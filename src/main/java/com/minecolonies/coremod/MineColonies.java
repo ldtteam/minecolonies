@@ -48,7 +48,6 @@ import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -60,8 +59,8 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -113,14 +112,12 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(GatherDataHandler::dataGeneratorSetup);
-
+        Mod.EventBusSubscriber.Bus.MOD.bus().get().addListener(this::entityAttributeCreation);
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(this.getClass());
-
         // Temporary additional
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagEventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagFMLEventHandlers.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(TagWorkAroundEventHandler.TagClientEventHandler.class));
-
         InteractionValidatorInitializer.init();
         proxy.setupApi();
     }
@@ -161,32 +158,30 @@ public class MineColonies
         CapabilityManager.INSTANCE.register(IColonyTagCapability.class, new IColonyTagCapability.Storage(), IColonyTagCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IChunkmanagerCapability.class, new IChunkmanagerCapability.Storage(), IChunkmanagerCapability.Impl::new);
         CapabilityManager.INSTANCE.register(IColonyManagerCapability.class, new IColonyManagerCapability.Storage(), IColonyManagerCapability.Impl::new);
-        DeferredWorkQueue.runLater(() -> {
-            GlobalEntityTypeAttributes.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.BARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.ARCHERBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.CHIEFBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.PHARAO, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.MUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.ARCHERMUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.PIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.ARCHERPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.CHIEFPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.AMAZON, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.AMAZONCHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-            GlobalEntityTypeAttributes.put(ModEntities.SHIELDMAIDEN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
-        });
-
         Network.getNetwork().registerCommonMessages();
 
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
+    }
+    public void entityAttributeCreation(EntityAttributeCreationEvent event){
+        event.put(ModEntities.CITIZEN, AbstractEntityCitizen.getDefaultAttributes().build());
+        event.put(ModEntities.VISITOR, AbstractEntityCitizen.getDefaultAttributes().build());
+        event.put(ModEntities.MERCENARY, EntityMercenary.getDefaultAttributes().build());
+        event.put(ModEntities.BARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.ARCHERBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.CHIEFBARBARIAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.PHARAO, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.MUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.ARCHERMUMMY, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.PIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.ARCHERPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.CHIEFPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.AMAZON, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.AMAZONCHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.SHIELDMAIDEN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
     }
 
     @SubscribeEvent
