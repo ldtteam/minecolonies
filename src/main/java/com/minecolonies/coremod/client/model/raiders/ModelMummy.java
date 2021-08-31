@@ -21,9 +21,9 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
     {
         super(part);
         hat.visible = false;
-        stripLeftA = part.getChild("stripLeftA");
-        stripRightB = part.getChild("stripRightB");
-        stripRightA = part.getChild("stripRightA");
+        stripLeftA = part.getChild("left_arm").getChild("stripLeftA");
+        stripRightB = part.getChild("right_arm").getChild("stripRightB");
+        stripRightA = part.getChild("right_arm").getChild("stripRightA");
     }
 
     public static LayerDefinition createMesh()

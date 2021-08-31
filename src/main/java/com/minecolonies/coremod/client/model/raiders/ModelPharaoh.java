@@ -20,8 +20,8 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
     {
         super(part);
         hat.visible = false;
-        bodyGoldenStrip = part.getChild("bodyGoldenStrip");
-        jaw = part.getChild("jaw");
+        bodyGoldenStrip = part.getChild("body").getChild("bodyGoldenStrip");
+        jaw = part.getChild("head").getChild("jaw");
     }
 
     public static LayerDefinition createMesh()
