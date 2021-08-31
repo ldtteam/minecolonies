@@ -62,6 +62,8 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.RABBIT_HERDER, new ModelEntityRabbitHerderMale(context.bakeLayer(ClientRegistryHandler.MALE_RABBITHERDER)), new ModelEntityRabbitHerderFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_RABBITHERDER)));
         register(BipedModelType.CONCRETE_MIXER, new ModelEntityConcreteMixerMale(context.bakeLayer(ClientRegistryHandler.MALE_CONCRETEMIXER)), new ModelEntityConcreteMixerFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_CONCRETEMIXER)));
         register(BipedModelType.BEEKEEPER, new ModelEntityBeekeeperMale(context.bakeLayer(ClientRegistryHandler.MALE_BEEKEEPER)), new ModelEntityBeekeeperFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BEEKEEPER)));
+        register(BipedModelType.BEEKEEPER, new ModelEntityBeekeeperMale(context.bakeLayer(ClientRegistryHandler.MALE_BEEKEEPER)), new ModelEntityBeekeeperFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BEEKEEPER)));
+
     }
 
     @Override
