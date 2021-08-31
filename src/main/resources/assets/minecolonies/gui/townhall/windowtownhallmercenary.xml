@@ -9,9 +9,9 @@
     <image source="minecolonies:textures/items/moneygold.png" pos="170 90" size="20 20"/>
     <image source="minecraft:textures/item/diamond_sword.png" pos="200 60" size="40 40"/>
 
-    <button id="done" size="200 20" pos="110 170" label="$(com.minecolonies.coremod.gui.townHall.mercenaryHire)"/>
+    <button id="done" size="200 20" pos="110 170" label="$(com.minecolonies.coremod.gui.townhall.mercenaryhire)"/>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
 
-    <text id="text" size="145 90" pos="10 55" color="white" text="$(com.minecolonies.coremod.gui.townHall.mercenaryStory)"/>
+    <text id="text" size="145 90" pos="10 55" color="white" text="$(com.minecolonies.coremod.gui.townhall.mercenarystory)"/>
 
 </window>

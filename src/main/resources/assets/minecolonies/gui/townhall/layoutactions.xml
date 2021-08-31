@@ -2,21 +2,21 @@
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
     <label size="148 11" color="green" pos="100 24"
-           label="$(com.minecolonies.coremod.gui.townHall.currTownHallName)"/>
+           label="$(com.minecolonies.coremod.gui.townhall.currtownhallname)"/>
     <label size="148 11" id="name" color="black" pos="100 35"/>
     <label size="135 11" id="level" color="black" pos="113 69"/>
 
     <button id="build" size="120 19" pos="113 107"
-            label="$(com.minecolonies.coremod.gui.townHall.build)"/>
+            label="$(com.minecolonies.coremod.gui.townhall.build)"/>
     <!--        <button id="changeSpec" size="120 19" pos="38 153"
                         label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/> -->
     <button id="rename" size="120 19" pos="113 130"
-            label="$(com.minecolonies.coremod.gui.townHall.rename)"/>
+            label="$(com.minecolonies.coremod.gui.townhall.rename)"/>
     <button id="mercenaries" size="120 19" pos="113 153"
-            label="$(com.minecolonies.coremod.gui.townHall.mercenary)"/>
+            label="$(com.minecolonies.coremod.gui.townhall.mercenary)"/>
 
     <label size="148 11" pos="271 30" style="bold" color="green"
-           label="$(com.minecolonies.coremod.gui.townHall.allies)"/>
+           label="$(com.minecolonies.coremod.gui.townhall.allies)"/>
     <list id="allies" size="150 75" pos="271 40">
         <box size="100% 25" linewidth="2">
             <label id="name" size="100 12" pos="5 0" color="black"/>
@@ -26,7 +26,7 @@
     </list>
 
     <label size="148 11" pos="271 130" style="bold" color="red"
-           label="$(com.minecolonies.coremod.gui.townHall.feuds)"/>
+           label="$(com.minecolonies.coremod.gui.townhall.feuds)"/>
     <list id="feuds" size="150 50" pos="271 140">
         <box size="100% 25" linewidth="2">
             <label id="name" size="100 12" pos="5 0" color="black"/>

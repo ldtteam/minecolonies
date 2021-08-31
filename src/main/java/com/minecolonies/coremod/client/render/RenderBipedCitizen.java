@@ -45,6 +45,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         super.addLayer(new ItemInHandLayer<>(this));
 
         IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, false, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)));
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, true, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZEN)));
         IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.CUSTOM, false, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)));
     }
 

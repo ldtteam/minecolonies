@@ -95,7 +95,7 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = new TranslatableComponent("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString()).getString();
+        final String colonyName = new TranslatableComponent("com.minecolonies.coremod.gui.townhall.defaultname", player.getName().getString()).getString();
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);
 
