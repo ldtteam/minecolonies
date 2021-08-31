@@ -45,6 +45,10 @@ public class DebugRendererChunkBorder
 
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
+        if (true)
+        {
+            return; //todo 1.17
+        }
         final Player player = Minecraft.getInstance().player;
 
         if (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() != ModItems.buildTool.get())

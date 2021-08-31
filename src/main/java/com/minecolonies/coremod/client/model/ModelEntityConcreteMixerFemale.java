@@ -18,8 +18,6 @@ public class ModelEntityConcreteMixerFemale extends CitizenModel<AbstractEntityC
   {
       super(part);
       hat.visible = false;
-
-      IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.CONCRETE_MIXER, true, this);
   }
 
   public static LayerDefinition createMesh()

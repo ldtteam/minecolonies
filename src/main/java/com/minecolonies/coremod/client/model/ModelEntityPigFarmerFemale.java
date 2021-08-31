@@ -19,8 +19,6 @@ public class ModelEntityPigFarmerFemale extends CitizenModel<AbstractEntityCitiz
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.PIG_FARMER, true, this);
     }
 
     public static LayerDefinition createMesh()

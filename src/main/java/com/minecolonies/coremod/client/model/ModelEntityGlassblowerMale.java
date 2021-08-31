@@ -17,8 +17,6 @@ public class ModelEntityGlassblowerMale extends CitizenModel<AbstractEntityCitiz
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.GLASSBLOWER, false, this);
     }
 
     public static LayerDefinition createMesh()

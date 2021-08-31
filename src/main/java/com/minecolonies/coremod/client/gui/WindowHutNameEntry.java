@@ -9,7 +9,10 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -47,7 +50,7 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(building.getCustomName());
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(new TranslatableComponent(building.getCustomName().toLowerCase(Locale.ROOT)).getString());
     }
 
     @Override

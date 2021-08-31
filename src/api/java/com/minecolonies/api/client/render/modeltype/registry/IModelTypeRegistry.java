@@ -4,6 +4,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 
 import java.util.Map;
 
@@ -17,9 +18,9 @@ public interface IModelTypeRegistry
 
     IModelTypeRegistry register(IModelType type, CitizenModel<AbstractEntityCitizen> maleModel, CitizenModel<AbstractEntityCitizen> femaleModel);
 
-    IModelTypeRegistry register(final IModelType type, final boolean female, final CitizenModel<AbstractEntityCitizen> model);
-
     Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap();
 
     Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap();
+
+    void setup(EntityRendererProvider.Context context);
 }

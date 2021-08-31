@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
@@ -43,13 +44,8 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
         super.addLayer(new ItemInHandLayer<>(this));
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, false, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)));
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, true, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZEN)));
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.CUSTOM, false, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)));
+        MinecoloniesAPIProxy.getInstance().getModelTypeRegistry().setup(context);
     }
-
-
 
     @Override
     public void render(
@@ -127,7 +123,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                double yOffset = model.young ? -0.8 : 0;
+                /*double yOffset = model.young ? -0.8 : 0;
                 boolean isSneaking = entityIn.isShiftKeyDown();
                 double height = entityIn.getBbHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;
@@ -148,7 +144,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                 r.vertex(matrix, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
                 r.vertex(matrix, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
                 r.vertex(matrix, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
-                matrixStack.popPose();
+                matrixStack.popPose();*/
             }
         }
     }

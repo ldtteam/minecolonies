@@ -19,8 +19,6 @@ public class ModelEntityCookFemale extends CitizenModel<AbstractEntityCitizen>
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.COOK, true, this);
     }
 
     public static LayerDefinition createMesh()

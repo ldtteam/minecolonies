@@ -5,8 +5,8 @@
     <list id="unemployed" size="100% 120" pos="0 40">
         <view size="100% 40">
             <label id="citizen" size="175 12" pos="10 4" color="yellow"/>
-            <button id="done" size="45 15" pos="190 2" label="$(com.minecolonies.coremod.gui.hiring.buttonHire)"/>
-            <button id="fire" size="45 15" pos="190 2" label="$(com.minecolonies.coremod.gui.hiring.buttonFire)"/>
+            <button id="done" size="45 15" pos="190 2" label="$(com.minecolonies.coremod.gui.hiring.buttonhire)"/>
+            <button id="fire" size="45 15" pos="190 2" label="$(com.minecolonies.coremod.gui.hiring.buttonfire)"/>
             <button id="pause" size="65 15" pos="240 2" label=""/>
             <button id="restart" size="65 15" pos="310 2" label="$(com.minecolonies.coremod.gui.hiring.restart)"/>
             <label id="attributes" size="400 24" pos="0 16" color="white"/>

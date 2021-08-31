@@ -16,8 +16,6 @@ public class ModelEntityDyerFemale extends CitizenModel<AbstractEntityCitizen>
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.DYER, true, this);
     }
 
     public static LayerDefinition createMesh()

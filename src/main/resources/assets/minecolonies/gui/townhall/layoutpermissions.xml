@@ -25,7 +25,7 @@
                 </box>
             </list>
 
-            <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addPlayer)"/>
+            <label size="148 11" pos="26 65" color="black" label="$(com.minecolonies.coremod.gui.townhall.addplayer)"/>
             <input id="addPlayerName" size="100 18" pos="26 76" maxlength="32"/>
             <button id="addPlayer" size="19 19" pos="130 76" label="+"/>
             <label id="permissionError" size="148 100" pos="26 100" color="red" label="$(com.minecolonies.coremod.gui.townhall.player_permission_error)" textalign="TOP_MIDDLE" />

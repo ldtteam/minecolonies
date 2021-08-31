@@ -19,8 +19,6 @@ public class ModelEntityComposterFemale extends CitizenModel<AbstractEntityCitiz
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.COMPOSTER, true, this);
     }
 
     public static LayerDefinition createMesh()

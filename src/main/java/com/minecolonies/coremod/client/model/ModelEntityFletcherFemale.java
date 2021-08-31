@@ -19,8 +19,6 @@ public class ModelEntityFletcherFemale extends CitizenModel<AbstractEntityCitize
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.FLETCHER, true, this);
     }
 
     public static LayerDefinition createMesh()

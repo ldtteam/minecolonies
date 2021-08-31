@@ -260,7 +260,7 @@ public final class TranslationConstants
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.coremod.toofar";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.TOWNHALL.population.totalcitizens.count";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.count";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS              = "com.minecolonies.coremod.gui.townhall.population.childs";
     @NonNls

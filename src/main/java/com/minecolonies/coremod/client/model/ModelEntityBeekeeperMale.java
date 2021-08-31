@@ -19,8 +19,6 @@ public class ModelEntityBeekeeperMale extends CitizenModel<AbstractEntityCitizen
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BEEKEEPER, false, this);
     }
 
     public static LayerDefinition createMesh()

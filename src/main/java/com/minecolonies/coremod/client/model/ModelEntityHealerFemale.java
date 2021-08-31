@@ -19,8 +19,6 @@ public class ModelEntityHealerFemale extends CitizenModel<AbstractEntityCitizen>
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.HEALER, true, this);
     }
 
     public static LayerDefinition createMesh()

@@ -19,8 +19,6 @@ public class ModelEntityBlacksmithMale extends CitizenModel<AbstractEntityCitize
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BLACKSMITH, false, this);
     }
 
     public static LayerDefinition createMesh()

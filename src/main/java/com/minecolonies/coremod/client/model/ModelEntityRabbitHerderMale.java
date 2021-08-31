@@ -19,8 +19,6 @@ public class ModelEntityRabbitHerderMale extends CitizenModel<AbstractEntityCiti
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.RABBIT_HERDER, false, this);
     }
 
     public static LayerDefinition createMesh()

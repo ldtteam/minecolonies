@@ -19,8 +19,6 @@ public class ModelEntityTeacherFemale extends CitizenModel<AbstractEntityCitizen
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.TEACHER, true, this);
     }
 
     public static LayerDefinition createMesh()

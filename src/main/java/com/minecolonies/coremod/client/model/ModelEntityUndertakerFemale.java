@@ -19,8 +19,6 @@ public class ModelEntityUndertakerFemale extends CitizenModel<AbstractEntityCiti
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.UNDERTAKER, true, this);
     }
 
     public static LayerDefinition createMesh()

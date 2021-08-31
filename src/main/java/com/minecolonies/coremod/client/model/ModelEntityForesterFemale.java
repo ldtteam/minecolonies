@@ -19,8 +19,6 @@ public class ModelEntityForesterFemale extends CitizenModel<AbstractEntityCitize
     {
         super(part);
         hat.visible = false;
-
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.FORESTER, true, this);
     }
 
     public static LayerDefinition createMesh()
