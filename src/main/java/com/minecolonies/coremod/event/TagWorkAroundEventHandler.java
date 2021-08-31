@@ -37,12 +37,12 @@ public class TagWorkAroundEventHandler
          * This event fires on both client and server, immediately after reading tags data from disk (on server) or from network (on remote clients)..
          * It is also a guaranteed source for valid tag suppliers on a remote client that aren't (as of Forge 36.1.2) reliable when taken from TagCollectionManager or ItemTags.
          * VanillaTagTypes only guarantees block, item, fluid, and entity_type tags are completely filled and updated.
-         * If we need support for enchantment, potion, or block_entity_type, use {@link net.minecraftforge.event.TagsUpdatedEvent.CustomTagTypes}.
+         * If we need support for enchantment, potion, or block_entity_type, use {@link net.minecraftforge.event.TagsUpdatedEvent}.
          *
-         * @param event {@link net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes}
+         * @param event {@link net.minecraftforge.event.TagsUpdatedEvent}
          */
         @SubscribeEvent
-        public static void onTagUpdate(final TagsUpdatedEvent.VanillaTagTypes event)
+        public static void onTagUpdate(final TagsUpdatedEvent event)
         {
             // This Tag Supplier is guaranteed to have the output of a transmitted TagSupplier on remote clients.
             // _Only_ these events and ClientWorld.getTags() are guaranteed to be consistent on remote clients.
