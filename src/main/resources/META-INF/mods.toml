@@ -57,14 +57,14 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="structurize"
     mandatory=true
-    versionRange="[${project.structurize_version}]"
+    versionRange="[0.13.214-ALPHA]"
     ordering="AFTER"
     side="BOTH"
 # The rest of these are not required, but if you have them then they must be at least this version
 [[dependencies.minecolonies]]
     modId="jei"
     mandatory=false
-    versionRange="[${project.jei_version},)"
+    versionRange="[8.0.0.14,)"
     ordering="NONE"
     side="BOTH"
 #[[dependencies.minecolonies]]
