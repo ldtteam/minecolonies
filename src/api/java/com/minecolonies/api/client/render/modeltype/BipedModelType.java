@@ -41,7 +41,8 @@ public enum BipedModelType implements ISimpleModelType
     RABBIT_HERDER("rabbitherder", 1),
     PLANTER("planter", 1),
     BEEKEEPER("beekeeper", 1),
-    BASE("base", 1);
+    BASE("base", 1),
+    CUSTOM("base", 1);
 
 
     /**

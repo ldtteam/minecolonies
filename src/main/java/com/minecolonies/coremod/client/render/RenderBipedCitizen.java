@@ -5,6 +5,7 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.event.ClientRegistryHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -43,8 +44,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
         super.addLayer(new ItemInHandLayer<>(this));
 
-        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, false, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)));
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.BASE, false, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)));
+        IMinecoloniesAPI.getInstance().getModelTypeRegistry().register(BipedModelType.CUSTOM, false, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)));
     }
+
+
 
     @Override
     public void render(
@@ -99,7 +103,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
         {
-            model = IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.BASE);
+            model = IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.CUSTOM);
         }
 
         model.young = citizen.isBaby();

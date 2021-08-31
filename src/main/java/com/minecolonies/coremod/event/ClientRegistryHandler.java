@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
@@ -112,6 +113,8 @@ public class ClientRegistryHandler
 
     public static final ModelLayerLocation SCARECROW = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "scarecrow"), "scarecrow");
 
+    public static final ModelLayerLocation CITIZEN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "citizen"), "citizen");
+
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
@@ -189,6 +192,8 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_STUDENT, ModelEntityStudentMale::createMesh);
         event.registerLayerDefinition(MALE_HEALER, ModelEntityHealerMale::createMesh);
         event.registerLayerDefinition(MALE_CRAFTER, ModelEntityCrafterMale::createMesh);
+
+        event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }
 
     @OnlyIn(Dist.CLIENT)
