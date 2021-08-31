@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
@@ -301,10 +302,10 @@ public final class WorkerUtil
                 final SignBlockEntity teLevelSign = (SignBlockEntity) te;
 
                 teLevelSign.setMessage(0, new TextComponent(ChatFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId)));
+                  new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minerMineNode").getString() + ": " + levelId)));
                 teLevelSign.setMessage(1, new TextComponent(ChatFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
                 teLevelSign.setMessage(2, new TextComponent(ChatFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes())));
+                  new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minerNode").getString() + ": " + level.getNumberOfBuiltNodes())));
                 teLevelSign.setMessage(3, new TextComponent(ChatFormatting.stripFormatting("")));
 
                 teLevelSign.setChanged();

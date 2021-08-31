@@ -207,7 +207,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     private void toggleHiring(@NotNull final Button button)
     {
         final boolean toggle;
-        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
+        if (button.getTextAsString().equals(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF).getString()))
         {
             button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
@@ -228,7 +228,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     private void toggleHousing(@NotNull final Button button)
     {
         final boolean toggle;
-        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
+        if (button.getTextAsString().equals(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF).getString()))
         {
             button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
@@ -249,7 +249,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     private void toggleMoveIn(@NotNull final Button button)
     {
         final boolean toggle;
-        if (button.getTextAsString().equals(LanguageHandler.format(OFF_STRING)))
+        if (button.getTextAsString().equals(new TranslatableComponent(OFF_STRING).getString()))
         {
             button.setText(new TranslatableComponent(ON_STRING));
             toggle = true;
@@ -269,7 +269,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void togglePrintProgress(@NotNull final Button button)
     {
-        if (button.getTextAsString().equals(LanguageHandler.format(OFF_STRING)))
+        if (button.getTextAsString().equals(new TranslatableComponent(OFF_STRING).getString()))
         {
             button.setText(new TranslatableComponent(ON_STRING));
         }

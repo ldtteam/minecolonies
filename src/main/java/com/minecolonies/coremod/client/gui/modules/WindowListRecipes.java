@@ -20,6 +20,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.A
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -242,7 +243,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         {
             lifeCount++;
         }
-        recipeStatus.setText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
+        recipeStatus.setText(new TranslatableComponent(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 }

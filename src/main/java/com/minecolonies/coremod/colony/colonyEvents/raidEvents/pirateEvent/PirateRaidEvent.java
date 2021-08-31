@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidEvent;
 
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -88,6 +89,6 @@ public class PirateRaidEvent extends AbstractShipRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return new TextComponent(LanguageHandler.format(RAID_PIRATE));
+        return new TranslatableComponent(RAID_PIRATE);
     }
 }

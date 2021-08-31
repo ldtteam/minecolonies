@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.server.RemoveFromRallyingListMessage;
 import com.minecolonies.coremod.network.messages.server.ToggleBannerRallyGuardsMessage;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
@@ -96,11 +97,11 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
         if (isActive(banner))
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(new TranslatableComponent(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
         }
         else
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(new TranslatableComponent(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
         }
 
         guardTowerList.setDataProvider(() -> getGuardTowerViews(banner).size(), (index, rowPane) ->
@@ -130,7 +131,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(LanguageHandler.format(guardTowerView.getGuardType().getJobTranslationKey()) + ": " + guardTowerView.getGuards().size());
+                  .setText(new TranslatableComponent(guardTowerView.getGuardType().getJobTranslationKey()) + ": " + guardTowerView.getGuards().size());
 
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }
@@ -139,7 +140,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                 exampleStackDisplay.setItem(new ItemStack(Items.COOKIE));
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
+                  .setText(new TranslatableComponent(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setColors(Color.rgbaToInt(255, 0, 0, 1));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }

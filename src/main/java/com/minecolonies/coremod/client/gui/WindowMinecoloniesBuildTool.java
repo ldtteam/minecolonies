@@ -14,6 +14,7 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -167,11 +168,11 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
                     case NOT_SOLID:
-                        errorMessage = LanguageHandler.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
+                        errorMessage = new TranslatableComponent(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList).getString();
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
                     case NEEDS_AIR_ABOVE:
-                        errorMessage = LanguageHandler.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
+                        errorMessage = new TranslatableComponent(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList).getString();
                         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
                         break;
                     case INSIDE_COLONY:

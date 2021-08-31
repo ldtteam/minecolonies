@@ -117,7 +117,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
-        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.xofz",
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.xofz",
           module.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 

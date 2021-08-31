@@ -168,7 +168,7 @@ public class EventHandler
             {
                 if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
+                    event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.noCloseColony").getString());
                     return;
                 }
                 colony = IColonyManager.getInstance().getClosestIColony(world, pos);
@@ -178,13 +178,13 @@ public class EventHandler
                     return;
                 }
 
-                event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                  (int) Math.sqrt(colony.getDistanceSquared(pos)), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
+                event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.nextColony",
+                  (int) Math.sqrt(colony.getDistanceSquared(pos)), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
             }
 
             event.getLeft().add(colony.getName() + " : "
-                                  + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
+                                  + new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
               (int) Math.sqrt(colony.getDistanceSquared(pos))));
         }
     }

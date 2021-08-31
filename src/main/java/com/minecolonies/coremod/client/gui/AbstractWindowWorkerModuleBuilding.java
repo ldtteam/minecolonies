@@ -12,6 +12,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDe
 import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -98,11 +99,11 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
         if (prio == 0)
         {
             findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(
-              LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never"));
+              new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildPrio").getString() + new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never").getString());
         }
         else
         {
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildPrio") + prio + "/10");
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildPrio").getString() + prio + "/10");
         }
     }
 
@@ -182,7 +183,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(worker.getName());
                             rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Text.class)
-                              .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.workerLevel",
+                              .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.workerLevel",
                                 worker.getCitizenSkillHandler().getJobModifier(building)));
                         }
                     }

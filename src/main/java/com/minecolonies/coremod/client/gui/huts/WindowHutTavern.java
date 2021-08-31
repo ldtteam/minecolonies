@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
@@ -116,7 +117,7 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
         final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
 
         final int sparePlaces = 4 - building.getResidents().size();
-        buttonAssign.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
+        buttonAssign.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
         buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
 
         citizen.refreshElementPanes();

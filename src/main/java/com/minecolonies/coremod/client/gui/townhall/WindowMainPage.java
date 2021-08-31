@@ -12,7 +12,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.*;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
@@ -20,9 +20,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 
 /**
  * BOWindow for the town hall.
@@ -67,7 +64,7 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
-        final Component teleport = new TextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
+        final Component teleport = new TranslatableComponent(DO_REALLY_WANNA_TP, ally.name)
                                           .setStyle(Style.EMPTY.withBold(true).withColor(ChatFormatting.GOLD).withClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
                                               () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(
@@ -116,7 +113,7 @@ public class WindowMainPage extends AbstractWindowTownHall
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
                 if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
                 {
-                    button.setText(LanguageHandler.format(TH_TOO_LOW));
+                    button.setText(new TranslatableComponent(TH_TOO_LOW));
                     button.disable();
                 }
                 else

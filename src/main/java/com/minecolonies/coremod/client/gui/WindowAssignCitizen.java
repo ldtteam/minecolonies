@@ -17,6 +17,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -151,7 +152,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         if (work != null)
                         {
                             final double oldDistance = BlockPosUtil.getDistance2D(work, home);
-                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.currently", oldDistance);
+                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homeHut.currently", oldDistance).getString();
                             better = newDistance < oldDistance;
                             if (oldDistance >= FAR_DISTANCE_THRESHOLD)
                             {
@@ -160,12 +161,12 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         }
                         else
                         {
-                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homeHut.current", home.getX(), home.getY(), home.getZ());
+                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homeHut.current", home.getX(), home.getY(), home.getZ()).getString();
                         }
                     }
 
                     final Text newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Text.class);
-                    newLivingLabel.setText(LanguageHandler.format(citizen.getJob()) + workString);
+                    newLivingLabel.setText(new TranslatableComponent(citizen.getJob()).getString() + workString);
                     if (better)
                     {
                         newLivingLabel.setColors(DARKGREEN);

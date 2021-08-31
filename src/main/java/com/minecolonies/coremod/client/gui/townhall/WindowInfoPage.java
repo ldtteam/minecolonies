@@ -98,7 +98,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
-        totalCitizenLabel.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+        totalCitizenLabel.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
             citizensSize,
             Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
         List<MutableComponent> hoverText = new ArrayList<>();
@@ -122,7 +122,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 hoverText.add(new TranslatableComponent( "com.minecolonies.coremod.gui.townhall.population.totalcitizens.configlimited", this.building.getColony().getName()));
             }
             totalCitizenLabel.setText(
-                LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
+                new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
         }
         PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
@@ -191,8 +191,8 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 unemployedCount++;
             }
         }
-        final String numberOfUnemployed = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount);
-        final String numberOfKids = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children);
+        final String numberOfUnemployed = new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount).getString();
+        final String numberOfKids = new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children).getString();
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
         if (list == null)
@@ -220,9 +220,9 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (index < theList.size())
                 {
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
-                    final String job = LanguageHandler.format(entry.getKey());
+                    final String job = new TranslatableComponent(entry.getKey()).getString();
                     final String numberOfWorkers =
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
+                      new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB()).toString();
                     label.setText(numberOfWorkers);
                 }
                 else
@@ -268,7 +268,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                         rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
                     }
 
-                    final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
+                    final String name = new TranslatableComponent(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)).getString();
 
                     if (name.contains(KEY_TO_PERMISSIONS))
                     {
@@ -327,7 +327,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     public void permissionEventsClicked(@NotNull final Button button)
     {
         permissionEvents = !permissionEvents;
-        button.setText(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
+        button.setText(new TranslatableComponent(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 
     @Override

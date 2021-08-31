@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -125,7 +126,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.get("gui.done") : new TranslatableComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */

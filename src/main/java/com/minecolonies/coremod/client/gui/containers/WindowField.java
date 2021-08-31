@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -120,10 +121,10 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            this.font.draw(stack, LanguageHandler.format("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            this.font.draw(stack, new TranslatableComponent("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
         }
 
-        this.font.draw(stack, LanguageHandler.format("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.font.draw(stack, new TranslatableComponent("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
         for (Widget widget : this.renderables)
         {
@@ -292,8 +293,8 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             }
 
             List<FormattedText> lines = Lists.newArrayList(new TextComponent(
-              LanguageHandler.format("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName())),
-              new TextComponent(ChatFormatting.GRAY + "" + ChatFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
+              new TranslatableComponent("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName()).getString()),
+              new TextComponent(ChatFormatting.GRAY + "" + ChatFormatting.ITALIC + new TranslatableComponent(getDirectionalTranslationKey()).getString()
             ));
 
             WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);

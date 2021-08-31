@@ -130,7 +130,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setText(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(new TranslatableComponent("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
     }
 
     /**
@@ -279,7 +279,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     }
 
                     isPaused.on();
-                    isPaused.setText(LanguageHandler.format(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                    isPaused.setText(new TranslatableComponent(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
 
                 if (citizen.isPaused())
@@ -312,7 +312,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 textBuilder.newLine(); // finish the current line
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
-                  .setText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
+                  .setText((citizen.getJob().isEmpty() ? "" : new TranslatableComponent(citizen.getJob()).getString() + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
             }
         });

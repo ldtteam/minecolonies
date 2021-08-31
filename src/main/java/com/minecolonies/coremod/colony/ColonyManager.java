@@ -21,6 +21,7 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveM
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -94,7 +95,7 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString());
+        final String colonyName = new TranslatableComponent("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString()).getString();
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);
 

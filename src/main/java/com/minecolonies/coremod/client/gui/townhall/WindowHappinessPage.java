@@ -66,7 +66,7 @@ public class WindowHappinessPage extends AbstractWindowTownHall
             label.setSize(136, 11);
             label.setPosition(25, yPos);
             label.setColors(BLACK);
-            label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
+            label.setText(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
 
             if (value > 1.0)
             {

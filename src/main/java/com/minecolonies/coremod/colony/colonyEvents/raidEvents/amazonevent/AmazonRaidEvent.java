@@ -12,6 +12,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Ho
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -85,7 +86,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return new TextComponent(LanguageHandler.format(RAID_AMAZON));
+        return new TranslatableComponent(RAID_AMAZON);
     }
 
     @Override

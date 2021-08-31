@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -695,11 +696,11 @@ public final class BlockPosUtil
 
         if (pos.getZ() > building.getZ() + 1)
         {
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH).getString());
         }
         else if (pos.getZ() < building.getZ() - 1)
         {
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH).getString());
         }
 
         if (pos.getX() > building.getX() + 1)
@@ -708,7 +709,7 @@ public final class BlockPosUtil
             {
                 dist.append('/');
             }
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST).getString());
         }
         else if (pos.getX() < building.getX() - 1)
         {
@@ -716,7 +717,7 @@ public final class BlockPosUtil
             {
                 dist.append('/');
             }
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST).getString());
         }
 
         return dist.toString();

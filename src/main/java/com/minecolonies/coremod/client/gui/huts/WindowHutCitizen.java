@@ -16,6 +16,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.RecallCi
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -83,7 +84,7 @@ public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingM
                     {
                         final BlockPos work = citizenDataView.getWorkBuilding();
                         final double distance2D = BlockPosUtil.getDistance2D(work, home.getPosition());
-                        rowPane.findPaneOfTypeByID(LABEL_DIST, Text.class).setText(LanguageHandler.format(DIST, distance2D));
+                        rowPane.findPaneOfTypeByID(LABEL_DIST, Text.class).setText(new TranslatableComponent(DIST, distance2D));
                     }
                 }
             }
@@ -100,7 +101,7 @@ public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingM
         final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
 
         final int sparePlaces = building.getBuildingLevel() - building.getResidents().size();
-        buttonAssign.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
+        buttonAssign.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
         buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
 
         citizen.refreshElementPanes();

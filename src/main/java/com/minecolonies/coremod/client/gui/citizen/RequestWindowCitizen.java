@@ -13,6 +13,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
@@ -125,7 +126,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             if (slot == -1)
             {
                 final Component chatMessage = new TextComponent("<" + citizen.getName() + "> " +
-                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                                                                             new TranslatableComponent(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()).getString())
                                                      .setStyle(Style.EMPTY.withBold(false).withColor(ChatFormatting.WHITE)
                                                      );
                 Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUUID());

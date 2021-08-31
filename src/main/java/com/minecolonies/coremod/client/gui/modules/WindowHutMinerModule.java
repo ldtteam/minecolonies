@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,7 +114,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
 
                 rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + levelsInfo.get(index).getA());
+                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minerNode").getString() + ": " + levelsInfo.get(index).getA());
                 rowPane.findPaneOfTypeByID("yLevel", Text.class)
                   .setText("Y: " + (levelsInfo.get(index).getB() + 1));
                 // ^^ 1 is for Y depth fix

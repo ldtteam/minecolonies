@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityArcherPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityCaptainPirate;
 import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -167,6 +168,6 @@ public class PirateGroundRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return new TextComponent(LanguageHandler.format(RAID_PIRATE));
+        return new TranslatableComponent(RAID_PIRATE);
     }
 }
