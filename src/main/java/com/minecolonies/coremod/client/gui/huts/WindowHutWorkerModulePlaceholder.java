@@ -5,6 +5,8 @@ import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 /**
  * BOWindow for worker. Placeholder for many different jobs.
  *
@@ -24,7 +26,7 @@ public class WindowHutWorkerModulePlaceholder<B extends AbstractBuildingWorkerVi
     public WindowHutWorkerModulePlaceholder(final B building, final String name)
     {
         super(building, Constants.MOD_ID + WORKER_PLACEHOLDER_RESOURCE_SUFFIX);
-        this.name = name;
+        this.name = name.toLowerCase(Locale.ROOT);
     }
 
     @NotNull

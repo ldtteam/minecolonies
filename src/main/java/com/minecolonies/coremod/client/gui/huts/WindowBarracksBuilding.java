@@ -110,7 +110,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.buildBarracks";
+        return "com.minecolonies.coremod.gui.workerhuts.buildbarracks";
     }
 
     /**

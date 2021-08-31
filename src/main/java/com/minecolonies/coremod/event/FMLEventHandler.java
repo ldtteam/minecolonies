@@ -57,6 +57,12 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
+    public static void onWorldTick(final TickEvent.WorldTickEvent event)
+    {
+        IColonyManager.getInstance().onWorldTick(event);
+    }
+
+    @SubscribeEvent
     public static void onServerAboutToStart(@NotNull final FMLServerAboutToStartEvent event)
     {
         IColonyManager.getInstance().getRecipeManager().reset();

@@ -2,7 +2,7 @@
     <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
 
     <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"
-           label="$(com.minecolonies.coremod.gui.workerhuts.workerAssigned)"/>
+           label="$(com.minecolonies.coremod.gui.workerhuts.workerassigned)"/>
 
     <list id="workers" size="164 30" pos="13 43">
         <view size="100% 22">

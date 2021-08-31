@@ -55,7 +55,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
     /**
      * Name string of the builder hut.
      */
-    private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerhuts.buildersHut";
+    private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerhuts.buildershut";
 
     /**
      * Button to increase delivery prio.
@@ -99,11 +99,11 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
         if (prio == 0)
         {
             findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(
-              new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildPrio").getString() + new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never").getString());
+              new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildprio").getString() + new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never").getString());
         }
         else
         {
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildPrio").getString() + prio + "/10");
+            findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildprio").getString() + prio + "/10");
         }
     }
 
@@ -183,7 +183,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
                         {
                             rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(worker.getName());
                             rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Text.class)
-                              .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.workerLevel",
+                              .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.workerlevel",
                                 worker.getCitizenSkillHandler().getJobModifier(building)));
                         }
                     }
