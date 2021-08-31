@@ -1,18 +1,18 @@
 package com.minecolonies.coremod.compatibility.jei;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.inventory.InventoryMenu;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import org.lwjgl.BufferUtils;
 
@@ -39,7 +39,7 @@ public class RenderHelper
     {
         final Minecraft mc = Minecraft.getInstance();
 
-        /*matrixStack.pushPose();
+        matrixStack.pushPose();
         matrixStack.translate(x, y, z);
         matrixStack.scale(-scale, -scale, -scale);
         matrixStack.translate(-0.5F, -0.5F, 0);
@@ -53,19 +53,21 @@ public class RenderHelper
         matrixStack.pushPose();
         matrixStack.translate(0, 0, -1);
 
-        mc.getTextureManager().bind(InventoryMenu.BLOCK_ATLAS);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
         final MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
-        mc.getBlockRenderer().renderBlock(block, matrixStack, buffers, 0x00F000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        mc.getBlockRenderer().renderSingleBlock(block, matrixStack, buffers, 0x00F000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         buffers.endBatch();
         matrixStack.popPose();
 
-        matrixStack.popPose();*/
-        //todo 1.17
+        matrixStack.popPose();
     }
 
     /**
      * Render an entity on a GUI.
-     * @param matrixStack matrix
+     * @param poseStack matrix
      * @param x horizontal center position
      * @param y vertical bottom position
      * @param scale scaling factor
@@ -73,21 +75,21 @@ public class RenderHelper
      * @param pitch adjusts look rotation
      * @param livingEntity the entity to render
      */
-    public static void renderEntity(final PoseStack matrixStack, final int x, final int y, final double scale,
+    public static void renderEntity(final PoseStack poseStack, final int x, final int y, final double scale,
                                     final double yaw, final double pitch, final LivingEntity livingEntity)
     {
         final Minecraft mc = Minecraft.getInstance();
         if (livingEntity.level == null) livingEntity.level = mc.level;
         final float yawAngle = (float) Math.atan(yaw / 40.0F);
         final float pitchAngle = (float) Math.atan(pitch / 40.0F);
-        matrixStack.pushPose();
-        matrixStack.translate((float) x, (float) y, 1050.0F);
-        matrixStack.scale(1.0F, 1.0F, -1.0F);
-        matrixStack.translate(0.0D, 0.0D, 1000.0D);
-        matrixStack.scale((float) scale, (float) scale, (float) scale);
+        poseStack.pushPose();
+        poseStack.translate((float) x, (float) y, 1050.0F);
+        poseStack.scale(1.0F, 1.0F, -1.0F);
+        poseStack.translate(0.0D, 0.0D, 1000.0D);
+        poseStack.scale((float) scale, (float) scale, (float) scale);
         final Quaternion pitchRotation = Vector3f.XP.rotationDegrees(pitchAngle * 20.0F);
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
-        matrixStack.mulPose(pitchRotation);
+        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+        poseStack.mulPose(pitchRotation);
         final float oldYawOffset = livingEntity.yBodyRot;
         final float oldYaw = livingEntity.getYRot();
         final float oldPitch = livingEntity.getXRot();
@@ -98,35 +100,35 @@ public class RenderHelper
         livingEntity.setXRot(-pitchAngle * 20.0F);
         livingEntity.yHeadRot = livingEntity.getYRot();
         livingEntity.yHeadRotO = livingEntity.getYRot();
-        final EntityRenderDispatcher entityrenderermanager = mc.getEntityRenderDispatcher();
+        final EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
         pitchRotation.conj();
-        entityrenderermanager.overrideCameraOrientation(pitchRotation);
-        entityrenderermanager.setRenderShadow(false);
+        dispatcher.overrideCameraOrientation(pitchRotation);
+        dispatcher.setRenderShadow(false);
         final MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        RenderSystem.runAsFancy(() -> entityrenderermanager.render(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, matrixStack, buffers, 0x00F000F0));
+        RenderSystem.runAsFancy(() -> dispatcher.render(livingEntity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, poseStack, buffers, 0x00F000F0));
         buffers.endBatch();
-        entityrenderermanager.setRenderShadow(true);
+        dispatcher.setRenderShadow(true);
         livingEntity.yBodyRot = oldYawOffset;
         livingEntity.setYRot(oldYaw);
         livingEntity.setXRot(oldPitch);
         livingEntity.yHeadRotO = oldPrevYawHead;
         livingEntity.yHeadRot = oldYawHead;
-        matrixStack.popPose();
+        poseStack.popPose();
     }
 
     /**
      * Enable scissor (clipping) to GUI region (prevent drawing outside).
      *
-     * @param matrixStack matrix
+     * @param poseStack matrix
      * @param x left position
      * @param y top position
      * @param w width
      * @param h height
      */
-    public static void scissor(final PoseStack matrixStack, int x, int y, int w, int h)
+    public static void scissor(final PoseStack poseStack, int x, int y, int w, int h)
     {
         final double scale = Minecraft.getInstance().getWindow().getGuiScale();
-        final double[] xyzTranslation = getGLTranslation(matrixStack, scale);
+        final double[] xyzTranslation = getGLTranslation(poseStack, scale);
         x *= scale;
         y *= scale;
         w *= scale;
@@ -146,9 +148,9 @@ public class RenderHelper
         RenderSystem.disableScissor();
     }
 
-    private static double[] getGLTranslation(final PoseStack matrixStack, final double scale)
+    private static double[] getGLTranslation(final PoseStack poseStack, final double scale)
     {
-        final Matrix4f matrix = matrixStack.last().pose();
+        final Matrix4f matrix = poseStack.last().pose();
         final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         matrix.store(buf);
         // { x, y, z }
