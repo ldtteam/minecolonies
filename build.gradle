@@ -15,6 +15,19 @@ buildscript {
     }
 }
 
+// Workaround to make Mixins and BMS work with the mess that is FG
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+// End of workaround
+
 configurations.all {
     resolutionStrategy {
         force 'cpw.mods:securejarhandler:0.9.50'
@@ -35,5 +48,5 @@ dependencies {
     implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     contained "com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"
 
-    implementation "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
+    library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
 }
