@@ -85,10 +85,6 @@ public class DebugRendererChunkBorder
 
         VertexConsumer buffer = BORDER_LINE_RENDERER.get();
 
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
-        RenderSystem.disableBlend();
-
         if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),
           GLFW.GLFW_KEY_LEFT_CONTROL))
         {
@@ -98,10 +94,6 @@ public class DebugRendererChunkBorder
         {
             draw(stack, buffer, coloniesMap, nearestColonyView.getID(), playerChunkPos, playerRenderDist);
         }
-
-        RenderSystem.enableBlend();
-        RenderSystem.enableTexture();
-        RenderSystem.disableDepthTest();
 
         stack.popPose();
     }
@@ -122,8 +114,9 @@ public class DebugRendererChunkBorder
                 return;
             }
 
-            final boolean isPlayerChunkX = colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
-            final boolean isPlayerChunkZ = colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
+            // I'm unsure how we want to handle this, I don't remember the origin of this.
+            final boolean isPlayerChunkX = true; //colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
+            final boolean isPlayerChunkZ = true; //colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
             final float minX = (float) (chunkPos.getMinBlockX() + LINE_SHIFT);
             final float maxX = (float) (chunkPos.getMaxBlockX() + 1.0d - LINE_SHIFT);
             final float minZ = (float) (chunkPos.getMinBlockZ() + LINE_SHIFT);
