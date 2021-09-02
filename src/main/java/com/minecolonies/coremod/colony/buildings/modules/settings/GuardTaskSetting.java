@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleVie
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ToolModuleView;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -66,7 +67,7 @@ public class GuardTaskSetting extends StringSettingWithDesc
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutguardtasksetting.xml", (View) pane);
+        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutguardtasksetting.xml"), (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
         pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));

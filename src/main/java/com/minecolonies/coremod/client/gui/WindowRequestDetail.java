@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +100,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      */
     public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
     {
-        super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX));
         this.prevWindow = prevWindow;
         this.request = request;
         this.colonyId = colonyId;
@@ -159,7 +160,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
         else if (!request.getDisplayIcon().equals(MISSING))
         {
             logo.setVisible(true);
-            logo.setImage(request.getDisplayIcon());
+            logo.setImage(request.getDisplayIcon(), false);
             PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(colony));
         }
 

@@ -69,7 +69,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
             button.setText(new TranslatableComponent(LABEL_LIMIT_REACHED));
-            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
+            button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"), false);
         }
 
         registerButton(STOCK_REMOVE, this::removeStock);

@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
      */
     public WindowAssignCitizen(final IColonyView c, final BlockPos buildingId)
     {
-        super(Constants.MOD_ID + ASSIGN_CITIZEN_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID + ASSIGN_CITIZEN_RESOURCE_SUFFIX));
         this.colony = c;
         building = colony.getBuilding(buildingId);
         citizenList = findPaneOfTypeByID(CITIZEN_LIST, ScrollingList.class);

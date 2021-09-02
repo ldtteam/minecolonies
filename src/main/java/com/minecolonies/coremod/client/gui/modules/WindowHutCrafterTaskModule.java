@@ -107,7 +107,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                 }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-                logo.setImage(request.getDisplayIcon());
+                logo.setImage(request.getDisplayIcon(), false);
             }
         });
     }

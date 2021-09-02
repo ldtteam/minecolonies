@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.event.ClientRegistryHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -123,7 +121,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                /*double yOffset = model.young ? -0.8 : 0; todo 1.17
+                double yOffset = model.young ? -0.8 : 0;
                 boolean isSneaking = entityIn.isShiftKeyDown();
                 double height = entityIn.getBbHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;
@@ -137,14 +135,16 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                final Matrix4f matrix = matrixStack.last().pose();
-                final VertexConsumer r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
+                VertexConsumer r = buffer.getBuffer(MRenderTypes.customTexRenderer(texture));
 
-                r.vertex(matrix, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
-                r.vertex(matrix, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
-                r.vertex(matrix, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
-                r.vertex(matrix, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
-                matrixStack.popPose();*/
+                final Matrix4f matrixA = matrixStack.last().pose();
+
+                r.vertex(matrixA, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
+                r.vertex(matrixA, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
+                r.vertex(matrixA, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
+                r.vertex(matrixA, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
+
+                matrixStack.popPose();
             }
         }
     }

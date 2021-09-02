@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.event;
 
 import com.google.common.collect.ImmutableMap;
-import com.ldtteam.blockui.Log;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.StructureClientHandler;
@@ -27,9 +26,11 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.render.MRenderTypes;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
@@ -114,9 +115,10 @@ public class ClientEventHandler
      * Render buffers.
      */
     public static final RenderBuffers renderBuffers = new RenderBuffers();
-    private static final MultiBufferSource.BufferSource renderBuffer = renderBuffers.bufferSource();
-    private static final Supplier<VertexConsumer> linesWithCullAndDepth = () -> renderBuffer.getBuffer(RenderType.lines());
+    private static final MultiBufferSource.BufferSource renderBuffer             = renderBuffers.bufferSource();
+    public static final  Supplier<VertexConsumer>       linesWithCullAndDepth    = () -> renderBuffer.getBuffer(RenderType.lines());
     private static final Supplier<VertexConsumer> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
+    public static final Supplier<VertexConsumer>  BORDER_LINE_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customLineRenderer());
 
     /**
      * Lazy cache for crafting module lookups.
@@ -131,10 +133,6 @@ public class ClientEventHandler
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        if (true)
-        {
-            return; //todo 1.17
-        }
         if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
         {
             Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());

@@ -39,15 +39,16 @@ public final class MRenderTypes extends RenderType
      * @param resourceLocation the location fo the texture.
      * @return the renderType which is created.
      */
-    public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
+    public static RenderType customTexRenderer(@NotNull final ResourceLocation resourceLocation)
     {
         final CompositeState state = CompositeState.builder()
                               .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false, false))//Texture state
-                              //.setAlphaState(RenderStateShard.MIDWAY_ALPHA) todo 1.17
+                              .setShaderState(ShaderStateShard.POSITION_TEX_SHADER)
                               .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
                               .createCompositeState(true);
 
-        return create("custommctextrenderer", format, VertexFormat.Mode.QUADS, 256, true, false, state);
+
+        return create("custommctexrenderer", format, VertexFormat.Mode.QUADS, 256, true, false, state);
     }
 
     /**
@@ -58,6 +59,9 @@ public final class MRenderTypes extends RenderType
     public static RenderType customLineRenderer()
     {
         return create("minecolonieslines", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.LINES, 256, false, false,
-          CompositeState.builder().setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty())).createCompositeState(false));
+          CompositeState.builder()
+            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+            .setShaderState(ShaderStateShard.RENDERTYPE_LINES_SHADER)
+            .createCompositeState(false));
     }
 }

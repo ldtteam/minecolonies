@@ -88,7 +88,7 @@ public class WindowInteraction extends AbstractWindowSkeleton
         for (final Component component : handler.getPossibleResponses())
         {
             final ButtonImage button = new ButtonImage();
-            button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES));
+            button.setImage(new ResourceLocation(Constants.MOD_ID, MEDIUM_SIZED_BUTTON_RES), false);
             button.setSize(BUTTON_LENGTH, BUTTON_HEIGHT);
             button.setColors(SLIGHTLY_BLUE);
             button.setPosition(x, y);

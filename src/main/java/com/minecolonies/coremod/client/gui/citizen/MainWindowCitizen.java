@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         }
         else
         {
-            statusIcon.setImage(citizen.getVisibleStatus().getIcon());
+            statusIcon.setImage(citizen.getVisibleStatus().getIcon(), false);
             PaneBuilders.tooltipBuilder()
                 .append(new TextComponent(citizen.getVisibleStatus().getTranslatedText()))
                 .hoverPane(statusIcon)
@@ -90,7 +91,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
 
         if (citizen.isFemale())
         {
-            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(FEMALE_SOURCE);
+            findPaneOfTypeByID(WINDOW_ID_GENDER, Image.class).setImage(new ResourceLocation(FEMALE_SOURCE), false);
         }
     }
 

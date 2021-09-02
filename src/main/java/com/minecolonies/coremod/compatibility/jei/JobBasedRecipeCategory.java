@@ -205,8 +205,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     private static EntityCitizen createCitizenWithJob(@NotNull final IJob<?> job)
     {
         final EntityCitizen citizen = new EntityCitizen(ModEntities.CITIZEN, Minecraft.getInstance().level);
-        //todo 1.17 temporarily disable female citizens as they're missing a model or something
-        //citizen.setFemale(citizen.getRandom().nextBoolean());
+        citizen.setFemale(citizen.getRandom().nextBoolean());
         citizen.setTextureId(citizen.getRandom().nextInt(255));
         citizen.getEntityData().set(EntityCitizen.DATA_TEXTURE_SUFFIX, CitizenData.SUFFIXES.get(citizen.getRandom().nextInt(CitizenData.SUFFIXES.size())));
         citizen.setModelId(job.getModel());

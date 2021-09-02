@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockui.Log;
+import com.minecolonies.api.util.Log;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
@@ -334,7 +334,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                     if (!request.getDisplayIcon().equals(MISSING))
                     {
                         logo.setVisible(true);
-                        logo.setImage(request.getDisplayIcon());
+                        logo.setImage(request.getDisplayIcon(), false);
                         PaneBuilders.tooltipBuilder().hoverPane(logo).build().setText(request.getResolverToolTip(colony));
                     }
                 }

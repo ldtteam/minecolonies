@@ -15,7 +15,15 @@ buildscript {
     }
 }
 
-// Workaround to make Mixins and BMS work with the mess that is FG
+configurations.all {
+    resolutionStrategy {
+        force 'cpw.mods:securejarhandler:0.9.50'
+    }
+}
+
+apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
 configurations {
     library
     implementation.extendsFrom library
@@ -26,16 +34,6 @@ minecraft.runs.all {
         configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
     }
 }
-// End of workaround
-
-configurations.all {
-    resolutionStrategy {
-        force 'cpw.mods:securejarhandler:0.9.50'
-    }
-}
-
-apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 dependencies {
     implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")

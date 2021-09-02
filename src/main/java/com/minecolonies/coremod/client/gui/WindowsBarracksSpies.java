@@ -11,6 +11,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.HireSpiesMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -60,7 +61,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
 
     public WindowsBarracksSpies(final IBuildingView buildingView, final BlockPos buildingPos)
     {
-        super(Constants.MOD_ID + SPIES_GUI_XML);
+        super(new ResourceLocation(Constants.MOD_ID + SPIES_GUI_XML));
         this.buildingView = buildingView;
 
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
