@@ -60,8 +60,12 @@ public final class MRenderTypes extends RenderType
     {
         return create("minecolonieslines", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.LINES, 256, false, false,
           CompositeState.builder()
-            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
             .setShaderState(ShaderStateShard.RENDERTYPE_LINES_SHADER)
-            .createCompositeState(false));
+            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+            .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+            .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+            .setOutputState(ITEM_ENTITY_TARGET)
+            .setWriteMaskState(COLOR_DEPTH_WRITE)
+            .setCullState(NO_CULL).createCompositeState(false));
     }
 }
