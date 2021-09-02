@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 import static com.minecolonies.api.util.constant.PathingConstants.debugNodeMonitor;
+import static com.minecolonies.coremod.event.ClientEventHandler.*;
 
 /**
  * Static class the handles all the Pathfinding.
@@ -115,11 +116,6 @@ public final class Pathfinding
         matrixStack.pushPose();
         matrixStack.translate(-dx, -dy, -dz);
 
-        RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
-        RenderSystem.disableBlend();
-        //todo 1.17 RenderSystem.disableLighting();
-
         final Set<MNode> debugNodesNotVisited;
         final Set<MNode> debugNodesVisited;
         final Set<MNode> debugNodesPath;
@@ -160,10 +156,6 @@ public final class Pathfinding
             Log.getLogger().catching(exc);
         }
 
-        RenderSystem.disableDepthTest();
-        RenderSystem.enableTexture();
-        RenderSystem.enableBlend();
-        //todo 1.17 RenderSystem.enableLighting();
         matrixStack.popPose();
     }
 
@@ -184,61 +176,61 @@ public final class Pathfinding
 
         matrixStack.scale(0.25F, 0.25F, 0.25F);
 
-        final Tesselator tessellator = Tesselator.getInstance();
-        final BufferBuilder vertexBuffer = tessellator.getBuilder();
+        final VertexConsumer vertexBuffer = PATH_RENDERER.get();
 
         final Matrix4f matrix4f = matrixStack.last().pose();
-        vertexBuffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-        //todo 1.17 RenderSystem.color3f(r, g, b);
-        RenderSystem.setShaderColor(r, g, b, 1.0f);
 
         //  X+
-        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
 
         //  X-
-        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
 
         //  Z-
-        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
 
         //  Z+
-        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
 
         //  Y+
-        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 1.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 1.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
 
         //  Y-
-        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 1.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).endVertex();
-        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 0.0f, 0.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 0.0f).color(r, g, b, 1.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, 1.0f, 0.0f, 1.0f).color(r, g, b, 1.0f).endVertex();
 
-        tessellator.end();
 
         if (n.parent != null)
         {
+            matrixStack.pushPose();
+            final Matrix4f lineMatrix = matrixStack.last().pose();
+
             final float pdx = n.parent.pos.getX() - n.pos.getX() + 0.125f;
             final float pdy = n.parent.pos.getY() - n.pos.getY() + 0.125f;
             final float pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125f;
-            vertexBuffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
-            vertexBuffer.vertex(matrix4f, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
-            vertexBuffer.vertex(matrix4f, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
-            tessellator.end();
+
+            final VertexConsumer buffer = BORDER_LINE_RENDERER.get();
+
+            buffer.vertex(lineMatrix, 0.5f, 0.5f, 0.5f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            buffer.vertex(lineMatrix, pdx / 0.25f, pdy / 0.25f, pdz / 0.25f).color(0.75F, 0.75F, 0.75F, 1.0F).endVertex();
+            matrixStack.popPose();
         }
 
         matrixStack.popPose();
@@ -253,50 +245,39 @@ public final class Pathfinding
 
         matrixStack.pushPose();
         matrixStack.translate(0.0F, 0.75F, 0.0F);
-        //todo 1.17 RenderSystem.normal3f(0.0F, 1.0F, 0.0F);
 
         final EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
         matrixStack.mulPose(renderManager.cameraOrientation());
         matrixStack.scale(-0.014F, -0.014F, 0.014F);
         matrixStack.translate(0.0F, 18F, 0.0F);
 
-        RenderSystem.depthMask(false);
-
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(
-          GlStateManager.SourceFactor.SRC_ALPHA,
-          GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-          GlStateManager.SourceFactor.ONE,
-          GlStateManager.DestFactor.ZERO);
-        RenderSystem.disableTexture();
-
         final int i = Math.max(fontrenderer.width(s1), fontrenderer.width(s2)) / 2;
 
         final Matrix4f matrix4f = matrixStack.last().pose();
-        final Tesselator tessellator = Tesselator.getInstance();
-        final BufferBuilder vertexBuffer = tessellator.getBuilder();
-        vertexBuffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        vertexBuffer.vertex(matrix4f, (-i - 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
-        vertexBuffer.vertex(matrix4f, (-i - 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
-        vertexBuffer.vertex(matrix4f, (i + 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
-        vertexBuffer.vertex(matrix4f, (i + 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).endVertex();
-        tessellator.end();
 
-        RenderSystem.enableTexture();
+        final VertexConsumer vertexBuffer = PATH_TEXT_RENDERER.get();
+        vertexBuffer.vertex(matrix4f, (-i - 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).normal(0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, (-i - 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).normal(0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, (i + 1), 12.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).normal(0.0f, 1.0f, 0.0f).endVertex();
+        vertexBuffer.vertex(matrix4f, (i + 1), -5.0f, 0.0f).color(0.0F, 0.0F, 0.0F, 0.7F).normal(0.0f, 1.0f, 0.0f).endVertex();
 
+        matrixStack.pushPose();
+
+        final Matrix4f textMatrix4f = matrixStack.last().pose();
         final MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-        matrixStack.translate(0.0F, -5F, 0.0F);
-        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
-        matrixStack.translate(0.0F, 8F, 0.0F);
-        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
 
-        RenderSystem.depthMask(true);
-        matrixStack.translate(0.0F, -8F, 0.0F);
-        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
-        matrixStack.translate(0.0F, 8F, 0.0F);
-        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 0, 0xFFFFFFFF, false, matrix4f, buffer, false, 0, 15728880);
+        matrixStack.translate(0.0F, -5F, -0.1F);
+        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 0, 0xFFFFFFFF, false, textMatrix4f, buffer, false, 0, 15728880);
+        matrixStack.translate(0.0F, 8F, -0.1F);
+        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 0, 0xFFFFFFFF, false, textMatrix4f, buffer, false, 0, 15728880);
+
+        matrixStack.translate(0.0F, -8F, -0.1F);
+        fontrenderer.drawInBatch(s1, -fontrenderer.width(s1) / 2.0f, 0, 0xFFFFFFFF, false, textMatrix4f, buffer, false, 0, 15728880);
+        matrixStack.translate(0.0F, 8F, -0.1F);
+        fontrenderer.drawInBatch(s2, -fontrenderer.width(s2) / 2.0f, 0, 0xFFFFFFFF, false, textMatrix4f, buffer, false, 0, 15728880);
         buffer.endBatch();
 
+        matrixStack.popPose();
         matrixStack.popPose();
     }
 }

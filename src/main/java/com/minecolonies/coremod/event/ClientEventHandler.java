@@ -119,6 +119,8 @@ public class ClientEventHandler
     public static final  Supplier<VertexConsumer>       linesWithCullAndDepth    = () -> renderBuffer.getBuffer(RenderType.lines());
     private static final Supplier<VertexConsumer> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
     public static final Supplier<VertexConsumer>  BORDER_LINE_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customLineRenderer());
+    public static final Supplier<VertexConsumer>  PATH_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customPathRenderer());
+    public static final Supplier<VertexConsumer>  PATH_TEXT_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customPathTextRenderer());
 
     /**
      * Lazy cache for crafting module lookups.

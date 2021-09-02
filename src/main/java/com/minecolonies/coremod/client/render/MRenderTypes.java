@@ -68,4 +68,33 @@ public final class MRenderTypes extends RenderType
             .setWriteMaskState(COLOR_DEPTH_WRITE)
             .setCullState(NO_CULL).createCompositeState(false));
     }
+
+    /**
+     * Custom line renderer type.
+     *
+     * @return the renderType which is created.
+     */
+    public static RenderType customPathRenderer()
+    {
+        return create("minecoloniespath", POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
+          CompositeState.builder()
+            .setShaderState(ShaderStateShard.POSITION_COLOR_SHADER)
+            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+            .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+            .setTextureState(RenderStateShard.NO_TEXTURE)
+            .createCompositeState(false));
+    }
+
+    /**
+     * Custom line renderer type.
+     *
+     * @return the renderType which is created.
+     */
+    public static RenderType customPathTextRenderer()
+    {
+        return create("minecoloniespathtext", POSITION_COLOR_NORMAL, VertexFormat.Mode.QUADS, 256, false, false,
+          CompositeState.builder()
+            .setShaderState(ShaderStateShard.POSITION_COLOR_SHADER)
+            .createCompositeState(false));
+    }
 }
