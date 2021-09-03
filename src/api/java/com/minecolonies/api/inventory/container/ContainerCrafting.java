@@ -291,7 +291,7 @@ public class ContainerCrafting extends AbstractContainerMenu
 
         final int total_slots = TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0);
 
-        ItemStack itemstack = ItemStackUtils.EMPTY;
+        ItemStack itemstack = ItemStack.EMPTY;
         final Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem())
         {
@@ -301,7 +301,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 if (!this.moveItemStackTo(itemstack1, total_crafting_slots, total_slots, true))
                 {
-                    return ItemStackUtils.EMPTY;
+                    return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
             }
@@ -309,7 +309,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 if (!this.moveItemStackTo(itemstack1, HOTBAR_START, total_slots, false))
                 {
-                    return ItemStackUtils.EMPTY;
+                    return ItemStack.EMPTY;
                 }
             }
             else if ((index < total_slots
@@ -320,7 +320,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             }
             if (itemstack1.getCount() == 0)
             {
-                slot.set(ItemStackUtils.EMPTY);
+                slot.set(ItemStack.EMPTY);
             }
             else
             {
@@ -328,7 +328,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             }
             if (itemstack1.getCount() == itemstack.getCount())
             {
-                return ItemStackUtils.EMPTY;
+                return ItemStack.EMPTY;
             }
         }
         return itemstack;
