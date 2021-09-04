@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.util.EntityUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -11,8 +12,10 @@ import net.minecraft.network.IPacket;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -135,7 +138,25 @@ public class SittingEntity extends Entity
         {
             passenger.dimensions = ((LivingEntity) passenger).isBaby() ? passenger.getType().getDimensions().scale(0.5f) : passenger.getType().getDimensions();
         }
-        passenger.setPos(this.getX(), this.getY() + 0.6, this.getZ());
+
+        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level, this.blockPosition());
+        if (spawn != null)
+        {
+            passenger.moveTo(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, passenger.yRot,
+              passenger.xRot);
+        }
+    }
+
+    @NotNull
+    @Override
+    public Vector3d getDismountLocationForPassenger(@NotNull final LivingEntity passenger)
+    {
+        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level, this.blockPosition());
+        if (spawn == null)
+        {
+            return super.getDismountLocationForPassenger(passenger);
+        }
+        return new Vector3d(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5);
     }
 
     /**
