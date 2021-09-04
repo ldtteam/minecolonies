@@ -153,7 +153,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                         return CURE;
                     }
 
-                    final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
+                    final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(Stack.class));
                     final ImmutableList<IRequest<? extends Stack>> completed = getOwnBuilding().getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
                     for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
                     {
@@ -261,7 +261,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
             return DECIDE;
         }
 
-        final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
+        final ImmutableList<IRequest<? extends Stack>> list = getOwnBuilding().getOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(Stack.class));
         final ImmutableList<IRequest<? extends Stack>> completed = getOwnBuilding().getCompletedRequestsOfType(worker.getCitizenData(), TypeToken.of(Stack.class));
 
         for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
