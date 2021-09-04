@@ -510,6 +510,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PREPARE_DELIVERY;
         }
 
+        if (getInventory().isFull())
+        {
+            return DUMPING;
+        }
+
         final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
         job.addConcurrentDelivery(nextPickUp.getId());
         if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
@@ -538,7 +543,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public boolean gatherIfInTileEntity(final TileEntity entity, final ItemStack is)
     {
-        if (is == null)
+        if (ItemStackUtils.isEmpty(is))
         {
             return false;
         }
