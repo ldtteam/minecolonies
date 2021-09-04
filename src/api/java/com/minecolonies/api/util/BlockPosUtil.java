@@ -576,7 +576,7 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.Mutable#set(int, int, int)}.
      *
      * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.

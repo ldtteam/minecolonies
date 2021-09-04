@@ -176,7 +176,7 @@ public interface IRecipeStorage
     List<ItemStack> getSecondaryOutputs();
 
     /**
-     * Get the tools & Secondary Output (leave behind in grid)
+     * Get the tools and Secondary Output (leave behind in grid)
      * @return list of items that weren't consumed during crafting
      */
     List<ItemStack> getCraftingToolsAndSecondaryOutputs();
