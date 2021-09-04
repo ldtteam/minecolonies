@@ -224,7 +224,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()),
+            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(),
               TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
