@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -26,9 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -54,6 +53,12 @@ public final class BackUpHelper
     public static final String FILENAME_EXPORT = "colony%dExport.zip";
 
     /**
+     * Last backup timer before the next is allowed
+     */
+    public static        long lastBackupTime          = 0;
+    private static final long MAX_TIME_TO_NEXT_BACKUP = 1000 * 60 * 5;
+
+    /**
      * Private constructor to hide implicit one.
      */
     private BackUpHelper()
@@ -70,6 +75,12 @@ public final class BackUpHelper
      */
     public static boolean backupColonyData()
     {
+        if (System.currentTimeMillis() - lastBackupTime < MAX_TIME_TO_NEXT_BACKUP)
+        {
+            return false;
+        }
+        lastBackupTime = System.currentTimeMillis();
+
         BackUpHelper.saveColonies();
         try (FileOutputStream fos = new FileOutputStream(getBackupSaveLocation(new Date())))
         {
@@ -104,6 +115,44 @@ public final class BackUpHelper
             }
             addToZipFile(getSaveLocation().getName(), zos, saveDir);
             zos.close();
+
+            File[] files = saveDir.listFiles();
+
+            if (files == null)
+            {
+                return true;
+            }
+
+            final List<File> fileList = new ArrayList<>();
+
+            for (final File current : files)
+            {
+                if (current.isDirectory() || !current.exists() || !current.getName().contains("colonies-"))
+                {
+                    continue;
+                }
+
+                fileList.add(current);
+            }
+
+            if (fileList.size() <= MineColonies.getConfig().getServer().maxkeptbackups.get())
+            {
+                return true;
+            }
+
+            fileList.sort(Comparator.comparingLong(File::lastModified));
+
+            int deleteCount = fileList.size() - MineColonies.getConfig().getServer().maxkeptbackups.get();
+            for (File current : fileList)
+            {
+                if (deleteCount <= 0)
+                {
+                    break;
+                }
+
+                deleteCount--;
+                current.delete();
+            }
         }
         catch (final Exception e)
         {
