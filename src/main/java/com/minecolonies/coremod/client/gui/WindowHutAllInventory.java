@@ -7,7 +7,6 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -48,12 +47,12 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     /**
      * The filter for the resource list.
      */
-    private       String        filter         = "";
+    private String filter = "";
 
     /**
      * The sortDescriptor so how we want to sort
      */
-    private       int           sortDescriptor = 0;
+    private int sortDescriptor = 0;
 
     /**
      * The building associated to the GUI.
@@ -113,18 +112,26 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         final ItemStorage storage = allItems.get(row);
         final Set<BlockPos> containerList = new HashSet<>(building.getContainerList());
         containerList.add(building.getID());
+        HighlightManager.clearCategory("inventoryHighlight");
+
+        Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
+        close();
 
         for (BlockPos blockPos : containerList)
         {
             final TileEntity rack = Minecraft.getInstance().level.getBlockEntity(blockPos);
             if (rack instanceof TileEntityRack)
             {
-                if (((TileEntityRack) rack).hasItemStack(storage.getItemStack(), 1, false))
+                int count = ((TileEntityRack) rack).getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
+                if (count > 0)
                 {
-                    HighlightManager.HIGHLIGHT_MAP.put("inventoryHighlight", new Tuple<>(blockPos, Minecraft.getInstance().level.getGameTime() + 120 * 20));
-                    Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
-                    close();
-                    return;
+                    // Varies the color between yellow(low count) to green(64+)
+                    final int color = 0x00FF00 + 0xFF0000 * Math.max(0, 1 - count / 64);
+                    HighlightManager.addRenderBox("inventoryHighlight",
+                      new HighlightManager.TimedBoxRenderData().setPos(blockPos)
+                        .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 60 * 20)
+                        .addText("" + count)
+                        .setColor(color));
                 }
             }
         }
@@ -140,13 +147,8 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
     }
 
     /**
-     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages
-     * 0 - 4 NO_SORT
-     * 0   No Sorting, like wysiwyg ASC_SORT
-     * 1   Name Ascending DESC_SORT
-     * 2   Name Descending COUNT_ASC_SORT
-     * 3   Itemcount Ascending COUNT_DESC_SORT
-     * 4   Itemcount Descending
+     * Increments the sortDescriptor and sets the GUI Button accordingly Valid Stages 0 - 4 NO_SORT 0   No Sorting, like wysiwyg ASC_SORT 1   Name Ascending DESC_SORT 2   Name
+     * Descending COUNT_ASC_SORT 3   Itemcount Ascending COUNT_DESC_SORT 4   Itemcount Descending
      **/
     private void setSortFlag()
     {
@@ -293,7 +295,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 final String name = resource.getItemStack().getHoverName().getString();
                 resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
-                if(!Screen.hasShiftDown())
+                if (!Screen.hasShiftDown())
                 {
                     qtys.setText(Utils.format(resource.getAmount()));
                 }
