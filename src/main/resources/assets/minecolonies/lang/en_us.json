@@ -216,7 +216,7 @@
   "minecolonies.config.maxyforbarbarians.comment": "Max Y level (height) for Raiders to spawn.",
   "minecolonies.config.enablecolonyprotection": "Enable Colony Protection",
   "minecolonies.config.enablecolonyprotection.comment": "Should colony protection be enabled?",
-  "minecolonies.config.maxkeptbackups": "Backup count",
+  "minecolonies.config.maxkeptbackups": "Backup Count",
   "minecolonies.config.maxkeptbackups.comment": "Set the amount of backups kept",
   "minecolonies.config.turnoffexplosionsincolonies": "Turn off Explosions in Colonies",
   "minecolonies.config.turnoffexplosionsincolonies.comment": "Independent from the colony protection, should explosions be turned off inside colonies? DAMAGE_NOTHING prevents explosions completely. DAMAGE_PLAYERS, allows explosions to damage players and hostile mobs, but not blocks or neutral or friendly mobs. DAMAGE_ENTITIES allows damage to all entities. DAMAGE_EVERYTHING allows explosions to damage entities and blocks.",
