@@ -16,6 +16,7 @@ public class CommandBackup implements IMCOPCommand
     @Override
     public int onExecute(final CommandContext<CommandSource> context)
     {
+        BackUpHelper.lastBackupTime = 0;
         if (BackUpHelper.backupColonyData())
         {
             context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.backup.success"), true);
