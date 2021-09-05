@@ -89,10 +89,10 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, 1),
-          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, 1),
-          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, 1),
-          new AITarget(ARCHER_SHOOT, this::shoot, 1)
+          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, STANDARD_DELAY),
+          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, STANDARD_DELAY),
+          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, CHECK_SHOT_DELAY),
+          new AITarget(ARCHER_SHOOT, this::shoot, STANDARD_DELAY)
 
         );
     }
@@ -104,7 +104,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     private IAIState selectTarget()
     {
-        setDelay(STANDARD_DELAY);
         final BuildingArchery archeryBuilding = getOwnBuilding();
         if (targetCounter >= archeryBuilding.getBuildingLevel() * BUILDING_LEVEL_TARGET_MULTIPLIER)
         {
@@ -130,7 +129,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     private IAIState findShootingStandPosition()
     {
-        setDelay(STANDARD_DELAY);
         final BuildingArchery archeryBuilding = getOwnBuilding();
         final BlockPos shootingPos = archeryBuilding.getRandomShootingStandPosition(worker.getRandom());
 
@@ -151,7 +149,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     protected IAIState shoot()
     {
-        setDelay(STANDARD_DELAY);
         if (currentShootingTarget == null || !isSetup())
         {
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
@@ -203,7 +200,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return ARCHER_SHOOT;
         }
 
-        setDelay(CHECK_SHOT_DELAY);
         return ARCHER_CHECK_SHOT;
     }
 
