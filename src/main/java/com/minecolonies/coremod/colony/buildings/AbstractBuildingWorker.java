@@ -91,7 +91,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
 
         for (final ICitizenData data : getAssignedCitizen())
         {
-            for (final IRequest<?> request : getOpenRequests(data))
+            for (final IRequest<?> request : getOpenRequests(data.getId()))
             {
                 for (final ItemStack deliveryStack : request.getDeliveries())
                 {

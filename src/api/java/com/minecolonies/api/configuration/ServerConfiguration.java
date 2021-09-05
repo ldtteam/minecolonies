@@ -473,7 +473,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
 
-        dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 5);
+        dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 8);
 
         fishingRodDurabilityAdjustT2 = defineInteger(builder, "fishingroddurabilityadjustt2", 6, -249, 250000);
         fishingRodDurabilityAdjustT1 = defineInteger(builder, "fishingroddurabilityadjustt1", 22, -58, 250000);
