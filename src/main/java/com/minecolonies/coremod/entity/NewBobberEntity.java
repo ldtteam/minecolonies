@@ -548,7 +548,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     }
 
     /**
-     * Handler for {@link World#setEntityState}
+     * Handler for {@link World#broadcastEntityEvent}
      */
     @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(final byte id)

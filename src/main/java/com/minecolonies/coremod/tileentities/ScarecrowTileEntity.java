@@ -125,7 +125,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
     /**
      * The size of the field in all four directions
-     * in the same order as {@link Direction#getHorizontalIndex()}:
+     * in the same order as {@link Direction#get2DDataValue()}:
      * S, W, N, E
      */
     protected int[] radii = {MAX_RANGE, MAX_RANGE, MAX_RANGE, MAX_RANGE};
