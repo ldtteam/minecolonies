@@ -189,6 +189,14 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
+    public void openShapeToolWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
     public void openSuggestionWindow(@NotNull BlockPos pos, @NotNull BlockState state, @NotNull final ItemStack stack)
     {
         /*
