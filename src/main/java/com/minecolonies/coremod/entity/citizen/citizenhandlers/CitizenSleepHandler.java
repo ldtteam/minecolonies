@@ -6,10 +6,12 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
+import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalBlock;
@@ -201,8 +203,7 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
         final BlockPos spawn;
         if (!getBedLocation().equals(BlockPos.ZERO) && citizen.level.getBlockState(getBedLocation()).getBlock().is(BlockTags.BEDS))
         {
-            final Optional<Vector3d> spawnVec = Blocks.RED_BED.getBedSpawnPosition(ModEntities.CITIZEN, citizen.level.getBlockState(getBedLocation()), citizen.level, getBedLocation(), 0, citizen);
-            spawn = spawnVec.map(BlockPos::new).orElseGet(() -> getBedLocation().above());
+            spawn = EntityUtils.getSpawnPoint(citizen.level, getBedLocation());
         }
         else
         {
