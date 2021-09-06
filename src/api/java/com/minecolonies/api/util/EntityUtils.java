@@ -170,9 +170,9 @@ public final class EntityUtils
         return Utils.scanForBlockNearPoint(
           world,
           nearPoint.below(),
-          1,
           2,
-          1,
+          2,
+          2,
           2,
           Blocks.AIR,
           Blocks.CAVE_AIR,

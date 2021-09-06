@@ -374,7 +374,7 @@ public class EntityAIEatTask extends Goal
             }
         }
 
-        if (citizen.isWorkerAtSiteWithMove(eatPos, 1))
+        if (citizen.isWorkerAtSiteWithMove(eatPos, 2))
         {
             SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
             // Delay till they start eating
