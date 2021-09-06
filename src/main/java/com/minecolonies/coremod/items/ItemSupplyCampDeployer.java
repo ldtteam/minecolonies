@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
@@ -147,23 +148,20 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     public static boolean canCampBePlaced(
       @NotNull final World world,
       @NotNull final BlockPos pos,
-      final BlockPos size,
       @NotNull final List<PlacementError> placementErrorList,
       final PlayerEntity placer)
     {
-        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
-        {
-            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
-            {
-                checkIfSolidAndNotInColony(world, new BlockPos(x, pos.getY(), z), placementErrorList, placer);
-            }
-        }
+        final BlockPos zeroPos = pos.subtract(Settings.instance.getActiveStructure().getPrimaryBlockOffset());
+        final int sizeX = Settings.instance.getActiveStructure().getSizeX();
+        final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
 
-        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
-            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
             {
-                if (world.getBlockState(new BlockPos(x, pos.getY() + 1, z)).getMaterial().isSolid())
+                checkIfSolidAndNotInColony(world, new BlockPos(x, zeroPos.getY(), z), placementErrorList, placer);
+
+                if (world.getBlockState(new BlockPos(x, zeroPos.getY() + 1, z)).getMaterial().isSolid())
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY(), z));
                     placementErrorList.add(placementError);
