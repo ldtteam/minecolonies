@@ -644,6 +644,18 @@ public class EventHandler
             }
             event.setCanceled(true);
         }
+
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.shapeTool.get())
+        {
+            if (event.getWorld().isClientSide())
+            {
+                if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
+                {
+                    MineColonies.proxy.openShapeToolWindow(event.getPos().relative(event.getFace()));
+                }
+            }
+            event.setCanceled(true);
+        }
     }
 
     /**
@@ -661,6 +673,12 @@ public class EventHandler
                 Settings.instance.setStyle(view.getStyle());
             }
             MineColonies.proxy.openBuildToolWindow(null);
+            event.setCanceled(true);
+        }
+
+        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.shapeTool.get() && event.getWorld().isClientSide)
+        {
+            MineColonies.proxy.openShapeToolWindow(null);
             event.setCanceled(true);
         }
     }

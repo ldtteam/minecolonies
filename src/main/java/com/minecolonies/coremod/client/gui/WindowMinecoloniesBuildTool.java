@@ -63,7 +63,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
 
         BuildToolPlaceMessage msg = new BuildToolPlaceMessage(
           structureName.toString(),
-          structureName.toString(),
+          structureName.getLocalizedName(),
           Settings.instance.getPosition(),
           Settings.instance.getRotation(),
           structureName.isHut(),
