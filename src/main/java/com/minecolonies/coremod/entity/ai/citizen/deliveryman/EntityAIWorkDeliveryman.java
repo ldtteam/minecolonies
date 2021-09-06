@@ -16,6 +16,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -509,7 +510,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PREPARE_DELIVERY;
         }
 
-        final BlockEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
+        if (getInventory().isFull())
+        {
+            return DUMPING;
+        }
+
+        final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
         job.addConcurrentDelivery(nextPickUp.getId());
         if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {
@@ -537,12 +543,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public boolean gatherIfInTileEntity(final BlockEntity entity, final ItemStack is)
     {
-        if (is == null)
+        if (ItemStackUtils.isEmpty(is))
         {
             return false;
         }
 
-        if (InventoryUtils.hasEnoughInProvider(entity, is, is.getCount()))
+        if (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount())
         {
             final IItemHandler handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);
             if (handler != null)
