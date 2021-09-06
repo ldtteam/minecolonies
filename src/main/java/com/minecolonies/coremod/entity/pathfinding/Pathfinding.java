@@ -87,7 +87,6 @@ public final class Pathfinding
      * Add a job to the queue for processing.
      *
      * @param job PathJob
-     * @return a Future containing the Path
      */
     public static void enqueue(@NotNull final AbstractPathJob job)
     {

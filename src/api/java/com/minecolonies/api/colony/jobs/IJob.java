@@ -250,7 +250,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
     }
 
     /**
-     * Trigger a job based action on activity change (active -> inactive, or inactive -> active).
+     * Trigger a job based action on activity change (active to inactive, or inactive to active).
      * @param newState the new state (true for active, false for inactive).
      */
     default void triggerActivityChangeAction(boolean newState)

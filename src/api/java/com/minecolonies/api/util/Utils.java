@@ -233,7 +233,7 @@ public final class Utils
     }
     
     /**
-     * Formats a long value into a abbreviated string, ie: 1000->1k, 1200->1.2k, 13000->13k
+     * Formats a long value into a abbreviated string, ie: 1000 to 1k, 1200 to 1.2k, 13000 to 13k
      * @param value to format
      * @return string version of the value
      */

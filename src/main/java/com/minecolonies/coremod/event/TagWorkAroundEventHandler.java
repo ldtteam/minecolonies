@@ -22,11 +22,11 @@ import org.jetbrains.annotations.NotNull;
  * If Forge changes its behavior for TagCollectionManager and ItemTags, some of the logic in here can be cleaned up and moved to normal FooEventHandlers.
  *
  * For Single Player, startup pattern is :
- *  -- onTagUpdate (populate ModTagsInitializer) -> onServerStarted (populate CompatibilityManager and FurnaceRecipes)-> onRecipesUpdate (repeat FurnaceRecipes).
+ *  -- onTagUpdate (populate ModTagsInitializer) to onServerStarted (populate CompatibilityManager and FurnaceRecipes) to onRecipesUpdate (repeat FurnaceRecipes).
  * For Dedicated Servers, startup pattern is :
- *  -- onTagUpdate (populate ModTagsInitializer) -> onServerStarted (populate CompatibilityManager and FurnaceRecipes).
+ *  -- onTagUpdate (populate ModTagsInitializer) to onServerStarted (populate CompatibilityManager and FurnaceRecipes).
  * For Remote Clients either connecting to Open To Lan Single Player, or a Dedicated Server, startup pattern is :
- *  -- onRecipesUpdated fires (populates FurnaceRecipes) -> onTagUpdate fires (populates CompatibilityManager and ModTagsInitializer).
+ *  -- onRecipesUpdated fires (populates FurnaceRecipes) to onTagUpdate fires (populates CompatibilityManager and ModTagsInitializer).
  * Data Pack Reloads during live play will fire onTagUpdate in all cases.
  */
 public class TagWorkAroundEventHandler

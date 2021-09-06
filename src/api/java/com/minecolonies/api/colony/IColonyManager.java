@@ -175,7 +175,7 @@ public interface IColonyManager
     IColony getClosestIColony(@NotNull Level w, @NotNull BlockPos pos);
 
     /**
-     * Returns the closest view {@link #getColonyView(int, RegistryKey<World>)}.
+     * Returns the closest view {@link #getColonyView}.
      *
      * @param w   World.
      * @param pos Block Position.

@@ -29,7 +29,7 @@ public class UndertakerConstants
     public static final double RESURRECT_WORKER_MANA_LVL_WEIGHT = 0.00125;
 
     /**
-     * The max resurrection chance cap [0.0 min -> 1.0 max]
+     * The max resurrection chance cap [0.0 min equals 1.0 max]
      */
     public static final double MAX_RESURRECTION_CHANCE = 0.025;
 
