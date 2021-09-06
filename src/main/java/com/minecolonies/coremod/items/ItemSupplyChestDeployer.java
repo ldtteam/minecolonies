@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
@@ -118,8 +119,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private void placeSupplyShip(Level world, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
         final String name = WorldUtil.isNetherType(world)
-                ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
-                : SUPPLY_SHIP_STRUCTURE_NAME;
+                              ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
+                              : SUPPLY_SHIP_STRUCTURE_NAME;
 
         if (pos == null)
         {
@@ -165,35 +166,48 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             @NotNull final Level world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
     Player placer)
     {
-        final BlockPos size = new BlockPos(ship.getSizeX(), ship.getSizeY(), ship.getSizeZ());
+        final BlockPos anchorPos = ship.getPrimaryBlockOffset();
+        final BlockPos zeroPos = pos.subtract(anchorPos);
+        final int sizeX = ship.getSizeX();
+        final int sizeZ = ship.getSizeZ();
 
-        for (int z = 0; z < size.getZ(); z++)
+        final CompoundNBT nbt = ship.getBlockInfoAsMap().get(anchorPos).getTileEntityData();
+        int waterLevel = 3;
+        if (nbt != null)
         {
-            for (int x = 0; x < size.getX(); x++)
+            final Map<BlockPos, List<String>> tagPosMap = IBlueprintDataProvider.readTagPosMapFrom(nbt);
+            for (final Map.Entry<BlockPos, List<String>> entry : tagPosMap.entrySet())
             {
-                checkFluidAndNotInColony(
-                        world,
-                        new BlockPos(
-                                x + pos.getX() - size.getX() / 2 + 1,
-                                pos.getY() + 2,
-                                z + pos.getZ() - size.getZ() / 2 + 1),
-                        placementErrorList,
-                        placer
-                );
-            }
-        }
-
-        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
-        {
-            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
-            {
-                if (!world.isEmptyBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
+                for (final String tag : entry.getValue())
                 {
-                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY() + SCAN_HEIGHT, z));
-                    placementErrorList.add(placementError);
+                    if (tag.equals("groundlevel"))
+                    {
+                        waterLevel = entry.getKey().getY();
+                        break;
+                    }
                 }
             }
         }
+
+        for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
+        {
+            for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
+            {
+                for (int y = zeroPos.getY(); y <= zeroPos.getY() + waterLevel; y++)
+                {
+                    if (y != zeroPos.getY() + waterLevel)
+                    {
+                        checkFluidAndNotInColony(world, new BlockPos(x, y, z), placementErrorList, placer);
+                    }
+                    else if (world.getBlockState(new BlockPos(x, y, z)).getMaterial().isSolid())
+                    {
+                        final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z));
+                        placementErrorList.add(placementError);
+                    }
+                }
+            }
+        }
+
         return placementErrorList.isEmpty();
     }
 
