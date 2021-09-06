@@ -39,17 +39,7 @@ public class EntityAICitizenWander extends Goal
     @Override
     public boolean canUse()
     {
-        return !isTooOld() && !checkForRandom() && citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
-    }
-
-    /**
-     * Returns whether or not the citizen is too old to wander. True when age >= 100.
-     *
-     * @return True when age => 100, otherwise false.
-     */
-    private boolean isTooOld()
-    {
-        return citizen.getAge() >= 100;
+        return !checkForRandom() && citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
     }
 
     private boolean checkForRandom()
