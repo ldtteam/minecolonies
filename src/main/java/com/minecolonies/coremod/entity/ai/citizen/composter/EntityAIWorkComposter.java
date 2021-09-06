@@ -169,7 +169,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
-        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData().getId()))
         {
             final ArrayList<ItemStack> itemList = new ArrayList<>();
             for (final ItemStorage item : list)

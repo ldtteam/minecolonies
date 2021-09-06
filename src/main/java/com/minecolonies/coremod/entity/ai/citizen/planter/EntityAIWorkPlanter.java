@@ -210,7 +210,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private void requestPlantable(final Item current)
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == current))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(current, PLANT_TO_REQUEST)));

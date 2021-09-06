@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -23,6 +24,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -79,7 +81,33 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         {
             return ImmutableList.of();
         }
-        return building.getOpenRequests(citizen);
+
+        final List<IRequest<?>> requests = new ArrayList<>();
+        for (final IToken<?> req : building.getOpenRequestsByCitizen().getOrDefault(citizen.getId(), Collections.emptyList()))
+        {
+            if (req != null)
+            {
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
+                if (request != null)
+                {
+                    requests.add(request);
+                }
+            }
+        }
+
+        for (final IToken<?> req : building.getOpenRequestsByCitizen().getOrDefault(-1, Collections.emptyList()))
+        {
+            if (req != null)
+            {
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
+                if (request != null)
+                {
+                    requests.add(request);
+                }
+            }
+        }
+
+        return ImmutableList.copyOf(requests);
     }
 
     @Override
