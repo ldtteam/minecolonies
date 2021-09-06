@@ -515,7 +515,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DUMPING;
         }
 
-        final TileEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
+        final BlockEntity tileEntity = world.getBlockEntity(location.getInDimensionLocation());
         job.addConcurrentDelivery(nextPickUp.getId());
         if (gatherIfInTileEntity(tileEntity, nextPickUp.getRequest().getStack()))
         {

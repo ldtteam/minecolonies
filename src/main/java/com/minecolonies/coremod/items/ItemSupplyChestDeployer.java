@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -10,6 +11,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.Item;
@@ -171,7 +173,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final int sizeX = ship.getSizeX();
         final int sizeZ = ship.getSizeZ();
 
-        final CompoundNBT nbt = ship.getBlockInfoAsMap().get(anchorPos).getTileEntityData();
+        final CompoundTag nbt = ship.getBlockInfoAsMap().get(anchorPos).getTileEntityData();
         int waterLevel = 3;
         if (nbt != null)
         {

@@ -172,7 +172,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     }
 
     @Override
-    public boolean hasMatchingBlock(@NotNull final PlayerInventory inventory, final String hut)
+    public boolean hasMatchingBlock(@NotNull final Inventory inventory, final String hut)
     {
         return InventoryUtils.hasItemInProvider(inventory.player,
           item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()

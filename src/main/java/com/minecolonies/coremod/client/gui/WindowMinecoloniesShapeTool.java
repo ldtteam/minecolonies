@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.client.gui.WindowShapeTool;
+import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
 import org.jetbrains.annotations.Nullable;
 
 public class WindowMinecoloniesShapeTool extends WindowShapeTool

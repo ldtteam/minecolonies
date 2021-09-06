@@ -2,6 +2,8 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.structurize.util.RenderUtils;
 import com.minecolonies.api.util.Tuple;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -69,7 +71,7 @@ public class HighlightManager
 
                         if (!boxRenderData.text.isEmpty())
                         {
-                            IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+                            MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
                             RenderUtils.renderDebugText(boxRenderData.pos, boxRenderData.text, event.getMatrixStack(), true, 3, buffer);
                             RenderSystem.disableDepthTest();
                             buffer.endBatch();

@@ -114,7 +114,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         containerList.add(building.getID());
         HighlightManager.clearCategory("inventoryHighlight");
 
-        Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
+        Minecraft.getInstance().player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
         close();
 
         for (BlockPos blockPos : containerList)

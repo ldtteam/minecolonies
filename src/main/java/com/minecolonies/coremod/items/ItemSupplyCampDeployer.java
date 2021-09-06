@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
@@ -140,7 +140,6 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      *
      * @param world              the world.
      * @param pos                the position.
-     * @param size               the size.
      * @param placementErrorList the list of placement errors.
      * @param placer             the placer.
      * @return true if so.
