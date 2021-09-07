@@ -281,6 +281,8 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingSawmill.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
                                  .addBuildingModuleProducer(BuildingSawmill.CraftingModule::new, () -> CraftingModuleView::new)
+                                 .addBuildingModuleProducer(BuildingSawmill.DOCraftingModule::new, () -> DOCraftingModuleView::new)
+
                                  .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                  .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
 

@@ -1,0 +1,35 @@
+<window size="190 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.coremod.gui.docrafting)"/>
+
+    <label id="block1Label" size="40 12" pos="20 37" color="black" label="$(com.minecolonies.coremod.gui.docrafting.block1)"/>
+    <itemicon id="block1Icon" size="17 17" pos="60 35"/>
+    <buttonimage id="addBlock1" size="64 15" pos="80 35" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
+                 label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
+
+    <label id="block2Label" size="40 12" pos="20 57" color="black" label="$(com.minecolonies.coremod.gui.docrafting.block2)"/>
+    <itemicon id="block2Icon" size="17 17" pos="60 55"/>
+    <buttonimage id="addBlock2" size="64 15" pos="80 55" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
+                 label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
+
+    <label id="block3Label" size="40 12" pos="20 77" color="black"  label="$(com.minecolonies.coremod.gui.docrafting.block3)"/>
+    <itemicon id="block3Icon" size="17 17" pos="60 75"/>
+    <buttonimage id="addBlock3" size="64 15" pos="80 75" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
+                 label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
+
+    <list id="resourcesstock" size="170 100" pos="13 100">
+        <box size="100% 17" linewidth="1">
+            <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
+            <label id="resourceName" size="90 12" pos="20 1" color="black"/>
+            <label id="resourceQty" size="12 12" pos="115 1" color="black"/>
+        </box>
+    </list>
+
+    <buttonimage id="add" size="64 17" pos="60 210" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_small.png"
+                 label="$(com.minecolonies.coremod.gui.docrafting.teach)"/>
+</window>

@@ -148,9 +148,8 @@ public class WindowListRecipes extends AbstractModuleWindow
             // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
             return;
         }
-        final BlockPos pos = buildingView.getPosition();
-        Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, module.getId()));
+
+        module.openCraftingGUI();
     }
 
     @Override

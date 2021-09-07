@@ -173,4 +173,29 @@ public class BuildingSawmill extends AbstractBuildingWorker implements IBuilding
             return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
         }
     }
+
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobSawmill(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
+        {
+            return (recipe.getPrimaryOutput().getItem().getRegistryName().getNamespace().equals("domum_ornamentum"));
+        }
+
+        @Override
+        public boolean canLearnCraftingRecipes() { return true; }
+
+        @Override
+        public boolean canLearnFurnaceRecipes() { return false; }
+
+        @Override
+        public boolean canLearnLargeRecipes() { return true; }
+    }
 }
