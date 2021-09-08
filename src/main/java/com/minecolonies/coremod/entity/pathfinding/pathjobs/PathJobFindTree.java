@@ -55,17 +55,19 @@ public class PathJobFindTree extends AbstractPathJob
      * Fake goal when using restricted area
      */
     private final BlockPos boxCenter;
+    private final int dyntreesize;
 
     /**
      * AbstractPathJob constructor.
      *
-     * @param world      the world within which to path.
-     * @param start      the start position from which to path from.
-     * @param home       the position of the worker hut.
-     * @param range      maximum path range.
-     * @param treesToCut the trees the lj is supposed to cut.
-     * @param entity     the entity.
-     * @param colony     the colony.
+     * @param world       the world within which to path.
+     * @param start       the start position from which to path from.
+     * @param home        the position of the worker hut.
+     * @param range       maximum path range.
+     * @param treesToCut  the trees the lj is supposed to cut.
+     * @param entity      the entity.
+     * @param dyntreesize the radius a dynamic tree must have
+     * @param colony      the colony.
      */
     public PathJobFindTree(
       final World world,
@@ -73,6 +75,7 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos home,
       final int range,
       final List<ItemStorage> treesToCut,
+      final int dyntreesize,
       final IColony colony,
       final LivingEntity entity)
     {
@@ -81,6 +84,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.hutLocation = home;
         this.colony = colony;
         this.boxCenter = null;
+        this.dyntreesize = dyntreesize;
     }
 
     /**
@@ -92,6 +96,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param startRestriction start of the restricted area.
      * @param endRestriction   end of the restricted area.
      * @param excludedTrees       the trees the lj is not supposed to cut.
+     * @param dyntreesize      the radius a dynamic tree must have
      * @param entity           the entity.
      * @param colony           the colony.
      */
@@ -103,6 +108,7 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos endRestriction,
       final BlockPos furthestRestriction,
       final List<ItemStorage> excludedTrees,
+      final int dyntreesize,
       final IColony colony,
       final LivingEntity entity)
     {
@@ -118,6 +124,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.excludedTrees = excludedTrees;
         this.hutLocation = home;
         this.colony = colony;
+        this.dyntreesize = dyntreesize;
 
         final BlockPos size = startRestriction.subtract(endRestriction);
         this.boxCenter = endRestriction.offset(size.getX()/2, size.getY()/2, size.getZ()/2);
@@ -158,14 +165,8 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        final LivingEntity entity = this.entity.get();
-        BuildingLumberjack building = null;
 
-        if (entity instanceof AbstractEntityCitizen && ((EntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding() instanceof BuildingLumberjack)
-        {
-            building = (BuildingLumberjack) ((AbstractEntityCitizen) entity).getCitizenColonyHandler().getWorkBuilding();
-        }
-        if (Tree.checkTree(world, pos, excludedTrees, building) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
             getResult().treeLocation = pos;
             return true;
