@@ -228,7 +228,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     {
         final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
         final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getId());
-        if (module == null)
+        if (module == null || buildingWorker.getMainCitizen() == null)
         {
             manager.updateRequestState(request.getId(), RequestState.FAILED);
             return;
