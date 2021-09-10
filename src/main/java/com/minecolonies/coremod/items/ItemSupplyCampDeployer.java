@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.util.BlueprintTagUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -155,13 +156,20 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final int sizeX = Settings.instance.getActiveStructure().getSizeX();
         final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
 
+        int groundLevel = zeroPos.getY();
+        final BlockPos groundLevelPos = BlueprintTagUtils.getFirstPosForTag(Settings.instance.getActiveStructure(), "groundlevel");
+        if (groundLevelPos != null)
+        {
+            groundLevel = groundLevelPos.getY();
+        }
+
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
             for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
             {
-                checkIfSolidAndNotInColony(world, new BlockPos(x, zeroPos.getY(), z), placementErrorList, placer);
+                checkIfSolidAndNotInColony(world, new BlockPos(x, groundLevel, z), placementErrorList, placer);
 
-                if (world.getBlockState(new BlockPos(x, zeroPos.getY() + 1, z)).getMaterial().isSolid())
+                if (world.getBlockState(new BlockPos(x, groundLevel + 1, z)).getMaterial().isSolid())
                 {
                     final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY(), z));
                     placementErrorList.add(placementError);
