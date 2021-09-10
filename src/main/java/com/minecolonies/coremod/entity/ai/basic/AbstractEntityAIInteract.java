@@ -186,11 +186,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             List<ItemStack> localItems = new ArrayList<ItemStack>();
 
             //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
-            if (silkTouch && Item.byBlock(BlockPosUtil.getBlock(world, blockToMine)) != null)
+            if (silkTouch || shouldSilkTouchBlock(curBlockState))
             {
                 //Stores Silk Touch Block in localItems
-                final ItemStack silkItem = new ItemStack(Item.byBlock(BlockPosUtil.getBlock(world, blockToMine)), 1);
-                localItems.add(silkItem);
+                final ItemStack silkItem = curBlockState.getBlock().getCloneItemStack(world, blockToMine,curBlockState);
+                if (!ItemStackUtils.isEmpty(silkItem))
+                {
+                    localItems.add(silkItem);
+                }
             }
             //If Silk Touch doesn't work, get blocks with Fortune value as normal.
             else
@@ -226,6 +229,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
         worker.getCitizenExperienceHandler().addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
+    }
+
+    /**
+     * Check if this specific block should be picked up via silk touch.
+     * @param curBlockState the state to check.
+     * @return true if so.
+     */
+    public boolean shouldSilkTouchBlock(final BlockState curBlockState)
+    {
+        return false;
     }
 
     /**

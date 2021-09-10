@@ -19,8 +19,8 @@
                  label="$(com.minecolonies.coremod.gui.back)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
     <buttonimage id="fulfill" size="37 16" pos="76 105" textcolor="black"
-                 label="$(com.minecolonies.coremod.gui.citizen.requestsFulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+                 label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
     <buttonimage id="cancel" size="37 16" pos="117 105" textcolor="black"
-                 label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+                 label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 </window>

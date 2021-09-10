@@ -260,6 +260,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         return BUILDING_STEP;
     }
 
+    @Override
+    public boolean shouldSilkTouchBlock(final BlockState curBlockState)
+    {
+        return IColonyManager.getInstance().getCompatibilityManager().isOre(curBlockState);
+    }
+
     private BlockPos getSurroundingOreOrDefault(final BlockPos pos)
     {
         for (Direction direction : Direction.values())

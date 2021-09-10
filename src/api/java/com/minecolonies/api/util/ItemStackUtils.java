@@ -296,6 +296,10 @@ public final class ItemStackUtils
         {
             return Compatibility.getToolLevel(stack);
         }
+        if (!isTool(stack, toolType))
+        {
+            return -1;
+        }
         if (ToolType.HOE.equals(toolType))
         {
             if (stack.getItem() instanceof HoeItem)
@@ -375,12 +379,22 @@ public final class ItemStackUtils
             return false;
         }
 
-        boolean isATool = false;
-        if (ToolType.AXE.equals(toolType) || ToolType.SHOVEL.equals(toolType) || ToolType.PICKAXE.equals(toolType))
+        if (ToolType.AXE.equals(toolType) && itemStack.canPerformAction(ToolActions.AXE_DIG))
         {
-            isATool = getMiningLevel(itemStack, toolType) >= 0;
+            return true;
         }
-        else if (ToolType.HOE.equals(toolType))
+
+        if (ToolType.SHOVEL.equals(toolType) && itemStack.canPerformAction(ToolActions.SHOVEL_DIG))
+        {
+            return true;
+        }
+
+        if (ToolType.PICKAXE.equals(toolType) && itemStack.canPerformAction(ToolActions.PICKAXE_DIG))
+        {
+            return true;
+        }
+
+        if (ToolType.HOE.equals(toolType))
         {
             for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
             {
@@ -389,49 +403,50 @@ public final class ItemStackUtils
                     break;
                 }
             }
-            isATool = true;
+            return true;
         }
-        else if (ToolType.BOW.equals(toolType))
+        if (ToolType.BOW.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof BowItem;
+            return itemStack.getItem() instanceof BowItem;
         }
-        else if (ToolType.SWORD.equals(toolType))
+        if (ToolType.SWORD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(itemStack);
+            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP);
         }
-        else if (ToolType.FISHINGROD.equals(toolType))
+        if (ToolType.FISHINGROD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof FishingRodItem;
+            return itemStack.getItem() instanceof FishingRodItem;
         }
-        else if (ToolType.SHEARS.equals(toolType))
+        if (ToolType.SHEARS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ShearsItem;
+            return itemStack.getItem() instanceof ShearsItem;
         }
-        else if (ToolType.HELMET.equals(toolType))
+        if (ToolType.HELMET.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.LEGGINGS.equals(toolType))
+        if (ToolType.LEGGINGS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.CHESTPLATE.equals(toolType))
+        if (ToolType.CHESTPLATE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.BOOTS.equals(toolType))
+        if (ToolType.BOOTS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.SHIELD.equals(toolType))
+        if (ToolType.SHIELD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ShieldItem;
+            return itemStack.getItem() instanceof ShieldItem;
         }
-        else if (ToolType.FLINT_N_STEEL.equals(toolType))
+        if (ToolType.FLINT_N_STEEL.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof FlintAndSteelItem;
+            return itemStack.getItem() instanceof FlintAndSteelItem;
         }
-        return isATool;
+
+        return false;
     }
 
     /**

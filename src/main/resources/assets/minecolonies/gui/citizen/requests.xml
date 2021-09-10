@@ -16,11 +16,11 @@
 
             <!-- Color green if possible? -->
             <buttonimage id="fulfill" size="37 16" pos="20 23" textcolor="black"
-                         label="$(com.minecolonies.coremod.gui.citizen.requestsFulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+                         label="$(com.minecolonies.coremod.gui.citizen.requestsfulfill)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
 
             <!-- button to cancel the request-->
             <buttonimage id="cancel" size="37 16" pos="110 23" textcolor="black"
-                         label="$(com.minecolonies.coremod.gui.citizen.requestsCancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
+                         label="$(com.minecolonies.coremod.gui.citizen.requestscancel)" source="minecolonies:textures/gui/citizen/colonist_button_small.png"/>
         </box>
     </list>
 </window>
