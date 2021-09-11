@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
+import com.minecolonies.api.compatibility.productivebees.ProductiveBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
@@ -746,6 +747,10 @@ public class CompatibilityManager implements ICompatibilityManager
         if (ModList.get().isLoaded("resourcefulbees"))
         {
             Compatibility.beeHiveCompat = new ResourcefulBeesCompat();
+        }
+        if (ModList.get().isLoaded("productivebees"))
+        {
+            Compatibility.beeHiveCompat = new ProductiveBeesCompat();
         }
         if (ModList.get().isLoaded("tconstruct"))
         {
