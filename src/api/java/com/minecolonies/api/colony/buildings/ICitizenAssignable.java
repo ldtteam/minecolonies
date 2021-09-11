@@ -76,9 +76,9 @@ public interface ICitizenAssignable extends ISchematicProvider
     boolean hasAssignedCitizen();
 
     /**
-     * Returns the {@link net.minecraft.entity.Entity} of the worker.
+     * Returns the Entities of the worker.
      *
-     * @return {@link net.minecraft.entity.Entity} of the worker
+     * @return Entity of the worker
      */
     @Nullable
     List<Optional<AbstractEntityCitizen>> getAssignedEntities();

@@ -190,11 +190,6 @@ public abstract class AbstractCitizenAssignable extends AbstractSchematicProvide
         return !assignedCitizen.isEmpty();
     }
 
-    /**
-     * Returns the {@link net.minecraft.entity.Entity} of the worker.
-     *
-     * @return {@link net.minecraft.entity.Entity} of the worker
-     */
     @Override
     @Nullable
     public List<Optional<AbstractEntityCitizen>> getAssignedEntities()

@@ -179,9 +179,9 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
     }
 
     /**
-     * Get the {@link AxisAlignedBB} we're searching for targets in.
+     * Get the {@link AABB} we're searching for targets in.
      *
-     * @return the {@link AxisAlignedBB}
+     * @return the {@link AABB}
      */
     protected AABB getSearchArea()
     {

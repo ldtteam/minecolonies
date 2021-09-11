@@ -24,11 +24,11 @@ public interface IBuildingDataManager
     }
 
     /**
-     * Creates a new entry from a given {@link IColony} and the data passed in as {@link CompoundNBT}.
+     * Creates a new entry from a given {@link IColony} and the data passed in as {@link CompoundTag}.
      *
      * @param colony   The {@link IColony} to which the new {@link IBuilding} belongs.
-     * @param compound The data from which to load new {@link IBuilding} stored in a {@link CompoundNBT}.
-     * @return The {@link IBuilding} with the data loaded from {@link CompoundNBT}.
+     * @param compound The data from which to load new {@link IBuilding} stored in a {@link CompoundTag}.
+     * @return The {@link IBuilding} with the data loaded from {@link CompoundTag}.
      */
     IBuilding createFrom(final IColony colony, final CompoundTag compound);
 

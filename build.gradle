@@ -40,11 +40,9 @@ dependencies {
 
     apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
     implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
-    contained "com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"
 
     apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
-    contained "com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"
 
     library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
 }
