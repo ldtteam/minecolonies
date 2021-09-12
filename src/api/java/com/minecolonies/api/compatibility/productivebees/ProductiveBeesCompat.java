@@ -3,6 +3,7 @@ package com.minecolonies.api.compatibility.productivebees;
 import cy.jdkdigital.productivebees.common.tileentity.AdvancedBeehiveTileEntity;
 import com.minecolonies.api.compatibility.resourcefulbees.IBeehiveCompat;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -18,7 +19,10 @@ public class ProductiveBeesCompat implements IBeehiveCompat
         List<ItemStack> list = new ArrayList<>();
         if (world.getBlockEntity(pos) instanceof AdvancedBeehiveTileEntity)
         {
-            //If we have a productive bees hive, we care about the items inside
+            //Using shears on a Productive Bees hive also provides vanilla honeycomb
+            list.add(new ItemStack(Items.HONEYCOMB, amount));
+
+            //If we have a Productive Bees hive, we care about the items inside
             AdvancedBeehiveTileEntity hive = (AdvancedBeehiveTileEntity) world.getBlockEntity(pos);
 
             //the actual IItemHandlerModifiable is protected, but this is the public method that
