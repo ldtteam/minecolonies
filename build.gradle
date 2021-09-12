@@ -40,6 +40,9 @@ repositories {
     maven {
         url "http://harleyoconnor.com/maven/"
     }
+    maven {
+        url "https://www.cursemaven.com"
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -106,9 +109,9 @@ dependencies {
     
     implementation fg.deobf("mezz.jei:jei-${config.jei_mcversion}:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
-    compileOnly fg.deobf("cy.jdkdigital.productivebees:productivebees:${config.pb_version}")
+    compileOnly fg.deobf("curse.maven:productivebees-377897:3455924")
     apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
-    apiCompileOnly fg.deobf("cy.jdkdigital.productivebees:productivebees:${config.pb_version}")
+    apiCompileOnly fg.deobf("curse.maven:productivebees-377897:3455924")
     apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:${config.mantle_mcversion}-${config.mantle_version}")
     apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${config.tc_mcversion}-${config.tc_version}")
     apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.dt_mcversion}:${config.dt_version}")
