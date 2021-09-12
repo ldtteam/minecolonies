@@ -218,7 +218,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
 
         for (BlockPos pos : hives)
         {
-            if (!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock))
+            if (!(world.getBlockState(pos).getBlock() instanceof BeehiveBlock || world.getBlockEntity(pos) instanceof BeehiveTileEntity))
             {
                 getOwnBuilding().removeHive(pos);
             }

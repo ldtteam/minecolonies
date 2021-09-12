@@ -13,6 +13,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.BeehiveTileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +57,8 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
         final IBuilding hut = colony.getBuildingManager().getBuilding(hutPos);
         final BuildingBeekeeper building = (BuildingBeekeeper) hut;
 
-        if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock)
+        if (useContext.getLevel().getBlockState(useContext.getClickedPos()).getBlock() instanceof BeehiveBlock
+                || useContext.getLevel().getBlockEntity(useContext.getClickedPos()) instanceof BeehiveTileEntity)
         {
 
             final Collection<BlockPos> positions = building.getHives();
