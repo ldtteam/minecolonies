@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.client.gui.modules.MinimumStockModuleWindow;
@@ -40,7 +41,7 @@ public class MinimumStockModuleView extends AbstractBuildingModuleView  implemen
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            minimumStock.add(new Tuple<>(new ItemStorage(buf.readItem()), buf.readInt()));
+            minimumStock.add(new Tuple<>(new ItemStackStorage(buf.readItem()), buf.readInt()));
         }
         reachedLimit = buf.readBoolean();
     }

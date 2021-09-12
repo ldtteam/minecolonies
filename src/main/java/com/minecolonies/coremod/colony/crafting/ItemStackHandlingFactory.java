@@ -3,20 +3,23 @@ package com.minecolonies.coremod.colony.crafting;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import com.minecolonies.api.crafting.IItemStorageFactory;
+import com.minecolonies.api.crafting.IItemStackHandlingFactory;
 import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
+
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import org.jetbrains.annotations.NotNull;
 
 /**
- * Factory implementation taking care of creating new instances, serializing and deserializing ItemStorage.
+ * Factory implementation taking care of creating new instances, serializing and deserializing ItemStackHandlingFactory.
  */
-public class ItemStorageFactory implements IItemStorageFactory
+public class ItemStackHandlingFactory implements IItemStackHandlingFactory
 {
+
     /**
      * Compound tag for the size.
      */
@@ -39,26 +42,22 @@ public class ItemStorageFactory implements IItemStorageFactory
 
     @NotNull
     @Override
-    public TypeToken<ItemStorage> getFactoryOutputType()
+    public TypeToken<? extends ItemStorage> getFactoryOutputType()
     {
-        return TypeConstants.ITEMSTORAGE;
+        return TypeConstants.ITEMSTACKHANDLING;
     }
 
     @NotNull
     @Override
-    public TypeToken<FactoryVoidInput> getFactoryInputType()
+    public TypeToken<? extends FactoryVoidInput> getFactoryInputType()
     {
         return TypeConstants.FACTORYVOIDINPUT;
     }
 
-    @NotNull
     @Override
-    public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT)
+    public short getSerializationId()
     {
-        ItemStorage newItem = new ItemStackHandling(stack, ignoreDamage, ignoreNBT);
-        newItem.setAmount(size);
-        return newItem;
-
+        return 47;
     }
 
     @NotNull
@@ -66,8 +65,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final ItemStorage storage)
     {
         final CompoundNBT compound = new CompoundNBT();
-        @NotNull CompoundNBT stackTag = new CompoundNBT();
-        storage.getItemStack().save(stackTag);
+        @NotNull CompoundNBT stackTag = storage.getItemStack().serializeNBT();
         compound.put(TAG_STACK, stackTag);
         compound.putInt(TAG_SIZE, storage.getAmount());
         compound.putBoolean(TAG_SHOULDIGNOREDAMAGE, storage.ignoreDamageValue());
@@ -80,6 +78,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     public ItemStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
     {
         final ItemStack stack = ItemStack.of(nbt.getCompound(TAG_STACK));
+    
         final int size = nbt.getInt(TAG_SIZE);
         final boolean ignoreNBT = nbt.getBoolean(TAG_SHOULDIGNORENBT);
         final boolean ignoreDamage = nbt.getBoolean(TAG_SHOULDIGNOREDAMAGE);
@@ -89,7 +88,7 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public void serialize(IFactoryController controller, ItemStorage input, PacketBuffer packetBuffer)
     {
-        packetBuffer.writeItem(input.getItemStack());
+        packetBuffer.writeItemStack(input.getItemStack(), false);
         packetBuffer.writeVarInt(input.getAmount());
         packetBuffer.writeBoolean(input.ignoreDamageValue());
         packetBuffer.writeBoolean(input.ignoreNBT());
@@ -98,16 +97,21 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public ItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
-        final ItemStack stack = buffer.readItem();
+        final ItemStack stack = ItemStack.of(buffer.readNbt());
         final int size = buffer.readVarInt();
         final boolean ignoreDamage = buffer.readBoolean();
         final boolean ignoreNBT = buffer.readBoolean();
         return this.getNewInstance(stack, size, ignoreDamage, ignoreNBT);
     }
 
+    @NotNull
     @Override
-    public short getSerializationId()
+    public ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT)
     {
-        return 27;
+        ItemStorage newItem = new ItemStackHandling(stack, ignoreDamage, ignoreNBT);
+        newItem.setAmount(size);
+        return newItem;
+
     }
+    
 }

@@ -11,7 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.PARAMS_ITEMSTORAGE;
 /**
  * Interface for the IItemStorageFactory which is responsible for creating and maintaining ItemStorage objects.
  */
-public interface IImmutableItemStorageFactory extends IFactory<FactoryVoidInput, ItemStorage>
+public interface IItemStackStorageFactory extends IFactory<FactoryVoidInput, ItemStorage>
 {
     @NotNull
     @Override

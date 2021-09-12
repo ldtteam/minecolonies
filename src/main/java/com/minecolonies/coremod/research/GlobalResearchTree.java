@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IGlobalResearch;
@@ -326,7 +327,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
                 try
                 {
                     stack.setTag(JsonToNBT.parseTag(tag));
-                    outputList.add(new ItemStorage(stack, false, false));
+                    outputList.add(new ItemStackHandling(stack, false, false));
                 }
                 catch (CommandSyntaxException parseException)
                 {
@@ -336,7 +337,7 @@ public class GlobalResearchTree implements IGlobalResearchTree
             }
             else
             {
-                outputList.add(new ItemStorage(stack, false, true));
+                outputList.add(new ItemStackHandling(stack, false, true));
             }
         }
         return outputList;

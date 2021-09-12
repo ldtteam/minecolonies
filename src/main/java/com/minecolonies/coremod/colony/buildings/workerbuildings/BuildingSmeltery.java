@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -203,7 +204,7 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
                 if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).test(stack))
                 {
                     final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
-                    recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
+                    recipes.add(createSmeltingRecipe(new ItemStackHandling(stack), output, Blocks.FURNACE));
                 }
             }
             return recipes;

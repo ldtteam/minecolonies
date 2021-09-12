@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.INonExhaustiveDeliv
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
@@ -225,17 +226,17 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
                 int leftOver = tuple.getA().getCount();
                 if (keep > 0)
                 {
-                    int kept = storages.getOrDefault(new ItemStorage(tuple.getA()), 0);
+                    int kept = storages.getOrDefault(new ItemStackStorage(tuple.getA()), 0);
                     if (kept < keep)
                     {
                         if (leftOver + kept <= keep)
                         {
-                            storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + tuple.getA().getCount());
+                            storages.put(new ItemStackStorage(tuple.getA()), storages.getOrDefault(new ItemStackStorage(tuple.getA()), 0) + tuple.getA().getCount());
                             continue;
                         }
                         int toKeep = (leftOver + kept) - keep;
                         leftOver-=toKeep;
-                        storages.put(new ItemStorage(tuple.getA()), storages.getOrDefault(new ItemStorage(tuple.getA()), 0) + toKeep);
+                        storages.put(new ItemStackStorage(tuple.getA()), storages.getOrDefault(new ItemStackStorage(tuple.getA()), 0) + toKeep);
                     }
                 }
 

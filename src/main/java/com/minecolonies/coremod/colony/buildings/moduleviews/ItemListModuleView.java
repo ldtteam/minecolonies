@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -125,7 +126,7 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
 
         for (int j = 0; j < size; j++)
         {
-            listsOfItems.add(new ItemStorage(buf.readItem()));
+            listsOfItems.add(new ItemStackStorage(buf.readItem()));
         }
     }
 

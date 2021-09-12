@@ -3,6 +3,8 @@ package com.minecolonies.api.colony.requestsystem.requestable;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStackHandling;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
@@ -111,7 +113,7 @@ public class Food implements IDeliverable
             final ListNBT filterableItems = compound.getList(NBT_EXCLUSION, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableItems.size(); ++i)
             {
-                items.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(i))));
+                items.add(new ItemStackHandling(ItemStack.of(filterableItems.getCompound(i))));
             }
         }
 
@@ -157,7 +159,7 @@ public class Food implements IDeliverable
         final int itemsCount = buffer.readInt();
         for (int i = 0; i < itemsCount; ++i)
         {
-            items.add(new ItemStorage(buffer.readItem()));
+            items.add(new ItemStackHandling(buffer.readItem()));
         }
 
         if (!items.isEmpty())
@@ -170,7 +172,7 @@ public class Food implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return ItemStackUtils.ISFOOD.test(stack) && !exclusionList.contains(new ItemStorage(stack)) && !(ItemStackUtils.ISCOOKABLE.test(stack) && exclusionList.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack))));
+        return ItemStackUtils.ISFOOD.test(stack) && !exclusionList.contains(new ItemStackHandling(stack)) && !(ItemStackUtils.ISCOOKABLE.test(stack) && exclusionList.contains(new ItemStackHandling(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack))));
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.IImmutableItemStorageFactory;
 import com.minecolonies.api.crafting.ImmutableItemStorage;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,7 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
 
     @NotNull
     @Override
-    public TypeToken<? extends ImmutableItemStorage> getFactoryOutputType()
+    public TypeToken<? extends ItemStorage> getFactoryOutputType()
     {
         return TypeConstants.IMMUTABLEITEMSTORAGE;
     }
@@ -40,7 +41,7 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     }
 
     @Override
-    public CompoundNBT serialize(IFactoryController controller, ImmutableItemStorage output)
+    public CompoundNBT serialize(IFactoryController controller, ItemStorage output)
     {
         @NotNull final CompoundNBT compound = StandardFactoryController.getInstance().serialize(output.copy());
 
@@ -48,29 +49,29 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     }
 
     @Override
-    public ImmutableItemStorage deserialize(IFactoryController controller, CompoundNBT nbt) throws Throwable
+    public ItemStorage deserialize(IFactoryController controller, CompoundNBT nbt) throws Throwable
     {
         final ItemStorage readStorage = StandardFactoryController.getInstance().deserialize(nbt);
         return readStorage.toImmutable();
     }
 
     @Override
-    public void serialize(IFactoryController controller, ImmutableItemStorage output, PacketBuffer packetBuffer)
+    public void serialize(IFactoryController controller, ItemStorage output, PacketBuffer packetBuffer)
     {
         StandardFactoryController.getInstance().serialize(packetBuffer, output.copy());
     }
 
     @Override
-    public ImmutableItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
+    public ItemStorage deserialize(IFactoryController controller, PacketBuffer buffer) throws Throwable
     {
         @NotNull final ItemStorage newItem = StandardFactoryController.getInstance().deserialize(buffer);
         return newItem.toImmutable();
     }
 
     @Override
-    public ImmutableItemStorage getNewInstance(ItemStack stack, int size)
+    public ItemStorage getNewInstance(ItemStack stack, int size)
     {
-        @NotNull final ItemStorage newItem = new ItemStorage(stack);
+        @NotNull final ItemStorage newItem = new ItemStackHandling(stack);
         newItem.setAmount(size);
         return newItem.toImmutable();
     }

@@ -19,32 +19,37 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Used to store an stack with various informations to compare items later on.
  */
-public class ItemStorage
+public abstract class ItemStorage
 {
     /**
      * The stack to store.
      */
-    private final ItemStack stack;
+    protected final ItemStack stack;
 
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    private final boolean shouldIgnoreDamageValue;
+    protected final boolean shouldIgnoreDamageValue;
 
     /**
      * Set this to ignore the damage value in comparisons.
      */
-    private final boolean shouldIgnoreNBTValue;
+    protected final boolean shouldIgnoreNBTValue;
 
     /**
      * The creative tab index of the storage.
      */
-    private final List<Integer> creativeTabIndex;
+    protected final List<Integer> creativeTabIndex;
 
     /**
      * Amount of the storage.
      */
-    private int amount;
+    protected int amount;
+
+    /**
+     * if this instance is immutable
+     */
+    protected boolean immutable; 
 
     /**
      * Creates an instance of the storage.
@@ -53,7 +58,7 @@ public class ItemStorage
      * @param amount            the amount.
      * @param ignoreDamageValue should the damage value be ignored?
      */
-    public ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
+    protected ItemStorage(@NotNull final ItemStack stack, final int amount, final boolean ignoreDamageValue)
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
@@ -69,7 +74,7 @@ public class ItemStorage
      * @param ignoreDamageValue    should the damage value be ignored?
      * @param shouldIgnoreNBTValue should the nbt value be ignored?
      */
-    public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue, final boolean shouldIgnoreNBTValue)
+    protected ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue, final boolean shouldIgnoreNBTValue)
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
@@ -85,7 +90,7 @@ public class ItemStorage
      * @param stack             the stack.
      * @param ignoreDamageValue should the damage value be ignored?
      */
-    public ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
+    protected ItemStorage(@NotNull final ItemStack stack, final boolean ignoreDamageValue)
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = ignoreDamageValue;
@@ -99,7 +104,7 @@ public class ItemStorage
      *
      * @param stack the stack.
      */
-    public ItemStorage(@NotNull final ItemStack stack)
+    protected ItemStorage(@NotNull final ItemStack stack)
     {
         this.stack = stack;
         this.shouldIgnoreDamageValue = false;
@@ -113,7 +118,7 @@ public class ItemStorage
      * 
      * @param jObject the JSON Object to parse
      */
-    public ItemStorage(@NotNull final JsonObject jObject)
+    protected ItemStorage(@NotNull final JsonObject jObject)
     {
         if (jObject.has(ITEM_PROP))
         {
@@ -203,6 +208,10 @@ public class ItemStorage
      */
     public void setAmount(final int amount)
     {
+        if(immutable)
+        {
+            throw new UnsupportedOperationException("Immutable instance of ItemStorage can't set value!");
+        }
         this.amount = amount;
     }
 
@@ -330,22 +339,19 @@ public class ItemStorage
     }
 
     /**
-     * Make a copy of the ItemStorage
-     * @return a copy
-     */
-    public ItemStorage copy()
-    {
-        ItemStorage newInstance = new ItemStorage(stack.copy(), shouldIgnoreDamageValue, shouldIgnoreNBTValue);
-        newInstance.setAmount(amount);
-        return newInstance;
-    }    
-
-    /**
      * Get an immutable version of this item storage
      * @return immutable wrapper
      */
-    public ImmutableItemStorage toImmutable()
+    public ItemStorage toImmutable()
     {
-        return new ImmutableItemStorage(this);
+        ItemStorage newInstance = this.copy();
+        newInstance.immutable = true;
+        return newInstance;
     }
+
+    /**
+     * Make a copy of the ItemStackStorage
+     * @return a copy
+     */
+    public abstract ItemStorage copy();
 }

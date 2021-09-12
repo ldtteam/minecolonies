@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
@@ -119,8 +120,8 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
     public boolean isAllowedFood(ItemStack stack)
     {
         ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
-        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack))
-          && !listModule.isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
+        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStackStorage(stack))
+          && !listModule.isItemInList(new ItemStackStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
     }
 
     /**
@@ -331,7 +332,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
         ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
         if (isAllowedFood(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
-            final ItemStorage kept = new ItemStorage(stack);
+            final ItemStorage kept = new ItemStackStorage(stack);
             if (localAlreadyKept.contains(kept))
             {
                 kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
@@ -344,7 +345,7 @@ public class BuildingCook extends AbstractBuildingFurnaceUser implements IBuildi
         if (allowedFuel.test(stack) && (localAlreadyKept.stream().filter(storage -> allowedFuel.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE
               || !inventory))
         {
-            final ItemStorage kept = new ItemStorage(stack);
+            final ItemStorage kept = new ItemStackStorage(stack);
             if (localAlreadyKept.contains(kept))
             {
                 kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());

@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui.containers;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -152,7 +153,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
                     final ItemStack copy = stack.copy();
                     ItemStackUtils.setSize(copy, 1);
 
-                    input.add(new ItemStorage(copy));
+                    input.add(new ItemStackStorage(copy));
                 }
 
                 final ItemStack primaryOutput = menu.craftResult.getItem(0).getStack().copy();

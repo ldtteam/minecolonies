@@ -9,6 +9,8 @@ import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.crafting.ItemStackHandling;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
@@ -272,7 +274,7 @@ public class CompatibilityManager implements ICompatibilityManager
     public Set<ItemStorage> getCompostInputs()
     {
         return compostRecipes.keySet().stream()
-                .map(item -> new ItemStorage(new ItemStack(item)))
+                .map(item -> new ItemStackStorage(new ItemStack(item)))
                 .collect(Collectors.toSet());
     }
 
@@ -361,7 +363,7 @@ public class CompatibilityManager implements ICompatibilityManager
         final BlockStateStorage store = new BlockStateStorage(leaf, leafCompareWithoutProperties, true);
         if (!leavesToSaplingMap.containsKey(store))
         {
-            leavesToSaplingMap.put(store, new ItemStorage(stack, false, true));
+            leavesToSaplingMap.put(store, new ItemStackHandling(stack, false, true));
         }
     }
 
@@ -460,7 +462,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     }
                     if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty())
                     {
-                        smeltableOres.add(new ItemStorage(stack));
+                        smeltableOres.add(new ItemStackHandling(stack));
                     }
                 }
             }
@@ -479,7 +481,7 @@ public class CompatibilityManager implements ICompatibilityManager
             item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
-                saplings.add(new ItemStorage(stack, false, true));
+                saplings.add(new ItemStackHandling(stack, false, true));
             }
         }
         Log.getLogger().info("Finished discovering saplings " + saplings.size());
@@ -523,7 +525,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 {
                     if (stack.getItem() instanceof BlockItem)
                     {
-                        plantables.add(new ItemStorage(stack));
+                        plantables.add(new ItemStackHandling(stack));
                     }
                 }
             }
@@ -542,7 +544,7 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 if(FurnaceTileEntity.isFuel(item))
                 {
-                    fuel.add(new ItemStorage(item));
+                    fuel.add(new ItemStackHandling(item));
                 }
             }
         }
@@ -560,10 +562,10 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 if(ISFOOD.test(item) || ISCOOKABLE.test(item))
                 {
-                    food.add(new ItemStorage(item));
+                    food.add(new ItemStackHandling(item));
                     if(CAN_EAT.test(item))
                     {
-                        edibles.add(new ItemStorage(item));
+                        edibles.add(new ItemStackHandling(item));
                     }
                 }
             }
@@ -600,7 +602,7 @@ public class CompatibilityManager implements ICompatibilityManager
                     final int rarity = Integer.parseInt(split[split.length - 1]);
                     for (int i = 0; i < rarity; i++)
                     {
-                        luckyOres.add(new ItemStorage(stack));
+                        luckyOres.add(new ItemStackHandling(stack));
                     }
                 }
                 catch (final NumberFormatException ex)
@@ -709,7 +711,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundNBT compound)
     {
-        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStorage(ItemStack.of(compound), false, true));
+        return new Tuple<>(NBTUtil.readBlockState(compound), new ItemStackHandling(ItemStack.of(compound), false, true));
     }
 
     /**
@@ -773,7 +775,7 @@ public class CompatibilityManager implements ICompatibilityManager
             item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
-                flowers.add(new ItemStorage(stack));
+                flowers.add(new ItemStackHandling(stack));
             }
         }
 

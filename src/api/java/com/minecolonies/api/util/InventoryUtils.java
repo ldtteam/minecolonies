@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ItemStackStorage;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
@@ -2787,7 +2789,7 @@ public class InventoryUtils
                 final ItemStack containedStack = handler.getStackInSlot(i);
                 if (!ItemStackUtils.isEmpty(containedStack))
                 {
-                    final ItemStorage storage = new ItemStorage(containedStack.copy(), false, false);
+                    final ItemStorage storage = new ItemStackStorage(containedStack.copy());
 
                     if (storageMap.containsKey(storage))
                     {
@@ -3051,7 +3053,7 @@ public class InventoryUtils
     {
         if (entity instanceof TileEntityColonyBuilding)
         {
-            return InventoryUtils.hasBuildingEnoughElseCount( ((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(stack), stack.getCount()) >= count;
+            return InventoryUtils.hasBuildingEnoughElseCount( ((TileEntityColonyBuilding) entity).getBuilding(), new ItemStackHandling(stack), stack.getCount()) >= count;
         }
         else if (entity instanceof TileEntityRack)
         {

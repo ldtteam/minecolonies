@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -138,7 +139,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         if(!getOwnBuilding().getIsCooking() )
         {
             return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack)
-                     && !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
+                     && !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).isItemInList(new ItemStackHandling(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
         }
         return false;
     }
@@ -251,7 +252,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     private boolean canEat(final ItemStack stack)
     {
         final ItemListModule module = ((BuildingCook) worker.getCitizenData().getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
-        if (module.isItemInList(new ItemStorage(stack)))
+        if (module.isItemInList(new ItemStackHandling(stack)))
         {
             return false;
         }
@@ -339,7 +340,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             this.reservedItemCache.addAll(getOwnBuilding().getFirstModuleOccurance(BuildingCook.CraftingModule.class).reservedStacks().keySet());
         }
 
-        return reservedItemCache.contains(new ItemStorage(stack));
+        return reservedItemCache.contains(new ItemStackHandling(stack));
     }
 
     @Override

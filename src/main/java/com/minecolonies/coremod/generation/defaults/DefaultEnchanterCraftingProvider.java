@@ -2,6 +2,7 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.ldtteam.datagenerators.loot_table.LootTableJson;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
@@ -388,7 +389,7 @@ public class DefaultEnchanterCraftingProvider implements IDataProvider
         @Override
         protected void registerRecipes(@NotNull final Consumer<IFinishedRecipe> consumer)
         {
-            final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
+            final List<ItemStorage> tome = Collections.singletonList(new ItemStackHandling(
                     new ItemStack(ModItems.ancientTome), true, true));
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)

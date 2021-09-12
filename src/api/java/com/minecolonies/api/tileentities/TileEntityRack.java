@@ -2,6 +2,8 @@ package com.minecolonies.api.tileentities;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.crafting.ItemStackHandling;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
@@ -91,7 +93,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasItemStack(final ItemStack stack, final int count, final boolean ignoreDamageValue)
     {
-        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue);
+        final ItemStorage checkItem = new ItemStackHandling(stack, ignoreDamageValue);
 
         return content.getOrDefault(checkItem, 0) >= count;
     }
@@ -99,7 +101,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public int getCount(final ItemStack stack, final boolean ignoreDamageValue, final boolean ignoreNBT)
     {
-        final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);
+        final ItemStorage checkItem = new ItemStackHandling(stack, ignoreDamageValue, ignoreNBT);
         return getCount(checkItem);
     }
 
@@ -143,7 +145,7 @@ public class TileEntityRack extends AbstractTileEntityRack
     @Override
     public boolean hasSimilarStack(@NotNull final ItemStack stack)
     {
-        final ItemStorage checkItem = new ItemStorage(stack, true, true);
+        final ItemStorage checkItem = new ItemStackHandling(stack, true, true);
         if (content.containsKey(checkItem))
         {
             return true;
@@ -232,7 +234,7 @@ public class TileEntityRack extends AbstractTileEntityRack
                 continue;
             }
 
-            final ItemStorage storage = new ItemStorage(stack.copy());
+            final ItemStorage storage = new ItemStackHandling(stack.copy());
             int amount = ItemStackUtils.getSize(stack);
             if (content.containsKey(storage))
             {

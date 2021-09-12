@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
@@ -173,7 +174,7 @@ public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildi
 
                 final List<ItemStorage> woolItems = ItemTags.WOOL.getValues().stream()
                                                       .filter(item -> !item.equals(Items.WHITE_WOOL))
-                                                      .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
+                                                      .map(i -> new ItemStackHandling(new ItemStack(i))).collect(Collectors.toList());
 
                 for(ItemStorage color : woolItems)
                 {
@@ -189,7 +190,7 @@ public class BuildingDyer extends AbstractBuildingFurnaceUser implements IBuildi
                 final IRecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
                   TypeConstants.RECIPE,
                   StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
+                  ImmutableList.of(woolToUse, new ItemStackHandling(new ItemStack(Items.WHITE_DYE, 1))),
                   1,
                   new ItemStack(Items.WHITE_WOOL, 1),
                   Blocks.AIR);

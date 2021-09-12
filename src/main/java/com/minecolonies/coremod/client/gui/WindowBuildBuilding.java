@@ -22,6 +22,7 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -387,7 +388,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         ItemStorage resource = resources.get(res.getDescriptionId());
         if (resource == null)
         {
-            resource = new ItemStorage(res);
+            resource = new ItemStackStorage(res);
             resource.setAmount(amount);
         }
         else

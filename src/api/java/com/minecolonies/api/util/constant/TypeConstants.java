@@ -12,6 +12,8 @@ import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequ
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.requestsystem.token.StandardToken;
 import com.minecolonies.api.crafting.ImmutableItemStorage;
+import com.minecolonies.api.crafting.ItemStackHandling;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 
@@ -41,6 +43,8 @@ public class TypeConstants
     public static final TypeToken<ItemStorage>      ITEMSTORAGE      = TypeToken.of(ItemStorage.class);
 
     public static final TypeToken<ImmutableItemStorage> IMMUTABLEITEMSTORAGE = TypeToken.of(ImmutableItemStorage.class);
+    public static final TypeToken<ItemStackHandling> ITEMSTACKHANDLING = TypeToken.of(ItemStackHandling.class);
+    public static final TypeToken<ItemStackStorage> ITEMSTACKSTORAGE = TypeToken.of(ItemStackStorage.class);
 
     /////Request system specific
     public static final TypeToken<IPlayerRequestResolver>                             PLAYER_REQUEST_RESOLVER                         = TypeToken.of(IPlayerRequestResolver.class);

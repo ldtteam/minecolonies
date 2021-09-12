@@ -17,6 +17,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
@@ -244,7 +245,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         ItemStorage resource = resources.get(res.getDescriptionId());
         if (resource == null)
         {
-            resource = new ItemStorage(res);
+            resource = new ItemStackStorage(res);
             resource.setAmount(amount);
         }
         else

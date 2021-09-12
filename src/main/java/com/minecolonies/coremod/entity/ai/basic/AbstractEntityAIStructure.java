@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -572,7 +573,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         final Map<ItemStorage, Integer> list = new HashMap<>();
         for (final ItemStack stack : itemList)
         {
-            ItemStorage tempStorage = new ItemStorage(stack.copy());
+            ItemStorage tempStorage = new ItemStackHandling(stack.copy());
             if (list.containsKey(tempStorage))
             {
                 final int oldSize = list.get(tempStorage);

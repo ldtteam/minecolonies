@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
@@ -59,7 +60,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
     {
 
         this.assign = buf.readBoolean();
-        this.item = new ItemStorage(buf.readItem());
+        this.item = new ItemStackHandling(buf.readItem());
         this.id = buf.readUtf(32767);
     }
 

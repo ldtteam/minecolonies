@@ -2,6 +2,9 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -93,11 +96,11 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
             if (getRequiredResources() != null && getRequiredResources().getResourceMap().containsKey(key))
             {
                 final int qtyToKeep = getRequiredResources().getResourceMap().get(key);
-                if (localAlreadyKept.contains(new ItemStorage(stack)))
+                if (localAlreadyKept.contains(new ItemStackHandling(stack)))
                 {
                     for (final ItemStorage storage : localAlreadyKept)
                     {
-                        if (storage.equals(new ItemStorage(stack)))
+                        if (storage.equals(new ItemStackHandling(stack)))
                         {
                             if (storage.getAmount() >= qtyToKeep)
                             {
@@ -121,12 +124,12 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                 {
                     if (qtyToKeep >= stack.getCount())
                     {
-                        localAlreadyKept.add(new ItemStorage(stack));
+                        localAlreadyKept.add(new ItemStackHandling(stack));
                         return 0;
                     }
                     else
                     {
-                        localAlreadyKept.add(new ItemStorage(stack, qtyToKeep, false));
+                        localAlreadyKept.add(new ItemStackHandling(stack, qtyToKeep, false));
                         return stack.getCount() - qtyToKeep;
                     }
                 }
@@ -136,7 +139,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
                   || checkIfShouldKeepTool(ToolType.AXE, stack, localAlreadyKept)
                   || checkIfShouldKeepTool(ToolType.HOE, stack, localAlreadyKept))
             {
-                localAlreadyKept.add(new ItemStorage(stack, 1, true));
+                localAlreadyKept.add(new ItemStackHandling(stack, 1, true));
                 return 0;
             }
             return stack.getCount();

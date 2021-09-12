@@ -234,7 +234,7 @@ public class CustomRecipe
                 if (e.isJsonObject())
                 {
                     JsonObject ingredient = e.getAsJsonObject();
-                    ItemStorage parsed = new ItemStorage(ingredient);
+                    ItemStorage parsed = new ItemStackHandling(ingredient);
                     if(!parsed.isEmpty()) {
                         recipe.inputs.add(parsed);
                     }

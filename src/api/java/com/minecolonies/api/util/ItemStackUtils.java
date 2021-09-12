@@ -3,6 +3,7 @@ package com.minecolonies.api.util;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModItems;
@@ -210,22 +211,22 @@ public final class ItemStackUtils
                 if (!ItemStackUtils.isEmpty(stack))
                 {
                     ItemStackUtils.setSize(stack, 1);
-                    request.add(new ItemStorage(stack));
+                    request.add(new ItemStackStorage(stack));
                 }
-                request.add(new ItemStorage(new ItemStack(Items.ITEM_FRAME, 1)));
+                request.add(new ItemStackStorage(new ItemStack(Items.ITEM_FRAME, 1)));
             }
             else if (entity instanceof ArmorStandEntity)
             {
-                request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
-                entity.getArmorSlots().forEach(item -> request.add(new ItemStorage(item)));
-                entity.getHandSlots().forEach(item -> request.add(new ItemStorage(item)));
+                request.add(new ItemStackStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
+                entity.getArmorSlots().forEach(item -> request.add(new ItemStackStorage(item)));
+                entity.getHandSlots().forEach(item -> request.add(new ItemStackStorage(item)));
             }
 
             /*
             todo: deactivated until forge fixes this problem.
             else if (!(entity instanceof MobEntity))
             {
-                request.add(new ItemStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
+                request.add(new ItemStackStorage(entity.getPickedResult(new EntityRayTraceResult(placer))));
             }*/
 
             return request.stream().filter(stack -> !stack.getItemStack().isEmpty()).collect(Collectors.toList());

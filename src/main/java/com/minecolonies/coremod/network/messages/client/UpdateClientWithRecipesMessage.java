@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.network.IMessage;
@@ -53,7 +54,7 @@ public class UpdateClientWithRecipesMessage implements IMessage
         {
             final ItemStack result = buf.readItem();
             final RecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readNbt());
-            recipes.put(new ItemStorage(result), storage);
+            recipes.put(new ItemStackStorage(result), storage);
         }
     }
 

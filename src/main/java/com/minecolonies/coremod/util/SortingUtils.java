@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -51,7 +52,7 @@ public final class SortingUtils
                     {
                         continue;
                     }
-                    final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
+                    final ItemStorage storage = new ItemStackStorage(inv.extractItem(i, 64, false));
                     int amount = storage.getAmount();
                     if (map.containsKey(storage))
                     {

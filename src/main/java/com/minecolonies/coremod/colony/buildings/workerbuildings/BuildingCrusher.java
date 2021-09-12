@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
@@ -250,7 +251,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
 
         if (compound.getAllKeys().contains(TAG_CRUSHER_MODE))
         {
-            this.crusherMode = new ItemStorage(ItemStack.of(compound.getCompound(TAG_CRUSHER_MODE)));
+            this.crusherMode = new ItemStackStorage(ItemStack.of(compound.getCompound(TAG_CRUSHER_MODE)));
         }
 
         this.oneByOne = compound.getBoolean(TAG_CRUSHER_RATIO);
@@ -348,7 +349,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
 
             if (buf.readBoolean())
             {
-                crusherMode = new ItemStorage(buf.readItem());
+                crusherMode = new ItemStackStorage(buf.readItem());
             }
             dailyQuantity = buf.readInt();
             crusherModes.clear();
@@ -356,7 +357,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
             final int size = buf.readInt();
             for (int i = 0; i < size; i++)
             {
-                crusherModes.add(new ItemStorage(buf.readItem()));
+                crusherModes.add(new ItemStackStorage(buf.readItem()));
             }
         }
 

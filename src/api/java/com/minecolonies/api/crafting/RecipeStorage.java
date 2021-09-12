@@ -199,7 +199,7 @@ public class RecipeStorage implements IRecipeStorage
                 if(!tempStorage.matchDefinitionEquals(storage))
                 {
                     int amount = tempStorage.getAmount();
-                    tempStorage = new ItemStorage(tempStorage.getItemStack(), tempStorage.ignoreDamageValue() || storage.ignoreDamageValue(), tempStorage.ignoreNBT() || storage.ignoreNBT());
+                    tempStorage = new ItemStackHandling(tempStorage.getItemStack(), tempStorage.ignoreDamageValue() || storage.ignoreDamageValue(), tempStorage.ignoreNBT() || storage.ignoreNBT());
                     tempStorage.setAmount(amount);
                 }
                 storage = tempStorage;

@@ -8,6 +8,8 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStackHandling;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -61,9 +63,9 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     @Override
     public void addMinimumStock(final ItemStack itemStack, final int quantity)
     {
-        if (minimumStock.containsKey(new ItemStorage(itemStack)) || minimumStock.size() < minimumStockSize())
+        if (minimumStock.containsKey(new ItemStackStorage(itemStack)) || minimumStock.size() < minimumStockSize())
         {
-            minimumStock.put(new ItemStorage(itemStack), quantity);
+            minimumStock.put(new ItemStackStorage(itemStack), quantity);
             markDirty();
         }
     }
@@ -90,7 +92,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     @Override
     public void removeMinimumStock(final ItemStack itemStack)
     {
-        minimumStock.remove(new ItemStorage(itemStack));
+        minimumStock.remove(new ItemStackStorage(itemStack));
 
         final Collection<IToken<?>> list = building.getOpenRequestsByRequestableType().getOrDefault(TypeToken.of(Stack.class), new ArrayList<>());
         final IToken<?> token = getMatchingRequest(itemStack, list);
@@ -118,7 +120,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                     continue;
                 }
 
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(itemStack, true), entry.getValue() * itemStack.getMaxStackSize());
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStackStorage(itemStack), entry.getValue() * itemStack.getMaxStackSize());
                 final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
                 final IToken<?> request = getMatchingRequest(itemStack, list);
                 if (delta > 0)
@@ -155,7 +157,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     @Override
     public boolean isStocked(final ItemStack stack)
     {
-        return minimumStock.containsKey(new ItemStorage(stack));
+        return minimumStock.containsKey(new ItemStackHandling(stack));
     }
 
     @Override
@@ -178,7 +180,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         for (int i = 0; i < minimumStockTagList.size(); i++)
         {
             final CompoundNBT compoundNBT = minimumStockTagList.getCompound(i);
-            minimumStock.put(new ItemStorage(ItemStack.of(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
+            minimumStock.put(new ItemStackStorage(ItemStack.of(compoundNBT)), compoundNBT.getInt(TAG_QUANTITY));
         }
     }
 

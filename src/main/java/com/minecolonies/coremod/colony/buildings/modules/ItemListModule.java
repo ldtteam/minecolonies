@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
@@ -54,7 +55,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
             final ListNBT filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
-                allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));
+                allowedItems.add(new ItemStackStorage(ItemStack.of(filterableList.getCompound(i))));
             }
         }
         else
@@ -73,7 +74,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
                         final ListNBT filterableItems = listItem.getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
                         for (int j = 0; j < filterableItems.size(); ++j)
                         {
-                            allowedItems.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(j))));
+                            allowedItems.add(new ItemStackStorage(ItemStack.of(filterableItems.getCompound(j))));
                         }
                     }
                 }

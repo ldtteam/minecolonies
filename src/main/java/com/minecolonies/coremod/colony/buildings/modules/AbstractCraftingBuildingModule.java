@@ -269,7 +269,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 requiredItems.put(itemStorage, new Tuple<>(amount, false));
             }
 
-            final ItemStorage output = new ItemStorage(recipeStorage.getA().getPrimaryOutput());
+            final ItemStorage output = new ItemStackStorage(recipeStorage.getA().getPrimaryOutput());
             int amount = output.getAmount() * recipeStorage.getB();
             if (requiredItems.containsKey(output))
             {

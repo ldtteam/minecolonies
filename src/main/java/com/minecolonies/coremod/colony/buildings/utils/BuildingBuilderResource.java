@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.utils;
 
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Information about a resource. - How many are needed to finish the build - How many are available to the builder - How many are in the player's inventory (client side only)
  */
-public class BuildingBuilderResource extends ItemStorage
+public class BuildingBuilderResource extends ItemStackHandling
 {
     private int amountAvailable;
     private int amountPlayer;

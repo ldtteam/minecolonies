@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blocks.decorative.BlockTimberFrame;
 import com.ldtteam.structurize.blocks.types.TimberFrameCentreType;
 import com.ldtteam.structurize.blocks.types.TimberFrameType;
 import com.ldtteam.structurize.blocks.types.WoodType;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.DataGenerator;
@@ -38,8 +39,8 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
             for (final TimberFrameCentreType centreType : TimberFrameCentreType.values())
             {
                     final String id = String.format("%s_%s_timber_frame", frameType.getSerializedName(), centreType.getSerializedName());
-                    final ItemStorage frame = new ItemStorage(new ItemStack(frameType.getMaterial(), 1));
-                    final ItemStorage centre = new ItemStorage(new ItemStack(centreType.getMaterial()));
+                    final ItemStorage frame = new ItemStackHandling(new ItemStack(frameType.getMaterial(), 1));
+                    final ItemStorage centre = new ItemStackHandling(new ItemStack(centreType.getMaterial()));
 
                     final List<ItemStack> results = Arrays.stream(TimberFrameType.values())
                                                       .map(type -> idToStructurize(BlockTimberFrame.getName(type, frameType, centreType), 4))
@@ -47,7 +48,7 @@ public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
 
 
                     CustomRecipeBuilder.create("sawmill_crafting", id)
-                      .inputs(Lists.newArrayList(frame, centre, new ItemStorage(new ItemStack(buildTool.get()))))
+                      .inputs(Lists.newArrayList(frame, centre, new ItemStackHandling(new ItemStack(buildTool.get()))))
                       .alternateOutputs(results.subList(1, results.size()))
                       .result(results.get(0))
                       .mustExist(true)

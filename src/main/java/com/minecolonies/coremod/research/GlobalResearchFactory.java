@@ -3,6 +3,7 @@ package com.minecolonies.coremod.research;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IResearchRequirement;
@@ -147,7 +148,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
                 {
                     is.setTag(compound.getCompound(TAG_COST_NBT));
                 }
-                research.addCost(new ItemStorage(is, false, !is.hasTag()));
+                research.addCost(new ItemStackHandling(is, false, !is.hasTag()));
             }
         });
         NBTUtils.streamCompound(nbt.getList(TAG_REQS, Constants.NBT.TAG_COMPOUND)).

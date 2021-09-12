@@ -28,6 +28,7 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
@@ -1029,7 +1030,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 }
                 else
                 {
-                    final ItemStorage newStorage = new ItemStorage(stack);
+                    final ItemStorage newStorage = new ItemStackStorage(stack);
                     newStorage.setAmount(ItemStackUtils.getSize(stack) - Math.max(0, rest));
                     localAlreadyKept.add(newStorage);
                 }
@@ -1071,7 +1072,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             {
                 for(ItemStack item : request.getDeliveries())
                 {
-                    final ItemStorage output = new ItemStorage(item);
+                    final ItemStorage output = new ItemStackStorage(item);
                     int amount = output.getAmount();
                     if (requiredItems.containsKey(output))
                     {

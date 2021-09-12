@@ -11,7 +11,7 @@ import static com.minecolonies.api.util.constant.Constants.PARAMS_ITEMSTORAGE;
 /**
  * Interface for the IItemStorageFactory which is responsible for creating and maintaining ItemStorage objects.
  */
-public interface IImmutableItemStorageFactory extends IFactory<FactoryVoidInput, ItemStorage>
+public interface IItemStackHandlingFactory extends IFactory<FactoryVoidInput, ItemStorage>
 {
     @NotNull
     @Override
@@ -32,9 +32,22 @@ public interface IImmutableItemStorageFactory extends IFactory<FactoryVoidInput,
             throw new IllegalArgumentException("Second parameter is supposed to be an Integer!");
         }
 
+        if (context.length >= PARAMS_ITEMSTORAGE + 1 && !(context[2] instanceof Boolean))
+        {
+            throw new IllegalArgumentException("Third parameter is supposed to be an Boolean!");
+        }
+
+        if (context.length >= PARAMS_ITEMSTORAGE + 2 && !(context[3] instanceof Boolean))
+        {
+            throw new IllegalArgumentException("Fourth parameter is supposed to be an Boolean!");
+        }
+
         final ItemStack stack = (ItemStack) context[0];
         final int size = (int) context[1];
-        return getNewInstance(stack, size);
+        final boolean ignoreDamage = context.length >= 3 ? (Boolean) context[2] : false;
+        final boolean ignoreNBT = context.length >= 4 ? (Boolean) context[3] : false;
+
+        return getNewInstance(stack, size, ignoreDamage, ignoreNBT);
     }
 
     /**
@@ -45,6 +58,6 @@ public interface IImmutableItemStorageFactory extends IFactory<FactoryVoidInput,
      * @return a new Instance of ItemStorage.
      */
     @NotNull
-    ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size);
+    ItemStorage getNewInstance(@NotNull final ItemStack stack, final int size, final boolean ignoreDamage, final boolean ignoreNBT);
 }
 

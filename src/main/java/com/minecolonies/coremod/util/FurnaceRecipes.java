@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -54,7 +55,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
                         final RecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
                           TypeConstants.RECIPE,
                           StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                          ImmutableList.of(new ItemStorage(smeltable)),
+                          ImmutableList.of(new ItemStackHandling(smeltable)),
                           1,
                           recipe.getResultItem(),
                           Blocks.FURNACE,
@@ -64,7 +65,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
 
                         final ItemStack output = recipe.getResultItem().copy();
                         output.setCount(1);
-                        reverseRecipes.put(new ItemStorage(output), storage);
+                        reverseRecipes.put(new ItemStackHandling(output), storage);
                     }
                 }
             }
@@ -105,7 +106,7 @@ public class FurnaceRecipes implements IFurnaceRecipes
      */
     public ItemStack getSmeltingResult(final ItemStack itemStack)
     {
-        final RecipeStorage storage = recipes.getOrDefault(new ItemStorage(itemStack), null);
+        final RecipeStorage storage = recipes.getOrDefault(new ItemStackHandling(itemStack), null);
         if (storage != null)
         {
             return storage.getPrimaryOutput();

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.generation.defaults;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.DataGenerator;
@@ -33,8 +34,8 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
     protected void registerRecipes(@NotNull final Consumer<IFinishedRecipe> consumer)
     {
         final List<ItemStorage> input = new ArrayList<>();
-        input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));
-        input.add(new ItemStorage(new ItemStack(Items.GRAVEL, 4)));
+        input.add(new ItemStackHandling(new ItemStack(Items.SAND, 4)));
+        input.add(new ItemStackHandling(new ItemStack(Items.GRAVEL, 4)));
 
         for (final DyeColor color : DyeColor.values())
         {
@@ -49,7 +50,7 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             }
 
             final List<ItemStorage> customInput = new ArrayList<>(input);
-            customInput.add(new ItemStorage(new ItemStack(dye)));
+            customInput.add(new ItemStackHandling(new ItemStack(dye)));
 
             CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", powder.getRegistryName().getPath())
                     .inputs(customInput)
@@ -57,7 +58,7 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
                     .build(consumer);
 
             CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", concrete.getRegistryName().getPath())
-                    .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
+                    .inputs(Collections.singletonList(new ItemStackHandling(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)
                     .build(consumer);

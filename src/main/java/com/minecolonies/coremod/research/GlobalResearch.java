@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.crafting.ItemStackHandling;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.effects.IResearchEffect;
@@ -801,7 +802,7 @@ public class GlobalResearch implements IGlobalResearch
                      reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).isJsonPrimitive() && reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsJsonPrimitive().isString())
                 {
                     final ItemStack itemStack = idToItemStack(reqArrayElement.getAsJsonObject().get(RESEARCH_ITEM_NAME_PROP).getAsString());
-                    final ItemStorage itemStorage = new ItemStorage(itemStack, false, !itemStack.hasTag());
+                    final ItemStorage itemStorage = new ItemStackHandling(itemStack, false, !itemStack.hasTag());
                     if(reqArrayElement.getAsJsonObject().has(RESEARCH_QUANTITY_PROP) && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).isJsonPrimitive()
                          && reqArrayElement.getAsJsonObject().get(RESEARCH_QUANTITY_PROP).getAsJsonPrimitive().isNumber())
                     {

@@ -23,4 +23,10 @@ public class ImmutableItemStorage extends ItemStorage
     {
         throw new UnsupportedOperationException("Immutable instance of ItemStorage can't set value!");
     }
+
+    @Override
+    public ItemStorage copy()
+    {
+        return new ItemStackHandling(this.getItemStack(), this.ignoreDamageValue(), this.ignoreNBT());
+    }
 }

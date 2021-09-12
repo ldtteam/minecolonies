@@ -14,6 +14,8 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStackHandling;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
@@ -220,7 +222,7 @@ public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuild
                     final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
                       TypeConstants.RECIPE,
                       StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                      ImmutableList.of(new ItemStorage(storage.getPrimaryOutput().copy())),
+                      ImmutableList.of(new ItemStackHandling(storage.getPrimaryOutput().copy())),
                       1,
                       smeltResult,
                       Blocks.FURNACE);

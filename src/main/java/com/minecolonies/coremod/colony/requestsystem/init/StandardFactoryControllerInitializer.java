@@ -9,6 +9,8 @@ import com.minecolonies.api.colony.requestsystem.token.StandardTokenFactory;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingsFactories;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeFactory;
 import com.minecolonies.coremod.colony.crafting.ImmutableItemStorageFactory;
+import com.minecolonies.coremod.colony.crafting.ItemStackHandlingFactory;
+import com.minecolonies.coremod.colony.crafting.ItemStackStorageFactory;
 import com.minecolonies.coremod.colony.crafting.ItemStorageFactory;
 import com.minecolonies.coremod.colony.crafting.RecipeStorageFactory;
 import com.minecolonies.coremod.colony.requestsystem.data.*;
@@ -62,6 +64,8 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new StandardPlayerRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new StandardRetryingRequestResolverFactory());
         StandardFactoryController.getInstance().registerNewFactory(new RecipeStorageFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new ItemStackStorageFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new ItemStackHandlingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new ItemStorageFactory());
         StandardFactoryController.getInstance().registerNewFactory(new ImmutableItemStorageFactory());
         StandardFactoryController.getInstance().registerNewFactory(new GlobalResearchFactory());

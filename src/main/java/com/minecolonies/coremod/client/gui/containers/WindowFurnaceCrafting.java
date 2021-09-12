@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui.containers;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.crafting.ItemStackStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -113,7 +114,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
             if (module.canLearnFurnaceRecipes())
             {
                 final List<ItemStorage> input = new ArrayList<>();
-                input.add(new ItemStorage(container.slots.get(0).getItem()));
+                input.add(new ItemStackStorage(container.slots.get(0).getItem()));
                 final ItemStack primaryOutput = container.slots.get(1).getItem().copy();
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
