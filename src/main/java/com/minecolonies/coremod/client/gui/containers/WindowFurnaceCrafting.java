@@ -100,7 +100,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new OnButtonPress());
-        this.addWidget(doneButton);
+        this.addRenderableWidget(doneButton);
         if (!module.canLearnFurnaceRecipes())
         {
             doneButton.active = false;

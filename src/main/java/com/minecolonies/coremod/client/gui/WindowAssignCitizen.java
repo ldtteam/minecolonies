@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -153,7 +154,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         if (work != null)
                         {
                             final double oldDistance = BlockPosUtil.getDistance2D(work, home);
-                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homeHut.currently", oldDistance).getString();
+                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homehut.currently", oldDistance).getString();
                             better = newDistance < oldDistance;
                             if (oldDistance >= FAR_DISTANCE_THRESHOLD)
                             {
@@ -162,12 +163,12 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         }
                         else
                         {
-                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homeHut.current", home.getX(), home.getY(), home.getZ()).getString();
+                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homehut.current", home.getX(), home.getY(), home.getZ()).getString();
                         }
                     }
 
                     final Text newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Text.class);
-                    newLivingLabel.setText(new TranslatableComponent(citizen.getJob()).getString() + workString);
+                    newLivingLabel.setText(new TranslatableComponent(citizen.getJob().toLowerCase(Locale.ROOT)).getString() + workString);
                     if (better)
                     {
                         newLivingLabel.setColors(DARKGREEN);

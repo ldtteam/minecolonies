@@ -64,7 +64,7 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="jei"
     mandatory=false
-    versionRange="[8.0.0.14,)"
+    versionRange="[8.0.0.16,)"
     ordering="NONE"
     side="BOTH"
 #[[dependencies.minecolonies]]

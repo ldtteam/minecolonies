@@ -112,7 +112,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               new TextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
               dir
             );
-            this.addWidget(db);
+            this.addRenderableWidget(db);
         }
     }
 

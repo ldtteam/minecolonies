@@ -178,7 +178,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
             @Override
             public boolean mayPlace(final ItemStack par1ItemStack)
             {
-                return false;
+                return true;
             }
 
             @Override
@@ -228,10 +228,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
                   || mode == ClickType.SWAP)
             {
                 final Slot slot = this.slots.get(slotId);
-
-                final ItemStack dropping = playerIn.inventoryMenu.getCarried();
-
-                handleSlotClick(slot, dropping);
+                handleSlotClick(slot, this.getCarried());
             }
         }
         else

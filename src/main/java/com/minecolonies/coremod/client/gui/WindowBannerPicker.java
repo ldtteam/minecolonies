@@ -141,7 +141,7 @@ public class WindowBannerPicker extends Screen
     {
         int paletteX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, 0, 0) - 70;
 
-        this.colors = new ColorPalette(paletteX, this.height/2, 2, this::addWidget);
+        this.colors = new ColorPalette(paletteX, this.height/2, 2, this::addRenderableWidget);
         colors.onchange = color -> setLayer(null, color);
 
         createLayerButtons();
@@ -158,10 +158,10 @@ public class WindowBannerPicker extends Screen
         {
             int posX = (this.width - SIDE * 6) / 2 + layer * SIDE;
 
-            this.addWidget(new LayerButton(posX, GUI_Y, SIDE, SIDE, layer));
+            this.addRenderableWidget(new LayerButton(posX, GUI_Y, SIDE, SIDE, layer));
         }
 
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 center(this.width, 6, SIDE, 7, 0), GUI_Y,
                 SIDE, SIDE,
                 new TextComponent(ChatFormatting.RED + "X"),
@@ -186,7 +186,7 @@ public class WindowBannerPicker extends Screen
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
             int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
-            this.addWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
+            this.addRenderableWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
         }
     }
 
@@ -195,7 +195,7 @@ public class WindowBannerPicker extends Screen
      */
     protected void createCloseButtons()
     {
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
@@ -209,7 +209,7 @@ public class WindowBannerPicker extends Screen
                     window.open();
                 }
         ));
-        this.addWidget(new Button(
+        this.addRenderableWidget(new Button(
                 center(this.width, 2, 80, 0, 10),
                 this.height - 40,
                 80, SIDE,

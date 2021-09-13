@@ -8,7 +8,7 @@
             <label id="citizen" size="100% 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
             <label id="job" size="100% 12" pos="5 14" textalign="MIDDLE_LEFT" color="yellow"/>
             <label id="living" size="100% 12" pos="5 24" textalign="MIDDLE_LEFT" color="yellow"/>
-            <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonAssign)"/>
+            <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonassign)"/>
         </view>
     </list>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>

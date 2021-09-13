@@ -308,6 +308,13 @@ public class WorldUtil
     {
         final Tuple<BlockPos, BlockPos> corners = building.getCorners();
 
-        return world.getEntitiesOfClass(clazz, new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()), predicate);
+        if (predicate == null)
+        {
+            return world.getEntitiesOfClass(clazz,
+              new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()));
+        }
+        return world.getEntitiesOfClass(clazz,
+          new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()),
+          predicate);
     }
 }

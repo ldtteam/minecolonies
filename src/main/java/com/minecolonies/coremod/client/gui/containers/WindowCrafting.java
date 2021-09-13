@@ -132,11 +132,12 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
          */
         final Button
           doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
-        this.addWidget(doneButton);
+        this.addRenderableWidget(doneButton);
         if (!module.canLearnCraftingRecipes())
         {
             doneButton.active = false;
         }
+
     }
 
     public class OnButtonPress implements Button.OnPress
