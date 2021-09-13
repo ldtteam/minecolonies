@@ -130,7 +130,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setText(new TranslatableComponent("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(new TranslatableComponent("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ROOT)));
     }
 
     /**
@@ -312,7 +312,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 textBuilder.newLine(); // finish the current line
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
-                  .setText((citizen.getJob().isEmpty() ? "" : new TranslatableComponent(citizen.getJob()).getString() + ": ") + citizen.getName());
+                  .setText((citizen.getJob().isEmpty() ? "" : new TranslatableComponent(citizen.getJob().toLowerCase(Locale.ROOT)).getString() + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
             }
         });

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -120,7 +121,7 @@ public class WindowBannerPicker extends Screen
 
         this.colony = colony;
         this.window = hallWindow;
-        this.modelRender = this.minecraft.getEntityModels().bakeLayer(ModelLayers.BANNER).getChild("flag");
+        this.modelRender = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BANNER).getChild("flag");
 
         /* Get all patterns, then remove excluded and item-required patterns */
         List<BannerPattern> exclusion = new ArrayList<>();
