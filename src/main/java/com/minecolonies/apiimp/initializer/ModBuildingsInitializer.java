@@ -230,7 +230,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.home = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutHome)
-                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "home", 5, ModBuildings.home))
+                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5, ModBuildings.home))
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .addBuildingModuleProducer(BedHandlingModule::new)
