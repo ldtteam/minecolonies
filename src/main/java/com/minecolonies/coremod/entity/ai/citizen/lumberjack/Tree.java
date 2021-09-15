@@ -339,9 +339,10 @@ public class Tree
      * @param world         the world.
      * @param pos           The coordinates.
      * @param treesToNotCut the trees the lumberjack is not supposed to cut.
+     * @param dyntreesize   the radius a dynamic tree must have in order to get cut down.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut, final int dyntreesize)
     {
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
@@ -354,7 +355,7 @@ public class Tree
         // Only harvest nearly fully grown dynamic trees(8 max)
         if (Compatibility.isDynamicBlock(block)
               && BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS) != null
-              && ((Integer) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getServer().dynamicTreeHarvestSize.get()))
+              && ((Integer) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < dyntreesize))
         {
             return false;
         }
