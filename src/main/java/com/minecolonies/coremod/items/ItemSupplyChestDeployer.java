@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structures.lib.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -11,7 +11,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.Item;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
@@ -173,22 +171,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         final int sizeX = ship.getSizeX();
         final int sizeZ = ship.getSizeZ();
 
-        final CompoundTag nbt = ship.getBlockInfoAsMap().get(anchorPos).getTileEntityData();
         int waterLevel = 3;
-        if (nbt != null)
+        final BlockPos groundLevel = BlueprintTagUtils.getFirstPosForTag(ship, "groundlevel");
+        if (groundLevel != null)
         {
-            final Map<BlockPos, List<String>> tagPosMap = IBlueprintDataProvider.readTagPosMapFrom(nbt);
-            for (final Map.Entry<BlockPos, List<String>> entry : tagPosMap.entrySet())
-            {
-                for (final String tag : entry.getValue())
-                {
-                    if (tag.equals("groundlevel"))
-                    {
-                        waterLevel = entry.getKey().getY();
-                        break;
-                    }
-                }
-            }
+            waterLevel = groundLevel.getY();
         }
 
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
