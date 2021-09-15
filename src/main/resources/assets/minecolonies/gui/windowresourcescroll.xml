@@ -6,7 +6,7 @@
     <image source="minecolonies:textures/gui/builderhut/builder_charcoal_chalk.png" size="19 59" pos="175 180"/>
 
     <label size="100% 11" pos="0 11" color="black" textalign="MIDDLE"
-           label="$(com.minecolonies.coremod.gui.workerhuts.resourceList)"/>
+           label="$(com.minecolonies.coremod.gui.workerhuts.resourcelist)"/>
 
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_left.png" size="6 15" pos="24 22"/>
     <image source="minecolonies:textures/gui/builderhut/builder_sketch_center.png" size="130 15" pos="30 22"/>
