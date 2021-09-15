@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structures.lib.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
@@ -9,7 +10,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.util.BlueprintTagUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
