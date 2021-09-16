@@ -1,18 +1,17 @@
+// Made with Blockbench 4.0.0-beta.0
+// Exported for Minecraft version 1.17 with Mojang mappings
+// Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
-import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.model.HumanoidModel;
-import org.jetbrains.annotations.NotNull;
-
 public class ModelEntityGlassblowerFemale extends CitizenModel<AbstractEntityCitizen>
 {
-
     public ModelEntityGlassblowerFemale(final ModelPart part)
     {
         super(part);
@@ -21,317 +20,74 @@ public class ModelEntityGlassblowerFemale extends CitizenModel<AbstractEntityCit
 
     public static LayerDefinition createMesh()
     {
-        MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
-        PartDefinition partDefinition = meshdefinition.getRoot();
-
-        PartDefinition bodyDefinition = partDefinition.addOrReplaceChild("body",
-          CubeListBuilder.create()
-          , PartPose.offset(0F, 0F, 0F));
-
-        PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
-          CubeListBuilder.create()
-          , PartPose.offset(0F, 0F, 0F));
-
-        PartDefinition pocketDefinition = bodyDefinition.addOrReplaceChild("pocket",
-          CubeListBuilder.create()
-          , PartPose.offset(-2F, 8F, -3F));
-
-        PartDefinition thing1Definition = bodyDefinition.addOrReplaceChild("thing1",
-          CubeListBuilder.create()
-          , PartPose.offset(-1F, 6F, -3F));
-
-        PartDefinition thing2Definition = bodyDefinition.addOrReplaceChild("thing2",
-          CubeListBuilder.create()
-          , PartPose.offset(0F, 6F, -3F));
-
-        PartDefinition rightArmDefinition = partDefinition.addOrReplaceChild("right_arm",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, 2F, 0F));
-
-        PartDefinition leftArmDefinition = partDefinition.addOrReplaceChild("left_arm",
-          CubeListBuilder.create()
-          , PartPose.offset(5F, 2F, 0F));
-
-        PartDefinition gauntlet1Definition = leftArmDefinition.addOrReplaceChild("gauntlet1",
-          CubeListBuilder.create()
-          , PartPose.offset(3.5F, 7F, -2.5F));
-
-        PartDefinition gauntlet2Definition = rightArmDefinition.addOrReplaceChild("gauntlet2",
-          CubeListBuilder.create()
-          , PartPose.offset(-8.5F, 7F, -2.5F));
-
-        PartDefinition Hair5Definition = headDefinition.addOrReplaceChild("Hair5",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, 1F));
-
-        PartDefinition Hair1Definition = headDefinition.addOrReplaceChild("Hair1",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, 1F));
-
-        PartDefinition Hair2Definition = headDefinition.addOrReplaceChild("Hair2",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -2F));
-
-        PartDefinition Hair4Definition = headDefinition.addOrReplaceChild("Hair4",
-          CubeListBuilder.create()
-          , PartPose.offset(3F, -6F, -5F));
-
-        PartDefinition Hair3Definition = headDefinition.addOrReplaceChild("Hair3",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -7F, 1F));
-
-        PartDefinition Hair6Definition = headDefinition.addOrReplaceChild("Hair6",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -7F, -5F));
-
-        PartDefinition Hair7Definition = headDefinition.addOrReplaceChild("Hair7",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -2F));
-
-        PartDefinition Hair8Definition = headDefinition.addOrReplaceChild("Hair8",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -4F));
-
-        PartDefinition Hair12Definition = headDefinition.addOrReplaceChild("Hair12",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, -5F));
-
-        PartDefinition Hair13Definition = headDefinition.addOrReplaceChild("Hair13",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -6F, -4F));
-
-        PartDefinition Hair11Definition = headDefinition.addOrReplaceChild("Hair11",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, -2F));
-
-        PartDefinition Hair15Definition = headDefinition.addOrReplaceChild("Hair15",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, 0F));
-
-        PartDefinition Hair17Definition = headDefinition.addOrReplaceChild("Hair17",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -8F, -5F));
-
-        PartDefinition Hair18Definition = headDefinition.addOrReplaceChild("Hair18",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -7F, -5F));
-
-        PartDefinition Hair19Definition = headDefinition.addOrReplaceChild("Hair19",
-          CubeListBuilder.create()
-          , PartPose.offset(1F, -7F, -5F));
-
-        PartDefinition Hair192Definition = headDefinition.addOrReplaceChild("Hair192",
-          CubeListBuilder.create()
-          , PartPose.offset(1F, -7F, -5F));
-
-        PartDefinition Hair14Definition = headDefinition.addOrReplaceChild("Hair14",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, -1F));
-
-        PartDefinition Hair20Definition = headDefinition.addOrReplaceChild("Hair20",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -7F, 1F));
-
-        PartDefinition Hair21Definition = headDefinition.addOrReplaceChild("Hair21",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, 1F));
-
-        PartDefinition Hair16Definition = headDefinition.addOrReplaceChild("Hair16",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, 2F));
-
-        PartDefinition Hair10Definition = headDefinition.addOrReplaceChild("Hair10",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, 1F));
-
-        PartDefinition Hair9Definition = headDefinition.addOrReplaceChild("Hair9",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -6F, -3F));
-
-        PartDefinition bipedChestDefinition = bodyDefinition.addOrReplaceChild("bipedChest",
-          CubeListBuilder.create()
-          , PartPose.offset(0.5F, 0F, 0F));
-
-        PartDefinition rightLegDefinition = partDefinition.addOrReplaceChild("right_leg",
-          CubeListBuilder.create()
-          , PartPose.offset(-2F, 12F, 0F));
-
-        PartDefinition leftLegDefinition = partDefinition.addOrReplaceChild("left_leg",
-          CubeListBuilder.create()
-          , PartPose.offset(2F, 12F, 0F));
-
-        PartDefinition PonytailBDefinition = headDefinition.addOrReplaceChild("PonytailB",
-          CubeListBuilder.create()
-          , PartPose.offset(0F, 0F, 1F));
-
-        PartDefinition PonytailTDefinition = headDefinition.addOrReplaceChild("PonytailT",
-          CubeListBuilder.create()
-          , PartPose.offset(0F, 1F, 1F));
-
-        PartDefinition Hair22Definition = headDefinition.addOrReplaceChild("Hair22",
-          CubeListBuilder.create()
-          , PartPose.offset(-2F, 2F, 4F));
-
-        PartDefinition Hair23Definition = headDefinition.addOrReplaceChild("Hair23",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -4F, 2F));
-
-        PartDefinition Hair24Definition = headDefinition.addOrReplaceChild("Hair24",
-          CubeListBuilder.create()
-          , PartPose.offset(-2F, -7F, -5F));
-
-        PartDefinition Hair25Definition = headDefinition.addOrReplaceChild("Hair25",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -9F, -5F));
-
-        PartDefinition Hair26Definition = headDefinition.addOrReplaceChild("Hair26",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -4F, -1F));
-
-        PartDefinition Hair28Definition = headDefinition.addOrReplaceChild("Hair28",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -4F));
-
-        PartDefinition Hair29Definition = headDefinition.addOrReplaceChild("Hair29",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -6F, -3F));
-
-        PartDefinition Hair30Definition = headDefinition.addOrReplaceChild("Hair30",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, 1F));
-
-        PartDefinition Hair31Definition = headDefinition.addOrReplaceChild("Hair31",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, -2F));
-
-        PartDefinition Hair32Definition = headDefinition.addOrReplaceChild("Hair32",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, -5F));
-
-        PartDefinition Hair33Definition = headDefinition.addOrReplaceChild("Hair33",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -6F, -4F));
-
-        PartDefinition Hair35Definition = headDefinition.addOrReplaceChild("Hair35",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, 2F));
-
-        PartDefinition Hair34Definition = headDefinition.addOrReplaceChild("Hair34",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, -1F));
-
-        PartDefinition Hair37Definition = headDefinition.addOrReplaceChild("Hair37",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -7F, -5F));
-
-        PartDefinition Hair38Definition = headDefinition.addOrReplaceChild("Hair38",
-          CubeListBuilder.create()
-          , PartPose.offset(2F, -7F, -5F));
-
-        PartDefinition Hair39Definition = headDefinition.addOrReplaceChild("Hair39",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -7F, 1F));
-
-        PartDefinition Hair40Definition = headDefinition.addOrReplaceChild("Hair40",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -7F, 1F));
-
-        PartDefinition Hair42Definition = headDefinition.addOrReplaceChild("Hair42",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -9F, 4F));
-
-        PartDefinition Hair43Definition = headDefinition.addOrReplaceChild("Hair43",
-          CubeListBuilder.create()
-          , PartPose.offset(-3F, 0F, 4F));
-
-        PartDefinition Hair41Definition = headDefinition.addOrReplaceChild("Hair41",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, 1F));
-
-        PartDefinition Hair27Definition = headDefinition.addOrReplaceChild("Hair27",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -2F));
-
-        PartDefinition Hair44Definition = headDefinition.addOrReplaceChild("Hair44",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -4F, 2F));
-
-        PartDefinition Hair45Definition = headDefinition.addOrReplaceChild("Hair45",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -9F, -5F));
-
-        PartDefinition Hair46Definition = headDefinition.addOrReplaceChild("Hair46",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -4F, -1F));
-
-        PartDefinition Hair47Definition = headDefinition.addOrReplaceChild("Hair47",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -2F));
-
-        PartDefinition Hair48Definition = headDefinition.addOrReplaceChild("Hair48",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, -5F));
-
-        PartDefinition Hair49Definition = headDefinition.addOrReplaceChild("Hair49",
-          CubeListBuilder.create()
-          , PartPose.offset(3F, -6F, -5F));
-
-        PartDefinition Hair51Definition = headDefinition.addOrReplaceChild("Hair51",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, -2F));
-
-        PartDefinition Hair52Definition = headDefinition.addOrReplaceChild("Hair52",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, -5F));
-
-        PartDefinition Hair55Definition = headDefinition.addOrReplaceChild("Hair55",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, 2F));
-
-        PartDefinition Hair54Definition = headDefinition.addOrReplaceChild("Hair54",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -4F, -1F));
-
-        PartDefinition Hair53Definition = headDefinition.addOrReplaceChild("Hair53",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -6F, -5F));
-
-        PartDefinition Hair57Definition = headDefinition.addOrReplaceChild("Hair57",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -6F, -5F));
-
-        PartDefinition Hair58Definition = headDefinition.addOrReplaceChild("Hair58",
-          CubeListBuilder.create()
-          , PartPose.offset(2F, -7F, -5F));
-
-        PartDefinition Hair59Definition = headDefinition.addOrReplaceChild("Hair59",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -7F, 1F));
-
-        PartDefinition Hair60Definition = headDefinition.addOrReplaceChild("Hair60",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -7F, 1F));
-
-        PartDefinition Hair61Definition = headDefinition.addOrReplaceChild("Hair61",
-          CubeListBuilder.create()
-          , PartPose.offset(-5F, -8F, 1F));
-
-        PartDefinition Hair62Definition = headDefinition.addOrReplaceChild("Hair62",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -9F, 4F));
-
-        PartDefinition Hair63Definition = headDefinition.addOrReplaceChild("Hair63",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -7F, -5F));
-
-        PartDefinition Hair56Definition = headDefinition.addOrReplaceChild("Hair56",
-          CubeListBuilder.create()
-          , PartPose.offset(-4F, -8F, -5F));
-
-        PartDefinition Hair50Definition = headDefinition.addOrReplaceChild("Hair50",
-          CubeListBuilder.create()
-          , PartPose.offset(4F, -8F, 1F));
-
-        return LayerDefinition.create(meshdefinition, 128, 64);
-    }
+		MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+		PartDefinition partdefinition = meshdefinition.getRoot();
+
+		PartDefinition head = partdefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.0F))
+		.texOffs(32, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		PartDefinition glasses = head.addOrReplaceChild("glasses", CubeListBuilder.create().texOffs(98, 6).addBox(-4.0F, -4.0F, -4.01F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F))
+		.texOffs(108, 6).addBox(3.0F, -4.0F, -4.01F, 1.0F, 1.0F, 0.0F, new CubeDeformation(0.05F))
+		.texOffs(104, 0).addBox(4.01F, -4.0F, -4.0F, 0.0F, 1.0F, 8.0F, new CubeDeformation(0.05F))
+		.texOffs(88, 0).addBox(-4.01F, -4.0F, -4.0F, 0.0F, 1.0F, 8.0F, new CubeDeformation(0.05F))
+		.texOffs(96, 9).addBox(-4.0F, -4.0F, 4.01F, 8.0F, 1.0F, 0.0F, new CubeDeformation(0.05F))
+		.texOffs(101, 2).addBox(-1.0F, -4.1F, -4.8F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.21F)), PartPose.offset(0.0F, -0.2F, 0.0F));
+
+		PartDefinition crystalLeft = glasses.addOrReplaceChild("crystalLeft", CubeListBuilder.create().texOffs(111, 2).addBox(-3.0F, -6.0F, -4.8F, 2.0F, 2.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(111, 0).addBox(-3.0F, -6.6F, -4.8F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(117, 1).addBox(-1.4F, -6.5F, -4.8F, 1.0F, 3.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(107, 1).addBox(-3.6F, -6.5F, -4.8F, 1.0F, 3.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(111, 5).addBox(-3.0F, -4.4F, -4.8F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F)), PartPose.offset(4.0F, 1.5F, 0.0F));
+
+		PartDefinition crystalRight = glasses.addOrReplaceChild("crystalRight", CubeListBuilder.create().texOffs(91, 2).addBox(-3.0F, -6.0F, -4.8F, 2.0F, 2.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(91, 0).addBox(-3.0F, -6.6F, -4.8F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(97, 1).addBox(-1.4F, -6.5F, -4.8F, 1.0F, 3.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(87, 1).addBox(-3.6F, -6.5F, -4.8F, 1.0F, 3.0F, 1.0F, new CubeDeformation(-0.2F))
+		.texOffs(91, 5).addBox(-3.0F, -4.4F, -4.8F, 2.0F, 1.0F, 1.0F, new CubeDeformation(-0.2F)), PartPose.offset(0.0F, 1.5F, 0.0F));
+
+		PartDefinition HairExtension = head.addOrReplaceChild("HairExtension", CubeListBuilder.create().texOffs(56, 0).addBox(-4.0F, 0.0F, 3.0F, 8.0F, 7.0F, 1.0F, new CubeDeformation(0.5F)), PartPose.offset(0.0F, 1.0F, 0.0F));
+
+		PartDefinition Ponytail = head.addOrReplaceChild("Ponytail", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+
+		PartDefinition ponyTailTip_r1 = Ponytail.addOrReplaceChild("ponyTailTip_r1", CubeListBuilder.create().texOffs(88, 55).mirror().addBox(0.0F, 0.0F, 0.0F, 1.0F, 5.0F, 1.0F, new CubeDeformation(0.1F)).mirror(false), PartPose.offsetAndRotation(-0.5F, -25.0F, 4.8F, 0.2231F, 0.0F, 0.0F));
+
+		PartDefinition ponytailBase_r1 = Ponytail.addOrReplaceChild("ponytailBase_r1", CubeListBuilder.create().texOffs(86, 48).mirror().addBox(0.0F, 0.0F, 0.0F, 2.0F, 5.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-1.0F, -28.0F, 2.0F, 0.5577F, 0.0F, 0.0F));
+
+		PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(16, 32).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(0.0F, 0.0F, 0.0F));
+
+		PartDefinition breast = body.addOrReplaceChild("breast", CubeListBuilder.create().texOffs(64, 49).addBox(-3.0F, 1.8938F, -5.716F, 8.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+		.texOffs(64, 55).addBox(-3.0F, 1.8938F, -5.716F, 8.0F, 3.0F, 3.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(-1.0F, 3.0F, 4.0F, -0.5236F, 0.0F, 0.0F));
+
+		PartDefinition apronBody = body.addOrReplaceChild("apronBody", CubeListBuilder.create().texOffs(104, 15).addBox(-4.4F, -15.9F, -2.9F, 0.0F, 1.0F, 5.0F, new CubeDeformation(0.15F))
+		.texOffs(94, 15).addBox(4.4F, -15.9F, -2.9F, 0.0F, 1.0F, 5.0F, new CubeDeformation(0.15F))
+		.texOffs(96, 21).addBox(-4.0F, -15.8F, 2.0F, 8.0F, 1.0F, 0.0F, new CubeDeformation(0.25F))
+		.texOffs(96, 11).addBox(-4.0F, -20.0F, -2.8F, 8.0F, 8.0F, 0.0F, new CubeDeformation(0.249F))
+		.texOffs(94, 15).addBox(2.7F, -24.4F, -2.7F, 1.0F, 4.0F, 0.0F, new CubeDeformation(0.15F))
+		.texOffs(112, 15).addBox(-3.7F, -24.4F, -2.7F, 1.0F, 4.0F, 0.0F, new CubeDeformation(0.15F))
+		.texOffs(90, 11).addBox(-3.7F, -24.4F, -2.4F, 1.0F, 0.0F, 4.0F, new CubeDeformation(0.15F))
+		.texOffs(108, 11).addBox(2.7F, -24.4F, -2.4F, 1.0F, 0.0F, 4.0F, new CubeDeformation(0.15F))
+		.texOffs(98, 22).addBox(-2.5F, -24.4F, 0.6F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.15F))
+		.texOffs(98, 31).addBox(-3.0F, -14.6F, -3.3F, 6.0F, 2.0F, 0.0F, new CubeDeformation(0.25F))
+		.texOffs(98, 33).addBox(1.0F, -16.4F, -3.4F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F))
+		.texOffs(102, 33).addBox(-0.4F, -16.4F, -3.4F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.3F));
+
+		PartDefinition right_arm = partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(40, 32).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
+
+		PartDefinition left_arm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(48, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(5.0F, 2.0F, 0.0F));
+
+		PartDefinition right_leg = partdefinition.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
+		.texOffs(0, 32).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
+
+		PartDefinition apronRightLeg = right_leg.addOrReplaceChild("apronRightLeg", CubeListBuilder.create().texOffs(104, 23).addBox(-4.25F, -11.5F, -2.5F, 4.0F, 8.0F, 0.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
+
+		PartDefinition left_leg = partdefinition.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(16, 48).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false)
+		.texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
+
+		PartDefinition apronLeftLeg = left_leg.addOrReplaceChild("apronLeftLeg", CubeListBuilder.create().texOffs(96, 23).addBox(0.25F, -11.5F, -2.5F, 4.0F, 8.0F, 0.0F, new CubeDeformation(0.25F)), PartPose.offset(-1.9F, 12.0F, 0.0F));
+
+		return LayerDefinition.create(meshdefinition, 128, 64);
+	}
 }
