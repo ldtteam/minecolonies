@@ -18,7 +18,7 @@
     <label size="100% 11" pos="0 49" id="progress" label="" color="black" textalign="MIDDLE"/>
 
     <list id="resources" size="164 71%" pos="13 60">
-        <box size="100% 30" linewidth="2">
+        <box size="100% 30" linewidth="1">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
             <image id="indeliveryicon" source="minecolonies:textures/gui/citizen/delivery_16x16.png" size="16 16" pos="120 12" visible="false"/>
             <label id="resourceName" size="135 9" pos="18 2" color="black"/>

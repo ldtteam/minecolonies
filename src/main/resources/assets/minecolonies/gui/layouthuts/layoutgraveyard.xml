@@ -4,7 +4,7 @@
 
     <label size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.graves):"/>
     <list id="graves" size="164 102" pos="13 30">
-        <box size="100% 34" linewidth="2">
+        <box size="100% 34" linewidth="1">
             <label id="name" color="black" pos="20 2" size="130 9"/>
             <label id="dist" color="black" pos="20 12" size="65 9"/>
             <label id="dir" color="black" pos="20 22" size="65 9"/>
@@ -13,7 +13,7 @@
 
     <label size="130 11" pos="30 134" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.graveyard.rip):"/>
     <list id="citizen" size="164 60" pos="13 145">
-        <box size="100% 12" linewidth="2">
+        <box size="100% 12" linewidth="1">
             <label id="citizenName" color="black" pos="20 2" size="130 9"/>
         </box>
     </list>

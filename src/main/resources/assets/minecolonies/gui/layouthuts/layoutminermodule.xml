@@ -3,7 +3,7 @@
     <label size="130 11" pos="30 14" textalign="MIDDLE" color="black"
            label="$(com.minecolonies.coremod.gui.workerhuts.minerNodeList):"/>
     <list id="levels" size="164 185" pos="13 29">
-        <box size="100% 28" linewidth="2">
+        <box size="100% 28" linewidth="1">
             <label id="lvl" size="50 13" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
             <button id="changeToLevel" size="70 13" pos="30 2" label="$(com.minecolonies.coremod.gui.workerhuts.minerminenode)"/>
             <button id="repair" size="50 13" pos="103 2" label="$(com.minecolonies.coremod.gui.workerhuts.minerrepairnode)"/>

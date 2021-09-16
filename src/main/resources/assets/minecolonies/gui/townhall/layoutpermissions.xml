@@ -4,7 +4,7 @@
     <switch id="pages" size="100% 100%" pos="75 0">
         <view id="pageAddPlayer">
             <list id="users" size="148 171" pos="201 36">
-                <box size="100% 35" linewidth="2">
+                <box size="100% 35" linewidth="1">
                     <label id="name" size="100 11" pos="5 2" color="black"/>
                     <button id="removePlayer" size="11 11" pos="7 2" align="TOP_RIGHT" label="X" textscale="0.5"/>
                     <label id="rank" size="129 11" pos="5 15" color="black" />
@@ -35,7 +35,7 @@
                 <view id="permissionsList">
                     <buttonimage id="permissionsModeToggle" label="Settings" size="129 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png" textcolor="black"/>
                     <list id="rankList" size="148 150" pos="0 19">
-                        <box size="100% 21" linewidth="2">
+                        <box size="100% 21" linewidth="1">
                             <label id="name" size="110 18" pos="2 2" color="black" />
                             <button id="trigger" size="24 17" pos="2 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerhuts.retrieveoff)" />
                             <label id="index" pos="100 100" />
@@ -79,7 +79,7 @@
         <view id="freeBlockList">
             <label size="148 11" pos="201 24" color="black" label="$(com.minecolonies.coremod.gui.townhall.freeblocks)"/>
             <list id="blocks" size="148 171" pos="201 36">
-                <box size="100% 30" linewidth="2">
+                <box size="100% 30" linewidth="1">
                     <label id="name" size="100 12" pos="5 2" color="black"/>
                     <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
                 </box>

@@ -5,7 +5,7 @@
 
     <list id="workOrderList" size="148 166" pos="276 50">
         <view size="100% 30">
-            <box size="100% 30" linewidth="2">
+            <box size="100% 30" linewidth="1">
                 <button id="plus" size="15 15" label="↥" pos="0 0"/>
                 <button id="minus" size="15 15" label="↧" pos="0 15"/>
                 <label id="assignee" size="50 8" pos="25 15" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>

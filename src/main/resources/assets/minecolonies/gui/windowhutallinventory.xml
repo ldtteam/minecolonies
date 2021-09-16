@@ -9,7 +9,7 @@
                  source="minecolonies:textures/gui/builderhut/builder_button_mini.png"
                  label="v^"/>
     <list id="allinventorylist" size="165 156" pos="15 55">
-        <box size="100% 18" linewidth="2">
+        <box size="100% 18" linewidth="1">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>
             <label id="ressourceStackName" size="100 12" pos="20 3" color="black"/>
             <label id="quantities" size="25 18" pos="117 1" color="black"/>

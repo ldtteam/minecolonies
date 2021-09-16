@@ -6,7 +6,7 @@
     <label size="164 11" pos="13 40" id="stepprogress" textalign="MIDDLE" label="" color="black"/>
     <label size="164 11" pos="13 51" id="progress" textalign="MIDDLE" label="" color="black"/>
     <list id="resources" size="164 163" pos="13 62">
-        <box size="100% 30" linewidth="2">
+        <box size="100% 30" linewidth="1">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
             <label id="resourceName" size="100 12" pos="20 3" textalign="MIDDLE_LEFT" color="black"/>
             <label id="resourceMissing" size="50 12" pos="2 18" textalign="MIDDLE_LEFT" color="black"/>
