@@ -18,6 +18,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Vector3f;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -96,6 +98,10 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
       final int lightA,
       final int lightB)
     {
+        if (te.getBlockState().getValue(BlockScarecrow.HALF) == DoubleBlockHalf.UPPER)
+        {
+            return;
+        }
         //Store the transformation
         matrixStack.pushPose();
         //Set viewport to tile entity position to render it
