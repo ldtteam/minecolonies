@@ -27,9 +27,10 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     @Override
     public void setup(final EntityRendererProvider.Context context)
     {
-        register(BipedModelType.BASE, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZEN)));
+        register(BipedModelType.BASE, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleCitizen(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZEN)));
+        register(BipedModelType.SETTLER, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleSettler(context.bakeLayer(ClientRegistryHandler.FEMALE_SETTLER)));
         register(BipedModelType.CUSTOM, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), null);
-        register(BipedModelType.NOBLE, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityCitizenFemaleNoble(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZENNOBLE)));
+        register(BipedModelType.NOBLE, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleNoble(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZENNOBLE)));
         register(BipedModelType.ARISTOCRAT, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleAristocrat(context.bakeLayer(ClientRegistryHandler.FEMALE_ARISTOCRAT)));
         register(BipedModelType.BUILDER, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityBuilderFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BUILDER)));
         register(BipedModelType.COURIER, new ModelEntityCourierMale(context.bakeLayer(ClientRegistryHandler.MALE_COURIER)), new ModelEntityCourierFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_COURIER)));

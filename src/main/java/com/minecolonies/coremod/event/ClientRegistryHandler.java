@@ -60,6 +60,7 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_COMPOSTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_composter"), "male_composter");
     public static final ModelLayerLocation MALE_FLETCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_fletcher"), "male_fletcher");
     public static final ModelLayerLocation FEMALE_CITIZEN    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_citizen"), "female_citizen");
+    public static final ModelLayerLocation FEMALE_SETTLER    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_settler"), "female_settler");
     public static final ModelLayerLocation FEMALE_FISHER     = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_fisherman"), "female_fisherman");
     public static final ModelLayerLocation MALE_RABBITHERDER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_rabbitherder"), "male_rabbitherder");
     public static final ModelLayerLocation FEMALE_FLETCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_fletcher"), "female_fletcher");
@@ -153,6 +154,7 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_COMPOSTER, ModelEntityComposterMale::createMesh);
         event.registerLayerDefinition(MALE_FLETCHER, ModelEntityFletcherMale::createMesh);
         event.registerLayerDefinition(FEMALE_CITIZEN, ModelEntityFemaleCitizen::createMesh);
+        event.registerLayerDefinition(FEMALE_SETTLER, ModelEntityFemaleSettler::createMesh);
         event.registerLayerDefinition(FEMALE_FISHER, ModelEntityFisherFemale::createMesh);
         event.registerLayerDefinition(MALE_RABBITHERDER, ModelEntityRabbitHerderMale::createMesh);
         event.registerLayerDefinition(FEMALE_FLETCHER, ModelEntityFletcherFemale::createMesh);
@@ -166,7 +168,7 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_CHICKENFARMER, ModelEntityChickenFarmerMale::createMesh);
         event.registerLayerDefinition(MALE_GLASSBLOWER, ModelEntityGlassblowerMale::createMesh);
         event.registerLayerDefinition(FEMALE_PIGFARMER, ModelEntityPigFarmerFemale::createMesh);
-        event.registerLayerDefinition(FEMALE_CITIZENNOBLE, ModelEntityCitizenFemaleNoble::createMesh);
+        event.registerLayerDefinition(FEMALE_CITIZENNOBLE, ModelEntityFemaleNoble::createMesh);
         event.registerLayerDefinition(MALE_BLACKSMITH, ModelEntityBlacksmithMale::createMesh);
         event.registerLayerDefinition(FEMALE_GLASSBLOWER, ModelEntityGlassblowerFemale::createMesh);
         event.registerLayerDefinition(FEMALE_BLACKSMITH, ModelEntityBlacksmithFemale::createMesh);
