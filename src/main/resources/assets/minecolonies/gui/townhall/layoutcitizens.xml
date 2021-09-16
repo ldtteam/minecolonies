@@ -72,7 +72,7 @@
         </scrollgroup>
 
         <image id="deco3" size="73 16" source="minecolonies:textures/gui/citizen/colonist_decor_up.png" pos="37 112"/>
-        <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallOne)" id="recallone" pos="30 132" size="86 17"
+        <buttonimage label="$(com.minecolonies.coremod.gui.townhall.recallone)" id="recallone" pos="30 132" size="86 17"
                      source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
     </box>
 

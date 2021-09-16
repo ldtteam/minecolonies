@@ -79,7 +79,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         CitizenWindowUtils.createHappinessBar(view, this);
         CitizenWindowUtils.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Text.class).setText(
-          "§l" + new TranslatableComponent(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()).getString());
+          "§l" + new TranslatableComponent(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob().toLowerCase(Locale.ROOT)).getString());
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(String.valueOf(view.getId()));
     }
 
