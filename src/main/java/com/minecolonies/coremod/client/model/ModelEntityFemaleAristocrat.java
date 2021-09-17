@@ -16,7 +16,6 @@ public class ModelEntityFemaleAristocrat extends CitizenModel<AbstractEntityCiti
     {
         super(part);
         hat.visible = false;
-        leftArm.visible = false;
     }
 
     public static LayerDefinition createMesh()
