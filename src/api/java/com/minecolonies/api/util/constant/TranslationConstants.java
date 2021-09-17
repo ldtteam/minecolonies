@@ -10,13 +10,13 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED           = "com.minecolonies.coremod.gui.workerhuts.farmerhut.unused";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.South";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.south";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.North";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.north";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.East";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.east";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.West";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.west";
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                              = "block.minecolonies.blockhutfarmer.name";
     @NonNls

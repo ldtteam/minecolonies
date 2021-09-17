@@ -27,7 +27,7 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
      */
     public RendererPirate(final EntityRendererProvider.Context context)
     {
-        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
+        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), 0.5F);
     }
 
     @NotNull
