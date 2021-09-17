@@ -59,6 +59,7 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation FEMALE_UNDERTAKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_undertaker"), "female_undertaker");
     public static final ModelLayerLocation MALE_COMPOSTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_composter"), "male_composter");
     public static final ModelLayerLocation MALE_FLETCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_fletcher"), "male_fletcher");
+    public static final ModelLayerLocation MALE_CITIZEN    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_citizen"), "male_citizen");
     public static final ModelLayerLocation FEMALE_CITIZEN    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_citizen"), "female_citizen");
     public static final ModelLayerLocation FEMALE_SETTLER    = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_settler"), "female_settler");
     public static final ModelLayerLocation FEMALE_FISHER     = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_fisherman"), "female_fisherman");
@@ -154,6 +155,7 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_COMPOSTER, ModelEntityComposterMale::createMesh);
         event.registerLayerDefinition(MALE_FLETCHER, ModelEntityFletcherMale::createMesh);
         event.registerLayerDefinition(FEMALE_CITIZEN, ModelEntityFemaleCitizen::createMesh);
+        event.registerLayerDefinition(MALE_CITIZEN, ModelEntityMaleCitizen::createMesh);
         event.registerLayerDefinition(FEMALE_SETTLER, ModelEntityFemaleSettler::createMesh);
         event.registerLayerDefinition(FEMALE_FISHER, ModelEntityFisherFemale::createMesh);
         event.registerLayerDefinition(MALE_RABBITHERDER, ModelEntityRabbitHerderMale::createMesh);
