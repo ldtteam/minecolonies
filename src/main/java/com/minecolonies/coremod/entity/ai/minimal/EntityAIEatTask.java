@@ -216,6 +216,10 @@ public class EntityAIEatTask extends Goal
     @Override
     public boolean canUse()
     {
+        if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
+        {
+            return false;
+        }
         stateMachine.tick();
         return stateMachine.getState() != IDLE;
     }
