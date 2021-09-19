@@ -69,8 +69,7 @@ public class ModelEntityChildFemale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
           CubeListBuilder.create()
             .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)
-            .texOffs(20, 37).addBox(0.0F, 0.0F, 0.0F, 9.0F, 1.0F, 8.0F).mirror()
-          , PartPose.offsetAndRotation(-4.5F, -8.5F, -2.0F, -0.5236F, 0.0F, 0.0F));
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition headDressDefinition = headDefinition.addOrReplaceChild("headDress",
           CubeListBuilder.create()
