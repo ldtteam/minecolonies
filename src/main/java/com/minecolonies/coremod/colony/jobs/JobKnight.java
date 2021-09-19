@@ -33,7 +33,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     /**
      * Desc of knight job.
      */
-    public static final String DESC = "com.minecolonies.coremod.job.Knight";
+    public static final String DESC = "com.minecolonies.coremod.job.knight";
 
     /**
      * Initialize citizen data.
