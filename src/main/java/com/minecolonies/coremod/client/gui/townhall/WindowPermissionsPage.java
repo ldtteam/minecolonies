@@ -92,6 +92,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     public WindowPermissionsPage(final BuildingTownHall.View building)
     {
         super(building, "layoutpermissions.xml");
+        actions.addAll(Arrays.asList(Action.values()));
+
         rankTypes.put(0, RANKTYPE_COLONY_MANAGER);
         rankTypes.put(1, RANKTYPE_HOSTILE);
         rankTypes.put(2, RANKTYPE_NONE);

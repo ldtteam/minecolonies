@@ -131,7 +131,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         }
 
         builders.clear();
-        builders.add(new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.job.Builder").getString() + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.job.builder").getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
                 .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                         && !(build instanceof BuildingMiner.View))

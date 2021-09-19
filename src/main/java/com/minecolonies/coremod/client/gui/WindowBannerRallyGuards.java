@@ -22,6 +22,7 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.*;
@@ -131,7 +132,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
                 }
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(new TranslatableComponent(guardTowerView.getGuardType().getJobTranslationKey()) + ": " + guardTowerView.getGuards().size());
+                  .setText(new TranslatableComponent(guardTowerView.getGuardType().getJobTranslationKey().toLowerCase(Locale.ROOT)).getString() + ": " + guardTowerView.getGuards().size());
 
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }

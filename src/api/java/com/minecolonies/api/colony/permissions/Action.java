@@ -11,39 +11,36 @@ public enum Action
     GUARDS_ATTACK(1),
     PLACE_HUTS(2),
     BREAK_HUTS(3),
-    CAN_PROMOTE(4),
-    CAN_DEMOTE(5),
-    SEND_MESSAGES(6),
     //Including promote, demote and remove.
-    EDIT_PERMISSIONS(7),
+    EDIT_PERMISSIONS(4),
     //All GUI button interactions
-    MANAGE_HUTS(8),
-    RECEIVE_MESSAGES(9),
-    USE_SCAN_TOOL(10),
-    PLACE_BLOCKS(11),
-    BREAK_BLOCKS(12),
-    TOSS_ITEM(13),
-    PICKUP_ITEM(14),
-    FILL_BUCKET(15),
-    OPEN_CONTAINER(16),
-    RIGHTCLICK_BLOCK(17),
-    RIGHTCLICK_ENTITY(18),
-    THROW_POTION(19),
-    SHOOT_ARROW(20),
-    ATTACK_CITIZEN(21),
-    ATTACK_ENTITY(22),
+    MANAGE_HUTS(5),
+    RECEIVE_MESSAGES(6),
+    USE_SCAN_TOOL(7),
+    PLACE_BLOCKS(8),
+    BREAK_BLOCKS(9),
+    TOSS_ITEM(10),
+    PICKUP_ITEM(11),
+    FILL_BUCKET(12),
+    OPEN_CONTAINER(13),
+    RIGHTCLICK_BLOCK(14),
+    RIGHTCLICK_ENTITY(15),
+    THROW_POTION(16),
+    SHOOT_ARROW(17),
+    ATTACK_CITIZEN(18),
+    ATTACK_ENTITY(19),
     //has access to allowed list, "hostile+" or "neutral+"
-    ACCESS_FREE_BLOCKS(23),
-    TELEPORT_TO_COLONY(24),
-    EXPLODE(25),
-    RECEIVE_MESSAGES_FAR_AWAY(26),
-    CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(27),
-    RALLY_GUARDS(28);
+    ACCESS_FREE_BLOCKS(20),
+    TELEPORT_TO_COLONY(21),
+    EXPLODE(22),
+    RECEIVE_MESSAGES_FAR_AWAY(23),
+    CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(24),
+    RALLY_GUARDS(25);
 
     private final int flag;
 
     /**
-     * Stores the action as byte. {@link #ACCESS_HUTS} has value 0000 0000 {@link #SEND_MESSAGES} has value 0100 0000
+     * Stores the action as byte. {@link #ACCESS_HUTS} has value 0000 0000 has value 0100 0000
      *
      * @param bit how many bits should be shifted and set
      */

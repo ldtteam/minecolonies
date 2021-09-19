@@ -656,7 +656,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         else
         {
-            worker.removeEffectNoUpdate(GLOW_EFFECT);
+            worker.removeEffect(GLOW_EFFECT);
         }
 
         if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()))

@@ -69,7 +69,7 @@ public class Permissions implements IPermissions
          */
         for (Action a:Action.values())
         {
-            if (a != Action.GUARDS_ATTACK && a != Action.CAN_PROMOTE && a != Action.CAN_DEMOTE
+            if (a != Action.GUARDS_ATTACK
                   && a != Action.EDIT_PERMISSIONS && a != Action.MANAGE_HUTS
                   && a != Action.TELEPORT_TO_COLONY && a != Action.EXPLODE
                   && a != Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY && a != Action.RALLY_GUARDS)
@@ -155,9 +155,6 @@ public class Permissions implements IPermissions
                 case OFFICER:
                     this.setPermission(rank, Action.PLACE_HUTS);
                     this.setPermission(rank, Action.BREAK_HUTS);
-                    this.setPermission(rank, Action.CAN_PROMOTE);
-                    this.setPermission(rank, Action.CAN_DEMOTE);
-                    this.setPermission(rank, Action.SEND_MESSAGES);
                     this.setPermission(rank, Action.MANAGE_HUTS);
                     this.setPermission(rank, Action.RECEIVE_MESSAGES);
                     this.setPermission(rank, Action.PLACE_BLOCKS);
@@ -323,7 +320,17 @@ public class Permissions implements IPermissions
                     for (int j = 0; j < flagsTagList.size(); ++j)
                     {
                         final String flag = flagsTagList.getString(j);
-                        flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                        try
+                        {
+                            if (Action.valueOf(flag) != null)
+                            {
+                                flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
+                            }
+                        }
+                        catch (IllegalArgumentException ex)
+                        {
+                            // noop, this can happen with backwards compat.
+                        }
                     }
                     permissionMap.put(rank, flags);
                 }
@@ -354,27 +361,6 @@ public class Permissions implements IPermissions
             else
             {
                 checkFullyAbandoned();
-            }
-        }
-        else
-        {
-            permissionMap.clear();
-            final ListTag permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < permissionsTagList.size(); ++i)
-            {
-                final CompoundTag permissionsCompound = permissionsTagList.getCompound(i);
-                final OldRank oldRank = OldRank.valueOf(permissionsCompound.getString(TAG_RANK));
-                final Rank rank = ranks.get(oldRank.ordinal());
-                final ListTag flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-
-                int flags = 0;
-
-                for (int j = 0; j < flagsTagList.size(); ++j)
-                {
-                    final String flag = flagsTagList.getString(j);
-                    flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
-                }
-                permissionMap.put(rank, flags);
             }
         }
 
@@ -572,7 +558,7 @@ public class Permissions implements IPermissions
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
         return (rank == ranks.get(OWNER_RANK_ID) && action != Action.GUARDS_ATTACK)
-                 || Utils.testFlag(permissionMap.get(rank), action.getFlag())
+                 || permissionMap.get(rank) != null && Utils.testFlag(permissionMap.get(rank), action.getFlag())
                  || (fullyAbandoned && Utils.testFlag(fullyAbandonedPermissionsFlag, action.getFlag()));
     }
 
