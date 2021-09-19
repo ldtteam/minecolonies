@@ -92,7 +92,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
             Minecraft minecraft = Minecraft.getInstance();
             final GameProfile profile = new GameProfile(textureUUID, getNameFromUUID(textureUUID));
             SkullBlockEntity.updateGameprofile(profile, (gameProfile -> {
-                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
+                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(gameProfile);
                 if (!map.isEmpty())
                 {
                     cachedTexture = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
