@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -9,11 +10,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
@@ -23,7 +26,7 @@ public class DoBlockPlacementHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return blockState.getBlock().getRegistryName().getNamespace().equals("domum_ornamentum");
+        return blockState.getBlock() instanceof IMateriallyTexturedBlock;
     }
 
     @Override
@@ -72,7 +75,14 @@ public class DoBlockPlacementHandler implements IPlacementHandler
         final List<ItemStack> itemList = new ArrayList<>();
         if (tileEntityData != null)
         {
-            itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState));
+            BlockPos blockpos = new BlockPos(tileEntityData.getInt("x"), tileEntityData.getInt("y"), tileEntityData.getInt("z"));
+            final BlockEntity tileEntity = BlockEntity.loadStatic(blockpos, blockState, tileEntityData);
+            if (tileEntity == null)
+            {
+                return Collections.emptyList();
+            }
+
+            itemList.add(com.ldtteam.domumornamentum.util.BlockUtils.getMaterializedItemStack(null, tileEntity));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;
