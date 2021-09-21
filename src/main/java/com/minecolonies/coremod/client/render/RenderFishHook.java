@@ -16,6 +16,7 @@ import net.minecraft.util.Mth;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -47,87 +48,100 @@ public class RenderFishHook extends EntityRenderer<Entity>
     }
 
     @Override
-    public void render(final Entity entityIn, final float entityYaw, final float partialTicks, @NotNull final PoseStack matrixStackIn, @NotNull final MultiBufferSource bufferIn, final int packedLightIn)
+    public void render(@NotNull Entity entity, float p_114706_, float p_114707_, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int partialTicks)
     {
-        NewBobberEntity bobber = (NewBobberEntity) entityIn;
-        if (bobber != null && bobber.getAngler() != null)
+        if (!(entity instanceof NewBobberEntity))
         {
-            final EntityCitizen citizen = bobber.getAngler();
-            matrixStackIn.pushPose();
-            matrixStackIn.pushPose();
-            matrixStackIn.scale(0.5F, 0.5F, 0.5F);
-            matrixStackIn.mulPose(this.entityRenderDispatcher.cameraOrientation());
-            matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-            final PoseStack.Pose matrixstack$entry = matrixStackIn.last();
-            final Matrix4f matrix4f = matrixstack$entry.pose();
-            final Matrix3f matrix3f = matrixstack$entry.normal();
-            final VertexConsumer ivertexbuilder = bufferIn.getBuffer(RENDER_TYPE);
-            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 0.0F, 0, 0, 1);
-            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 1.0F, 0, 1, 1);
-            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 1.0F, 1, 1, 0);
-            vertex(ivertexbuilder, matrix4f, matrix3f, packedLightIn, 0.0F, 1, 0, 0);
-            matrixStackIn.popPose();
+            return;
+        }
+        EntityCitizen citizen = ((NewBobberEntity) entity).getAngler();
+        if (citizen != null)
+        {
+            poseStack.pushPose();
+            poseStack.pushPose();
+            poseStack.scale(0.5F, 0.5F, 0.5F);
+            poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+            PoseStack.Pose posestack$pose = poseStack.last();
+            Matrix4f matrix4f = posestack$pose.pose();
+            Matrix3f matrix3f = posestack$pose.normal();
+            VertexConsumer vertexconsumer = buffer.getBuffer(RENDER_TYPE);
+            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 0.0F, 0, 0, 1);
+            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 1.0F, 0, 1, 1);
+            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 1.0F, 1, 1, 0);
+            vertex(vertexconsumer, matrix4f, matrix3f, partialTicks, 0.0F, 1, 0, 0);
+            poseStack.popPose();
             int i = citizen.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
-            final ItemStack itemstack = citizen.getMainHandItem();
-            if (!(itemstack.getItem() instanceof net.minecraft.world.item.FishingRodItem))
+            ItemStack itemstack = citizen.getMainHandItem();
+            if (!itemstack.is(Items.FISHING_ROD))
             {
                 i = -i;
             }
 
-            final float f2 = Mth.lerp(partialTicks, citizen.yBodyRotO, citizen.yBodyRotO) * ((float) Math.PI / 180F);
-            final double d0 = Mth.sin(f2);
-            final double d1 = Mth.cos(f2);
-            final double d2 = (double) i * 0.35D;
+            float f = citizen.getAttackAnim(p_114707_);
+            float f2 = Mth.lerp(p_114707_, citizen.yBodyRotO, citizen.yBodyRot) * ((float) Math.PI / 180F);
+            double d0 = (double) Mth.sin(f2);
+            double d1 = (double) Mth.cos(f2);
+            double d2 = (double) i * 0.35D;
+            double d4;
+            double d5;
+            double d6;
+            float f3;
 
-            double d4 = Mth.lerp(partialTicks, citizen.xo, citizen.getX()) - d1 * d2 - d0 * 0.8D;
-            double d5 = citizen.yo + (double) citizen.getEyeHeight() + (citizen.getY() - citizen.yo) * (double) partialTicks - 0.45D;
-            double d6 = Mth.lerp(partialTicks, citizen.zo, citizen.getZ()) - d0 * d2 + d1 * 0.8D;
-            float f3 = citizen.isCrouching() ? -0.1875F : 0.0F;
+            d4 = Mth.lerp(p_114707_, citizen.xo, citizen.getX()) - d1 * d2 - d0 * 0.8D;
+            d5 = citizen.yo + (double) citizen.getEyeHeight() + (citizen.getY() - citizen.yo) * (double) p_114707_ - 0.45D;
+            d6 = Mth.lerp(p_114707_, citizen.zo, citizen.getZ()) - d0 * d2 + d1 * 0.8D;
+            f3 = citizen.isCrouching() ? -0.1875F : 0.0F;
 
-            double d9 = Mth.lerp(partialTicks, entityIn.xo, entityIn.getX());
-            double d10 = Mth.lerp(partialTicks, entityIn.yo, entityIn.getY()) + 0.25D;
-            double d8 = Mth.lerp(partialTicks, entityIn.zo, entityIn.getZ());
+            double d9 = Mth.lerp((double) p_114707_, entity.xo, entity.getX());
+            double d10 = Mth.lerp((double) p_114707_, entity.yo, entity.getY()) + 0.25D;
+            double d8 = Mth.lerp((double) p_114707_, entity.zo, entity.getZ());
             float f4 = (float) (d4 - d9);
             float f5 = (float) (d5 - d10) + f3;
             float f6 = (float) (d6 - d8);
-            final VertexConsumer ivertexbuilder1 = bufferIn.getBuffer(RenderType.lines());
-            final Matrix4f matrix4f1 = matrixStackIn.last().pose();
+            VertexConsumer vertexconsumer1 = buffer.getBuffer(RenderType.lineStrip());
+            PoseStack.Pose posestack$pose1 = poseStack.last();
+            int j = 16;
 
-            for (int k = 0; k < 16; ++k)
+            for (int k = 0; k <= 16; ++k)
             {
-                stringVertex(f4, f5, f6, ivertexbuilder1, matrix4f1, fraction(k, 16));
-                stringVertex(f4, f5, f6, ivertexbuilder1, matrix4f1, fraction(k + 1, 16));
+                stringVertex(f4, f5, f6, vertexconsumer1, posestack$pose1, fraction(k, 16), fraction(k + 1, 16));
             }
 
-            matrixStackIn.popPose();
-            super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+            poseStack.popPose();
+            super.render(entity, p_114706_, p_114707_, poseStack, buffer, partialTicks);
         }
     }
 
-    private static float fraction(int p_229105_0_, int p_229105_1_)
+    private static float fraction(int first, int second)
     {
-        return (float) p_229105_0_ / (float) p_229105_1_;
+        return (float) first / (float) second;
     }
 
-    private static void vertex(
-      VertexConsumer p_229106_0_,
-      Matrix4f p_229106_1_,
-      Matrix3f p_229106_2_,
-      int p_229106_3_,
-      float p_229106_4_,
-      int p_229106_5_,
-      int p_229106_6_,
-      int p_229106_7_)
+    private static void vertex(VertexConsumer p_114712_, Matrix4f p_114713_, Matrix3f p_114714_, int p_114715_, float p_114716_, int p_114717_, int p_114718_, int p_114719_)
     {
-        p_229106_0_.vertex(p_229106_1_, p_229106_4_ - 0.5F, (float) p_229106_5_ - 0.5F, 0.0F).color(255, 255, 255, 255).uv((float) p_229106_6_, (float) p_229106_7_).overlayCoords(
-          OverlayTexture.NO_OVERLAY).uv2(p_229106_3_).normal(p_229106_2_, 0.0F, 1.0F, 0.0F).endVertex();
-    }
-
-    private static void stringVertex(float p_229104_0_, float p_229104_1_, float p_229104_2_, VertexConsumer p_229104_3_, Matrix4f p_229104_4_, float p_229104_5_)
-    {
-        p_229104_3_.vertex(p_229104_4_, p_229104_0_ * p_229104_5_, p_229104_1_ * (p_229104_5_ * p_229104_5_ + p_229104_5_) * 0.5F + 0.25F, p_229104_2_ * p_229104_5_)
-          .color(0, 0, 0, 255)
+        p_114712_.vertex(p_114713_, p_114716_ - 0.5F, (float) p_114717_ - 0.5F, 0.0F)
+          .color(255, 255, 255, 255)
+          .uv((float) p_114718_, (float) p_114719_)
+          .overlayCoords(OverlayTexture.NO_OVERLAY)
+          .uv2(p_114715_)
+          .normal(p_114714_, 0.0F, 1.0F, 0.0F)
           .endVertex();
+    }
+
+    private static void stringVertex(float p_174119_, float p_174120_, float p_174121_, VertexConsumer p_174122_, PoseStack.Pose p_174123_, float p_174124_, float p_174125_)
+    {
+        float f = p_174119_ * p_174124_;
+        float f1 = p_174120_ * (p_174124_ * p_174124_ + p_174124_) * 0.5F + 0.25F;
+        float f2 = p_174121_ * p_174124_;
+        float f3 = p_174119_ * p_174125_ - f;
+        float f4 = p_174120_ * (p_174125_ * p_174125_ + p_174125_) * 0.5F + 0.25F - f1;
+        float f5 = p_174121_ * p_174125_ - f2;
+        float f6 = Mth.sqrt(f3 * f3 + f4 * f4 + f5 * f5);
+        f3 = f3 / f6;
+        f4 = f4 / f6;
+        f5 = f5 / f6;
+        p_174122_.vertex(p_174123_.pose(), f, f1, f2).color(0, 0, 0, 255).normal(p_174123_.normal(), f3, f4, f5).endVertex();
     }
 
     /**
