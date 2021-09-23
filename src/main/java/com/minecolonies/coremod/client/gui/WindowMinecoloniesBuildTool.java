@@ -8,7 +8,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.event.HighlightManager;
+import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
@@ -154,7 +154,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                                                                      .setPos(error.getPos())
                                                                      .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
                                                                      .addText(LanguageHandler.translateKey("item.supply.error." + error.getType().toString().toLowerCase()))
-                                                                     .setColor(0xFF0000));
+                                                                     .setColor(0xffFF0000));
             }
         }
 

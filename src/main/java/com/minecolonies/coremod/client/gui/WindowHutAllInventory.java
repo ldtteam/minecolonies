@@ -9,8 +9,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.event.HighlightManager;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.Item;
@@ -126,7 +127,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 if (count > 0)
                 {
                     // Varies the color between yellow(low count) to green(64+)
-                    final int color = 0x00FF00 + 0xFF0000 * Math.max(0, 1 - count / 64);
+                    final int color = (0x00FF00 + 0xFF0000 * Math.max(0, 1 - count / 64)) >> 8 | 0xff;
                     HighlightManager.addRenderBox("inventoryHighlight",
                       new HighlightManager.TimedBoxRenderData().setPos(blockPos)
                         .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 60 * 20)

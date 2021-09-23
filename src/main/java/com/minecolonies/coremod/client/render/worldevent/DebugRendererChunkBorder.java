@@ -1,33 +1,34 @@
-package com.minecolonies.coremod.event;
+package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
-import static com.minecolonies.coremod.event.ClientEventHandler.*;
 
 public class DebugRendererChunkBorder
 {
+    public static void render(final WorldEventContext ctx)
+    {
+    }
+
     private static final double LINE_SHIFT = 0.003d;
     private static final int RENDER_DIST_THRESHOLD = 3;
     private static final int CHUNK_SIZE = 16;
@@ -57,7 +58,7 @@ public class DebugRendererChunkBorder
         final Map<ChunkPos, Integer> coloniesMap = new HashMap<>();
         final Map<ChunkPos, Integer> chunkticketsMap = new HashMap<>();
         final int range = Math.max(Minecraft.getInstance().options.renderDistance,
-          MineColonies.getConfig().getServer().maxColonySize.get());
+            MineColonies.getConfig().getServer().maxColonySize.get());
 
         for (int chunkX = -range; chunkX <= range; chunkX++)
         {
@@ -83,10 +84,9 @@ public class DebugRendererChunkBorder
         stack.pushPose();
         stack.translate(-currView.x, -currView.y, -currView.z);
 
-        VertexConsumer buffer = BORDER_LINE_RENDERER.get();
+        VertexConsumer buffer = null; // BORDER_LINE_RENDERER.get();
 
-        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),
-          GLFW.GLFW_KEY_LEFT_CONTROL))
+        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL))
         {
             draw(stack, buffer, chunkticketsMap, nearestColonyView.getID(), playerChunkPos, playerRenderDist);
         }
@@ -98,7 +98,8 @@ public class DebugRendererChunkBorder
         stack.popPose();
     }
 
-    private static void draw(final PoseStack stack, final VertexConsumer bufferbuilder,
+    private static void draw(final PoseStack stack,
+        final VertexConsumer bufferbuilder,
         final Map<ChunkPos, Integer> mapToDraw,
         final int playerColonyId,
         final ChunkPos playerChunkPos,
@@ -115,8 +116,8 @@ public class DebugRendererChunkBorder
             }
 
             // I'm unsure how we want to handle this, I don't remember the origin of this.
-            final boolean isPlayerChunkX = true; //colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
-            final boolean isPlayerChunkZ = true; //colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
+            final boolean isPlayerChunkX = true; // colonyId == playerColonyId && chunkPos.x == playerChunkPos.x;
+            final boolean isPlayerChunkZ = true; // colonyId == playerColonyId && chunkPos.z == playerChunkPos.z;
             final float minX = (float) (chunkPos.getMinBlockX() + LINE_SHIFT);
             final float maxX = (float) (chunkPos.getMaxBlockX() + 1.0d - LINE_SHIFT);
             final float minZ = (float) (chunkPos.getMinBlockZ() + LINE_SHIFT);

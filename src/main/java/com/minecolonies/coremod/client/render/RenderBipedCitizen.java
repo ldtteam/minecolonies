@@ -5,6 +5,7 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.client.render.worldevent.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -135,14 +136,14 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                VertexConsumer r = buffer.getBuffer(MRenderTypes.customTexRenderer(texture));
+                VertexConsumer r = buffer.getBuffer(RenderTypes.getPrimitiveTex(texture));
 
                 final Matrix4f matrixA = matrixStack.last().pose();
 
-                r.vertex(matrixA, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
-                r.vertex(matrixA, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
-                r.vertex(matrixA, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
-                r.vertex(matrixA, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
+                r.vertex(matrixA, 0, 0, 0).uv(0, 0).endVertex();
+                r.vertex(matrixA, 0, 10, 0).uv(1, 0).endVertex();
+                r.vertex(matrixA, 10, 10, 0).uv(1, 1).endVertex();
+                r.vertex(matrixA, 10, 0, 0).uv(0, 1).endVertex();
 
                 matrixStack.popPose();
             }

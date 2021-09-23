@@ -134,9 +134,6 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
         return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
     }
 
-    /**
-     * @deprecated
-     */
     @NotNull
     @Override
     public BlockState rotate(@NotNull BlockState state, Rotation rot)

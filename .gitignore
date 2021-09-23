@@ -48,3 +48,4 @@ tools/fix_model_angle/*.class
 src/main/generated/resources/.cache/cache
 
 logs/
+gradle/local.gradle
