@@ -52,7 +52,7 @@ public final class ConstructionTapeHelper
     /**
      * Place construction tape.
      *
-     * @param corners the corner positions.
+     * @param orgCorners the corner positions.
      * @param world   the world.
      */
     public static void placeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)
@@ -163,7 +163,7 @@ public final class ConstructionTapeHelper
     /**
      * Remove construction tape.
      *
-     * @param corners the corner positions.
+     * @param orgCorners the corner positions.
      * @param world   the world.
      */
     public static void removeConstructionTape(final Tuple<BlockPos, BlockPos> orgCorners, @NotNull final World world)

@@ -1291,20 +1291,20 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean hasWorkerOpenRequests(@NotNull final ICitizenData citizen)
+    public boolean hasWorkerOpenRequests(final int citizenId)
     {
-        return getOpenRequestsByCitizen().containsKey(citizen.getId()) && !getOpenRequestsByCitizen().get(citizen.getId()).isEmpty();
+        return getOpenRequestsByCitizen().containsKey(citizenId) && !getOpenRequestsByCitizen().get(citizenId).isEmpty();
     }
 
     @Override
-    public Collection<IRequest<?>> getOpenRequests(@NotNull final ICitizenData data)
+    public Collection<IRequest<?>> getOpenRequests(final int citizenId)
     {
-        if (!getOpenRequestsByCitizen().containsKey(data.getId()))
+        if (!getOpenRequestsByCitizen().containsKey(citizenId))
         {
             return ImmutableList.of();
         }
 
-        final Collection<IToken<?>> tokens = getOpenRequestsByCitizen().get(data.getId());
+        final Collection<IToken<?>> tokens = getOpenRequestsByCitizen().get(citizenId);
         final List<IRequest<?>> requests = new ArrayList<>(tokens.size());
 
         for (final IToken<?> token : tokens)
@@ -1320,15 +1320,15 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public boolean hasWorkerOpenRequestsFiltered(@NotNull final ICitizenData citizen, @NotNull final Predicate<IRequest<?>> selectionPredicate)
+    public boolean hasWorkerOpenRequestsFiltered(final int citizenId, @NotNull final Predicate<IRequest<?>> selectionPredicate)
     {
-        return getOpenRequests(citizen).stream().anyMatch(selectionPredicate);
+        return getOpenRequests(citizenId).stream().anyMatch(selectionPredicate);
     }
 
     @Override
     public boolean hasOpenSyncRequest(@NotNull final ICitizenData citizen)
     {
-        if (!hasWorkerOpenRequests(citizen))
+        if (!hasWorkerOpenRequests(citizen.getId()))
         {
             return false;
         }
@@ -1345,18 +1345,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     }
 
     @Override
-    public <R> boolean hasWorkerOpenRequestsOfType(@NotNull final ICitizenData citizenData, final TypeToken<R> requestType)
+    public <R> boolean hasWorkerOpenRequestsOfType(final int citizenId, final TypeToken<R> requestType)
     {
-        return !getOpenRequestsOfType(citizenData, requestType).isEmpty();
+        return !getOpenRequestsOfType(citizenId, requestType).isEmpty();
     }
 
     @Override
     @SuppressWarnings({GENERIC_WILDCARD, UNCHECKED})
     public <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
-      @NotNull final ICitizenData citizenData,
+      final int citizenId,
       final TypeToken<R> requestType)
     {
-        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+        return ImmutableList.copyOf(getOpenRequests(citizenId).stream()
                                       .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .iterator());
@@ -1493,7 +1493,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void cancelAllRequestsOfCitizen(@NotNull final ICitizenData data)
     {
-        getOpenRequests(data).forEach(request ->
+        getOpenRequests(data.getId()).forEach(request ->
         {
             getColony().getRequestManager().updateRequestState(request.getId(), RequestState.CANCELLED);
 
@@ -1571,7 +1571,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 continue;
             }
 
-            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data, TypeConstants.DELIVERABLE), stack);
+            final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(data.getId(), TypeConstants.DELIVERABLE), stack);
 
             if (target == null || !isRequestStuck(target, playerRequests, retryingRequests) )
             {
@@ -1614,7 +1614,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
       final TypeToken<R> requestType,
       final Predicate<IRequest<? extends R>> filter)
     {
-        return ImmutableList.copyOf(getOpenRequests(citizenData).stream()
+        return ImmutableList.copyOf(getOpenRequests(citizenData.getId()).stream()
                                       .filter(request ->  request.getType().isSubtypeOf(requestType))
                                       .map(request -> (IRequest<? extends R>) request)
                                       .filter(filter)
@@ -1629,7 +1629,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return false;
         }
 
-        final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(citizenData, TypeConstants.DELIVERABLE), stack);
+        final IRequest<? extends IDeliverable> target = getFirstOverullingRequestFromInputList(getOpenRequestsOfType(citizenData.getId(), TypeConstants.DELIVERABLE), stack);
 
         if (target == null)
         {

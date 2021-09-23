@@ -502,7 +502,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     private void updateWorkerStatusFromRequests()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData().getId()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             worker.getCitizenStatusHandler().setLatestStatus();
             return;
@@ -511,7 +511,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         Collection<IRequest<?>> requests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
         if (requests.isEmpty())
         {
-            requests = getOwnBuilding().getOpenRequests(worker.getCitizenData());
+            requests = getOwnBuilding().getOpenRequests(worker.getCitizenData().getId());
         }
 
         if (!requests.isEmpty())
@@ -877,7 +877,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean hasOpenToolRequest(final IToolType key)
     {
-        return getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+        return getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           iRequest -> iRequest.getRequest() instanceof Tool && ((Tool) iRequest.getRequest()).getToolClass() == key);
     }
 

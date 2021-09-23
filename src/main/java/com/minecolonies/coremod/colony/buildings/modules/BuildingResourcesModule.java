@@ -320,7 +320,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             return;
         }
 
-        final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker, TypeToken.of(Stack.class));
+        final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getId(), TypeToken.of(Stack.class));
         for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet())
         {
             final ItemStorage itemStack = neededResources.get(entry.getKey());
