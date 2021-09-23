@@ -429,17 +429,17 @@ public enum AIWorkerState implements IAIState
     /**
      * Select a random target.
      */
-    ARCHER_SELECT_TARGET(false),
+    ARCHER_SELECT_TARGET(true),
 
     /**
      * Check the shot result.
      */
-    ARCHER_CHECK_SHOT(false),
+    ARCHER_CHECK_SHOT(true),
 
     /**
      * Archer shoot target.
      */
-    ARCHER_SHOOT(false),
+    ARCHER_SHOOT(true),
 
             /*
 ### Knights in Training ###

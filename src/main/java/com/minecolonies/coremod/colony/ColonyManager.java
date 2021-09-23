@@ -695,11 +695,17 @@ public final class ColonyManager implements IColonyManager
     {
         if (!world.isClientSide)
         {
+            boolean hasColonies = false;
             for (@NotNull final IColony c : getColonies(world))
             {
+                hasColonies = true;
                 c.onWorldUnload(world);
             }
-            BackUpHelper.backupColonyData();
+
+            if (hasColonies)
+            {
+                BackUpHelper.backupColonyData();
+            }
         }
     }
 

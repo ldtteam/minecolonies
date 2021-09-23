@@ -163,7 +163,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         List<ItemStorage> allowedFlowers = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList();;
         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), (stack) -> allowedFlowers.contains(new ItemStorage(stack)))
               && InventoryUtils.getCountFromBuilding(getOwnBuilding(), allowedFlowers) == 0
-              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
+              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
         {
             worker.getCitizenData().createRequestAsync(new StackList(allowedFlowers.stream()
                                                                                    .map((item) -> item.getItemStack())

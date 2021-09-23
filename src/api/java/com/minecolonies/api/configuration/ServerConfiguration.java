@@ -126,6 +126,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> specialPermGroup;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> freeToInteractBlocks;
     public final ForgeConfigSpec.IntValue                            secondsBetweenPermissionMessages;
+    public final ForgeConfigSpec.IntValue                            maxkeptbackups;
 
     /*  -------------------------------------------------------------------------------- *
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
@@ -263,6 +264,7 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "permissions");
 
         enableColonyProtection = defineBoolean(builder, "enablecolonyprotection", true);
+        maxkeptbackups = defineInteger(builder, "maxkeptbackups", 50, 3, 5000);
         turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
         specialPermGroup = defineList(builder, "specialpermgroup",
           Arrays.asList
@@ -473,7 +475,7 @@ public class ServerConfiguration extends AbstractConfiguration
 
         enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
 
-        dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 5);
+        dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 8);
 
         fishingRodDurabilityAdjustT2 = defineInteger(builder, "fishingroddurabilityadjustt2", 6, -249, 250000);
         fishingRodDurabilityAdjustT1 = defineInteger(builder, "fishingroddurabilityadjustt1", 22, -58, 250000);

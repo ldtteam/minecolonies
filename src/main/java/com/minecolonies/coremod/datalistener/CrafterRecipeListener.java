@@ -30,7 +30,7 @@ public class CrafterRecipeListener extends JsonReloadListener
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data
-     * Directory is: <namespace>/crafterrecipes/<path>
+     * Directory is: (namespace)/crafterrecipes/(path)
      * @param dataPackRegistries
      */
     public CrafterRecipeListener(@NotNull final DataPackRegistries dataPackRegistries)

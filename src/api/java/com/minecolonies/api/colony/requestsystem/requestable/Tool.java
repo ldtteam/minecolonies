@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -212,7 +213,22 @@ public class Tool implements IDeliverable
             return set;
         }
 
-        set.addAll(stack.getItem().getToolTypes(stack).stream().map(net.minecraftforge.common.ToolType::getName).collect(Collectors.toList()));
+        for (final net.minecraftforge.common.ToolType toolType : stack.getItem().getToolTypes(stack))
+        {
+            if (toolType == null)
+            {
+                Log.getLogger().error("This should never happen, report to the mod author. Null tooltype for:" + stack);
+                continue;
+            }
+
+            if (toolType.getName() == null)
+            {
+                Log.getLogger().error("This should never happen, report to the mod author. Null tooltype name for:" + stack);
+                continue;
+            }
+
+            set.add(toolType.getName());
+        }
 
         if (stack.getItem() instanceof BowItem)
         {

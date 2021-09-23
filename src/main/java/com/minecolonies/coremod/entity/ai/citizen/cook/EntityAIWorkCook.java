@@ -153,11 +153,11 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     public void requestSmeltable()
     {
         final IRequestable smeltable = getSmeltAbleClass();
-        if (smeltable != null && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(smeltable.getClass()))
-        && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
-                req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_FOOD))))
+        if (smeltable != null
+              && !getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(smeltable.getClass()))
+              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(smeltable.getClass())))
         {
-            worker.getCitizenData().createRequestAsync(smeltable);
+            getOwnBuilding().createRequest(smeltable, true);
         }
     }
 

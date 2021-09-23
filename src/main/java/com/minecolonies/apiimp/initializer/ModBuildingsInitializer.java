@@ -258,7 +258,8 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new SettingsModule()
                                                                        .with(BuildingLumberjack.REPLANT, new BoolSetting(true))
                                                                        .with(BuildingLumberjack.RESTRICT, new BoolSetting(false))
-                                                                       .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                                                       .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
+                                                                       .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting()), () -> SettingsModuleView::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterLumberjack))
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .createBuildingEntry();

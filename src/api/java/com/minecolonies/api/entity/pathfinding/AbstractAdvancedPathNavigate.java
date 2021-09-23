@@ -128,6 +128,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
       final BlockPos endRestriction,
       final double speed,
       final List<ItemStorage> excludedTrees,
+      final int dyntreesize,
       final IColony colony);
 
     /**
@@ -138,7 +139,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param excludedTrees the trees which should be cut.
      * @return the result of the search.
      */
-    public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final IColony colony);
+    public abstract TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony);
 
     /**
      * Used to move a living ourEntity with a speed.
