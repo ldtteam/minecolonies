@@ -381,7 +381,7 @@ public class EventHandler
     @SubscribeEvent
     public static void on(final LivingSpawnEvent.CheckSpawn event)
     {
-        if (!(event.getEntity() instanceof Enemy))
+        if (!(event.getEntity() instanceof Enemy) || !(event.getWorld() instanceof Level))
         {
             return;
         }
