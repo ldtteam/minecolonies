@@ -90,30 +90,24 @@ public class DoBlockPlacementHandler implements IPlacementHandler
                 return Collections.emptyList();
             }
 
+            final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
             if (blockState.getBlock() instanceof DoorBlock)
             {
-                final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
                 item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
-                itemList.add(item);
             }
             else if (blockState.getBlock() instanceof FancyDoorBlock)
             {
-                final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
                 item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
-                itemList.add(item);
             }
             else if (blockState.getBlock() instanceof TrapdoorBlock)
             {
-                final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
                 item.getOrCreateTag().putString("type", blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase());
-                itemList.add(item);
             }
             else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
             {
-                final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
                 item.getOrCreateTag().putString("type", blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase());
-                itemList.add(item);
             }
+            itemList.add(item);
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;
