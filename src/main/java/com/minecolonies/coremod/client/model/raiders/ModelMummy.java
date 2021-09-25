@@ -30,45 +30,45 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
     {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
         PartDefinition partDefinition = meshdefinition.getRoot();
-        
+
         PartDefinition leftArmDefinition = partDefinition.addOrReplaceChild("left_arm",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(40, 16).addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4)
           , PartPose.offset(5.0F, 2.0F, 0.0F));
 
         PartDefinition rightArmDefinition = partDefinition.addOrReplaceChild("right_arm",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(24, 16).addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4)
           , PartPose.offset(-5.0F, 2.0F, 0.0F));
 
         PartDefinition stripRightBDefinition = rightArmDefinition.addOrReplaceChild("stripRightB",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(36, -2).addBox(0.0F, 0.0F, -1.0F, 0, 5, 2)
           , PartPose.offset(1.3F, 5.0F, 1.0F));
 
         PartDefinition bodyDefinition = partDefinition.addOrReplaceChild("body",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4)
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition armRightLayerDefinition = rightArmDefinition.addOrReplaceChild("armRightLayer",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(24, 32).addBox(-3.0F, -2.0F, -2.0F, 4, 12, 4, new CubeDeformation(0.3F))
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition rightLegDefinition = partDefinition.addOrReplaceChild("right_leg",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(24, 16).addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4)
           , PartPose.offset(-1.9F, 12.0F, 0.1F));
 
         PartDefinition stripLeftADefinition = leftArmDefinition.addOrReplaceChild("stripLeftA",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(40, -2).addBox(0.0F, 0.0F, -1.0F, 0, 7, 2)
           , PartPose.offset(3.3F, 5.0F, 2.0F));
 
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8)
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition leftLegDefinition = partDefinition.addOrReplaceChild("left_leg",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(40,16).addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4)
           , PartPose.offset(1.9F, 12.0F, 0.1F));
 
         PartDefinition bodyLayerDefinition = bodyDefinition.addOrReplaceChild("bodyLayer",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(0, 32).addBox(-4.0F, 0.0F, -2.0F, 8, 12, 4, new CubeDeformation(0.5F))
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition legLeftLayerDefinition = leftLegDefinition.addOrReplaceChild("legLeftLayer",
@@ -76,15 +76,15 @@ public class ModelMummy extends EgyptianModel<AbstractEntityEgyptian>
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition armLeftLayerDefinition = leftArmDefinition.addOrReplaceChild("armLeftLayer",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(40, 32).addBox(-1.0F, -2.0F, -2.0F, 4, 12, 4, new CubeDeformation(0.3F))
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition stripRightADefinition = rightArmDefinition.addOrReplaceChild("stripRightA",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(32, -2).addBox(0.0F, 0.0F, -1.0F, 0, 10, 2)
           , PartPose.offset(-3.3F, 7.0F, 1.0F));
 
         PartDefinition legRightLayerDefinition = rightLegDefinition.addOrReplaceChild("legRightLayer",
-          CubeListBuilder.create()
+          CubeListBuilder.create().texOffs(40, 32).addBox(-2.0F, 0.0F, -2.0F, 4, 12, 4, new CubeDeformation(0.3F))
           , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition,  64,  64 );
