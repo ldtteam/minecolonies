@@ -244,7 +244,7 @@ public class GraveManager implements IGraveManager
     @Override
     public void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData)
     {
-        final BlockPos firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
+        final BlockPos firstValidPosition = BlockPosUtil.findAround(world, pos, 15, 10,
           (blockAccess, current) ->
             blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
               blockAccess.getBlockState(current.below()).getMaterial().isSolid());
