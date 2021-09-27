@@ -12,7 +12,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import net.minecraft.block.material.Material;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
@@ -244,10 +244,14 @@ public class GraveManager implements IGraveManager
     @Override
     public void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData)
     {
-        final BlockPos firstValidPosition = ConstructionTapeHelper.firstValidPosition(pos, world, 10);
+        final BlockPos firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
+          (blockAccess, current) ->
+            blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
+              blockAccess.getBlockState(current.below()).getMaterial().isSolid());
         if (firstValidPosition != null)
         {
-            world.setBlockAndUpdate(firstValidPosition, BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), new TileEntityGrave(), firstValidPosition));
+            world.setBlockAndUpdate(firstValidPosition,
+              BlockMinecoloniesGrave.getPlacementState(ModBlocks.blockGrave.defaultBlockState(), new TileEntityGrave(), firstValidPosition));
             final TileEntityGrave graveEntity = (TileEntityGrave) world.getBlockEntity(firstValidPosition);
             if (!InventoryUtils.transferAllItemHandler(citizenData.getInventory(), graveEntity.getInventory()))
             {
