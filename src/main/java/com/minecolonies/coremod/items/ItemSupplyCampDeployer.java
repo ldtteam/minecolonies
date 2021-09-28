@@ -74,7 +74,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 LanguageHandler.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
                 return ActionResultType.FAIL;
             }
-            placeSupplyCamp(ctx.getClickedPos(), ctx.getPlayer().getDirection());
+            placeSupplyCamp(ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection());
         }
 
         return ActionResultType.FAIL;

@@ -85,7 +85,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             {
                 return ActionResultType.FAIL;
             }
-            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos(), ctx.getPlayer().getDirection());
+            placeSupplyShip(ctx.getLevel(), ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection());
         }
 
         return ActionResultType.FAIL;
