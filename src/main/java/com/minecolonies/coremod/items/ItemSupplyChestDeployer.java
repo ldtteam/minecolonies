@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
@@ -58,12 +59,17 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Offset y of the supply chest.
      */
-    private static final int OFFSET_Y = -2;
+    private static final int OFFSET_Y = 0;
 
     /**
      * Height to scan in which should be air.
      */
     private static final int SCAN_HEIGHT = 7;
+
+    /**
+     * If a schematic lacks a groundlevel tag, we assume it has this many levels of water
+     */
+    private static final int DEFAULT_WATER_LEVELS = 3;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -123,7 +129,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, name, 0);
+            MineColonies.proxy.openBuildToolWindow(null, name, 0, GROUNDSTYLE_LEGACY_SHIP);
             return;
         }
 
@@ -148,7 +154,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, name, rotations);
+        MineColonies.proxy.openBuildToolWindow(tempPos, name, rotations, GROUNDSTYLE_LEGACY_SHIP);
     }
 
     /**
@@ -165,25 +171,18 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
       @NotNull final World world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
     PlayerEntity placer)
     {
-        final BlockPos anchorPos = ship.getPrimaryBlockOffset();
-        final BlockPos zeroPos = pos.subtract(anchorPos);
         final int sizeX = ship.getSizeX();
         final int sizeZ = ship.getSizeZ();
-
-        int waterLevel = 3;
-        final BlockPos groundLevel = BlueprintTagUtils.getFirstPosForTag(ship, "groundlevel");
-        if (groundLevel != null)
-        {
-            waterLevel = groundLevel.getY();
-        }
+        final int waterLevel = BlueprintTagUtils.getNumberOfGroundLevels(ship, DEFAULT_WATER_LEVELS);
+        final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
 
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
             for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
             {
-                for (int y = zeroPos.getY(); y <= zeroPos.getY() + waterLevel; y++)
+                for (int y = zeroPos.getY(); y <= zeroPos.getY() + waterLevel + SCAN_HEIGHT; y++)
                 {
-                    if (y != zeroPos.getY() + waterLevel)
+                    if (y < zeroPos.getY() + waterLevel)
                     {
                         checkFluidAndNotInColony(world, new BlockPos(x, y, z), placementErrorList, placer);
                     }

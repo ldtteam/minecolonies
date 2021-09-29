@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
@@ -108,7 +109,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0);
+            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0, GROUNDSTYLE_LEGACY_CAMP);
             return;
         }
 
@@ -133,7 +134,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 rotations = ROTATE_0_TIMES;
                 break;
         }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations);
+        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations, GROUNDSTYLE_LEGACY_CAMP);
     }
 
     /**
@@ -141,7 +142,6 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
      *
      * @param world              the world.
      * @param pos                the position.
-     * @param size               the size.
      * @param placementErrorList the list of placement errors.
      * @param placer             the placer.
      * @return true if so.
@@ -155,13 +155,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final BlockPos zeroPos = pos.subtract(Settings.instance.getActiveStructure().getPrimaryBlockOffset());
         final int sizeX = Settings.instance.getActiveStructure().getSizeX();
         final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
-
-        int groundLevel = zeroPos.getY();
-        final BlockPos groundLevelPos = BlueprintTagUtils.getFirstPosForTag(Settings.instance.getActiveStructure(), "groundlevel");
-        if (groundLevelPos != null)
-        {
-            groundLevel = groundLevelPos.getY();
-        }
+        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(Settings.instance.getActiveStructure(), 1);
 
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
