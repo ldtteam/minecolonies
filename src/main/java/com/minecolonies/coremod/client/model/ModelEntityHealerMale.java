@@ -89,8 +89,7 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
           CubeListBuilder.create()
             .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)
-            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
-          , PartPose.offset(0.0F, 0.0F, 1.0F));
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition MaskL2Definition = headDefinition.addOrReplaceChild("MaskL2",
           CubeListBuilder.create()
@@ -135,11 +134,7 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition maskFaceDefinition = headDefinition.addOrReplaceChild("maskFace",
           CubeListBuilder.create()
             .texOffs(99, 12).addBox(-4.0F, -7.5F, -5.0F, 8.0F, 3.0F, 1.0F).mirror()
-            .texOffs(108, 6).addBox(-4.0F, -7.5F, -5.0F, 1.0F, 2.0F, 1.0F).mirror()
-            .texOffs(82, 0).addBox(-4.0F, -7.5F, -5.0F, 8.0F, 2.0F, 1.0F).mirror()
-            .texOffs(104, 4).addBox(-4.0F, -7.5F, -5.0F, 1.0F, 2.0F, 1.0F).mirror()
-            .texOffs(100, 0).addBox(-4.0F, -7.5F, -5.0F, 2.0F, 2.0F, 1.0F).mirror()
-          , PartPose.offset(3.0F, 2.0F, 0.0F));
+          , PartPose.offset(0.0F, 4.0F, 0.0F));
 
         PartDefinition eyeLDefinition = headDefinition.addOrReplaceChild("eyeL",
           CubeListBuilder.create()
@@ -198,10 +193,6 @@ public class ModelEntityHealerMale extends CitizenModel<AbstractEntityCitizen>
 
         PartDefinition BrimDefinition = headDefinition.addOrReplaceChild("Brim",
           CubeListBuilder.create()
-            .texOffs(74, 43).addBox(-4.5F, -9.0F, 4.5F, 9.0F, 1.0F, 1.0F).mirror()
-            .texOffs(72, 45).addBox(5.0F, -9.0F, -4.0F, 1.0F, 1.0F, 8.0F).mirror()
-            .texOffs(54, 45).addBox(-6.0F, -9.0F, -4.0F, 1.0F, 1.0F, 8.0F).mirror()
-            .texOffs(94, 43).addBox(-4.5F, -9.0F, -5.5F, 9.0F, 1.0F, 1.0F).mirror()
             .texOffs(43, 54).addBox(-5.0F, -9.0F, -4.5F, 10.0F, 1.0F, 9.0F).mirror()
           , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.0698F, 0.0F, 0.0F));
 

@@ -221,7 +221,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      *
      * @return Depth limit.
      */
-    public int getDepthLimit()
+    public int getDepthLimit(final Level level)
     {
         if (this.getBuildingLevel() == 1)
         {
@@ -233,7 +233,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         else if (this.getBuildingLevel() >= 3)
         {
-            return MAX_DEPTH_LEVEL_3;
+            return level.getMinSection() + MAX_DEPTH_LEVEL_3;
         }
 
         return MAX_DEPTH_LEVEL_0;

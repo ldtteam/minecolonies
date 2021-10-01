@@ -1,6 +1,13 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.domumornamentum.block.AbstractBlockDoor;
+import com.ldtteam.domumornamentum.block.AbstractBlockTrapdoor;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
+import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
+import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
+import com.ldtteam.domumornamentum.block.vanilla.DoorBlock;
+import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
+import com.ldtteam.domumornamentum.util.BlockUtils;
 import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -10,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -82,7 +90,24 @@ public class DoBlockPlacementHandler implements IPlacementHandler
                 return Collections.emptyList();
             }
 
-            itemList.add(com.ldtteam.domumornamentum.util.BlockUtils.getMaterializedItemStack(null, tileEntity));
+            final ItemStack item = BlockUtils.getMaterializedItemStack(null, tileEntity);
+            if (blockState.getBlock() instanceof DoorBlock)
+            {
+                item.getOrCreateTag().putString("type", blockState.getValue(DoorBlock.TYPE).toString().toUpperCase());
+            }
+            else if (blockState.getBlock() instanceof FancyDoorBlock)
+            {
+                item.getOrCreateTag().putString("type", blockState.getValue(FancyDoorBlock.TYPE).toString().toUpperCase());
+            }
+            else if (blockState.getBlock() instanceof TrapdoorBlock)
+            {
+                item.getOrCreateTag().putString("type", blockState.getValue(TrapdoorBlock.TYPE).toString().toUpperCase());
+            }
+            else if (blockState.getBlock() instanceof FancyTrapdoorBlock)
+            {
+                item.getOrCreateTag().putString("type", blockState.getValue(FancyTrapdoorBlock.TYPE).toString().toUpperCase());
+            }
+            itemList.add(item);
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
         return itemList;
