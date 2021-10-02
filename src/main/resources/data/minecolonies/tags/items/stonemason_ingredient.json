@@ -16,6 +16,8 @@
     "minecraft:polished_blackstone_bricks",
     "minecraft:basalt",
     "minecraft:bricks",
-    "minecraft:stone_bricks"
+    "minecraft:stone_bricks",
+    "domum_ornamentum:bricks",
+    "domum_ornamentum:extra_block"
   ]
 }
