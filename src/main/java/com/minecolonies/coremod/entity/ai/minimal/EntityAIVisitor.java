@@ -132,7 +132,7 @@ public class EntityAIVisitor extends Goal
             return true;
         }
 
-        if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.position()), 2) && citizen.canSee(target))
+        if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.position()), 2) && citizen.hasLineOfSight(target))
         {
             citizen.swing(InteractionHand.MAIN_HAND);
             target.hurt(new NamedDamageSource(citizen.getName().getString(), citizen), 10.0f);

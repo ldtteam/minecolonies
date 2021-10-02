@@ -28,6 +28,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderVi
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
@@ -99,7 +100,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         registerButton(BUTTON_CANCEL, this::close);
 
         findPaneOfTypeByID(BUTTON_BUILD, Button.class)
-                .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
+                .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.build"));
         findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
@@ -130,7 +131,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         }
 
         builders.clear();
-        builders.add(new Tuple<>(LanguageHandler.format("com.minecolonies.coremod.job.Builder") + ":", BlockPos.ZERO));
+        builders.add(new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.job.builder").getString() + ":", BlockPos.ZERO));
         builders.addAll(colony.getBuildings().stream()
                 .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
                         && !(build instanceof BuildingMiner.View))

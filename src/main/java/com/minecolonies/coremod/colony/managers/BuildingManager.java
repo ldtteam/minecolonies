@@ -43,6 +43,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -615,10 +616,13 @@ public class BuildingManager implements IBuildingManager
 
         for (final IBuilding colonyBuilding : getBuildings().values())
         {
-            if (colonyBuilding instanceof IGuardBuilding
-                  && (colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()) * 16) > building.getID().distManhattan(colonyBuilding.getID()))
+            if (colonyBuilding instanceof IGuardBuilding)
             {
-                return true;
+                final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
+                if (guardedRegion.isInside(building.getPosition()))
+                {
+                    return true;
+                }
             }
         }
 
@@ -628,19 +632,13 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void guardBuildingChangedAt(final IBuilding guardBuilding, final int newLevel)
     {
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        final int claimRadius = guardBuilding.getClaimRadius(Math.max(guardBuilding.getBuildingLevel(), newLevel));
+        final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(guardBuilding.getPosition(), claimRadius);
+        for (final IBuilding building : getBuildings().values())
         {
-            if (building.getPosition().getX() <= guardBuilding.getPosition().getX() + 16 * guardBuilding.getClaimRadius(newLevel)
-                  && building.getPosition().getZ() <= guardBuilding.getPosition().getZ() + 16 * guardBuilding.getClaimRadius(newLevel))
+            if (guardedRegion.isInside(building.getPosition()))
             {
-                if (newLevel > 0)
-                {
-                    building.setGuardBuildingNear(true);
-                }
-                else
-                {
-                    building.setGuardBuildingNear(hasGuardBuildingNear(building));
-                }
+                building.resetGuardBuildingNear();
             }
         }
     }

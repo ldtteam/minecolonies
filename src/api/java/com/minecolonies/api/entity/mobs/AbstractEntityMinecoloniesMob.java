@@ -22,7 +22,6 @@ import com.minecolonies.api.items.IChiefSwordItem;
 import com.minecolonies.api.sounds.RaiderSounds;
 import com.minecolonies.api.util.Log;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
@@ -376,7 +375,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
 
         if (colony == null || eventID == 0)
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
         }
 
         super.readAdditionalSaveData(compound);
@@ -417,7 +416,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
             if (shouldDespawn())
             {
                 this.die(new DamageSource("despawn"));
-                this.remove();
+                this.remove(RemovalReason.DISCARDED);
                 return;
             }
 
@@ -467,13 +466,13 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     }
 
     @Override
-    public void remove()
+    public void remove(RemovalReason reason)
     {
         if (!level.isClientSide && colony != null && eventID > 0)
         {
             colony.getEventManager().unregisterEntity(this, eventID);
         }
-        super.remove();
+        super.remove(reason);
     }
 
     /**
@@ -493,7 +492,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     {
         if (colony == null || eventID == 0 || dead)
         {
-            remove();
+            remove(RemovalReason.DISCARDED);
             return;
         }
         RaiderMobUtils.setMobAttributes(this, getColony());

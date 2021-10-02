@@ -3,7 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import java.io.File;
 

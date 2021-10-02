@@ -14,7 +14,6 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
-import net.minecraft.block.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;

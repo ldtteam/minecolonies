@@ -64,7 +64,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
             return CombatAIStates.NO_TARGET;
         }
 
-        final boolean canSeeTarget = user.getSensing().canSee(target);
+        final boolean canSeeTarget = user.getSensing().hasLineOfSight(target);
         if (canSeeTarget)
         {
             nextTarget.setLastSeen(user.level.getGameTime());
@@ -141,7 +141,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
             return null;
         }
 
-        if (user.getSensing().canSee(target))
+        if (user.getSensing().hasLineOfSight(target))
         {
             pathAttempts = 0;
             user.lookAt(target, (float) TURN_AROUND, (float) TURN_AROUND);

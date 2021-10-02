@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.coremod.colony.managers.RaidManager;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
@@ -59,7 +59,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(final Node n)
+    protected boolean isAtDestination(final MNode n)
     {
         if (start.distSqr(n.pos) < 50 * 50)
         {
@@ -70,25 +70,25 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(final Node n)
+    protected double getNodeResultScore(final MNode n)
     {
         return Math.sqrt(direction.distSqr(n.pos));
     }
 
     @Override
-    protected boolean isPassable(final BlockPos pos, final boolean head, final Node currentnode)
+    protected boolean isPassable(final BlockPos pos, final boolean head, final MNode currentnode)
     {
         return true;
     }
 
     @Override
-    protected boolean onLadderGoingDown(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
+    protected boolean onLadderGoingDown(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
     {
         return !currentNode.isSwimming();
     }
 
     @Override
-    protected boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
+    protected boolean onLadderGoingUp(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
     {
         if (isWalkableSurface(world.getBlockState(currentNode.pos), currentNode.pos) == SurfaceType.WALKABLE)
         {
@@ -116,7 +116,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
     }
 
     @Override
-    protected int getGroundHeight(final Node parent, @NotNull final BlockPos pos)
+    protected int getGroundHeight(final MNode parent, @NotNull final BlockPos pos)
     {
         final int height = super.getGroundHeight(parent, pos);
         if (height != pos.getY())

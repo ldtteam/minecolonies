@@ -13,8 +13,8 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,12 +32,6 @@ public class FMLEventHandler
     public static void onClientTick(final TickEvent.ClientTickEvent event)
     {
         IColonyManager.getInstance().onClientTick(event);
-    }
-
-    @SubscribeEvent
-    public static void onWorldTick(final TickEvent.WorldTickEvent event)
-    {
-        IColonyManager.getInstance().onWorldTick(event);
     }
 
     @SubscribeEvent
@@ -60,6 +54,12 @@ public class FMLEventHandler
         event.addListener(new CrafterRecipeListener(event.getDataPackRegistries()));
         event.addListener(new ResearchListener());
         event.addListener(new CustomVisitorListener());
+    }
+
+    @SubscribeEvent
+    public static void onWorldTick(final TickEvent.WorldTickEvent event)
+    {
+        IColonyManager.getInstance().onWorldTick(event);
     }
 
     @SubscribeEvent

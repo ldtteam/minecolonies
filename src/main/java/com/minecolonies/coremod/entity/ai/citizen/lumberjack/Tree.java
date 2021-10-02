@@ -139,8 +139,8 @@ public class Tree
      */
     public Tree(@NotNull final Level world, @NotNull final BlockPos log, final IColony colony)
     {
-        final Block block = BlockPosUtil.getBlock(world, log);
-        if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block))
+        final BlockState block = BlockPosUtil.getBlockState(world, log);
+        if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock()))
         {
             isTree = true;
             woodBlocks = new LinkedList<>();
@@ -153,10 +153,10 @@ public class Tree
 
             checkTree(world, topLog);
 
-            dynamicTree = Compatibility.isDynamicBlock(block);
+            dynamicTree = Compatibility.isDynamicBlock(block.getBlock());
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
-            slimeTree = Compatibility.isSlimeBlock(block);
+            slimeTree = Compatibility.isSlimeBlock(block.getBlock());
             sapling = calcSapling(world);
             if (sapling.is(fungi))
             {
@@ -229,7 +229,7 @@ public class Tree
         BlockState blockState = world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
-        if (block.is(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
+        if (blockState.is(BlockTags.LEAVES) || Compatibility.isDynamicLeaf(block))
         {
             NonNullList<ItemStack> list = NonNullList.create();
 
@@ -270,7 +270,7 @@ public class Tree
                 }
             }
         }
-        else if (block.is(BlockTags.WART_BLOCKS))
+        else if (blockState.is(BlockTags.WART_BLOCKS))
         {
             if (block == Blocks.WARPED_WART_BLOCK)
             {
@@ -339,14 +339,15 @@ public class Tree
      * @param world         the world.
      * @param pos           The coordinates.
      * @param treesToNotCut the trees the lumberjack is not supposed to cut.
+     * @param dyntreesize   the radius a dynamic tree must have in order to get cut down.
      * @return true if the log is part of a tree.
      */
-    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut)
+    public static boolean checkTree(@NotNull final LevelReader world, final BlockPos pos, final List<ItemStorage> treesToNotCut, final int dyntreesize)
     {
         //Is the first block a log?
         final BlockState state = world.getBlockState(pos);
         final Block block = state.getBlock();
-        if (!block.is(BlockTags.LOGS) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
+        if (!state.is(BlockTags.LOGS) && !Compatibility.isSlimeBlock(block) && !Compatibility.isDynamicBlock(block))
         {
             return false;
         }
@@ -354,7 +355,7 @@ public class Tree
         // Only harvest nearly fully grown dynamic trees(8 max)
         if (Compatibility.isDynamicBlock(block)
               && BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS) != null
-              && ((Integer) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < MineColonies.getConfig().getServer().dynamicTreeHarvestSize.get()))
+              && ((Integer) state.getValue(BlockStateUtils.getPropertyByNameFromState(state, DYNAMICTREERADIUS)) < dyntreesize))
         {
             return false;
         }
@@ -414,8 +415,8 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.offset(x, y, z);
-                    final Block block = world.getBlockState(temp).getBlock();
-                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block) || Compatibility.isDynamicBlock(block)) && !woodenBlocks.contains(temp))
+                    final BlockState block = world.getBlockState(temp);
+                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock())) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -684,8 +685,8 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.offset(x, y, z);
-                    final Block block = BlockPosUtil.getBlock(world, temp);
-                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block)))
+                    final BlockState block = BlockPosUtil.getBlockState(world, temp);
+                    if ((block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock())))
                     {
                         addAndSearch(world, temp, colony);
                     }

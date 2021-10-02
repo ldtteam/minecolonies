@@ -7,7 +7,11 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.ColonyView;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -27,14 +31,14 @@ public class WindowTownHallNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowTownHallNameEntry(final IColonyView c)
     {
-        super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
         this.colony = c;
     }
 
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(colony.getName());
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(new TranslatableComponent(colony.getName().toLowerCase(Locale.ROOT)).getString());
     }
 
     @Override

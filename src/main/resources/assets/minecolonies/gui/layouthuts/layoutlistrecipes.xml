@@ -7,7 +7,7 @@
     <list id="recipes" size="85% 150" pos="20 40">
         <view size="100% 50">
             <itemicon id="output" size="16 16" pos="80 17"/>
-            <box id="3x3" size="100% 50" linewidth="2">
+            <box id="3x3" size="100% 50" linewidth="1">
                 <itemicon id="res1" size="16 16" pos="20 1"/>
                 <itemicon id="res2" size="16 16" pos="34 1"/>
                 <itemicon id="res3" size="16 16" pos="48 1"/>

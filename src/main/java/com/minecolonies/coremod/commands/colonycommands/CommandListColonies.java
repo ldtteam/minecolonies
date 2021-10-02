@@ -8,7 +8,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.text.*;
 import net.minecraft.network.chat.ClickEvent;
 
 import java.util.ArrayList;

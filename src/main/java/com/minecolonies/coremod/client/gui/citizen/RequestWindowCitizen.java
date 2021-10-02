@@ -7,12 +7,14 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferItemsToCitizenRequestMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
@@ -22,6 +24,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -78,7 +81,33 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
         {
             return ImmutableList.of();
         }
-        return building.getOpenRequests(citizen);
+
+        final List<IRequest<?>> requests = new ArrayList<>();
+        for (final IToken<?> req : building.getOpenRequestsByCitizen().getOrDefault(citizen.getId(), Collections.emptyList()))
+        {
+            if (req != null)
+            {
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
+                if (request != null)
+                {
+                    requests.add(request);
+                }
+            }
+        }
+
+        for (final IToken<?> req : building.getOpenRequestsByCitizen().getOrDefault(-1, Collections.emptyList()))
+        {
+            if (req != null)
+            {
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(req);
+                if (request != null)
+                {
+                    requests.add(request);
+                }
+            }
+        }
+
+        return ImmutableList.copyOf(requests);
     }
 
     @Override
@@ -125,7 +154,7 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
             if (slot == -1)
             {
                 final Component chatMessage = new TextComponent("<" + citizen.getName() + "> " +
-                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                                                                             new TranslatableComponent(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()).getString())
                                                      .setStyle(Style.EMPTY.withBold(false).withColor(ChatFormatting.WHITE)
                                                      );
                 Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUUID());

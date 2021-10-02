@@ -44,11 +44,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.PacketDistributor.TargetPoint;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class NetworkChannel
     /**
      * Forge network channel
      */
-    private final        SimpleChannel rawChannel;
+    private final SimpleChannel rawChannel;
 
     /**
      * The messages that this channel can process, as viewed from a message id.
@@ -246,7 +245,7 @@ public class NetworkChannel
             msg.fromBytes(buf);
             return msg;
         }, (msg, ctxIn) -> {
-            final Context ctx = ctxIn.get();
+            final NetworkEvent.Context ctx = ctxIn.get();
             final LogicalSide packetOrigin = ctx.getDirection().getOriginationSide();
             ctx.setPacketHandled(true);
             msg.onExecute(ctx, packetOrigin.equals(LogicalSide.CLIENT));
@@ -294,7 +293,7 @@ public class NetworkChannel
      * @param msg message to send
      * @param ctx network context
      */
-    public void sendToOrigin(final IMessage msg, final Context ctx)
+    public void sendToOrigin(final IMessage msg, final NetworkEvent.Context ctx)
     {
         final ServerPlayer player = ctx.getSender();
         if (player != null) // side check
@@ -323,9 +322,9 @@ public class NetworkChannel
      *
      * @param msg message to send
      * @param pos target position and radius
-     * @see TargetPoint
+     * @see PacketDistributor.TargetPoint
      */
-    public void sendToPosition(final IMessage msg, final TargetPoint pos)
+    public void sendToPosition(final IMessage msg, final PacketDistributor.TargetPoint pos)
     {
         handleSplitting(msg, s -> rawChannel.send(PacketDistributor.NEAR.with(() -> pos), s));
     }

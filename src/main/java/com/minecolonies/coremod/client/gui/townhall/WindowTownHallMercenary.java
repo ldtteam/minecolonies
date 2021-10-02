@@ -10,6 +10,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.network.messages.server.colony.HireMercenaryMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +38,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
      */
     public WindowTownHallMercenary(final IColonyView c)
     {
-        super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX));
         this.colony = c;
 
         int amountOfMercenaries = colony.getCitizenCount();
@@ -50,7 +51,7 @@ public class WindowTownHallMercenary extends BOWindow implements ButtonHandler
         for (int i = 0; i < amountOfMercenaries; i++)
         {
             final Image newImage = new Image();
-            newImage.setImage("minecolonies:textures/entity_icon/citizenmale3.png");
+            newImage.setImage(new ResourceLocation("minecolonies:textures/entity_icon/citizenmale3.png"), false);
             newImage.setSize(10, 10);
             newImage.setPosition(startX, startY);
             this.addChild(newImage);

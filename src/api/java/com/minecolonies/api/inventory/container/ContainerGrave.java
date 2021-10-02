@@ -118,19 +118,6 @@ public class ContainerGrave extends AbstractContainerMenu
 
     @NotNull
     @Override
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player)
-    {
-        if (player.level.isClientSide || slotId >= inventory.getSlots() || slotId < 0)
-        {
-            return super.clicked(slotId, dragType, clickTypeIn, player);
-        }
-
-        final ItemStack result = super.clicked(slotId, dragType, clickTypeIn, player);
-        return result;
-    }
-
-    @NotNull
-    @Override
     public ItemStack quickMoveStack(final Player playerIn, final int index)
     {
         final Slot slot = this.slots.get(index);

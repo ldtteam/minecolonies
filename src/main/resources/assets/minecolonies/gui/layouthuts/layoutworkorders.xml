@@ -4,10 +4,10 @@
 
     <switch id="switchpageWorkOrder" size="100% 100%">
         <view>
-            <label size="148 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townHall.workorders):"/>
+            <label size="148 11" pos="201 28" textalign="MIDDLE" label="§n§4$(com.minecolonies.coremod.gui.townhall.workorders):"/>
 
             <list id="workOrders" size="164 154" pos="13 35">
-                <box size="100% 30" linewidth="2">
+                <box size="100% 30" linewidth="1">
                     <label id="buildingName" size="150 12" pos="2 2" color="black"/>
                     <label id="buildingPos" size="50 12" pos="2 17" color="blue"/>
                     <buttonimage id="manage"

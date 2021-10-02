@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.server.colony;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 

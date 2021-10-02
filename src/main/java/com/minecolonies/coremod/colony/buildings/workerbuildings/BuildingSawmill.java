@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -17,10 +18,12 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobSawmill;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +40,7 @@ public class BuildingSawmill extends AbstractBuildingWorker implements IBuilding
     /**
      * Description string of the building.
      */
-    private static final String SAWMILL = "sawmill";
+    protected static final String SAWMILL = "sawmill";
 
     /**
      * The min percentage something has to have out of wood to be craftable by this worker.
@@ -172,5 +175,44 @@ public class BuildingSawmill extends AbstractBuildingWorker implements IBuilding
 
             return amountOfValidBlocks > 0 && amountOfValidBlocks / blocks > MIN_PERCENTAGE_TO_CRAFT;
         }
+    }
+
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobSawmill(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
+        {
+            final ItemStack stack = recipe.getPrimaryOutput();
+            if (stack.getItem().getRegistryName().getNamespace().equals("domum_ornamentum"))
+            {
+                final CompoundTag dataNbt = stack.getOrCreateTagElement("textureData");
+                final MaterialTextureData textureData = MaterialTextureData.deserializeFromNBT(dataNbt);
+                for (final Block block : textureData.getTexturedComponents().values())
+                {
+                    final ItemStack ingredientStack = new ItemStack(block);
+                    if (!ItemStackUtils.isEmpty(ingredientStack) && (ItemTags.PLANKS.contains(ingredientStack.getItem()) || ItemTags.LOGS.contains(ingredientStack.getItem())))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean canLearnCraftingRecipes() { return true; }
+
+        @Override
+        public boolean canLearnFurnaceRecipes() { return false; }
+
+        @Override
+        public boolean canLearnLargeRecipes() { return true; }
     }
 }

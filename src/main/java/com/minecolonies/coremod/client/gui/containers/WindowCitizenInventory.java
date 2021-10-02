@@ -5,6 +5,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
@@ -81,7 +82,7 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
     protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
         this.font.draw(stack, this.menu.getDisplayName(), 8, 6, 4210752);
-        this.font.draw(stack, this.inventory.getDisplayName().getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
+        this.font.draw(stack, this.playerInventoryTitle.getString(), 8, 20 + this.inventoryRows * SLOT_OFFSET, 4210752);
     }
 
     /**
@@ -89,10 +90,9 @@ public class WindowCitizenInventory extends AbstractContainerScreen<ContainerCit
      */
     protected void renderBg(@NotNull final PoseStack stack, float partialTicks, int mouseX, int mouseY)
     {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-        this.minecraft.getTextureManager().bind(TEXT);
-
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXT);
         int i = (this.width - this.imageWidth) / 2;
         int j = (this.height - this.imageHeight) / 2;
         blit(stack, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);

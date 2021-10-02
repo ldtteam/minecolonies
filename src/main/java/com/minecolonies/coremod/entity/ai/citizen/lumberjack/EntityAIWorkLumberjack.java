@@ -18,7 +18,6 @@ import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavig
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.block.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -261,7 +260,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean isStackLog(@Nullable final ItemStack stack)
     {
-        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).is(BlockTags.LOGS);
+        return !ItemStackUtils.isEmpty(stack) && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock().defaultBlockState().is(BlockTags.LOGS);
     }
 
     /**
@@ -355,6 +354,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                  endPos,
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
+                                 building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
                                  worker.getCitizenColonyHandler().getColony());
             }
             else
@@ -363,6 +363,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                                .moveToTree(SEARCH_RANGE + searchIncrement,
                                  1.0D,
                                  building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(SAPLINGS_LIST)).getList(),
+                                 building.getSetting(BuildingLumberjack.DYNAMIC_TREES_SIZE).getValue(),
                                  worker.getCitizenColonyHandler().getColony());
             }
             return getState();
@@ -748,8 +749,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private boolean plantSapling(@NotNull final BlockPos location)
     {
-        final Block worldBlock = world.getBlockState(location).getBlock();
-        if (!(worldBlock instanceof AirBlock) && !(worldBlock.is(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
+        final BlockState worldState = world.getBlockState(location);
+        final Block worldBlock = worldState.getBlock();
+        if (!(worldBlock instanceof AirBlock) && !(worldState.is(BlockTags.SAPLINGS)) && worldBlock != Blocks.SNOW)
         {
             return true;
         }
@@ -849,11 +851,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         while (!job.getTree().getStumpLocations().isEmpty())
         {
             final BlockPos pos = job.getTree().getStumpLocations().get(0);
-            final Item sapling = getInventory().getStackInSlot(saplingSlot).getItem();
+            final ItemStack sapling = getInventory().getStackInSlot(saplingSlot);
             final Block new_block;
             if (sapling.is(fungi))
             {
-                if (sapling == Items.WARPED_FUNGUS)
+                if (sapling.getItem() == Items.WARPED_FUNGUS)
                 {
                     new_block = Blocks.WARPED_NYLIUM;
                 }

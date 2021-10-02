@@ -13,14 +13,16 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +112,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               new TextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
               dir
             );
-            this.addButton(db);
+            this.addRenderableWidget(db);
         }
     }
 
@@ -119,17 +121,20 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            this.font.draw(stack, LanguageHandler.format("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            this.font.draw(stack, new TranslatableComponent("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
         }
 
-        this.font.draw(stack, LanguageHandler.format("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.font.draw(stack, new TranslatableComponent("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
-        for (AbstractWidget widget : this.buttons)
+        for (Widget widget : this.renderables)
         {
-            if (widget.isHovered())
+            if (widget instanceof AbstractWidget)
             {
-                widget.renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
-                break;
+                if (((AbstractWidget) widget).isHovered())
+                {
+                    ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
+                    break;
+                }
             }
         }
     }
@@ -144,8 +149,9 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     @Override
     protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        minecraft.getTextureManager().bind(TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, TEXTURE);
         final int marginHorizontal = (width - imageWidth) / 2;
         final int marginVertical = (height - imageHeight) / 2;
         blit(stack, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
@@ -257,8 +263,11 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         {
             Minecraft minecraft = Minecraft.getInstance();
             Font fontrenderer = minecraft.font;
-            minecraft.getTextureManager().bind(WindowField.TEXTURE);
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+            RenderSystem.setShaderTexture(0, TEXTURE);
+
             int i = this.getYImage(this.isHovered());
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
@@ -278,14 +287,14 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         public void renderToolTip(@NotNull final PoseStack stack, int mouseX, int mouseY)
         {
             // Don't render while they are dragging a stack around
-            if (!inventory.getCarried().isEmpty())
+            if (!menu.getCarried().isEmpty())
             {
                 return;
             }
 
             List<FormattedText> lines = Lists.newArrayList(new TextComponent(
-              LanguageHandler.format("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName())),
-              new TextComponent(ChatFormatting.GRAY + "" + ChatFormatting.ITALIC + LanguageHandler.format(getDirectionalTranslationKey())
+              new TranslatableComponent("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName()).getString()),
+              new TextComponent(ChatFormatting.GRAY + "" + ChatFormatting.ITALIC + new TranslatableComponent(getDirectionalTranslationKey()).getString()
             ));
 
             WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
@@ -298,7 +307,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
          */
         public String getDirectionalTranslationKey()
         {
-            Direction[] looks = Direction.orderedByNearest(inventory.player);
+            Direction[] looks = Direction.orderedByNearest(Minecraft.getInstance().player);
             Direction facing = looks[0].getAxis() == Direction.Axis.Y ? looks[1] : looks[0];
 
             switch (facing.getOpposite().get2DDataValue() - this.direction.get2DDataValue())

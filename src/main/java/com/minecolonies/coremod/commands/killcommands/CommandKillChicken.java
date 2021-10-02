@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands.killcommands;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.network.chat.TextComponent;
 
@@ -23,7 +24,7 @@ public class CommandKillChicken implements IMCOPCommand
 
         context.getSource().getLevel().getEntities(EntityType.CHICKEN, entity -> true).forEach(entity ->
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             entitiesKilled++;
         });
         context.getSource().sendSuccess(new TextComponent(entitiesKilled + " entities killed"), true);

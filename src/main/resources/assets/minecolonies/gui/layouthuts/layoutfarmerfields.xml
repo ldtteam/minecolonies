@@ -8,7 +8,7 @@
             label="$(com.minecolonies.coremod.gui.hiring.off)"/>
 
     <list id="fields" size="164 154" pos="13 60">
-        <box size="100% 34" linewidth="2">
+        <box size="100% 34" linewidth="1">
             <itemicon id="icon" size="16 16" pos="1 1"/>
             <label id="worker" color="black" pos="20 2" size="130 9"/>
             <label id="dist" color="black" pos="20 12" size="65 9"/>

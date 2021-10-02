@@ -97,7 +97,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        final List<AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
+        final List<? extends AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
           AbstractEntityCitizen.class,
           getOwnBuilding(),
           cit -> cit.isBaby() && cit.vehicle != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
@@ -182,7 +182,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private void requestPaper()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData(),
+        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(Items.PAPER, PAPER_TO_REQUEST)));

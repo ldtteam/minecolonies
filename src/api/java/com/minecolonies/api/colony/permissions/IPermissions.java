@@ -111,7 +111,7 @@ public interface IPermissions
     @Nullable
     Map.Entry<UUID, ColonyPlayer> getOwnerEntry();
 
-    boolean setOwner(ColonyPlayer player);
+    boolean setOwner(Player player);
 
     /**
      * Sets the owner to abandoned

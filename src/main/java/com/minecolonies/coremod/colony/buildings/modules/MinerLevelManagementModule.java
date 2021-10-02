@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,7 +19,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.SHAFT_RADIUS;
-import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
 /**
  * Module containing miner level management.
@@ -30,7 +29,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
     @NotNull
-    private final List<Level> levels = new ArrayList<>();
+    private final List<MinerLevel> levels = new ArrayList<>();
 
     /**
      * The number of the current level.
@@ -62,7 +61,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
         final ListTag levelTagList = compound.getList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); i++)
         {
-            this.levels.add(new Level(levelTagList.getCompound(i)));
+            this.levels.add(new MinerLevel(levelTagList.getCompound(i)));
         }
 
         if (compound.getAllKeys().contains(TAG_ACTIVE))
@@ -81,7 +80,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
         compound.putInt(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
         @NotNull final ListTag levelTagList = new ListTag();
-        for (@NotNull final Level level : levels)
+        for (@NotNull final MinerLevel level : levels)
         {
             @NotNull final CompoundTag levelCompound = new CompoundTag();
             level.write(levelCompound);
@@ -110,7 +109,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for (@NotNull final Level level : levels)
+        for (@NotNull final MinerLevel level : levels)
         {
             buf.writeInt(level.getNumberOfBuiltNodes());
             buf.writeInt(level.getDepth());
@@ -127,9 +126,9 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     /**
      * Adds a level to the levels list.
      *
-     * @param currentLevel {@link Level} to add.
+     * @param currentLevel {@link MinerLevel} to add.
      */
-    public void addLevel(final Level currentLevel)
+    public void addLevel(final MinerLevel currentLevel)
     {
         levels.add(currentLevel);
     }
@@ -150,7 +149,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * @return Current level.
      */
     @Nullable
-    public Level getCurrentLevel()
+    public MinerLevel getCurrentLevel()
     {
         if (currentLevel >= 0 && currentLevel < levels.size())
         {
@@ -165,7 +164,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * @param level the level.
      * @return position in the levels array.
      */
-    public int getLevelId(final Level level)
+    public int getLevelId(final MinerLevel level)
     {
         return levels.indexOf(level);
     }
@@ -271,7 +270,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      * Get the list of levels.
      * @return the list.
      */
-    public List<Level> getLevels()
+    public List<MinerLevel> getLevels()
     {
         return levels;
     }

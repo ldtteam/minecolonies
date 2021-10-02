@@ -3,154 +3,140 @@
 // Paste this class into your mod and generate all required imports
 package com.minecolonies.coremod.client.model;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.HumanoidModel;
 
 public class ModelEntityFarmerFemale extends CitizenModel<AbstractEntityCitizen>
 {
-    public ModelEntityFarmerFemale()
+
+    public ModelEntityFarmerFemale(final ModelPart part)
     {
-        ModelPart chest;
-        ModelPart boxBottom;
-        ModelPart boxFront;
-        ModelPart boxBack;
-        ModelPart boxLeft;
-        ModelPart boxRight;
-        ModelPart seeds;
-        ModelPart strapLeft;
-        ModelPart strapRight;
-        ModelPart headDetail;
-        ModelPart hatFrill;
-        ModelPart hatBottom;
-        ModelPart hatTop;
-        ModelPart hatStrap;
-        ModelPart ponytailBase;
-        ModelPart ponytailTail;
-
-        texWidth = 128;
-        texHeight = 64;
-
-        rightArm = new ModelPart(this);
-        rightArm.setPos(-5.0F, 2.0F, 0.0F);
-        rightArm.texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, true);
-
-        leftArm = new ModelPart(this);
-        leftArm.setPos(5.0F, 2.0F, 0.0F);
-        leftArm.texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, 0.0F, false);
-
-        rightLeg = new ModelPart(this);
-        rightLeg.setPos(-2.0F, 12.0F, 0.0F);
-        rightLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, true);
-
-        leftLeg = new ModelPart(this);
-        leftLeg.setPos(2.0F, 12.0F, 0.0F);
-        leftLeg.texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, 0.0F, false);
-
-        body = new ModelPart(this);
-        body.setPos(0.0F, 0.0F, 0.0F);
-        body.texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F, 0.0F, false);
-
-        chest = new ModelPart(this);
-        chest.setPos(0.0F, 0.0F, 0.0F);
-        body.addChild(chest);
-        setRotationAngle(chest, -0.5934F, 0.0F, 0.0F);
-        chest.texOffs(17, 32).addBox(-3.5F, 2.7F, -0.6F, 7.0F, 3.0F, 4.0F, 0.0F, true);
-
-        boxBottom = new ModelPart(this);
-        boxBottom.setPos(0.0F, 9.0F, -4.0F);
-        body.addChild(boxBottom);
-        boxBottom.texOffs(19, 50).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
-
-        boxFront = new ModelPart(this);
-        boxFront.setPos(0.0F, 9.0F, -4.0F);
-        body.addChild(boxFront);
-        boxFront.texOffs(21, 55).addBox(-3.0F, -2.0F, -3.0F, 6.0F, 3.0F, 1.0F, 0.0F, true);
-
-        boxBack = new ModelPart(this);
-        boxBack.setPos(0.0F, 9.0F, 0.0F);
-        body.addChild(boxBack);
-        boxBack.texOffs(21, 40).addBox(-3.0F, -2.0F, -3.0F, 6.0F, 3.0F, 1.0F, 0.0F, true);
-
-        boxLeft = new ModelPart(this);
-        boxLeft.setPos(0.0F, 9.0F, -4.0F);
-        body.addChild(boxLeft);
-        boxLeft.texOffs(42, 43).addBox(3.0F, -2.0F, -3.0F, 1.0F, 3.0F, 6.0F, 0.0F, true);
-
-        boxRight = new ModelPart(this);
-        boxRight.setPos(0.0F, 9.0F, -4.0F);
-        body.addChild(boxRight);
-        boxRight.texOffs(0, 43).addBox(-4.0F, -2.0F, -3.0F, 1.0F, 3.0F, 6.0F, 0.0F, true);
-
-        seeds = new ModelPart(this);
-        seeds.setPos(0.0F, 9.0F, -4.0F);
-        body.addChild(seeds);
-        seeds.texOffs(19, 45).addBox(-3.0F, -2.0F, -2.0F, 6.0F, 1.0F, 3.0F, 0.0F, true);
-
-        strapLeft = new ModelPart(this);
-        strapLeft.setPos(3.0F, 4.0F, -4.0F);
-        body.addChild(strapLeft);
-        setRotationAngle(strapLeft, 1.0472F, 0.0F, 0.0F);
-        strapLeft.texOffs(0, 55).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 8.0F, 0.0F, true);
-
-        strapRight = new ModelPart(this);
-        strapRight.setPos(-4.0F, 4.0F, -4.0F);
-        body.addChild(strapRight);
-        setRotationAngle(strapRight, 1.0472F, 0.0F, 0.0F);
-        strapRight.texOffs(0, 55).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 8.0F, 0.0F, true);
-
-        head = new ModelPart(this);
-        head.setPos(0.0F, 0.0F, 0.0F);
-        head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
-
-        headDetail = new ModelPart(this);
-        headDetail.setPos(0.0F, 0.0F, 1.0F);
-        head.addChild(headDetail);
-        headDetail.texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, 0.5F, false);
-
-        hatFrill = new ModelPart(this);
-        hatFrill.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(hatFrill);
-        setRotationAngle(hatFrill, -0.6981F, 0.0F, 0.0F);
-        hatFrill.texOffs(57, 21).addBox(-5.5F, -5.7F, -8.0F, 11.0F, 1.0F, 10.0F, 0.0F, true);
-
-        hatBottom = new ModelPart(this);
-        hatBottom.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(hatBottom);
-        setRotationAngle(hatBottom, -0.7854F, 0.0F, 0.0F);
-        hatBottom.texOffs(61, 9).addBox(-5.0F, -7.8F, -7.0F, 10.0F, 3.0F, 8.0F, 0.0F, true);
-
-        hatTop = new ModelPart(this);
-        hatTop.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(hatTop);
-        setRotationAngle(hatTop, -0.7854F, 0.0F, 0.0F);
-        hatTop.texOffs(64, 1).addBox(-4.5F, -8.5F, -6.0F, 9.0F, 1.0F, 6.0F, 0.0F, true);
-
-        hatStrap = new ModelPart(this);
-        hatStrap.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(hatStrap);
-        setRotationAngle(hatStrap, -0.3491F, 0.0F, 0.0F);
-        hatStrap.texOffs(68, 33).addBox(-4.5F, -6.7F, -2.7F, 9.0F, 8.0F, 1.0F, 0.0F, true);
-
-        ponytailBase = new ModelPart(this);
-        ponytailBase.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(ponytailBase);
-        setRotationAngle(ponytailBase, 0.1047F, 0.0F, 0.0F);
-        ponytailBase.texOffs(30, 0).addBox(-0.5F, 2.2F, 3.8F, 1.0F, 5.0F, 1.0F, 0.0F, true);
-
-        ponytailTail = new ModelPart(this);
-        ponytailTail.setPos(0.0F, 0.0F, 0.0F);
-        head.addChild(ponytailTail);
-        setRotationAngle(ponytailTail, 0.2269F, 0.0F, 0.0F);
-        ponytailTail.texOffs(24, 0).addBox(-1.0F, -2.2F, 3.5F, 2.0F, 5.0F, 1.0F, 0.0F, true);
-
+        super(part);
         hat.visible = false;
     }
 
-    public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z)
+    public static LayerDefinition createMesh()
     {
-        modelRenderer.xRot = x;
-        modelRenderer.yRot = y;
-        modelRenderer.zRot = z;
+        MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        PartDefinition partDefinition = meshdefinition.getRoot();
+
+        PartDefinition rightArmDefinition = partDefinition.addOrReplaceChild("right_arm",
+          CubeListBuilder.create()
+            .texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F).mirror()
+          , PartPose.offset(-5.0F, 2.0F, 0.0F));
+
+        PartDefinition leftArmDefinition = partDefinition.addOrReplaceChild("left_arm",
+          CubeListBuilder.create()
+            .texOffs(40, 16).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F)
+          , PartPose.offset(5.0F, 2.0F, 0.0F));
+
+        PartDefinition rightLegDefinition = partDefinition.addOrReplaceChild("right_leg",
+          CubeListBuilder.create()
+            .texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F).mirror()
+          , PartPose.offset(-2.0F, 12.0F, 0.0F));
+
+        PartDefinition leftLegDefinition = partDefinition.addOrReplaceChild("left_leg",
+          CubeListBuilder.create()
+            .texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F)
+          , PartPose.offset(2.0F, 12.0F, 0.0F));
+
+        PartDefinition bodyDefinition = partDefinition.addOrReplaceChild("body",
+          CubeListBuilder.create()
+            .texOffs(16, 16).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F)
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
+
+        PartDefinition chestDefinition = bodyDefinition.addOrReplaceChild("chest",
+          CubeListBuilder.create()
+            .texOffs(17, 32).addBox(-3.5F, 2.7F, -0.6F, 7.0F, 3.0F, 4.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5934F, 0.0F, 0.0F));
+
+        PartDefinition boxBottomDefinition = bodyDefinition.addOrReplaceChild("boxBottom",
+          CubeListBuilder.create()
+            .texOffs(19, 50).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 1.0F, 3.0F).mirror()
+          , PartPose.offset(0.0F, 9.0F, -4.0F));
+
+        PartDefinition boxFrontDefinition = bodyDefinition.addOrReplaceChild("boxFront",
+          CubeListBuilder.create()
+            .texOffs(21, 55).addBox(-3.0F, -2.0F, -3.0F, 6.0F, 3.0F, 1.0F).mirror()
+          , PartPose.offset(0.0F, 9.0F, -4.0F));
+
+        PartDefinition boxBackDefinition = bodyDefinition.addOrReplaceChild("boxBack",
+          CubeListBuilder.create()
+            .texOffs(21, 40).addBox(-3.0F, -2.0F, -3.0F, 6.0F, 3.0F, 1.0F).mirror()
+          , PartPose.offset(0.0F, 9.0F, 0.0F));
+
+        PartDefinition boxLeftDefinition = bodyDefinition.addOrReplaceChild("boxLeft",
+          CubeListBuilder.create()
+            .texOffs(42, 43).addBox(3.0F, -2.0F, -3.0F, 1.0F, 3.0F, 6.0F).mirror()
+          , PartPose.offset(0.0F, 9.0F, -4.0F));
+
+        PartDefinition boxRightDefinition = bodyDefinition.addOrReplaceChild("boxRight",
+          CubeListBuilder.create()
+            .texOffs(0, 43).addBox(-4.0F, -2.0F, -3.0F, 1.0F, 3.0F, 6.0F).mirror()
+          , PartPose.offset(0.0F, 9.0F, -4.0F));
+
+        PartDefinition seedsDefinition = bodyDefinition.addOrReplaceChild("seeds",
+          CubeListBuilder.create()
+            .texOffs(19, 45).addBox(-3.0F, -2.0F, -2.0F, 6.0F, 1.0F, 3.0F).mirror()
+          , PartPose.offset(0.0F, 9.0F, -4.0F));
+
+        PartDefinition strapLeftDefinition = bodyDefinition.addOrReplaceChild("strapLeft",
+          CubeListBuilder.create()
+            .texOffs(0, 55).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 8.0F).mirror()
+          , PartPose.offsetAndRotation(3.0F, 4.0F, -4.0F, 1.0472F, 0.0F, 0.0F));
+
+        PartDefinition strapRightDefinition = bodyDefinition.addOrReplaceChild("strapRight",
+          CubeListBuilder.create()
+            .texOffs(0, 55).addBox(0.0F, 0.0F, -4.0F, 1.0F, 1.0F, 8.0F).mirror()
+          , PartPose.offsetAndRotation(-4.0F, 4.0F, -4.0F, 1.0472F, 0.0F, 0.0F));
+
+        PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
+          CubeListBuilder.create()
+            .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)
+            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
+          , PartPose.offset(0.0F, 0.0F, 1.0F));
+
+        PartDefinition headDetailDefinition = headDefinition.addOrReplaceChild("headDetail",
+          CubeListBuilder.create()
+            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
+          , PartPose.offset(0.0F, 0.0F, 1.0F));
+
+        PartDefinition hatFrillDefinition = headDefinition.addOrReplaceChild("hatFrill",
+          CubeListBuilder.create()
+            .texOffs(57, 21).addBox(-5.5F, -5.7F, -8.0F, 11.0F, 1.0F, 10.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.6981F, 0.0F, 0.0F));
+
+        PartDefinition hatBottomDefinition = headDefinition.addOrReplaceChild("hatBottom",
+          CubeListBuilder.create()
+            .texOffs(61, 9).addBox(-5.0F, -7.8F, -7.0F, 10.0F, 3.0F, 8.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.7854F, 0.0F, 0.0F));
+
+        PartDefinition hatTopDefinition = headDefinition.addOrReplaceChild("hatTop",
+          CubeListBuilder.create()
+            .texOffs(64, 1).addBox(-4.5F, -8.5F, -6.0F, 9.0F, 1.0F, 6.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.7854F, 0.0F, 0.0F));
+
+        PartDefinition hatStrapDefinition = headDefinition.addOrReplaceChild("hatStrap",
+          CubeListBuilder.create()
+            .texOffs(68, 33).addBox(-4.5F, -6.7F, -2.7F, 9.0F, 8.0F, 1.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.3491F, 0.0F, 0.0F));
+
+        PartDefinition ponytailBaseDefinition = headDefinition.addOrReplaceChild("ponytailBase",
+          CubeListBuilder.create()
+            .texOffs(30, 0).addBox(-0.5F, 2.2F, 3.8F, 1.0F, 5.0F, 1.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.1047F, 0.0F, 0.0F));
+
+        PartDefinition ponytailTailDefinition = headDefinition.addOrReplaceChild("ponytailTail",
+          CubeListBuilder.create()
+            .texOffs(24, 0).addBox(-1.0F, -2.2F, 3.5F, 2.0F, 5.0F, 1.0F).mirror()
+          , PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.2269F, 0.0F, 0.0F));
+
+        return LayerDefinition.create(meshdefinition, 128, 64);
     }
 }

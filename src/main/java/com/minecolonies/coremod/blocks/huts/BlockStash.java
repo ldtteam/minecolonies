@@ -12,6 +12,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -44,11 +45,10 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
         return "blockstash";
     }
 
-    @Nullable
     @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world)
+    public @Nullable BlockEntity newBlockEntity(final @NotNull BlockPos blockPos, final @NotNull BlockState blockState)
     {
-        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create();
+        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }

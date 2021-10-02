@@ -10,7 +10,7 @@
       "tag": "minecraft:planks"
     },
     "B": {
-      "item": "structurize:blockbarreldeco_standing"
+      "item": "minecraft:barrel"
     },
     "S": {
       "item": "structurize:sceptergold"

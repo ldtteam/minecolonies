@@ -13,7 +13,7 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetti
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.world.entity.Mob;
@@ -101,7 +101,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     private BlockPos getMinerProxy(final BlockPos target, final double distanceToPath, @NotNull final BuildingMiner building)
     {
         final MinerLevelManagementModule module = building.getFirstModuleOccurance(MinerLevelManagementModule.class);
-        final Level level = module.getCurrentLevel();
+        final MinerLevel level = module.getCurrentLevel();
         final BlockPos ladderPos = building.getLadderLocation();
 
         //If his current working level is null, we have nothing to worry about.
@@ -232,7 +232,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
         return getProxy(target, citizen.blockPosition(), distanceToPath);
     }
 
-    private void calculateNodes(final Level level, final int levelDepth, final BuildingMiner buildingMiner)
+    private void calculateNodes(final MinerLevel level, final int levelDepth, final BuildingMiner buildingMiner)
     {
         final List<BlockPos> nodesToTarget = new ArrayList<>();
         com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getActiveNode().getParent());

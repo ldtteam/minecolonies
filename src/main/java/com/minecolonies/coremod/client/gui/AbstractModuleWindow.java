@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.IModuleWindow;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Locale;
 import java.util.Random;
@@ -38,13 +39,13 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
         if (building.getAllModuleViews().size() > 0)
         {
             final ButtonImage image = new ButtonImage();
-            image.setImage("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png");
+            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
             image.setPosition(-20, 10 + offset);
             image.setSize(32, 26);
             image.setHandler(button -> building.getWindow().open());
 
             final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage("minecolonies:textures/gui/modules/main.png");
+            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/main.png"), false);
             iconImage.setID("main");
             iconImage.setPosition(-15, 13 + offset);
             iconImage.setSize(20, 20);
@@ -63,14 +64,14 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             if (!view.isPageVisible()) continue;
 
             final ButtonImage image = new ButtonImage();
-            image.setImage("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png");
+            image.setImage(new ResourceLocation("minecolonies:textures/gui/modules/tab_side" + (random.nextInt(3) + 1) + ".png"), false);
             image.setPosition(-20, 10 + offset);
             image.setSize(32, 26);
             image.setHandler(button -> view.getWindow().open());
 
             final String icon = view.getIcon();
             final ButtonImage iconImage = new ButtonImage();
-            iconImage.setImage("minecolonies:textures/gui/modules/" + icon + ".png");
+            iconImage.setImage(new ResourceLocation("minecolonies:textures/gui/modules/" + icon + ".png"), false);
             iconImage.setSize(20, 20);
             iconImage.setID(icon);
             iconImage.setPosition(-15, 13 + offset);

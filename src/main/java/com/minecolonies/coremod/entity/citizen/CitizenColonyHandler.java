@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuildingWorker;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
@@ -87,7 +88,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
         if (colonyId == 0 || citizen.getCivilianID() == 0)
         {
-            citizen.remove();
+            citizen.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -96,7 +97,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
         if (colony == null)
         {
             Log.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", citizen.getUUID(), colonyId));
-            citizen.remove();
+            citizen.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 

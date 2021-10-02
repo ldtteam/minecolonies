@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.*;
 
 /**
- * Java8 functional interfaces for {@link net.minecraft.inventory.IInventory} Most methods will be remapping of parameters to reduce duplication. Because of erasure clashes, not
+ * Java8 functional interfaces for inventories. Most methods will be remapping of parameters to reduce duplication. Because of erasure clashes, not
  * all combinations are supported.
  */
 public final class InventoryFunctions

@@ -78,7 +78,7 @@ public class ItemPharaoScepter extends BowItem
                     ArrowItem arrowitem = (ArrowItem) Items.ARROW;
                     AbstractArrow abstractarrowentity = arrowitem.createArrow(worldIn, new ItemStack(arrowitem, 1), playerentity);
                     abstractarrowentity = customArrow(abstractarrowentity);
-                    abstractarrowentity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, speed * 3.0F, 1.0F);
+                    abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(), 0.0F, speed * 3.0F, 1.0F);
                     if (speed == 1.0F)
                     {
                         abstractarrowentity.setCritArrow(true);
@@ -121,7 +121,7 @@ public class ItemPharaoScepter extends BowItem
                   SoundEvents.ARROW_SHOOT,
                   SoundSource.PLAYERS,
                   1.0F,
-                  1.0F / (random.nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
+                  1.0F / (entityLiving.getRandom().nextFloat() * 0.4F + 1.2F) + speed * 0.5F);
                 playerentity.awardStat(Stats.ITEM_USED.get(this));
             }
         }

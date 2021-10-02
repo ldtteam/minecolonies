@@ -8,9 +8,9 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.loot.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,9 +29,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.network.FMLPlayMessages;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -90,7 +90,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
     {
         this.angler = citizen;
         final float pitch = (float) (Math.random()*40.0-10.0);
-        final float yaw = this.angler.yRot;
+        final float yaw = this.angler.getYRot();
         final float cowYaw = Mth.cos(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
         final float sinYaw = Mth.sin(-yaw * ((float) Math.PI / 180F) - (float) Math.PI);
         final float cosPitch = -Mth.cos(-pitch * ((float) Math.PI / 180F));
@@ -105,10 +105,10 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
           0.6D / d3 + 0.5D + this.random.nextGaussian() * 0.0045D,
           0.6D / d3 + 0.5D + this.random.nextGaussian() * 0.0045D);
         this.setDeltaMovement(vec);
-        this.yRot = (float) (Mth.atan2(vec.x, vec.z) * (double) (180F / (float) Math.PI));
-        this.xRot = (float) (Mth.atan2(vec.y, (double) Mth.sqrt(getHorizontalDistanceSqr(vec))) * (double) (180F / (float) Math.PI));
-        this.yRotO = this.yRot;
-        this.xRotO = this.xRot;
+        this.setYRot((float) (Mth.atan2(vec.x, vec.z) * (double) (180F / (float) Math.PI)));
+        this.setXRot((float) (Mth.atan2(vec.y, Mth.sqrt((float) vec.horizontalDistanceSqr())) * (double) (180F / (float) Math.PI)));
+        this.yRotO = this.getYRot();
+        this.xRotO = this.getXRot();
         this.luck = Math.max(0, luck);
         this.lureSpeed = Math.max(0, lureSpeed);
     }
@@ -176,7 +176,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         {
             if (--this.tickRemove <= 0)
             {
-                this.remove();
+                this.remove(RemovalReason.DISCARDED);
                 return;
             }
         }
@@ -192,7 +192,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
             }
             else
             {
-                this.remove();
+                this.remove(RemovalReason.DISCARDED);
             }
         }
         else if (this.level.isClientSide || !this.shouldStopFishing())
@@ -203,7 +203,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 ++this.ticksInGround;
                 if (this.ticksInGround >= 1200)
                 {
-                    this.remove();
+                    this.remove(RemovalReason.DISCARDED);
                     return;
                 }
             }
@@ -253,7 +253,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 {
                     if (this.caughtEntity != null)
                     {
-                        if (this.caughtEntity.removed)
+                        if (this.caughtEntity.isRemoved())
                         {
                             this.caughtEntity = null;
                             this.currentState = NewBobberEntity.State.FLYING;
@@ -302,47 +302,47 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         final ItemStack itemstack1 = this.angler.getOffhandItem();
         final boolean flag = itemstack.getItem() instanceof net.minecraft.world.item.FishingRodItem;
         final boolean flag1 = itemstack1.getItem() instanceof net.minecraft.world.item.FishingRodItem;
-        if (!this.angler.removed && this.angler.isAlive() && (flag || flag1) && !(this.distanceToSqr(this.angler) > 1024.0D))
+        if (!this.angler.isRemoved() && this.angler.isAlive() && (flag || flag1) && !(this.distanceToSqr(this.angler) > 1024.0D))
         {
             return false;
         }
         else
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return true;
         }
     }
 
     private void updateRotation()
     {
-        final Vec3 Vector3d = this.getDeltaMovement();
-        final float f = Mth.sqrt(getHorizontalDistanceSqr(Vector3d));
-        this.yRot = (float) (Mth.atan2(Vector3d.x, Vector3d.z) * (double) (180F / (float) Math.PI));
+        final Vec3 vec = this.getDeltaMovement();
+        final float f = Mth.sqrt((float) vec.horizontalDistanceSqr());
+        this.setYRot((float) (Mth.atan2(vec.x, vec.z) * (double) (180F / (float) Math.PI)));
 
-        for (this.xRot = (float) (Mth.atan2(Vector3d.y, (double) f) * (double) (180F / (float) Math.PI));
-          this.xRot - this.xRotO < -180.0F;
+        for (this.setXRot((float) (Mth.atan2(vec.y, (double) f) * (double) (180F / (float) Math.PI)));
+          this.getXRot() - this.xRotO < -180.0F;
           this.xRotO -= 360.0F)
         {
             ;
         }
 
-        while (this.xRot - this.xRotO >= 180.0F)
+        while (this.getXRot() - this.xRotO >= 180.0F)
         {
             this.xRotO += 360.0F;
         }
 
-        while (this.yRot - this.yRotO < -180.0F)
+        while (this.getYRot() - this.yRotO < -180.0F)
         {
             this.yRotO -= 360.0F;
         }
 
-        while (this.yRot - this.yRotO >= 180.0F)
+        while (this.getYRot() - this.yRotO >= 180.0F)
         {
             this.yRotO += 360.0F;
         }
 
-        this.xRot = Mth.lerp(0.2F, this.xRotO, this.xRot);
-        this.yRot = Mth.lerp(0.2F, this.yRotO, this.yRot);
+        this.setXRot(Mth.lerp(0.2F, this.xRotO, this.getXRot()));
+        this.setYRot(Mth.lerp(0.2F, this.yRotO, this.getYRot()));
     }
 
     private void checkCollision()
@@ -544,7 +544,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                 i = 2;
             }
 
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return event == null ? i : event.getRodDamage();
         }
         else
@@ -553,9 +553,6 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         }
     }
 
-    /**
-     * Handler for {@link World#setEntityState}
-     */
     @OnlyIn(Dist.CLIENT)
     public void handleEntityEvent(final byte id)
     {

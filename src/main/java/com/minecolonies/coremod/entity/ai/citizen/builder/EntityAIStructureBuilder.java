@@ -252,7 +252,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
-                WorldUtil.getEntitiesWithinBuilding(world, Monster.class, building, null).forEach(Entity::remove);
+                WorldUtil.getEntitiesWithinBuilding(world, Monster.class, building, null).forEach(e -> e.remove(Entity.RemovalReason.DISCARDED));
             }
         }
     }
@@ -320,7 +320,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public BlockState getSolidSubstitution(@NotNull final BlockPos location)
     {
-        return BlockUtils.getSubstitutionBlockAtWorld(world, location).getBlockState();
+        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
     }
 
     @Override

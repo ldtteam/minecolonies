@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structures.lib.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.BlockUtils;
@@ -118,8 +119,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private void placeSupplyShip(Level world, @Nullable final BlockPos pos, @NotNull final Direction direction)
     {
         final String name = WorldUtil.isNetherType(world)
-                ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
-                : SUPPLY_SHIP_STRUCTURE_NAME;
+                              ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
+                              : SUPPLY_SHIP_STRUCTURE_NAME;
 
         if (pos == null)
         {
@@ -165,35 +166,37 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             @NotNull final Level world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
     Player placer)
     {
-        final BlockPos size = new BlockPos(ship.getSizeX(), ship.getSizeY(), ship.getSizeZ());
+        final BlockPos anchorPos = ship.getPrimaryBlockOffset();
+        final BlockPos zeroPos = pos.subtract(anchorPos);
+        final int sizeX = ship.getSizeX();
+        final int sizeZ = ship.getSizeZ();
 
-        for (int z = 0; z < size.getZ(); z++)
+        int waterLevel = 3;
+        final BlockPos groundLevel = BlueprintTagUtils.getFirstPosForTag(ship, "groundlevel");
+        if (groundLevel != null)
         {
-            for (int x = 0; x < size.getX(); x++)
-            {
-                checkFluidAndNotInColony(
-                        world,
-                        new BlockPos(
-                                x + pos.getX() - size.getX() / 2 + 1,
-                                pos.getY() + 2,
-                                z + pos.getZ() - size.getZ() / 2 + 1),
-                        placementErrorList,
-                        placer
-                );
-            }
+            waterLevel = groundLevel.getY();
         }
 
-        for (int z = pos.getZ() - size.getZ() / 2 + 1; z < pos.getZ() + size.getZ() / 2 + 1; z++)
+        for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
-            for (int x = pos.getX() - size.getX() / 2 + 1; x < pos.getX() + size.getX() / 2 + 1; x++)
+            for (int x = zeroPos.getX(); x < zeroPos.getX() + sizeX; x++)
             {
-                if (!world.isEmptyBlock(new BlockPos(x, pos.getY() + SCAN_HEIGHT, z)))
+                for (int y = zeroPos.getY(); y <= zeroPos.getY() + waterLevel; y++)
                 {
-                    final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, pos.getY() + SCAN_HEIGHT, z));
-                    placementErrorList.add(placementError);
+                    if (y != zeroPos.getY() + waterLevel)
+                    {
+                        checkFluidAndNotInColony(world, new BlockPos(x, y, z), placementErrorList, placer);
+                    }
+                    else if (world.getBlockState(new BlockPos(x, y, z)).getMaterial().isSolid())
+                    {
+                        final PlacementError placementError = new PlacementError(PlacementError.PlacementErrorType.NEEDS_AIR_ABOVE, new BlockPos(x, y, z));
+                        placementErrorList.add(placementError);
+                    }
                 }
             }
         }
+
         return placementErrorList.isEmpty();
     }
 

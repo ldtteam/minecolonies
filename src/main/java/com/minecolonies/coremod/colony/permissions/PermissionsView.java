@@ -199,7 +199,7 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public boolean setOwner(final ColonyPlayer player)
+    public boolean setOwner(final Player player)
     {
         return false;
     }

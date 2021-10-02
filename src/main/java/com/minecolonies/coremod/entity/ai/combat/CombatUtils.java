@@ -63,8 +63,8 @@ public class CombatUtils
         final double xVector = target.getX() - arrow.getX();
         final double yVector = target.getBoundingBox().minY + target.getBbHeight() / AIM_HEIGHT - arrow.getY();
         final double zVector = target.getZ() - arrow.getZ();
-        final double distance = Mth.sqrt(xVector * xVector + zVector * zVector);
-        final double dist3d = Mth.sqrt(yVector * yVector + xVector * xVector + zVector * zVector);
+        final double distance = Mth.sqrt((float) (xVector * xVector + zVector * zVector));
+        final double dist3d = Mth.sqrt((float) (yVector * yVector + xVector * xVector + zVector * zVector));
         arrow.shoot(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) (ARROW_SPEED * 1 + (dist3d / SPEED_FOR_DIST)), (float) hitChance);
         target.level.addFreshEntity(arrow);
     }

@@ -2,6 +2,7 @@ package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,22 +10,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AmazonModel<T extends AbstractEntityAmazon> extends HumanoidModel<AbstractEntityAmazon>
 {
-    /**
-     * Create a model of a specific size.
-     *
-     * @param size the size.
-     */
-    public AmazonModel(final float size)
+    public AmazonModel(final ModelPart part)
     {
-        super(size);
-    }
-
-    /**
-     * Create a model of the default size.
-     */
-    public AmazonModel()
-    {
-        this(1.0F);
+        super(part);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -79,7 +80,7 @@ public class BoolSetting implements ISetting
       final ISettingsModuleView settingsModuleView,
       final IBuildingView building, final BOWindow window)
     {
-        Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutboolsetting.xml", (View) pane);
+        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutboolsetting.xml"), (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
         pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));

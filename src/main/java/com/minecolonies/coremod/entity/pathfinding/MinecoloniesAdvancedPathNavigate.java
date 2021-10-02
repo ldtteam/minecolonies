@@ -10,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.*;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.world.level.block.BaseRailBlock;
@@ -353,7 +354,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 final Entity entity = ourEntity.vehicle;
                 ourEntity.stopRiding();
-                entity.remove();
+                entity.remove(Entity.RemovalReason.DISCARDED);
             }
             else if (!pEx.isOnRails())
             {
@@ -361,7 +362,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     final Entity entity = ourEntity.vehicle;
                     ourEntity.stopRiding();
-                    entity.remove();
+                    entity.remove(Entity.RemovalReason.DISCARDED);
                 }
                 else
                 {
@@ -372,7 +373,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 final Entity entity = ourEntity.vehicle;
                 ourEntity.stopRiding();
-                entity.remove();
+                entity.remove(Entity.RemovalReason.DISCARDED);
             }
         }
         return true;
@@ -824,7 +825,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     final Node point = path.getNode(i);
                     final BlockPos pos = new BlockPos(point.x, point.y, point.z);
-                    for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                    for (final MNode node : AbstractPathJob.lastDebugNodesPath)
                     {
                         if (!node.isReachedByWorker() && node.pos.equals(pos))
                         {
@@ -868,11 +869,12 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else
                 {
+
                     // Mark nodes as unreached for debug path drawing
                     if (AbstractPathJob.lastDebugNodesPath != null)
                     {
                         final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
-                        for (final Node node : AbstractPathJob.lastDebugNodesPath)
+                        for (final MNode node : AbstractPathJob.lastDebugNodesPath)
                         {
                             if (node.isReachedByWorker() && node.pos.equals(pos))
                             {
@@ -935,7 +937,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> excludedTrees, final IColony colony)
+    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) mob).getCitizenColonyHandler().getWorkBuilding().getPosition();
@@ -943,13 +945,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final BlockPos furthestRestriction = BlockPosUtil.getFurthestCorner(start, startRestriction, endRestriction);
 
         final PathJobFindTree job =
-          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(mob), start, buildingPos, startRestriction, endRestriction, furthestRestriction, excludedTrees, colony, ourEntity);
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(mob), start, buildingPos, startRestriction, endRestriction, furthestRestriction, excludedTrees, dyntreesize, colony, ourEntity);
 
         return (TreePathResult) setPathJob(job, null, speed);
     }
 
     @Override
-    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final IColony colony)
+    public TreePathResult moveToTree(final int range, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) mob).getCitizenColonyHandler().getWorkBuilding().getPosition();
@@ -960,7 +962,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         }
 
         return (TreePathResult) setPathJob(
-          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(mob), start, buildingPos, range, excludedTrees, colony, ourEntity), null, speed);
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(mob), start, buildingPos, range, excludedTrees, dyntreesize, colony, ourEntity), null, speed);
     }
 
     @Nullable

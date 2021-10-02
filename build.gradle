@@ -15,17 +15,36 @@ buildscript {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'cpw.mods:securejarhandler:0.9.50'
+    }
+}
+
 apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
 
 dependencies {
     implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
 
     apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
     implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
-    contained "com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"
 
     apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
-    contained "com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"
+
+    implementation fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}")
+
+    library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
 }

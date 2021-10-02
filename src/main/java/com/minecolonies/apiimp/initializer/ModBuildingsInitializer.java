@@ -230,7 +230,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.home = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutHome)
-                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "home", 5, ModBuildings.home))
+                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5, ModBuildings.home))
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .addBuildingModuleProducer(BedHandlingModule::new)
@@ -258,7 +258,8 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new SettingsModule()
                                                                        .with(BuildingLumberjack.REPLANT, new BoolSetting(true))
                                                                        .with(BuildingLumberjack.RESTRICT, new BoolSetting(false))
-                                                                       .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                                                       .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
+                                                                       .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting()), () -> SettingsModuleView::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterLumberjack))
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .createBuildingEntry();
@@ -281,6 +282,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> BuildingSawmill.View::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
                                  .addBuildingModuleProducer(BuildingSawmill.CraftingModule::new, () -> CraftingModuleView::new)
+                                 .addBuildingModuleProducer(BuildingSawmill.DOCraftingModule::new, () -> DOCraftingModuleView::new)
                                  .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                  .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
 
@@ -325,6 +327,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> BuildingStonemason.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID))
                                     .addBuildingModuleProducer(BuildingStonemason.CraftingModule::new, () -> CraftingModuleView::new)
+                                    .addBuildingModuleProducer(BuildingStonemason.DOCraftingModule::new, () -> DOCraftingModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry();
@@ -429,6 +432,7 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                      .addBuildingModuleProducer(BuildingGlassblower.CraftingModule::new, () -> CraftingModuleView::new)
                                      .addBuildingModuleProducer(BuildingGlassblower.SmeltingModule::new, () -> CraftingModuleView::new)
+                                     .addBuildingModuleProducer(BuildingGlassblower.DOCraftingModule::new, () -> DOCraftingModuleView::new)
                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                      .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
@@ -454,6 +458,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingViewProducer(() -> BuildingFletcher.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
                                   .addBuildingModuleProducer(BuildingFletcher.CraftingModule::new, () -> CraftingModuleView::new)
+                                  .addBuildingModuleProducer(BuildingFletcher.DOCraftingModule::new, () -> DOCraftingModuleView::new)
                                   .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                   .createBuildingEntry();
@@ -474,6 +479,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingViewProducer(() -> BuildingMechanic.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
                                   .addBuildingModuleProducer(BuildingMechanic.CraftingModule::new, () -> CraftingModuleView::new)
+                                  .addBuildingModuleProducer(BuildingMechanic.DOCraftingModule::new, () -> DOCraftingModuleView::new)
                                   .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                   .createBuildingEntry();

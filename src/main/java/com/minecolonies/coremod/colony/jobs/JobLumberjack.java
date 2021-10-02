@@ -75,7 +75,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     @Override
     public BipedModelType getModel()
     {
-        return BipedModelType.LUMBERJACK;
+        return BipedModelType.FORESTER;
     }
 
     @Override

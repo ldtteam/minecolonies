@@ -79,7 +79,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
             }
             else if (optionalEntityCitizen.get().getTicksExisted() == 0)
             {
-                citizenData.getEntity().ifPresent(Entity::remove);
+                citizenData.getEntity().ifPresent(e -> e.remove(Entity.RemovalReason.DISCARDED));
                 citizenData.updateEntityIfNecessary();
             }
 

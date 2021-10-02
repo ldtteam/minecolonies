@@ -17,6 +17,7 @@ import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.FishingRodItem;
@@ -540,7 +541,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      */
     private boolean isFishHookStuck()
     {
-        return (!entityFishHook.isInWater() && (entityFishHook.isOnGround() || entityFishHook.shouldStopFishing()) || !entityFishHook.inChunk) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
+        return (!entityFishHook.isInWater() && (entityFishHook.isOnGround() || entityFishHook.shouldStopFishing())) || !entityFishHook.isAlive() || entityFishHook.caughtEntity != null;
     }
 
     /**
@@ -643,7 +644,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             worker.swing(worker.getUsedItemHand());
             final int i = entityFishHook.getDamage();
-            entityFishHook.remove();
+            entityFishHook.remove(Entity.RemovalReason.DISCARDED);
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, i);
             entityFishHook = null;
         }

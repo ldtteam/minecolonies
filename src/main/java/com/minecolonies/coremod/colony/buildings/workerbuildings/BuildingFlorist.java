@@ -216,7 +216,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
                          .collect(Collectors.toSet());
             case 2:
                 return IColonyManager.getInstance().getCompatibilityManager().getCopyOfPlantables().stream()
-                         .filter(itemStorage -> itemStorage.is(ItemTags.SMALL_FLOWERS))
+                         .filter(itemStorage -> itemStorage.getItemStack().is(ItemTags.SMALL_FLOWERS))
                          .collect(Collectors.toSet());
             case 3:
             case 4:

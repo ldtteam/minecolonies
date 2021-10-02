@@ -163,7 +163,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         boolean movedXp = false;
 
-        for (@NotNull final ExperienceOrb orb : citizen.level.getLoadedEntitiesOfClass(ExperienceOrb.class, box))
+        for (@NotNull final ExperienceOrb orb : citizen.level.getEntitiesOfClass(ExperienceOrb.class, box))
         {
             if (orb.tickCount < 5)
             {

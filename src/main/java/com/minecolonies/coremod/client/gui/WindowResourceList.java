@@ -38,7 +38,6 @@ import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
-
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
 /**
@@ -149,14 +148,17 @@ public class WindowResourceList extends AbstractWindowSkeleton
         for (final IToken<?> token : tokensToCheck)
         {
             final IRequest<?> request = builder.getColony().getRequestManager().getRequestForToken(token);
-            if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID()))
+            if (request != null)
             {
-                requestList.add((Delivery) request.getRequest());
-            }
+                if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID()))
+                {
+                    requestList.add((Delivery) request.getRequest());
+                }
 
-            if (request.hasChildren())
-            {
-                addDeliveryRequestsToList(requestList, request.getChildren());
+                if (request.hasChildren())
+                {
+                    addDeliveryRequestsToList(requestList, request.getChildren());
+                }
             }
         }
     }

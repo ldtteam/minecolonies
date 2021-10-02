@@ -38,13 +38,13 @@ public class MinecoloniesWorldColonyManagerCapabilityProvider implements ICapabi
     @Override
     public Tag serializeNBT()
     {
-        return COLONY_MANAGER_CAP.getStorage().writeNBT(COLONY_MANAGER_CAP, colonyManager, null);
+        return IColonyManagerCapability.Storage.writeNBT(COLONY_MANAGER_CAP, colonyManager, null);
     }
 
     @Override
     public void deserializeNBT(final Tag nbt)
     {
-        COLONY_MANAGER_CAP.getStorage().readNBT(COLONY_MANAGER_CAP, colonyManager, null, nbt);
+        IColonyManagerCapability.Storage.readNBT(COLONY_MANAGER_CAP, colonyManager, null, nbt);
     }
 
     @Nonnull

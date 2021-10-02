@@ -6,17 +6,20 @@ import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
+import com.minecolonies.coremod.event.ClientRegistryHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Vector3f;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * Class to render the scarecrow.
  */
 @OnlyIn(Dist.CLIENT)
-public class TileEntityScarecrowRenderer extends BlockEntityRenderer<AbstractScarecrowTileEntity>
+public class TileEntityScarecrowRenderer implements BlockEntityRenderer<AbstractScarecrowTileEntity>
 {
     /**
      * Offset to the block middle.
@@ -78,12 +81,12 @@ public class TileEntityScarecrowRenderer extends BlockEntityRenderer<AbstractSca
     /**
      * The public constructor for the renderer.
      *
-     * @param dispatcher the render dispatcher.
+     * @param context the render context.
      */
-    public TileEntityScarecrowRenderer(final BlockEntityRenderDispatcher dispatcher)
+    public TileEntityScarecrowRenderer(final BlockEntityRendererProvider.Context context)
     {
-        super(dispatcher);
-        this.model = new ModelScarecrowBoth();
+        super();
+        this.model = new ModelScarecrowBoth(context.bakeLayer(ClientRegistryHandler.SCARECROW));
     }
 
     @Override
@@ -95,6 +98,10 @@ public class TileEntityScarecrowRenderer extends BlockEntityRenderer<AbstractSca
       final int lightA,
       final int lightB)
     {
+        if (te.getBlockState().getValue(BlockScarecrow.HALF) == DoubleBlockHalf.UPPER)
+        {
+            return;
+        }
         //Store the transformation
         matrixStack.pushPose();
         //Set viewport to tile entity position to render it

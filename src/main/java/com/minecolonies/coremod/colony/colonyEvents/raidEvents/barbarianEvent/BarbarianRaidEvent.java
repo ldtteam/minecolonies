@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityChiefBarbarian;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,7 +47,7 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     {
         if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -68,7 +69,7 @@ public class BarbarianRaidEvent extends HordeRaidEvent
             return;
         }
 
-        entity.remove();
+        entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override
@@ -142,6 +143,6 @@ public class BarbarianRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return new TextComponent(LanguageHandler.format(RAID_BARBARIAN));
+        return new TranslatableComponent(RAID_BARBARIAN);
     }
 }

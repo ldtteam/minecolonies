@@ -14,7 +14,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -124,17 +126,18 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.get("gui.done") : new TranslatableComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button
           doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
-        this.addButton(doneButton);
+        this.addRenderableWidget(doneButton);
         if (!module.canLearnCraftingRecipes())
         {
             doneButton.active = false;
         }
+
     }
 
     public class OnButtonPress implements Button.OnPress
@@ -155,7 +158,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
                     input.add(new ItemStorage(copy));
                 }
 
-                final ItemStack primaryOutput = menu.craftResult.getItem(0).getStack().copy();
+                final ItemStack primaryOutput = menu.craftResult.getItem(0).copy();
                 final List<ItemStack> secondaryOutputs = menu.getRemainingItems();
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
@@ -181,14 +184,15 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     @Override
     protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (completeCrafting)
         {
-            this.minecraft.getTextureManager().bind(CRAFTING_TABLE_GUI_TEXTURES3X3);
+            RenderSystem.setShaderTexture(0, CRAFTING_TABLE_GUI_TEXTURES3X3);
         }
         else
         {
-            this.minecraft.getTextureManager().bind(CRAFTING_TABLE_GUI_TEXTURES);
+            RenderSystem.setShaderTexture(0, CRAFTING_TABLE_GUI_TEXTURES);
         }
         this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }

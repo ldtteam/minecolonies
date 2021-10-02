@@ -20,7 +20,6 @@ import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -149,7 +148,6 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
         this.goalSelector.addGoal(4, new EntityAIInteractToggleAble(this, FENCE_TOGGLE, TRAP_TOGGLE, DOOR_TOGGLE));
         this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, Monster.class, 10, true, false, e -> e instanceof Enemy && !(e instanceof Llama)));
 
-        this.forcedLoading = true;
         setCustomNameVisible(true);
         this.setPersistenceRequired();
 
@@ -203,7 +201,7 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
     {
         if (level == null || level.getGameTime() - worldTimeAtSpawn > TICKS_FOURTY_MIN || colony == null || this.isInvisible())
         {
-            this.remove();
+            this.remove(RemovalReason.DISCARDED);
             return true;
         }
         return false;

@@ -222,7 +222,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
                     {
                         if (furnace.isLit()) 
                         {
-                            furnace.tick();
+                            FurnaceBlockEntity.serverTick(entity.getLevel(), entity.getBlockPos(), entity.getBlockState(), furnace);
                         }
                     }
                 }
@@ -298,7 +298,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final Level world = getOwnBuilding().getColony().getWorld();
         final List<ItemStack> possibleFuels = getActivePossibleFuels();
 
-        if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)) && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE )
+        if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)) && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE )
         {
             worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * getOwnBuilding().getFurnaces().size(), 1));
             return getState();

@@ -106,7 +106,7 @@ public final class ShipBasedRaiderUtils
     {
         world.removeBlock(location, false);
         world.setBlockAndUpdate(location, Blocks.SPAWNER.defaultBlockState());
-        final SpawnerBlockEntity spawner = new SpawnerBlockEntity();
+        final SpawnerBlockEntity spawner = new SpawnerBlockEntity(location, Blocks.SPAWNER.defaultBlockState());
 
         spawner.getSpawner().requiredPlayerRange = SPAWNER_DISTANCE;
         spawner.getSpawner().setEntityId(mob);
@@ -115,7 +115,7 @@ public final class ShipBasedRaiderUtils
         spawner.getSpawner().nextSpawnData.getTag().putInt(TAG_COLONY_ID, colonyId);
 
         event.addSpawner(location);
-        world.setBlockEntity(location, spawner);
+        world.setBlockEntity(spawner);
     }
 
     /**

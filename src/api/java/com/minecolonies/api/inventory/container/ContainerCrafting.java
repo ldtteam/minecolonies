@@ -1,6 +1,5 @@
 package com.minecolonies.api.inventory.container;
 
-import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -140,13 +139,6 @@ public class ContainerCrafting extends AbstractContainerMenu
 
                     @NotNull
                     @Override
-                    public ItemStack onTake(final Player player, @NotNull final ItemStack stack)
-                    {
-                        return ItemStack.EMPTY;
-                    }
-
-                    @NotNull
-                    @Override
                     public ItemStack remove(final int par1)
                     {
                         return ItemStack.EMPTY;
@@ -155,7 +147,7 @@ public class ContainerCrafting extends AbstractContainerMenu
                     @Override
                     public boolean mayPlace(final ItemStack par1ItemStack)
                     {
-                        return false;
+                        return true;
                     }
 
                     @Override
@@ -216,12 +208,12 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 stack = iRecipe.get().assemble(this.craftMatrix);
                 this.craftResultSlot.set(stack);
-                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, stack));
+                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, stack));
             }
             else
             {
                 this.craftResultSlot.set(ItemStack.EMPTY);
-                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, ItemStack.EMPTY));
+                player.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, 0, 0, ItemStack.EMPTY));
             }
         }
 
@@ -234,9 +226,8 @@ public class ContainerCrafting extends AbstractContainerMenu
         return true;
     }
 
-    @NotNull
     @Override
-    public ItemStack clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
+    public void clicked(final int slotId, final int clickedButton, final @NotNull ClickType mode, final @NotNull Player playerIn)
     {
         if (slotId >= 1 && slotId < CRAFTING_SLOTS + (complete ? ADDITIONAL_SLOTS : 0))
         {
@@ -246,21 +237,19 @@ public class ContainerCrafting extends AbstractContainerMenu
                   || mode == ClickType.SWAP)
             {
                 final Slot slot = this.slots.get(slotId);
-
-                final ItemStack dropping = playerIn.inventory.getCarried();
-
-                return handleSlotClick(slot, dropping);
+                handleSlotClick(slot, this.getCarried());
+                return;
             }
 
-            return ItemStack.EMPTY;
+            return;
         }
 
         if (mode == ClickType.QUICK_MOVE)
         {
-            return ItemStack.EMPTY;
+            return;
         }
 
-        return super.clicked(slotId, clickedButton, mode, playerIn);
+        super.clicked(slotId, clickedButton, mode, playerIn);
     }
 
     /**
@@ -298,7 +287,7 @@ public class ContainerCrafting extends AbstractContainerMenu
 
         final int total_slots = TOTAL_SLOTS + (complete ? ADDITIONAL_SLOTS : 0);
 
-        ItemStack itemstack = ItemStackUtils.EMPTY;
+        ItemStack itemstack = ItemStack.EMPTY;
         final Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem())
         {
@@ -308,7 +297,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 if (!this.moveItemStackTo(itemstack1, total_crafting_slots, total_slots, true))
                 {
-                    return ItemStackUtils.EMPTY;
+                    return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(itemstack1, itemstack);
             }
@@ -316,7 +305,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             {
                 if (!this.moveItemStackTo(itemstack1, HOTBAR_START, total_slots, false))
                 {
-                    return ItemStackUtils.EMPTY;
+                    return ItemStack.EMPTY;
                 }
             }
             else if ((index < total_slots
@@ -327,7 +316,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             }
             if (itemstack1.getCount() == 0)
             {
-                slot.set(ItemStackUtils.EMPTY);
+                slot.set(ItemStack.EMPTY);
             }
             else
             {
@@ -335,7 +324,7 @@ public class ContainerCrafting extends AbstractContainerMenu
             }
             if (itemstack1.getCount() == itemstack.getCount())
             {
-                return ItemStackUtils.EMPTY;
+                return ItemStack.EMPTY;
             }
         }
         return itemstack;

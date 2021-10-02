@@ -3,11 +3,8 @@ package com.minecolonies.coremod.enchants;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EquipmentSlot;
 
-import static net.minecraft.enchantment.EnchantmentType.WEAPON;
+import static net.minecraft.world.item.enchantment.EnchantmentCategory.WEAPON;
 
-import net.mnetimport net.minecraft.world.item.enchantment.Enchantment.Rarity;
-
-.minecraft.world.item.enchantment.EnchantmentCategory
 /**
  * Enchant for adding extra damage against raiders
  */

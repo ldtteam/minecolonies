@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -506,7 +507,7 @@ public class PermissionsMessage
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
-            final ColonyPlayer player = ctxIn.getSender();
+            final ServerPlayer player = ctxIn.getSender();
             if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID))
             {
                 Log.getLogger().error(rank.getName());
@@ -583,7 +584,7 @@ public class PermissionsMessage
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
-            final ColonyPlayer player = ctxIn.getSender();
+            final ServerPlayer player = ctxIn.getSender();
             final ColonyPlayer permissionsPlayer = colony.getPermissions().getPlayers().get(playerID);
             if ((permissionsPlayer.getRank().isHostile() && colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS))
                   || (!permissionsPlayer.getRank().isHostile()

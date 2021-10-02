@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.management.handlers.update.implementation;
 
+import com.minecolonies.api.colony.requestsystem.management.update.UpdateType;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.handlers.update.IUpdateStep;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +15,14 @@ public class InitialUpdate implements IUpdateStep
     }
 
     @Override
-    public void update(@NotNull final IStandardRequestManager manager)
+    public void update(@NotNull final UpdateType type, @NotNull final IStandardRequestManager manager)
     {
         //Noop
+        final Colony colony = (Colony) manager.getColony();
+        if (type == UpdateType.DATA_LOAD)
+        {
+            manager.reset();
+        }
+        colony.getBuildingManager().getBuildings().values().forEach(manager::onProviderAddedToColony);
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.proxy;
 
-import com.ldtteam.structures.helpers.Settings;
+import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
@@ -20,7 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,6 +60,18 @@ public class ClientProxy extends CommonProxy
         }
 
         @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos);
+        window.open();
+    }
+
+    @Override
+    public void openShapeToolWindow(@Nullable final BlockPos pos)
+    {
+        if (pos == null && Settings.instance.getActiveStructure() == null)
+        {
+            return;
+        }
+
+        @Nullable final WindowMinecoloniesShapeTool window = new WindowMinecoloniesShapeTool(pos);
         window.open();
     }
 

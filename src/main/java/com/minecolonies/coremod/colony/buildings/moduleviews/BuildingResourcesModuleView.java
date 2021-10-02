@@ -50,7 +50,9 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
             final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack, amountNeeded, amountAvailable);
-            resources.put(itemStack.getHoverName().getString(), resource);
+            final int hashCode = itemStack.hasTag() ? itemStack.getTag().hashCode() : 0;
+            final String key = itemStack.getDescriptionId() + "-" + hashCode;
+            resources.put(key, resource);
         }
 
         constructionName = buf.readUtf(32767);

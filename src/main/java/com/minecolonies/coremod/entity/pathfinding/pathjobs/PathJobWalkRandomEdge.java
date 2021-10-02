@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(final Node n)
+    protected boolean isAtDestination(final MNode n)
     {
         if (start.getY() - n.pos.getY() > 3)
         {
@@ -53,7 +53,7 @@ public class PathJobWalkRandomEdge extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(final Node n)
+    protected double getNodeResultScore(final MNode n)
     {
         return start.distManhattan(n.pos);
     }

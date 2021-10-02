@@ -19,6 +19,7 @@ import com.minecolonies.coremod.network.messages.server.DecorationControllerUpda
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -94,17 +95,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     if (controller.getTier() == 0)
                     {
-                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
+                        buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
                     }
                     else
                     {
-                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
+                        buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
                 else if (wo.get().getType() == WorkOrderType.BUILD)
                 {
-                    buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
+                    buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
             }
@@ -118,8 +119,9 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         LoadOnlyStructureHandler structure = null;
         try
         {
+            final String structureName = controller.getSchematicPath().replace("/structurize/", "").replaceAll("\\d$", "");
             structure =
-              new LoadOnlyStructureHandler(world, b, controller.getSchematicPath().replace("/structurize/", "") + (controller.getTier() + 1), new PlacementSettings(), true);
+              new LoadOnlyStructureHandler(world, b, structureName + (controller.getTier() + 1), new PlacementSettings(), true);
         }
         catch (final Exception e)
         {
@@ -141,7 +143,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         }
         else
         {
-            findPaneOfTypeByID("nameLabel", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.deco.namescan"));
+            findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.deco.namescan"));
         }
     }
 

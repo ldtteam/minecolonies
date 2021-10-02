@@ -9,7 +9,11 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -40,14 +44,14 @@ public class WindowHutNameEntry extends BOWindow implements ButtonHandler
      */
     public WindowHutNameEntry(final IBuildingView b)
     {
-        super(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX);
+        super(new ResourceLocation(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX));
         this.building = b;
     }
 
     @Override
     public void onOpened()
     {
-        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(building.getCustomName());
+        findPaneOfTypeByID(INPUT_NAME, TextField.class).setText(new TranslatableComponent(building.getCustomName().toLowerCase(Locale.ROOT)).getString());
     }
 
     @Override

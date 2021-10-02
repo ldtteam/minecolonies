@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.client.render;
 
+import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.BipedRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
@@ -32,15 +33,16 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     public static        boolean isItGhostTime = false;
 
     /**
-     * Renders model, see {@link BipedRenderer}.
+     * Renders model, see {@link MobRenderer}.
      *
-     * @param renderManagerIn the RenderManager for this Renderer.
+     * @param context the context for this Renderer.
      */
-    public RenderBipedCitizen(final EntityRenderDispatcher renderManagerIn)
+    public RenderBipedCitizen(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new CitizenModel<>(0.0F), (float) SHADOW_SIZE);
-        super.addLayer(new HumanoidArmorLayer<>(this, new CitizenModel<>(0.5F), new CitizenModel<>(1.0F)));
+        super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
+        this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
         super.addLayer(new ItemInHandLayer<>(this));
+        MinecoloniesAPIProxy.getInstance().getModelTypeRegistry().setup(context);
     }
 
     @Override
@@ -52,6 +54,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
       @NotNull final MultiBufferSource renderTypeBuffer,
       final int light)
     {
+
         setupMainModelFrom(citizen);
 
         final CitizenModel<AbstractEntityCitizen> citizenModel = model;
@@ -66,11 +69,11 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         if (isItGhostTime)
         {
             RenderSystem.enableBlend();
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.3F);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.3F);
 
             super.render(citizen, limbSwing, partialTicks, matrixStack, renderTypeBuffer, light);
 
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1F);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             RenderSystem.disableBlend();
         }
@@ -87,12 +90,15 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
                          : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
         if (model == null)
         {
-            model = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));
+            //no if base, or the next condition, get player model!
+            model = (citizen.isFemale()
+                       ? IModelTypeRegistry.getInstance().getFemaleMap().get(BipedModelType.BASE)
+                       : IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.BASE));
         }
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
         {
-            model = new CitizenModel<>(false);
+            model = IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.CUSTOM);
         }
 
         model.young = citizen.isBaby();
@@ -129,13 +135,15 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                final Matrix4f matrix = matrixStack.last().pose();
-                final VertexConsumer r = buffer.getBuffer(MRenderTypes.customTextRenderer(texture));
+                VertexConsumer r = buffer.getBuffer(MRenderTypes.customTexRenderer(texture));
 
-                r.vertex(matrix, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
-                r.vertex(matrix, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
-                r.vertex(matrix, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
-                r.vertex(matrix, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
+                final Matrix4f matrixA = matrixStack.last().pose();
+
+                r.vertex(matrixA, 0, 0, 0).uv(0, 0).uv2(250).endVertex();
+                r.vertex(matrixA, 0, 10, 0).uv(1, 0).uv2(250).endVertex();
+                r.vertex(matrixA, 10, 10, 0).uv(1, 1).uv2(250).endVertex();
+                r.vertex(matrixA, 10, 0, 0).uv(0, 1).uv2(250).endVertex();
+
                 matrixStack.popPose();
             }
         }

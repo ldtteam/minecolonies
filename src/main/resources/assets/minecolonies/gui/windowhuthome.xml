@@ -4,7 +4,7 @@
             label="$(com.minecolonies.coremod.gui.workerhuts.assign)"/>
 
     <list id="assignedCitizen" size="164 60" pos="13 49">
-        <box size="100% 30" linewidth="2">
+        <box size="100% 30" linewidth="1">
             <label id="name" size="150 12" pos="5 2" color="black"/>
             <button id="remove" size="80 13" pos="75 15" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
             <label id="dist" size="75 13" pos="5 15" color="black"/>

@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.mobs.egyptians.EntityArcherMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityMummy;
 import com.minecolonies.coremod.entity.mobs.egyptians.EntityPharao;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -79,7 +80,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     {
         if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
         {
-            entity.remove();
+            entity.remove(Entity.RemovalReason.DISCARDED);
             return;
         }
 
@@ -101,7 +102,7 @@ public class EgyptianRaidEvent extends HordeRaidEvent
             return;
         }
 
-        entity.remove();
+        entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
     @Override
@@ -175,6 +176,6 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     @Override
     protected MutableComponent getDisplayName()
     {
-        return new TextComponent(LanguageHandler.format(RAID_EGYPTIAN));
+        return new TranslatableComponent(RAID_EGYPTIAN);
     }
 }

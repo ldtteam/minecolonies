@@ -8,8 +8,8 @@ import com.ldtteam.datagenerators.loot_table.pool.entry.EntryTypeEnum;
 import com.ldtteam.datagenerators.loot_table.pool.entry.functions.IEntryFunction;
 import com.ldtteam.datagenerators.loot_table.pool.entry.functions.SetCountFunctionJson;
 import com.ldtteam.datagenerators.loot_table.pool.entry.functions.SetNbtFunctionJson;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

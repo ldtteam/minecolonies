@@ -43,6 +43,7 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
+import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.world.entity.*;
@@ -62,6 +63,7 @@ import net.minecraft.world.item.ShieldItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.scores.Team;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -209,6 +211,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      * Cached team name the entity belongs to.
      */
     private String cachedTeamName;
+
+    /**
+     * The current chunkpos.
+     */
+    private ChunkPos lastChunk;
 
     /**
      * Our entities threat list
@@ -501,6 +508,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         citizenData.setLastPosition(blockPosition());
         citizenDiseaseHandler.tick();
         onLivingSoundUpdate();
+
+        final ChunkPos currentChunk = chunkPosition();
+        if ((!Objects.equals(currentChunk, lastChunk)))
+        {
+            lastChunk = currentChunk;
+            EventHandler.onEnteringChunkEntity(this, currentChunk);
+        }
         return false;
     }
 

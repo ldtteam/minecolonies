@@ -84,6 +84,10 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
+        if (blockState.getValue(HALF) == DoubleBlockHalf.UPPER)
+        {
+            return null;
+        }
         return new ScarecrowTileEntity(blockPos, blockState);
     }
 
@@ -119,7 +123,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         return InteractionResult.SUCCESS;
     }
 
-    @javax.annotation.Nullable
+    @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {

@@ -2,8 +2,8 @@ package com.minecolonies.coremod.generation;
 
 import com.ldtteam.datagenerators.loot_table.LootTableJson;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +37,7 @@ public abstract class LootTableJsonProvider implements DataProvider
     protected abstract Map<ResourceLocation, LootTableJson> getLootTables();
 
     @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final HashCache cache) throws IOException
     {
         final Map<ResourceLocation, LootTableJson> lootTables = getLootTables();
 
@@ -48,7 +48,7 @@ public abstract class LootTableJsonProvider implements DataProvider
                     .resolve(entry.getKey().getNamespace())
                     .resolve("loot_tables")
                     .resolve(entry.getKey().getPath() + ".json");
-            IDataProvider.save(DataGeneratorConstants.GSON, cache, entry.getValue().serialize(), savePath);
+            DataProvider.save(DataGeneratorConstants.GSON, cache, entry.getValue().serialize(), savePath);
         }
     }
 }

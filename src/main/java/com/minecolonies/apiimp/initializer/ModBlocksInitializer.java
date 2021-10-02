@@ -116,7 +116,7 @@ public final class ModBlocksInitializer
     }
 
     /**
-     * Initializes the registry with the relevant {@link net.minecraft.item.BlockItem} produced by the relevant blocks.
+     * Initializes the registry with the relevant item produced by the relevant blocks.
      *
      * @param registry The item registry to add the items too.
      */

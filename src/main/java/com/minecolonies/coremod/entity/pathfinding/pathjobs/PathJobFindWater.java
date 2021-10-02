@@ -3,7 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
 import com.minecolonies.api.util.Pond;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
@@ -73,7 +73,7 @@ public class PathJobFindWater extends AbstractPathJob
 
     //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
     @Override
-    protected boolean isAtDestination(@NotNull final Node n)
+    protected boolean isAtDestination(@NotNull final MNode n)
     {
         if (squareDistance(hutLocation, n.pos) > MAX_RANGE)
         {
@@ -96,7 +96,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param n the location.
      * @return true if so.
      */
-    private boolean isWater(@NotNull final Node n)
+    private boolean isWater(@NotNull final MNode n)
     {
         if (n.parent == null)
         {
@@ -154,7 +154,7 @@ public class PathJobFindWater extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(final Node n)
+    protected double getNodeResultScore(final MNode n)
     {
         return 0;
     }

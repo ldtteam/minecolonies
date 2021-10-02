@@ -8,6 +8,7 @@ import com.ldtteam.blockui.views.SwitchView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.coremod.network.messages.server.OpenGuiWindowTriggerMessage;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +61,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
      */
     public AbstractWindowSkeleton(final String resource, @Nullable final BOWindow parent)
     {
-        super(resource);
+        super(new ResourceLocation(resource));
         this.resource = resource;
         this.parent = parent;
 

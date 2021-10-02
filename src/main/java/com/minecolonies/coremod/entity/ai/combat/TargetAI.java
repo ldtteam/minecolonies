@@ -53,7 +53,8 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
     {
         if (target != null && !target.isAlive())
         {
-            onKill(target);
+            onTargetDied(target);
+            target = null;
         }
 
         final ThreatTableEntry nextTarget = user.getThreatTable().getTarget();
@@ -136,7 +137,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
             return true;
         }
 
-        final List<LivingEntity> entities = user.level.getLoadedEntitiesOfClass(LivingEntity.class, getSearchArea());
+        final List<LivingEntity> entities = user.level.getEntitiesOfClass(LivingEntity.class, getSearchArea());
 
         if (entities.isEmpty())
         {
@@ -178,9 +179,9 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
     }
 
     /**
-     * Get the {@link AxisAlignedBB} we're searching for targets in.
+     * Get the {@link AABB} we're searching for targets in.
      *
-     * @return the {@link AxisAlignedBB}
+     * @return the {@link AABB}
      */
     protected AABB getSearchArea()
     {
@@ -240,11 +241,11 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
     }
 
     /**
-     * When killing an entity
+     * When our previous target has died
      *
      * @param target
      */
-    protected void onKill(final LivingEntity target)
+    protected void onTargetDied(final LivingEntity target)
     {
 
     }

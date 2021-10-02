@@ -7,6 +7,8 @@ import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagWallBanner;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +19,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -33,17 +34,19 @@ import java.util.List;
  * The custom renderer to render the colony flag patterns if they exist,
  * and a placeholder marker if in Creative mode.
  */
-public class TileEntityColonyFlagRenderer extends BlockEntityRenderer<TileEntityColonyFlag>
+public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEntityColonyFlag>
 {
-    private final ModelPart cloth     = BannerRenderer.makeFlag();
-    private final ModelPart standPost = new ModelPart(64, 64, 44, 0);
-    private final ModelPart crossbar  = new ModelPart(64, 64, 0, 42);;
+    private final ModelPart cloth;
+    private final ModelPart standPost;
+    private final ModelPart crossbar;
 
-    public TileEntityColonyFlagRenderer(BlockEntityRenderDispatcher dispatcher)
+    public TileEntityColonyFlagRenderer(final BlockEntityRendererProvider.Context context)
     {
-        super(dispatcher);
-        standPost.addBox(-1.0F, -30.0F, -1.0F, 2.0F, 42.0F, 2.0F, 0.0F);
-        crossbar.addBox(-10.0F, -32.0F, -1.0F, 20.0F, 2.0F, 2.0F, 0.0F);
+        super();
+        ModelPart modelpart = context.bakeLayer(ModelLayers.BANNER);
+        this.cloth = modelpart.getChild("flag");
+        this.standPost = modelpart.getChild("pole");
+        this.crossbar = modelpart.getChild("bar");
     }
 
     @Override
@@ -90,7 +93,7 @@ public class TileEntityColonyFlagRenderer extends BlockEntityRenderer<TileEntity
 
                 transform.translate(0.0D, 0.5D, 0.0D);
                 transform.scale(0.75F, 0.75F, 0.75F);
-                Minecraft.getInstance().getItemRenderer().renderStatic(placeholder, ItemTransforms.TransformType.FIXED, combinedLightIn, OverlayTexture.NO_OVERLAY, transform, bufferIn);
+                Minecraft.getInstance().getItemRenderer().renderStatic(placeholder, ItemTransforms.TransformType.FIXED, combinedLightIn, combinedOverlayIn, transform, bufferIn, OverlayTexture.NO_OVERLAY);
                 transform.popPose();
             }
         }

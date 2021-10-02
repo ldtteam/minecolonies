@@ -9,16 +9,16 @@ import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.LootTableBuilder;
 import com.minecolonies.coremod.generation.LootTableJsonProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentData;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -360,7 +360,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     private ItemStack enchantedBook(@NotNull final Enchantment enchantment, final int level)
     {
         final ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
-        EnchantedBookItem.addEnchantment(stack, new EnchantmentData(enchantment, level));
+        EnchantedBookItem.addEnchantment(stack, new EnchantmentInstance(enchantment, level));
         return stack;
     }
 
@@ -372,7 +372,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
+    public void run(@NotNull final HashCache cache) throws IOException
     {
         recipeProvider.run(cache);
         lootTableProvider.run(cache);
@@ -386,7 +386,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
         }
 
         @Override
-        protected void registerRecipes(@NotNull final Consumer<IFinishedRecipe> consumer)
+        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
         {
             final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
                     new ItemStack(ModItems.ancientTome), true, true));

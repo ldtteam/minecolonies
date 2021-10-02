@@ -88,7 +88,7 @@ public final class BuildingConstants
     public static final int MAX_DEPTH_LEVEL_3 = 5;
 
     /**
-     * Florist & Beekeeper flower list filter.
+     * Florist and Beekeeper flower list filter.
      */
     public static final String BUILDING_FLOWER_LIST = "flowers";
 

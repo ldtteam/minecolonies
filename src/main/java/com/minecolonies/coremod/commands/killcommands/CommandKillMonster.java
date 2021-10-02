@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands.killcommands;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.network.chat.TextComponent;
 
@@ -20,11 +21,11 @@ public class CommandKillMonster implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getLevel().getEntities().forEach(entity ->
+        context.getSource().getLevel().getEntities().getAll().forEach(entity ->
         {
             if (entity instanceof Monster)
             {
-                entity.remove();
+                entity.remove(Entity.RemovalReason.DISCARDED);
                 entitiesKilled++;
             }
         });

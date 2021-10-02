@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowsBarracksSpies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -109,7 +110,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.buildBarracks";
+        return "com.minecolonies.coremod.gui.workerhuts.buildbarracks";
     }
 
     /**
@@ -172,15 +173,15 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
         final String distanceDesc;
         if (distance < QUITE_CLOSE)
         {
-            distanceDesc = LanguageHandler.format(QUITE_CLOSE_DESC);
+            distanceDesc = new TranslatableComponent(QUITE_CLOSE_DESC).getString();
         }
         else if (distance < QUITE_FAR)
         {
-            distanceDesc = LanguageHandler.format(QUITE_FAR_DESC);
+            distanceDesc = new TranslatableComponent(QUITE_FAR_DESC).getString();
         }
         else
         {
-            distanceDesc = LanguageHandler.format(REALLY_FAR_DESC);
+            distanceDesc = new TranslatableComponent(REALLY_FAR_DESC).getString();
         }
         final String directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
         return distanceDesc + " " + directionDest;

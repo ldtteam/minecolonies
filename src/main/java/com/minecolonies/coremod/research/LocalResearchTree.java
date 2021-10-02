@@ -336,17 +336,7 @@ public class LocalResearchTree implements ILocalResearchTree
               /// region Updated ID helper.
               if (!MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
               {
-                  if(ResearchCompatMap.updateMap.containsKey(research.getId().getPath()))
-                  {
-                      final ResearchState currentState = research.getState();
-                      final int progress = research.getProgress();
-                      research = new LocalResearch(ResearchCompatMap.updateMap.get(research.getId().getPath()),
-                        new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, research.getBranch().getPath()), research.getDepth());
-                      research.setState(currentState);
-                      research.setProgress(progress);
-                      Log.getLogger().warn("Research " + research.getId().getPath() + " was in colony save file, and was updated to " + research.getId());
-                  }
-                  else if(research.getBranch().getNamespace().contains("minecraft"))
+                  if(research.getBranch().getNamespace().contains("minecraft"))
                   {
                       final ResearchState currentState = research.getState();
                       final int progress = research.getProgress();

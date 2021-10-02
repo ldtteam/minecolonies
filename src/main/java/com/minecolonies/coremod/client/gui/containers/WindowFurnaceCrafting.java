@@ -15,7 +15,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -93,12 +95,12 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnFurnaceRecipes() ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = module.canLearnFurnaceRecipes() ? I18n.get("gui.done") : new TranslatableComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new OnButtonPress());
-        this.addButton(doneButton);
+        this.addRenderableWidget(doneButton);
         if (!module.canLearnFurnaceRecipes())
         {
             doneButton.active = false;
@@ -130,8 +132,9 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     @Override
     protected void renderBg(@NotNull final PoseStack stack, final float partialTicks, final int mouseX, final int mouseY)
     {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(CRAFTING_FURNACE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, CRAFTING_FURNACE);
         this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 

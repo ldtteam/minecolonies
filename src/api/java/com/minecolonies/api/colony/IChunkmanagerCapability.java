@@ -92,10 +92,9 @@ public interface IChunkmanagerCapability
     /**
      * The storage class of the capability.
      */
-    class Storage implements Capability.IStorage<IChunkmanagerCapability>
+    class Storage
     {
-        @Override
-        public Tag writeNBT(@NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance, @Nullable final Direction side)
+        public static Tag writeNBT(@NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance, @Nullable final Direction side)
         {
             final CompoundTag compound = new CompoundTag();
             compound.put(TAG_ALL_CHUNK_STORAGES,
@@ -103,8 +102,7 @@ public interface IChunkmanagerCapability
             return compound;
         }
 
-        @Override
-        public void readNBT(
+        public static void readNBT(
           @NotNull final Capability<IChunkmanagerCapability> capability, @NotNull final IChunkmanagerCapability instance,
           @Nullable final Direction side, @NotNull final Tag nbt)
         {

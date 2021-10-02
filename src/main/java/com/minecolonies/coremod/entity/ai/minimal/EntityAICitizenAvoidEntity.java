@@ -173,7 +173,7 @@ public class EntityAICitizenAvoidEntity extends Goal
                 (double) distanceFromEntity,
                 3.0D,
                 (double) distanceFromEntity),
-              target -> target.isAlive() && citizen.getSensing().canSee(target))
+              target -> target.isAlive() && citizen.getSensing().hasLineOfSight(target))
                                                       .stream()
                                                       .filter(targetEntityClass::isInstance)
                                                       .findFirst();

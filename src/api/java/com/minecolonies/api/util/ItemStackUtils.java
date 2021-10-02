@@ -10,13 +10,13 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.ListTag;
@@ -25,10 +25,14 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.system.CallbackI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,22 +44,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
 import static com.minecolonies.api.items.ModTags.fungi;
-
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.FlintAndSteelItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tiers;
 
 /**
  * Utility methods for the inventories.
@@ -308,6 +296,10 @@ public final class ItemStackUtils
         {
             return Compatibility.getToolLevel(stack);
         }
+        if (!isTool(stack, toolType))
+        {
+            return -1;
+        }
         if (ToolType.HOE.equals(toolType))
         {
             if (stack.getItem() instanceof HoeItem)
@@ -348,9 +340,9 @@ public final class ItemStackUtils
             //We need a hut level 1 minimum
             return 1;
         }
-        else
+        else if (stack.getItem() instanceof TieredItem)
         {
-            return stack.getItem().getHarvestLevel(stack, net.minecraftforge.common.ToolType.get(toolType.getName()), null, null);
+            return ((TieredItem) stack.getItem()).getTier().getLevel();
         }
         return -1;
     }
@@ -387,56 +379,74 @@ public final class ItemStackUtils
             return false;
         }
 
-        boolean isATool = false;
-        if (ToolType.AXE.equals(toolType) || ToolType.SHOVEL.equals(toolType) || ToolType.PICKAXE.equals(toolType))
+        if (ToolType.AXE.equals(toolType) && itemStack.canPerformAction(ToolActions.AXE_DIG))
         {
-            isATool = getMiningLevel(itemStack, toolType) >= 0;
+            return true;
         }
-        else if (ToolType.HOE.equals(toolType))
+
+        if (ToolType.SHOVEL.equals(toolType) && itemStack.canPerformAction(ToolActions.SHOVEL_DIG))
         {
-            isATool = itemStack.getItem() instanceof HoeItem || itemStack.getToolTypes().contains(net.minecraftforge.common.ToolType.HOE);
+            return true;
         }
-        else if (ToolType.BOW.equals(toolType))
+
+        if (ToolType.PICKAXE.equals(toolType) && itemStack.canPerformAction(ToolActions.PICKAXE_DIG))
         {
-            isATool = itemStack.getItem() instanceof BowItem;
+            return true;
         }
-        else if (ToolType.SWORD.equals(toolType))
+
+        if (ToolType.HOE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof SwordItem || Compatibility.isTinkersWeapon(itemStack);
+            for (final ToolAction action : ToolActions.DEFAULT_HOE_ACTIONS)
+            {
+                if (!itemStack.canPerformAction(action))
+                {
+                    break;
+                }
+            }
+            return true;
         }
-        else if (ToolType.FISHINGROD.equals(toolType))
+        if (ToolType.BOW.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof FishingRodItem;
+            return itemStack.getItem() instanceof BowItem;
         }
-        else if (ToolType.SHEARS.equals(toolType))
+        if (ToolType.SWORD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ShearsItem;
+            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP);
         }
-        else if (ToolType.HELMET.equals(toolType))
+        if (ToolType.FISHINGROD.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof FishingRodItem;
         }
-        else if (ToolType.LEGGINGS.equals(toolType))
+        if (ToolType.SHEARS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ShearsItem;
         }
-        else if (ToolType.CHESTPLATE.equals(toolType))
+        if (ToolType.HELMET.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.BOOTS.equals(toolType))
+        if (ToolType.LEGGINGS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ArmorItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.SHIELD.equals(toolType))
+        if (ToolType.CHESTPLATE.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof ShieldItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        else if (ToolType.FLINT_N_STEEL.equals(toolType))
+        if (ToolType.BOOTS.equals(toolType))
         {
-            isATool = itemStack.getItem() instanceof FlintAndSteelItem;
+            return itemStack.getItem() instanceof ArmorItem;
         }
-        return isATool;
+        if (ToolType.SHIELD.equals(toolType))
+        {
+            return itemStack.getItem() instanceof ShieldItem;
+        }
+        if (ToolType.FLINT_N_STEEL.equals(toolType))
+        {
+            return itemStack.getItem() instanceof FlintAndSteelItem;
+        }
+
+        return false;
     }
 
     /**

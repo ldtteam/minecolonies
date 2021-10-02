@@ -89,10 +89,10 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
         //Tasks: Wander around, Find shooting position, go to shooting position, shoot, verify shot
         super(job);
         super.registerTargets(
-          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, 1),
-          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, 1),
-          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, 1),
-          new AITarget(ARCHER_SHOOT, this::shoot, 1)
+          new AITarget(COMBAT_TRAINING, this::findShootingStandPosition, STANDARD_DELAY),
+          new AITarget(ARCHER_SELECT_TARGET, this::selectTarget, STANDARD_DELAY),
+          new AITarget(ARCHER_CHECK_SHOT, this::checkShot, CHECK_SHOT_DELAY),
+          new AITarget(ARCHER_SHOOT, this::shoot, STANDARD_DELAY)
 
         );
     }
@@ -104,7 +104,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     private IAIState selectTarget()
     {
-        setDelay(STANDARD_DELAY);
         final BuildingArchery archeryBuilding = getOwnBuilding();
         if (targetCounter >= archeryBuilding.getBuildingLevel() * BUILDING_LEVEL_TARGET_MULTIPLIER)
         {
@@ -130,7 +129,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     private IAIState findShootingStandPosition()
     {
-        setDelay(STANDARD_DELAY);
         final BuildingArchery archeryBuilding = getOwnBuilding();
         final BlockPos shootingPos = archeryBuilding.getRandomShootingStandPosition(worker.getRandom());
 
@@ -151,7 +149,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     protected IAIState shoot()
     {
-        setDelay(STANDARD_DELAY);
         if (currentShootingTarget == null || !isSetup())
         {
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
@@ -170,7 +167,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             final double xVector = currentShootingTarget.getX() - worker.getX();
             final double yVector = currentShootingTarget.getY() - arrow.getY();
             final double zVector = currentShootingTarget.getZ() - worker.getZ();
-            final double distance = (double) Mth.sqrt(xVector * xVector + zVector * zVector);
+            final double distance = (double) Mth.sqrt((float) (xVector * xVector + zVector * zVector));
 
             final double chance = HIT_CHANCE_DIVIDER / (getPrimarySkillLevel()/2.0 + 1);
             arrow.shoot(xVector, yVector + distance * RANGED_AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, RANGED_VELOCITY, (float) chance);
@@ -203,7 +200,6 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return ARCHER_SHOOT;
         }
 
-        setDelay(CHECK_SHOT_DELAY);
         return ARCHER_CHECK_SHOT;
     }
 

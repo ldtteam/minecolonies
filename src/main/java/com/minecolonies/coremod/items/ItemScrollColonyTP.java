@@ -18,7 +18,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.text.*;
+
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +77,7 @@ public class ItemScrollColonyTP extends AbstractItemScroll
             if (pos != null)
             {
                 player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, TICKS_SECOND * 7));
-                player.teleportTo((ServerLevel) world, pos.getX(), pos.getY(), pos.getZ(), player.yRot, player.xRot);
+                player.teleportTo((ServerLevel) world, pos.getX(), pos.getY(), pos.getZ(), player.getYRot(), player.getXRot());
             }
 
             SoundUtils.playSoundForPlayer(player, SoundEvents.BAT_TAKEOFF, 0.4f, 1.0f);

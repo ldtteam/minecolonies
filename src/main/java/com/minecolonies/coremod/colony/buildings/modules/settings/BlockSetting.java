@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -97,7 +98,7 @@ public class BlockSetting implements ISetting
       final IBuildingView building, final BOWindow window)
     {
 
-        Loader.createFromXMLFile("minecolonies:gui/layouthuts/layoutblocksetting.xml", (View) pane);
+        Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutblocksetting.xml"), (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
         pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
 

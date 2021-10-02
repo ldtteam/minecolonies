@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -102,11 +103,11 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                 {
                     rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class)
                       .setText(
-                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY) + ((IDeliverymanRequestable) (request.getRequest())).getPriority());
+                        new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY).getString() + ((IDeliverymanRequestable) (request.getRequest())).getPriority());
                 }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);
-                logo.setImage(request.getDisplayIcon());
+                logo.setImage(request.getDisplayIcon(), false);
             }
         });
     }

@@ -30,7 +30,6 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.block.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +45,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -232,7 +231,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(Objects.requireNonNull(worker.getCitizenData()),
+            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(),
               TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();

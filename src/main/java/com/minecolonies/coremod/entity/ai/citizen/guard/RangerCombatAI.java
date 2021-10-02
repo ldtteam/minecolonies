@@ -300,7 +300,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         {
             final EntityCitizen citizen = (EntityCitizen) entity;
             if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()
-                  && user.getSensing().canSee(citizen))
+                  && user.getSensing().hasLineOfSight(citizen))
             {
                 parentAI.setWakeCitizen(citizen);
                 return true;
@@ -325,5 +325,12 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return Y_VISION;
+    }
+
+    @Override
+    protected void onTargetDied(final LivingEntity entity)
+    {
+        parentAI.incrementActionsDoneAndDecSaturation();
+        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
     }
 }

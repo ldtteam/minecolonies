@@ -160,7 +160,8 @@ public class CitizenWindowUtils
     private static void addHeart(final View healthBarView, final int heartPos, final HeartsEnum heart)
     {
         @NotNull final Image heartImage = new Image();
-        heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH, false);
+        heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+        heartImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
         heartImage.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         healthBarView.addChild(heartImage);
     }
@@ -203,10 +204,8 @@ public class CitizenWindowUtils
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION,
               EMPTY_SATURATION_ITEM_ROW_POS,
-              SATURATION_ICON_COLUMN,
-              SATURATION_ICON_HEIGHT_WIDTH,
-              SATURATION_ICON_HEIGHT_WIDTH,
-              false);
+              SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
 
             saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -217,7 +216,8 @@ public class CitizenWindowUtils
         for (saturationPos = 0; saturationPos < ((int) citizen.getSaturation()); saturationPos++)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
@@ -226,7 +226,8 @@ public class CitizenWindowUtils
         if (citizen.getSaturation() / 2 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
-            saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH, false);
+            saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
         }
@@ -246,11 +247,13 @@ public class CitizenWindowUtils
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS, Text.class).setText(Integer.toString((int) citizen.getHappiness()));
 
         @NotNull final Image xpBar = new Image();
-        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT, false);
+        xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT);
+        xpBar.setSize(XP_BAR_WIDTH, XP_HEIGHT);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
         @NotNull final Image xpBar2 = new Image();
-        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT, false);
+        xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
+        xpBar2.setSize(XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBar);
@@ -259,7 +262,8 @@ public class CitizenWindowUtils
         if (experienceRatio > 0)
         {
             @NotNull final Image xpBarFull = new Image();
-            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT, false);
+            xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT);
+            xpBarFull.setSize((int) experienceRatio, XP_HEIGHT);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);
         }
@@ -294,7 +298,7 @@ public class CitizenWindowUtils
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
+        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
@@ -309,13 +313,13 @@ public class CitizenWindowUtils
             label.setSize(136, 11);
             label.setPosition(70, yPos);
             label.setColors(BLACK);
-            label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
+            label.setText(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness." + name));
             window.addChild(label);
             PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
 
             if (value > 1.0)
             {
-                image.setImage(GREEN_ICON);
+                image.setImage(new ResourceLocation(GREEN_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.positive"))
                     .hoverPane(image)
@@ -323,7 +327,7 @@ public class CitizenWindowUtils
             }
             else if (value == 1)
             {
-                image.setImage(BLUE_ICON);
+                image.setImage(new ResourceLocation(BLUE_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.neutral"))
                     .hoverPane(image)
@@ -331,7 +335,7 @@ public class CitizenWindowUtils
             }
             else if (value > 0.75)
             {
-                image.setImage(YELLOW_ICON);
+                image.setImage(new ResourceLocation(YELLOW_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.slightlynegative"))
                     .hoverPane(image)
@@ -339,7 +343,7 @@ public class CitizenWindowUtils
             }
             else
             {
-                image.setImage(RED_ICON);
+                image.setImage(new ResourceLocation(RED_ICON), false);
                 PaneBuilders.tooltipBuilder()
                     .append(new TranslatableComponent("com.minecolonies.coremod.gui.happiness.negative"))
                     .hoverPane(image)
@@ -363,50 +367,50 @@ public class CitizenWindowUtils
 
         if (building instanceof AbstractBuildingWorkerView && !(building instanceof BuildingLibrary.View))
         {
-            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
-              LanguageHandler.format(citizen.getJob())));
-            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.label",
+              new TranslatableComponent(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.desc"));
 
             final Skill primary = ((AbstractBuildingWorkerView) building).getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
-              .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
+              .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)).getString() + " (100% XP)");
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png");
+              .setImage(new ResourceLocation(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
+                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)).getString() + " ("
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
+                  .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
+                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)).getString() + " (-"
                                   + PRIMARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png");
+                  .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
 
             final Skill secondary = ((AbstractBuildingWorkerView) building).getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
-              .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)) + " (50% XP)");
+              .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)).getString() + " (50% XP)");
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
-              .setImage(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png");
+              .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png"), false);
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
+                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)).getString() + " ("
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
+                  .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png"), false);
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
+                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)).getString() + " (-"
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
-                  .setImage(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png");
+                  .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
         }
         else

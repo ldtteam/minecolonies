@@ -74,7 +74,6 @@ public interface IFactory<Input, Output>
      * @param controller   The controller that can be used to serialize complicated types.
      * @param output       The request to serialize.
      * @param packetBuffer The buffer to serialize into.
-     * @return The serialized data of the given requests.
      */
     @NotNull
     void serialize(@NotNull IFactoryController controller, @NotNull Output output, FriendlyByteBuf packetBuffer);

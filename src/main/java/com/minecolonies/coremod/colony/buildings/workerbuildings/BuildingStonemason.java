@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -10,13 +11,18 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCraf
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobStonemason;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +36,7 @@ public class BuildingStonemason extends AbstractBuildingWorker implements IBuild
     /**
      * Description string of the building.
      */
-    private static final String STONEMASON = "stonemason";
+    protected static final String STONEMASON = "stonemason";
 
     /**
      * Instantiates a new stonemason building.
@@ -130,5 +136,44 @@ public class BuildingStonemason extends AbstractBuildingWorker implements IBuild
             if (!super.isRecipeCompatible(recipe)) return false;
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, STONEMASON).orElse(false);
         }
+    }
+
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobStonemason(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
+        {
+            final ItemStack stack = recipe.getPrimaryOutput();
+            if (stack.getItem().getRegistryName().getNamespace().equals("domum_ornamentum"))
+            {
+                final CompoundTag dataNbt = stack.getOrCreateTagElement("textureData");
+                final MaterialTextureData textureData = MaterialTextureData.deserializeFromNBT(dataNbt);
+                for (final Block block : textureData.getTexturedComponents().values())
+                {
+                    final ItemStack ingredientStack = new ItemStack(block);
+                    if (!ItemStackUtils.isEmpty(ingredientStack) && ModTags.crafterIngredient.get(STONEMASON).contains(ingredientStack.getItem()))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean canLearnCraftingRecipes() { return true; }
+
+        @Override
+        public boolean canLearnFurnaceRecipes() { return false; }
+
+        @Override
+        public boolean canLearnLargeRecipes() { return true; }
     }
 }

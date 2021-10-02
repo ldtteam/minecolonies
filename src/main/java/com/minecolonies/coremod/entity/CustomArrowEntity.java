@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -100,7 +100,7 @@ public class CustomArrowEntity extends Arrow
 
         if (this.inGroundTime > MAX_TIME_IN_GROUND)
         {
-            remove();
+            remove(RemovalReason.DISCARDED);
         }
     }
 }

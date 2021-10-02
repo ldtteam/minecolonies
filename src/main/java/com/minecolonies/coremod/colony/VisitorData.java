@@ -62,7 +62,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
         if (textureUUID != null)
         {
-            compoundNBT.putUUID(TAG_TEXTURE, textureUUID);
+            compoundNBT.putUUID(TAG_TEXTURE_UUID, textureUUID);
         }
         return compoundNBT;
     }
@@ -139,7 +139,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         if (getEntity().isPresent())
         {
             final Entity entity = getEntity().get();
-            if (entity.isAlive() && entity.inChunk && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
+            if (entity.isAlive() && WorldUtil.isEntityBlockLoaded(entity.level, entity.blockPosition()))
             {
                 return;
             }

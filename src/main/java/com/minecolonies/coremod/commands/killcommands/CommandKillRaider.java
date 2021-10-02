@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.Entity;
 
 public class CommandKillRaider implements IMCOPCommand
 {
@@ -23,13 +24,13 @@ public class CommandKillRaider implements IMCOPCommand
     {
         entitiesKilled = 0;
 
-        context.getSource().getLevel().getEntities().forEach(entity ->
+        context.getSource().getLevel().getEntities().getAll().forEach(entity ->
         {
             if (entity instanceof AbstractEntityMinecoloniesMob)
             {
                 final AbstractEntityMinecoloniesMob mob = (AbstractEntityMinecoloniesMob) entity;
                 mob.die(new DamageSource("despawn"));
-                mob.remove();
+                mob.remove(Entity.RemovalReason.DISCARDED);
 
                 final IColonyEvent event = mob.getColony().getEventManager().getEventByID(mob.getEventID());
 

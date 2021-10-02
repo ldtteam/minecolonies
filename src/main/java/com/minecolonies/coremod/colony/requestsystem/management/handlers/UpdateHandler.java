@@ -43,7 +43,7 @@ public class UpdateHandler implements IUpdateHandler
           .forEachOrdered(s ->
           {
               manager.setCurrentVersion(s.updatesToVersion());
-              s.update(manager);
+              s.update(type, manager);
           });
     }
 

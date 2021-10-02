@@ -13,7 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.text.*;
+
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 

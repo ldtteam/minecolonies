@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -12,30 +13,24 @@ import java.util.OptionalDouble;
 
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 
-import net.minecraft.client.renderer.RenderType.CompositeState;
-
 /**
  * Holding all kind of render types of minecolonies
  */
 public final class MRenderTypes extends RenderType
 {
-    private static final VertexFormat format = new VertexFormat(ImmutableList.of(ELEMENT_POSITION, ELEMENT_UV0, ELEMENT_UV2));
+    public static final VertexFormat format = new VertexFormat(ImmutableMap.<String, VertexFormatElement>builder().put("Position", ELEMENT_POSITION).put("UV0", ELEMENT_UV0).put("UV2", ELEMENT_UV2).build());
 
-    /**
-     * Private constructor to hide implicit one.
-     *
-     * @param name   the name of the rendertype.
-     * @param format its format.
-     * @param id1    no idea.
-     * @param id2    no idea.
-     * @param b1     no idea.
-     * @param b2     no idea.
-     * @param b3     no idea.
-     * @param state  the rendertype state.
-     */
-    private MRenderTypes(final String name, final VertexFormat format, final int id1, final int id2, final boolean b1, final boolean b2, final Runnable b3, final Runnable state)
+    public MRenderTypes(final String nameIn,
+      final VertexFormat formatIn,
+      final VertexFormat.Mode drawModeIn,
+      final int bufferSizeIn,
+      final boolean useDelegateIn,
+      final boolean needsSortingIn,
+      final Runnable setupTaskIn,
+      final Runnable clearTaskIn)
     {
-        super(name, format, id1, id2, b1, b2, b3, state);
+        super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
+        throw new IllegalStateException();
     }
 
     /**
@@ -44,15 +39,16 @@ public final class MRenderTypes extends RenderType
      * @param resourceLocation the location fo the texture.
      * @return the renderType which is created.
      */
-    public static RenderType customTextRenderer(@NotNull final ResourceLocation resourceLocation)
+    public static RenderType customTexRenderer(@NotNull final ResourceLocation resourceLocation)
     {
         final CompositeState state = CompositeState.builder()
                               .setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false, false))//Texture state
-                              .setAlphaState(RenderStateShard.MIDWAY_ALPHA)
+                              .setShaderState(ShaderStateShard.POSITION_TEX_SHADER)
                               .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
                               .createCompositeState(true);
 
-        return create("custommctextrenderer", format, 7, 256, true, false, state);
+
+        return create("custommctexrenderer", format, VertexFormat.Mode.QUADS, 256, true, false, state);
     }
 
     /**
@@ -62,7 +58,43 @@ public final class MRenderTypes extends RenderType
      */
     public static RenderType customLineRenderer()
     {
-        return create("minecolonieslines", DefaultVertexFormat.POSITION_COLOR, 1, 256,
-          CompositeState.builder().setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty())).createCompositeState(false));
+        return create("minecolonieslines", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.LINES, 256, false, false,
+          CompositeState.builder()
+            .setShaderState(ShaderStateShard.RENDERTYPE_LINES_SHADER)
+            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+            .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+            .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+            .setOutputState(ITEM_ENTITY_TARGET)
+            .setWriteMaskState(COLOR_DEPTH_WRITE)
+            .setCullState(NO_CULL).createCompositeState(false));
+    }
+
+    /**
+     * Custom line renderer type.
+     *
+     * @return the renderType which is created.
+     */
+    public static RenderType customPathRenderer()
+    {
+        return create("minecoloniespath", POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, false,
+          CompositeState.builder()
+            .setShaderState(ShaderStateShard.POSITION_COLOR_SHADER)
+            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+            .setLightmapState(RenderStateShard.NO_LIGHTMAP)
+            .setTextureState(RenderStateShard.NO_TEXTURE)
+            .createCompositeState(false));
+    }
+
+    /**
+     * Custom line renderer type.
+     *
+     * @return the renderType which is created.
+     */
+    public static RenderType customPathTextRenderer()
+    {
+        return create("minecoloniespathtext", POSITION_COLOR_NORMAL, VertexFormat.Mode.QUADS, 256, false, false,
+          CompositeState.builder()
+            .setShaderState(ShaderStateShard.POSITION_COLOR_SHADER)
+            .createCompositeState(false));
     }
 }

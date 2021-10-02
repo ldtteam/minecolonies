@@ -16,10 +16,6 @@ import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 
-import com.minecolonies.api.research.AbstractResearchProvider.Research;
-import com.minecolonies.api.research.AbstractResearchProvider.ResearchBranch;
-import com.minecolonies.api.research.AbstractResearchProvider.ResearchEffect;
-
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
  * Note that this does not validate that the resulting research tree is coherent:

@@ -28,7 +28,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
 import com.minecolonies.coremod.util.NamedDamageSource;
@@ -536,7 +536,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
                 if (building instanceof BuildingMiner)
                 {
                     final BuildingMiner buildingMiner = (BuildingMiner) building;
-                    final Level level = buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel();
+                    final MinerLevel level = buildingMiner.getFirstModuleOccurance(MinerLevelManagementModule.class).getCurrentLevel();
                     if (level == null)
                     {
                         setNextPatrolTarget(buildingMiner.getPosition());
@@ -656,7 +656,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         }
         else
         {
-            worker.removeEffectNoUpdate(GLOW_EFFECT);
+            worker.removeEffect(GLOW_EFFECT);
         }
 
         if (rallyLocation != null && rallyLocation.isReachableFromLocation(worker.getLocation()))

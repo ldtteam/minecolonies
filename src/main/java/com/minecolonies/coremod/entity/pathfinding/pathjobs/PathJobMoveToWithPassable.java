@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
@@ -39,7 +39,7 @@ public class PathJobMoveToWithPassable extends PathJobMoveToLocation
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final Node parent)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent)
     {
         return super.isPassable(block, pos, parent) || isPassable.apply(block);
     }

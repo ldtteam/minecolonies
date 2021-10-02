@@ -328,7 +328,6 @@ public interface ICitizenData extends ICivilianData
      * @param rand used random func.
      * @param firstParentName name of the first parent.
      * @param secondParentName name of the second parent.
-     * @return true on success.
      */
     void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName);
 

@@ -216,6 +216,8 @@
   "minecolonies.config.maxyforbarbarians.comment": "Max Y level (height) for Raiders to spawn.",
   "minecolonies.config.enablecolonyprotection": "Enable Colony Protection",
   "minecolonies.config.enablecolonyprotection.comment": "Should colony protection be enabled?",
+  "minecolonies.config.maxkeptbackups": "Backup Count",
+  "minecolonies.config.maxkeptbackups.comment": "Set the max amount of backups kept",
   "minecolonies.config.turnoffexplosionsincolonies": "Turn off Explosions in Colonies",
   "minecolonies.config.turnoffexplosionsincolonies.comment": "Independent from the colony protection, should explosions be turned off inside colonies? DAMAGE_NOTHING prevents explosions completely. DAMAGE_PLAYERS, allows explosions to damage players and hostile mobs, but not blocks or neutral or friendly mobs. DAMAGE_ENTITIES allows damage to all entities. DAMAGE_EVERYTHING allows explosions to damage entities and blocks.",
   "minecolonies.config.specialpermgroup": "Special Permissions Group",
@@ -742,6 +744,11 @@
   "item.supplycampdeployer.invalid.lava_block_needed": "Placing a Supply Ship in the Nether requires lava under the ship. These blocks must be lava: %s.",
   "item.supplycampdeployer.invalid.solid_block_needed": "Placing a Supply Camp requires flat, solid ground. These blocks must be solid: %s.",
   "item.supplycampdeployer.invalid.air_block_needed": "Placing a Supply Camp or Ship requires air above the ground/sea level. These blocks must be air: %s.",
+  "item.supply.error.not_solid": "Not a solid",
+  "item.supply.error.inside_colony": "Inside colony",
+  "item.supply.error.needs_air_above": "Need air above",
+  "item.supply.error.not_water": "Not a Fluid",
+  "item.supply.badblocks": "Not all blocks in the area do meet the requirements! Recheck the highlighted blocks",
   "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your Supply Camp or Ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "Supply Ship",
   "item.minecolonies.supplycampdeployer": "Supply Camp",
@@ -1968,6 +1975,7 @@
   "com.minecolonies.coremod.gui.workerhuts.switch": "Switch",
   "com.minecolonies.coremod.gui.workerhuts.tools": "Selection Tools",
   "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right-click a beehive with the tool to add it to the hut. Right-click any other block to discard the tool.",
+  "com.minecolonies.coremod.setting.minecolonies:dynamictreeharvestsize": "Dynamic trees radius:",
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by right-clicking one corner and left-clicking the opposite corner with the tool.",
@@ -2022,5 +2030,13 @@
   "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style",
   "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
   "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
-  "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!"
+  "com.minecolonies.coremod.gui.chat.hyrios": "I am Asuna, I have come here from Aincrad to defend your freedom!",
+  "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!",
+  "com.minecolonies.coremod.gui.docrafting": "Architects Cutter Recipes",
+  "com.minecolonies.coremod.gui.docrafting.block1": "Input1:",
+  "com.minecolonies.coremod.gui.docrafting.block2": "Input2:",
+  "com.minecolonies.coremod.gui.docrafting.block3": "Input3:",
+  "com.minecolonies.coremod.gui.docrafting.switch": "Switch",
+  "com.minecolonies.coremod.gui.docrafting.teach": "Teach"
+
 }

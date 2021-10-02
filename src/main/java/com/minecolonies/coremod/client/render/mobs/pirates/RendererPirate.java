@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.client.render.mobs.pirates;
 
 import com.minecolonies.api.entity.mobs.pirates.AbstractEntityPirate;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +23,11 @@ public class RendererPirate extends AbstractRendererPirate<AbstractEntityPirate,
     /**
      * Constructor method for renderer
      *
-     * @param renderManagerIn the renderManager
+     * @param context the renderManager
      */
-    public RendererPirate(final EntityRenderDispatcher renderManagerIn)
+    public RendererPirate(final EntityRendererProvider.Context context)
     {
-        super(renderManagerIn, new HumanoidModel<>(1.0F), 0.5F);
+        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)), 0.5F);
     }
 
     @NotNull

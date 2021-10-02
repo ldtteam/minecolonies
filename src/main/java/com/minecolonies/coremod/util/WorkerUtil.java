@@ -12,9 +12,13 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.GlazedTerracottaBlock;
@@ -30,7 +34,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
-import net.minecraft.world.level.Level;
+import net.minecraftforge.common.TierSortingRegistry;
+import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,19 +170,15 @@ public final class WorkerUtil
      */
     public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
     {
-        final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
-
         String toolName = "";
-        if (forgeTool == null)
-        {
+
             if (blockHardness > 0f)
             {
                 for (final Tuple<ToolType, ItemStack> tool : getOrInitTestTools())
                 {
                     if (tool.getB() != null && tool.getB().getItem() instanceof DiggerItem)
                     {
-                        final DiggerItem toolItem = (DiggerItem) tool.getB().getItem();
-                        if (tool.getB().getDestroySpeed(state) >= toolItem.getTier().getSpeed())
+                        if (tool.getB().isCorrectToolForDrops(state))
                         {
                             toolName = tool.getA().getName();
                             break;
@@ -185,22 +186,8 @@ public final class WorkerUtil
                     }
                 }
             }
-        }
-        else
-        {
-            toolName = forgeTool.getName();
-        }
 
         final IToolType toolType = ToolType.getToolType(toolName);
-
-        if (toolType == ToolType.NONE && state.getMaterial() == Material.WOOD)
-        {
-            return ToolType.AXE;
-        }
-        else if (state.getBlock() instanceof GlazedTerracottaBlock)
-        {
-            return ToolType.PICKAXE;
-        }
         return toolType;
     }
 
@@ -212,7 +199,16 @@ public final class WorkerUtil
      */
     public static int getCorrectHarvestLevelForBlock(final BlockState target)
     {
-        final int required = target.getHarvestLevel();
+        int required = 0;
+        final List<Tier> tiers = TierSortingRegistry.getSortedTiers();
+        for (final Tier tier : tiers) {
+            Tag<Block> tag = tier.getTag();
+            if (tag != null && target.is(tag))
+            {
+                required = tiers.indexOf(tier);
+                break;
+            }
+        }
 
         if ((required < 0 && target.getMaterial() == Material.WOOD)
               || target.getBlock() instanceof GlazedTerracottaBlock)
@@ -292,7 +288,7 @@ public final class WorkerUtil
      * @param level   the level to update.
      * @param levelId the id of the level.
      */
-    public static void updateLevelSign(final Level world, final Level level, final int levelId)
+    public static void updateLevelSign(final Level world, final MinerLevel level, final int levelId)
     {
         @Nullable final BlockPos levelSignPos = level.getLevelSign();
 
@@ -306,10 +302,10 @@ public final class WorkerUtil
                 final SignBlockEntity teLevelSign = (SignBlockEntity) te;
 
                 teLevelSign.setMessage(0, new TextComponent(ChatFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId)));
+                  new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minerminenode").getString() + ": " + levelId)));
                 teLevelSign.setMessage(1, new TextComponent(ChatFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
                 teLevelSign.setMessage(2, new TextComponent(ChatFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes())));
+                  new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minernode").getString() + ": " + level.getNumberOfBuiltNodes())));
                 teLevelSign.setMessage(3, new TextComponent(ChatFormatting.stripFormatting("")));
 
                 teLevelSign.setChanged();

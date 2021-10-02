@@ -26,7 +26,7 @@ public class SettingsFactories
     /**
      * Specific factory for the bool setting.
      */
-    public abstract static class AbstractBoolSettingFactory <T extends BoolSetting> implements IBoolSettingFactory<T>
+    public abstract static class AbstractBoolSettingFactory<T extends BoolSetting> implements IBoolSettingFactory<T>
     {
         /**
          * Compound tag for the value.
@@ -291,7 +291,7 @@ public class SettingsFactories
     /**
      * Specific factory for the bool setting.
      */
-    public static class IntSettingFactory implements IIntSettingFactory<IntSetting>
+    public static abstract class AbstractIntSettingFactory<T extends IntSetting> implements IIntSettingFactory<T>
     {
         /**
          * Compound tag for the value.
@@ -305,23 +305,9 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public TypeToken<IntSetting> getFactoryOutputType()
-        {
-            return TypeToken.of(IntSetting.class);
-        }
-
-        @NotNull
-        @Override
         public TypeToken<FactoryVoidInput> getFactoryInputType()
         {
             return TypeConstants.FACTORYVOIDINPUT;
-        }
-
-        @NotNull
-        @Override
-        public IntSetting getNewInstance(final int value, final int def)
-        {
-            return new IntSetting(value, def);
         }
 
         @NotNull
@@ -336,7 +322,7 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             return this.getNewInstance(nbt.getInt(TAG_VALUE), nbt.getInt(TAG_DEFAULT));
         }
@@ -350,9 +336,26 @@ public class SettingsFactories
 
         @NotNull
         @Override
-        public IntSetting deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        public T deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
         {
             return this.getNewInstance(buffer.readInt(), buffer.readInt());
+        }
+    }
+
+    public static class IntSettingFactory extends AbstractIntSettingFactory<IntSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<IntSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(IntSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public IntSetting getNewInstance(final int value, final int def)
+        {
+            return new IntSetting(value, def);
         }
 
         @Override
@@ -567,6 +570,30 @@ public class SettingsFactories
         public short getSerializationId()
         {
             return 56;
+        }
+    }
+
+    public static class DynamicTreesSettingFactory extends AbstractIntSettingFactory<DynamicTreesSetting>
+    {
+
+        @NotNull
+        @Override
+        public DynamicTreesSetting getNewInstance(int def, int current)
+        {
+            return new DynamicTreesSetting(def, current);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<DynamicTreesSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(DynamicTreesSetting.class);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return 57;
         }
     }
 }

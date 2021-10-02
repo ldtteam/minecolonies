@@ -14,6 +14,8 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
@@ -63,13 +65,6 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     @NotNull
     @Override
-    public String getTitle()
-    {
-        return this.title;
-    }
-
-    @NotNull
-    @Override
     public IDrawable getBackground()
     {
         return this.background;
@@ -87,6 +82,12 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
     public Class<? extends CompostRecipe> getRecipeClass()
     {
         return CompostRecipe.class;
+    }
+
+    @Override
+    public Component getTitle()
+    {
+        return new TextComponent(this.title);
     }
 
     @Override

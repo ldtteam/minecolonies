@@ -216,6 +216,10 @@ public class EntityAIEatTask extends Goal
     @Override
     public boolean canUse()
     {
+        if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
+        {
+            return false;
+        }
         stateMachine.tick();
         return stateMachine.getState() != IDLE;
     }
@@ -266,8 +270,8 @@ public class EntityAIEatTask extends Goal
             citizen.getX(),
             citizen.getY(),
             citizen.getZ(),
-            citizen.xRot,
-            citizen.yRot,
+            citizen.getXRot(),
+            citizen.getYRot(),
             citizen.getEyeHeight()), citizen);
 
         waitingTicks++;
@@ -374,7 +378,7 @@ public class EntityAIEatTask extends Goal
             }
         }
 
-        if (citizen.isWorkerAtSiteWithMove(eatPos, 1))
+        if (citizen.isWorkerAtSiteWithMove(eatPos, 2))
         {
             SittingEntity.sitDown(eatPos, citizen, TICKS_SECOND * 60);
             // Delay till they start eating

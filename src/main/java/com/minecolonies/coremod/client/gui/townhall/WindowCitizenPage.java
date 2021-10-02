@@ -10,6 +10,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -78,7 +79,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         CitizenWindowUtils.createHappinessBar(view, this);
         CitizenWindowUtils.createSkillContent(view, this);
         findPaneOfTypeByID(JOB_LABEL, Text.class).setText(
-          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
+          "§l" + new TranslatableComponent(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob().toLowerCase(Locale.ROOT)).getString());
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(String.valueOf(view.getId()));
     }
 

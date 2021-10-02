@@ -13,24 +13,21 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.ITooltipCallback;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * Base class for a JEI recipe category that displays a Minecolonies citizen based on a job.
@@ -92,13 +89,12 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
     @NotNull
     @Override
-    public String getTitle()
+    public Component getTitle()
     {
-        return getTitleAsTextComponent().getString();
+        return getTitleAsTextComponent();
     }
 
     @NotNull
-    @Override
     public Component getTitleAsTextComponent()
     {
         return new TranslatableComponent(this.job.getName().toLowerCase());
@@ -126,6 +122,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final int citizen_cy = CITIZEN_Y + (CITIZEN_H / 2);
         final int citizen_by = CITIZEN_Y + CITIZEN_H;
         final int offsetY = 4;
+
         RenderHelper.scissor(matrixStack, CITIZEN_X, CITIZEN_Y, CITIZEN_W, CITIZEN_H);
         RenderHelper.renderEntity(matrixStack, citizen_cx, citizen_by - offsetY, scale, citizen_cx - mouseX, citizen_cy - offsetY - mouseY, this.citizen);
         RenderHelper.stopScissor();

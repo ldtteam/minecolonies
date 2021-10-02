@@ -3,10 +3,13 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
+import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tags.BlockTags;
@@ -51,17 +54,19 @@ public class PathJobFindTree extends AbstractPathJob
      * Fake goal when using restricted area
      */
     private final BlockPos boxCenter;
+    private final int dyntreesize;
 
     /**
      * AbstractPathJob constructor.
      *
-     * @param world      the world within which to path.
-     * @param start      the start position from which to path from.
-     * @param home       the position of the worker hut.
-     * @param range      maximum path range.
-     * @param treesToCut the trees the lj is supposed to cut.
-     * @param entity     the entity.
-     * @param colony     the colony.
+     * @param world       the world within which to path.
+     * @param start       the start position from which to path from.
+     * @param home        the position of the worker hut.
+     * @param range       maximum path range.
+     * @param treesToCut  the trees the lj is supposed to cut.
+     * @param entity      the entity.
+     * @param dyntreesize the radius a dynamic tree must have
+     * @param colony      the colony.
      */
     public PathJobFindTree(
       final Level world,
@@ -69,6 +74,7 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos home,
       final int range,
       final List<ItemStorage> treesToCut,
+      final int dyntreesize,
       final IColony colony,
       final LivingEntity entity)
     {
@@ -77,6 +83,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.hutLocation = home;
         this.colony = colony;
         this.boxCenter = null;
+        this.dyntreesize = dyntreesize;
     }
 
     /**
@@ -88,6 +95,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param startRestriction start of the restricted area.
      * @param endRestriction   end of the restricted area.
      * @param excludedTrees       the trees the lj is not supposed to cut.
+     * @param dyntreesize      the radius a dynamic tree must have
      * @param entity           the entity.
      * @param colony           the colony.
      */
@@ -99,6 +107,7 @@ public class PathJobFindTree extends AbstractPathJob
       final BlockPos endRestriction,
       final BlockPos furthestRestriction,
       final List<ItemStorage> excludedTrees,
+      final int dyntreesize,
       final IColony colony,
       final LivingEntity entity)
     {
@@ -114,6 +123,7 @@ public class PathJobFindTree extends AbstractPathJob
         this.excludedTrees = excludedTrees;
         this.hutLocation = home;
         this.colony = colony;
+        this.dyntreesize = dyntreesize;
 
         final BlockPos size = startRestriction.subtract(endRestriction);
         this.boxCenter = endRestriction.offset(size.getX()/2, size.getY()/2, size.getZ()/2);
@@ -133,12 +143,12 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull final Node n)
+    protected boolean isAtDestination(@NotNull final MNode n)
     {
         return n.parent != null && isNearTree(n);
     }
 
-    private boolean isNearTree(@NotNull final Node n)
+    private boolean isNearTree(@NotNull final MNode n)
     {
         if (n.pos.getX() == n.parent.pos.getX())
         {
@@ -154,7 +164,8 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-        if (Tree.checkTree(world, pos, excludedTrees) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
+
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
         {
             getResult().treeLocation = pos;
             return true;
@@ -164,13 +175,13 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(final Node n)
+    protected double getNodeResultScore(final MNode n)
     {
         return 0;
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final Node parent)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent)
     {
         return super.isPassable(block, pos, parent) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }

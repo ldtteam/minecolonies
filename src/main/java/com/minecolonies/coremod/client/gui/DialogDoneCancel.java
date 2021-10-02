@@ -9,6 +9,8 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.List;
 import java.util.function.ObjIntConsumer;
 
@@ -65,7 +67,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
     public DialogDoneCancel(final BOWindow window)
     {
         super();
-        Loader.createFromXMLFile(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX, this);
+        Loader.createFromXMLFile(new ResourceLocation(Constants.MOD_ID + DIALOG_OK_CANCEL_SUFFIX), this);
         titleLabel = findPaneOfTypeByID("title", Text.class);
         contentText = findPaneOfTypeByID("textcontent", Text.class);
         doneButton = findPaneOfTypeByID("done", Button.class);

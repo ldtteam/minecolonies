@@ -13,7 +13,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data
-     * Directory is: <namespace>/crafterrecipes/<path>
+     * Directory is: (namespace)/crafterrecipes/(path)
      * @param dataPackRegistries
      */
     public CrafterRecipeListener(@NotNull final ServerResources dataPackRegistries)

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.entity.pathfinding.Node;
+import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.BlockPos;
@@ -67,7 +67,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected BlockPos getPathTargetPos(final Node finalNode)
+    protected BlockPos getPathTargetPos(final MNode finalNode)
     {
         return destination;
     }
@@ -85,7 +85,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @return true if has been reached.
      */
     @Override
-    protected boolean isAtDestination(@NotNull final Node n)
+    protected boolean isAtDestination(@NotNull final MNode n)
     {
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
@@ -108,7 +108,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @return double of the distance.
      */
     @Override
-    protected double getNodeResultScore(@NotNull final Node n)
+    protected double getNodeResultScore(@NotNull final MNode n)
     {
         //  For Result Score lower is better
         return destination.distSqr(n.pos);

@@ -20,6 +20,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.A
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -147,9 +148,8 @@ public class WindowListRecipes extends AbstractModuleWindow
             // This should never happen, because the button is hidden. But if someone glitches into the interface, stop him here.
             return;
         }
-        final BlockPos pos = buildingView.getPosition();
-        Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
-        Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, module.getId()));
+
+        module.openCraftingGUI();
     }
 
     @Override
@@ -213,7 +213,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                 }
                 else
                 {
-                    for (int i = 0; i < 9; i++)
+                    for (int i = 0; i < recipe.getInput().size(); i++)
                     {
                         rowPane.findPaneOfTypeByID(String.format(RESOURCE, i + 1), ItemIcon.class).setItem(getStackWithCount(recipe.getInput().get(i)));
                     }
@@ -242,7 +242,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         {
             lifeCount++;
         }
-        recipeStatus.setText(LanguageHandler.format(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
+        recipeStatus.setText(new TranslatableComponent(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 }

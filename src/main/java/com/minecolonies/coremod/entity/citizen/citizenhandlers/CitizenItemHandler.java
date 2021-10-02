@@ -8,6 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -22,7 +23,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,13 +97,13 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
                     if (ItemStackUtils.isEmpty(resultStack))
                     {
-                        itemEntity.remove();
+                        itemEntity.remove(Entity.RemovalReason.DISCARDED);
                     }
                 }
             }
             else
             {
-                itemEntity.remove();
+                itemEntity.remove(Entity.RemovalReason.DISCARDED);
             }
         }
     }
@@ -277,7 +278,7 @@ public class CitizenItemHandler implements ICitizenItemHandler
     @Override
     public void pickupItems()
     {
-        for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getLoadedEntitiesOfClass(ItemEntity.class,
+        for (final ItemEntity item : CompatibilityUtils.getWorldFromCitizen(citizen).getEntitiesOfClass(ItemEntity.class,
           new AABB(citizen.blockPosition())
             .expandTowards(2.0F, 1.0F, 2.0F)
             .expandTowards(-2.0F, -1.0F, -2.0F)))

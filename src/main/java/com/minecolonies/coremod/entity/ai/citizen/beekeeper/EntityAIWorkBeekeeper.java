@@ -163,7 +163,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         List<ItemStorage> allowedFlowers = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST)).getList();;
         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), (stack) -> allowedFlowers.contains(new ItemStorage(stack)))
               && InventoryUtils.getCountFromBuilding(getOwnBuilding(), allowedFlowers) == 0
-              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData(), TypeToken.of(StackList.class)))
+              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
         {
             worker.getCitizenData().createRequestAsync(new StackList(allowedFlowers.stream()
                                                                                    .map((item) -> item.getItemStack())
@@ -436,8 +436,8 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
     /**
      * Breed two animals together!
      *
-     * @param animalOne the first {@link AnimalEntity} to breed.
-     * @param animalTwo the second {@link AnimalEntity} to breed.
+     * @param animalOne the first {@link Animal} to breed.
+     * @param animalTwo the second {@link Animal} to breed.
      */
     private void breedTwoAnimals(final Animal animalOne, final Animal animalTwo)
     {
@@ -553,7 +553,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                  .stream()
                  .map(AABB::new)
                  .map(aabb -> aabb.inflate(HIVE_BEE_RADIUS))
-                 .map(aabb -> world.getLoadedEntitiesOfClass(Bee.class, aabb))
+                 .map(aabb -> world.getEntitiesOfClass(Bee.class, aabb))
                  .flatMap(Collection::stream)
                  .collect(Collectors.toList());
     }

@@ -7,13 +7,13 @@ import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.event.HighlightManager;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,13 +25,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * BuildTool window.
  */
 public class WindowMinecoloniesBuildTool extends WindowBuildTool
 {
+    /**
+     * The displayed boxes category
+     */
+    private static final String RENDER_BOX_CATEGORY = "placement";
+
     /**
      * Creates a window build tool for a specific structure.
      *
@@ -62,7 +66,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
 
         BuildToolPlaceMessage msg = new BuildToolPlaceMessage(
           structureName.toString(),
-          structureName.toString(),
+          structureName.getLocalizedName(),
           Settings.instance.getPosition(),
           Settings.instance.getRotation(),
           structureName.isHut(),
@@ -132,7 +136,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         else if (schemName.contains("supplycamp"))
         {
             if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().level, Settings.instance.getPosition(),
-              new BlockPos(Settings.instance.getActiveStructure().getSizeX(), Settings.instance.getActiveStructure().getSizeY(), Settings.instance.getActiveStructure().getSizeZ()),
               placementErrorList,
               Minecraft.getInstance().player))
             {
@@ -140,49 +143,18 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             }
         }
 
+        HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
-            final Map<PlacementError.PlacementErrorType, List<BlockPos>> blockPosListByErrorTypeMap = PlacementError.partitionPlacementErrorsByErrorType(
-              placementErrorList);
-            for (final Map.Entry<PlacementError.PlacementErrorType, List<BlockPos>> entry : blockPosListByErrorTypeMap.entrySet())
-            {
-                final PlacementError.PlacementErrorType placementErrorType = entry.getKey();
-                final List<BlockPos> blockPosList = entry.getValue();
+            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.supply.badblocks");
 
-                final int numberOfBlocksToReport = blockPosList.size() > 5 ? 5 : blockPosList.size();
-                final List<BlockPos> blocksToReportList = blockPosList.subList(0, numberOfBlocksToReport);
-                String outputList = PlacementError.blockListToCommaSeparatedString(blocksToReportList);
-                if (blockPosList.size() > numberOfBlocksToReport)
-                {
-                    outputList += "...";
-                }
-                final String errorMessage;
-                switch (placementErrorType)
-                {
-                    case NOT_WATER:
-                        final String dim = WorldUtil.isNetherType(Minecraft.getInstance().level)
-                                             ? TranslationConstants.SUPPLY_CAMP_INVALID_NOT_LAVA_MESSAGE_KEY
-                                             : TranslationConstants.SUPPLY_CAMP_INVALID_NOT_WATER_MESSAGE_KEY;
-                        errorMessage = String.format(dim, outputList);
-                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
-                        break;
-                    case NOT_SOLID:
-                        errorMessage = LanguageHandler.format(TranslationConstants.SUPPLY_CAMP_INVALID_NOT_SOLID_MESSAGE_KEY, outputList);
-                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
-                        break;
-                    case NEEDS_AIR_ABOVE:
-                        errorMessage = LanguageHandler.format(TranslationConstants.SUPPLY_CAMP_INVALID_NEEDS_AIR_ABOVE_MESSAGE_KEY, outputList);
-                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage, outputList);
-                        break;
-                    case INSIDE_COLONY:
-                        errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID_INSIDE_COLONY_MESSAGE_KEY;
-                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
-                        break;
-                    default:
-                        errorMessage = TranslationConstants.SUPPLY_CAMP_INVALID;
-                        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, errorMessage);
-                        break;
-                }
+            for (final PlacementError error : placementErrorList)
+            {
+                HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
+                                                                     .setPos(error.getPos())
+                                                                     .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
+                                                                     .addText(LanguageHandler.translateKey("item.supply.error." + error.getType().toString().toLowerCase()))
+                                                                     .setColor(0xFF0000));
             }
         }
 
@@ -190,6 +162,13 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         {
             super.cancelClicked();
         }
+    }
+
+    @Override
+    public void cancelClicked()
+    {
+        super.cancelClicked();
+        HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
     }
 
     @Override

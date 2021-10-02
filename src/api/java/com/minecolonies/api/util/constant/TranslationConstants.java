@@ -10,13 +10,13 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED           = "com.minecolonies.coremod.gui.workerhuts.farmerhut.unused";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.South";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.south";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.North";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH            = "com.minecolonies.coremod.gui.workerhuts.farmerhut.north";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.East";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.east";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.West";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST             = "com.minecolonies.coremod.gui.workerhuts.farmerhut.west";
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                              = "block.minecolonies.blockhutfarmer.name";
     @NonNls
@@ -260,19 +260,19 @@ public final class TranslationConstants
     @NonNls
     public static final String CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN                                 = "com.minecolonies.coremod.toofar";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.townHall.population.totalcitizens.count";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT = "com.minecolonies.coremod.gui.townhall.population.totalcitizens.count";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS              = "com.minecolonies.coremod.gui.townHall.population.childs";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS              = "com.minecolonies.coremod.gui.townhall.population.childs";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH                = "com.minecolonies.coremod.gui.townHall.population.each";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH                = "com.minecolonies.coremod.gui.townhall.population.each";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED          = "com.minecolonies.coremod.gui.townHall.population.unemployed";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED          = "com.minecolonies.coremod.gui.townhall.population.unemployed";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED             = "com.minecolonies.coremod.gui.townHall.citizens.unemployed";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED             = "com.minecolonies.coremod.gui.townhall.citizens.unemployed";
     @NonNls
-    public static final String COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS               = "com.minecolonies.coremod.gui.townHall.permissionevents";
+    public static final String COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS               = "com.minecolonies.coremod.gui.townhall.permissionevents";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS                   = "com.minecolonies.coremod.gui.townHall.colonyevents";
+    public static final String COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS                   = "com.minecolonies.coremod.gui.townhall.colonyevents";
     @NonNls
     public static final String LIST_REQUEST_DISPLAY_STRING                                          = "com.minecolonies.coremod.request.stacklist";
     @NonNls
@@ -286,9 +286,9 @@ public final class TranslationConstants
     @NonNls
     public static final String TOWNHALL_BREAKING_MESSAGE                                            = "com.minecolonies.coremod.pvp.townhall.broke";
     @NonNls
-    public static final String ON_STRING                                                            = "com.minecolonies.coremod.gui.townHall.on";
+    public static final String ON_STRING                                                            = "com.minecolonies.coremod.gui.townhall.on";
     @NonNls
-    public static final String OFF_STRING                                                           = "com.minecolonies.coremod.gui.townHall.off";
+    public static final String OFF_STRING                                                           = "com.minecolonies.coremod.gui.townhall.off";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MOURN                                       = "com.minecolonies.coremod.mourning";
     @NonNls

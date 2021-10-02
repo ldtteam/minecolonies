@@ -5,13 +5,14 @@ import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.BookModel;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import com.mojang.math.Vector3f;
@@ -20,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class TileEntityEnchanterRenderer extends BlockEntityRenderer<TileEntityColonyBuilding>
+public class TileEntityEnchanterRenderer implements BlockEntityRenderer<TileEntityColonyBuilding>
 {
     public static final Material TEXTURE_BOOK;
     static
@@ -31,16 +32,17 @@ public class TileEntityEnchanterRenderer extends BlockEntityRenderer<TileEntityC
     /**
      * The book model to be rendered.
      */
-    private final BookModel modelBook = new BookModel();
+    private final BookModel modelBook;
 
     /**
      * Create the renderer.
      *
-     * @param dispatcher the dispatcher.
+     * @param context the context.
      */
-    public TileEntityEnchanterRenderer(final BlockEntityRenderDispatcher dispatcher)
+    public TileEntityEnchanterRenderer(final BlockEntityRendererProvider.Context context)
     {
-        super(dispatcher);
+        super();
+        this.modelBook = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -312,7 +313,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             return super.getDisplayName();
         }
-        return new TextComponent(LanguageHandler.format(getBlockState().getBlock().getDescriptionId() + ".name"));
+        return new TranslatableComponent(getBlockState().getBlock().getDescriptionId() + ".name");
     }
 
     /**

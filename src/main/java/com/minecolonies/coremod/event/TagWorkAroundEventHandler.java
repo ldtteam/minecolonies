@@ -6,7 +6,7 @@ import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,11 +22,11 @@ import org.jetbrains.annotations.NotNull;
  * If Forge changes its behavior for TagCollectionManager and ItemTags, some of the logic in here can be cleaned up and moved to normal FooEventHandlers.
  *
  * For Single Player, startup pattern is :
- *  -- onTagUpdate (populate ModTagsInitializer) -> onServerStarted (populate CompatibilityManager and FurnaceRecipes)-> onRecipesUpdate (repeat FurnaceRecipes).
+ *  -- onTagUpdate (populate ModTagsInitializer) to onServerStarted (populate CompatibilityManager and FurnaceRecipes) to onRecipesUpdate (repeat FurnaceRecipes).
  * For Dedicated Servers, startup pattern is :
- *  -- onTagUpdate (populate ModTagsInitializer) -> onServerStarted (populate CompatibilityManager and FurnaceRecipes).
+ *  -- onTagUpdate (populate ModTagsInitializer) to onServerStarted (populate CompatibilityManager and FurnaceRecipes).
  * For Remote Clients either connecting to Open To Lan Single Player, or a Dedicated Server, startup pattern is :
- *  -- onRecipesUpdated fires (populates FurnaceRecipes) -> onTagUpdate fires (populates CompatibilityManager and ModTagsInitializer).
+ *  -- onRecipesUpdated fires (populates FurnaceRecipes) to onTagUpdate fires (populates CompatibilityManager and ModTagsInitializer).
  * Data Pack Reloads during live play will fire onTagUpdate in all cases.
  */
 public class TagWorkAroundEventHandler
@@ -37,12 +37,12 @@ public class TagWorkAroundEventHandler
          * This event fires on both client and server, immediately after reading tags data from disk (on server) or from network (on remote clients)..
          * It is also a guaranteed source for valid tag suppliers on a remote client that aren't (as of Forge 36.1.2) reliable when taken from TagCollectionManager or ItemTags.
          * VanillaTagTypes only guarantees block, item, fluid, and entity_type tags are completely filled and updated.
-         * If we need support for enchantment, potion, or block_entity_type, use {@link net.minecraftforge.event.TagsUpdatedEvent.CustomTagTypes}.
+         * If we need support for enchantment, potion, or block_entity_type, use {@link net.minecraftforge.event.TagsUpdatedEvent}.
          *
-         * @param event {@link net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes}
+         * @param event {@link net.minecraftforge.event.TagsUpdatedEvent}
          */
         @SubscribeEvent
-        public static void onTagUpdate(final TagsUpdatedEvent.VanillaTagTypes event)
+        public static void onTagUpdate(final TagsUpdatedEvent event)
         {
             // This Tag Supplier is guaranteed to have the output of a transmitted TagSupplier on remote clients.
             // _Only_ these events and ClientWorld.getTags() are guaranteed to be consistent on remote clients.
@@ -77,7 +77,7 @@ public class TagWorkAroundEventHandler
          * Fires on a server side only, when the server has started.
          * This event is the first reliable point for server-only parsing of available smelting recipes, which are
          * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
-         * @param event  {@link net.minecraftforge.fml.event.server.FMLServerStartedEvent}
+         * @param event  {@link net.minecraftforge.fmlserverevents.FMLServerStartedEvent}
          */
         @SubscribeEvent
         public static void onServerStarted(@NotNull final FMLServerStartedEvent event)

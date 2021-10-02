@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.event;
 
-import com.ldtteam.blockui.Log;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -40,7 +39,7 @@ public class TextureReloadListener extends SimplePreparableReloadListener<Textur
         final List<ResourceLocation> resLocs = new ArrayList<>(manager.listResources("textures/entity/citizen", f -> true));
         for (final ResourceLocation res : resLocs)
         {
-            if (!res.getPath().contains("png"))
+            if (!res.getPath().contains("png") && res.getPath().contains("textures/entity/citizen"))
             {
                 final String folder = res.getPath().replace("textures/entity/citizen", "").replace("/", "");
                 if (!folder.isEmpty())

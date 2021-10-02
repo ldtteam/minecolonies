@@ -19,7 +19,7 @@ public abstract class AbstractDeliverymanRequestable implements IDeliverymanRequ
     /**
      * Constructor for deliveryman requestables
      *
-     * @param priority The priority of the request. Higher priority -> Earlier delivery/pickup
+     * @param priority The priority of the request. Higher priority equals earlier delivery/pickup
      */
     protected AbstractDeliverymanRequestable(final int priority)
     {

@@ -115,7 +115,7 @@ public class DefaultSoundProvider implements DataProvider
           "raid.amazon.amazon_raid");
 
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
-        IDataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
+        DataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
     }
 
     @NotNull

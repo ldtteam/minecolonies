@@ -11,24 +11,29 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
+import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +83,7 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final ColonyPlayer player, @NotNull final String style)
+    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String style)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
@@ -90,7 +95,7 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString());
+        final String colonyName = new TranslatableComponent("com.minecolonies.coremod.gui.townhall.defaultname", player.getName().getString()).getString();
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);
 
@@ -523,7 +528,7 @@ public final class ColonyManager implements IColonyManager
 
     @Override
     @Nullable
-    public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final ColonyPlayer owner)
+    public IColony getIColonyByOwner(@NotNull final Level w, @NotNull final Player owner)
     {
         return getIColonyByOwner(w, w.isClientSide ? owner.getUUID() : owner.getGameProfile().getId());
     }
@@ -640,7 +645,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(final TickEvent.@NotNull WorldTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END)
         {
@@ -694,11 +699,17 @@ public final class ColonyManager implements IColonyManager
     {
         if (!world.isClientSide)
         {
+            boolean hasColonies = false;
             for (@NotNull final IColony c : getColonies(world))
             {
+                hasColonies = true;
                 c.onWorldUnload(world);
             }
-            BackUpHelper.backupColonyData();
+
+            if (hasColonies)
+            {
+                BackUpHelper.backupColonyData();
+            }
         }
     }
 

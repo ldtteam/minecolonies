@@ -253,10 +253,9 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean isGuardBuildingNear();
 
     /**
-     * Sets whether this building has a guard building nearby
-     * @param guardBuildingNear
+     * Requests recalculation of whether this building has a guard building nearby
      */
-    void setGuardBuildingNear(boolean guardBuildingNear);
+    void resetGuardBuildingNear();
 
     /**
      * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.
@@ -308,11 +307,11 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      */
     <R extends IRequestable> IToken<?> createRequest(@NotNull R requested, boolean async);
 
-    boolean hasWorkerOpenRequests(@NotNull ICitizenData citizen);
+    boolean hasWorkerOpenRequests(final int citizenid);
 
-    Collection<IRequest<?>> getOpenRequests(@NotNull ICitizenData data);
+    Collection<IRequest<?>> getOpenRequests(final int citizenid);
 
-    boolean hasWorkerOpenRequestsFiltered(@NotNull ICitizenData citizen, @NotNull Predicate<IRequest<?>> selectionPredicate);
+    boolean hasWorkerOpenRequestsFiltered(final int citizenid, @NotNull Predicate<IRequest<?>> selectionPredicate);
 
     /**
      * Checks whether the citizen has an open sync request, preventing it from working
@@ -322,11 +321,11 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      */
     boolean hasOpenSyncRequest(@NotNull ICitizenData citizen);
 
-    <R> boolean hasWorkerOpenRequestsOfType(@NotNull ICitizenData citizenData, TypeToken<R> requestType);
+    <R> boolean hasWorkerOpenRequestsOfType(final int citizenid, TypeToken<R> requestType);
 
     @SuppressWarnings(GENERIC_WILDCARD)
     <R> ImmutableList<IRequest<? extends R>> getOpenRequestsOfType(
-      @NotNull ICitizenData citizenData,
+      final int citizenid,
       TypeToken<R> requestType);
 
     boolean hasCitizenCompletedRequests(@NotNull ICitizenData data);

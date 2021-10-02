@@ -1,0 +1,14 @@
+repositories {
+    maven { url = 'https://files.minecraftforge.net/maven' }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+dependencies {
+    apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
+    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
+}

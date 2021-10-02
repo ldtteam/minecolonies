@@ -9,7 +9,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.function.Function;
 
 /**
- * Entry for the {@link IResearchEffect <?>} registry. Makes it possible to create a single registry for a {@link IResearchEffect <?>}.
+ * Entry for the {@link IResearchEffect} registry. Makes it possible to create a single registry for a {@link IResearchEffect}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
 public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>

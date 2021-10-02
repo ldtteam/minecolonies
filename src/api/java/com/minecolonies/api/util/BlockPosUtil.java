@@ -2,9 +2,11 @@ package com.minecolonies.api.util;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -460,6 +462,24 @@ public final class BlockPosUtil
     }
 
     /**
+     * Returns a radial bounding box aligned to chunk boundaries.  Note that the Y coordinate
+     * is also aligned to chunk-like sizes; this does not return full world height.  (It also
+     * might return Y coordinates outside the world limits, so clip before using if needed.)
+     * @param pos A position inside the center chunk.
+     * @param chunkRadius 0 for one chunk, 1 for nine chunks, etc.
+     * @return The specified bounding box.
+     */
+    public static BoundingBox getChunkAlignedBB(final BlockPos pos, final int chunkRadius)
+    {
+        final int blockRadius = chunkRadius * 16;
+        final int x1 = pos.getX() & ~15;
+        final int y1 = pos.getY() & ~15;
+        final int z1 = pos.getZ() & ~15;
+        return new BoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
+                x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
+    }
+
+    /**
      * Returns the tile entity at a specific chunk coordinate.
      *
      * @param world World the tile entity is in.
@@ -528,7 +548,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(net.minecraft.entity.MobEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
@@ -545,7 +564,6 @@ public final class BlockPosUtil
     }
 
     /**
-     * {@link EntityUtils#tryMoveLivingToXYZ(net.minecraft.entity.MobEntity, int, int, int)}.
      *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
@@ -557,9 +575,8 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.Mutable#setPos(int, int, int)}.
+     * Create a method for using a {@link BlockPos}.
      *
-     * @param pos    {@link net.minecraft.util.math.BlockPos.Mutable}.
      * @param newPos The new position to set.
      */
     public static void set(@NotNull final BlockPos.MutableBlockPos pos, @NotNull final BlockPos newPos)
@@ -679,11 +696,11 @@ public final class BlockPosUtil
 
         if (pos.getZ() > building.getZ() + 1)
         {
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH).getString());
         }
         else if (pos.getZ() < building.getZ() - 1)
         {
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH).getString());
         }
 
         if (pos.getX() > building.getX() + 1)
@@ -692,7 +709,7 @@ public final class BlockPosUtil
             {
                 dist.append('/');
             }
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST).getString());
         }
         else if (pos.getX() < building.getX() - 1)
         {
@@ -700,7 +717,7 @@ public final class BlockPosUtil
             {
                 dist.append('/');
             }
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
+            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST).getString());
         }
 
         return dist.toString();

@@ -1,6 +1,10 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
@@ -10,19 +14,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel<AbstractEntityCitizen>
 {
-    public CitizenModel(final float size)
+    public CitizenModel(final ModelPart part)
     {
-        super(size);
-    }
-
-    public CitizenModel()
-    {
-        this(true);
-    }
-
-    public CitizenModel(final boolean legacy)
-    {
-        super(RenderType::entityCutoutNoCull, 0.0F, 0.0F, 64, legacy ? 32 : 64);
+        super(part, RenderType::entityCutoutNoCull);
     }
 
     @Override
@@ -38,6 +32,12 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         {
             head.xRot = getActualRotation();
         }
+    }
+
+    public static LayerDefinition createMesh()
+    {
+        MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        return LayerDefinition.create(meshdefinition, 64, 32);
     }
 
     /**

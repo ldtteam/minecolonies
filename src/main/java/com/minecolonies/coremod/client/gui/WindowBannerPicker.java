@@ -4,8 +4,10 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -119,7 +121,7 @@ public class WindowBannerPicker extends Screen
 
         this.colony = colony;
         this.window = hallWindow;
-        this.modelRender = BannerRenderer.makeFlag();
+        this.modelRender = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BANNER).getChild("flag");
 
         /* Get all patterns, then remove excluded and item-required patterns */
         List<BannerPattern> exclusion = new ArrayList<>();
@@ -140,7 +142,7 @@ public class WindowBannerPicker extends Screen
     {
         int paletteX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, 0, 0) - 70;
 
-        this.colors = new ColorPalette(paletteX, this.height/2, 2, this::addButton);
+        this.colors = new ColorPalette(paletteX, this.height/2, 2, this::addRenderableWidget);
         colors.onchange = color -> setLayer(null, color);
 
         createLayerButtons();
@@ -157,10 +159,10 @@ public class WindowBannerPicker extends Screen
         {
             int posX = (this.width - SIDE * 6) / 2 + layer * SIDE;
 
-            this.addButton(new LayerButton(posX, GUI_Y, SIDE, SIDE, layer));
+            this.addRenderableWidget(new LayerButton(posX, GUI_Y, SIDE, SIDE, layer));
         }
 
-        this.addButton(new Button(
+        this.addRenderableWidget(new Button(
                 center(this.width, 6, SIDE, 7, 0), GUI_Y,
                 SIDE, SIDE,
                 new TextComponent(ChatFormatting.RED + "X"),
@@ -185,7 +187,7 @@ public class WindowBannerPicker extends Screen
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
             int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
-            this.addButton(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
+            this.addRenderableWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
         }
     }
 
@@ -194,7 +196,7 @@ public class WindowBannerPicker extends Screen
      */
     protected void createCloseButtons()
     {
-        this.addButton(new Button(
+        this.addRenderableWidget(new Button(
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
@@ -208,7 +210,7 @@ public class WindowBannerPicker extends Screen
                     window.open();
                 }
         ));
-        this.addButton(new Button(
+        this.addRenderableWidget(new Button(
                 center(this.width, 2, 80, 0, 10),
                 this.height - 40,
                 80, SIDE,
@@ -333,7 +335,7 @@ public class WindowBannerPicker extends Screen
      */
     public void renderBanner(PoseStack transform, List<Pair<BannerPattern, DyeColor>> layers)
     {
-        this.modelRender.xRot = 0.0F;
+        this.modelRender.xRot= 0.0F;
         this.modelRender.y = -32.0F;
 
         MultiBufferSource.BufferSource source = this.minecraft.renderBuffers().bufferSource();
