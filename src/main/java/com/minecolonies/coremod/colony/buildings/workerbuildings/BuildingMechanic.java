@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -10,12 +11,18 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCraf
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.jobs.JobGlassblower;
 import com.minecolonies.coremod.colony.jobs.JobMechanic;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HopperBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -149,5 +156,48 @@ public class BuildingMechanic extends AbstractBuildingWorker implements IBuildin
             }
             return false;
         }
+    }
+
+    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobMechanic(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
+        {
+            final ItemStack stack = recipe.getPrimaryOutput();
+            if (stack.getItem().getRegistryName().getNamespace().equals("domum_ornamentum"))
+            {
+                final CompoundTag dataNbt = stack.getOrCreateTagElement("textureData");
+                final MaterialTextureData textureData = MaterialTextureData.deserializeFromNBT(dataNbt);
+                for (final Block block : textureData.getTexturedComponents().values())
+                {
+                    final ItemStack ingredientStack = new ItemStack(block);
+                    if (!ItemStackUtils.isEmpty(ingredientStack)
+                          && !ModTags.crafterIngredient.get(BuildingFletcher.FLETCHER).contains(ingredientStack.getItem())
+                          && !ModTags.crafterIngredient.get(BuildingSawmill.SAWMILL).contains(ingredientStack.getItem())
+                          && !ModTags.crafterIngredient.get(BuildingStonemason.STONEMASON).contains(ingredientStack.getItem())
+                          && !ModTags.crafterIngredient.get(BuildingGlassblower.GLASS_BLOWER).contains(ingredientStack.getItem()))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean canLearnCraftingRecipes() { return true; }
+
+        @Override
+        public boolean canLearnFurnaceRecipes() { return false; }
+
+        @Override
+        public boolean canLearnLargeRecipes() { return true; }
     }
 }

@@ -4,6 +4,8 @@
     "#forge:stone",
     "#forge:cobblestone",
     "#forge:end_stones",
+    "#domum_ornamentum:brick_items",
+    "#domum_ornamentum:extra_block_items",
     "minecraft:nether_brick",
     "minecraft:popped_chorus_fruit",
     "minecraft:purpur_block",
@@ -16,8 +18,6 @@
     "minecraft:polished_blackstone_bricks",
     "minecraft:basalt",
     "minecraft:bricks",
-    "minecraft:stone_bricks",
-    "domum_ornamentum:bricks",
-    "domum_ornamentum:extra_block"
+    "minecraft:stone_bricks"
   ]
 }

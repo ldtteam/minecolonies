@@ -68,7 +68,7 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="domum_ornamentum"
     mandatory=true
-    versionRange="[1.17.1-1.0.0-RELEASE, )"
+    versionRange="[1.17.1-1.0.9-ALPHA, )"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.minecolonies]]
