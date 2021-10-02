@@ -44,5 +44,7 @@ dependencies {
     apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
 
+    implementation fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}")
+
     library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
 }

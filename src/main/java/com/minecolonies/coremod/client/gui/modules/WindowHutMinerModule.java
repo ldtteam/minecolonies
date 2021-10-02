@@ -114,7 +114,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
 
                 rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Text.class)
-                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minerNode").getString() + ": " + levelsInfo.get(index).getA());
+                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minernode").getString() + ": " + levelsInfo.get(index).getA());
                 rowPane.findPaneOfTypeByID("yLevel", Text.class)
                   .setText("Y: " + (levelsInfo.get(index).getB() + 1));
                 // ^^ 1 is for Y depth fix
