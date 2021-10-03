@@ -51,9 +51,9 @@ public class NearColonyBuildingsRenderer
     static void render(final WorldEventContext ctx)
     {
         if (Settings.instance.getActiveStructure() == null || !ctx.hasNearestColony()
-            || MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
+            || !MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
         {
-            blueprintCache = null;
+            blueprintCache.clear();
             lastCacheRebuild = null;
             return;
         }

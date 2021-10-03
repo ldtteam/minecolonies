@@ -55,13 +55,14 @@ public class WorldEventContext
         poseStack.pushPose();
         poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 
-        PathfindingDebugRenderer.render(this);
+        ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
+
+        NearColonyBuildingsRenderer.render(this);
         ColonyWaypointRenderer.render(this);
         ColonyPatrolPointRenderer.render(this);
         GuardTowerRallyBannerRenderer.render(this);
-        NearColonyBuildingsRenderer.render(this);
-        ColonyBorderRenderer.render(this);
         HighlightManager.render(this);
+        PathfindingDebugRenderer.render(this);
 
         poseStack.popPose();
     }

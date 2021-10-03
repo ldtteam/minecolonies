@@ -12,7 +12,6 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
@@ -186,7 +185,6 @@ public class MineColonies
     @SubscribeEvent
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
-        Log.getLogger().warn("FMLLoadCompleteEvent");
         PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
     }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
+import com.ldtteam.blockui.MatrixUtils;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.colony.IColonyView;
@@ -7,7 +8,10 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
 import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferBuilder.DrawState;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -23,8 +27,8 @@ public class ColonyBorderRenderer
     private static final int CHUNK_HEIGHT = 256;
     private static final int PLAYER_CHUNK_STEP = CHUNK_SIZE / 4;
 
-    private static ByteBuffer colonies = null;
-    private static ByteBuffer chunktickets = null;
+    private static Pair<DrawState, ByteBuffer> colonies = null;
+    private static Pair<DrawState, ByteBuffer> chunktickets = null;
     private static ChunkPos lastPlayerChunkPos = null;
     private static IColonyView lastColony = null;
 
@@ -73,12 +77,17 @@ public class ColonyBorderRenderer
             bufferbuilder.unsetDefaultColor();
         }
 
-        final ByteBuffer buffer = Screen.hasControlDown() ? chunktickets : colonies;
+        final Pair<DrawState, ByteBuffer> p = Screen.hasControlDown() ? chunktickets : colonies;
+        final DrawState ds = p.getFirst();
 
-        ((BufferBuilder) ctx.bufferSource.getBuffer(WorldRenderMacros.LINES)).putBulkData(buffer);
+        MatrixUtils.pushShaderMVstack(ctx.poseStack);
+        WorldRenderMacros.LINES.setupRenderState();
+        BufferUploader._end(p.getSecond(), ds.mode(), ds.format(), ds.vertexCount(), ds.indexType(), ds.indexCount(), ds.sequentialIndex());
+        WorldRenderMacros.LINES.clearRenderState();
+        MatrixUtils.popShaderMVstack();
     }
 
-    private static ByteBuffer draw(final BufferBuilder bufferbuilder,
+    private static Pair<DrawState, ByteBuffer> draw(final BufferBuilder bufferbuilder,
         final Map<ChunkPos, Integer> mapToDraw,
         final int playerColonyId,
         final ChunkPos playerChunkPos,
@@ -251,12 +260,12 @@ public class ColonyBorderRenderer
         bufferbuilder.end();
 
         // create bytebuffer copy since buffer builder uses slice
-        final ByteBuffer preResult = bufferbuilder.popNextBuffer().getSecond();
-        final ByteBuffer temp = MemoryTracker.create(preResult.capacity());
-        preResult.clear();
+        final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.popNextBuffer();
+        final ByteBuffer temp = MemoryTracker.create(preResult.getSecond().capacity());
+        preResult.getSecond().clear();
         temp.clear();
-        temp.order(preResult.order()); // FORGE: Fix incorrect byte order
-        temp.put(preResult);
-        return temp;
+        temp.order(preResult.getSecond().order()); // FORGE: Fix incorrect byte order
+        temp.put(preResult.getSecond());
+        return Pair.of(preResult.getFirst(), temp);
     }
 }
