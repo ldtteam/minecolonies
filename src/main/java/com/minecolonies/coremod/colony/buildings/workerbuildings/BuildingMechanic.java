@@ -170,7 +170,7 @@ public class BuildingMechanic extends AbstractBuildingWorker implements IBuildin
         @Override
         public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
         {
-            final ItemStack stack = recipe.getPrimaryOutput();
+            final ItemStack stack = recipe.getPrimaryOutput().copy();
             if (stack.getItem().getRegistryName().getNamespace().equals("domum_ornamentum"))
             {
                 final CompoundTag dataNbt = stack.getOrCreateTagElement("textureData");

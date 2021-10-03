@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -1396,7 +1397,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)
         {
             return !head
-                     || !(state.getBlock() instanceof WoolCarpetBlock )//todo 1.17 || state.getBlock() instanceof BlockFloatingCarpet)
+                     || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock)
                      || isLadder(state.getBlock(), pos);
         }
         return isPassable(state, pos, parent);
