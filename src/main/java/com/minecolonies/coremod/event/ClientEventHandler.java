@@ -5,6 +5,7 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.research.IGlobalResearch;
@@ -14,12 +15,23 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
@@ -30,17 +42,15 @@ import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI;
 
 /**
  * Used to handle client events.
@@ -260,6 +270,48 @@ public class ClientEventHandler
         {
             tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, block.getName()));
             tooltip.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, block.getName()));
+        }
+    }
+
+    /**
+     * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
+     *
+     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
+     */
+    @SubscribeEvent
+    public static void onDebugOverlay(final RenderGameOverlayEvent.Text event)
+    {
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.options.renderDebug)
+        {
+            final ClientLevel world = mc.level;
+            final LocalPlayer player = mc.player;
+            final BlockPos pos = new BlockPos(player.position());
+            IColony colony = IColonyManager.getInstance().getIColony(world, pos);
+            if (colony == null)
+            {
+                if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
+                {
+                    event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.noclosecolony").getString());
+                    return;
+                }
+                colony = IColonyManager.getInstance().getClosestIColony(world, pos);
+
+                if (colony == null)
+                {
+                    return;
+                }
+
+                event.getLeft()
+                    .add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.nextcolony",
+                        (int) Math.sqrt(colony.getDistanceSquared(pos)),
+                        IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
+                return;
+            }
+
+            event.getLeft()
+                .add(colony.getName() + " : " + new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.blocksfromcenter",
+                    (int) Math.sqrt(colony.getDistanceSquared(pos))));
         }
     }
 }

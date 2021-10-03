@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 
 public class MutableChunkPos extends ChunkPos
@@ -44,45 +45,47 @@ public class MutableChunkPos extends ChunkPos
     }
 
     @Override
-    public boolean equals(final Object p_equals_1_)
+    public boolean equals(final Object obj)
     {
-        if (this == p_equals_1_)
+        if (this == obj)
         {
             return true;
         }
-        else if (!(p_equals_1_ instanceof ChunkPos))
+        else if (obj instanceof MutableChunkPos mcp)
         {
-            return false;
+            return this.mutableX == mcp.mutableX && this.mutableZ == mcp.mutableZ;
+        }
+        else if (obj instanceof ChunkPos cp)
+        {
+            return this.mutableX == cp.x && this.mutableZ == cp.z;
         }
         else
         {
-            final ChunkPos chunkpos = (ChunkPos) p_equals_1_;
-            return this.mutableX == chunkpos.x && this.mutableZ == chunkpos.z;
+            return false;
         }
     }
 
     @Override
-    public int getMinBlockX()
-    {
-        return this.mutableX << 4;
+    public int getMinBlockX() {
+       return SectionPos.sectionToBlockCoord(this.mutableX);
     }
 
     @Override
     public int getMinBlockZ()
     {
-        return this.mutableZ << 4;
+        return SectionPos.sectionToBlockCoord(this.mutableZ);
     }
 
     @Override
-    public int getMaxBlockX()
+    public int getBlockX(final int offset)
     {
-        return (this.mutableX << 4) + 15;
+        return SectionPos.sectionToBlockCoord(this.mutableX, offset);
     }
 
     @Override
-    public int getMaxBlockZ()
+    public int getBlockZ(final int offset)
     {
-        return (this.mutableZ << 4) + 15;
+        return SectionPos.sectionToBlockCoord(this.mutableZ, offset);
     }
 
     @Override
@@ -119,6 +122,11 @@ public class MutableChunkPos extends ChunkPos
     public int getChessboardDistance(final ChunkPos chunkPosIn)
     {
         return Math.max(Math.abs(this.mutableX - chunkPosIn.x), Math.abs(this.mutableZ - chunkPosIn.z));
+    }
+
+    public int getChessboardDistance(final MutableChunkPos chunkPosIn)
+    {
+        return Math.max(Math.abs(this.mutableX - chunkPosIn.mutableX), Math.abs(this.mutableZ - chunkPosIn.mutableZ));
     }
 
     public int getX()

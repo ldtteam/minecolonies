@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Main class for handling world rendering.
  * Also holds all possible values which may be needed during rendering.
@@ -31,7 +33,12 @@ public class WorldEventContext
     ClientLevel clientLevel;
     LocalPlayer clientPlayer;
     ItemStack mainHandItem;
+    @Nullable
     IColonyView nearestColony;
+    /**
+     * In chunks
+     */
+    int clientRenderDist;
 
     public void renderWorldLastEvent(final RenderWorldLastEvent event)
     {
@@ -42,6 +49,7 @@ public class WorldEventContext
         clientPlayer = Minecraft.getInstance().player;
         mainHandItem = clientPlayer.getMainHandItem();
         nearestColony = IColonyManager.getInstance().getClosestColonyView(clientLevel, clientPlayer.blockPosition());
+        clientRenderDist = Minecraft.getInstance().options.renderDistance;
 
         final Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         poseStack.pushPose();
@@ -52,7 +60,8 @@ public class WorldEventContext
         ColonyPatrolPointRenderer.render(this);
         GuardTowerRallyBannerRenderer.render(this);
         NearColonyBuildingsRenderer.render(this);
-        DebugRendererChunkBorder.render(this);
+        ColonyBorderRenderer.render(this);
+        HighlightManager.render(this);
 
         poseStack.popPose();
     }
