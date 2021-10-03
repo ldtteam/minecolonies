@@ -5,7 +5,7 @@
   "icon": "minecolonies:blockhutlibrary",
   "requirements": [
     {
-      "building": "citizen",
+      "building": "home",
       "level": 3
     },
     {

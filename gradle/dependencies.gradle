@@ -11,8 +11,4 @@ dependencies {
     apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
     compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
-
-    apiCompileOnly fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}:universal")
-    compileOnly fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}:universal")
 }

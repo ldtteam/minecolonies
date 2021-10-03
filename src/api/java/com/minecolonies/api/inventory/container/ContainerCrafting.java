@@ -1,6 +1,5 @@
 package com.minecolonies.api.inventory.container;
 
-import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.minecolonies.api.inventory.ModContainers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;

@@ -17,9 +17,9 @@ public class GatherDataHandler
         generator.addProvider(new DefaultBlockLootTableProvider(generator));
         generator.addProvider(new DefaultSoundProvider(generator));
         generator.addProvider(new DefaultResearchProvider(generator));
-        generator.addProvider(new SawmillTimberFrameRecipeProvider(generator));
         generator.addProvider(new DefaultSifterCraftingProvider(generator));
         generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
+        generator.addProvider(new TagProvider(generator, event.getExistingFileHelper()));
     }
 }

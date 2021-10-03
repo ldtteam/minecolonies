@@ -10,7 +10,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:aqua_affinity\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:aqua_affinity\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -21,7 +21,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:bane_of_arthropods\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:bane_of_arthropods\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -32,7 +32,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:blast_protection\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:blast_protection\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -43,7 +43,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:depth_strider\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:depth_strider\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -54,7 +54,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:efficiency\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:efficiency\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -65,7 +65,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:feather_falling\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:feather_falling\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -76,7 +76,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:fire_aspect\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fire_aspect\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -87,7 +87,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:fire_protection\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:fire_protection\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -98,7 +98,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:flame\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:flame\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -109,7 +109,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:frost_walker\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:frost_walker\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -120,7 +120,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:knockback\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:knockback\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -131,7 +131,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:looting\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:looting\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -142,7 +142,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:power\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:power\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -153,7 +153,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:projectile_protection\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:projectile_protection\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -164,7 +164,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:protection\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:protection\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -175,7 +175,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:punch\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:punch\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -186,7 +186,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:quick_charge\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:quick_charge\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -197,7 +197,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:respiration\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:respiration\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -208,7 +208,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:sharpness\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:sharpness\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -219,7 +219,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:smite\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:smite\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -230,7 +230,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:sweeping\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:sweeping\",lvl:1s}]}"
             }
           ],
           "weight": 50
@@ -241,7 +241,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{StoredEnchantments:[{lvl:1s,id:\"minecraft:unbreaking\"}]}"
+              "tag": "{StoredEnchantments:[{id:\"minecraft:unbreaking\",lvl:1s}]}"
             }
           ],
           "weight": 50
