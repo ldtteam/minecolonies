@@ -87,7 +87,7 @@ public class NearColonyBuildingsRenderer
                 0,
                 255,
                 255,
-                0.004f);
+                0.08f);
         }
     }
 

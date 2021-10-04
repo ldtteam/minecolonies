@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -126,8 +127,10 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 int count = ((TileEntityRack) rack).getCount(storage.getItemStack(), storage.ignoreDamageValue(), false);
                 if (count > 0)
                 {
-                    // Varies the color between yellow(low count) to green(64+)
-                    final int color = (0x00FF00 + 0xFF0000 * Math.max(0, 1 - count / 64)) >> 8 | 0xff;
+                    // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
+                    // mixing equation: alpha | red part | green part
+                    final int color = 0x3f000000 | ((int) (0xfe * Mth.clamp(2.0f - count / 32.0f, 0.0f, 1.0f)) << 16)
+                        | ((int) (0xfe * Mth.clamp(count / 32.0f, 0.0f, 1.0f)) << 8);
                     HighlightManager.addRenderBox("inventoryHighlight",
                       new HighlightManager.TimedBoxRenderData().setPos(blockPos)
                         .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 60 * 20)

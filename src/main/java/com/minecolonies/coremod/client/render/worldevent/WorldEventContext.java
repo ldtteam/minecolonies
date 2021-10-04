@@ -64,6 +64,8 @@ public class WorldEventContext
         HighlightManager.render(this);
         PathfindingDebugRenderer.render(this);
 
+        bufferSource.endBatch();
+
         poseStack.popPose();
     }
 

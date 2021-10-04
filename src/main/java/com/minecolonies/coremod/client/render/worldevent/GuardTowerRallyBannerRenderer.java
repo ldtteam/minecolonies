@@ -27,7 +27,7 @@ public class GuardTowerRallyBannerRenderer
                     ctx.poseStack,
                     guardTower.getInDimensionLocation(),
                     guardTower.getInDimensionLocation(),
-                    0.004f);
+                    0.02f);
             }
         }
     }

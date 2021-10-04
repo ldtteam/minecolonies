@@ -43,7 +43,7 @@ public class HighlightManager
                 }
 
                 WorldRenderMacros.renderLineBox(ctx.bufferSource.getBuffer(
-                    WorldRenderMacros.GLINT_LINES_WITH_WIDTH), ctx.poseStack, boxRenderData.pos, boxRenderData.argbColor, 0.004f);
+                    WorldRenderMacros.GLINT_LINES_WITH_WIDTH), ctx.poseStack, boxRenderData.pos, boxRenderData.argbColor, 0.01f);
 
                 if (!boxRenderData.text.isEmpty())
                 {
