@@ -128,9 +128,9 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 if (count > 0)
                 {
                     // Varies the color between red(1 pc) over yellow(32 pcs) to green(64+ pcs)
-                    // mixing equation: alpha | red part | green part
-                    final int color = 0x3f000000 | ((int) (0xfe * Mth.clamp(2.0f - count / 32.0f, 0.0f, 1.0f)) << 16)
-                        | ((int) (0xfe * Mth.clamp(count / 32.0f, 0.0f, 1.0f)) << 8);
+                    // mixing equation: alpha | red part | green part 
+                    final int color = 0x40000000 | (Mth.clamp((int) (0xff * (2.0f - count / 32.0f)), 0, 255) << 16)
+                        | (Mth.clamp((int) (0xff * count / 32.0f), 0, 255) << 8);
                     HighlightManager.addRenderBox("inventoryHighlight",
                       new HighlightManager.TimedBoxRenderData().setPos(blockPos)
                         .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 60 * 20)
