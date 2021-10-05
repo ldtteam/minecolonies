@@ -152,6 +152,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
       @NotNull final List<PlacementError> placementErrorList,
       final PlayerEntity placer)
     {
+        if (MineColonies.getConfig().getServer().noSupplyPlacementRestrictions.get())
+        {
+            return true;
+        }
+
         final BlockPos zeroPos = pos.subtract(Settings.instance.getActiveStructure().getPrimaryBlockOffset());
         final int sizeX = Settings.instance.getActiveStructure().getSizeX();
         final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
