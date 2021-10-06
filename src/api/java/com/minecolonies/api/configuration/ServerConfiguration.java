@@ -62,6 +62,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
     public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
     public final ForgeConfigSpec.IntValue     maxTreeSize;
+    public final ForgeConfigSpec.BooleanValue noSupplyPlacementRestrictions;
 
     /*  --------------------------------------------------------------------------- *
      *  ------------------- ######## Research settings ######## ------------------- *
@@ -213,6 +214,7 @@ public class ServerConfiguration extends AbstractConfiguration
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
         generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
+        noSupplyPlacementRestrictions = defineBoolean(builder, "nosupplyplacementrestrictions", false);
 
         swapToCategory(builder, "research");
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);

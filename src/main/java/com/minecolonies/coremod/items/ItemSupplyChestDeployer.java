@@ -166,6 +166,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             @NotNull final Level world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
     Player placer)
     {
+        if (MineColonies.getConfig().getServer().noSupplyPlacementRestrictions.get())
+        {
+            return true;
+        }
+
         final BlockPos anchorPos = ship.getPrimaryBlockOffset();
         final BlockPos zeroPos = pos.subtract(anchorPos);
         final int sizeX = ship.getSizeX();
