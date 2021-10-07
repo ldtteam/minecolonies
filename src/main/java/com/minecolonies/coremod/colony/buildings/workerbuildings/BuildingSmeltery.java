@@ -122,21 +122,22 @@ public class BuildingSmeltery extends AbstractBuildingFurnaceUser
     @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
     public int ingotMultiplier(final int skillLevel, final Random random)
     {
+        int fortuneLevel;
         switch (getBuildingLevel())
         {
-            case 1:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel / 2) == 0 ? DOUBLE : 1;
-            case 2:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel) == 0 ? DOUBLE : 1;
-            case 3:
-                return 2;
-            case 4:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel / 2) == 0 ? TRIPLE : DOUBLE;
-            case 5:
-                return random.nextInt(ONE_HUNDRED_PERCENT - skillLevel) == 0 ? TRIPLE : DOUBLE;
-            default:
-                return 1;
+            case 2: // Building Level 2 - Default: Fortune 0, Chance for Fortune 1
+                fortuneLevel = random.nextInt(ONE_HUNDRED_PERCENT - skillLevel / 2) == 0 ? 1 : 0; break;
+            case 3: // Building Level 3 - Default: Fortune 1, Chance for Fortune 2
+                fortuneLevel = random.nextInt(ONE_HUNDRED_PERCENT - skillLevel) == 0 ? 2 : 1; break;
+            case 4: // Building Level 4 - Default: Fortune 2, Chance for Fortune 3
+                fortuneLevel = random.nextInt(ONE_HUNDRED_PERCENT - skillLevel / 2) == 0 ? 3 : 2; break;
+            case 5: // Building Level 5 - Default: Fortune 3, Chance for Fortune 4
+                fortuneLevel = random.nextInt(ONE_HUNDRED_PERCENT - skillLevel) == 0 ? 4 : 3; break;
+            default: // Building Level 1 - Default: Fortune 0
+                fortuneLevel = 0; break;
         }
+        int multiplier = random.nextInt(fortuneLevel + 2) - 1;
+        return multiplier > 0 ? 1 + multiplier : 1;
     }
 
     @Override
