@@ -260,10 +260,12 @@ public class TileEntityRack extends AbstractTileEntityRack
                 {
                     if (getOtherChest() != null && level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                     {
-
-                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                        final Direction dirToNeighbour = BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor));
+                        typeHere = level.getBlockState(worldPosition)
+                                     .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
+                                     .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
                         typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                         .setValue(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor)));
+                                         .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
                     }
                     else
                     {
@@ -275,9 +277,13 @@ public class TileEntityRack extends AbstractTileEntityRack
                 {
                     if (getOtherChest() != null && level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
                     {
-                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
+                        final Direction dirToNeighbour = BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor));
+                        typeHere = level.getBlockState(worldPosition)
+                                     .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
+                                     .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
+                        ;
                         typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                         .setValue(AbstractBlockMinecoloniesRack.FACING, BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor)));
+                                         .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
                     }
                     else
                     {
