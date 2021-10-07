@@ -6,12 +6,12 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -260,14 +260,14 @@ public interface IBuildingView extends IRequester
     List<IBuildingModuleView> getAllModuleViews();
 
     /**
-     * Set the registry name.
-     * @param registryName the name to set.
+     * Get the Building type
+     * @return building type
      */
-    void setRegistryName(ResourceLocation registryName);
+    BuildingEntry getBuildingType();
 
     /**
-     * Get the registry name of the view.
-     * @return the name.
+     * Set the building type
+     * @param buildingType
      */
-    ResourceLocation getRegistryName();
+    void setBuildingType(BuildingEntry buildingType);
 }

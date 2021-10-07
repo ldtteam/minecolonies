@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableSet;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.BlockInfo;
@@ -12,17 +12,18 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -63,6 +64,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * Height of the building.
      */
     private int height;
+
+    /**
+     * The type of the building
+     */
+    private BuildingEntry buildingType = null;
 
     /**
      * If the building was deconstructed by the builder.
@@ -529,5 +535,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider)
     {
         upgradeBuildingLevelToSchematicData();
+    }
+
+    @Override
+    public final BuildingEntry getBuildingType()
+    {
+        return buildingType;
+    }
+
+    @Override
+    public void setBuildingType(final BuildingEntry buildingType)
+    {
+        this.buildingType = buildingType;
     }
 }

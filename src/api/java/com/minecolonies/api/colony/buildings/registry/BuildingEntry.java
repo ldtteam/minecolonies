@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
@@ -157,17 +157,19 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         {
             building.registerModule(module.get().setBuilding(building));
         }
+        building.setBuildingType(this);
         return building;
     }
 
     public IBuildingView produceBuildingView(final BlockPos position, final IColonyView colony)
     {
         final IBuildingView buildingView = buildingViewProducer.get().apply(colony, position);
-        buildingView.setRegistryName(getRegistryName());
+        buildingView.setBuildingType(this);
         for (final Supplier<Supplier<IBuildingModuleView>> module : buildingModuleViewProducers)
         {
             buildingView.registerModule(module.get().get());
         }
+
         return buildingView;
     }
 

@@ -6,6 +6,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -18,13 +19,12 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -142,9 +142,9 @@ public abstract class AbstractBuildingView implements IBuildingView
     protected List<IBuildingModuleView> moduleViews = new ArrayList<>();
 
     /**
-     * Registry name of the view.
+     * Building type
      */
-    private ResourceLocation registryName;
+    private BuildingEntry buildingType;
 
     /**
      * Creates a building view.
@@ -663,14 +663,14 @@ public abstract class AbstractBuildingView implements IBuildingView
     }
 
     @Override
-    public void setRegistryName(final ResourceLocation registryName)
+    public final BuildingEntry getBuildingType()
     {
-        this.registryName = registryName;
+        return buildingType;
     }
 
     @Override
-    public ResourceLocation getRegistryName()
+    public void setBuildingType(final BuildingEntry buildingType)
     {
-        return this.registryName;
+        this.buildingType = buildingType;
     }
 }

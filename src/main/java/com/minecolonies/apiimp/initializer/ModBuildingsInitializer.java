@@ -16,8 +16,8 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
-import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -230,7 +230,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.home = new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutHome)
-                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5, ModBuildings.home))
+                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5))
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .addBuildingModuleProducer(BedHandlingModule::new)
@@ -465,7 +465,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.tavern = new BuildingEntry.Builder()
                                 .setBuildingBlock(ModBlocks.blockHutTavern)
-                                .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "tavern", 3, ModBuildings.tavern))
+                                .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "tavern", 3))
                                 .setBuildingViewProducer(() -> TavernBuildingModule.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
                                 .addBuildingModuleProducer(BedHandlingModule::new)

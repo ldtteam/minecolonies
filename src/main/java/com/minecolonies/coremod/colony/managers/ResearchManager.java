@@ -15,12 +15,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.research.LocalResearch;
 import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.research.ResearchEffectManager;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -113,7 +113,7 @@ public class ResearchManager implements IResearchManager
                 Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
                 for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
                 {
-                    if (building.getValue().getBuildingRegistryEntry() == ModBuildings.university)
+                    if (building.getValue().getBuildingType() == ModBuildings.university)
                     {
                         if (building.getValue().getBuildingLevel() > level)
                         {

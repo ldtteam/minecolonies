@@ -13,13 +13,13 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverProvider;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -383,8 +383,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     Optional<ICitizenData> getCitizenForRequest(@NotNull IToken<?> token);
 
-    BuildingEntry getBuildingRegistryEntry();
-
     /**
      * Calculate the number of reserved stacks the resolver can't touch.
      * @return a list of itemstorages.
@@ -401,6 +399,18 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * Calculate all building corners from the schematic data.
      */
     void calculateCorners();
+
+    /**
+     * Get the Building type
+     * @return building type
+     */
+    BuildingEntry getBuildingType();
+
+    /**
+     * Set the building type
+     * @param buildingType
+     */
+    void setBuildingType(BuildingEntry buildingType);
 
     /**
      * Check if a certain vec is within this building.
