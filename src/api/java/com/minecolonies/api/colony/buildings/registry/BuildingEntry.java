@@ -163,6 +163,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
     public IBuildingView produceBuildingView(final BlockPos position, final IColonyView colony)
     {
         final IBuildingView buildingView = buildingViewProducer.get().apply(colony, position);
+        buildingView.setRegistryName(getRegistryName());
         for (final Supplier<Supplier<IBuildingModuleView>> module : buildingModuleViewProducers)
         {
             buildingView.registerModule(module.get().get());

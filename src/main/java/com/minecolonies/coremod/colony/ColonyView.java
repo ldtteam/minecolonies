@@ -1183,7 +1183,7 @@ public final class ColonyView implements IColonyView
         int sum = 0;
         for (final IBuildingView building : buildings.values())
         {
-            if (building.getSchematicName().equals(name))
+            if (building.getRegistryName().getPath().equalsIgnoreCase(name))
             {
                 if (singleBuilding)
                 {

@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -257,4 +258,16 @@ public interface IBuildingView extends IRequester
      * @return the list of views.
      */
     List<IBuildingModuleView> getAllModuleViews();
+
+    /**
+     * Set the registry name.
+     * @param registryName the name to set.
+     */
+    void setRegistryName(ResourceLocation registryName);
+
+    /**
+     * Get the registry name of the view.
+     * @return the name.
+     */
+    ResourceLocation getRegistryName();
 }

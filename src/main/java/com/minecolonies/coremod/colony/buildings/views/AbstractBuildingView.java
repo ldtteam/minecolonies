@@ -24,6 +24,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,6 +140,11 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Set of building modules this building has.
      */
     protected List<IBuildingModuleView> moduleViews = new ArrayList<>();
+
+    /**
+     * Registry name of the view.
+     */
+    private ResourceLocation registryName;
 
     /**
      * Creates a building view.
@@ -654,5 +660,17 @@ public abstract class AbstractBuildingView implements IBuildingView
     public List<IBuildingModuleView> getAllModuleViews()
     {
         return this.moduleViews;
+    }
+
+    @Override
+    public void setRegistryName(final ResourceLocation registryName)
+    {
+        this.registryName = registryName;
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return this.registryName;
     }
 }
