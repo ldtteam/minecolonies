@@ -69,11 +69,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.*;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
@@ -145,47 +141,6 @@ public class EventHandler
                 ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
             }
-        }
-    }
-
-    /**
-     * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
-     *
-     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
-     */
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    public static void onDebugOverlay(final RenderGameOverlayEvent.Text event)
-    {
-        final Minecraft mc = Minecraft.getInstance();
-        if (mc.options.renderDebug)
-        {
-            final ClientLevel world = mc.level;
-            final LocalPlayer player = mc.player;
-            final BlockPos pos = new BlockPos(player.position());
-            IColony colony = IColonyManager.getInstance().getIColony(world, pos);
-            if (colony == null)
-            {
-                if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
-                {
-                    event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.noCloseColony").getString());
-                    return;
-                }
-                colony = IColonyManager.getInstance().getClosestIColony(world, pos);
-
-                if (colony == null)
-                {
-                    return;
-                }
-
-                event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                  (int) Math.sqrt(colony.getDistanceSquared(pos)), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
-                return;
-            }
-
-            event.getLeft().add(colony.getName() + " : "
-                                  + new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
-              (int) Math.sqrt(colony.getDistanceSquared(pos))));
         }
     }
 

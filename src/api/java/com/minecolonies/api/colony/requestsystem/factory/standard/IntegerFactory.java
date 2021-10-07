@@ -31,7 +31,7 @@ public class IntegerFactory implements IFactory<FactoryVoidInput, Integer>
     public Integer getNewInstance(
       @NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, @NotNull final Object... context) throws IllegalArgumentException
     {
-        return new Integer(0);
+        return Integer.valueOf(0);
     }
 
     @NotNull

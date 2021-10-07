@@ -1,60 +1,37 @@
 package com.minecolonies.coremod.event;
 
 import com.google.common.collect.ImmutableMap;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.Network;
-import com.ldtteam.structurize.client.StructureClientHandler;
-import com.ldtteam.structurize.helpers.Settings;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
-import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.ldtteam.structurize.util.RenderUtils;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.render.MRenderTypes;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.EmptyView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
+import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
-import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.items.ItemBannerRallyGuards;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
@@ -62,26 +39,18 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
-import org.antlr.v4.runtime.misc.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI;
 
 /**
  * Used to handle client events.
@@ -92,77 +61,14 @@ public class ClientEventHandler
     private static final String MOB_SOUND_EVENT_PREFIX = "mob.";
 
     /**
-     * The distance in which previews of nearby buildings are rendered
-     */
-    private static final double PREVIEW_RANGE = 25.0f;
-
-    /**
-     * Cached wayPointBlueprint.
-     */
-    private static Blueprint wayPointTemplate;
-
-    /**
-     * Cached wayPointBlueprint.
-     */
-    private static Blueprint partolPointTemplate;
-
-    /**
-     * The cached map of blueprints of nearby buildings that are rendered.
-     */
-    private static Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> blueprintCache = new HashMap<>();
-
-    /**
-     * Render buffers.
-     */
-    public static final RenderBuffers renderBuffers = new RenderBuffers();
-    private static final MultiBufferSource.BufferSource renderBuffer             = renderBuffers.bufferSource();
-    public static final  Supplier<VertexConsumer>       linesWithCullAndDepth    = () -> renderBuffer.getBuffer(RenderType.lines());
-    private static final Supplier<VertexConsumer> linesWithoutCullAndDepth = () -> renderBuffer.getBuffer(RenderUtils.LINES_GLINT);
-    public static final Supplier<VertexConsumer>  BORDER_LINE_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customLineRenderer());
-    public static final Supplier<VertexConsumer>  PATH_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customPathRenderer());
-    public static final Supplier<VertexConsumer>  PATH_TEXT_RENDERER     = () -> renderBuffer.getBuffer(MRenderTypes.customPathTextRenderer());
-
-    /**
      * Lazy cache for crafting module lookups.
      */
     private static final Lazy<Map<String, BuildingEntry>> crafterToBuilding = Lazy.of(ClientEventHandler::buildCrafterToBuildingMap);
 
-    /**
-     * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
-     *
-     * @param event the catched event.
-     */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
-        {
-            Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
-        }
-        final Blueprint structure = Settings.instance.getActiveStructure();
-        final ClientLevel world = Minecraft.getInstance().level;
-        final Player player = Minecraft.getInstance().player;
-        if (structure != null)
-        {
-            handleRenderStructure(event, world, player);
-        }
-
-        if (player.getMainHandItem().getItem() == ModItems.scepterGuard)
-        {
-            handleRenderScepterGuard(event, world, player);
-        }
-        else if (player.getMainHandItem().getItem() == ModItems.bannerRallyGuards)
-        {
-            handleRenderBannerRallyGuards(event, world, player);
-        }
-        else if (player.getMainHandItem().getItem() == com.ldtteam.structurize.items.ModItems.buildTool.get())
-        {
-            handleRenderBuildTool(event, world, player);
-        }
-
-        DebugRendererChunkBorder.renderWorldLastEvent(event);
-
-        renderBuffer.endBatch();
+        WorldEventContext.INSTANCE.renderWorldLastEvent(event);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -368,195 +274,44 @@ public class ClientEventHandler
     }
 
     /**
-     * Renders building bounding boxes into the client
+     * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
      *
-     * @param event  The caught event
-     * @param world  The world in which to render
-     * @param player The player for which to render
+     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
-    private static void handleRenderBuildTool(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
+    @SubscribeEvent
+    public static void onDebugOverlay(final RenderGameOverlayEvent.Text event)
     {
-        if (Settings.instance.getActiveStructure() == null)
+        final Minecraft mc = Minecraft.getInstance();
+        if (mc.options.renderDebug)
         {
-            return;
-        }
-
-        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.position()));
-        if (colony == null)
-        {
-            return;
-        }
-
-        final BlockPos activePosition = Settings.instance.getPosition();
-        final Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> newCache = new HashMap<>();
-        for (final IBuildingView buildingView : colony.getBuildings())
-
-        {
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
+            final ClientLevel world = mc.level;
+            final LocalPlayer player = mc.player;
+            final BlockPos pos = new BlockPos(player.position());
+            IColony colony = IColonyManager.getInstance().getIColony(world, pos);
+            if (colony == null)
             {
-                if (buildingView instanceof PostBox.View || buildingView instanceof EmptyView)
+                if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    continue;
+                    event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.noclosecolony").getString());
+                    return;
                 }
-                final BlockPos currentPosition = buildingView.getPosition();
+                colony = IColonyManager.getInstance().getClosestIColony(world, pos);
 
-                if (activePosition.closerThan(currentPosition, PREVIEW_RANGE))
+                if (colony == null)
                 {
-                    if (blueprintCache.containsKey(currentPosition))
-                    {
-                        newCache.put(currentPosition, blueprintCache.get(currentPosition));
-                    }
-                    else
-                    {
-                        final StructureName sn =
-                                new StructureName(Structures.SCHEMATICS_PREFIX,
-                                        buildingView.getStyle(),
-                                        buildingView.getSchematicName() + buildingView.getBuildingMaxLevel());
-
-                        final String structureName = sn.toString();
-                        final String md5 = Structures.getMD5(structureName);
-
-                        final IStructureHandler wrapper = new LoadOnlyStructureHandler(world, buildingView.getID(), structureName, new PlacementSettings(), true);
-                        if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
-                        {
-                            Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
-                            if (ServerLifecycleHooks.getCurrentServer() == null)
-                            {
-                                Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                                continue;
-                            }
-                        }
-
-                        final Blueprint blueprint = wrapper.getBluePrint();
-
-                        if (blueprint != null)
-                        {
-                            final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-                            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
-                                    mirror,
-                                    world);
-
-                            final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
-                            final BlockPos pos = currentPosition.subtract(primaryOffset);
-                            final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-                            final BlockPos renderSize = pos.offset(size).subtract(new BlockPos(1, 1, 1));
-                            blueprint.setRenderSource(buildingView.getID());
-
-                            if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
-                            {
-                                newCache.put(currentPosition, new Triple<>(blueprint, pos, renderSize));
-                            }
-                            else
-                            {
-                                newCache.put(currentPosition, new Triple<>(null, pos, renderSize));
-                            }
-                        }
-                    }
+                    return;
                 }
-            }
-        }
 
-        blueprintCache = newCache;
-
-        for (final Map.Entry<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> nearbyBuilding : blueprintCache.entrySet())
-        {
-            final Triple<Blueprint, BlockPos, BlockPos> buildingData = nearbyBuilding.getValue();
-            final BlockPos position = nearbyBuilding.getKey();
-            if (buildingData.a != null)
-            {
-                StructureClientHandler.renderStructureAtPos(buildingData.a,
-                  event.getPartialTicks(),
-                  position,
-                  event.getMatrixStack());
+                event.getLeft()
+                    .add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.nextcolony",
+                        (int) Math.sqrt(colony.getDistanceSquared(pos)),
+                        IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
+                return;
             }
 
-            RenderUtils.renderBox(buildingData.b, buildingData.c, 0, 0, 1, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
-        }
-    }
-
-    /**
-     * Renders structures into the client
-     *
-     * @param event  The caught event
-     * @param world  The world in which to render
-     * @param player The player for which to render
-     */
-    private static void handleRenderStructure(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
-    {
-        final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-        if (Settings.instance.getStructureName() != null && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
-        {
-            final IColonyView tempView = IColonyManager.getInstance().getClosestColonyView(world, new BlockPos(player.position()));
-            if (tempView != null)
-            {
-                if (wayPointTemplate == null)
-                {
-                    wayPointTemplate = new LoadOnlyStructureHandler(world, BlockPos.ZERO, "schematics/infrastructure/waypoint", settings, true).getBluePrint();
-                }
-                StructureClientHandler.renderStructureAtPosList(Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure() : wayPointTemplate,
-                    event.getPartialTicks(),
-                    new ArrayList<>(tempView.getWayPoints().keySet()),
-                    event.getMatrixStack());
-            }
-        }
-    }
-
-    /**
-     * Renders the guard scepter objects into the world.
-     *
-     * @param event  The caught event
-     * @param world  The world in which to render
-     * @param player The player for which to render
-     */
-    private static void handleRenderScepterGuard(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
-    {
-        final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(), BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-        final ItemStack stack = player.getMainHandItem();
-        if (!stack.hasTag())
-        {
-            return;
-        }
-        final CompoundTag compound = stack.getTag();
-
-        final IColonyView colony = IColonyManager.getInstance().getColonyView(compound.getInt(TAG_ID), player.level.dimension());
-        if (colony == null)
-        {
-            return;
-        }
-
-        final BlockPos guardTower = BlockPosUtil.read(compound, TAG_POS);
-        final IBuildingView hut = colony.getBuilding(guardTower);
-
-        if (partolPointTemplate == null)
-        {
-            partolPointTemplate = new LoadOnlyStructureHandler(world, hut.getPosition(), "schematics/infrastructure/patrolpoint", settings, true).getBluePrint();
-        }
-
-        if (hut instanceof AbstractBuildingGuards.View)
-        {
-            StructureClientHandler.renderStructureAtPosList(partolPointTemplate, event.getPartialTicks(),((AbstractBuildingGuards.View) hut).getPatrolTargets().stream().map(BlockPos::above).collect(Collectors.toList()), event.getMatrixStack());
-        }
-    }
-
-    /**
-     * Renders the rallying banner guard tower indicators into the world.
-     *
-     * @param event  The caught event
-     * @param world  The world in which to render
-     * @param player The player for which to render
-     */
-    private static void handleRenderBannerRallyGuards(@NotNull final RenderWorldLastEvent event, final ClientLevel world, final Player player)
-    {
-        final ItemStack stack = player.getMainHandItem();
-
-        final List<ILocation> guardTowers = ItemBannerRallyGuards.getGuardTowerLocations(stack);
-
-        for (final ILocation guardTower : guardTowers)
-        {
-            if (world.dimension() != guardTower.getDimension())
-            {
-                RenderUtils.renderBox(guardTower.getInDimensionLocation(), guardTower.getInDimensionLocation(), 0, 0, 0, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
-            }
+            event.getLeft()
+                .add(colony.getName() + " : " + new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.blocksfromcenter",
+                    (int) Math.sqrt(colony.getDistanceSquared(pos))));
         }
     }
 }

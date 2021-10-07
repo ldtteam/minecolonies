@@ -3,8 +3,6 @@ package com.minecolonies.coremod;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.client.render.modeltype.AmazonModel;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.configuration.Configuration;
@@ -14,27 +12,8 @@ import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.sounds.ModSoundEvents;
-import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
-import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
-import com.minecolonies.coremod.client.model.raiders.ModelAmazonChief;
-import com.minecolonies.coremod.client.render.*;
-import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
-import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazon;
-import com.minecolonies.coremod.client.render.mobs.amazon.RendererChiefAmazon;
-import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
-import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
-import com.minecolonies.coremod.client.render.mobs.egyptians.RendererArcherMummy;
-import com.minecolonies.coremod.client.render.mobs.egyptians.RendererMummy;
-import com.minecolonies.coremod.client.render.mobs.egyptians.RendererPharao;
-import com.minecolonies.coremod.client.render.mobs.norsemen.RendererArcherNorsemen;
-import com.minecolonies.coremod.client.render.mobs.norsemen.RendererChiefNorsemen;
-import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaidenNorsemen;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
-import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -45,20 +24,12 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -72,12 +43,10 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.function.Consumer;
 
 @Mod(Constants.MOD_ID)
@@ -113,7 +82,6 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(HighlightManager.class));
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 
@@ -217,7 +185,6 @@ public class MineColonies
     @SubscribeEvent
     public static void onLoadComplete(final FMLLoadCompleteEvent event)
     {
-        Log.getLogger().warn("FMLLoadCompleteEvent");
         PlacementHandlerInitializer.initHandlers();
         RequestSystemInitializer.onPostInit();
     }
