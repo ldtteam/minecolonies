@@ -1685,8 +1685,8 @@
   "com.minecolonies.coremod.gui.townhall.happiness.desc.saturation": "Increases happiness as colonists are well-fed.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.mysticalsite": "Increases happiness if the colony has a Mystical Site, based on that Site's level.",
 
-  "com.minecolonies.coremod.gui.townhall.happiness.desc.damage": "Decreases happiness if colonists has been injured recently.",
-  "com.minecolonies.coremod.gui.townhall.happiness.desc.death": "Decreases happiness if colonists has died recently.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.damage": "Decreases happiness if colonists have been injured recently.",
+  "com.minecolonies.coremod.gui.townhall.happiness.desc.death": "Decreases happiness if colonists have died recently.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.raidwithoutdeath": "Increases happiness if the colony has survived a raid without a civilian death recently.",
   "com.minecolonies.coremod.gui.townhall.happiness.desc.slepttonight": "Increases happiness if civilian colonists have been able to sleep recently.",
   "com.minecolonies.coremod.gui.back": "Back",

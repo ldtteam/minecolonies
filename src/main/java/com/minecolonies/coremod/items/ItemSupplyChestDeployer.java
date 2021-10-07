@@ -171,6 +171,11 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
       @NotNull final World world, @NotNull final BlockPos pos, final Blueprint ship, @NotNull final List<PlacementError> placementErrorList, final
     PlayerEntity placer)
     {
+        if (MineColonies.getConfig().getServer().noSupplyPlacementRestrictions.get())
+        {
+            return true;
+        }
+
         final int sizeX = ship.getSizeX();
         final int sizeZ = ship.getSizeZ();
         final int waterLevel = BlueprintTagUtils.getNumberOfGroundLevels(ship, DEFAULT_WATER_LEVELS);
