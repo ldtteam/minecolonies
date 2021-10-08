@@ -123,7 +123,11 @@ public class WorldUtil
      */
     public static boolean isEntityChunkLoaded(final LevelAccessor world, final ChunkPos pos)
     {
-        return world.getChunkSource().hasChunk(pos.x, pos.z);
+        if (world instanceof ServerLevel)
+        {
+            return ((ServerLevel) world).isPositionEntityTicking(pos);
+        }
+        return isChunkLoaded(world, pos);
     }
 
     /**
