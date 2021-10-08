@@ -6,11 +6,12 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -257,4 +258,16 @@ public interface IBuildingView extends IRequester
      * @return the list of views.
      */
     List<IBuildingModuleView> getAllModuleViews();
+
+    /**
+     * Get the Building type
+     * @return building type
+     */
+    BuildingEntry getBuildingType();
+
+    /**
+     * Set the building type
+     * @param buildingType
+     */
+    void setBuildingType(BuildingEntry buildingType);
 }

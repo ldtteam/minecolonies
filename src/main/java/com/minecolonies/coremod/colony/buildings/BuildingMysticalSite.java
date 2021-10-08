@@ -4,8 +4,6 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
@@ -42,12 +40,6 @@ public class BuildingMysticalSite extends AbstractBuilding implements IMysticalS
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.mysticalSite;
     }
 
     /**

@@ -6,6 +6,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -18,9 +19,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -139,6 +140,11 @@ public abstract class AbstractBuildingView implements IBuildingView
      * Set of building modules this building has.
      */
     protected List<IBuildingModuleView> moduleViews = new ArrayList<>();
+
+    /**
+     * Building type
+     */
+    private BuildingEntry buildingType;
 
     /**
      * Creates a building view.
@@ -654,5 +660,17 @@ public abstract class AbstractBuildingView implements IBuildingView
     public List<IBuildingModuleView> getAllModuleViews()
     {
         return this.moduleViews;
+    }
+
+    @Override
+    public final BuildingEntry getBuildingType()
+    {
+        return buildingType;
+    }
+
+    @Override
+    public void setBuildingType(final BuildingEntry buildingType)
+    {
+        this.buildingType = buildingType;
     }
 }

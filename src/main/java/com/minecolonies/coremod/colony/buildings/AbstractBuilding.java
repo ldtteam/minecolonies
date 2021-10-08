@@ -48,23 +48,23 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import com.minecolonies.coremod.util.ColonyUtils;
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -312,7 +312,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean isMatchingBlock(@NotNull final Block block)
     {
-        return getBuildingRegistryEntry().getBuildingBlock() == block;
+        return this.getBuildingType().getBuildingBlock() == block;
     }
 
     @Override
@@ -346,7 +346,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
         }
         compound.put(TAG_RESOLVER, list);
-        compound.putString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
+        compound.putString(TAG_BUILDING_TYPE, this.getBuildingType().getRegistryName().toString());
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
@@ -672,7 +672,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
-        buf.writeUtf(getBuildingRegistryEntry().getRegistryName().toString());
+        buf.writeUtf(this.getBuildingType().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
@@ -771,7 +771,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final Player player, final BlockPos builder)
     {
-        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(getBuildingRegistryEntry().getBuildingBlock());
+        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(this.getBuildingType().getBuildingBlock());
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
         {
