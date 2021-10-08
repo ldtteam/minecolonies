@@ -124,17 +124,17 @@ public class ColonyBorderRenderer
 
             mutableChunkPos.setX(chunkPos.x);
             mutableChunkPos.setZ(chunkPos.z - 1);
-            final boolean north = mapToDraw.get(mutableChunkPos) != testedColonyId;
+            final boolean north = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
 
             mutableChunkPos.setZ(chunkPos.z + 1);
-            final boolean south = mapToDraw.get(mutableChunkPos) != testedColonyId;
+            final boolean south = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
 
             mutableChunkPos.setX(chunkPos.x + 1);
             mutableChunkPos.setZ(chunkPos.z);
-            final boolean east = mapToDraw.get(mutableChunkPos) != testedColonyId;
+            final boolean east = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
 
             mutableChunkPos.setX(chunkPos.x - 1);
-            final boolean west = mapToDraw.get(mutableChunkPos) != testedColonyId;
+            final boolean west = mapToDraw.getOrDefault(mutableChunkPos, -1) != testedColonyId;
 
             // vert lines
             if (north || west)
