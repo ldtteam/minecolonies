@@ -538,19 +538,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         for (final ItemStack stack : itemList)
         {
-            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 -> stack.sameItem(stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
+            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 ->  ItemStackUtils.compareItemStacksIgnoreStackSize(stack, stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
             {
                 return RECALC;
             }
         }
 
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
-          itemStack -> itemList.stream().anyMatch(targetStack -> targetStack.sameItem(itemStack)));
+          itemStack -> itemList.stream().anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(targetStack, itemStack)));
         if (force)
         {
             for (final ItemStack foundStack : new ArrayList<>(foundStacks))
             {
-                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> targetStack.sameItem(foundStack)).findFirst();
+                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(targetStack, foundStack)).findFirst();
                 if (opt.isPresent())
                 {
                     final ItemStack stack = opt.get();
@@ -565,7 +565,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
         else
         {
-            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> target.sameItem(itemStack)));
+            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target, itemStack)));
         }
         itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock().defaultBlockState()));
 

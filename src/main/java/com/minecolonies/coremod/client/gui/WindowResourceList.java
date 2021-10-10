@@ -111,7 +111,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 {
                     amountToSet =
                       InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
-                        stack -> !ItemStackUtils.isEmpty(stack) && stack.sameItem(resource.getItemStack()));
+                        stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
                 }
                 resource.setPlayerAmount(amountToSet);
 

@@ -35,6 +35,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildPickUpMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -45,6 +46,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.entity.PersistentEntitySectionManager;
 import net.minecraftforge.common.util.TriPredicate;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -384,7 +386,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             return;
         }
-        ItemStorage resource = resources.get(res.getDescriptionId());
+        final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
+        final String key = res.getDescriptionId() + "-" + hashCode;
+        ItemStorage resource = resources.get(key);
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -394,7 +398,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getDescriptionId(), resource);
+        resources.put(key, resource);
     }
 
     /**

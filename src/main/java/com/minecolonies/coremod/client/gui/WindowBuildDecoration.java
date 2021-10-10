@@ -24,6 +24,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
@@ -242,7 +243,9 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             return;
         }
-        ItemStorage resource = resources.get(res.getDescriptionId());
+        final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
+        final String key = res.getDescriptionId() + "-" + hashCode;
+        ItemStorage resource = resources.get(key);
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -252,7 +255,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getDescriptionId(), resource);
+        resources.put(key, resource);
     }
 
     public void updateResourceList()

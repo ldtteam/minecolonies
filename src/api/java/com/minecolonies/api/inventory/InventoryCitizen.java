@@ -317,7 +317,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
 
         final ItemStack copy = stack.copy();
         final ItemStack inSlot = mainInventory.get(slot);
-        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !inSlot.sameItem(copy)))
+        if (inSlot.getCount() >= inSlot.getMaxStackSize() || (!inSlot.isEmpty() && !ItemStackUtils.compareItemStacksIgnoreStackSize(inSlot, copy)))
         {
             return copy;
         }
