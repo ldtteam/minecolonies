@@ -137,13 +137,6 @@ public class SittingEntity extends Entity
         {
             passenger.dimensions = ((LivingEntity) passenger).isBaby() ? passenger.getType().getDimensions().scale(0.5f) : passenger.getType().getDimensions();
         }
-
-        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level, this.blockPosition());
-        if (spawn != null)
-        {
-            passenger.moveTo(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, passenger.getYRot(),
-              passenger.getXRot());
-        }
     }
 
     @NotNull
