@@ -54,8 +54,7 @@ public class ModelEntityBlacksmithMale extends CitizenModel<AbstractEntityCitize
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
           CubeListBuilder.create()
             .texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F).mirror()
-            .texOffs(32, 0).addBox(-4.0F, -24.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
-          , PartPose.offset(0.0F, 20.0F, 0.0F));
+          , PartPose.offset(0.0F, 4.0F, 0.0F));
 
         PartDefinition headdetailDefinition = headDefinition.addOrReplaceChild("headdetail",
           CubeListBuilder.create()
@@ -82,22 +81,11 @@ public class ModelEntityBlacksmithMale extends CitizenModel<AbstractEntityCitize
             .texOffs(22, 46).addBox(0.5F, -15.5F, 3.5F, 3.0F, 1.0F, 1.0F).mirror()
             .texOffs(22, 48).addBox(1.5F, -14.5F, 3.5F, 1.0F, 2.0F, 1.0F).mirror()
             .texOffs(30, 44).addBox(-4.5F, -20.5F, -0.5F, 9.0F, 1.0F, 3.0F).mirror()
-            .texOffs(43, 59).addBox(-4.5F, -1.5F, -2.5F, 9.0F, 1.0F, 4.0F).mirror()
-          , PartPose.offset(0.0F, 0.0F, 0.0F));
+          , PartPose.offset(0.0F, 20.7F, -0.4F));
 
         PartDefinition beardDefinition = headDefinition.addOrReplaceChild("beard",
           CubeListBuilder.create()
-            .texOffs(0, 54).addBox(-0.5F, 7.5F, -4.5F, 1.0F, 1.0F, 1.0F).mirror()
-            .texOffs(4, 54).addBox(-2.5F, 3.5F, -4.5F, 5.0F, 1.0F, 1.0F).mirror()
-            .texOffs(16, 54).addBox(-3.5F, 2.5F, -4.5F, 7.0F, 1.0F, 1.0F).mirror()
-            .texOffs(0, 56).addBox(-1.5F, 4.5F, -5.0F, 3.0F, 1.0F, 2.0F).mirror()
-            .texOffs(10, 56).addBox(-1.0F, 4.5F, -4.5F, 2.0F, 3.0F, 1.0F).mirror()
-            .texOffs(16, 56).addBox(-4.5F, 1.5F, -4.5F, 9.0F, 1.0F, 2.0F).mirror()
-            .texOffs(1, 60).addBox(-4.5F, 0.5F, -4.5F, 3.0F, 1.0F, 3.0F).mirror()
-            .texOffs(13, 59).addBox(-4.5F, -0.5F, -4.5F, 9.0F, 1.0F, 4.0F).mirror()
-            .texOffs(32, 52).addBox(-3.5F, -1.5F, -4.5F, 7.0F, 1.0F, 3.0F).mirror()
-            .texOffs(65, 59).addBox(1.5F, 0.5F, -4.5F, 3.0F, 1.0F, 3.0F).mirror()
-          , PartPose.offset(0.0F, 0.0F, 0.0F));
+          , PartPose.offset(0.0F, 2.7F, -0.4F));
 
         PartDefinition beardBDefinition = beardDefinition.addOrReplaceChild("beardB",
           CubeListBuilder.create()

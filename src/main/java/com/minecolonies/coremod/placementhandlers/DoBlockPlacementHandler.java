@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.placementhandlers;
 
-import com.ldtteam.domumornamentum.block.AbstractBlockDoor;
-import com.ldtteam.domumornamentum.block.AbstractBlockTrapdoor;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
@@ -17,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +46,19 @@ public class DoBlockPlacementHandler implements IPlacementHandler
     {
         if (world.getBlockState(pos).equals(blockState))
         {
+            world.removeBlock(pos, false);
+            world.setBlock(pos, blockState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+            if (tileEntityData != null)
+            {
+                try
+                {
+                    handleTileEntityPlacement(tileEntityData, world, pos, settings);
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Unable to place TileEntity");
+                }
+            }
             return ActionProcessingResult.PASS;
         }
 
