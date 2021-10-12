@@ -10,7 +10,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.*;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.world.level.block.BaseRailBlock;
@@ -135,6 +134,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return pathResult;
         }
 
+        desiredPos = BlockPos.ZERO;
         final int theRange = (int) (mob.getRandom().nextInt((int) range) + range / 2);
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
@@ -155,6 +155,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             return pathResult;
         }
 
+        desiredPos = BlockPos.ZERO;
         return setPathJob(new PathJobRandomPos(CompatibilityUtils.getWorldFromEntity(ourEntity),
           AbstractPathJob.prepareStart(ourEntity),
           3,

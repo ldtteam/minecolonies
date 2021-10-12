@@ -19,8 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-
 /**
  * Stuck handler for pathing
  */
@@ -39,7 +37,7 @@ public class PathingStuckHandler implements IStuckHandler
     /**
      * Constants related to tp.
      */
-    private static final int MAX_TP_DELAY    = 60 * TICKS_SECOND * 5;
+    private static final int MIN_TP_DELAY    = 120 * 20;
     private static final int MIN_DIST_FOR_TP = 10;
 
     /**
@@ -111,6 +109,11 @@ public class PathingStuckHandler implements IStuckHandler
     private int delayBeforeActions       = 10 * 20;
     private int delayToNextUnstuckAction = delayBeforeActions;
 
+    /**
+     * The start position of moving away unstuck
+     */
+    private BlockPos moveAwayStartPos = BlockPos.ZERO;
+
     private Random rand = new Random();
 
     private PathingStuckHandler()
@@ -137,12 +140,12 @@ public class PathingStuckHandler implements IStuckHandler
     {
         if (navigator.getDesiredPos() == null || navigator.getDesiredPos().equals(BlockPos.ZERO))
         {
-            resetGlobalStuckTimers();
             return;
         }
 
         if (navigator.getOurEntity() instanceof IStuckHandlerEntity && !((IStuckHandlerEntity) navigator.getOurEntity()).canBeStuck())
         {
+            resetGlobalStuckTimers();
             return;
         }
 
@@ -162,7 +165,7 @@ public class PathingStuckHandler implements IStuckHandler
             globalTimeout++;
 
             // Try path first, if path fits target pos
-            if (globalTimeout > Math.min(MAX_TP_DELAY, timePerBlockDistance * Math.max(MIN_DIST_FOR_TP, distanceToGoal)))
+            if (globalTimeout > Math.max(MIN_TP_DELAY, timePerBlockDistance * Math.max(MIN_DIST_FOR_TP, distanceToGoal)))
             {
                 completeStuckAction(navigator);
             }
@@ -172,6 +175,7 @@ public class PathingStuckHandler implements IStuckHandler
             resetGlobalStuckTimers();
         }
 
+        delayToNextUnstuckAction--;
         prevDestination = navigator.getDesiredPos();
 
         if (navigator.getPath() == null || navigator.getPath().isDone())
@@ -199,7 +203,7 @@ public class PathingStuckHandler implements IStuckHandler
                 {
                     progressedNodes = navigator.getPath().getNextNodeIndex() > lastPathIndex ? progressedNodes + 1 : progressedNodes - 1;
 
-                    if (progressedNodes > 5)
+                    if (progressedNodes > 5 && (navigator.getPath().getEndNode() == null || !moveAwayStartPos.equals(navigator.getPath().getEndNode().asBlockPos())))
                     {
                         // Not stuck when progressing
                         resetStuckTimers();
@@ -273,16 +277,17 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void tryUnstuck(final AbstractAdvancedPathNavigate navigator)
     {
-        if (delayToNextUnstuckAction-- > 0)
+        if (delayToNextUnstuckAction > 0)
         {
             return;
         }
+        delayToNextUnstuckAction = 50;
 
         // Clear path
         if (stuckLevel == 0)
         {
             stuckLevel++;
-            delayToNextUnstuckAction = 600;
+            delayToNextUnstuckAction = 200;
             navigator.stop();
             return;
         }
@@ -293,7 +298,8 @@ public class PathingStuckHandler implements IStuckHandler
             stuckLevel++;
             delayToNextUnstuckAction = 300;
             navigator.stop();
-            navigator.moveAwayFromXYZ(new BlockPos(navigator.getOurEntity().position()), 10, 1.0f);
+            navigator.moveAwayFromXYZ(navigator.getOurEntity().blockPosition(), 10, 1.0f);
+            moveAwayStartPos = navigator.getOurEntity().blockPosition();
             return;
         }
 
@@ -311,7 +317,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             if (canPlaceLadders && rand.nextBoolean())
             {
-                delayToNextUnstuckAction = 300;
+                delayToNextUnstuckAction = 200;
                 placeLadders(navigator);
             }
             else if (canBuildLeafBridges && rand.nextBoolean())
@@ -322,16 +328,17 @@ public class PathingStuckHandler implements IStuckHandler
         }
 
         // break blocks
-        if (stuckLevel == 6 && canBreakBlocks)
+        if (stuckLevel >= 6 && stuckLevel <= 8 && canBreakBlocks)
         {
-            delayToNextUnstuckAction = 300;
+            delayToNextUnstuckAction = 200;
             breakBlocks(navigator);
         }
 
         chanceStuckLevel();
 
-        if (stuckLevel == 8)
+        if (stuckLevel == 9)
         {
+            completeStuckAction(navigator);
             resetStuckTimers();
         }
     }
@@ -358,12 +365,14 @@ public class PathingStuckHandler implements IStuckHandler
         lastPathIndex = -1;
         progressedNodes = 0;
         stuckLevel = 0;
+        moveAwayStartPos = BlockPos.ZERO;
     }
 
     /**
      * Attempt to break blocks that are blocking the entity to reach its destination.
-     * @param world the world it is in.
-     * @param start the position the entity is at.
+     *
+     * @param world  the world it is in.
+     * @param start  the position the entity is at.
      * @param facing the direction the goal is in.
      */
     private void breakBlocksAhead(final Level world, final BlockPos start, final Direction facing)
@@ -375,24 +384,25 @@ public class PathingStuckHandler implements IStuckHandler
             return;
         }
 
-        // In goal direction
-        if (!world.isEmptyBlock(start.relative(facing)))
-        {
-            setAirIfPossible(world, start.relative(facing));
-            return;
-        }
-
         // Goal direction up
         if (!world.isEmptyBlock(start.above().relative(facing)))
         {
             setAirIfPossible(world, start.above().relative(facing));
+            return;
+        }
+
+        // In goal direction
+        if (!world.isEmptyBlock(start.relative(facing)))
+        {
+            setAirIfPossible(world, start.relative(facing));
         }
     }
 
     /**
      * Check if the block at the position is indestructible, if not, attempt to break it.
+     *
      * @param world the world the block is in.
-     * @param pos the pos the block is at.
+     * @param pos   the pos the block is at.
      */
     private void setAirIfPossible(final Level world, final BlockPos pos)
     {
@@ -436,7 +446,7 @@ public class PathingStuckHandler implements IStuckHandler
         final Level world = navigator.getOurEntity().level;
         final Mob entity = navigator.getOurEntity();
 
-        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos()).getOpposite();
+        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
 
         for (final Direction dir : HORIZONTAL_DIRS)
         {

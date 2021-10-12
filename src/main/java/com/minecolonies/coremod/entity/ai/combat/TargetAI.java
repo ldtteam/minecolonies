@@ -157,7 +157,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
                 return false;
             }
 
-            if (isEntityValidTarget(entity))
+            if (isEntityValidTarget(entity) && user.canSee(entity))
             {
                 user.getThreatTable().addThreat(entity, 0);
                 foundTarget = true;
