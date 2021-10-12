@@ -133,10 +133,12 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
+        ITag<EntityType<?>> mobBlacklist = EntityTypeTags.getAllTags().getTag(new ResourceLocation(Constants.MOD_ID,"mob_attack_blacklist" ));
         if (!event.getWorld().isClientSide())
         {
             if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy) && !(event.getEntity() instanceof Llama)
                   && !(event.getEntity() instanceof EnderMan))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob)  && !(event.getEntity().getTags().contains(mobBlacklist)))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
