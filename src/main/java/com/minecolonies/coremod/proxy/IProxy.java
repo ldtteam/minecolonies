@@ -64,12 +64,12 @@ public interface IProxy
 
     /**
      * Opens a build tool window for a specific structure.
-     *
-     * @param pos           the position.
+     *  @param pos           the position.
      * @param structureName the structure name.
      * @param rotation      the rotation.
+     * @param groundstyle   one of the GROUNDSTYLE_ values.
      */
-    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation);
+    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle);
 
     /**
      * Opens a rally banner window.

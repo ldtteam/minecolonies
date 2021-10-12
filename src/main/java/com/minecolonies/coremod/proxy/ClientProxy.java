@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
+
 /**
  * Client side proxy.
  */
@@ -59,7 +61,7 @@ public class ClientProxy extends CommonProxy
             return;
         }
 
-        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, GROUNDSTYLE_RELATIVE);
         window.open();
     }
 
@@ -100,14 +102,14 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation)
+    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle)
     {
         if (pos == null && Settings.instance.getActiveStructure() == null)
         {
             return;
         }
 
-        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation);
+        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation, groundstyle);
         window.open();
     }
 

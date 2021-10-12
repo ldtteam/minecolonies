@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -74,7 +75,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
         {
             Network.getNetwork().sendToServer(new SwitchBuildingWithToolMessage(stack));
-            new WindowMinecoloniesBuildTool(this.pos).open();
+            new WindowMinecoloniesBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
             return;
         }
         LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.buildtool.missing");

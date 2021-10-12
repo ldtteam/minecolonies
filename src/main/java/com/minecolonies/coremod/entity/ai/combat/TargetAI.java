@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTableEntry;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
@@ -20,7 +21,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.Y_VISION;
 /**
  * Target search AI
  */
-public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IStateAI
+public class TargetAI<T extends Mob & IThreatTableEntity> implements IStateAI
 {
     /**
      * The entity this AI runs for
@@ -157,7 +158,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
                 return false;
             }
 
-            if (isEntityValidTarget(entity) && user.canSee(entity))
+            if (isEntityValidTarget(entity) && user.getSensing().hasLineOfSight(entity))
             {
                 user.getThreatTable().addThreat(entity, 0);
                 foundTarget = true;

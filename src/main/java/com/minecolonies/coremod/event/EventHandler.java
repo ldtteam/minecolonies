@@ -44,6 +44,8 @@ import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -133,12 +135,10 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
-        ITag<EntityType<?>> mobBlacklist = EntityTypeTags.getAllTags().getTag(new ResourceLocation(Constants.MOD_ID,"mob_attack_blacklist" ));
+        Tag<EntityType<?>> mobBlacklist = EntityTypeTags.getAllTags().getTag(new ResourceLocation(Constants.MOD_ID,"mob_attack_blacklist" ));
         if (!event.getWorld().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy) && !(event.getEntity() instanceof Llama)
-                  && !(event.getEntity() instanceof EnderMan))
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob)  && !(event.getEntity().getTags().contains(mobBlacklist)))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy)  && !(mobBlacklist.contains(event.getEntity().getType())))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
