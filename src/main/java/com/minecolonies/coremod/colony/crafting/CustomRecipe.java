@@ -637,7 +637,7 @@ public class CustomRecipe
         final CustomRecipe that = (CustomRecipe) o;
 
 
-        return result.sameItem(that.result) 
+        return ItemStackUtils.compareItemStacksIgnoreStackSize(result, that.result)
             && researchId.equals(that.researchId)
             && excludedResearchId.equals(that.excludedResearchId)
             && inputs.equals(that.inputs);

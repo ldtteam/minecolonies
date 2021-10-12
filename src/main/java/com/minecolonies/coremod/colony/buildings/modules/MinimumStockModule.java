@@ -79,7 +79,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         for (final IToken<?> token : list)
         {
             final IRequest<?> iRequest = building.getColony().getRequestManager().getRequestForToken(token);
-            if (iRequest != null && iRequest.getRequest() instanceof Stack && ((Stack) iRequest.getRequest()).getStack().sameItem(stack))
+            if (iRequest != null && iRequest.getRequest() instanceof Stack && ItemStackUtils.compareItemStacksIgnoreStackSize(((Stack) iRequest.getRequest()).getStack(), stack))
             {
                 return token;
             }
@@ -144,7 +144,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
         for (final Map.Entry<ItemStorage, Integer> entry : minimumStock.entrySet())
         {
             if (request.getRequest() instanceof com.minecolonies.api.colony.requestsystem.requestable.Stack
-                  && ((Stack) request.getRequest()).getStack().sameItem(entry.getKey().getItemStack()))
+                  && ItemStackUtils.compareItemStacksIgnoreStackSize(((Stack) request.getRequest()).getStack(), entry.getKey().getItemStack()))
             {
                 return true;
             }

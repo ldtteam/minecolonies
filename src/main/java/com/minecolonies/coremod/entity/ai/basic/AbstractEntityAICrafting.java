@@ -178,7 +178,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             incrementActionsDone(getActionRewardForCraftingSuccess());
             return START_WORKING;
         }
-        currentRecipeStorage = module.getFirstFulfillableRecipe(stack -> stack.sameItem(currentTask.getRequest().getStack()), 1, false);
+        currentRecipeStorage = module.getFirstFulfillableRecipe(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentTask.getRequest().getStack()), 1, false);
         if (currentRecipeStorage == null)
         {
             job.finishRequest(false);
@@ -214,8 +214,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             {
                 remaining = inputStorage.getAmount() * remainingOpsCount;
             }
-            if (InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItemStackIgnoreDurability(inputStorage.getItemStack()))
-                  + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.sameItemStackIgnoreDurability(inputStorage.getItemStack()))
+            if (InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
+                  + InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, inputStorage.getItemStack(), false, true))
                   + getExtendedCount(inputStorage.getItemStack())
                   < remaining)
             {

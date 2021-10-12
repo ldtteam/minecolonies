@@ -280,7 +280,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         return new HashMap<>(requiredItems.entrySet()
                                .stream()
-                               .collect(Collectors.toMap(key -> (stack -> stack.sameItemStackIgnoreDurability(key.getKey().getItemStack())), Map.Entry::getValue)));
+                               .collect(Collectors.toMap(key -> (stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, key.getKey().getItemStack(), false, true)), Map.Entry::getValue)));
     }
 
     @Override

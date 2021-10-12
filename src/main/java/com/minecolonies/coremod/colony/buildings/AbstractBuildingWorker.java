@@ -95,7 +95,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuilding implements
             {
                 for (final ItemStack deliveryStack : request.getDeliveries())
                 {
-                    if (deliveryStack.sameItemStackIgnoreDurability(stack))
+                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(deliveryStack, stack, false, true))
                     {
                         return true;
                     }
