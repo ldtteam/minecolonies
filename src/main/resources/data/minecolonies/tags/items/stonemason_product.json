@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
+    "#domum_ornamentum:brick_items",
+    "#domum_ornamentum:extra_block_items",
     "#forge:stone",
     "#forge:cobblestone",
     "#minecraft:stone_bricks",
