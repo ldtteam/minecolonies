@@ -160,7 +160,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         final BlockPos zeroPos = pos.subtract(Settings.instance.getActiveStructure().getPrimaryBlockOffset());
         final int sizeX = Settings.instance.getActiveStructure().getSizeX();
         final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
-        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(Settings.instance.getActiveStructure(), 1);
+        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(Settings.instance.getActiveStructure(), 1) - 1;
 
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
