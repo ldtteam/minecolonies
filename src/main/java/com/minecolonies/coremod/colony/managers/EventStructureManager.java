@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.colony.managers;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
+import com.ldtteam.structures.lib.BlueprintTagUtils;
 import com.ldtteam.structurize.Structurize;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.BlockInfo;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
@@ -17,7 +16,6 @@ import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -27,10 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
 import static com.ldtteam.structurize.management.Structures.SCHEMATIC_EXTENSION_NEW;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -92,31 +88,11 @@ public class EventStructureManager implements IEventStructureManager
 
         final World world = colony.getWorld();
 
-        int y = 3;
+        final int y = BlueprintTagUtils.getNumberOfGroundLevels(structure, 4) - 1;
 
-        final BlockInfo info = structure.getBlockInfoAsMap().getOrDefault(structure.getPrimaryBlockOffset(), null);
-        if (info.getTileEntityData() != null)
-        {
-            final CompoundNBT teData = structure.getTileEntityData(targetSpawnPoint, structure.getPrimaryBlockOffset());
-            if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
-            {
-                final TileEntity entity = TileEntity.loadStatic(info.getState(), info.getTileEntityData());
-                if (entity instanceof IBlueprintDataProvider)
-                {
-                    for (final Map.Entry<BlockPos, List<String>> entry : ((IBlueprintDataProvider) entity).getPositionedTags().entrySet())
-                    {
-                        if (entry.getValue().contains("groundlevel"))
-                        {
-                            y = entry.getKey().getY();
-                        }
-                    }
-                }
-            }
-        }
+        final BlockPos spawnPos = targetSpawnPoint.offset(0, -y, 0).offset(structure.getPrimaryBlockOffset());
 
-        final BlockPos spawnPos = targetSpawnPoint.offset(0, -y, 0);
-
-        final BlockPos zeroPos = targetSpawnPoint.subtract(structure.getPrimaryBlockOffset()).offset(0, -y, 0);
+        final BlockPos zeroPos = spawnPos.subtract(structure.getPrimaryBlockOffset());
         final BlockPos cornerPos = new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1);
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
