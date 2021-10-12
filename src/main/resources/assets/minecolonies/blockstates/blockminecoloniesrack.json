@@ -1,14 +1,32 @@
 {
   "variants": {
-    "facing=east,variant=blockrackempty": {"model": "minecolonies:block/blockrackemptydouble","y": 180},
+    "facing=east,variant=blockrackempty": {
+      "model": "minecolonies:block/blockrackemptydouble",
+      "y": 0
+    },
     "facing=south,variant=blockrackempty": {"model": "minecolonies:block/blockrackemptydouble","y": 90},
-    "facing=west,variant=blockrackempty": {"model": "minecolonies:block/blockrackemptydouble","y": 0},
+    "facing=west,variant=blockrackempty": {
+      "model": "minecolonies:block/blockrackemptydouble",
+      "y": 180
+    },
     "facing=north,variant=blockrackempty": {"model": "minecolonies:block/blockrackemptydouble","y": 270},
     
     "facing=east,variant=blockrackfull": [
-      {"model": "minecolonies:block/blockrackfulldouble","y": 180,"weight": 40},
-      {"model": "minecolonies:block/blockrackfulldouble_1","y": 180,"weight": 30},
-      {"model": "minecolonies:block/blockrackfulldouble_2","y": 180,"weight": 30}
+      {
+        "model": "minecolonies:block/blockrackfulldouble",
+        "y": 0,
+        "weight": 40
+      },
+      {
+        "model": "minecolonies:block/blockrackfulldouble_1",
+        "y": 0,
+        "weight": 30
+      },
+      {
+        "model": "minecolonies:block/blockrackfulldouble_2",
+        "y": 0,
+        "weight": 30
+      }
     ],
     "facing=south,variant=blockrackfull": [
       {"model": "minecolonies:block/blockrackfulldouble","y": 90,"weight": 40},
@@ -16,25 +34,55 @@
       {"model": "minecolonies:block/blockrackfulldouble_2","y": 90,"weight": 30}
     ],
     "facing=west,variant=blockrackfull": [
-      {"model": "minecolonies:block/blockrackfulldouble","y": 0,"weight": 40},
-      {"model": "minecolonies:block/blockrackfulldouble_1","y": 0,"weight": 30},
-      {"model": "minecolonies:block/blockrackfulldouble_2","y": 0,"weight": 30}
+      {
+        "model": "minecolonies:block/blockrackfulldouble",
+        "y": 180,
+        "weight": 40
+      },
+      {
+        "model": "minecolonies:block/blockrackfulldouble_1",
+        "y": 180,
+        "weight": 30
+      },
+      {
+        "model": "minecolonies:block/blockrackfulldouble_2",
+        "y": 180,
+        "weight": 30
+      }
     ],
     "facing=north,variant=blockrackfull": [
       {"model": "minecolonies:block/blockrackfulldouble","y": 270,"weight": 40},
       {"model": "minecolonies:block/blockrackfulldouble_1","y": 270,"weight": 30},
       {"model": "minecolonies:block/blockrackfulldouble_2","y": 270,"weight": 30}
     ],
-    
-    "facing=east,variant=blockrackemptysingle": {"model": "minecolonies:block/blockrackempty","y": 180},
+
+    "facing=east,variant=blockrackemptysingle": {
+      "model": "minecolonies:block/blockrackempty",
+      "y": 0
+    },
     "facing=south,variant=blockrackemptysingle": {"model": "minecolonies:block/blockrackempty","y": 90},
-    "facing=west,variant=blockrackemptysingle": {"model": "minecolonies:block/blockrackempty","y": 0},
+    "facing=west,variant=blockrackemptysingle": {
+      "model": "minecolonies:block/blockrackempty",
+      "y": 180
+    },
     "facing=north,variant=blockrackemptysingle": {"model": "minecolonies:block/blockrackempty","y": 270},
     
     "facing=east,variant=blockrackfullsingle": [
-      {"model": "minecolonies:block/blockrackfull","y": 180,"weight":40},
-      {"model": "minecolonies:block/blockrackfull_1","y": 180,"weight":30},
-      {"model": "minecolonies:block/blockrackfull_2","y": 180,"weight":30}
+      {
+        "model": "minecolonies:block/blockrackfull",
+        "y": 0,
+        "weight": 40
+      },
+      {
+        "model": "minecolonies:block/blockrackfull_1",
+        "y": 0,
+        "weight": 30
+      },
+      {
+        "model": "minecolonies:block/blockrackfull_2",
+        "y": 0,
+        "weight": 30
+      }
     ],
     "facing=south,variant=blockrackfullsingle": [
       {"model": "minecolonies:block/blockrackfull","y": 90,"weight":40},
@@ -42,9 +90,21 @@
       {"model": "minecolonies:block/blockrackfull_2","y": 90,"weight":30}
     ],
     "facing=west,variant=blockrackfullsingle": [
-      {"model": "minecolonies:block/blockrackfull","y": 0,"weight":40},
-      {"model": "minecolonies:block/blockrackfull_1","y": 0,"weight":30},
-      {"model": "minecolonies:block/blockrackfull_2","y": 0,"weight":30}
+      {
+        "model": "minecolonies:block/blockrackfull",
+        "y": 180,
+        "weight": 40
+      },
+      {
+        "model": "minecolonies:block/blockrackfull_1",
+        "y": 180,
+        "weight": 30
+      },
+      {
+        "model": "minecolonies:block/blockrackfull_2",
+        "y": 180,
+        "weight": 30
+      }
     ],
     "facing=north,variant=blockrackfullsingle": [
       {"model": "minecolonies:block/blockrackfull","y": 270,"weight":40},
