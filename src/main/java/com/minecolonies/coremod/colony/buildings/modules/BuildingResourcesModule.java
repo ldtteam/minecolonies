@@ -331,10 +331,10 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
             boolean hasOpenRequest = false;
             int count = InventoryUtils.getItemCountInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
-              stack -> stack.sameItem(itemStack.getItemStack()));
+              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
 
             int totalAmount = neededResources.containsKey(entry.getKey()) ? neededResources.get(entry.getKey()).getAmount() : 0;
-            int workerInvCount = InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> stack.sameItem(itemStack.getItemStack()));
+            int workerInvCount = InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
             if ((workerInv && (count + workerInvCount) < entry.getValue())
                   || (count < entry.getValue() && (count + workerInvCount) < totalAmount))
             {
@@ -343,7 +343,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 {
                     for (final IRequest<? extends Stack> request : list)
                     {
-                        if (request.getRequest().getStack().sameItem(itemStack.getItemStack()))
+                        if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack()))
                         {
                             hasOpenRequest = true;
                             break;

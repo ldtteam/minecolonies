@@ -1,6 +1,7 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
@@ -58,6 +59,10 @@ public class WorldUtil
      */
     public static boolean isChunkLoaded(final LevelAccessor world, final int x, final int z)
     {
+        if (world.getChunkSource() instanceof ServerChunkCache)
+        {
+            return ((ServerChunkCache)world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false).isDone();
+        }
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
     }
 
