@@ -6,12 +6,12 @@ import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.coremod.colony.Colony;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
@@ -290,7 +290,7 @@ public class Permissions implements IPermissions
                 rank = ranks.get(oldRank.ordinal());
             }
 
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(id).get();
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(id).orElse(null);
 
             if (player != null && rank != null)
             {
@@ -375,7 +375,7 @@ public class Permissions implements IPermissions
         final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)
         {
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID).get();
+            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID).orElse(null);
 
             if (player != null)
             {
@@ -686,7 +686,7 @@ public class Permissions implements IPermissions
         else
         {
 
-            final GameProfile gameprofile = world.getServer().getProfileCache().get(id).get();
+            final GameProfile gameprofile = world.getServer().getProfileCache().get(id).orElse(null);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -748,7 +748,7 @@ public class Permissions implements IPermissions
         {
             return false;
         }
-        final GameProfile gameprofile = world.getServer().getProfileCache().get(player).get();
+        final GameProfile gameprofile = world.getServer().getProfileCache().get(player).orElse(null);
         //Check if the player already exists so that their rank isn't overridden
 
         // Adds new subscribers

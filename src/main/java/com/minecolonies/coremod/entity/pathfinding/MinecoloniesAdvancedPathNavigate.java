@@ -12,25 +12,25 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.*;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.level.block.BaseRailBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.network.protocol.game.DebugPackets;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.pathfinder.PathFinder;
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import net.minecraft.world.level.block.state.properties.RailShape;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -514,23 +514,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getNode(this.getPath().getNextNodeIndex());
             final PathPointExtended pExNext = getPath().getNodeCount() > this.getPath().getNextNodeIndex() + 1
                                                 ? (PathPointExtended) this.getPath()
-                                                                        .getNode(this.getPath()
-                                                                                                 .getNextNodeIndex() + 1)
-                                                : null;
-
-            for (int i = this.path.getNextNodeIndex(); i < Math.min(this.path.getNodeCount(), this.path.getNextNodeIndex() + 3); i++)
-            {
-                final PathPointExtended nextPoints = (PathPointExtended) this.getPath().getNode(i);
-                if (nextPoints.isOnLadder())
-                {
-                    Vec3 motion = this.mob.getDeltaMovement();
-                    double x = motion.x < -0.1 ? -0.1 : Math.min(motion.x, 0.1);
-                    double z = motion.x < -0.1 ? -0.1 : Math.min(motion.z, 0.1);
-
-                    this.ourEntity.setDeltaMovement(x, motion.y, z);
-                    break;
-                }
-            }
+              .getNode(this.getPath()
+                .getNextNodeIndex() + 1) : null;
 
             if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y))
             {
@@ -691,7 +676,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         Vec3 vec3 = this.getPath().getNextEntityPos(this.ourEntity);
         final BlockPos entityPos = new BlockPos(this.ourEntity.position());
-        if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < Math.random() * 0.1)
+        if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < 0.6)
         {
             //This way he is less nervous and gets up the ladder
             double newSpeed = 0.3;
@@ -699,16 +684,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                 case NORTH:
-                    vec3 = vec3.add(0, 0, 1);
+                    vec3 = vec3.add(0, 0, 0.4);
                     break;
                 case SOUTH:
-                    vec3 = vec3.add(0, 0, -1);
+                    vec3 = vec3.add(0, 0, -0.4);
                     break;
                 case WEST:
-                    vec3 = vec3.add(1, 0, 0);
+                    vec3 = vec3.add(0.4, 0, 0);
                     break;
                 case EAST:
-                    vec3 = vec3.add(-1, 0, 0);
+                    vec3 = vec3.add(-0.4, 0, 0);
                     break;
                 case UP:
                     vec3 = vec3.add(0, 1, 0);
