@@ -206,6 +206,8 @@ minecraft {
 
 //From forge
 task downloadCrowdin() {
+    duplicatesStrategy 'exclude'
+
     ext {
         output = file('build/crowdin_raw.zip')
         update = file('build/crowdin.json')
@@ -232,6 +234,8 @@ task downloadCrowdin() {
 }
 
 task crowdin(type: Zip) {
+    duplicatesStrategy 'exclude'
+    
     dependsOn downloadCrowdin
     onlyIf {
         !downloadCrowdin.state.skipped
