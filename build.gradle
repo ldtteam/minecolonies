@@ -206,8 +206,6 @@ minecraft {
 
 //From forge
 task downloadCrowdin() {
-    duplicatesStrategy 'exclude'
-
     ext {
         output = file('build/crowdin_raw.zip')
         update = file('build/crowdin.json')
