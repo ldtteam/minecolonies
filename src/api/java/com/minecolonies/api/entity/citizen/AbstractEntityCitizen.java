@@ -18,27 +18,25 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -448,26 +446,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public int getRecentlyHit()
     {
         return lastHurtByPlayerTime;
-    }
-
-    /**
-     * Entities treat being on ladders as not on ground; this breaks navigation logic.
-     */
-    @Override
-    protected void checkFallDamage(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
-    {
-        if (!onGround)
-        {
-            final int px = Mth.floor(getX());
-            final int py = (int) getY();
-            final int pz = Mth.floor(getZ());
-
-            this.onGround =
-              CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(level.getBlockState(
-                new BlockPos(px, py, pz)), level, new BlockPos(px, py, pz), this);
-        }
-
-        super.checkFallDamage(y, onGroundIn, state, pos);
     }
 
     /**
