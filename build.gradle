@@ -254,11 +254,13 @@ task crowdin(type: Zip) {
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
+    duplicatesStrategy 'exclude'
 }
 
 jar {
     from sourceSets.api.output
     from sourceSets.main.output
+    duplicatesStrategy 'exclude'
 
     // add crowdin locales
     from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
@@ -287,11 +289,15 @@ javadoc {
 
 task packageJavadoc(type: Jar) {
     from javadoc
+    duplicatesStrategy 'exclude'
+
     classifier = 'javadoc'
 }
 
 task sourceJar(type: Jar) {
     classifier = 'sources'
+    duplicatesStrategy 'exclude'
+
     from sourceSets.main.allJava
     from sourceSets.api.allJava
 }
@@ -316,6 +322,8 @@ task setupCIWorkspace {
 
 processResources {
     inputs.file 'build.properties'
+    duplicatesStrategy 'exclude'
+
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
         expand 'config': config
