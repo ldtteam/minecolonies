@@ -639,7 +639,7 @@ public class CustomRecipe
 
         return ItemStackUtils.compareItemStacksIgnoreStackSize(result, that.result)
             && Objects.equals(researchId, that.researchId)
-            && excludedResearchId.equals(that.excludedResearchId)
+            && Objects.equals(excludedResearchId, that.excludedResearchId)
             && inputs.equals(that.inputs);
     }
 
