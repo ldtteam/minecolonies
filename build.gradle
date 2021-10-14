@@ -10,7 +10,7 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.+', changing: true
     }
 }
 
@@ -38,7 +38,7 @@ repositories {
         url 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
-        url "http://harleyoconnor.com/maven/"
+        url "https://harleyoconnor.com/maven/"
     }
 }
 
@@ -47,7 +47,7 @@ apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 compileJava.options.encoding = "UTF-8"
 
@@ -102,7 +102,7 @@ dependencies {
     implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     contained fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
-    compile "com.ldtteam:datagenerators:${config.datagen_version}"
+    implementation "com.ldtteam:datagenerators:${config.datagen_version}"
     
     implementation fg.deobf("mezz.jei:jei-${config.jei_mcversion}:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
