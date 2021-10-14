@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IRSComponent;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.util.Tuple;
@@ -63,11 +61,5 @@ public class Stash extends AbstractBuilding implements IRSComponent
     public int getRotation()
     {
         return 0;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.stash;
     }
 }

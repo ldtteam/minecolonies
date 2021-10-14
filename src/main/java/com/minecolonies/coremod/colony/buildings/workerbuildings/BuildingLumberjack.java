@@ -5,10 +5,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -145,12 +143,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker implements IBuild
             }
         }
         return toKeep;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.lumberjack;
     }
 
     @NotNull

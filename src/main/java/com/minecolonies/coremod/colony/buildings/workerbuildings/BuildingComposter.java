@@ -6,9 +6,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -177,12 +175,6 @@ public class BuildingComposter extends AbstractBuildingWorker
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.composter;
     }
 
 

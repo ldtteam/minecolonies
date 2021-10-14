@@ -4,8 +4,6 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -88,12 +86,6 @@ public class BuildingMechanic extends AbstractBuildingWorker implements IBuildin
     public Skill getSecondarySkill()
     {
         return Skill.Agility;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.mechanic;
     }
 
     /**

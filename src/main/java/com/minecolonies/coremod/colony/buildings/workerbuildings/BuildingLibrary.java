@@ -5,8 +5,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -241,12 +239,6 @@ public class BuildingLibrary extends AbstractBuildingWorker
     public List<StudyItem> getStudyItems()
     {
         return studyItems;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.library;
     }
 
     /**

@@ -383,8 +383,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     Optional<ICitizenData> getCitizenForRequest(@NotNull IToken<?> token);
 
-    BuildingEntry getBuildingRegistryEntry();
-
     /**
      * Calculate the number of reserved stacks the resolver can't touch.
      * @return a list of itemstorages.
@@ -425,4 +423,18 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player the player picking it up.
      */
     void pickUp(final PlayerEntity player);
+
+    /**
+     * Get the Building type
+     *
+     * @return building type
+     */
+    BuildingEntry getBuildingType();
+
+    /**
+     * Set the building type
+     *
+     * @param buildingType
+     */
+    void setBuildingType(BuildingEntry buildingType);
 }

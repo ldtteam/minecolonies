@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
@@ -15,7 +13,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
@@ -125,12 +122,6 @@ public class BuildingHospital extends AbstractBuildingWorker
     public boolean canWorkDuringTheRain()
     {
         return true;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.hospital;
     }
 
     @Override

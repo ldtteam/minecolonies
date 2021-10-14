@@ -4,8 +4,6 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -58,12 +56,6 @@ public class BuildingDeliveryman extends AbstractBuildingWorker implements IBuil
     public int getMaxBuildingLevel()
     {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.deliveryman;
     }
 
     @NotNull

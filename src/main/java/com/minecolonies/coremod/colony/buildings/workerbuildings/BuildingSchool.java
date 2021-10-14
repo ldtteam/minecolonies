@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -222,12 +220,6 @@ public class BuildingSchool extends AbstractBuildingWorker
         }
 
         return compound;
-    }
-
-    @Override
-    public BuildingEntry getBuildingRegistryEntry()
-    {
-        return ModBuildings.school;
     }
 
     @Override

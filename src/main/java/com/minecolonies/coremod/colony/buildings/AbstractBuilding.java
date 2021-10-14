@@ -312,7 +312,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public boolean isMatchingBlock(@NotNull final Block block)
     {
-        return getBuildingRegistryEntry().getBuildingBlock() == block;
+        return this.getBuildingType().getBuildingBlock() == block;
     }
 
     @Override
@@ -346,7 +346,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             list.add(StandardFactoryController.getInstance().serialize(requestResolver.getId()));
         }
         compound.put(TAG_RESOLVER, list);
-        compound.putString(TAG_BUILDING_TYPE, this.getBuildingRegistryEntry().getRegistryName().toString());
+        compound.putString(TAG_BUILDING_TYPE, this.getBuildingType().getRegistryName().toString());
         writeRequestSystemToNBT(compound);
         compound.putBoolean(TAG_IS_BUILT, isBuilt);
         compound.putString(TAG_CUSTOM_NAME, customName);
@@ -672,7 +672,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
-        buf.writeUtf(getBuildingRegistryEntry().getRegistryName().toString());
+        buf.writeUtf(this.getBuildingType().getRegistryName().toString());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
@@ -771,7 +771,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void requestUpgrade(final PlayerEntity player, final BlockPos builder)
     {
-        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(getBuildingRegistryEntry().getBuildingBlock());
+        final ResourceLocation hutResearch = colony.getResearchManager().getResearchEffectIdFrom(this.getBuildingType().getBuildingBlock());
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) && colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
         {

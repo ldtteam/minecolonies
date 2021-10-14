@@ -12,6 +12,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -89,6 +90,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      * Child schematics within this
      */
     private Set<BlockPos> childSchematics = ImmutableSet.of();
+
+    /**
+     * The type of the building
+     */
+    private BuildingEntry buildingType = null;
 
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
@@ -529,5 +535,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider)
     {
         upgradeBuildingLevelToSchematicData();
+    }
+
+    @Override
+    public final BuildingEntry getBuildingType()
+    {
+        return buildingType;
+    }
+
+    @Override
+    public void setBuildingType(final BuildingEntry buildingType)
+    {
+        this.buildingType = buildingType;
     }
 }
