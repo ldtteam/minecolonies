@@ -2716,7 +2716,22 @@ public class InventoryUtils
      */
     public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
     {
-        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)) < quantity)
+        return attemptReduceStackInItemHandler(invWrapper, itemStack, quantity, false, false);
+    }
+
+    /**
+     * Search for a certain itemStack in the inventory and decrease it by a certain quantity.
+     *
+     * @param invWrapper the inventory item handler.
+     * @param itemStack  the itemStack to decrease.
+     * @param quantity   the quantity.
+     * @param ignoreDamage ignore damage values.
+     * @param ignoreNBT ignore NBT values.
+     * @return true if successfully.
+     */
+    public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity, final boolean ignoreDamage, final boolean ignoreNBT)
+    {
+        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT)) < quantity)
         {
             return false;
         }
@@ -2725,7 +2740,7 @@ public class InventoryUtils
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
             final ItemStack stack = invWrapper.getStackInSlot(i);
-            if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack))
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack, !ignoreDamage, !ignoreNBT))
             {
                 if (stack.getCount() >= qty)
                 {

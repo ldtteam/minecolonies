@@ -149,7 +149,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             {
                 if (player.isCreative() || InventoryUtils.attemptReduceStackInItemHandler(new InvWrapper(player.getInventory()),
                   ((IVisitorData) data).getRecruitCost(),
-                  ((IVisitorData) data).getRecruitCost().getCount()))
+                  ((IVisitorData) data).getRecruitCost().getCount(), true, true))
                 {
                     // Recruits visitor as new citizen and respawns entity
                     colony.getVisitorManager().removeCivilian(data);
