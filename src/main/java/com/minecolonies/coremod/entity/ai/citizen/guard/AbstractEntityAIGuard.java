@@ -601,7 +601,6 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             ((IThreatTableEntity) worker).getThreatTable().addThreat(attacker, 20);
             registerTarget(new AIOneTimeEventTarget(CombatAIStates.ATTACKING));
-            target = attacker;
         }
     }
 
@@ -740,9 +739,8 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     public boolean canBeInterrupted()
     {
-        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || getState() == GUARD_RALLY || (target != null && target.isAlive())
-              || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
-                                                                .equals(GuardTaskSetting.FOLLOW))
+        if (fighttimer > 0 || getState() == CombatAIStates.ATTACKING || buildingGuards.getRallyLocation() != null || buildingGuards.getTask()
+                                                                                                                       .equals(GuardTaskSetting.FOLLOW))
         {
             return false;
         }

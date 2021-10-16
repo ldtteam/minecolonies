@@ -18,7 +18,6 @@ import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -36,7 +35,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -449,26 +447,6 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public int getRecentlyHit()
     {
         return lastHurtByPlayerTime;
-    }
-
-    /**
-     * Entities treat being on ladders as not on ground; this breaks navigation logic.
-     */
-    @Override
-    protected void checkFallDamage(final double y, final boolean onGroundIn, @NotNull final BlockState state, @NotNull final BlockPos pos)
-    {
-        if (!onGround)
-        {
-            final int px = MathHelper.floor(getX());
-            final int py = (int) getY();
-            final int pz = MathHelper.floor(getZ());
-
-            this.onGround =
-              CompatibilityUtils.getWorldFromCitizen(this).getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(level.getBlockState(
-                new BlockPos(px, py, pz)), level, new BlockPos(px, py, pz), this);
-        }
-
-        super.checkFallDamage(y, onGroundIn, state, pos);
     }
 
     /**
