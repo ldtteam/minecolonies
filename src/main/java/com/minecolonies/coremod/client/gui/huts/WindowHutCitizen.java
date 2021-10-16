@@ -162,6 +162,6 @@ public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingM
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.homehut";
+        return "com.minecolonies.coremod.gui.workerhuts.home";
     }
 }
