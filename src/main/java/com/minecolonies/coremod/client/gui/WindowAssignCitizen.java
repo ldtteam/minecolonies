@@ -4,9 +4,8 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.BOWindow;
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -163,7 +162,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         }
                         else
                         {
-                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homehut.current", home.getX(), home.getY(), home.getZ()).getString();
+                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.home.current", home.getX(), home.getY(), home.getZ()).getString();
                         }
                     }
 
