@@ -599,7 +599,7 @@ public class Colony implements IColony
                 player.refreshList(this);
                 if (player.getGuards().isEmpty())
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), "You successfully defended your colony against, " + player.getPlayer().getName());
+                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName().getString());
                 }
             }
         }
@@ -1688,8 +1688,8 @@ public class Colony implements IColony
             {
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(),
-                      "Beware, " + attackingPlayer.getPlayer().getName() + " has now: " + attackingPlayer.getGuards().size() + " guards!");
+                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE,
+                            attackingPlayer.getPlayer().getName().getString(), attackingPlayer.getGuards().size());
                 }
                 return;
             }
@@ -1702,7 +1702,7 @@ public class Colony implements IColony
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), "Beware, " + visitingPlayer.getName() + " is attacking you and he brought guards.");
+                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName().getString());
             }
         }
     }
