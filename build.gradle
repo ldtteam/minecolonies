@@ -10,7 +10,7 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.+', changing: true
     }
 }
 
@@ -38,7 +38,7 @@ repositories {
         url 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
-        url "http://harleyoconnor.com/maven/"
+        url "https://harleyoconnor.com/maven/"
     }
 }
 
@@ -47,7 +47,7 @@ apply plugin: 'jacoco'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 compileJava.options.encoding = "UTF-8"
 
@@ -102,14 +102,19 @@ dependencies {
     implementation fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     contained fg.deobf("com.ldtteam:structurize:${config.structurize_version}")
     additionalMods "com.ldtteam:structurize:${config.structurize_version}"
-    compile "com.ldtteam:datagenerators:${config.datagen_version}"
+    implementation "com.ldtteam:datagenerators:${config.datagen_version}"
     
     implementation fg.deobf("mezz.jei:jei-${config.jei_mcversion}:${config.jei_version}")
     compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
+    compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.dt_mcversion}:${config.dt_version}")
+    compileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${config.tc_mcversion}-${config.tc_version}")
+    compileOnly fg.deobf("slimeknights.mantle:Mantle:${config.mantle_mcversion}-${config.mantle_version}")
+
     apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
     apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:${config.mantle_mcversion}-${config.mantle_version}")
     apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${config.tc_mcversion}-${config.tc_version}")
     apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.dt_mcversion}:${config.dt_version}")
+
 
     testImplementation  'junit:junit:4.12'
     testImplementation  "org.mockito:mockito-core:1.+"
@@ -232,6 +237,8 @@ task downloadCrowdin() {
 }
 
 task crowdin(type: Zip) {
+    duplicatesStrategy 'exclude'
+    
     dependsOn downloadCrowdin
     onlyIf {
         !downloadCrowdin.state.skipped
@@ -254,11 +261,13 @@ task crowdin(type: Zip) {
 task apiJar(type: Jar) {
     from sourceSets.api.output
     classifier 'api'
+    duplicatesStrategy 'exclude'
 }
 
 jar {
     from sourceSets.api.output
     from sourceSets.main.output
+    duplicatesStrategy 'exclude'
 
     // add crowdin locales
     from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
@@ -287,11 +296,15 @@ javadoc {
 
 task packageJavadoc(type: Jar) {
     from javadoc
+    duplicatesStrategy 'exclude'
+
     classifier = 'javadoc'
 }
 
 task sourceJar(type: Jar) {
     classifier = 'sources'
+    duplicatesStrategy 'exclude'
+
     from sourceSets.main.allJava
     from sourceSets.api.allJava
 }
@@ -316,6 +329,8 @@ task setupCIWorkspace {
 
 processResources {
     inputs.file 'build.properties'
+    duplicatesStrategy 'exclude'
+
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
         expand 'config': config

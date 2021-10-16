@@ -799,7 +799,7 @@ public class InventoryUtils
                 }
                 else if (entity instanceof ChestTileEntity)
                 {
-                    totalCount += getItemCountInProvider(entity, itemStack -> itemStack.sameItem(stack.getItemStack()));
+                    totalCount += getItemCountInProvider(entity, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack.getItemStack()));
                 }
             }
         }
@@ -1760,7 +1760,7 @@ public class InventoryUtils
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
-            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).sameItem(sourceStack))
+            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && ItemStackUtils.compareItemStacksIgnoreStackSize(targetHandler.getStackInSlot(i), sourceStack))
             {
                 sourceStack = targetHandler.insertItem(i, sourceStack, false);
                 if (ItemStackUtils.isEmpty(sourceStack))
@@ -1794,7 +1794,7 @@ public class InventoryUtils
 
         for (int i = 0; i < targetHandler.getSlots(); i++)
         {
-            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && targetHandler.getStackInSlot(i).sameItem(sourceStack))
+            if (!ItemStackUtils.isEmpty(targetHandler.getStackInSlot(i)) && ItemStackUtils.compareItemStacksIgnoreStackSize(targetHandler.getStackInSlot(i), sourceStack))
             {
                 sourceStack = targetHandler.insertItem(i, sourceStack, false);
                 if (ItemStackUtils.isEmpty(sourceStack))
@@ -2165,7 +2165,7 @@ public class InventoryUtils
         while (i < list.size() && tries < maxTries)
         {
             final ItemStack stack = list.get(i);
-            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, stack::sameItem);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, lStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, lStack));
 
             if (slot == -1)
             {
@@ -2698,7 +2698,7 @@ public class InventoryUtils
     {
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
-            if (invWrapper.getStackInSlot(i).sameItem(itemStack))
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(invWrapper.getStackInSlot(i), itemStack))
             {
                 invWrapper.getStackInSlot(i).shrink(quantity);
                 return;
@@ -2716,7 +2716,7 @@ public class InventoryUtils
      */
     public static boolean attemptReduceStackInItemHandler(final IItemHandler invWrapper, final ItemStack itemStack, final int quantity)
     {
-        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && stack.sameItem(itemStack)) < quantity)
+        if (getItemCountInItemHandler(invWrapper, stack -> !stack.isEmpty() && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack)) < quantity)
         {
             return false;
         }
@@ -2725,7 +2725,7 @@ public class InventoryUtils
         for (int i = 0; i < invWrapper.getSlots(); i++)
         {
             final ItemStack stack = invWrapper.getStackInSlot(i);
-            if (stack.sameItem(itemStack))
+            if (ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack))
             {
                 if (stack.getCount() >= qty)
                 {

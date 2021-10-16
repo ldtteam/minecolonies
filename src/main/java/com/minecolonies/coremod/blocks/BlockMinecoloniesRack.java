@@ -117,9 +117,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         {
             if (rack.getOtherChest() != null)
             {
+                state.setValue(FACING, BlockPosUtil.getFacing(pos, rack.getNeighbor()));
                 if (rack.isMain())
                 {
-                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE).setValue(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE);
                 }
                 else
                 {
@@ -135,10 +136,10 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         {
             if (rack.getOtherChest() != null)
             {
+                state.setValue(FACING, BlockPosUtil.getFacing(pos, rack.getNeighbor()));
                 if (rack.isMain())
                 {
-                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                             .setValue(FACING, BlockPosUtil.getFacing(rack.getNeighbor(), pos));
+                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE);
                 }
                 else
                 {

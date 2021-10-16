@@ -384,7 +384,9 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             return;
         }
-        ItemStorage resource = resources.get(res.getDescriptionId());
+        final int hashCode = res.hasTag() ? res.getTag().hashCode() : 0;
+        final String key = res.getDescriptionId() + "-" + hashCode;
+        ItemStorage resource = resources.get(key);
         if (resource == null)
         {
             resource = new ItemStorage(res);
@@ -394,7 +396,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         {
             resource.setAmount(resource.getAmount() + amount);
         }
-        resources.put(res.getDescriptionId(), resource);
+        resources.put(key, resource);
     }
 
     /**

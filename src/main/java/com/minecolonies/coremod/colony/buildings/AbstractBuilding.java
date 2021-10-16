@@ -1081,7 +1081,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 }
             }
         }
-        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> stack.sameItem(key.getKey().getItemStack())), Map.Entry::getValue)));
+        toKeep.putAll(requiredItems.entrySet().stream().collect(Collectors.toMap(key -> (stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, key.getKey().getItemStack())), Map.Entry::getValue)));
 
         getModules(IAltersRequiredItems.class).forEach(module -> module.alterItemsToBeKept((stack, qty, inv) -> toKeep.put(stack, new Tuple<>(qty,inv))));
         return toKeep;

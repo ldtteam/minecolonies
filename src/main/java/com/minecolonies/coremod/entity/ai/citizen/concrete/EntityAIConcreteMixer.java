@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.concrete;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingConcreteMixer;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
@@ -111,7 +112,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             ItemStack inputStack = currentRecipeStorage.getCleanedInput().get(0).getItemStack();
             if(CONCRETE.test(inputStack))
             {
-                slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> s.sameItem(inputStack));
+                slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, inputStack));
             }
             else
             {

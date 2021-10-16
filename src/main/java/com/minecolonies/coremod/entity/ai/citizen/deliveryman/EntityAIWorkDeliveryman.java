@@ -548,7 +548,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        if ((entity instanceof TileEntityColonyBuilding && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) > is.getCount()) ||
+        if ((entity instanceof TileEntityColonyBuilding && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
               (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
         {
             final IItemHandler handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);

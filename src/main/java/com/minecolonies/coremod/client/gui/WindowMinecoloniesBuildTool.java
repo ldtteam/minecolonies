@@ -41,20 +41,22 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
      * @param pos           the position.
      * @param structureName the structure name.
      * @param rotation      the rotation.
+     * @param groundstyle   one of the GROUNDSTYLE_ values.
      */
-    public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation)
+    public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos, final String structureName, final int rotation, final int groundstyle)
     {
-        super(pos, structureName, rotation);
+        super(pos, structureName, rotation, groundstyle);
     }
 
     /**
      * Creates a window build tool. This requires X, Y and Z coordinates. If a structure is active, recalculates the X Y Z with offset. Otherwise the given parameters are used.
      *
      * @param pos coordinate.
+     * @param groundstyle one of the GROUNDSTYLE_ values.
      */
-    public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos)
+    public WindowMinecoloniesBuildTool(@Nullable final BlockPos pos, final int groundstyle)
     {
-        super(pos);
+        super(pos, groundstyle);
     }
 
     @Override

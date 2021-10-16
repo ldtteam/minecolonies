@@ -150,8 +150,8 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
             return null;
         }
 
-        /// Add ignore logic
-        final ThreatTableEntry current = threatList.get(currentTargetIndex);
+        // Threat value target change thresholds
+        ThreatTableEntry current = threatList.get(currentTargetIndex);
         final ThreatTableEntry top = threatList.get(0);
         if (top.getThreat() > current.getThreat())
         {
@@ -161,7 +161,7 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
                 if (top.getThreat() > (current.getThreat() * 1.3))
                 {
                     currentTargetIndex = 0;
-                    return top;
+                    current = top;
                 }
             }
             else
@@ -170,27 +170,20 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
                 if (top.getThreat() > (current.getThreat() * 1.1))
                 {
                     currentTargetIndex = 0;
-                    return top;
+                    current = top;
                 }
             }
+        }
+
+        if (Math.abs(owner.level.getGameTime() - current.getLastSeen()) > MAX_TRACKING_TICKS || !current.getEntity().isAlive())
+        {
+            removeCurrentTarget();
+            return getTarget();
         }
 
         if (current.getThreat() < 0)
         {
             return null;
-        }
-
-        if ((owner.level.getGameTime() - current.getLastSeen()) > MAX_TRACKING_TICKS || !current.getEntity().isAlive())
-        {
-            removeCurrentTarget();
-            if (threatList.isEmpty())
-            {
-                return null;
-            }
-            else
-            {
-                return threatList.get(currentTargetIndex);
-            }
         }
 
         return current;

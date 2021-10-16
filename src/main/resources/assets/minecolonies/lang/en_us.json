@@ -748,7 +748,7 @@
   "item.supply.error.inside_colony": "Inside colony",
   "item.supply.error.needs_air_above": "Need air above",
   "item.supply.error.not_water": "Not a Fluid",
-  "item.supply.badblocks": "Not all blocks in the area do meet the requirements! Recheck the highlighted blocks",
+  "item.supply.badblocks": "Not all blocks in the area meet the requirements! Recheck the highlighted blocks",
   "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your Supply Camp or Ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "Supply Ship",
   "item.minecolonies.supplycampdeployer": "Supply Camp",
