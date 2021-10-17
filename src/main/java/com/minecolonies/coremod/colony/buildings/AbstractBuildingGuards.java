@@ -25,6 +25,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
@@ -38,19 +39,19 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
 import com.minecolonies.coremod.items.ItemBannerRallyGuards;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArrowItem;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -243,6 +244,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final IBuilding building = citizen.getHomeBuilding();
             if (building != null && !building.getID().equals(this.getID()))
             {
+                if (building.hasModule(LivingBuildingModule.class))
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                      "com.minecolonies.coremod.gui.workerhuts.guardassignbed",
+                      citizen.getName(),
+                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
+                      BlockPosUtil.getString(building.getID()));
+                }
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
