@@ -234,6 +234,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             stuckHandler.checkStuck(this);
             followThePath();
+            stuckHandler.checkStuck(this);
             return;
         }
         if (handleRails())
