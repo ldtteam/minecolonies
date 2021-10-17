@@ -288,6 +288,12 @@ public final class TranslationConstants
     @NonNls
     public static final String ON_STRING                                                            = "com.minecolonies.coremod.gui.townhall.on";
     @NonNls
+    public static final String COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE                               = "com.minecolonies.coremod.pvp.attack.guardgroupsize";
+    @NonNls
+    public static final String COLONY_ATTACK_START_MESSAGE                                          = "com.minecolonies.coremod.pvp.attack.start";
+    @NonNls
+    public static final String COLONY_DEFENDED_SUCCESS_MESSAGE                                      = "com.minecolonies.coremod.pvp.defended.success";
+    @NonNls
     public static final String OFF_STRING                                                           = "com.minecolonies.coremod.gui.townhall.off";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MOURN                                       = "com.minecolonies.coremod.mourning";

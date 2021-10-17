@@ -979,6 +979,9 @@
   "com.minecolonies.coremod.status.fillingbarrels": "Filling the barrels",
   "com.minecolonies.coremod.status.harvestingbarrels": "Harvesting the barrels",
 
+  "com.minecolonies.coremod.pvp.attack.start": "§cBeware, %s§c is attacking you and he brought guards!",
+  "com.minecolonies.coremod.pvp.defended.success": "§aYou successfully defended your colony against %s§a.",
+  "com.minecolonies.coremod.pvp.attack.guardgroupsize": "§eBeware, %s §ehas now: %d §eguards!",
   "com.minecolonies.coremod.pvp.townhall.break.start": "Beware! %s started breaking your Town Hall!",
   "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100%% it will be lost!!!",
   "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Pick Team Color:",
