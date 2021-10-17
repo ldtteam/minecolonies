@@ -262,7 +262,7 @@ public class BuildToolPlaceMessage implements IMessage
                     }
                 }
 
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), new ItemStack(block, 1), 1);
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack, 1);
                 setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
             }
         }
