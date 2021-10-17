@@ -7,7 +7,7 @@
   "icon": "minecolonies:blockhutschool",
   "requirements": [
     {
-      "building": "citizen",
+      "building": "home",
       "level": 3
     },
     {
