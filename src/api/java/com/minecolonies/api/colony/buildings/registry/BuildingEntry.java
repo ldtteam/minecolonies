@@ -157,6 +157,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         {
             building.registerModule(module.get().setBuilding(building));
         }
+        building.setBuildingType(this);
         return building;
     }
 
@@ -167,6 +168,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         {
             buildingView.registerModule(module.get().get());
         }
+        buildingView.setBuildingType(this);
         return buildingView;
     }
 

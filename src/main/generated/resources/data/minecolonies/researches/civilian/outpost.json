@@ -5,7 +5,7 @@
   "icon": "minecolonies:blockhutcitizen:50",
   "requirements": [
     {
-      "building": "citizen",
+      "building": "home",
       "level": 4
     },
     {

@@ -1224,7 +1224,7 @@ public class Colony implements IColony
         int sum = 0;
         for (final IBuilding building : this.getBuildingManager().getBuildings().values())
         {
-            if (building.getSchematicName().equalsIgnoreCase(name))
+            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
             {
                 if (singleBuilding)
                 {

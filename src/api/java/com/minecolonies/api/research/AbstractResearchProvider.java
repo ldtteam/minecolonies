@@ -362,19 +362,10 @@ public abstract class AbstractResearchProvider implements IDataProvider
          * @param level            The required level or sum of levels.
          * @return The json object
          */
-        // TODO: consider fixing underlying discrepancy in 1.17.
         private JsonObject makeSafeBuildingProperty(final String propertyType, final String buildingName, final int level)
         {
             JsonObject req = new JsonObject();
-
-            if(buildingName.equals("home"))
-            {
-                req.addProperty(propertyType, "citizen");
-            }
-            else
-            {
-                req.addProperty(propertyType, buildingName);
-            }
+            req.addProperty(propertyType, buildingName);
             req.addProperty("level", level);
             return req;
         }
