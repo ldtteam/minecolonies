@@ -532,7 +532,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setSortOrder(4)
                                           .setOnlyChild()
                                           .setIcon(ModBlocks.blockHutSchool.asItem())
-                                          .addBuildingRequirement("citizen", 3)
+                                          .addBuildingRequirement("home", 3)
                                           .addItemCost(Items.BOOK, 3)
                                           .addEffect(ModBuildings.school.getBuildingBlock(), 1)
                                           .addToList(r);
