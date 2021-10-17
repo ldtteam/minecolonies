@@ -24,7 +24,6 @@ public class DefaultBuildingInstance extends AbstractBuilding
      * @param colony the colony.
      * @param pos the position.
      * @param schematicName the schematic name.
-     * @param entry the entry.
      */
     public DefaultBuildingInstance(final IColony colony, final BlockPos pos, final String schematicName, final int maxLevel)
     {
