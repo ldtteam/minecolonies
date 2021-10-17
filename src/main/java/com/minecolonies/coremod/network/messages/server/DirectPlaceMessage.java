@@ -127,6 +127,7 @@ public class DirectPlaceMessage implements IMessage
                 if (building != null)
                 {
                     building.setBuildingLevel(compound.getInt(TAG_OTHER_LEVEL));
+                    building.setDeconstructed();
                 }
             }
         }
