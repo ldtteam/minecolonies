@@ -5,11 +5,11 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -362,7 +362,6 @@ public abstract class AbstractResearchProvider implements DataProvider
          * @param level            The required level or sum of levels.
          * @return The json object
          */
-        // TODO: consider fixing underlying discrepancy in 1.17.
         private JsonObject makeSafeBuildingProperty(final String propertyType, final String buildingName, final int level)
         {
             JsonObject req = new JsonObject();

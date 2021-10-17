@@ -232,12 +232,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         this.ourEntity.setYya(0);
         if (handleLadders(oldIndex))
         {
+            stuckHandler.checkStuck(this);
             followThePath();
             stuckHandler.checkStuck(this);
             return;
         }
         if (handleRails())
         {
+            stuckHandler.checkStuck(this);
             return;
         }
 
@@ -704,6 +706,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                     newSpeed = 0;
                     mob.setShiftKeyDown(true);
                     isSneaking = true;
+                    this.ourEntity.getMoveControl().setWantedPosition(vec3.x, vec3.y, vec3.z, 0.2);
                     break;
             }
 
