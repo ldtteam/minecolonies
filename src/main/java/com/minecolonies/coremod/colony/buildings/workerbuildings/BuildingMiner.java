@@ -225,7 +225,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         else if (this.getBuildingLevel() >= 3)
         {
-            return level.getMinSection() + MAX_DEPTH_LEVEL_3;
+            return level.getMinBuildHeight() + MAX_DEPTH_LEVEL_3;
         }
 
         return MAX_DEPTH_LEVEL_0;
