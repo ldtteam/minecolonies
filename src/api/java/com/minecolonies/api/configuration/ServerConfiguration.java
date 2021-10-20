@@ -35,13 +35,10 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue allowOtherDimColonies;
     public final ForgeConfigSpec.IntValue     citizenRespawnInterval;
     public final ForgeConfigSpec.IntValue     maxCitizenPerColony;
-    public final ForgeConfigSpec.BooleanValue builderInfiniteResources;
-    public final ForgeConfigSpec.BooleanValue limitToOneWareHousePerColony;
     public final ForgeConfigSpec.IntValue     builderBuildBlockDelay;
     public final ForgeConfigSpec.IntValue     blockMiningDelayModifier;
     public final ForgeConfigSpec.BooleanValue enableInDevelopmentFeatures;
     public final ForgeConfigSpec.BooleanValue alwaysRenderNameTag;
-    public final ForgeConfigSpec.DoubleValue  growthModifier;
     public final ForgeConfigSpec.BooleanValue workersAlwaysWorkInRain;
     public final ForgeConfigSpec.BooleanValue sendEnteringLeavingMessages;
     public final ForgeConfigSpec.IntValue     allowGlobalNameChanges;
@@ -49,7 +46,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     updateRate;
     public final ForgeConfigSpec.IntValue     dirtFromCompost;
     public final ForgeConfigSpec.IntValue     luckyBlockChance;
-    public final ForgeConfigSpec.BooleanValue fixOrphanedChunks;
     public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
     public final ForgeConfigSpec.DoubleValue  fisherSpongeChance;
     public final ForgeConfigSpec.DoubleValue  fisherPrismarineChance;
@@ -187,13 +183,10 @@ public class ServerConfiguration extends AbstractConfiguration
         allowOtherDimColonies = defineBoolean(builder, "allowotherdimcolonies", true);
         citizenRespawnInterval = defineInteger(builder, "citizenrespawninterval", 60, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX);
         maxCitizenPerColony = defineInteger(builder, "maxcitizenpercolony", 250, 4, 500);
-        builderInfiniteResources = defineBoolean(builder, "builderinfiniteresources", false);
-        limitToOneWareHousePerColony = defineBoolean(builder, "limittoonewarehousepercolony", false);
         builderBuildBlockDelay = defineInteger(builder, "builderbuildblockdelay", 15, 1, 500);
         blockMiningDelayModifier = defineInteger(builder, "blockminingdelaymodifier", 500, 1, 10000);
         enableInDevelopmentFeatures = defineBoolean(builder, "enableindevelopmentfeatures", false);
         alwaysRenderNameTag = defineBoolean(builder, "alwaysrendernametag", true);
-        growthModifier = defineDouble(builder, "growthmodifier", 1, 1, 100);
         workersAlwaysWorkInRain = defineBoolean(builder, "workersalwaysworkinrain", false);
         sendEnteringLeavingMessages = defineBoolean(builder, "sendenteringleavingmessages", true);
         allowGlobalNameChanges = defineInteger(builder, "allowglobalnamechanges", 1, -1, 1);
@@ -201,7 +194,6 @@ public class ServerConfiguration extends AbstractConfiguration
         updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
-        fixOrphanedChunks = defineBoolean(builder, "fixorphanedchunks", false);
         restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
         fisherSpongeChance = defineDouble(builder, "fisherspongechance", 0.1, 0, 100);
         fisherPrismarineChance = defineDouble(builder, "fisherprismarinechance", 2.5, 0, 100);

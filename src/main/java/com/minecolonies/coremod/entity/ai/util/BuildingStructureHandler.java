@@ -9,22 +9,22 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -256,7 +256,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean isCreative()
     {
-        return MineColonies.getConfig().getServer().builderInfiniteResources.get();
+        return Constants.BUILDER_INF_RESOURECES;
     }
 
     @Override
