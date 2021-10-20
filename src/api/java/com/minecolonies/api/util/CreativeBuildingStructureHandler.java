@@ -80,9 +80,12 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
         {
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
-            ((IBlueprintDataProvider) te).readSchematicDataFromNBT(teData);
-            ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
-            te.setChanged();
+            if (te != null)
+            {
+                ((IBlueprintDataProvider) te).readSchematicDataFromNBT(teData);
+                ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
+                te.setChanged();
+            }
         }
 
         if (building != null)
