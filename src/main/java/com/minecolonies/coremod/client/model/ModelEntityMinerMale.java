@@ -34,8 +34,7 @@ public class ModelEntityMinerMale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
           CubeListBuilder.create()
             .texOffs(0, 0).addBox(-4.0F, -7.6F, -4.0F, 8.0F, 8.0F, 8.0F).mirror()
-            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
-          , PartPose.offset(0.0F, 0.4F, 1.0F));
+          , PartPose.offset(0.0F, 0.4F, 0.0F));
 
         PartDefinition headDetailDefinition = headDefinition.addOrReplaceChild("headDetail",
           CubeListBuilder.create()
