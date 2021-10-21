@@ -193,7 +193,7 @@ public abstract class AbstractBuildingContainer extends AbstractCitizenAssignabl
     public void setTileEntity(final AbstractTileEntityColonyBuilding te)
     {
         tileEntity = te;
-        if (te.isOutdated())
+        if (te != null && te.isOutdated())
         {
             safeUpdateTEDataFromSchematic();
         }
