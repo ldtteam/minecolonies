@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.client.gui.townhall.AbstractWindowTownHall;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -486,7 +487,15 @@ public class WindowBannerPicker extends Screen
 
             super.render(stack, p_render_1_, p_render_2_, p_render_3_);
 
-            drawBannerPattern(this.pattern, this.x, this.y);
+            try
+            {
+                drawBannerPattern(this.pattern, this.x, this.y);
+            }
+            catch (final Exception ex)
+            {
+                Log.getLogger().warn(pattern.getFilename());
+                Log.getLogger().error(ex);
+            }
         }
 
         @Override
