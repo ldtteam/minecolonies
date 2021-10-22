@@ -153,7 +153,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         if (work != null)
                         {
                             final double oldDistance = BlockPosUtil.getDistance2D(work, home);
-                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.homehut.currently", oldDistance).getString();
+                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.home.currently", oldDistance).getString();
                             better = newDistance < oldDistance;
                             if (oldDistance >= FAR_DISTANCE_THRESHOLD)
                             {
