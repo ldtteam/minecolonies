@@ -362,7 +362,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
             return getState();
         }
-        if (pathResult.isPathReachingDestination())
+        if (pathResult.isDone())
         {
             return setNewTree(building);
         }
