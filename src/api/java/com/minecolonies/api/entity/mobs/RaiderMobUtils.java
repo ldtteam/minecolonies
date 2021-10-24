@@ -163,6 +163,9 @@ public final class RaiderMobUtils
         {
             mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(Items.BOW));
         }
+        else if (mob instanceof ISpearmanMobEntity) {
+            mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.spear));
+        }
         else if (mob instanceof IChiefBarbarianEntity)
         {
             mob.setItemSlot(EquipmentSlotType.MAINHAND, new ItemStack(ModItems.chiefSword));
