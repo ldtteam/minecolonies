@@ -9,28 +9,27 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.core.NonNullList;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -722,12 +721,13 @@ public class Tree
         }
         for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for (int locY = locYMin; locY < world.getHeight(); locY++)
+            for (int locY = locYMin; locY < world.getLogicalHeight(); locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS)
+                          || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         leaves.add(leaf);
                     }
