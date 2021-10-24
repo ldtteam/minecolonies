@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.ldtteam.blockui.views.BOWindow;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.core.BlockPos;
@@ -87,6 +89,14 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
             final IBuilding building = citizen.getHomeBuilding();
             if (building != null && !building.getID().equals(this.getID()))
             {
+                if (building.hasModule(LivingBuildingModule.class))
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                      "com.minecolonies.coremod.gui.workerhuts.knighttraineeassignbed",
+                      citizen.getName(),
+                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
+                      BlockPosUtil.getString(building.getID()));
+                }
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);
