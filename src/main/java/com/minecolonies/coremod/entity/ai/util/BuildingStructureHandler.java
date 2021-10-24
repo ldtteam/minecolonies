@@ -9,8 +9,8 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
@@ -256,7 +256,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public boolean isCreative()
     {
-        return MineColonies.getConfig().getServer().builderInfiniteResources.get();
+        return Constants.BUILDER_INF_RESOURECES;
     }
 
     @Override
