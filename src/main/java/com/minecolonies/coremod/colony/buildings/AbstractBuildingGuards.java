@@ -25,6 +25,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
@@ -243,6 +244,14 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
             final IBuilding building = citizen.getHomeBuilding();
             if (building != null && !building.getID().equals(this.getID()))
             {
+                if (building.hasModule(LivingBuildingModule.class))
+                {
+                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                      "com.minecolonies.coremod.gui.workerhuts.guardassignbed",
+                      citizen.getName(),
+                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
+                      BlockPosUtil.getString(building.getID()));
+                }
                 building.removeCitizen(citizen);
             }
             citizen.setHomeBuilding(this);

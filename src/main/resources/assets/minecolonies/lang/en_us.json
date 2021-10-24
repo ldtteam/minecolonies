@@ -651,6 +651,9 @@
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
 
+  "com.minecolonies.coremod.gui.workerhuts.guardassignbed": "%s became a guard. The %s at %s now has an open bed slot for a new citizen.",
+  "com.minecolonies.coremod.gui.workerhuts.archertraineeassignbed": "%s became an archer in training. The %s at %s now has an open bed slot for a new citizen.",
+  "com.minecolonies.coremod.gui.workerhuts.knighttraineeassignbed": "%s became a knight in training. The %s at %s now has an open bed slot for a new citizen.",
   "com.minecolonies.coremod.gui.workerhuts.guardactions": "Guard Actions:",
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the Guard to the job:",
   "com.minecolonies.coremod.gui.workerhuts.patrol": "Find patrol target:",
