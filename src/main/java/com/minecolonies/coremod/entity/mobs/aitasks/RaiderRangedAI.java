@@ -20,7 +20,7 @@ import net.minecraft.util.SoundEvents;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
 /**
- * Raider AI for melee attacking a target
+ * Raider AI for shooting arrows at a target
  */
 public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
 {

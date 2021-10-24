@@ -714,6 +714,8 @@
   "item.minecolonies.scepterbeekeeper.addhive": "Hive added successfully",
   "item.minecolonies.scepterbeekeeper.maxhives": "You have reached the maximum number of hives. Upgrade the Apiary to increase the max number.",
 
+  "item.minecolonies.spear": "Spear",
+
   "com.minecolonies.coremod.item.permissionscepter.setmode": "Set to mode %s.",
   "com.minecolonies.coremod.item.permissionscepter.permission.deny": "You do not have permission to edit blocks with this tool!",
   "com.minecolonies.coremod.item.permissionscepter.addblock.success": "Added block type %s.",
@@ -1664,12 +1666,17 @@
   "death.attack.entity.minecolonies.pharao": "%s was put to sleep by a Pharaoh!",
   "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glare!",
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
+
   "entity.amazon": "Amazon",
-  "entity.minecolonies.amazonchief": "Amazon Leader",
   "entity.minecolonies.amazon": "Amazon",
-  "entity.amazonchief": "Amazon Leader",
-  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader!",
   "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow!",
+  "entity.amazonspearman": "Amazon Spearman",
+  "entity.minecolonies.amazonspearman": "Amazon Spearman",
+  "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear!",
+  "entity.amazonchief": "Amazon Leader",
+  "entity.minecolonies.amazonchief": "Amazon Leader",
+  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader!",
+
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "Planting:",
   "com.minecolonies.coremod.job.planter": "Planter",

@@ -70,6 +70,7 @@ public final class ModItemsInitializer
         ModItems.pharaoscepter = new ItemPharaoScepter(new Item.Properties());
         ModItems.firearrow = new ItemFireArrow(new Item.Properties());
         ModItems.scepterBeekeeper = new ItemScepterBeekeeper(new Item.Properties());
+        ModItems.spear = new ItemSpear(new Item.Properties());
 
         ModItems.breadDough = new ItemBreadDough(new Item.Properties());
         ModItems.cookieDough = new ItemCookieDough(new Item.Properties());
@@ -79,7 +80,7 @@ public final class ModItemsInitializer
         ModItems.milkyBread = new ItemMilkyBread(new Item.Properties());
         ModItems.sugaryBread = new ItemSugaryBread(new Item.Properties());
         ModItems.goldenBread = new ItemGoldenBread(new Item.Properties());
-        ModItems.chorusBread= new ItemChorusBread(new Item.Properties());
+        ModItems.chorusBread = new ItemChorusBread(new Item.Properties());
 
         ModItems.scrollColonyTP = new ItemScrollColonyTP(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
         registry.register(ModItems.scrollColonyTP);
@@ -137,6 +138,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.pharaoscepter);
         registry.register(ModItems.firearrow);
         registry.register(ModItems.scepterBeekeeper);
+        registry.register(ModItems.spear);
 
         registry.register(ModItems.breadDough);
         registry.register(ModItems.cookieDough);

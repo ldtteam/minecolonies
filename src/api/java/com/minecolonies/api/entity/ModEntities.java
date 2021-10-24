@@ -83,5 +83,8 @@ public class ModEntities
     @ObjectHolder("firearrow")
     public static EntityType<? extends AbstractArrowEntity> FIREARROW;
 
+    @ObjectHolder("spear")
+    public static EntityType<SpearEntity> SPEAR;
+
     public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
 }

@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
@@ -22,6 +23,7 @@ import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazon;
+import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazonSpearman;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererChiefAmazon;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -34,6 +36,8 @@ import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaiden
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
+import com.minecolonies.coremod.client.render.projectile.FireArrowRenderer;
+import com.minecolonies.coremod.client.render.projectile.RendererSpear;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -50,6 +54,7 @@ import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.entity.TippedArrowRenderer;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -188,6 +193,7 @@ public class MineColonies
         event.put(ModEntities.ARCHERPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
         event.put(ModEntities.CHIEFPIRATE, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
         event.put(ModEntities.AMAZON, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
+        event.put(ModEntities.AMAZONSPEARMAN, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
         event.put(ModEntities.AMAZONCHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
         event.put(ModEntities.NORSEMEN_ARCHER, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
         event.put(ModEntities.NORSEMEN_CHIEF, AbstractEntityMinecoloniesMob.getDefaultAttributes().build());
@@ -216,12 +222,13 @@ public class MineColonies
 
     /**
      * Called when MineCraft reloads a configuration file.
+     *
      * @param event event
      */
     @SubscribeEvent
     public static void onConfigReload(final ModConfig.Reloading event)
     {
-        if(event.getConfig().getType() == ModConfig.Type.SERVER)
+        if (event.getConfig().getType() == ModConfig.Type.SERVER)
         {
             // ModConfig fires for each of server, client, and common.
             // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
@@ -238,6 +245,7 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FISHHOOK, RenderFishHook::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MC_NORMAL_ARROW, TippedArrowRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.SPEAR, RendererSpear::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
@@ -278,6 +286,9 @@ public class MineColonies
         RenderTypeLookup.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+
+        ItemModelsProperties.register(ModItems.spear, new ResourceLocation("throwing"), (item, world, entity) ->
+                                                                                          (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
     }
 
     /**
