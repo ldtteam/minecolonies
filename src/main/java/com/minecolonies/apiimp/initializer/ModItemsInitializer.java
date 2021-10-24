@@ -223,6 +223,12 @@ public final class ModItemsInitializer
 
         registry.register(new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
           "amazonegg"));
+        registry.register(new SpawnEggItem(ModEntities.AMAZONSPEARMAN,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          new Item.Properties().tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
+          "amazonspearmanegg"
+        ));
         registry.register(new SpawnEggItem(ModEntities.AMAZONCHIEF,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,

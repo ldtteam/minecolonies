@@ -11,6 +11,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
+import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonSpearman;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
@@ -141,6 +142,12 @@ public class EntityInitializer
             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
             .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
+        ModEntities.AMAZONSPEARMAN = build("amazonspearman",
+          EntityType.Builder.of(EntityAmazonSpearman::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
         ModEntities.AMAZONCHIEF = build("amazonchief",
           EntityType.Builder.of(EntityAmazonChief::new, EntityClassification.MONSTER)
             .setTrackingRange(ENTITY_TRACKING_RANGE)
@@ -208,6 +215,7 @@ public class EntityInitializer
             ModEntities.ARCHERMUMMY,
             ModEntities.PHARAO,
             ModEntities.AMAZON,
+            ModEntities.AMAZONSPEARMAN,
             ModEntities.AMAZONCHIEF,
             ModEntities.FIREARROW,
             ModEntities.MC_NORMAL_ARROW,

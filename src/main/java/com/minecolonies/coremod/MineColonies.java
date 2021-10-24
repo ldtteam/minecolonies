@@ -255,6 +255,7 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.NORSEMEN_CHIEF, RendererChiefNorsemen::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZON, RendererAmazon::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZONSPEARMAN, RendererAmazonSpearman::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MERCENARY, RenderMercenary::new);

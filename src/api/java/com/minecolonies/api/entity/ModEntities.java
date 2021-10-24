@@ -71,6 +71,9 @@ public class ModEntities
     @ObjectHolder("amazon")
     public static EntityType<? extends AbstractEntityAmazon> AMAZON;
 
+    @ObjectHolder("amazonspearman")
+    public static EntityType<? extends AbstractEntityAmazon> AMAZONSPEARMAN;
+
     @ObjectHolder("amazonchief")
     public static EntityType<? extends AbstractEntityAmazon> AMAZONCHIEF;
 
