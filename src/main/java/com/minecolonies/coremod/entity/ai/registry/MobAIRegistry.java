@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.IArcherMobEntity;
+import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.entity.mobs.ISpearmanMobEntity;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -53,7 +54,7 @@ public class MobAIRegistry implements IMobAIRegistry
           .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtGoal(mob, PlayerEntity.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new LookAtGoal(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewStateAI(mob -> new RaiderMeleeAI<>(mob, mob.getAI()), mob -> !(mob instanceof IArcherMobEntity))
-          .registerNewStateAI(mob -> new RaiderRangedAI<>(mob, mob.getAI()), mob -> mob instanceof IArcherMobEntity || mob instanceof ISpearmanMobEntity)
+          .registerNewStateAI(mob -> new RaiderRangedAI<>(mob, mob.getAI()), mob -> mob instanceof IRangedMobEntity)
           .registerNewStateAI(mob -> new RaiderWalkAI(mob, mob.getAI()), mob -> true);
     }
 
