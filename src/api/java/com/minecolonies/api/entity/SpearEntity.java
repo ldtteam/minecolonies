@@ -11,6 +11,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -25,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 public class SpearEntity extends AbstractArrowEntity
@@ -40,6 +42,7 @@ public class SpearEntity extends AbstractArrowEntity
     public SpearEntity(EntityType<? extends AbstractArrowEntity> type, World world)
     {
         super(type, world);
+        getAddEntityPacket();
     }
 
     public SpearEntity(World world, LivingEntity thrower, ItemStack thrownWeapon)
@@ -47,6 +50,13 @@ public class SpearEntity extends AbstractArrowEntity
         super(ModEntities.SPEAR, thrower, world);
         this.weapon = thrownWeapon.copy();
         this.entityData.set(ID_LOYALTY, (byte) EnchantmentHelper.getLoyalty(thrownWeapon));
+        getAddEntityPacket();
+    }
+
+    @NotNull
+    @Override
+    public IPacket<?> getAddEntityPacket() {
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 
     @Override
