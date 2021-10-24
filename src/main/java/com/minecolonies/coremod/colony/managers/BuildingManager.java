@@ -22,7 +22,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -34,14 +33,14 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraftforge.common.util.Constants;
@@ -776,16 +775,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public boolean canPlaceAt(final Block block, final BlockPos pos, final Player player)
     {
-        if (block instanceof BlockHutWareHouse)
-        {
-            if (colony != null && (!MineColonies.getConfig().getServer().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
-            {
-                return true;
-            }
-            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.warehouse.limit");
-            return false;
-        }
-        else if (block instanceof BlockHutTownHall)
+        if (block instanceof BlockHutTownHall)
         {
             if (colony.hasTownHall())
             {

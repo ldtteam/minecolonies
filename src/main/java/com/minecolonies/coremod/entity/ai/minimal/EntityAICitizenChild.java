@@ -15,11 +15,11 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -299,7 +299,7 @@ public class EntityAICitizenChild extends Goal
                 return true;
             }
 
-            final double growthModifier = MineColonies.getConfig().getServer().growthModifier.get() * (1 + child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GROWTH));
+            final double growthModifier = (1 + child.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(GROWTH));
 
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
             if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier)
