@@ -14,14 +14,22 @@ public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
      */
     public ModelAmazonSpearman()
     {
+        ModelRenderer hairBack1;
+        ModelRenderer feather;
+        ModelRenderer hairback;
+        ModelRenderer bone;
+        ModelRenderer chest;
+        ModelRenderer handstuff;
+        ModelRenderer handstuff2;
+
         texWidth = 128;
         texHeight = 128;
 
-        ModelRenderer head = new ModelRenderer(this);
+        head = new ModelRenderer(this);
         head.setPos(0.0F, -3.0F, 0.0F);
         head.texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F, 0.0F, false);
 
-        ModelRenderer hairBack1 = new ModelRenderer(this);
+        hairBack1 = new ModelRenderer(this);
         hairBack1.setPos(0.0F, 0.0F, 0.0F);
         head.addChild(hairBack1);
         hairBack1.texOffs(24, 4).addBox(-4.5F, -5.5F, -4.5F, 1.0F, 2.0F, 1.0F, 0.0F, false);
@@ -33,7 +41,7 @@ public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
         hairBack1.texOffs(24, 26).addBox(-4.5F, -8.5F, 1.5F, 9.0F, 9.0F, 3.0F, 0.0F, false);
         hairBack1.texOffs(48, 0).addBox(-4.5F, -8.5F, -0.5F, 9.0F, 5.0F, 2.0F, 0.0F, false);
 
-        ModelRenderer feather = new ModelRenderer(this);
+        feather = new ModelRenderer(this);
         feather.setPos(-9.3F, -8.0F, -0.1F);
         hairBack1.addChild(feather);
         setRotationAngle(feather, 0.7854F, 0.0F, 0.0F);
@@ -43,7 +51,7 @@ public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
         feather.texOffs(106, 0).addBox(4.6F, -0.7121F, -1.7222F, 0.0F, 1.0F, 4.0F, 0.0F, false);
         feather.texOffs(104, 0).addBox(4.7F, -0.4293F, -2.1464F, 0.0F, 1.0F, 5.0F, 0.0F, false);
 
-        ModelRenderer hairback = new ModelRenderer(this);
+        hairback = new ModelRenderer(this);
         hairback.setPos(0.0F, -7.0F, 3.0F);
         hairBack1.addChild(hairback);
         setRotationAngle(hairback, -0.5236F, 0.0F, 0.0F);
@@ -54,7 +62,7 @@ public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
         hairback.texOffs(23, 27).addBox(-0.5F, -3.5984F, -0.2911F, 1.0F, 1.0F, 1.0F, 0.0F, false);
         hairback.texOffs(14, 43).addBox(-0.5F, -5.3135F, 0.4115F, 1.0F, 9.0F, 1.0F, 0.0F, false);
 
-        ModelRenderer bone = new ModelRenderer(this);
+        bone = new ModelRenderer(this);
         bone.setPos(0.0F, -4.5F, 1.5981F);
         hairback.addChild(bone);
         setRotationAngle(bone, 0.5236F, 0.0F, 0.0F);
@@ -63,42 +71,42 @@ public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
         bone.texOffs(4, 16).addBox(-0.5F, 3.9346F, -0.9545F, 1.0F, 3.0F, 1.0F, 0.0F, false);
         bone.texOffs(4, 0).addBox(-0.5F, 5.9346F, -0.6545F, 1.0F, 4.0F, 1.0F, 0.0F, false);
 
-        ModelRenderer body = new ModelRenderer(this);
+        body = new ModelRenderer(this);
         body.setPos(0.0F, 0.0F, 0.0F);
         body.texOffs(74, 0).addBox(-3.5F, 6.4F, -2.6F, 7.0F, 1.0F, 5.0F, 0.0F, false);
         body.texOffs(0, 63).addBox(-4.5F, 7.4F, -2.6F, 9.0F, 7.0F, 5.0F, 0.0F, false);
         body.texOffs(0, 26).addBox(-4.0F, -3.0F, -2.0F, 8.0F, 13.0F, 4.0F, 0.0F, false);
 
-        ModelRenderer chest = new ModelRenderer(this);
+        chest = new ModelRenderer(this);
         chest.setPos(0.0F, 0.0F, 0.0F);
         body.addChild(chest);
         setRotationAngle(chest, -0.632F, 0.0F, 0.0F);
         chest.texOffs(48, 7).addBox(-3.5F, 0.2727F, -2.3632F, 7.0F, 3.0F, 3.0F, 0.0F, false);
 
-        ModelRenderer leftLeg = new ModelRenderer(this);
+        leftLeg = new ModelRenderer(this);
         leftLeg.setPos(2.0F, 9.0F, 0.0F);
         leftLeg.texOffs(43, 33).addBox(-2.5F, 12.0F, -3.0F, 5.0F, 1.0F, 6.0F, 0.0F, false);
         leftLeg.texOffs(32, 0).addBox(-2.0F, 1.0F, -2.0F, 4.0F, 14.0F, 4.0F, 0.0F, false);
 
-        ModelRenderer rightLeg = new ModelRenderer(this);
+        rightLeg = new ModelRenderer(this);
         rightLeg.setPos(-2.0F, 9.0F, 0.0F);
         rightLeg.texOffs(43, 33).addBox(-2.5F, 12.0F, -3.0F, 5.0F, 1.0F, 6.0F, 0.0F, false);
         rightLeg.texOffs(24, 38).addBox(-2.0F, 1.0F, -2.0F, 4.0F, 14.0F, 4.0F, 0.0F, false);
 
-        ModelRenderer leftArm = new ModelRenderer(this);
+        leftArm = new ModelRenderer(this);
         leftArm.setPos(5.0F, 0.0F, 0.0F);
         leftArm.texOffs(40, 40).addBox(-1.0F, -3.0F, -2.0F, 3.0F, 13.0F, 4.0F, 0.0F, false);
 
-        ModelRenderer handstuff2 = new ModelRenderer(this);
+        handstuff2 = new ModelRenderer(this);
         handstuff2.setPos(0.0F, 0.0F, 0.0F);
         leftArm.addChild(handstuff2);
         handstuff2.texOffs(61, 33).addBox(-1.5F, 6.0F, -2.5F, 4.0F, 1.0F, 5.0F, 0.0F, false);
 
-        ModelRenderer rightArm = new ModelRenderer(this);
+        rightArm = new ModelRenderer(this);
         rightArm.setPos(-5.0F, 0.0F, 0.0F);
         rightArm.texOffs(0, 43).addBox(-2.0F, -3.0F, -2.0F, 3.0F, 13.0F, 4.0F, 0.0F, false);
 
-        ModelRenderer handstuff = new ModelRenderer(this);
+        handstuff = new ModelRenderer(this);
         handstuff.setPos(5.0F, 24.0F, 0.0F);
         rightArm.addChild(handstuff);
         handstuff.texOffs(43, 33).addBox(-7.5F, -18.0F, -2.5F, 4.0F, 1.0F, 5.0F, 0.0F, false);
