@@ -51,13 +51,13 @@ public final class ToolLevelConstants
      * Armor level for diamond.
      */
     @NonNls
-    public static final int ARMOR_LEVEL_MAX = 100;
+    public static final int ARMOR_LEVEL_MAX = Integer.MAX_VALUE;
 
     /**
      * Tool level for maximum.
      */
     @NonNls
-    public static final int TOOL_LEVEL_MAXIMUM = Integer.SIZE;
+    public static final int TOOL_LEVEL_MAXIMUM = Integer.MAX_VALUE;
 
     private ToolLevelConstants()
     {
