@@ -351,9 +351,9 @@ public final class BlockPosUtil
     public static double getValidHeight(@NotNull final Vec3 position, @NotNull final Level world)
     {
         double returnHeight = position.y;
-        if (position.y < 0)
+        if (position.y < world.getMinBuildHeight())
         {
-            returnHeight = 0;
+            returnHeight = world.getMinBuildHeight();
         }
 
         while (returnHeight >= 1 && world.isEmptyBlock(new BlockPos(Mth.floor(position.x),

@@ -62,8 +62,6 @@ public class ModTagsInitializer
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE);
         ModTags.hostile = getEntityTags(HOSTILE);
 
-        //todo 1.17 check if this works out.
-
         initCrafterRules("baker");
         initCrafterRules("blacksmith");
         initCrafterRules("chickenherder");

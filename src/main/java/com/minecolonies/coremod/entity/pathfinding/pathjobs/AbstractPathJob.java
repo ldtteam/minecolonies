@@ -184,7 +184,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.xzRestricted = false;
         this.hardXzRestriction = false;
 
-        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
+        this.world = new ChunkCache(world, new BlockPos(minX, world.getMinBuildHeight(), minZ), new BlockPos(maxX, world.getMaxBuildHeight(), maxZ), range, world.dimensionType());
 
         this.start = new BlockPos(start);
         this.maxRange = range;
@@ -263,7 +263,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.xzRestricted = true;
         this.hardXzRestriction = hardRestriction;
 
-        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
+        this.world = new ChunkCache(world, new BlockPos(minX, world.getMinBuildHeight(), minZ), new BlockPos(maxX, world.getMaxBuildHeight(), maxZ), range, world.dimensionType());
 
         this.start = start;
         this.maxRange = range;
@@ -330,7 +330,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             bs = down;
             down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.below());
 
-            if (pos.getY() < 0)
+            if (pos.getY() < entity.getCommandSenderWorld().getMinBuildHeight())
             {
                 return entity.blockPosition();
             }
@@ -978,7 +978,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  Can we traverse into this node?  Fix the y up
         final int newY = getGroundHeight(parent, pos);
 
-        if (newY < 0)
+        if (newY < world.getMinBuildHeight())
         {
             return false;
         }
@@ -1151,7 +1151,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         else if (walkability == SurfaceType.NOT_PASSABLE)
         {
-            return -1;
+            return -100;
         }
 
         return handleNotStanding(parent, pos, below);
@@ -1181,7 +1181,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (!canDrop || isSwimming || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.below(), false, parent)
                                          && isWalkableSurface(world.getBlockState(parent.pos.below()), parent.pos.below()) == SurfaceType.DROPABLE))
         {
-            return -1;
+            return -100;
         }
 
         for (int i = 2; i <= 10; i++)
@@ -1194,11 +1194,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else if (below.getMaterial() != Material.AIR)
             {
-                return -1;
+                return -100;
             }
         }
 
-        return -1;
+        return -100;
     }
 
     private int handleInLiquid(@NotNull final BlockPos pos, @NotNull final BlockState below, final boolean isSwimming)
@@ -1216,7 +1216,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Not allowed to swim or this isn't water, and we're on dry land
-        return -1;
+        return -100;
     }
 
     private int handleTargetNotPassable(@Nullable final MNode parent, @NotNull final BlockPos pos, @NotNull final BlockState target)
@@ -1225,7 +1225,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  Need to try jumping up one, if we can
         if (!canJump || isWalkableSurface(target, pos) != SurfaceType.WALKABLE)
         {
-            return -1;
+            return -100;
         }
 
         //  Check for headroom in the target space
@@ -1235,7 +1235,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             final VoxelShape bb2 = world.getBlockState(pos.above(2)).getCollisionShape(world, pos.above(2));
             if ((pos.above(2).getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) < 2)
             {
-                return -1;
+                return -100;
             }
         }
 
@@ -1246,7 +1246,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             final VoxelShape bb2 = world.getBlockState(parent.pos.above(2)).getCollisionShape(world, parent.pos.above(2));
             if ((parent.pos.above(2).getY() + getStartY(bb2, 1)) - (pos.getY() + getEndY(bb1, 0)) < 2)
             {
-                return -1;
+                return -100;
             }
         }
 
@@ -1267,7 +1267,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             return pos.getY() + 1;
         }
-        return -1;
+        return -100;
     }
 
     private boolean checkHeadBlock(@Nullable final MNode parent, @NotNull final BlockPos pos)
@@ -1447,7 +1447,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (blockState.getMaterial().isSolid()
               || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowLayerBlock.LAYERS) > 1)
-              //todo 1.17 || block instanceof BlockFloatingCarpet
+              || block instanceof FloatingCarpetBlock
               || block instanceof WoolCarpetBlock)
         {
             return SurfaceType.WALKABLE;

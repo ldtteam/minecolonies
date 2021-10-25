@@ -33,7 +33,11 @@ import java.util.stream.Stream;
 
 public class ChunkCache implements LevelReader
 {
-    protected int       chunkX;
+    /**
+     * Dimensiontype.
+     */
+    private final DimensionType dimType;
+    protected int chunkX;
     protected int       chunkZ;
     protected LevelChunk[][] chunkArray;
     /**
@@ -45,7 +49,7 @@ public class ChunkCache implements LevelReader
      */
     protected Level     world;
 
-    public ChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn)
+    public ChunkCache(Level worldIn, BlockPos posFromIn, BlockPos posToIn, int subIn, final DimensionType type)
     {
         this.world = worldIn;
         this.chunkX = posFromIn.getX() - subIn >> 4;
@@ -65,6 +69,7 @@ public class ChunkCache implements LevelReader
                 }
             }
         }
+        this.dimType = type;
     }
 
     /**
@@ -101,7 +106,7 @@ public class ChunkCache implements LevelReader
     @Override
     public BlockState getBlockState(BlockPos pos)
     {
-        if (pos.getY() >= 0 && pos.getY() < 256)
+        if (pos.getY() >= getMinBuildHeight() && pos.getY() < getMaxBuildHeight())
         {
             int i = (pos.getX() >> 4) - this.chunkX;
             int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -123,7 +128,7 @@ public class ChunkCache implements LevelReader
     @Override
     public FluidState getFluidState(final BlockPos pos)
     {
-        if (pos.getY() >= 0 && pos.getY() < 256)
+        if (pos.getY() >= getMinBuildHeight() && pos.getY() < getMaxBuildHeight())
         {
             int i = (pos.getX() >> 4) - this.chunkX;
             int j = (pos.getZ() >> 4) - this.chunkZ;
@@ -234,9 +239,9 @@ public class ChunkCache implements LevelReader
     }
 
     @Override
-    public DimensionType dimensionType()
+    public @NotNull DimensionType dimensionType()
     {
-        return null;
+        return dimType;
     }
 
     private boolean withinBounds(int x, int z)
