@@ -22,7 +22,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.blocks.huts.BlockHutWareHouse;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -776,16 +775,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public boolean canPlaceAt(final Block block, final BlockPos pos, final PlayerEntity player)
     {
-        if (block instanceof BlockHutWareHouse)
-        {
-            if (colony != null && (!MineColonies.getConfig().getServer().limitToOneWareHousePerColony.get() || !colony.hasWarehouse()))
-            {
-                return true;
-            }
-            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.warehouse.limit");
-            return false;
-        }
-        else if (block instanceof BlockHutTownHall)
+        if (block instanceof BlockHutTownHall)
         {
             if (colony.hasTownHall())
             {

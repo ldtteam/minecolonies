@@ -166,6 +166,11 @@ public final class Constants
     public static final int MAX_STORY = 20;
 
     /**
+     * Builder infinite resoureces toggle
+     */
+    public static boolean BUILDER_INF_RESOURECES = false;
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private Constants()

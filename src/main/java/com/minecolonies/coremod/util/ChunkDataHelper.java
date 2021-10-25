@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
@@ -72,32 +71,6 @@ public final class ChunkDataHelper
             if (existingStorage != null)
             {
                 addStorageToChunk(chunk, existingStorage);
-            }
-            else
-            {
-                if (MineColonies.getConfig().getServer().fixOrphanedChunks.get())
-                {
-                    final IColonyTagCapability closeCap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-                    if (closeCap != null)
-                    {
-                        boolean dirty = false;
-                        for (final int colony : closeCap.getAllCloseColonies())
-                        {
-                            if (colony != 0 && (cap.getColony(colony) == null
-                                                  || BlockPosUtil.getDistance2D(cap.getColony(colony).getCenter(),
-                              new BlockPos(chunk.getPos().x * BLOCKS_PER_CHUNK, 0, chunk.getPos().z * BLOCKS_PER_CHUNK)) > distanceToDelete))
-                            {
-                                Log.getLogger().warn("Removing orphaned chunk at:  " + chunk.getPos().x * BLOCKS_PER_CHUNK + " 100 " + chunk.getPos().z * BLOCKS_PER_CHUNK);
-                                closeCap.removeColony(colony, chunk);
-                                dirty = true;
-                            }
-                        }
-                        if (dirty)
-                        {
-                            Network.getNetwork().sendToEveryone(new UpdateChunkCapabilityMessage(closeCap, chunk.getPos().x, chunk.getPos().z));
-                        }
-                    }
-                }
             }
         }
 
