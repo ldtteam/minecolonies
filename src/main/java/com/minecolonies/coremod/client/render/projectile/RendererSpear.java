@@ -23,9 +23,10 @@ import org.jetbrains.annotations.NotNull;
 public class RendererSpear extends EntityRenderer<SpearEntity>
 {
     private final ResourceLocation texture;
-    private final ModelSpear model = new ModelSpear();
+    private final ModelSpear       model = new ModelSpear();
 
-    public RendererSpear(EntityRendererManager entityRendererManager) {
+    public RendererSpear(EntityRendererManager entityRendererManager)
+    {
         this(entityRendererManager, new ResourceLocation(Constants.MOD_ID, "textures/entity/spear.png"));
     }
 
@@ -43,7 +44,8 @@ public class RendererSpear extends EntityRenderer<SpearEntity>
         stack.pushPose();
         stack.mulPose(Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTicks, entity.yRotO, entity.yRot) - 90.0F));
         stack.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.lerp(partialTicks, entity.xRotO, entity.xRot) + 90.0F));
-        IVertexBuilder ivertexbuilder = net.minecraft.client.renderer.ItemRenderer.getFoilBuffer(buffer, this.model.renderType(this.getTextureLocation(entity)), false, entity.isInWater());
+        IVertexBuilder ivertexbuilder =
+          net.minecraft.client.renderer.ItemRenderer.getFoilBuffer(buffer, this.model.renderType(this.getTextureLocation(entity)), false, entity.isInWater());
         model.renderToBuffer(stack, ivertexbuilder, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         stack.popPose();
     }
