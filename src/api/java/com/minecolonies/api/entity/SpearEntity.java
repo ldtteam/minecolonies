@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
-public class SpearEntity extends AbstractArrowEntity
+public class SpearEntity extends AbstractArrowEntity implements ICustomAttackSound
 {
     public static final int       BASE_DAMAGE      = 8;
     public static final String    NBT_WEAPON       = "Weapon";
@@ -144,5 +144,11 @@ public class SpearEntity extends AbstractArrowEntity
     public boolean shouldRender(double x, double y, double z)
     {
         return true;
+    }
+
+    @Override
+    public SoundEvent getAttackSound()
+    {
+        return SoundEvents.TRIDENT_THROW;
     }
 }
