@@ -90,9 +90,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQ
 @SuppressWarnings({"squid:S2390", "PMD.ExcessiveClassLength"})
 public abstract class AbstractBuilding extends AbstractBuildingContainer
 {
-    public static final int MAX_BUILD_HEIGHT = 256;
-    public static final int MIN_BUILD_HEIGHT = 1;
-
     /**
      * The data store id for request system related data.
      */
@@ -481,13 +478,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        if (getCorners().getA().getY() >= MAX_BUILD_HEIGHT || getCorners().getB().getY() >= MAX_BUILD_HEIGHT)
+        final int max = colony.getWorld().getMaxBuildHeight();
+        if (getCorners().getA().getY() >= max || getCorners().getB().getY() >= max)
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messagebuildtoohigh");
             return;
         }
-        else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
+        else if (getPosition().getY() <= colony.getWorld().getMinBuildHeight())
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.builder.messagebuildtoolow");
