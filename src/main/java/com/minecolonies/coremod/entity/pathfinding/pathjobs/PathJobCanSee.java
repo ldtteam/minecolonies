@@ -45,7 +45,7 @@ public class PathJobCanSee extends AbstractPathJob
     @Override
     protected boolean isAtDestination(final MNode n)
     {
-        if (start.getY() - n.pos.getY() > world.getMinBuildHeight() + 2)
+        if (start.getY() - n.pos.getY() > 2)
         {
             return false;
         }
