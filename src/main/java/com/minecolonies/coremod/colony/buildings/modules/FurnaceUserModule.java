@@ -1,36 +1,34 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IAltersRequiredItems;
+import com.minecolonies.api.colony.buildings.modules.IModuleWithExternalBlocks;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.FurnaceBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
 
 /**
- * Abstract Class for all furnace users.
+ * Module for all workers that need a furnace.
  */
-@SuppressWarnings(OVERRIDE_EQUALS)
-public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
+public class FurnaceUserModule extends AbstractBuildingModule implements IPersistentModule, IModuleWithExternalBlocks, IAltersRequiredItems
 {
     /**
      * Tag to store the furnace position.
@@ -48,40 +46,21 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     private static final String TAG_FURNACES = "furnaces";
 
     /**
-     * The list of fuel.
-     */
-    public static final String FUEL_LIST = "fuel";
-
-    /**
      * List of registered furnaces.
      */
     private final List<BlockPos> furnaces = new ArrayList<>();
 
     /**
-     * Instantiates a new cook building.
-     *
-     * @param c the colony.
-     * @param l the location
+     * Construct a new furnace user module.
      */
-    public AbstractBuildingFurnaceUser(final IColony c, final BlockPos l)
+    public FurnaceUserModule()
     {
-        super(c, l);
-    }
-
-    /**
-     * Return a list of furnaces assigned to this hut.
-     *
-     * @return copy of the list
-     */
-    public List<BlockPos> getFurnaces()
-    {
-        return new ArrayList<>(furnaces);
+        super();
     }
 
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        super.deserializeNBT(compound);
         final ListNBT furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
@@ -97,10 +76,8 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public void serializeNBT(final CompoundNBT compound)
     {
-        final CompoundNBT compound = super.serializeNBT();
-
         @NotNull final ListNBT furnacesTagList = new ListNBT();
         for (@NotNull final BlockPos entry : furnaces)
         {
@@ -109,27 +86,13 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
             furnacesTagList.add(furnaceCompound);
         }
         compound.put(TAG_FURNACES, furnacesTagList);
-
-        return compound;
     }
 
     @Override
-    public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
+    public void alterItemsToBeKept(final TriConsumer<Predicate<ItemStack>, Integer, Boolean> consumer)
     {
-        super.registerBlockPosition(block, pos, world);
-        if (block instanceof FurnaceBlock && !furnaces.contains(pos))
-        {
-            furnaces.add(pos);
-        }
-        markDirty();
-    }
+        consumer.accept(this::isAllowedFuel, STACKSIZE * building.getBuildingLevel(), false);
 
-    @Override
-    public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
-    {
-        final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        toKeep.put(this::isAllowedFuel, new Tuple<>(STACKSIZE * this.getBuildingLevel(), false));
-        return toKeep;
     }
 
     /**
@@ -140,19 +103,6 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
     public void removeFromFurnaces(final BlockPos pos)
     {
         furnaces.remove(pos);
-    }
-
-    /**
-     * Getter for all allowed fuel from the building.
-     *
-     * @return the list of itemStacks.
-     */
-    public List<ItemStack> getAllowedFuel()
-    {
-        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().stream()
-                     .map(ItemStorage::getItemStack)
-                     .peek(stack -> stack.setCount(stack.getMaxStackSize()))
-                     .collect(Collectors.toList());
     }
 
     /**
@@ -167,6 +117,31 @@ public abstract class AbstractBuildingFurnaceUser extends AbstractBuildingWorker
         {
             return false;
         }
-        return getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(stack));
+        return building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).isItemInList(new ItemStorage(stack));
+    }
+
+    /**
+     * Return a list of furnaces assigned to this hut.
+     *
+     * @return copy of the list
+     */
+    public List<BlockPos> getFurnaces()
+    {
+        return new ArrayList<>(furnaces);
+    }
+
+    @Override
+    public void onBlockPlacedInBuilding(@NotNull final BlockState blockState, @NotNull final BlockPos pos, @NotNull final World world)
+    {
+        if (blockState.getBlock() instanceof FurnaceBlock && !furnaces.contains(pos))
+        {
+            furnaces.add(pos);
+        }
+    }
+
+    @Override
+    public List<BlockPos> getRegisteredBlocks()
+    {
+        return new ArrayList<>(furnaces);
     }
 }
