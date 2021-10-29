@@ -57,6 +57,12 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     private static final int RETRIEVE_SMELTABLE_IF_MORE_THAN = 10;
 
     /**
+    /**
+     * Storage buffer, slots to not fill with requests.
+     */
+    private static final int STORAGE_BUFFER = 3;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class.
@@ -107,7 +113,8 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     protected boolean reachedMaxToKeep()
     {
-        return false;
+        final int count = InventoryUtils.countEmptySlotsInBuilding(getOwnBuilding());
+        return count <= STORAGE_BUFFER;
     }
 
     /**

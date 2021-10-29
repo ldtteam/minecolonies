@@ -808,6 +808,31 @@ public class InventoryUtils
     }
 
     /**
+     * Calculate the number of empty slots in a given building.
+     * @param ownBuilding the building to check.
+     * @return the number of empty slots.
+     */
+    public static int countEmptySlotsInBuilding(final IBuilding ownBuilding)
+    {
+        int totalCount = 0;
+        final Level world = ownBuilding.getColony().getWorld();
+
+        for (final BlockPos pos : ownBuilding.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getFreeSlots();
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
      * Count the number of items a building has.
      *
      * @param provider  building to check in.

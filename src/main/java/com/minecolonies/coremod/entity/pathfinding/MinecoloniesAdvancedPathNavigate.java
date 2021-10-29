@@ -519,7 +519,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
               .getNode(this.getPath()
                 .getNextNodeIndex() + 1) : null;
 
-            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y))
+            final BlockPos pos = new BlockPos(pEx.x, pEx.y, pEx.z);
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && level.getBlockState(pos).isLadder(level, pos, ourEntity))
             {
                 return handlePathPointOnLadder(pEx);
             }
@@ -678,7 +679,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         Vec3 vec3 = this.getPath().getNextEntityPos(this.ourEntity);
         final BlockPos entityPos = new BlockPos(this.ourEntity.position());
-        if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < 0.6)
+        if (vec3.distanceToSqr(ourEntity.getX(), vec3.y, ourEntity.getZ()) < 0.6 && Math.abs(vec3.y - entityPos.getY()) <= 2.0)
         {
             //This way he is less nervous and gets up the ladder
             double newSpeed = 0.3;
