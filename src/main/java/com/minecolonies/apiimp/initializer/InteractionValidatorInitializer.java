@@ -14,11 +14,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
-import com.minecolonies.coremod.colony.buildings.modules.EnchanterStationsModule;
-import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
-import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import com.minecolonies.coremod.colony.buildings.modules.MinerLevelManagementModule;
+import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
@@ -33,10 +29,10 @@ import java.util.List;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
+import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser.FUEL_LIST;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
@@ -54,10 +50,10 @@ public class InteractionValidatorInitializer
     public static void init()
     {
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(FURNACE_USER_NO_FUEL),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser
+          citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(FurnaceUserModule.class)
                        && citizen.getWorkBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+          citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(FurnaceUserModule.class) && citizen.getWorkBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(RAW_FOOD),
           citizen -> InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), ISCOOKABLE) != -1
                        && InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventory(), stack -> CAN_EAT.test(stack) && (citizen.getWorkBuilding() == null || citizen.getWorkBuilding().canEat(stack))) == -1);
@@ -200,7 +196,7 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getJob() instanceof JobFisherman && ((JobFisherman) citizen.getJob()).getPonds().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(FURNACE_USER_NO_FUEL),
-          citizen -> citizen.getWorkBuilding() instanceof AbstractBuildingFurnaceUser && ((AbstractBuildingFurnaceUser) citizen.getWorkBuilding()).getAllowedFuel().isEmpty());
+          citizen -> citizen.getWorkBuilding() != null && citizen.getWorkBuilding().hasModule(FurnaceUserModule.class) && citizen.getWorkBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList().isEmpty());
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(FURNACE_USER_NO_FOOD),
           citizen -> {
             if (!(citizen.getWorkBuilding() instanceof BuildingCook))
@@ -229,7 +225,7 @@ public class InteractionValidatorInitializer
                    InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), item -> ModTags.meshes.contains(item.getItem())) <= 0;
           });
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(BAKER_HAS_NO_FURNACES_MESSAGE),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && ((BuildingBaker) citizen.getWorkBuilding()).getFurnaces().isEmpty());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingBaker && citizen.getWorkBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().isEmpty());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(NO_HIVES),
           citizen -> citizen.getWorkBuilding() instanceof BuildingBeekeeper && ((BuildingBeekeeper) citizen.getWorkBuilding()).getHives().isEmpty());

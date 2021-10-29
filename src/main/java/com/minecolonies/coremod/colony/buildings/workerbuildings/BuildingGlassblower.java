@@ -13,7 +13,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobGlassblower;
@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the glassblower building.
  */
-public class BuildingGlassblower extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
+public class BuildingGlassblower extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.

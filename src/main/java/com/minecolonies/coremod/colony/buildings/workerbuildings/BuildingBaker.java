@@ -17,7 +17,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 /**
  * Building for the bakery.
  */
-public class BuildingBaker extends AbstractBuildingFurnaceUser implements IBuildingPublicCrafter
+public class BuildingBaker extends AbstractBuildingWorker implements IBuildingPublicCrafter
 {
     /**
      * General bakery description key.

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
@@ -100,7 +101,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new SmeltableOre(STACKSIZE * getOwnBuilding().getFurnaces().size());
+        return new SmeltableOre(STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
     }
 
     /**
@@ -148,7 +149,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFurnaces().size(),1));
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
                 }
             }
         }

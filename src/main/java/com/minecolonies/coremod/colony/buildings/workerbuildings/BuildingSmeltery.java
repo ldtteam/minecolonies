@@ -15,7 +15,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobSmelter;
@@ -44,7 +44,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the smeltery building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingSmeltery extends AbstractBuildingFurnaceUser
+public class BuildingSmeltery extends AbstractBuildingWorker
 {
     /**
      * The smelter string.
