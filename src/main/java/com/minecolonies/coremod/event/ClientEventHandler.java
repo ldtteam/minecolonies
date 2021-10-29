@@ -6,6 +6,7 @@ import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structures.client.StructureClientHandler;
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.Network;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -49,6 +50,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -395,52 +397,58 @@ public class ClientEventHandler
                     if (blueprintCache.containsKey(currentPosition))
                     {
                         newCache.put(currentPosition, blueprintCache.get(currentPosition));
+                        continue;
+                    }
+
+                    final TileEntity tile = world.getBlockEntity(buildingView.getID());
+                    String schematicName = buildingView.getSchematicName();
+                    if (tile instanceof IBlueprintDataProvider)
+                    {
+                        if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
+                        {
+                            schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
+                        }
+                    }
+
+                    final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX,
+                      buildingView.getStyle(),
+                      schematicName + buildingView.getBuildingMaxLevel());
+
+                    final String structureName = sn.toString();
+                    final String md5 = Structures.getMD5(structureName);
+
+                    final IStructureHandler wrapper = new LoadOnlyStructureHandler(world,
+                      buildingView.getID(),
+                      structureName,
+                      new PlacementSettings(),
+                      true);
+                    if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
+                    {
+                        Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
+                        if (ServerLifecycleHooks.getCurrentServer() == null)
+                        {
+                            Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
+                            continue;
+                        }
+                    }
+
+                    final Blueprint blueprint = wrapper.getBluePrint();
+                    final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
+                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()), mirror, world);
+
+                    final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
+                    final BlockPos boxStartPos = currentPosition.subtract(primaryOffset);
+                    final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
+                    final BlockPos boxEndPos = boxStartPos.offset(size).subtract(new BlockPos(1, 1, 1));
+                    blueprint.setRenderSource(buildingView.getID());
+
+                    if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
+                    {
+                        newCache.put(currentPosition, new Triple(blueprint, boxStartPos, boxEndPos));
                     }
                     else
                     {
-                        final StructureName sn =
-                                new StructureName(Structures.SCHEMATICS_PREFIX,
-                                        buildingView.getStyle(),
-                                        buildingView.getSchematicName() + buildingView.getBuildingMaxLevel());
-
-                        final String structureName = sn.toString();
-                        final String md5 = Structures.getMD5(structureName);
-
-                        final IStructureHandler wrapper = new LoadOnlyStructureHandler(world, buildingView.getID(), structureName, new PlacementSettings(), true);
-                        if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
-                        {
-                            Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
-                            if (ServerLifecycleHooks.getCurrentServer() == null)
-                            {
-                                Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                                continue;
-                            }
-                        }
-
-                        final Blueprint blueprint = wrapper.getBluePrint();
-
-                        if (blueprint != null)
-                        {
-                            final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-                            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()),
-                                    mirror,
-                                    world);
-
-                            final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
-                            final BlockPos pos = currentPosition.subtract(primaryOffset);
-                            final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-                            final BlockPos renderSize = pos.offset(size).subtract(new BlockPos(1, 1, 1));
-                            blueprint.setRenderSource(buildingView.getID());
-
-                            if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
-                            {
-                                newCache.put(currentPosition, new Triple<>(blueprint, pos, renderSize));
-                            }
-                            else
-                            {
-                                newCache.put(currentPosition, new Triple<>(null, pos, renderSize));
-                            }
-                        }
+                        newCache.put(currentPosition, new Triple<>(null, boxStartPos, boxEndPos));
                     }
                 }
             }

@@ -136,7 +136,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
             return PREPARING;
         }
 
-        final SheepEntity sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared()).findFirst().orElse(null);
+        final SheepEntity sheep = sheeps.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
 
         if (worker.getMainHandItem() != null && sheep != null)
         {

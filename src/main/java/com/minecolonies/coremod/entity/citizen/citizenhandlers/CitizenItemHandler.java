@@ -246,10 +246,10 @@ public class CitizenItemHandler implements ICitizenItemHandler
         if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(TOOL_DURABILITY) > 0)
         {
             if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                               .getColony()
-                                                               .getResearchManager()
-                                                               .getResearchEffects()
-                                                               .getEffectStrength(TOOL_DURABILITY))))
+              .getColony()
+              .getResearchManager()
+              .getResearchEffects()
+              .getEffectStrength(TOOL_DURABILITY))))
             {
                 return;
             }
@@ -257,8 +257,8 @@ public class CitizenItemHandler implements ICitizenItemHandler
 
         //check if tool breaks
         if (citizen.getCitizenData()
-              .getInventory()
-              .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
+          .getInventory()
+          .damageInventoryItem(citizen.getCitizenData().getInventory().getHeldItemSlot(hand), damage, citizen, item -> item.broadcastBreakEvent(hand)))
         {
             if (hand == Hand.MAIN_HAND)
             {
@@ -336,18 +336,28 @@ public class CitizenItemHandler implements ICitizenItemHandler
             if (citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARMOR_DURABILITY) > 0)
             {
                 if (citizen.getRandom().nextDouble() > (1 / (1 + citizen.getCitizenColonyHandler()
-                                                                   .getColony()
-                                                                   .getResearchManager()
-                                                                   .getResearchEffects()
-                                                                   .getEffectStrength(ARMOR_DURABILITY))))
+                  .getColony()
+                  .getResearchManager()
+                  .getResearchEffects()
+                  .getEffectStrength(ARMOR_DURABILITY))))
                 {
                     return;
                 }
             }
 
-            // Todo: rework damaging to the visual items atm they can be both, direct inventory item references or visual copies
+            final int armorDmg = Math.max(1, (int) (damage / 4));
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(citizen.getInventoryCitizen(),
+              invStack -> invStack != stack && ItemStackUtils.compareItemStacksIgnoreStackSize(invStack, stack, false, true));
+            if (slot != -1)
+            {
+                if (citizen.getInventoryCitizen().damageInventoryItem(slot, armorDmg, citizen, (entityCitizen) -> {entityCitizen.broadcastBreakEvent(Hand.MAIN_HAND);}))
+                {
+                    stack.setCount(0);
+                    return;
+                }
+            }
 
-            stack.hurtAndBreak(Math.max(1, (int) (damage / 4)), citizen, (i) -> {
+            stack.hurtAndBreak(armorDmg, citizen, (i) -> {
                 i.broadcastBreakEvent(Hand.MAIN_HAND);
             });
         }
