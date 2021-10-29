@@ -93,6 +93,11 @@ public final class BuildingConstants
     public static final String BUILDING_FLOWER_LIST = "flowers";
 
     /**
+     * The list of fuel.
+     */
+    public static final String FUEL_LIST = "fuel";
+
+    /**
      * Private constructor to hide implicit public one.
      */
     private BuildingConstants()

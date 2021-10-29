@@ -17,7 +17,9 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingFurnaceUser;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.block.Blocks;
@@ -32,11 +34,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.ItemStackUtils.*;
+import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -44,7 +48,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 /**
  * Crafts furnace stone related block when needed.
  */
-public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingFurnaceUser> extends AbstractEntityAICrafting<J, B>
+public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingWorker> extends AbstractEntityAICrafting<J, B>
 {
     /**
      * Base xp gain for the smelter.
@@ -88,7 +92,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         if (currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
             int count = 0;
-            for (final BlockPos pos : getOwnBuilding().getFurnaces())
+            for (final BlockPos pos : getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
             {
                 if (WorldUtil.isBlockLoaded(world, pos))
                 {
@@ -148,7 +152,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
-            for (final BlockPos pos : getOwnBuilding().getFurnaces())
+            for (final BlockPos pos : getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
             {
                 final TileEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof FurnaceTileEntity)
@@ -168,8 +172,10 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
 
         final IAIState newState = super.getRecipe();
 
-        // This should only happen in the stonesmelter, but it could potentially happen with multiple fuels. 
-        if(newState == QUERY_ITEMS && currentRecipeStorage != null && !getOwnBuilding().getAllowedFuel().isEmpty() && getOwnBuilding().isAllowedFuel(currentRecipeStorage.getPrimaryOutput()))
+        final ItemListModule module = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST));
+
+        // This should only happen in the stonesmelter, but it could potentially happen with multiple fuels.
+        if(newState == QUERY_ITEMS && currentRecipeStorage != null && module.isItemInList(new ItemStorage(currentRecipeStorage.getPrimaryOutput())))
         {
             job.setCraftCounter(0);
         }
@@ -185,7 +191,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         int count = 0;
         final World world = getOwnBuilding().getColony().getWorld();
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        for (final BlockPos pos : getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -210,7 +216,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     {
         final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill()) / 10) * 2;
         final World world = getOwnBuilding().getColony().getWorld();
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        for (final BlockPos pos : getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -236,7 +242,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private List<ItemStack> getActivePossibleFuels()
     {
-        final List<ItemStack> possibleFuels = getOwnBuilding().getAllowedFuel();
+        final List<ItemStack> possibleFuels = getAllowedFuel();
         if (possibleFuels.isEmpty())
         {
             if (worker.getCitizenData() != null)
@@ -260,14 +266,15 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private boolean isFuelNeeded()
     {
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        final FurnaceUserModule module = getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class);
+        for (final BlockPos pos : module.getFurnaces())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
                 final TileEntity entity = world.getBlockEntity(pos);
                 if(!(entity instanceof FurnaceTileEntity))
                 {
-                    getOwnBuilding().removeFromFurnaces(pos);
+                    module.removeFromFurnaces(pos);
                     continue;
                 }
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
@@ -298,13 +305,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final World world = getOwnBuilding().getColony().getWorld();
         final List<ItemStack> possibleFuels = getActivePossibleFuels();
 
+        final FurnaceUserModule module = getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class);
         if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)) && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE )
         {
-            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * getOwnBuilding().getFurnaces().size(), 1));
+            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * module.getFurnaces().size(), 1));
             return getState();
         }
 
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        for (final BlockPos pos : module.getFurnaces())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -398,7 +406,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
     private int getMaxUsableFurnaces()
     {
         final int maxSkillFurnaces = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) + 1;
-        return Math.min(maxSkillFurnaces, getOwnBuilding().getFurnaces().size());
+        return Math.min(maxSkillFurnaces, getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
     }
 
     /**
@@ -409,7 +417,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private BlockPos getPositionOfOvenToRetrieveFrom()
     {
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        for (final BlockPos pos : getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
         {
             final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof FurnaceTileEntity)
@@ -440,14 +448,14 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     protected BlockPos getPositionOfOvenToRetrieveFuelFrom()
     {
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        for (final BlockPos pos : getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces())
         {
             final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof FurnaceTileEntity)
             {
                 final FurnaceTileEntity furnace = (FurnaceTileEntity) entity;
 
-                if (!furnace.getItem(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getOwnBuilding().getAllowedFuel(), furnace.getItem(FUEL_SLOT), false, false))
+                if (!furnace.getItem(FUEL_SLOT).isEmpty() && !compareItemStackListIgnoreStackSize(getAllowedFuel(), furnace.getItem(FUEL_SLOT), false, false))
                 {
                     worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_STATUS_RETRIEVING));
                     return pos;
@@ -621,7 +629,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return getState();            
         }
 
-        for (final BlockPos pos : getOwnBuilding().getFurnaces())
+        final FurnaceUserModule module = getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class);
+        for (final BlockPos pos : module.getFurnaces())
         {
             final TileEntity entity = world.getBlockEntity(pos);
 
@@ -637,7 +646,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             {
                 if (!(world.getBlockState(pos).getBlock() instanceof FurnaceBlock))
                 {
-                    getOwnBuilding().removeFromFurnaces(pos);
+                    module.removeFromFurnaces(pos);
                 }
             }
         }
@@ -657,7 +666,8 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
      */
     private IAIState fillUpFurnace()
     {
-        if (getOwnBuilding().getFurnaces().isEmpty())
+        final FurnaceUserModule module = getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class);
+        if (module.getFurnaces().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
@@ -751,17 +761,34 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         }
         else if (!(world.getBlockState(walkTo).getBlock() instanceof FurnaceBlock))
         {
-            getOwnBuilding().removeFromFurnaces(walkTo);
+            module.removeFromFurnaces(walkTo);
         }
         walkTo = null;
         setDelay(STANDARD_DELAY);
         return START_WORKING;
     }
 
+    /**
+     * Get a copy of the list of allowed fuel.
+     * @return the list.
+     */
+    private List<ItemStack> getAllowedFuel()
+    {
+        final List<ItemStack> list = new ArrayList<>();
+        for (final ItemStorage storage : getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FUEL_LIST)).getList())
+        {
+            final ItemStack stack = storage.getItemStack().copy();
+            stack.setCount(stack.getMaxStackSize());
+            list.add(stack);
+        }
+        return list;
+    }
+
     @Override
     protected IAIState craft()
     {
-        final List<ItemStack> possibleFuels = getOwnBuilding().getAllowedFuel();
+        final FurnaceUserModule module = getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class);
+        final List<ItemStack> possibleFuels = getAllowedFuel();
         if (possibleFuels.isEmpty())
         {
             if (worker.getCitizenData() != null)
@@ -794,7 +821,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
             return super.craft();
         }
 
-        if (getOwnBuilding().getFurnaces().isEmpty())
+        if (module.getFurnaces().isEmpty())
         {
             if (worker.getCitizenData() != null)
             {
