@@ -8,10 +8,10 @@ import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.combat.threat.ThreatTableEntry;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.InteractionHand;
 
 import static com.minecolonies.api.util.constant.Constants.HALF_ROTATION;
 import static com.minecolonies.api.util.constant.GuardConstants.TURN_AROUND;
@@ -95,7 +95,7 @@ public class AttackMoveAI<T extends Mob & IThreatTableEntity> extends TargetAI<T
 
             if (targetPath == null ||
                   user.getNavigation().isDone() ||
-                  (targetPath.isDone() && targetPath.hasPath() && targetPath.getPath().getTarget().distSqr(target.blockPosition()) > Math.pow(getAttackDistance(), 2)))
+                  (targetPath.isDone() && targetPath.hasPath() && targetPath.getPath().getTarget().distSqr(target.blockPosition()) > Math.pow(getAttackDistance(), 2) - 1))
             {
                 targetPath = moveInAttackPosition(target);
                 pathAttempts++;

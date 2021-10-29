@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.api.util.Log;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.helpers.Settings;
@@ -20,7 +21,9 @@ import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,15 +116,25 @@ public class NearColonyBuildingsRenderer
                     continue;
                 }
 
+                final BlockEntity tile = ctx.clientLevel.getBlockEntity(buildingView.getID());
+                String schematicName = buildingView.getSchematicName();
+                if (tile instanceof IBlueprintDataProvider)
+                {
+                    if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
+                    {
+                        schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
+                    }
+                }
+
                 final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX,
-                    buildingView.getStyle(),
-                    buildingView.getSchematicName() + buildingView.getBuildingMaxLevel());
+                  buildingView.getStyle(),
+                  schematicName + buildingView.getBuildingMaxLevel());
 
                 final String structureName = sn.toString();
                 final String md5 = Structures.getMD5(structureName);
 
                 final IStructureHandler wrapper = new LoadOnlyStructureHandler(ctx.clientLevel,
-                    buildingView.getID(),
+                  buildingView.getID(),
                     structureName,
                     new PlacementSettings(),
                     true);
