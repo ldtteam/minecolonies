@@ -8,6 +8,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.ItemListModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.AssignFilterableItemMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.ResetFilterableItemMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -109,7 +110,11 @@ public class ItemListModuleView extends AbstractBuildingModuleView implements II
     }
 
     @Override
-    public void clearItems() { listsOfItems.clear(); }
+    public void clearItems()
+    {
+        Network.getNetwork().sendToServer(new ResetFilterableItemMessage(this.buildingView, id));
+        listsOfItems.clear();
+    }
 
     @Override
     public String getDesc()

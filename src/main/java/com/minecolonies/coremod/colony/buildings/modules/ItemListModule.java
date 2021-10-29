@@ -139,6 +139,12 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     }
 
     @Override
+    public void clearItems()
+    {
+        itemsAllowed = ImmutableList.of();
+    }
+
+    @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(itemsAllowed.size());

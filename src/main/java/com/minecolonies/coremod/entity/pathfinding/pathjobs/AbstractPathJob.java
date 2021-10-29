@@ -1322,7 +1322,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         if (block.getMaterial() != Material.AIR)
         {
-            if (block.getMaterial().blocksMotion())
+            final VoxelShape shape = block.getCollisionShape(world, pos);
+            if (block.getMaterial().blocksMotion() && !(shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1))
             {
                 if (block.getBlock() instanceof TrapDoorBlock)
                 {
@@ -1356,7 +1357,6 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else
             {
-                final VoxelShape shape = block.getCollisionShape(world, pos);
                 return isLadder(block.getBlock(), pos) ||
                          ((shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)
                          && !isLiquid((block))

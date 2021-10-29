@@ -63,7 +63,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     /**
      * Level at which the cook should give some food to the player.
      */
-    private static final int LEVEL_TO_FEED_PLAYER = 10;
+    private static final int LEVEL_TO_FEED_PLAYER      = 10;
 
     /**
      * The citizen the worker is currently trying to serve.
@@ -146,6 +146,10 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected boolean reachedMaxToKeep()
     {
+        if (super.reachedMaxToKeep())
+        {
+            return true;
+        }
         return InventoryUtils.getCountFromBuilding(getOwnBuilding(), ItemStackUtils.CAN_EAT) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 

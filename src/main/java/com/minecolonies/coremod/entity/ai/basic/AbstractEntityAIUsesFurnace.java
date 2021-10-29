@@ -54,6 +54,11 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     protected static final int WAIT_AFTER_REQUEST = 50;
 
     /**
+     * Storage buffer, slots to not fill with requests.
+     */
+    private static final int STORAGE_BUFFER = 3;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class.
@@ -104,6 +109,11 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
      */
     protected boolean reachedMaxToKeep()
     {
+        final int count = InventoryUtils.countEmptySlotsInBuilding(getOwnBuilding());
+        if (count <= STORAGE_BUFFER)
+        {
+            return true;
+        }
         return false;
     }
 
