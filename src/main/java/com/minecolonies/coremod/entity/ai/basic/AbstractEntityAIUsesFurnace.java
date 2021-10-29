@@ -114,11 +114,7 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
     protected boolean reachedMaxToKeep()
     {
         final int count = InventoryUtils.countEmptySlotsInBuilding(getOwnBuilding());
-        if (count <= STORAGE_BUFFER)
-        {
-            return true;
-        }
-        return false;
+        return count <= STORAGE_BUFFER;
     }
 
     /**
