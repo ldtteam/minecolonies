@@ -18,26 +18,26 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.BossEvent;
-import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -236,7 +236,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PROGRESSING;
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
-        if (spawners.size() <= 0 && raiders.size() == 0)
+        if (spawners.size() <= 0 && raiders.size() == 0 && respawns.isEmpty())
         {
             status = EventStatus.WAITING;
             return;
@@ -343,6 +343,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         raiders.remove(entity);
         if (raiders.isEmpty() && spawners.isEmpty())
         {
+            status = EventStatus.WAITING;
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE, colony.getName());
         }
     }
@@ -350,7 +351,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive() || status != EventStatus.PROGRESSING)
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
             return;
