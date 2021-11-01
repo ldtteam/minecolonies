@@ -879,6 +879,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public AbstractTileEntityColonyBuilding getTileEntity()
     {
+        if (tileEntity != null && tileEntity.isRemoved())
+        {
+            tileEntity = null;
+        }
+
         if ((tileEntity == null)
               && colony != null
               && colony.getWorld() != null
