@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -13,7 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
 import net.minecraft.item.ItemStack;
@@ -131,16 +131,16 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingWorkerView)
+        if (requester instanceof IBuildingView)
         {
-            final IBuildingWorkerView bwv = (IBuildingWorkerView) requester;
+            final IBuildingView bwv = (IBuildingView) requester;
             return new TranslationTextComponent(bwv.getJobDisplayName().toLowerCase());
         }
         return super.getRequesterDisplayName(manager, request);
     }
 
     @Override
-    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuilding building, @NotNull final ItemStack stack)
     {
         if (manager.getColony().getWorld().isClientSide)
         {

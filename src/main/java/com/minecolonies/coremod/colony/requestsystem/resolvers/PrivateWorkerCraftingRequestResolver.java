@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCra
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -92,7 +92,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final Predicate<ItemStack> stackPredicate)
     {
         for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {

@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCra
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -66,8 +65,6 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
     {
         manager.updateRequestState(request.getId(), RequestState.FINALIZING);
 
-        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
-
         final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
 
         if (storage == null)
@@ -76,7 +73,7 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
             return;
         }
 
-        final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getRequest().getRecipeID());
+        final ICraftingBuildingModule module = building.getCraftingModuleForRecipe(request.getRequest().getRecipeID());
         if (module == null)
         {
             manager.updateRequestState(request.getId(), RequestState.FAILED);

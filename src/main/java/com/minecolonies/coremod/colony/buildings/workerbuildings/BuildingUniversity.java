@@ -10,8 +10,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobResearch;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_C
 /**
  * Creates a new building for the university.
  */
-public class BuildingUniversity extends AbstractBuildingWorker
+public class BuildingUniversity extends AbstractBuilding
 {
     /**
      * Description of the job executed in the hut.
@@ -265,7 +265,7 @@ public class BuildingUniversity extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

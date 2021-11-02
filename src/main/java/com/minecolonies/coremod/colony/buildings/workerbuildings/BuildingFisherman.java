@@ -10,8 +10,8 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +22,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The fishermans building.
  */
-public class BuildingFisherman extends AbstractBuildingWorker
+public class BuildingFisherman extends AbstractBuilding
 {
     /**
      * The maximum upgrade of the building.
@@ -119,7 +119,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     /**
      * Provides a view of the fisherman building class.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Public constructor of the view, creates an instance of it.

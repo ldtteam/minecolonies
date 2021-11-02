@@ -2,7 +2,7 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICitizenColonyHandler
@@ -13,7 +13,7 @@ public interface ICitizenColonyHandler
      * @return the building or null if none present.
      */
     @Nullable
-    IBuildingWorker getWorkBuilding();
+    IBuilding getWorkBuilding();
 
     @Nullable
     IBuilding getHomeBuilding();

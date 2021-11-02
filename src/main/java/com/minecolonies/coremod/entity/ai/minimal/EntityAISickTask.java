@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -42,8 +42,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITA
 import static com.minecolonies.api.util.constant.TranslationConstants.WAITING_FOR_CURE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
-
-import net.minecraft.entity.ai.goal.Goal.Flag;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.
@@ -419,7 +417,7 @@ public class EntityAISickTask extends Goal
      */
     private DiseaseState goToHut(final ICitizenData data)
     {
-        final IBuildingWorker buildingWorker = data.getWorkBuilding();
+        final IBuilding buildingWorker = data.getWorkBuilding();
         if (buildingWorker == null)
         {
             return SEARCH_HOSPITAL;

@@ -18,7 +18,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
@@ -131,12 +131,12 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : building.getColony().getBuildings())
         {
-            if (building instanceof AbstractBuildingWorkerView)
+            if (building instanceof AbstractBuildingView)
             {
-                int max = ((AbstractBuildingWorkerView) building).getMaxInhabitants();
-                int workers = ((AbstractBuildingWorkerView) building).getWorkerId().size();
+                int max = ((AbstractBuildingView) building).getMaxInhabitants();
+                int workers = ((AbstractBuildingView) building).getWorkerId().size();
 
-                String jobName = ((AbstractBuildingWorkerView) building).getJobDisplayName().toLowerCase(Locale.ENGLISH);
+                String jobName = ((AbstractBuildingView) building).getJobDisplayName().toLowerCase(Locale.ENGLISH);
                 if (building instanceof AbstractBuildingGuards.View)
                 {
                     jobName = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey();

@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobRabbitHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -21,7 +21,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Creates a new building for the rabbit hutch.
  */
-public class BuildingRabbitHutch extends AbstractBuildingWorker
+public class BuildingRabbitHutch extends AbstractBuilding
 {
     /**
      * Description of the job executed in the hut.
@@ -105,7 +105,7 @@ public class BuildingRabbitHutch extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

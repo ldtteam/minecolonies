@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWorker>
+public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
      * If hiring (true) else firing.
@@ -74,7 +74,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
 
     @Override
     protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         citizen.setPaused(false);

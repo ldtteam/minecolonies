@@ -11,9 +11,9 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobBlacksmith;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +25,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Creates a new building for the blacksmith.
  */
-public class BuildingBlacksmith extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingBlacksmith extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * Description of the job executed in the hut.
@@ -101,7 +101,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker implements IBuild
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.trainingcamps;
 
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +14,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
  * Abstract class for all training AIs.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractEntityAIInteract<J, B>
+public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B>
 {
     /**
      * Percentual chance for target search being chosen as target job.

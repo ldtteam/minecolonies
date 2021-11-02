@@ -7,7 +7,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenExperienceHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -75,7 +75,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         final ICitizenData data = citizen.getCitizenData();
         final IBuilding workBuilding = data.getWorkBuilding();
-        if (!(workBuilding instanceof AbstractBuildingWorker))
+        if (!(workBuilding instanceof AbstractBuilding))
         {
             return;
         }
@@ -96,8 +96,8 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
 
         localXp = citizen.getCitizenItemHandler().applyMending(localXp);
 
-        final Skill primary = ((AbstractBuildingWorker) workBuilding).getPrimarySkill();
-        final Skill secondary = ((AbstractBuildingWorker) workBuilding).getSecondarySkill();
+        final Skill primary = ((AbstractBuilding) workBuilding).getPrimarySkill();
+        final Skill secondary = ((AbstractBuilding) workBuilding).getSecondarySkill();
 
         data.getCitizenSkillHandler().addXpToSkill(primary, localXp, data);
         data.getCitizenSkillHandler().addXpToSkill(primary.getComplimentary(), localXp / (100.0 / PRIMARY_DEPENDENCY_SHARE), data);

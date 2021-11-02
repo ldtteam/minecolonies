@@ -11,8 +11,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -38,7 +38,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * Creates a new building for the Library.
  */
-public class BuildingLibrary extends AbstractBuildingWorker
+public class BuildingLibrary extends AbstractBuilding
 {
     /**
      * Description of the job executed in the hut.
@@ -244,7 +244,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingView implements IBuildingCanBeHiredFrom
     {
         /**
          * Instantiates the view of the building.
@@ -261,7 +261,7 @@ public class BuildingLibrary extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutWorkerModulePlaceholder<AbstractBuildingWorkerView>(this, LIBRARY_HUT_NAME);
+            return new WindowHutWorkerModulePlaceholder<AbstractBuildingView>(this, LIBRARY_HUT_NAME);
         }
 
         /**

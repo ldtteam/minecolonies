@@ -13,11 +13,11 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -45,7 +45,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
-public class BuildingPlantation extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingPlantation extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * Settings key for the building mode.
@@ -236,7 +236,7 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
     /**
      * Plantation View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the plantation view.

@@ -12,9 +12,9 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobConcreteMixer;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.Fluids;
@@ -40,7 +40,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class of the concrete mason building.
  */
-public class BuildingConcreteMixer extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingConcreteMixer extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
@@ -261,7 +261,7 @@ public class BuildingConcreteMixer extends AbstractBuildingWorker implements IBu
     /**
      * Concrete Mason View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
 
         /**

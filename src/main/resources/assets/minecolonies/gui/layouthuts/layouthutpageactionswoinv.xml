@@ -8,7 +8,6 @@
         <view size="100% 22">
             <box size="100% 22" linewidth="0">
                 <label id="workerName" size="100% 11" pos="0 0" textalign="MIDDLE" color="black"/>
-                <label id="workerLevel" size="100% 11" pos="0 11" textalign="MIDDLE" color="black"/>
             </box>
         </view>
     </list>

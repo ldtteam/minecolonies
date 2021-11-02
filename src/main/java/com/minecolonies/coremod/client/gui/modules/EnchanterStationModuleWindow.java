@@ -10,7 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.EnchanterStationsModuleView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -79,7 +79,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
         super.onOpened();
         selectedBuildings = module.getBuildingsToGatherFrom();
         allBuildings = buildingView.getColony().getBuildings().stream()
-                         .filter(b -> b instanceof AbstractBuildingWorkerView && !(b instanceof BuildingEnchanter.View))
+                         .filter(b -> b instanceof AbstractBuildingView && !(b instanceof BuildingEnchanter.View))
                          .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
                            b2.getPosition())))
                          .collect(Collectors.toList());
@@ -97,7 +97,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
             {
                 IBuildingView bView = allBuildings.get(index);
                 String text = "";
-                if (bView instanceof AbstractBuildingWorkerView)
+                if (bView instanceof AbstractBuildingView)
                 {
                     text += bView.getCustomName().isEmpty() ? bView.getSchematicName() : bView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";

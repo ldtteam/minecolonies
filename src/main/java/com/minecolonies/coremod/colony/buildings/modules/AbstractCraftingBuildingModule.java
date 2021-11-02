@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
@@ -21,7 +22,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.settings.CrafterRecipeSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
@@ -61,7 +62,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMP
  * "policy classes" (inner classes) to specify the type of crafting supported.  The policy
  * classes don't provide any "real" implementation, they just configure this one.
  */
-public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule, ICreatesResolversModule, IHasRequiredItemsModule
+public abstract class AbstractCraftingBuildingModule extends AbstractBuildingModule implements ICraftingBuildingModule, IPersistentModule, ICreatesResolversModule, IHasRequiredItemsModule, ITickingModule
 {
     /**
      * The recipemode of the crafter (either priority based, or warehouse stock baseD).
@@ -91,7 +92,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     /**
      * Specific crafting building.
      */
-    protected AbstractBuildingWorker building;
+    protected AbstractBuilding building;
 
     @Override
     public List<IToken<?>> getRecipes()
@@ -102,7 +103,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public IBuildingModule setBuilding(final IBuilding building)
     {
-        this.building = (AbstractBuildingWorker) building;
+        this.building = (AbstractBuilding) building;
         return super.setBuilding(building);
     }
 
@@ -189,7 +190,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final ListNBT recipesTags;
         if (compound.contains(TAG_RECIPES))
         {
-            //todo remove in 1.17
             recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
         }
         else
@@ -232,7 +232,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
 
-            //todo remove preTaught check in 1.17
             if (storage == null || (storage.getRecipeSource() != null && !crafterRecipes.containsKey(storage.getRecipeSource())) || (!isRecipeCompatibleWithCraftingModule(token) && !isPreTaughtRecipe(storage, crafterRecipes)))
             {
                 removeRecipe(token);
@@ -252,6 +251,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeUtf(getId());
         buf.writeBoolean(isVisible());
     }
+
+    //todo we need a connection between worker module and "modules it belongs to"
 
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
@@ -309,7 +310,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     private List<Tuple<IRecipeStorage, Integer>> getPendingRequestQueue()
     {
         final List<Tuple<IRecipeStorage, Integer>> recipes = new ArrayList<>();
-        for (final ICitizenData citizen : building.getAssignedCitizen())
+        for (final ICitizenData citizen : building.getAllAssignedCitizen())
         {
             if (citizen.getJob() instanceof AbstractJobCrafter)
             {
@@ -344,7 +345,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             addRecipeToList(token, false);
             markDirty();
 
-            if (building.getAssignedCitizen().isEmpty())
+            if (building.getAllAssignedCitizen().isEmpty())
             {
                 return true;
             }
@@ -357,6 +358,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onColonyTick(@NotNull final IColony colony)
+    {
+        checkForWorkerSpecificRecipes();
     }
 
     @Override
@@ -472,7 +479,8 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
-        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(building.getRecipeImprovementSkill())));
+
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(citizen.getJob().getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         ItemStorage reducedItem = null;
@@ -624,7 +632,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
                 final Set<IItemHandler> handlers = new HashSet<>();
-                for (final ICitizenData workerEntity : building.getAssignedCitizen())
+                for (final ICitizenData workerEntity : building.getAllAssignedCitizen())
                 {
                     handlers.add(workerEntity.getInventory());
                 }
@@ -677,7 +685,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
     }
 
-
     /**
      * Helper function for derived classes; returns the "real" job for the
      * building, if it exists.  Don't use if your building has multiple jobs
@@ -685,18 +692,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      *
      * @return The main citizen's job (if there is one)
      */
-    protected Optional<IJob<?>> getMainBuildingJob()
-    {
-        if (this.building != null)
-        {
-            final ICitizenData mainCitizen = this.building.getMainCitizen();
-            if (mainCitizen != null)
-            {
-                return Optional.ofNullable(mainCitizen.getJob());
-            }
-        }
-        return Optional.empty();
-    }
+    abstract Optional<IJob<?>> getMainBuildingJob();
 
     @Override
     public void replaceRecipe(final IToken<?> oldRecipe, final IToken<?> newRecipe)

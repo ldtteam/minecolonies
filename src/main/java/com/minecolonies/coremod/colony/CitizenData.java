@@ -5,7 +5,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -160,7 +160,7 @@ public class CitizenData implements ICitizenData
      * The work building of the citizen.
      */
     @Nullable
-    private IBuildingWorker workBuilding;
+    private IBuilding workBuilding;
 
     /**
      * The job of the citizen.
@@ -698,12 +698,12 @@ public class CitizenData implements ICitizenData
     @Override
     public void onRemoveBuilding(final IBuilding building)
     {
-        if (getHomeBuilding() == building)
+        if (homeBuilding != null && homeBuilding.getID().equals(building.getID()))
         {
             setHomeBuilding(null);
         }
 
-        if (getWorkBuilding() == building)
+        if (workBuilding != null && workBuilding.getID().equals(building.getID()))
         {
             setWorkBuilding(null);
         }
@@ -737,7 +737,7 @@ public class CitizenData implements ICitizenData
 
     @Override
     @Nullable
-    public IBuildingWorker getWorkBuilding()
+    public IBuilding getWorkBuilding()
     {
         if (job == null && workBuilding != null)
         {
@@ -747,7 +747,7 @@ public class CitizenData implements ICitizenData
     }
 
     @Override
-    public void setWorkBuilding(@Nullable final IBuildingWorker building)
+    public void setWorkBuilding(@Nullable final IBuilding building)
     {
         if (workBuilding != null && building != null && workBuilding != building)
         {

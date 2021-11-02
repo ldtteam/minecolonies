@@ -1,11 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -16,10 +13,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Blocks;
@@ -37,7 +32,7 @@ import java.util.function.Predicate;
 /**
  * Building for the bakery.
  */
-public class BuildingBaker extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingBaker extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * General bakery description key.
@@ -89,45 +84,6 @@ public class BuildingBaker extends AbstractBuildingWorker implements IBuildingPu
         return false;
     }
 
-    /**
-     * Create a Baker job.
-     *
-     * @param citizen the citizen to take the job.
-     * @return The new Baker job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobBaker(citizen);
-    }
-
-    /**
-     * The name of the bakery's job.
-     *
-     * @return The name of the bakery's job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BAKER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
     @Override
     public boolean canEat(final ItemStack stack)
     {
@@ -136,35 +92,6 @@ public class BuildingBaker extends AbstractBuildingWorker implements IBuildingPu
             return false;
         }
         return super.canEat(stack);
-    }
-
-    /**
-     * The client view for the bakery building.
-     */
-    public static class View extends AbstractBuildingWorkerView
-    {
-        /**
-         * The client view constructor for the bakery building.
-         *
-         * @param c The ColonyView the building is in.
-         * @param l The location of the building.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        /**
-         * Creates a new window for the building.
-         *
-         * @return A BlockOut window.
-         */
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, BAKER);
-        }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting

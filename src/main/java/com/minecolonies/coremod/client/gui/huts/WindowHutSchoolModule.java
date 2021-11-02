@@ -15,7 +15,7 @@ public class WindowHutSchoolModule extends WindowHutWorkerModulePlaceholder<Buil
     /**
      * Window for worker placeholder. Used by buildings not listed above this file.
      *
-     * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView}.
+     * @param building AbstractBuilding extending {@link com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView}.
      * @param name     Name of the the view (resource).
      */
     public WindowHutSchoolModule(final BuildingSchool.View building, final String name)

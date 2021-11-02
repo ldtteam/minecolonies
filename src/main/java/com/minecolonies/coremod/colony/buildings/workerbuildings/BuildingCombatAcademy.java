@@ -15,9 +15,9 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.block.Block;
 import net.minecraft.block.CarvedPumpkinBlock;
@@ -40,7 +40,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuildingWorker
+public class BuildingCombatAcademy extends AbstractBuilding
 {
     /**
      * The Schematic name.
@@ -321,7 +321,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingWorkerView implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingView implements IBuildingCanBeHiredFrom
     {
         /**
          * The client view constructor for the AbstractGuardBuilding.

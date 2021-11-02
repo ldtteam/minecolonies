@@ -16,7 +16,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
@@ -36,7 +36,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 /**
  * Abstract class for the principal crafting AIs.
  */
-public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J>, B extends AbstractBuildingWorker> extends AbstractEntityAIInteract<J, B>
+public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J>, B extends AbstractBuilding> extends AbstractEntityAIInteract<J, B>
 {
     /**
      * Time the worker delays until the next hit.

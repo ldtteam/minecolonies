@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.worker;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
@@ -23,7 +23,7 @@ import java.util.Optional;
  *
  * @author Colton
  */
-public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildingWorker>
+public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
      * Empty public constructor.
@@ -52,7 +52,7 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
 
     @Override
     protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         if (building.getAssignedEntities() == null)
         {

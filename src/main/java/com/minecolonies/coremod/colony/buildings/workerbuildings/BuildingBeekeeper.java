@@ -10,10 +10,10 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -37,7 +37,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Building of the beekeeper (apiary).
  */
-public class BuildingBeekeeper extends AbstractBuildingWorker
+public class BuildingBeekeeper extends AbstractBuilding
 {
     /**
      * The beekeeper mode.
@@ -220,7 +220,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         return (int) Math.pow(2, getBuildingLevel() - 1);
     }
 
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Creates a building view.

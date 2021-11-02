@@ -17,7 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
@@ -195,7 +195,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuilding)
             {
                 registeredDeliverymen.add(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
             }

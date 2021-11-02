@@ -10,9 +10,9 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobMechanic;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.item.BlockItem;
@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the mechanic building.
  */
-public class BuildingMechanic extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingMechanic extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
@@ -91,7 +91,7 @@ public class BuildingMechanic extends AbstractBuildingWorker implements IBuildin
     /**
      * Mechanic View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
 
         /**

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.pathfinding.AbstractWalkToProxy;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -66,7 +66,7 @@ public class EntityCitizenWalkToProxy extends AbstractWalkToProxy
     @Override
     public BlockPos getSpecializedProxy(final BlockPos target, final double distanceToPath)
     {
-        final IBuildingWorker building = citizen.getCitizenColonyHandler().getWorkBuilding();
+        final IBuilding building = citizen.getCitizenColonyHandler().getWorkBuilding();
         if (citizen.getCitizenJobHandler().getColonyJob() != null && citizen.getCitizenJobHandler().getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
         {
             return getMinerProxy(target, distanceToPath, (BuildingMiner) building);

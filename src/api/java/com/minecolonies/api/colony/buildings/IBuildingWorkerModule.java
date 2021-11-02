@@ -10,13 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface IBuildingWorker extends IBuilding
+public interface IBuildingWorkerModule
 {
-    /**
-     * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
-     */
-    int WOOD_HUT_LEVEL = 0;
-
     /**
      * The abstract method which creates a job for the building.
      *
@@ -25,14 +20,6 @@ public interface IBuildingWorker extends IBuilding
      */
     @NotNull
     IJob<?> createJob(ICitizenData citizen);
-
-    /**
-     * Check if a certain ItemStack is in the request of a worker.
-     *
-     * @param stack the stack to chest.
-     * @return true if so.
-     */
-    boolean isItemStackInRequest(@Nullable ItemStack stack);
 
     /**
      * Set a new hiring mode in the building.
@@ -49,28 +36,12 @@ public interface IBuildingWorker extends IBuilding
     HiringMode getHiringMode();
 
     /**
-     * Get all handlers accociated with this building.
-     *
-     * @return the handlers of the building + citizen.
-     */
-    List<IItemHandler> getHandlers();
-
-    boolean assignCitizen(ICitizenData citizen);
-
-    /**
      * The abstract method which returns the name of the job.
      *
      * @return the job name.
      */
     @NotNull
-    String getJobName();
-
-    /**
-     * Get the max tool level useable by the worker.
-     *
-     * @return the integer.
-     */
-    int getMaxToolLevel();
+    String getJobID();
 
     /**
      * Method which defines if a worker should be allowed to work during the rain.
@@ -94,19 +65,4 @@ public interface IBuildingWorker extends IBuilding
      */
     @NotNull
     Skill getSecondarySkill();
-
-    /**
-     *  Recipe Improvement skill getter
-     * @return the recipe improvement skill
-     */
-    @NotNull
-    Skill getRecipeImprovementSkill();
-
-    /**
-     * Check if the worker is allowed to eat the following stack.
-     *
-     * @param stack the stack to test.
-     * @return true if so.
-     */
-    boolean canEat(final ItemStack stack);
 }

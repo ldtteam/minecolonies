@@ -12,9 +12,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -44,7 +44,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * The florist building.
  */
-public class BuildingFlorist extends AbstractBuildingWorker
+public class BuildingFlorist extends AbstractBuilding
 {
     /**
      * Florist.
@@ -221,7 +221,7 @@ public class BuildingFlorist extends AbstractBuildingWorker
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -257,4 +258,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     {
         //noop.
     }
+
+    /**
+     * Skill responsible for recipe improvement.
+     * @return the skill.
+     */
+    Skill getRecipeImprovementSkill();
 }

@@ -7,8 +7,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobSwineHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the Swine Herder.
  */
-public class BuildingSwineHerder extends AbstractBuildingWorker
+public class BuildingSwineHerder extends AbstractBuilding
 {
     /**
      * Description of the job executed in the hut.
@@ -100,7 +100,7 @@ public class BuildingSwineHerder extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

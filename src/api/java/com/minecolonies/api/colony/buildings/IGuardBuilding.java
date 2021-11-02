@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-public interface IGuardBuilding extends IBuildingWorker
+public interface IGuardBuilding extends IBuilding
 {
     /**
      * Worker gets this distance times building level away from his/her hut to patrol.
@@ -23,7 +23,7 @@ public interface IGuardBuilding extends IBuildingWorker
      */
     static boolean checkIfGuardShouldTakeDamage(final AbstractEntityCitizen citizen, final PlayerEntity player)
     {
-        final IBuildingWorker buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
+        final IBuilding buildingWorker = citizen.getCitizenColonyHandler().getWorkBuilding();
         if (!(buildingWorker instanceof IGuardBuilding))
         {
             return true;

@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -468,7 +468,7 @@ public class CustomRecipe
      * This does research checks, to verify that the appropriate researches are in the correct states
      * @param building      Building to check recipe against.
      */
-    public boolean isValidForBuilding(IBuildingWorker building)
+    public boolean isValidForBuilding(IBuilding building)
     {
         final IColony colony = building.getColony();
         final boolean requiredEffectPresent;
@@ -538,7 +538,7 @@ public class CustomRecipe
      * @param building      The building which would contain the precursor recipe.
      * @return              True if a precursor recipe was required and not present.
      */
-    private boolean isPrecursorRecipeMissing(IBuildingWorker building)
+    private boolean isPrecursorRecipeMissing(IBuilding building)
     {
         if(mustExist)
         {

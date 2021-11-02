@@ -479,7 +479,6 @@
   "com.minecolonies.coremod.gui.workerhuts.minerrepairnode": "Repair",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
   "com.minecolonies.coremod.gui.workerhuts.buildtype": "Building Style:",
-  "com.minecolonies.coremod.gui.workerhuts.workerlevel": "Worker Level: %s",
 
   "com.minecolonies.coremod.gui.buildtool.wrongcolony": "The building was picked up in colony %d. You can only place it in that colony now!",
   "com.minecolonies.coremod.gui.buildtool.nohutininventory": "The hut block was not found in your inventory.",
@@ -625,7 +624,7 @@
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
   "com.minecolonies.coremod.gui.workerhuts.fisherman": "Fisher's Hut",
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
-  "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Worker Assigned:",
+  "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",

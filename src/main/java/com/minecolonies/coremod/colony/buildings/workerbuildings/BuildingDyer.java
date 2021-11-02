@@ -19,9 +19,9 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobDyer;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -42,7 +42,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the dyer building.
  */
-public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingDyer extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * Description string of the building.
@@ -111,7 +111,7 @@ public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPub
     /**
      * Dyer View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
 
         /**

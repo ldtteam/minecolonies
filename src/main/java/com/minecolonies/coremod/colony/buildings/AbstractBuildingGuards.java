@@ -28,7 +28,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
@@ -66,7 +66,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
  * Abstract class for Guard huts.
  */
 @SuppressWarnings({"squid:MaximumInheritanceDepth", "squid:S1448"})
-public abstract class AbstractBuildingGuards extends AbstractBuildingWorker implements IGuardBuilding
+public abstract class AbstractBuildingGuards extends AbstractBuilding implements IGuardBuilding
 {
     /**
      * Settings.
@@ -841,7 +841,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuildingWorker impl
     /**
      * The client view for the Guard building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * The list of manual patrol targets.

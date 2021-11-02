@@ -138,13 +138,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
         return false;
     }
 
-    @Override
-    public void onBuildingMove(final IBuilding oldBuilding)
-    {
-        super.onBuildingMove(oldBuilding);
-        colony.getBuildingManager().setTownHall(this);
-    }
-
     /**
      * Sets the style of the building.
      *

@@ -16,8 +16,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Items;
@@ -38,7 +38,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class which handles the graveyard building.
  */
-public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingGraveyard extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * Descriptive string of the building.
@@ -256,7 +256,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
     /**
      * Provides a view of the farmer building class.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Public constructor of the view, creates an instance of it.

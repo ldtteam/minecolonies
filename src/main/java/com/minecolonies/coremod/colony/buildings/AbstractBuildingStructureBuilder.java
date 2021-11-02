@@ -29,7 +29,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The structureBuilder building.
  */
-public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingWorker
+public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
 {
     /**
      * The maximum upgrade of the building.

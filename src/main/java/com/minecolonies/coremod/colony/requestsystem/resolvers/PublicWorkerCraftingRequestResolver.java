@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.IBuildingView;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -77,9 +77,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingWorkerView)
+        if (requester instanceof IBuildingView)
         {
-            final IBuildingWorkerView bwv = (IBuildingWorkerView) requester;
+            final IBuildingView bwv = (IBuildingView) requester;
             return new TranslationTextComponent(bwv.getJobDisplayName().toLowerCase());
         }
         return super.getRequesterDisplayName(manager, request);
@@ -92,7 +92,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final Predicate<ItemStack> stackPredicate)
     {
         for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {

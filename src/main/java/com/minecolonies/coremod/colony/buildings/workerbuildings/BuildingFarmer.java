@@ -13,12 +13,12 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.item.ItemStack;
@@ -39,7 +39,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class which handles the farmer building.
  */
-public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingFarmer extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * The beekeeper mode.
@@ -199,7 +199,7 @@ public class BuildingFarmer extends AbstractBuildingWorker implements IBuildingP
     /**
      * Provides a view of the farmer building class.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Public constructor of the view, creates an instance of it.

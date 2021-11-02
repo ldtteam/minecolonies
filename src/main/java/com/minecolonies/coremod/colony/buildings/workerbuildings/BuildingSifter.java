@@ -9,9 +9,9 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.coremod.client.gui.huts.WindowHutSifterModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobSifter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -24,7 +24,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAI
 /**
  * Class of the sifter building.
  */
-public class BuildingSifter extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingSifter extends AbstractBuilding implements IBuildingPublicCrafter
 {
     /**
      * The multiplier to define the max craft per day.
@@ -171,7 +171,7 @@ public class BuildingSifter extends AbstractBuildingWorker implements IBuildingP
     /**
      * BuildingSifter View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Maximum possible daily quantity
