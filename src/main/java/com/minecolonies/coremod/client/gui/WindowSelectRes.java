@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.Color;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Button;
@@ -9,19 +8,17 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -153,13 +150,16 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     private void updateResources()
     {
         this.allItems.clear();
-        this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                                    .map(ItemStack::new)
-                                                    .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getDescriptionId().toLowerCase(Locale.US)
-                                                                                                                        .contains(this.filter.toLowerCase(Locale.US))
-                                                                                                                   || stack.getHoverName().getString().toLowerCase(Locale.US)
-                                                                                                                        .contains(filter.toLowerCase(Locale.US)))))
-                                                    .collect(Collectors.toList())));
+
+        for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
+        {
+            if (test.test(stack) && (this.filter.isEmpty()
+                                       || stack.getDescriptionId().toLowerCase(Locale.US).contains(this.filter.toLowerCase(Locale.US))
+                                       || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))))
+            {
+                this.allItems.add(stack);
+            }
+        }
 
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
         this.updateResourceList();

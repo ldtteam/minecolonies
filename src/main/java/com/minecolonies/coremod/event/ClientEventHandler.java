@@ -424,12 +424,13 @@ public class ClientEventHandler
                       true);
                     if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
                     {
-                        Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
                         if (ServerLifecycleHooks.getCurrentServer() == null)
                         {
+                            Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
                             Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
                             continue;
                         }
+                        continue;
                     }
 
                     final Blueprint blueprint = wrapper.getBluePrint();
