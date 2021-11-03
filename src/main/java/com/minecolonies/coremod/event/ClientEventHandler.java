@@ -428,7 +428,6 @@ public class ClientEventHandler
                         {
                             Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
                             Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                            continue;
                         }
                         continue;
                     }
