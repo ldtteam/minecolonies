@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -44,7 +45,7 @@ public class JobSwineHerder extends AbstractJob<EntityAIWorkSwineHerder, JobSwin
     @Override
     public BipedModelType getModel()
     {
-        return BipedModelType.PIG_FARMER;
+        return ModModelTypes.pigFarmer;
     }
 
     @Override

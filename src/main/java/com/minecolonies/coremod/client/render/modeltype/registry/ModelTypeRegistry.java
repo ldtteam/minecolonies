@@ -1,76 +1,30 @@
 package com.minecolonies.coremod.client.render.modeltype.registry;
 
 import com.google.common.collect.Maps;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
-import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.client.model.*;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 public class ModelTypeRegistry implements IModelTypeRegistry
 {
-    private final Map<IModelType, CitizenModel<AbstractEntityCitizen>> maleMap   = Maps.newHashMap();
-    private final Map<IModelType, CitizenModel<AbstractEntityCitizen>> femaleMap = Maps.newHashMap();
+    private final ConcurrentMap<ResourceLocation, IModelType> modelMap = Maps.newConcurrentMap();
 
     public ModelTypeRegistry()
     {
-        register(BipedModelType.NOBLE, new CitizenModel<>(), new ModelEntityCitizenFemaleNoble());
-        register(BipedModelType.ARISTOCRAT, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
-        register(BipedModelType.BUILDER, new CitizenModel<>(), new ModelEntityBuilderFemale());
-        register(BipedModelType.DELIVERYMAN, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
-        register(BipedModelType.MINER, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
-        register(BipedModelType.LUMBERJACK, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
-        register(BipedModelType.FARMER, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
-        register(BipedModelType.UNDERTAKER, new ModelEntityUndertakerMale(), new ModelEntityUndertakerFemale());
-        register(BipedModelType.FISHERMAN, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
-        register(BipedModelType.BAKER, new ModelEntityBakerMale(), new ModelEntityBakerFemale());
-        register(BipedModelType.COMPOSTER, new ModelEntityComposterMale(), new ModelEntityComposterFemale());
-        register(BipedModelType.COOK, new ModelEntityCookMale(), new ModelEntityCookFemale());
-        register(BipedModelType.CHICKEN_FARMER, new ModelEntityChickenFarmerMale(), new ModelEntityChickenFarmerFemale());
-        register(BipedModelType.SHEEP_FARMER, new ModelEntitySheepFarmerMale(), new ModelEntitySheepFarmerFemale());
-        register(BipedModelType.PIG_FARMER, new ModelEntityPigFarmerMale(), new ModelEntityPigFarmerFemale());
-        register(BipedModelType.COW_FARMER, new ModelEntityCowFarmerMale(), new ModelEntityCowFarmerFemale());
-        register(BipedModelType.SMELTER, new ModelEntitySmelterMale(), new ModelEntitySmelterFemale());
-        register(BipedModelType.STUDENT, new ModelEntityStudentMale(), new ModelEntityStudentFemale());
-        register(BipedModelType.CRAFTER, new ModelEntityCrafterMale(), new ModelEntityCrafterFemale());
-        register(BipedModelType.BLACKSMITH, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
-        register(BipedModelType.ARCHER_GUARD, new CitizenModel<>(), new CitizenModel<>());
-        register(BipedModelType.KNIGHT_GUARD, new CitizenModel<>(), new CitizenModel<>());
-        register(BipedModelType.CHILD, new ModelEntityChildMale(), new ModelEntityChildFemale());
-        register(BipedModelType.HEALER, new ModelEntityHealerMale(), new ModelEntityHealerFemale());
-        register(BipedModelType.TEACHER, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
-        register(BipedModelType.GLASSBLOWER, new ModelEntityGlassblowerMale(), new ModelEntityGlassblowerFemale());
-        register(BipedModelType.DYER, new ModelEntityDyerMale(), new ModelEntityDyerFemale());
-        register(BipedModelType.PLANTER, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
-        register(BipedModelType.FLETCHER, new ModelEntityFletcherMale(), new ModelEntityFletcherFemale());
-        register(BipedModelType.MECHANIST, new ModelEntityMechanistMale(), new ModelEntityMechanistFemale());
-        register(BipedModelType.RABBIT_HERDER, new ModelEntityRabbitHerderMale(), new ModelEntityRabbitHerderFemale());
-        register(BipedModelType.CONCRETE_MIXER, new ModelEntityConcreteMixerMale(), new ModelEntityConcreteMixerFemale());
-        register(BipedModelType.BEEKEEPER, new ModelEntityBeekeeperMale(), new ModelEntityBeekeeperFemale());
+
     }
 
     @Override
-    public IModelTypeRegistry register(final IModelType type, final CitizenModel<AbstractEntityCitizen> maleModel, final CitizenModel<AbstractEntityCitizen> femaleModel)
+    public void register(final IModelType type)
     {
-        this.maleMap.put(type, maleModel);
-        this.femaleMap.put(type, femaleModel);
-
-        return this;
+        modelMap.put(type.getName(), type);
     }
 
     @Override
-    public Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap()
+    public IModelType getModelType(final ResourceLocation name)
     {
-        return Collections.unmodifiableMap(maleMap);
-    }
-
-    @Override
-    public Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap()
-    {
-        return Collections.unmodifiableMap(femaleMap);
+        return modelMap.get(name);
     }
 }

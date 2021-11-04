@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenColonyHandler;
 import com.minecolonies.api.util.Log;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.*;
@@ -125,7 +126,7 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
 
             citizen.setFemale(citizen.getEntityData().get(DATA_IS_FEMALE) != 0);
             citizen.setIsChild(citizen.getEntityData().get(DATA_IS_CHILD));
-            citizen.setModelId(BipedModelType.valueOf(citizen.getEntityData().get(DATA_MODEL)));
+            citizen.setModelId(IModelTypeRegistry.getInstance().getModelType(new ResourceLocation(citizen.getEntityData().get(DATA_MODEL))));
             citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();

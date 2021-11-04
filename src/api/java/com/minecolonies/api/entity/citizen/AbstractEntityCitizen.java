@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.citizen;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.client.render.modeltype.IModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -74,7 +74,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The default model.
      */
-    private IModelType modelId = BipedModelType.SETTLER;
+    private IModelType modelId = ModModelTypes.settler;
 
     /**
      * The texture id.
@@ -276,7 +276,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         entityData.define(DATA_LEVEL, 0);
         entityData.define(DATA_STYLE, "default");
         entityData.define(DATA_IS_FEMALE, 0);
-        entityData.define(DATA_MODEL, BipedModelType.SETTLER.name());
+        entityData.define(DATA_MODEL, ModModelTypes.SETTLER_ID.toString());
         entityData.define(DATA_RENDER_METADATA, "");
         entityData.define(DATA_IS_ASLEEP, false);
         entityData.define(DATA_IS_CHILD, false);

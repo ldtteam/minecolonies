@@ -1,23 +1,32 @@
 package com.minecolonies.api.client.render.modeltype.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.Map;
-
+/**
+ *
+ */
 public interface IModelTypeRegistry
 {
-
+    /**
+     * @return
+     */
     static IModelTypeRegistry getInstance()
     {
         return IMinecoloniesAPI.getInstance().getModelTypeRegistry();
     }
 
-    IModelTypeRegistry register(IModelType type, CitizenModel<AbstractEntityCitizen> maleModel, CitizenModel<AbstractEntityCitizen> femaleModel);
+    /**
+     * @param name
+     * @param modelType
+     * @return
+     */
+    void register(IModelType modelType);
 
-    Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap();
-
-    Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap();
+    /**
+     * @param name
+     * @return
+     */
+    IModelType getModelType(ResourceLocation name);
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
-import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -82,9 +81,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        model = (citizen.isFemale()
-                         ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
-                         : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
+        model = citizen.isFemale() ? citizen.getModelType().getFemaleMap() : citizen.getModelType().getMaleModel();
         if (model == null)
         {
             model = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));

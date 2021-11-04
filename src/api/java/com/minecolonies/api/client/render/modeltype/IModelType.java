@@ -14,7 +14,7 @@ public interface IModelType
      *
      * @return The name.
      */
-    String getName();
+    ResourceLocation getName();
 
     /**
      * Method used to get the path to the texture every time it is updated on the entity.
@@ -23,4 +23,18 @@ public interface IModelType
      * @return The path to the citizen.
      */
     ResourceLocation getTexture(AbstractEntityCitizen entityCitizen);
+
+    /**
+     * Get the male model for this model type
+     *
+     * @return The male model
+     */
+    CitizenModel<AbstractEntityCitizen> getMaleModel();
+
+    /**
+     * Get the female model for this model type
+     *
+     * @return The female model
+     */
+    CitizenModel<AbstractEntityCitizen> getFemaleMap();
 }
