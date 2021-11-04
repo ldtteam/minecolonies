@@ -16,6 +16,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,30 +36,29 @@ public final class LootTableAnalyzer
 {
     private LootTableAnalyzer() { }
 
-    private static JsonObject getLootTableJson(@NotNull final LootTables lootTableManager,
-                                               @NotNull final ResourceLocation lootTableId)
-    {
-        final LootTable lootTable = lootTableManager.get(lootTableId);
-        return LootTables.serialize(lootTable).getAsJsonObject();
-    }
-
     public static List<LootDrop> toDrops(@NotNull final LootTables lootTableManager,
                                          @NotNull final ResourceLocation lootTableId)
     {
+        return toDrops(lootTableManager, lootTableManager.get(lootTableId));
+    }
+
+    public static List<LootDrop> toDrops(@Nullable final LootTables lootTableManager,
+                                         @NotNull final LootTable lootTable)
+    {
         try
         {
-            final JsonObject lootTableJson = getLootTableJson(lootTableManager, lootTableId);
+            final JsonObject lootTableJson = LootTables.serialize(lootTable).getAsJsonObject();
             return toDrops(lootTableManager, lootTableJson);
         }
         catch (final JsonParseException ex)
         {
             Log.getLogger().error(String.format("Failed to parse loot table from %s",
-                    lootTableId.toString()), ex);
+                    lootTable.getLootTableId()), ex);
             return Collections.emptyList();
         }
     }
 
-    public static List<LootDrop> toDrops(@NotNull final LootTables lootTableManager,
+    public static List<LootDrop> toDrops(@Nullable final LootTables lootTableManager,
                                          @NotNull final JsonObject lootTableJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
@@ -98,7 +98,7 @@ public final class LootTableAnalyzer
 
                     drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight, variableQuality));
                 }
-                else if (type.equals("minecraft:loot_table"))
+                else if (type.equals("minecraft:loot_table") && lootTableManager != null)
                 {
                     final ResourceLocation table = new ResourceLocation(GsonHelper.getAsString(entryJson, "name"));
                     drops.addAll(toDrops(lootTableManager, table));
