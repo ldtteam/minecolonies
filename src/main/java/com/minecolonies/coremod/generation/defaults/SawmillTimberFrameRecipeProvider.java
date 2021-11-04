@@ -12,6 +12,7 @@ import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,13 +22,18 @@ import java.util.stream.Collectors;
 import static com.ldtteam.structurize.api.util.constant.Constants.MOD_ID;
 import static com.ldtteam.structurize.items.ModItems.buildTool;
 
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
-
 public class SawmillTimberFrameRecipeProvider extends CustomRecipeProvider
 {
     public SawmillTimberFrameRecipeProvider(final DataGenerator generatorIn)
     {
         super(generatorIn);
+    }
+
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return "SawmillTimberFrameRecipeProvider";
     }
 
     @Override

@@ -1,89 +1,25 @@
 package com.minecolonies.coremod.generation.defaults;
 
-import com.ldtteam.datagenerators.loot_table.LootTableJson;
-import com.ldtteam.datagenerators.loot_table.LootTableTypeEnum;
-import com.ldtteam.datagenerators.loot_table.pool.PoolJson;
-import com.ldtteam.datagenerators.loot_table.pool.conditions.survives_explosion.SurvivesExplosionConditionJson;
-import com.ldtteam.datagenerators.loot_table.pool.entry.EntryJson;
-import com.ldtteam.datagenerators.loot_table.pool.entry.EntryTypeEnum;
-import com.ldtteam.datagenerators.loot_table.pool.entry.functions.copy_name.CopyNameFunctionJson;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
-import com.minecolonies.coremod.generation.DataGeneratorConstants;
+import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.SurvivesExplosion;
+import net.minecraft.loot.functions.CopyName;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-public class DefaultBlockLootTableProvider implements IDataProvider
+public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 {
-
-    private final DataGenerator generator;
-
-    public DefaultBlockLootTableProvider(final DataGenerator generator)
+    public DefaultBlockLootTableProvider(@NotNull DataGenerator dataGenerator)
     {
-        this.generator = generator;
-    }
-
-    @Override
-    public void run(@NotNull final DirectoryCache cache) throws IOException
-    {
-        saveBlocks(Arrays.asList(ModBlocks.getHuts()), cache);
-
-        saveBlock(ModBlocks.blockHutWareHouse, cache);
-        saveBlock(ModBlocks.blockStash, cache);
-
-        saveBlock(ModBlocks.blockConstructionTape, cache);
-        saveBlock(ModBlocks.blockRack, cache);
-        saveBlock(ModBlocks.blockWayPoint, cache);
-        saveBlock(ModBlocks.blockBarrel, cache);
-        saveBlock(ModBlocks.blockDecorationPlaceholder, cache);
-        saveBlock(ModBlocks.blockScarecrow, cache);
-        saveBlock(ModBlocks.blockColonyBanner, cache);
-        saveBlock(ModBlocks.blockIronGate, cache);
-        saveBlock(ModBlocks.blockWoodenGate, cache);
-    }
-
-    private <T extends Block> void saveBlocks(final List<T> blocks, final DirectoryCache cache) throws IOException
-    {
-        for (Block block : blocks)
-        {
-            saveBlock(block, cache);
-        }
-    }
-
-    private void saveBlock(final Block block, final DirectoryCache cache) throws IOException
-    {
-        if (block.getRegistryName() != null)
-        {
-            final EntryJson entryJson = new EntryJson();
-            entryJson.setType(EntryTypeEnum.ITEM);
-            entryJson.setName(block.getRegistryName().toString());
-            if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack)
-            {
-                entryJson.setFunctions(Collections.singletonList(new CopyNameFunctionJson()));
-            }
-
-            final PoolJson poolJson = new PoolJson();
-            poolJson.setEntries(Collections.singletonList(entryJson));
-            poolJson.setRolls(1);
-            poolJson.setConditions(Collections.singletonList(new SurvivesExplosionConditionJson()));
-
-            final LootTableJson lootTableJson = new LootTableJson();
-            lootTableJson.setType(LootTableTypeEnum.BLOCK);
-            lootTableJson.setPools(Collections.singletonList(poolJson));
-
-            final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.LOOT_TABLES_DIR).resolve(block.getRegistryName().getPath() + ".json");
-            IDataProvider.save(DataGeneratorConstants.GSON, cache, lootTableJson.serialize(), savePath);
-        }
+        super(dataGenerator);
     }
 
     @NotNull
@@ -91,5 +27,53 @@ public class DefaultBlockLootTableProvider implements IDataProvider
     public String getName()
     {
         return "Default Block Loot Table Provider";
+    }
+
+    @Override
+    protected void registerTables(@NotNull final LootTableRegistrar registrar)
+    {
+        saveBlocks(Arrays.asList(ModBlocks.getHuts()), registrar);
+
+        saveBlock(ModBlocks.blockHutWareHouse, registrar);
+        saveBlock(ModBlocks.blockStash, registrar);
+
+        saveBlock(ModBlocks.blockConstructionTape, registrar);
+        saveBlock(ModBlocks.blockRack, registrar);
+        saveBlock(ModBlocks.blockWayPoint, registrar);
+        saveBlock(ModBlocks.blockBarrel, registrar);
+        saveBlock(ModBlocks.blockDecorationPlaceholder, registrar);
+        saveBlock(ModBlocks.blockScarecrow, registrar);
+        saveBlock(ModBlocks.blockColonyBanner, registrar);
+        saveBlock(ModBlocks.blockIronGate, registrar);
+        saveBlock(ModBlocks.blockWoodenGate, registrar);
+    }
+
+    private <T extends Block> void saveBlocks(@NotNull final List<T> blocks, @NotNull final LootTableRegistrar registrar)
+    {
+        for (final Block block : blocks)
+        {
+            saveBlock(block, registrar);
+        }
+    }
+
+    private void saveBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar)
+    {
+        if (block.getRegistryName() != null)
+        {
+            final ResourceLocation id = new ResourceLocation(block.getRegistryName().getNamespace(),
+                    "blocks/" + block.getRegistryName().getPath());
+
+            final StandaloneLootEntry.Builder<?> item = ItemLootEntry.lootTableItem(block);
+            if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack)
+            {
+                item.apply(CopyName.copyName(CopyName.Source.BLOCK_ENTITY));
+            }
+
+            registrar.register(id, LootParameterSets.BLOCK,
+                    LootTable.lootTable().withPool(LootPool.lootPool()
+                            .add(item)
+                            .when(SurvivesExplosion.survivesExplosion())
+                    ));
+        }
     }
 }
