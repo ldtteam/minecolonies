@@ -2,11 +2,11 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.ldtteam.structurize.blocks.decorative.BlockFloatingCarpet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
+import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
@@ -19,9 +19,6 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -41,6 +38,8 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Callable;
 
+import static com.minecolonies.api.entity.pathfinding.SurfaceType.getSurfaceType;
+import static com.minecolonies.api.entity.pathfinding.SurfaceType.isWater;
 import static com.minecolonies.api.util.constant.PathingConstants.*;
 
 /**
@@ -503,56 +502,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         return (node == null) ? isWater(world, pos.below()) : node.isSwimming();
     }
 
-    /**
-     * Check if the block at this position is actually some kind of waterly fluid.
-     *
-     * @param pos the pos in the world.
-     * @return true if so.
-     */
-    private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos)
-    {
-        return isWater(world, pos, null, null);
-    }
-
-    /**
-     * Check if the block at this position is actually some kind of waterly fluid.
-     * @param pos the pos in the world.
-     * @param pState existing blockstate or null
-     * @param pFluidState existing fluidstate or null
-     * @return true if so.
-     */
-    private static boolean isWater(@NotNull final IWorldReader world, final BlockPos pos, @Nullable BlockState pState, @Nullable FluidState pFluidState)
-    {
-        BlockState state = pState;
-        if (state == null)
-        {
-            state = world.getBlockState(pos);
-        }
-
-        if (state.canOcclude())
-        {
-            return false;
-        }
-        if (state.getBlock() == Blocks.WATER)
-        {
-            return true;
-        }
-
-        FluidState fluidState = pFluidState;
-        if (fluidState == null)
-        {
-            fluidState = world.getFluidState(pos);
-        }
-
-        if (fluidState == null || fluidState.isEmpty())
-        {
-            return false;
-        }
-
-        final Fluid fluid = fluidState.getType();
-        return fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER;
-    }
-
     public PathResult getResult()
     {
         return result;
@@ -612,7 +561,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             handleDebugOptions(currentNode);
             currentNode.setClosed();
 
-            final boolean isViablePosition = isInRestrictedArea(currentNode.pos) && isWalkableSurface(world.getBlockState(currentNode.pos.below()), currentNode.pos.below()) == SurfaceType.WALKABLE;
+            final boolean isViablePosition =
+              isInRestrictedArea(currentNode.pos) && getSurfaceType(world, world.getBlockState(currentNode.pos.below()), currentNode.pos.below()) == SurfaceType.WALKABLE;
             if (isViablePosition && isAtDestination(currentNode))
             {
                 bestNode = currentNode;
@@ -1121,7 +1071,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Do we have something to stand on in the target space?
         final BlockState below = world.getBlockState(pos.below());
-        final SurfaceType walkability = isWalkableSurface(below, pos);
+        final SurfaceType walkability = getSurfaceType(world, below, pos);
         if (walkability == SurfaceType.WALKABLE)
         {
             //  Level path
@@ -1157,7 +1107,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final boolean canDrop = parent != null && !parent.isLadder();
         //  Nothing to stand on
         if (!canDrop || isSwimming || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.below(), false, parent)
-                                         && isWalkableSurface(world.getBlockState(parent.pos.below()), parent.pos.below()) == SurfaceType.DROPABLE))
+                                         && getSurfaceType(world, world.getBlockState(parent.pos.below()), parent.pos.below()) == SurfaceType.DROPABLE))
         {
             return -1;
         }
@@ -1165,7 +1115,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         for (int i = 2; i <= 10; i++)
         {
             final BlockState below = world.getBlockState(pos.below(i));
-            if (isWalkableSurface(below, pos) == SurfaceType.WALKABLE && i <= 3 || isLiquid(below))
+            if (getSurfaceType(world, below, pos) == SurfaceType.WALKABLE && i <= 3 || isLiquid(below))
             {
                 //  Level path
                 return pos.getY() - i + 1;
@@ -1201,7 +1151,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
-        if (!canJump || isWalkableSurface(target, pos) != SurfaceType.WALKABLE)
+        if (!canJump || getSurfaceType(world, target, pos) != SurfaceType.WALKABLE)
         {
             return -1;
         }
@@ -1382,59 +1332,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Is the block solid and can be stood upon.
-     *
-     * @param blockState Block to check.
-     * @param pos        the position.
-     * @return true if the block at that location can be walked on.
-     */
-    @NotNull
-    protected SurfaceType isWalkableSurface(@NotNull final BlockState blockState, final BlockPos pos)
-    {
-        final Block block = blockState.getBlock();
-        if (block instanceof FenceBlock
-              || block instanceof FenceGateBlock
-              || block instanceof WallBlock
-              || block instanceof FireBlock
-              || block instanceof CampfireBlock
-              || block instanceof AbstractBlockMinecoloniesDefault
-              || block instanceof AbstractBlockBarrel
-              || block instanceof BambooBlock
-              || block instanceof DoorBlock
-              || block instanceof MagmaBlock
-              || (blockState.getShape(world, pos).max(Direction.Axis.Y) > 1.0))
-        {
-            return SurfaceType.NOT_PASSABLE;
-        }
-
-        final FluidState fluid = world.getFluidState(pos);
-        if (blockState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)))
-        {
-            return SurfaceType.NOT_PASSABLE;
-        }
-
-        if (isWater(world, pos, blockState,fluid))
-        {
-            return SurfaceType.WALKABLE;
-        }
-
-        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof AbstractSignBlock)
-        {
-            return SurfaceType.DROPABLE;
-        }
-
-        if (blockState.getMaterial().isSolid()
-              || (blockState.getBlock() == Blocks.SNOW && blockState.getValue(SnowBlock.LAYERS) > 1)
-              || block instanceof BlockFloatingCarpet
-              || block instanceof CarpetBlock)
-        {
-            return SurfaceType.WALKABLE;
-        }
-
-        return SurfaceType.DROPABLE;
-    }
-
-    /**
      * Is the block a ladder.
      *
      * @param block block to check.
@@ -1459,16 +1356,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     public void setPathingOptions(final PathingOptions pathingOptions)
     {
         this.pathingOptions = pathingOptions;
-    }
-
-    /**
-     * Check if we can walk on a surface, drop into, or neither.
-     */
-    protected enum SurfaceType
-    {
-        WALKABLE,
-        DROPABLE,
-        NOT_PASSABLE
     }
 
     /**

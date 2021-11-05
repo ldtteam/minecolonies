@@ -238,15 +238,13 @@ public class PathingStuckHandler implements IStuckHandler
 
         if (canTeleportGoal)
         {
-            for (final Direction dir : HORIZONTAL_DIRS)
+            final BlockPos tpPos = BlockPosUtil.findAround(world, desired, 10, 10,
+              (posworld, pos) -> SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE
+                                   && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos), pos) == SurfaceType.DROPABLE
+                                   && SurfaceType.getSurfaceType(posworld, posworld.getBlockState(pos.above()), pos.above()) == SurfaceType.DROPABLE);
+            if (tpPos != null)
             {
-                // need two air
-                if (world.isEmptyBlock(desired.relative(dir)) && world.isEmptyBlock(desired.relative(dir).above()))
-                {
-                    // Teleport
-                    entity.teleportTo(desired.relative(dir).getX() + 0.5d, desired.relative(dir).getY(), desired.relative(dir).getZ() + 0.5d);
-                    break;
-                }
+                entity.teleportTo(tpPos.getX() + 0.5, tpPos.getY(), tpPos.getZ() + 0.5);
             }
         }
         if (takeDamageOnCompleteStuck)
