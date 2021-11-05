@@ -212,7 +212,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             // appropriately, but we can't display the percentage chances.
             showLootTooltip = false;
             drops.addAll(recipe.getAdditionalOutputs().stream()
-                    .map(stack -> new LootTableAnalyzer.LootDrop(Collections.singletonList(stack), 0, false))
+                    .map(stack -> new LootTableAnalyzer.LootDrop(Collections.singletonList(stack), 0, 0))
                     .collect(Collectors.toList()));
         }
         if (!drops.isEmpty())

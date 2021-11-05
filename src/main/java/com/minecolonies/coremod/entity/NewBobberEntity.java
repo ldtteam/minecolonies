@@ -40,7 +40,7 @@ import java.util.List;
 public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {
     private static final DataParameter<Integer> DATA_HOOKED_ENTITY = EntityDataManager.defineId(NewBobberEntity.class, DataSerializers.INT);
-    private static final int                    XP_PER_CATCH       = 2;
+    public  static final int                    XP_PER_CATCH       = 2;
     private              boolean                inGround;
     private              int                    ticksInGround;
     private              EntityCitizen          angler;

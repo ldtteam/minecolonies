@@ -89,19 +89,25 @@ public final class LootTableAnalyzer
                 {
                     final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getAsString(entryJson, "name")));
                     final float weight = JSONUtils.getAsFloat(entryJson, "weight", 1);
-                    final boolean variableQuality = JSONUtils.getAsFloat(entryJson, "quality", 0) != 0;
+                    final float quality = JSONUtils.getAsFloat(entryJson, "quality", 0);
                     final ItemStack stack = new ItemStack(item);
                     if (entryJson.has("functions"))
                     {
                         processFunctions(stack, JSONUtils.getAsJsonArray(entryJson, "functions"));
                     }
 
-                    drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight, variableQuality));
+                    drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight, quality));
                 }
                 else if (type.equals("minecraft:loot_table") && lootTableManager != null)
                 {
                     final ResourceLocation table = new ResourceLocation(JSONUtils.getAsString(entryJson, "name"));
-                    drops.addAll(toDrops(lootTableManager, table));
+                    final List<LootTableAnalyzer.LootDrop> tableDrops = toDrops(lootTableManager, table);
+                    final float weight = JSONUtils.getAsFloat(entryJson, "weight", 1);
+                    final float quality = JSONUtils.getAsFloat(entryJson, "quality", 0);
+                    for (final LootTableAnalyzer.LootDrop drop : tableDrops)
+                    {
+                        drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality() + quality));
+                    }
                 }
             }
         }
@@ -149,20 +155,20 @@ public final class LootTableAnalyzer
     {
         private final List<ItemStack> stacks;
         private final float probability;
-        private final boolean variableQuality;
+        private final float quality;
 
-        public LootDrop(@NotNull final List<ItemStack> stacks, final float probability, final boolean variableQuality)
+        public LootDrop(@NotNull final List<ItemStack> stacks, final float probability, final float quality)
         {
             this.stacks = stacks;
             this.probability = probability;
-            this.variableQuality = variableQuality;
+            this.quality = quality;
         }
 
         public LootDrop(@NotNull final List<LootDrop> drops)
         {
             this.stacks = drops.stream().flatMap(d -> d.getItemStacks().stream()).collect(Collectors.toList());
             this.probability = drops.get(0).getProbability();
-            this.variableQuality = drops.get(0).getVariableQuality();
+            this.quality = drops.get(0).getQuality();
         }
 
         /** The loot item for this drop (as alternatives). */
@@ -170,13 +176,13 @@ public final class LootTableAnalyzer
         /** The approximate probability that this item will drop. */
         public float getProbability() { return this.probability; }
         /** If true, the probability is affected by the citizen's skills. */
-        public boolean getVariableQuality() { return this.variableQuality; }
+        public float getQuality() { return this.quality; }
 
         /** This should be unique, covering all the properties except for the stacks */
         @Override
         public int hashCode()
         {
-            return Objects.hash(probability, variableQuality);
+            return Objects.hash(probability, quality);
         }
 
         /** Copy a LootDrop to a packet buffer */
@@ -188,7 +194,7 @@ public final class LootTableAnalyzer
                 buffer.writeItem(stack);
             }
             buffer.writeFloat(probability);
-            buffer.writeBoolean(variableQuality);
+            buffer.writeFloat(quality);
         }
 
         /** Recover a LootDrop from a packet buffer */
@@ -201,8 +207,8 @@ public final class LootTableAnalyzer
                 stacks.add(buffer.readItem());
             }
             final float probability = buffer.readFloat();
-            final boolean variableQuality = buffer.readBoolean();
-            return new LootDrop(stacks, probability, variableQuality);
+            final float quality = buffer.readFloat();
+            return new LootDrop(stacks, probability, quality);
         }
     }
 }
