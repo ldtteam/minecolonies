@@ -19,6 +19,7 @@ public class GatherDataHandler
         generator.addProvider(new DefaultResearchProvider(generator));
         generator.addProvider(new DefaultSifterCraftingProvider(generator));
         generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
+        generator.addProvider(new DefaultFishermanLootProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
         generator.addProvider(new TagProvider(generator, event.getExistingFileHelper()));
     }

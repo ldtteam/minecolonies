@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
@@ -138,6 +139,8 @@ public class MineColonies
         AdvancementTriggers.preInit();
 
         StandardFactoryControllerInitializer.onPreInit();
+
+        event.enqueueWork(ModLootConditions::init);
     }
 
     @SubscribeEvent

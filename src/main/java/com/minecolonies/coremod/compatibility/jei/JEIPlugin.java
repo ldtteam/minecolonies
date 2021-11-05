@@ -69,6 +69,7 @@ public class JEIPlugin implements IModPlugin
         final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
 
         registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
 
         categories.clear();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
@@ -118,6 +119,7 @@ public class JEIPlugin implements IModPlugin
     {
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockBarrel), CompostRecipe.ID);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutComposter), CompostRecipe.ID);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFisherman), ModJobs.FISHERMAN_ID);
 
         for (final GenericRecipeCategory category : this.categories)
         {
@@ -191,6 +193,7 @@ public class JEIPlugin implements IModPlugin
                                  @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
     {
         registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
+        registrar.accept(FishermanRecipeCategory.findRecipes(), ModJobs.FISHERMAN_ID);
 
         for (final GenericRecipeCategory category : this.categories)
         {

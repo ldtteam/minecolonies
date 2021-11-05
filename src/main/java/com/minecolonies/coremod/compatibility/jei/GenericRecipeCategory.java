@@ -70,13 +70,15 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         return new ItemStack(building.getBuildingBlock().asItem());
     }
 
-    public ItemStack getCatalyst() {
+    public ItemStack getCatalyst()
+    {
         return getCatalyst(this.building);
     }
 
     @NotNull
     @Override
-    public Class<? extends IGenericRecipe> getRecipeClass() {
+    public Class<? extends IGenericRecipe> getRecipeClass()
+    {
         return IGenericRecipe.class;
     }
 
@@ -212,7 +214,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             // appropriately, but we can't display the percentage chances.
             showLootTooltip = false;
             drops.addAll(recipe.getAdditionalOutputs().stream()
-                    .map(stack -> new LootTableAnalyzer.LootDrop(Collections.singletonList(stack), 0, false))
+                    .map(stack -> new LootTableAnalyzer.LootDrop(Collections.singletonList(stack), 0, 0, false))
                     .collect(Collectors.toList()));
         }
         if (!drops.isEmpty())
