@@ -238,7 +238,7 @@ public class CustomRecipeManager
                 final ResourceLocation lootTable = recipe.getLootTable();
                 if (lootTable != null)
                 {
-                    lootIds.add(recipe.getLootTable());
+                    lootIds.add(lootTable);
                 }
             }
         }

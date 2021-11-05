@@ -115,11 +115,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private static final int FISHING_TIMEOUT = 5;
 
     /**
-     * Required level for sponge/prismarine drop.
-     */
-    private static final int LEVEL_FOR_BONUS = 3;
-
-    /**
      * Per level lure speed.
      */
     private static final int LURE_SPEED_DIVIDER = 25;
