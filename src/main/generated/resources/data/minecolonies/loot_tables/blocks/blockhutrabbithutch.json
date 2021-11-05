@@ -2,22 +2,22 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
-      "rolls": 1,
+      "rolls": 1.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecolonies:blockhutrabbithutch",
           "functions": [
             {
               "function": "minecraft:copy_name",
               "source": "block_entity"
             }
-          ]
+          ],
+          "name": "minecolonies:blockhutrabbithutch"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
         }
       ]
     }
