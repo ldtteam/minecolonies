@@ -42,7 +42,8 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
 
     @NotNull
     @Override
-    public Class<? extends FishingRecipe> getRecipeClass() {
+    public Class<? extends FishingRecipe> getRecipeClass()
+    {
         return FishingRecipe.class;
     }
 

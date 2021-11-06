@@ -70,13 +70,15 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         return new ItemStack(building.getBuildingBlock().asItem());
     }
 
-    public ItemStack getCatalyst() {
+    public ItemStack getCatalyst()
+    {
         return getCatalyst(this.building);
     }
 
     @NotNull
     @Override
-    public Class<? extends IGenericRecipe> getRecipeClass() {
+    public Class<? extends IGenericRecipe> getRecipeClass()
+    {
         return IGenericRecipe.class;
     }
 
