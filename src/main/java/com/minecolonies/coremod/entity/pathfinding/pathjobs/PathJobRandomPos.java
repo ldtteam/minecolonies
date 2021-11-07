@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.entity.pathfinding.PathResult;
+import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -115,7 +116,7 @@ public class PathJobRandomPos extends AbstractPathJob
     protected boolean isAtDestination(@NotNull final Node n)
     {
         if (random.nextInt(10) == 0 && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
-              && isWalkableSurface(world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
+              && SurfaceType.getSurfaceType(world, world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
               && destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
         {
             return true;
