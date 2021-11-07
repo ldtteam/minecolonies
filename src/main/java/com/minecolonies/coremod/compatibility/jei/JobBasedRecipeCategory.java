@@ -269,6 +269,11 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                     tooltip.add(new TranslationTextComponent(key,
                             Math.round(probability * 100) / 100f));
                 }
+
+                if (drop.getConditional())
+                {
+                    tooltip.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "conditions.tip"));
+                }
             }
         }
     }

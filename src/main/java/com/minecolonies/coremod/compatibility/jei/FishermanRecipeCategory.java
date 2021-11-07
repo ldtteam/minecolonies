@@ -12,7 +12,6 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTables;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -100,7 +99,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     @NotNull
     public static List<FishingRecipe> findRecipes()
     {
-        final List<LootTableAnalyzer.LootDrop> commonDrops = CustomRecipeManager.getInstance().getLootDrops(LootTables.FISHING);
+        final List<LootTableAnalyzer.LootDrop> commonDrops = CustomRecipeManager.getInstance().getLootDrops(ModLootTables.FISHING);
 
         final List<FishingRecipe> recipes = new ArrayList<>();
         for (final Map.Entry<Integer, ResourceLocation> level : ModLootTables.FISHERMAN_BONUS.entrySet())

@@ -1574,6 +1574,7 @@
   "com.minecolonies.coremod.jei.chance.tip": "§e%d%% chance",
   "com.minecolonies.coremod.jei.chanceskill.tip": "§e%d%% base chance §a+ skill modifier",
   "com.minecolonies.coremod.jei.chancenegskill.tip": "§e%d%% base chance §c- skill modifier",
+  "com.minecolonies.coremod.jei.conditions.tip": "§bSpecial conditions apply",
   "com.minecolonies.coremod.jei.baker": "Bakes bread, and other things at higher levels. Can be taught extra recipes starting at level 3.",
   "com.minecolonies.coremod.jei.blacksmith": "Crafts tools, weapons, armour, and many other things made of metal.",
   "com.minecolonies.coremod.jei.composter": "Uses compost barrels to turn various items into compost or dirt (look up usages for the compost barrel to see more). At higher skill levels, they can work faster than you can.",

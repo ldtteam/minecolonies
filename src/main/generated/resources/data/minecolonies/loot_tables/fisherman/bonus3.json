@@ -5,11 +5,6 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "quality": 1,
-          "name": "minecraft:sponge"
-        },
-        {
-          "type": "minecraft:item",
           "weight": 25,
           "quality": 1,
           "name": "minecraft:prismarine_shard"
@@ -22,7 +17,7 @@
         },
         {
           "type": "minecraft:empty",
-          "weight": 949
+          "weight": 950
         }
       ]
     }

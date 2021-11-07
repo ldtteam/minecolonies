@@ -20,7 +20,7 @@ public class GatherDataHandler
         generator.addProvider(new SawmillTimberFrameRecipeProvider(generator));
         generator.addProvider(new DefaultSifterCraftingProvider(generator));
         generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
-        generator.addProvider(new DefaultFishermanBonusProvider(generator));
+        generator.addProvider(new DefaultFishermanLootProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
     }
 }

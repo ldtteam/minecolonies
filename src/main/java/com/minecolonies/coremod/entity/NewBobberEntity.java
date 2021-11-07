@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -10,7 +11,10 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.*;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootParameters;
+import net.minecraft.loot.LootTable;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
@@ -511,7 +515,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
                                                             .withLuck((float)this.luck);
 
                 lootcontext$builder.withParameter(LootParameters.KILLER_ENTITY, this.angler).withParameter(LootParameters.THIS_ENTITY, this);
-                final LootTable loottable = this.level.getServer().getLootTables().get(LootTables.FISHING);
+                final LootTable loottable = this.level.getServer().getLootTables().get(ModLootTables.FISHING);
                 final List<ItemStack> list = loottable.getRandomItems(lootcontext$builder.create(LootParameterSets.FISHING));
 
                 for (final ItemStack itemstack : list)

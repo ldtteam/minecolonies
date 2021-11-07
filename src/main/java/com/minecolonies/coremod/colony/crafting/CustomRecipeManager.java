@@ -9,7 +9,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTableManager;
-import net.minecraft.loot.LootTables;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -243,7 +242,7 @@ public class CustomRecipeManager
             }
         }
 
-        lootIds.add(LootTables.FISHING);
+        lootIds.add(ModLootTables.FISHING);
         lootIds.addAll(ModLootTables.FISHERMAN_BONUS.values());
 
         lootTables.clear();
