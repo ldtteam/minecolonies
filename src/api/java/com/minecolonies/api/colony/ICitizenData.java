@@ -197,13 +197,6 @@ public interface ICitizenData extends ICivilianData
     void setJustAte(boolean justAte);
 
     /**
-     * Get the clean job modifier. Primary skill + secondary divided by 4.
-     *
-     * @return the int modifier.
-     */
-    int getJobModifier();
-
-    /**
      * If is idle at job.
      *
      * @return true if so.

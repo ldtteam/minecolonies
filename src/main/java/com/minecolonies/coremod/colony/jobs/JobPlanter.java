@@ -31,13 +31,6 @@ public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlant
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.planter";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.PLANTER;

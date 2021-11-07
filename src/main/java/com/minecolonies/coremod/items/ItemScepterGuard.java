@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -108,17 +107,9 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             return ActionResultType.FAIL;
         }
 
-        final ICitizenData citizen = tower.getMainCitizen();
-
-        String name = "";
-        if (citizen != null)
+        if (hut.getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.GUARD))
         {
-            name = " " + citizen.getName();
-        }
-
-        if (((AbstractBuildingGuards) hut).getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.GUARD))
-        {
-            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolclickguard", pos);
             tower.setGuardPos(pos);
             playerIn.inventory.removeItemNoUpdate(playerIn.inventory.selected);
         }
@@ -129,7 +120,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                 tower.resetPatrolTargets();
             }
             tower.addPatrolTargets(pos);
-            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickPatrol", pos, name);
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolclickpatrol", pos);
         }
         BlockPosUtil.write(compound, TAG_LAST_POS, pos);
 

@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.minecolonies.api.colony.buildings.IBuildingView;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -11,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -34,9 +36,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
      * @param location the location of the resolver.
      * @param token    its id.
      */
-    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, final JobEntry entry)
     {
-        super(location, token, true);
+        super(location, token, entry, true);
     }
 
     @Nullable
@@ -77,10 +79,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingView)
+        if (requester instanceof IBuildingView && ((IBuildingView) requester).getModuleView(CraftingModuleView.class) != null)
         {
-            final IBuildingView bwv = (IBuildingView) requester;
-            return new TranslationTextComponent(bwv.getJobDisplayName().toLowerCase());
+            return new TranslationTextComponent(((IBuildingView) requester).getModuleView(CraftingModuleView.class).getJobEntry().getTranslationKey());
         }
         return super.getRequesterDisplayName(manager, request);
     }

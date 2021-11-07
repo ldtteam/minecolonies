@@ -7,12 +7,9 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
@@ -21,17 +18,15 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.DynamicTreesSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobLumberjack;
-import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IGrowable;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -43,12 +38,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_ADD;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NETHER_TREE_LIST;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.SAPLINGS_LIST;
@@ -56,7 +49,7 @@ import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWork
 /**
  * The lumberjacks building.
  */
-public class BuildingLumberjack extends AbstractBuilding implements IBuildingPublicCrafter
+public class BuildingLumberjack extends AbstractBuilding
 {
     /**
      * Replant setting.
@@ -164,13 +157,6 @@ public class BuildingLumberjack extends AbstractBuilding implements IBuildingPub
         super.onUpgradeComplete(newLevel);
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobLumberjack(citizen);
-    }
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
@@ -225,27 +211,6 @@ public class BuildingLumberjack extends AbstractBuilding implements IBuildingPub
         return compound;
     }
 
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return LUMBERJACK;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Strength;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Focus;
-    }
-
     /**
      * Whether or not the LJ should replant saplings.
      *
@@ -290,24 +255,15 @@ public class BuildingLumberjack extends AbstractBuilding implements IBuildingPub
         return this.endRestriction;
     }
 
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, Attributes.MOVEMENT_SPEED));
-        }
-        super.removeCitizen(citizen);
-    }
-
     /**
      * Returns early if no worker is assigned Iterates over the nether tree position list If position is a fungus, grows it depending on worker's level If the block has changed,
      * removes the position from the list and returns early If the position is not a fungus, removes the position from the list
      */
     private void bonemealFungi()
     {
-        if (getMainCitizen() == null)
+        final WorkerBuildingModule module = getFirstModuleOccurance(WorkerBuildingModule.class);
+        final ICitizenData data = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
+        if (data == null)
         {
             return;
         }
@@ -322,7 +278,7 @@ public class BuildingLumberjack extends AbstractBuilding implements IBuildingPub
                 final Block block = blockState.getBlock();
                 if (block == Blocks.CRIMSON_FUNGUS || block == Blocks.WARPED_FUNGUS)
                 {
-                    int threshold = modifier + (int) Math.ceil(getMainCitizen().getCitizenSkillHandler().getLevel(getPrimarySkill()) * (1 - ((float) modifier / 100)));
+                    int threshold = modifier + (int) Math.ceil(data.getCitizenSkillHandler().getLevel(module.getPrimarySkill()) * (1 - ((float) modifier / 100)));
                     final int rand = world.getRandom().nextInt(100);
                     if (rand < threshold)
                     {
@@ -385,12 +341,6 @@ public class BuildingLumberjack extends AbstractBuilding implements IBuildingPub
         bonemealFungi();
     }
 
-    @Override
-    public Skill getCraftSpeedSkill()
-    {
-        return getPrimarySkill();
-    }
-
     /**
      * Provides a view of the lumberjack building class.
      */
@@ -417,11 +367,14 @@ public class BuildingLumberjack extends AbstractBuilding implements IBuildingPub
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobLumberjack(null));
+            super(jobEntry);
         }
 
         @Override

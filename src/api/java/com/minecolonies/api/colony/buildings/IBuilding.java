@@ -6,6 +6,8 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -487,6 +489,14 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return the handlers of the building + citizen.
      */
     List<IItemHandler> getHandlers();
+
+    /**
+     * Get setting for key. Utility function.
+     * @param key the key.
+     * @param <T> the key type.
+     * @return the optional wrapping the value.
+     */
+    <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key);
 
     /**
      * Check if the assigned citizens are allowed to eat the following stack.

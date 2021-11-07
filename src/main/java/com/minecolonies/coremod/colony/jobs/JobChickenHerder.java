@@ -4,6 +4,7 @@ import com.minecolonies.api.client.render.modeltype.BipedModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkChickenHerder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,13 +32,6 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
         return ModJobs.chickenHerder;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.ChickenHerder";
-    }
-
     /**
      * Generate your AI class to register.
      *
@@ -55,7 +49,7 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
     {
         if (pickedUpStack.getItem() == Items.FEATHER || pickedUpStack.getItem() == Items.EGG)
         {
-            return getCitizen().getRandom().nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill()))) > 1;
+            return getCitizen().getRandom().nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(getJobRegistryEntry())).getPrimarySkill()))) > 1;
         }
         return true;
     }

@@ -5,14 +5,13 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobResearch;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,11 +44,6 @@ public class BuildingUniversity extends AbstractBuilding
     private static final String UNIVERSITY = "university";
 
     /**
-     * Max building level of the hut.
-     */
-    private static final int MAX_BUILDING_LEVEL           = 5;
-
-    /**
      * Offline processing level cap.
      */
     private static final int OFFLINE_PROCESSING_LEVEL_CAP = 3;
@@ -80,39 +74,6 @@ public class BuildingUniversity extends AbstractBuilding
     public String getSchematicName()
     {
         return UNIVERSITY;
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "com.minecolonies.coremod.job.researcher";
-    }
-
-    @Override
-    public boolean canWorkDuringTheRain()
-    {
-        return true;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Mana;
     }
 
     @Override
@@ -153,12 +114,6 @@ public class BuildingUniversity extends AbstractBuilding
         }
     }
 
-    @Override
-    public int getMaxInhabitants()
-    {
-        return getBuildingLevel();
-    }
-
     /**
      * Returns a random bookshelf from the list.
      *
@@ -179,37 +134,25 @@ public class BuildingUniversity extends AbstractBuilding
         return getPosition();
     }
 
-    /**
-     * The abstract method which creates a job for the building.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the Job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobResearch(citizen);
-    }
-
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
         super.onColonyTick(colony);
 
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
+        final WorkerBuildingModule module = getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(ModJobs.researcher));
 
         int i = 1;
         for (final ILocalResearch research : inProgress)
         {
-            if (i > getAssignedCitizen().size())
+            if (i > module.getAssignedCitizen().size())
             {
                 return;
             }
 
-            for (final ICitizenData data : getAssignedCitizen())
+            for (final ICitizenData data : getAllAssignedCitizen())
             {
-                data.getCitizenSkillHandler().addXpToSkill(getSecondarySkill(), 25.0, data);
+                data.getCitizenSkillHandler().addXpToSkill(module.getSecondarySkill(), 25.0, data);
             }
 
             if (colony.getResearchManager()
@@ -252,7 +195,7 @@ public class BuildingUniversity extends AbstractBuilding
         {
             LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
               "entity.researcher.moreknowledge");
-            for (final ICitizenData citizenData : getAssignedCitizen())
+            for (final ICitizenData citizenData : getAllAssignedCitizen())
             {
                 if (citizenData.getJob() != null)
                 {
@@ -283,17 +226,6 @@ public class BuildingUniversity extends AbstractBuilding
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, UNIVERSITY);
-        }
-
-        /**
-         * Check if it has enough workers.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean hasEnoughWorkers()
-        {
-            return getWorkerId().size() >= getBuildingLevel();
         }
     }
 }

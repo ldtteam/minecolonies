@@ -3,8 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -15,7 +14,6 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.jobs.JobBaker;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -23,7 +21,6 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +29,7 @@ import java.util.function.Predicate;
 /**
  * Building for the bakery.
  */
-public class BuildingBaker extends AbstractBuilding implements IBuildingPublicCrafter
+public class BuildingBaker extends AbstractBuilding
 {
     /**
      * General bakery description key.
@@ -101,11 +98,14 @@ public class BuildingBaker extends AbstractBuilding implements IBuildingPublicCr
          */
         private static final int RECIPE_INPUT_HOLD = 128;
 
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobBaker(null));
+            super(jobEntry);
         }
 
         @Override
@@ -166,11 +166,5 @@ public class BuildingBaker extends AbstractBuilding implements IBuildingPublicCr
 
             return map;
         }
-    }
-
-    @Override
-    public Skill getCraftSpeedSkill()
-    {
-        return getSecondarySkill();
     }
 }

@@ -99,7 +99,8 @@ public class ReproductionManager implements IReproductionManager
                 return;
             }
 
-            final List<ICitizenData> assignedCitizens = newHome.getAssignedCitizen();
+            final LivingBuildingModule module = newHome.getFirstModuleOccurance(LivingBuildingModule.class);
+            final List<ICitizenData> assignedCitizens = module.getAssignedCitizen();
             assignedCitizens.removeIf(ICitizen::isChild);
 
             final ICitizenData newCitizen = colony.getCitizenManager().createAndRegisterCivilianData();
@@ -122,7 +123,7 @@ public class ReproductionManager implements IReproductionManager
                         if (altPos != null)
                         {
                             final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
-                            final List<ICitizenData> newAssignedCitizens = building.getAssignedCitizen();
+                            final List<ICitizenData> newAssignedCitizens = module.getAssignedCitizen();
                             newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null || cit.isRelatedTo(firstParent));
                             if (newAssignedCitizens.size() > 0)
                             {
@@ -165,7 +166,7 @@ public class ReproductionManager implements IReproductionManager
             newCitizen.setParents(firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
             newCitizen.generateName(random, firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
 
-            newHome.assignCitizen(newCitizen);
+            module.assignCitizen(newCitizen);
 
             for (final int sibling : newCitizen.getSiblings())
             {

@@ -4,13 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -259,31 +256,6 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         {
             data.getJob().onLevelUp();
         }
-    }
-
-    @Override
-    public int getJobModifier(@NotNull final ICitizenData data)
-    {
-        final IBuilding workBuilding = data.getWorkBuilding();
-        if (workBuilding instanceof AbstractBuilding)
-        {
-            final Skill primary = ((AbstractBuilding) workBuilding).getPrimarySkill();
-            final Skill secondary = ((AbstractBuilding) workBuilding).getSecondarySkill();
-            return (getLevel(primary) + getLevel(secondary)) / 4;
-        }
-        return 0;
-    }
-
-    @Override
-    public int getJobModifier(@NotNull final IBuildingView workBuilding)
-    {
-        if (workBuilding instanceof AbstractBuildingView)
-        {
-            final Skill primary = ((AbstractBuildingView) workBuilding).getPrimarySkill();
-            final Skill secondary = ((AbstractBuildingView) workBuilding).getSecondarySkill();
-            return (getLevel(primary) + getLevel(secondary)) / 4;
-        }
-        return 0;
     }
 
     @Override

@@ -317,7 +317,7 @@ public class EntityAISleep extends Goal
      */
     private boolean isBedOccupied(IBuilding hut, BlockPos bed)
     {
-        for (ICitizenData citizen : hut.getAssignedCitizen())
+        for (ICitizenData citizen : hut.getAllAssignedCitizen())
         {
             if (this.citizen.getCivilianID() != citizen.getId())
             {

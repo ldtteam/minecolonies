@@ -8,12 +8,12 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
@@ -43,14 +43,9 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     private final Skill secondary;
 
     /**
-     * Job identifier.
-     */
-    private final String                      jobID;
-
-    /**
      * Job creator function.
      */
-    private final Function<ICitizenData, IJob<?>> jobCreator;
+    private final JobEntry jobEntry;
 
     /**
      * Check if this worker by default can work in the rain.
@@ -72,30 +67,19 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
      */
     private String jobDisplayName = "";
 
-    public WorkerBuildingModule(final Function<ICitizenData, IJob<?>> jobCreator,
-      final String jobName,
+    public WorkerBuildingModule(final JobEntry entry,
       final Skill primary,
       final Skill secondary,
       final boolean canWorkingDuringRain,
       final Function<IBuilding, Integer> sizeLimit)
     {
-        this.jobCreator = jobCreator;
-        this.jobID = jobName;
+        this.jobEntry = entry;
         this.primary = primary;
         this.secondary = secondary;
         this.canWorkingDuringRain = canWorkingDuringRain;
         this.sizeLimit = sizeLimit;
     }
 
-    //todo, where we call this, we want to make two things sure:
-    // a) Always call a specific one
-    // b) If there is a living module, call this together for assign and remove.
-    //todo, Always when a citizen moves out of a housing building into a working building, notify player.
-    /*LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                      "com.minecolonies.coremod.gui.workerhuts.archertraineeassignbed",
-                      citizen.getName(),
-                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
-                                                                                                                                  BlockPosUtil.getString(building.getID()));*/
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
@@ -121,15 +105,17 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
             for (int i = 0; i < workersTagList.size(); ++i)
             {
                 final ICitizenData data = building.getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
-                if (data != null)
+                if (data != null && data.getJob() != null && data.getJob().getJobRegistryEntry().equals(jobEntry))
                 {
                     assignCitizen(data);
                 }
             }
+            this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
         }
-        else if (compound.contains(TAG_WORKING_RESIDENTS))
+        else if (compound.contains(jobEntry.getKey().toString()))
         {
-            final int[] residentIds = compound.getIntArray(TAG_WORKING_RESIDENTS);
+            final CompoundNBT jobCompound = compound.getCompound(jobEntry.getKey().toString());
+            final int[] residentIds = jobCompound.getIntArray(TAG_WORKING_RESIDENTS);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -138,8 +124,8 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
                     assignCitizen(citizen);
                 }
             }
+            this.hiringMode = HiringMode.values()[jobCompound.getInt(TAG_HIRING_MODE)];
         }
-        this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
     }
 
     @Override
@@ -160,6 +146,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void serializeNBT(final CompoundNBT compound)
     {
+        final CompoundNBT jobCompound = new CompoundNBT();
         if (!assignedCitizen.isEmpty())
         {
             @NotNull final int[] residentIds = new int[assignedCitizen.size()];
@@ -167,17 +154,18 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
             {
                 residentIds[i] = assignedCitizen.get(i).getId();
             }
-            compound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
+            jobCompound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
         }
-        compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
+        jobCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
+        compound.put(jobEntry.getKey().toString(), jobCompound);
     }
 
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
+        buf.writeRegistryId(jobEntry);
         buf.writeInt(hiringMode.ordinal());
-        buf.writeUtf(this.getJobID());
         buf.writeInt(getModuleMax());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
@@ -230,7 +218,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         if (jobDisplayName.isEmpty())
         {
-            jobDisplayName = createJob(null).getName();
+            jobDisplayName = createJob(null).getJobRegistryEntry().getTranslationKey();
         }
         return jobDisplayName;
     }
@@ -239,7 +227,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        return jobCreator.apply(citizen);
+        return jobEntry.getHandlerProducer().apply(citizen);
     }
 
     @Override
@@ -253,13 +241,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     public HiringMode getHiringMode()
     {
         return hiringMode;
-    }
-
-    @NotNull
-    @Override
-    public String getJobID()
-    {
-        return jobID;
     }
 
     @Override
@@ -289,9 +270,15 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
         builder.add(new BuildingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
                                                                                 .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
           new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                   .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+                                                                                   .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
           new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+                                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
         return builder.build();
+    }
+
+    @Override
+    public JobEntry getJobEntry()
+    {
+        return jobEntry;
     }
 }

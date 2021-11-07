@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingWorkerModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
@@ -164,11 +164,11 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         super.onOpened();
         final List<Tuple<String, Integer>> workers = new ArrayList<>();
 
-        for (final BuildingWorkerModuleView module : buildingView.getModuleViews(BuildingWorkerModuleView.class))
+        for (final WorkerBuildingModuleView module : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
             for (final int worker : module.getWorkerId())
             {
-                workers.add(new Tuple<>(module.getJobName(), worker));
+                workers.add(new Tuple<>(new TranslationTextComponent(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
@@ -191,7 +191,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(new TranslationTextComponent("com.minecolonies.coremod.job." + workers.get(index).getA()).getString() + ": " + worker.getName());
+                          .setText(new TranslationTextComponent(workers.get(index).getA()).getString() + ": " + worker.getName());
                     }
                 }
             });

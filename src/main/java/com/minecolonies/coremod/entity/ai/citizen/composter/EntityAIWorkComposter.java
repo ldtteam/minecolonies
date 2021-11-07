@@ -105,7 +105,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      */
     private IAIState accelerateBarrels()
     {
-        final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill()) / 10) * 2;
+        final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getModuleForJob().getPrimarySkill()) / 10) * 2;
         final World world = getOwnBuilding().getColony().getWorld();
         for (final BlockPos pos : getOwnBuilding().getBarrels())
         {

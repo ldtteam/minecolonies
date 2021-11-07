@@ -29,20 +29,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     JobEntry getJobRegistryEntry();
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    String getName();
-
-    /**
-     * Getter for the job which will be associated with the experience.
-     *
-     * @return the getName() or the specialized class name.
-     */
-    String getExperienceTag();
-
-    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.
@@ -258,10 +244,4 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     {
         //noop.
     }
-
-    /**
-     * Skill responsible for recipe improvement.
-     * @return the skill.
-     */
-    Skill getRecipeImprovementSkill();
 }

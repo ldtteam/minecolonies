@@ -154,7 +154,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
-            if (!(building instanceof BuildingDeliveryman) || !building.hasAssignedCitizen())
+            if (!(building instanceof BuildingDeliveryman) || building.getAllAssignedCitizen().isEmpty())
             {
                 registeredDeliverymen.remove(pos);
             }
@@ -195,7 +195,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NBTUtil.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuilding)
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof BuildingDeliveryman)
             {
                 registeredDeliverymen.add(new Vector3d(pos.getX(), pos.getY(), pos.getZ()));
             }

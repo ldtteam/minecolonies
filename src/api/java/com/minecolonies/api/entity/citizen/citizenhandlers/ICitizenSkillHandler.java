@@ -99,22 +99,6 @@ public interface ICitizenSkillHandler
     void levelUp(ICitizenData data);
 
     /**
-     * Get the job modifier.
-     *
-     * @param data the citizen data.
-     * @return the job modifier.
-     */
-    int getJobModifier(@NotNull final ICitizenData data);
-
-    /**
-     * Get the job modifier from the building on the client side.
-     *
-     * @param workBuilding the building instance.
-     * @return the modifier.
-     */
-    int getJobModifier(@NotNull IBuildingView workBuilding);
-
-    /**
      * Get the total xp that the citizen has.
      *
      * @return the total xp.

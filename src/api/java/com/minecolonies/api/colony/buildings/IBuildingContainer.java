@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface IBuildingContainer extends ICitizenAssignable, ICapabilityProvider
+public interface IBuildingContainer extends ISchematicProvider, ICapabilityProvider
 {
     @Override
     void deserializeNBT(CompoundNBT compound);

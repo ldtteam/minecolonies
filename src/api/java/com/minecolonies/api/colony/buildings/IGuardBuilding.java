@@ -66,13 +66,6 @@ public interface IGuardBuilding extends IBuilding
     int getPatrolDistance();
 
     /**
-     * Get the guard's {@link GuardType}.
-     *
-     * @return The job of the guard.
-     */
-    GuardType getGuardType();
-
-    /**
      * Get the guard's RetrieveOnLowHeath.
      *
      * @return if so.

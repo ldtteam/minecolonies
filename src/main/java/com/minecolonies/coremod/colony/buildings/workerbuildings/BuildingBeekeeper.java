@@ -1,12 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
@@ -14,7 +11,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -73,55 +69,6 @@ public class BuildingBeekeeper extends AbstractBuilding
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
         keepX.put(stack -> ItemTags.FLOWERS.contains(stack.getItem()), new Tuple<>(STACKSIZE,true));
-    }
-
-    /**
-     * The abstract method which creates a job for the building.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the Job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobBeekeeper(citizen);
-    }
-
-    /**
-     * The abstract method which returns the name of the job.
-     *
-     * @return the job name.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BEEKEEPER;
-    }
-
-    /**
-     * Primary skill getter.
-     *
-     * @return the primary skill.
-     */
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
-    /**
-     * Secondary skill getter.
-     *
-     * @return the secondary skill.
-     */
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Adaptability;
     }
 
     /**

@@ -30,13 +30,6 @@ public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
         return ModJobs.shepherd;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Shepherd";
-    }
-
     /**
      * Generate your AI class to register.
      *

@@ -68,6 +68,16 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
         return assignedCitizen;
     }
 
+    /**
+     * Get the first citizen assigned to this module.
+     * @return this citizen or null.
+     */
+    @Nullable
+    public ICitizenData getFirstCitizen()
+    {
+        return assignedCitizen.isEmpty() ? null : assignedCitizen.get(0);
+    }
+
     @Override
     public boolean isFull()
     {

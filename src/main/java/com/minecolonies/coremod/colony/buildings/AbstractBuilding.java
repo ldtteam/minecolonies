@@ -39,6 +39,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteraction;
@@ -915,7 +916,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
         colony.getProgressManager().progressBuildBuilding(this,
           colony.getBuildingManager().getBuildings().values().stream()
-            .filter(building -> building instanceof AbstractBuilding).mapToInt(ISchematicProvider::getBuildingLevel).sum(),
+            .filter(building -> building.hasModule(WorkerBuildingModule.class)).mapToInt(ISchematicProvider::getBuildingLevel).sum(),
           colony.getBuildingManager().getBuildings().values().stream()
             .filter(building -> building.hasModule(LivingBuildingModule.class)).mapToInt(ISchematicProvider::getBuildingLevel).sum()
         );
@@ -1120,12 +1121,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return ImmutableList.copyOf(handlers);
     }
 
-    /**
-     * Get setting for key. Utility function.
-     * @param key the key.
-     * @param <T> the key type.
-     * @return the optional wrapping the value.
-     */
+    @Override
     public <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key)
     {
         return getFirstModuleOccurance(ISettingsModule.class).getSetting(key);
@@ -1930,7 +1926,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-        final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
+        final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         return jobName.append(new StringTextComponent(" " + citizenData.getName()));
     }
 

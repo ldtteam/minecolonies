@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
@@ -18,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
@@ -260,7 +260,7 @@ public final class StandardRequests
             for (IBuildingView view : colony.getBuildings())
             if (view instanceof BuildingDeliveryman.View)
             {
-                for (int worker : ((BuildingDeliveryman.View) view).getWorkerId())
+                for (int worker : view.getModuleView(WorkerBuildingModuleView.class).getWorkerId())
                 {
                     final ICitizenDataView citizen = colony.getCitizen(worker);
                     if (citizen != null)
@@ -382,9 +382,9 @@ public final class StandardRequests
                 final IBuildingView view = colony.getBuilding(resolver);
 
                 int posInList = -1;
-                if (view instanceof IBuildingView)
+                if (view.getModuleView(WorkerBuildingModuleView.class) != null)
                 {
-                    for (int worker : ((IBuildingView) view).getWorkerId())
+                    for (int worker : view.getModuleView(WorkerBuildingModuleView.class).getWorkerId())
                     {
                         final ICitizenDataView citizen = colony.getCitizen(worker);
                         if (citizen != null)

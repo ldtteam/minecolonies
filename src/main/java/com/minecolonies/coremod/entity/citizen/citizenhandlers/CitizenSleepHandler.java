@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSleepHandler;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -11,13 +10,9 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.colony.interactionhandling.SimpleNotificationInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.Pose;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -87,34 +82,6 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
             citizen.getCitizenData().setAsleep(isAsleep);
         }
         citizen.getEntityData().set(DATA_IS_ASLEEP, isAsleep);
-    }
-
-    /**
-     * Returns the orientation of the bed in degrees.
-     */
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public float getBedOrientationInDegrees()
-    {
-        final BlockState state = getBedLocation() == null ? null : citizen.level.getBlockState(getBedLocation());
-        if (state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen))
-        {
-            switch (state.getBlock().getBedDirection(state, citizen.level, getBedLocation()))
-            {
-                case SOUTH:
-                    return NINETY_DEGREE;
-                case WEST:
-                    return 0.0F;
-                case NORTH:
-                    return THREE_QUARTERS;
-                case EAST:
-                    return HALF_ROTATION;
-                default:
-                    return 0F;
-            }
-        }
-
-        return 0.0F;
     }
 
     /**
@@ -249,56 +216,6 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
     public BlockPos getBedLocation()
     {
         return citizen.getEntityData().get(DATA_BED_POS);
-    }
-
-    /**
-     * Get the X render offset.
-     *
-     * @return the offset.
-     */
-    @Override
-    public float getRenderOffsetX()
-    {
-        if (!isAsleep())
-        {
-            return 0;
-        }
-
-        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, getBedLocation()) ? citizen.level.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.getValue(HorizontalBlock.FACING) : null;
-
-        if (Direction == null)
-        {
-            return 0;
-        }
-
-        return SLEEPING_RENDER_OFFSET * (float) Direction.getStepX();
-    }
-
-    /**
-     * Get the z render offset.
-     *
-     * @return the offset.
-     */
-    @Override
-    public float getRenderOffsetZ()
-    {
-        if (!isAsleep())
-        {
-            return 0;
-        }
-
-        final BlockState state = WorldUtil.isEntityBlockLoaded(citizen.level, getBedLocation()) ? citizen.level.getBlockState(getBedLocation()) : null;
-        final boolean isBed = state != null && state.getBlock().isBed(state, citizen.level, getBedLocation(), citizen);
-        final Direction Direction = isBed && state.getBlock() instanceof HorizontalBlock ? state.getValue(HorizontalBlock.FACING) : null;
-
-        if (Direction == null)
-        {
-            return 0;
-        }
-
-        return SLEEPING_RENDER_OFFSET * (float) Direction.getStepZ();
     }
 
     @Override

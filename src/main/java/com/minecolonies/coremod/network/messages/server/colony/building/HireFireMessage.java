@@ -3,6 +3,8 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -25,6 +27,11 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     private int citizenID;
 
     /**
+     * The job entry,
+     */
+    private JobEntry entry;
+
+    /**
      * Empty public constructor.
      */
     public HireFireMessage()
@@ -39,11 +46,12 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID)
+    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID, final JobEntry entry)
     {
         super(building);
         this.hire = hire;
         this.citizenID = citizenID;
+        this.entry = entry;
     }
 
     /**
@@ -54,9 +62,9 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         hire = buf.readBoolean();
         citizenID = buf.readInt();
+        entry = buf.readRegistryId();
     }
 
     /**
@@ -67,9 +75,9 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
+        buf.writeRegistryId(entry);
     }
 
     @Override
@@ -80,12 +88,11 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
         citizen.setPaused(false);
         if (hire)
         {
-
-            building.assignCitizen(citizen);
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(entry)).assignCitizen(citizen);
         }
         else
         {
-            building.removeCitizen(citizen);
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(entry)).removeCitizen(citizen);
         }
     }
 }

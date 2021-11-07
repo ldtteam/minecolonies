@@ -5,8 +5,8 @@
            label="$(com.minecolonies.coremod.gui.workerhuts.workerAssigned)"/>
 
     <list id="workers" size="164 30" pos="13 43">
-        <view size="100% 22">
-            <box size="100% 22" linewidth="0">
+        <view size="100% 11">
+            <box size="100% 11" linewidth="0">
                 <label id="workerName" size="100% 11" pos="0 0" textalign="MIDDLE" color="black"/>
             </box>
         </view>

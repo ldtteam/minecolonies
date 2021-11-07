@@ -59,34 +59,6 @@ public class BuildingSwineHerder extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return JOB;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Strength;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Athletics;
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobSwineHerder(citizen);
-    }
-
     @Override
     public boolean canEat(final ItemStack stack)
     {

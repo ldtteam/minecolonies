@@ -44,17 +44,6 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Beekeeper";
-    }
-
-    /**
      * Generate your AI class to register.
      * <p>
      * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters" But in this case the rule does not apply because We are

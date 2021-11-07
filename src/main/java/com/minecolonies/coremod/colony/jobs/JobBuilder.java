@@ -30,13 +30,6 @@ public class JobBuilder extends AbstractJobStructure<EntityAIStructureBuilder, J
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Builder";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.BUILDER;

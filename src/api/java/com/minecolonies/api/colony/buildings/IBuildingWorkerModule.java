@@ -2,13 +2,9 @@ package com.minecolonies.api.colony.buildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public interface IBuildingWorkerModule
 {
@@ -36,14 +32,6 @@ public interface IBuildingWorkerModule
     HiringMode getHiringMode();
 
     /**
-     * The abstract method which returns the name of the job.
-     *
-     * @return the job name.
-     */
-    @NotNull
-    String getJobID();
-
-    /**
      * Method which defines if a worker should be allowed to work during the rain.
      *
      * @return true if so.
@@ -65,4 +53,10 @@ public interface IBuildingWorkerModule
      */
     @NotNull
     Skill getSecondarySkill();
+
+    /**
+     * Getter for the job entry.
+     * @return the entry.
+     */
+    JobEntry getJobEntry();
 }

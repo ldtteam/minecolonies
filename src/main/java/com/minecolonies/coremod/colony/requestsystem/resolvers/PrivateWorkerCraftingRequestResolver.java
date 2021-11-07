@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -30,9 +31,9 @@ import static com.minecolonies.api.util.constant.RSConstants.CONST_CRAFTING_RESO
  */
 public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver
 {
-    public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, @NotNull final JobEntry entry)
     {
-        super(location, token, false);
+        super(location, token, entry,false);
     }
 
     @Nullable

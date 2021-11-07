@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -113,11 +114,11 @@ public class CommandCitizenInfo implements IMCColonyOfficerCommand
             context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.jobnull"), true);
             context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.noactivity"), true);
         }
-        else if (entityCitizen.getCitizenColonyHandler().getWorkBuilding() != null)
+        else if (entityCitizen.getCitizenColonyHandler().getWorkBuilding() != null && entityCitizen.getCitizenColonyHandler().getWorkBuilding().hasModule(WorkerBuildingModule.class))
         {
             context.getSource().sendSuccess(LanguageHandler.buildChatComponent(
               "com.minecolonies.command.citizeninfo.job",
-              entityCitizen.getCitizenColonyHandler().getWorkBuilding().getJobName()), true);
+              entityCitizen.getCitizenColonyHandler().getWorkBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).getJobEntry().getTranslationKey()), true);
             context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.activity",
               entityCitizen.getDesiredActivity(),
               entityCitizen.getCitizenJobHandler().getColonyJob().getNameTagDescription(),

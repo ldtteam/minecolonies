@@ -30,13 +30,6 @@ public class JobUndertaker extends AbstractJobCrafter<EntityAIWorkUndertaker, Jo
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.undertaker";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.UNDERTAKER;

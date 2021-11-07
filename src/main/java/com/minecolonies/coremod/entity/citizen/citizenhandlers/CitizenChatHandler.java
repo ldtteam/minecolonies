@@ -51,7 +51,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 final ITextComponent component = new TranslationTextComponent(
                   "block.blockhuttownhall.messageworkerdead",
-                  new TranslationTextComponent(job.getName().toLowerCase()),
+                  new TranslationTextComponent(job.getJobRegistryEntry().getTranslationKey()),
                   citizen.getCitizenData().getName(),
                   (int) citizen.getX(), (int) citizen.getY(),
                   (int) citizen.getZ(), new TranslationTextComponent(damageSource.msgId));
@@ -100,11 +100,11 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 players.remove(owner);
                 LanguageHandler.sendPlayerMessage(owner,
-                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), new StringTextComponent(" "), citizenDescription, requiredItem);
+                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(), new StringTextComponent(" "), citizenDescription, requiredItem);
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getName(), new StringTextComponent(" "),
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(), new StringTextComponent(" "),
               citizenDescription,
               colonyDescription,
               requiredItem);

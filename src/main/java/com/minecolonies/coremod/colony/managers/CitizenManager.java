@@ -18,10 +18,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
@@ -369,7 +366,10 @@ public class CitizenManager implements ICitizenManager
 
         for (@NotNull final IBuilding building : colony.getBuildingManager().getBuildings().values())
         {
-            building.removeCitizen((ICitizenData) citizen);
+            for (final AbstractAssignedCitizenModule assignedCitizenModule : building.getModules(AbstractAssignedCitizenModule.class))
+            {
+                assignedCitizenModule.removeCitizen((ICitizenData) citizen);
+            }
         }
 
         colony.getWorkManager().clearWorkForCitizen((ICitizenData) citizen);
@@ -409,17 +409,15 @@ public class CitizenManager implements ICitizenManager
         {
             if (b.getBuildingLevel() > 0)
             {
-                if (b.hasModule(BedHandlingModule.class) && b instanceof AbstractBuilding)
+                if (b.hasModule(BedHandlingModule.class) && b.hasModule(WorkAtHomeBuildingModule.class))
                 {
-                    newMaxCitizens += b.getAssignedCitizen().size();
-                    if ((b instanceof AbstractBuildingGuards) && b.getAssignedCitizen().size() == 0 && b.getBuildingLevel() > 0)
-                    {
-                        potentialMax += 1;
-                    }
+                    final WorkAtHomeBuildingModule module = b.getFirstModuleOccurance(WorkAtHomeBuildingModule.class);
+                    newMaxCitizens += module.getAssignedCitizen().size();
+                    potentialMax += module.getModuleMax() - module.getAssignedCitizen().size();
                 }
                 else if (b.hasModule(LivingBuildingModule.class))
                 {
-                    newMaxCitizens += b.getMaxInhabitants();
+                    newMaxCitizens += b.getFirstModuleOccurance(LivingBuildingModule.class).getModuleMax();
                 }
             }
         }

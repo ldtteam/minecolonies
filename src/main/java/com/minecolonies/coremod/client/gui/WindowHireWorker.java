@@ -11,11 +11,14 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.jobs.views.DefaultJobView;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
@@ -60,6 +63,21 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     protected final ScrollingList citizenList;
 
     /**
+     * Holder of a list element
+     */
+    protected final ScrollingList jobList;
+
+    /**
+     * The different job module views.
+     */
+    protected final List<WorkerBuildingModuleView> moduleViews = new ArrayList<>();
+
+    /**
+     * The selected module.
+     */
+    protected WorkerBuildingModuleView selectedModule;
+
+    /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
@@ -72,6 +90,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         building = (AbstractBuildingView) colony.getBuilding(buildingId);
 
         citizenList = findPaneOfTypeByID(CITIZEN_LIST_UNEMP, ScrollingList.class);
+        jobList = findPaneOfTypeByID(JOB_LIST, ScrollingList.class);
 
         super.registerButton(BUTTON_CANCEL, this::cancelClicked);
         super.registerButton(BUTTON_DONE, this::doneClicked);
@@ -79,6 +98,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(BUTTON_PAUSE, this::pauseClicked);
         super.registerButton(BUTTON_RESTART, this::restartClicked);
         super.registerButton(BUTTON_MODE, this::modeClicked);
+        super.registerButton(BUTTON_JOB, this::jobClicked);
+        moduleViews.addAll(building.getModuleViews(WorkerBuildingModuleView.class));
+        selectedModule = moduleViews.get(0);
+
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
     }
 
@@ -112,14 +135,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void switchHiringMode(final Button settingsButton)
     {
-        int index = building.getHiringMode().ordinal() + 1;
+        int index = selectedModule.getHiringMode().ordinal() + 1;
 
         if (index >= HiringMode.values().length)
         {
             index = 0;
         }
 
-        building.setHiringMode(HiringMode.values()[index]);
+        selectedModule.setHiringMode(HiringMode.values()[index]);
         setupSettings(settingsButton);
     }
 
@@ -130,7 +153,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setText(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + building.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + selectedModule.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
     }
 
     /**
@@ -173,14 +196,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int id = citizens.toArray(new CitizenDataView[0])[row].getId();
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
-        Network.getNetwork().sendToServer(new HireFireMessage(this.building, false, id));
-        building.removeWorkerId(id);
+        Network.getNetwork().sendToServer(new HireFireMessage(this.building, false, id, selectedModule.getJobEntry()));
+        selectedModule.removeWorkerId(id);
         citizen.setWorkBuilding(null);
         onOpened();
     }
 
     /**
-     * Done clicked to persist the changes.
+     * Hire clicked to persist the changes.
      *
      * @param button the clicked button.
      */
@@ -190,10 +213,27 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int id = citizens.get(row).getId();
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
-        building.addWorkerId(id);
-        Network.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
+        selectedModule.addWorkerId(id);
+        Network.getNetwork().sendToServer(new HireFireMessage(this.building, true, id, selectedModule.getJobEntry()));
         citizen.setWorkBuilding(building.getPosition());
+        citizen.setJobView(selectedModule.getJobEntry().getJobViewProducer().get().apply(colony, citizen));
+        citizen.getJobView().setEntry(selectedModule.getJobEntry());
         onOpened();
+    }
+
+    /**
+     * Fire citizen clicked to fire a citizen.
+     *
+     * @param button the clicked button.
+     */
+    private void jobClicked(@NotNull final Button button)
+    {
+        final int row = jobList.getListElementIndexByPane(button);
+        selectedModule = moduleViews.get(row);
+        setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
+        updateCitizens();
+        citizenList.refreshElementPanes();
+        jobList.refreshElementPanes();
     }
 
     /**
@@ -205,8 +245,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                     .filter(citizen -> !citizen.isChild())
-                     .filter(citizen ->  citizen.getWorkBuilding() == null || building.getPosition().equals(citizen.getWorkBuilding()) || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom).sorted(Comparator.comparing(ICitizenDataView::getName))
+                     .filter(citizen -> selectedModule.canAssign(citizen))
+                     .filter(citizen ->  citizen.getWorkBuilding() == null
+                                           || (citizen.getJobView() != null && citizen.getJobView().getEntry().equals(selectedModule.getJobEntry()))
+                                           || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom)
+                     .sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
 
         citizens.sort(
@@ -229,38 +272,29 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
         citizenList.setDataProvider(new ScrollingList.DataProvider()
         {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
             @Override
             public int getElementCount()
             {
                 return citizens.size();
             }
 
-            /**
-             * Inserts the elements into each row.
-             * @param index the index of the row/list element.
-             * @param rowPane the parent Pane for the row, containing the elements to update.
-             */
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
-                final Skill primary = building.getPrimarySkill();
-                final Skill secondary = building.getSecondarySkill();
+                final Skill primary = selectedModule.getPrimarySkill();
+                final Skill secondary = selectedModule.getSecondarySkill();
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if ((citizen.getWorkBuilding() == null|| colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom) && building.canAssign(citizen) && (building.getWorkerId().size() < building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
+                if ((citizen.getWorkBuilding() == null || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom) && selectedModule.canAssign(citizen) && (selectedModule.getWorkerId().size() < selectedModule.getMaxInhabitants()) && !selectedModule.getWorkerId().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
                     isPaused.off();
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
-                else if ((building.getWorkerId().size() >= building.getMaxInhabitants()) && !building.getWorkerId().contains(citizen.getId()))
+                else if ((selectedModule.getWorkerId().size() >= selectedModule.getMaxInhabitants()) && !selectedModule.getWorkerId().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
@@ -272,7 +306,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).on();
 
-                    if ((!building.getColony().isManualHiring() && building.getHiringMode() == HiringMode.DEFAULT) || (building.getHiringMode() == HiringMode.AUTO))
+                    if ((!selectedModule.getColony().isManualHiring() && selectedModule.getHiringMode() == HiringMode.DEFAULT) || (selectedModule.getHiringMode() == HiringMode.AUTO))
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).disable();
                         findPaneOfTypeByID(AUTO_HIRE_WARN, Text.class).on();
@@ -314,6 +348,31 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
                   .setText((citizen.getJob().isEmpty() ? "" : LanguageHandler.format(citizen.getJob()) + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
+            }
+        });
+
+        jobList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return moduleViews.size();
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final JobEntry entry = moduleViews.get(index).getJobEntry();
+                final Button button = rowPane.findPaneOfTypeByID(BUTTON_JOB, Button.class);
+                button.setText(new TranslationTextComponent(entry.getTranslationKey()));
+                if (entry.equals(selectedModule.getJobEntry()))
+                {
+                    button.disable();
+                }
+                else
+                {
+                    button.enable();
+                }
             }
         });
     }

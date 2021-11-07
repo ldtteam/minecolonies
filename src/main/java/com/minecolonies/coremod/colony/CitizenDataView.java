@@ -496,6 +496,12 @@ public class CitizenDataView implements ICitizenDataView
     }
 
     @Override
+    public void setJobView(final IJobView jobView)
+    {
+        this.jobView = jobView;
+    }
+
+    @Override
     public int hashCode()
     {
         return id;

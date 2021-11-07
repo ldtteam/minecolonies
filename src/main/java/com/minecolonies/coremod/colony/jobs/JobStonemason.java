@@ -27,13 +27,6 @@ public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, Jo
         return ModJobs.stoneMason;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Stonemason";
-    }
-
     /**
      * Generate your AI class to register.
      *

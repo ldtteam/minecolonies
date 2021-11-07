@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -23,7 +24,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     /**
      * The job id.
      */
-    private String jobId;
+    private JobEntry jobId;
 
     /**
      * Empty constructor used when registering the
@@ -39,7 +40,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
      * @param building View of the building to read data from.
      * @param mode     the hiring mode.
      */
-    public BuildingHiringModeMessage(@NotNull final IBuildingView building, final HiringMode mode, final String jobId)
+    public BuildingHiringModeMessage(@NotNull final IBuildingView building, final HiringMode mode, final JobEntry jobId)
     {
         super(building);
         this.mode = mode;
@@ -50,19 +51,19 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
         mode = HiringMode.values()[buf.readInt()];
-        jobId = buf.readUtf(32767);
+        this.jobId = buf.readRegistryIdSafe(JobEntry.class);;
     }
 
     @Override
     public void toBytesOverride(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(mode.ordinal());
-        buf.writeUtf(jobId);
+        buf.writeRegistryId(jobId);
     }
 
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobID().equals(jobId)).setHiringMode(mode);
+        building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobId)).setHiringMode(mode);
     }
 }

@@ -5,8 +5,9 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
+
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
@@ -45,7 +46,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
-public class BuildingPlantation extends AbstractBuilding implements IBuildingPublicCrafter
+public class BuildingPlantation extends AbstractBuilding
 {
     /**
      * Settings key for the building mode.
@@ -164,34 +165,6 @@ public class BuildingPlantation extends AbstractBuilding implements IBuildingPub
         return filtered;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobPlanter(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return PLANTATION;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Agility;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
     /**
      * Iterates over available plants
      * @return the item of the new or unchanged plant phase
@@ -259,11 +232,14 @@ public class BuildingPlantation extends AbstractBuilding implements IBuildingPub
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobPlanter(null));
+            super(jobEntry);
         }
 
         @Override

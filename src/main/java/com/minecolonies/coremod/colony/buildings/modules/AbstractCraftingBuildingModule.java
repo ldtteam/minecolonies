@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -90,9 +91,23 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     protected final List<IToken<?>> recipes = new ArrayList<>();
 
     /**
+     * The job entry that works at this module.
+     */
+    protected final JobEntry jobEntry;
+
+    /**
      * Specific crafting building.
      */
     protected AbstractBuilding building;
+
+    /**
+     * Create a new module.
+     * @param jobEntry the entry of the job.
+     */
+    public AbstractCraftingBuildingModule(final JobEntry jobEntry)
+    {
+        this.jobEntry = jobEntry;
+    }
 
     @Override
     public List<IToken<?>> getRecipes()
@@ -212,11 +227,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
-        final IJob<?> job = getMainBuildingJob().orElse(null);
-        if (job != null)
+        if (jobEntry != null)
         {
             buf.writeBoolean(true);
-            buf.writeRegistryId(job.getJobRegistryEntry());
+            buf.writeRegistryId(jobEntry);
         }
         else
         {
@@ -251,8 +265,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeUtf(getId());
         buf.writeBoolean(isVisible());
     }
-
-    //todo we need a connection between worker module and "modules it belongs to"
 
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
@@ -480,7 +492,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
 
-        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(citizen.getJob().getRecipeImprovementSkill())));
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         ItemStorage reducedItem = null;
@@ -519,7 +531,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
                 final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                  new TranslationTextComponent(citizen.getJob().getName().toLowerCase()),
+                  new TranslationTextComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase()),
                   recipe.getPrimaryOutput().getHoverName(),
                   reducedItem.getItemStack().getHoverName(),
                   citizen.getName());
@@ -650,16 +662,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = building.getHandlers();
+        final ICitizenData data = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getFirstCitizen();
 
-        final AbstractEntityCitizen worker = building.getMainCitizen().getEntity().orElse(null);
-
-        if(worker == null)
+        if (data == null || !data.getEntity().isPresent())
         {
             // we shouldn't hit this case, but just in case...
             return storage.fullfillRecipe(building.getColony().getWorld(), handlers);
         }
-
-        final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(building.getPrimarySkill());
+        final AbstractEntityCitizen worker = data.getEntity().get();
+        final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getPrimarySkill());
         final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) building.getColony().getWorld())
@@ -670,6 +681,17 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                                           .withLuck((float) luck));
 
         return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);
+    }
+
+    @Nullable
+    @Override
+    public IJob<?> getCraftingJob()
+    {
+        if (jobEntry == null)
+        {
+            return null;
+        }
+        return jobEntry.getHandlerProducer().apply(null);
     }
 
     @Override
@@ -684,15 +706,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             }
         }
     }
-
-    /**
-     * Helper function for derived classes; returns the "real" job for the
-     * building, if it exists.  Don't use if your building has multiple jobs
-     * and the crafter isn't the main one.
-     *
-     * @return The main citizen's job (if there is one)
-     */
-    abstract Optional<IJob<?>> getMainBuildingJob();
 
     @Override
     public void replaceRecipe(final IToken<?> oldRecipe, final IToken<?> newRecipe)
@@ -760,9 +773,9 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         final List<IRequestResolver<?>> resolvers = new ArrayList<>();
         resolvers.add(new PublicWorkerCraftingRequestResolver(building.getRequester().getLocation(),
-          building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
         resolvers.add(new PublicWorkerCraftingProductionResolver(building.getRequester().getLocation(),
-          building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+          building.getColony().getRequestManager().getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
 
         return resolvers;
     }
@@ -785,6 +798,16 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     /** This module is for standard crafters (3x3 by default) */
     public abstract static class Crafting extends AbstractCraftingBuildingModule
     {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Crafting(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
         @Override
         public boolean canLearnCraftingRecipes() { return true; }
 
@@ -815,6 +838,16 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     /** this module is for furnace-only users */
     public abstract static class Smelting extends AbstractCraftingBuildingModule
     {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Smelting(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
         @Override
         public boolean canLearnCraftingRecipes() { return false; }
 
@@ -845,6 +878,16 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     /** this module is for those who can't be taught recipes but can still use custom recipes */
     public abstract static class Custom extends AbstractCraftingBuildingModule
     {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Custom(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
         @Override
         public boolean canLearnCraftingRecipes() { return false; }
 

@@ -1,19 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.util.StudyItem;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobStudent;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
@@ -40,11 +36,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
  */
 public class BuildingLibrary extends AbstractBuilding
 {
-    /**
-     * Description of the job executed in the hut.
-     */
-    private static final String STUDENT = "student";
-
     /**
      * Description of the block used to set this block.
      */
@@ -125,26 +116,6 @@ public class BuildingLibrary extends AbstractBuilding
         return studyItemList;
     }
 
-    @Override
-    public boolean canWorkDuringTheRain()
-    {
-        return true;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Intelligence;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Intelligence;
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
@@ -156,26 +127,6 @@ public class BuildingLibrary extends AbstractBuilding
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return STUDENT;
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobStudent(citizen);
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return getBuildingLevel() * 2;
     }
 
     @Override
@@ -262,17 +213,6 @@ public class BuildingLibrary extends AbstractBuilding
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<AbstractBuildingView>(this, LIBRARY_HUT_NAME);
-        }
-
-        /**
-         * Check if it has enough workers.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean hasEnoughWorkers()
-        {
-            return getWorkerId().size() >= getBuildingLevel() * 2;
         }
     }
 }

@@ -292,7 +292,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (citizenToGatherFrom == null)
         {
             final List<AbstractEntityCitizen> workers = new ArrayList<>();
-            for (final Optional<AbstractEntityCitizen> citizen : buildingWorker.getAssignedEntities())
+            for (final Optional<AbstractEntityCitizen> citizen : getModuleForJob().getAssignedEntities())
             {
                 citizen.ifPresent(workers::add);
             }

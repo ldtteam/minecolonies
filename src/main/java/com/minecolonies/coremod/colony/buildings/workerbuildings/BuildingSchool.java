@@ -1,20 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.client.gui.huts.WindowHutSchoolModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobPupil;
-import com.minecolonies.coremod.colony.jobs.JobTeacher;
 import net.minecraft.block.Block;
 import net.minecraft.block.CarpetBlock;
 import net.minecraft.nbt.CompoundNBT;
@@ -53,11 +42,6 @@ public class BuildingSchool extends AbstractBuilding
     private static final String TAG_CARPET = "carpet";
 
     /**
-     * If the school has a teacher.
-     */
-    private boolean hasTeacher = false;
-
-    /**
      * List of carpets to sit on.
      */
     @NotNull
@@ -90,91 +74,6 @@ public class BuildingSchool extends AbstractBuilding
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "com.minecolonies.coremod.job.pupil";
-    }
-
-    @Override
-    public boolean canWorkDuringTheRain()
-    {
-        return true;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Mana;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return 1 + 2 * getBuildingLevel();
-    }
-
-    @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        if (citizen.isChild() || citizen.getJob() instanceof JobPupil)
-        {
-            if (getAssignedCitizen().size() + 1 >= getMaxInhabitants() && !hasTeacher)
-            {
-                return false;
-            }
-            return super.assignCitizen(citizen);
-        }
-        else if (hasTeacher)
-        {
-            return false;
-        }
-
-        if (super.assignCitizen(citizen))
-        {
-            markDirty();
-            return hasTeacher = true;
-        }
-        return false;
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (citizen.getJob() instanceof JobTeacher)
-        {
-            hasTeacher = false;
-            markDirty();
-        }
-        super.removeCitizen(citizen);
-    }
-
-    /**
-     * The abstract method which creates a job for the building.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the Job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        if (citizen != null && citizen.isChild())
-        {
-            return new JobPupil(citizen);
-        }
-        return new JobTeacher(citizen);
     }
 
     @Override
@@ -226,32 +125,6 @@ public class BuildingSchool extends AbstractBuilding
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeBoolean(hasTeacher);
-    }
-
-    @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-        // School auto hiring
-        if (!isFull() && ((getBuildingLevel() > 0 && isBuilt()))
-              && (getHiringMode() == HiringMode.DEFAULT && !this.getColony().isManualHiring() || getHiringMode() == HiringMode.AUTO))
-        {
-            for (final ICitizenData data : colony.getCitizenManager().getCitizens())
-            {
-                if (data.getWorkBuilding() == null)
-                {
-                    assignCitizen(data);
-                }
-            }
-        }
-
-        for (final ICitizenData citizenData : getAssignedCitizen())
-        {
-            if (citizenData.getJob() instanceof JobPupil && !citizenData.isChild())
-            {
-                removeCitizen(citizenData);
-            }
-        }
     }
 
     /**
@@ -273,22 +146,5 @@ public class BuildingSchool extends AbstractBuilding
         }
         carpet.remove(returnPos);
         return null;
-    }
-
-    /**
-     * ClientSide representation of the building.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiates the view of the building.
-         *
-         * @param c the colonyView.
-         * @param l the location of the block.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
     }
 }

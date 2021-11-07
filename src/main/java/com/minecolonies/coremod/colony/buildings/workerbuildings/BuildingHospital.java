@@ -90,40 +90,6 @@ public class BuildingHospital extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobHealer(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "com.minecolonies.coremod.job.healer";
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Mana;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @Override
-    public boolean canWorkDuringTheRain()
-    {
-        return true;
-    }
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
@@ -201,17 +167,6 @@ public class BuildingHospital extends AbstractBuilding
                 bedMap.put(registrationPosition, 0);
             }
         }
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, Attributes.MOVEMENT_SPEED));
-        }
-        super.removeCitizen(citizen);
     }
 
     /**

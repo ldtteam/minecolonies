@@ -30,13 +30,6 @@ public class JobPupil extends AbstractJob<EntityAIWorkPupil, JobPupil>
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.pupil";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.CHILD;

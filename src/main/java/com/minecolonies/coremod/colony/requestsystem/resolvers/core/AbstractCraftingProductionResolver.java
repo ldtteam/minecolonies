@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public abstract class AbstractCraftingProductionResolver<C extends AbstractCrafting> extends AbstractRequestResolver<C> implements IBuildingBasedRequester
 {
     private final Class<C> cClass;
+    private final JobEntry jobEntry;
 
     /**
      * Constructor to initialize.
@@ -43,16 +45,27 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
      */
     public AbstractCraftingProductionResolver(
       @NotNull final ILocation location,
-      @NotNull final IToken<?> token, final Class<C> cClass)
+      @NotNull final IToken<?> token,
+      @NotNull final JobEntry jobEntry, final Class<C> cClass)
     {
         super(location, token);
         this.cClass = cClass;
+        this.jobEntry = jobEntry;
     }
 
     @Override
     public TypeToken<? extends C> getRequestType()
     {
         return TypeToken.of(cClass);
+    }
+
+    /**
+     * Get the job entry for the production resolver.
+     * @return the entry.
+     */
+    public JobEntry getJobEntry()
+    {
+        return this.jobEntry;
     }
 
     @Override

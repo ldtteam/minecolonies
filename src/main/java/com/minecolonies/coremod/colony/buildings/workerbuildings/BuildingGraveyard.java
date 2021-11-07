@@ -3,12 +3,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -18,7 +14,6 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -38,7 +33,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class which handles the graveyard building.
  */
-public class BuildingGraveyard extends AbstractBuilding implements IBuildingPublicCrafter
+public class BuildingGraveyard extends AbstractBuilding
 {
     /**
      * Descriptive string of the building.
@@ -134,13 +129,6 @@ public class BuildingGraveyard extends AbstractBuilding implements IBuildingPubl
         return currentGrave;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(@Nullable final ICitizenData citizen)
-    {
-        return new JobUndertaker(citizen);
-    }
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
@@ -182,24 +170,6 @@ public class BuildingGraveyard extends AbstractBuilding implements IBuildingPubl
         }
         compound.put(TAG_VISUAL_GRAVES, visualGraveTagList);
         return compound;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return UNDERTAKER;
-}
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill() { return Skill.Strength; }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Mana;
     }
 
     @NotNull

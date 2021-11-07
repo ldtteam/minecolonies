@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
@@ -18,7 +21,7 @@ import java.util.Set;
 /**
  * AbstractBuilding View for clients.
  */
-public class BuildingWorkerModuleView extends AbstractBuildingModuleView
+public class WorkerBuildingModuleView extends AbstractBuildingModuleView
 {
     /**
      * List of the worker ids.
@@ -29,11 +32,6 @@ public class BuildingWorkerModuleView extends AbstractBuildingModuleView
      * The hiring mode of the building.
      */
     private HiringMode hiringMode;
-
-    /**
-     * The name of the job.
-     */
-    private String jobName;
 
     /**
      * The max amount of inhabitants
@@ -55,6 +53,11 @@ public class BuildingWorkerModuleView extends AbstractBuildingModuleView
      */
     private String jobDisplayName;
 
+    /**
+     * Job entry of the module view.
+     */
+    private JobEntry jobEntry;
+
     public List<Integer> getWorkerId()
     {
         return new ArrayList<>(workerIDs);
@@ -75,8 +78,8 @@ public class BuildingWorkerModuleView extends AbstractBuildingModuleView
             workerIDs.add(buf.readInt());
         }
 
+        this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);;
         this.hiringMode = HiringMode.values()[buf.readInt()];
-        this.jobName = buf.readUtf(32767);
         this.maxInhabitants = buf.readInt();
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
@@ -136,12 +139,17 @@ public class BuildingWorkerModuleView extends AbstractBuildingModuleView
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, this.getJobName()));
+        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, jobEntry));
     }
 
-    public String getJobName()
+    /**
+     * Check if citizens can be assigned.
+     * @param data the data to check.
+     * @return true if so.
+     */
+    public boolean canAssign(ICitizenDataView data)
     {
-        return this.jobName;
+        return !data.isChild();
     }
 
     /**
@@ -164,5 +172,14 @@ public class BuildingWorkerModuleView extends AbstractBuildingModuleView
     public Window getWindow()
     {
         return new WindowHutWorkerModulePlaceholder<>(buildingView, "");
+    }
+
+    /**
+     * Getter for the job entry of the module view.
+     * @return the entry.
+     */
+    public JobEntry getJobEntry()
+    {
+        return jobEntry;
     }
 }

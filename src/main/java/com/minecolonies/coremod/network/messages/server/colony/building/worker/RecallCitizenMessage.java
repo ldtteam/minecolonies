@@ -16,6 +16,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,18 +53,13 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
+    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.getAssignedEntities() == null)
+        final List<ICitizenData> citizens = new ArrayList<>(building.getAllAssignedCitizen());
+        for (int i = 0; i < building.getAllAssignedCitizen().size(); i++)
         {
-            return;
-        }
-
-        for (int i = 0; i < building.getAssignedEntities().size(); i++)
-        {
-            Optional<AbstractEntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
-            final ICitizenData citizenData = building.getAssignedCitizen().get(i);
+            Optional<AbstractEntityCitizen> optionalEntityCitizen = citizens.get(i).getEntity();
+            final ICitizenData citizenData = citizens.get(i);
             if (!optionalEntityCitizen.isPresent())
             {
                 if (citizenData != null)

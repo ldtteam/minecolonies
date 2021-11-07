@@ -88,7 +88,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         }
 
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getOwnBuilding().getPrimarySkill(), XP_PER_STUDYPOS, worker.getCitizenData());
+        worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getPrimarySkill(), XP_PER_STUDYPOS, worker.getCitizenData());
 
         studyPos = null;
         return getState();

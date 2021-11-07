@@ -3,7 +3,11 @@ package com.minecolonies.coremod.network.messages.server.colony.building.home;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -25,6 +29,11 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
     private int citizenID;
 
     /**
+     * The job entry.
+     */
+    private JobEntry jobEntry;
+
+    /**
      * Empty public constructor.
      */
     public AssignUnassignMessage()
@@ -38,12 +47,14 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
      * @param building  view of the building to read data from
      * @param assign    assign or unassigning the citizens
      * @param citizenID the id of the citizen to fill the job.
+     * @param entry the job entry.
      */
-    public AssignUnassignMessage(@NotNull final IBuildingView building, final boolean assign, final int citizenID)
+    public AssignUnassignMessage(@NotNull final IBuildingView building, final boolean assign, final int citizenID, final JobEntry entry)
     {
         super(building);
         this.assign = assign;
         this.citizenID = citizenID;
+        this.jobEntry = entry;
     }
 
     /**
@@ -54,9 +65,12 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
     @Override
     public void fromBytesOverride(@NotNull final PacketBuffer buf)
     {
-
         assign = buf.readBoolean();
         citizenID = buf.readInt();
+        if (buf.readBoolean())
+        {
+            jobEntry = buf.readRegistryId();
+        }
     }
 
     /**
@@ -69,6 +83,15 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
     {
         buf.writeBoolean(assign);
         buf.writeInt(citizenID);
+        if (jobEntry == null)
+        {
+            buf.writeBoolean(false);
+        }
+        else
+        {
+            buf.writeBoolean(true);
+            buf.writeRegistryId(jobEntry);
+        }
     }
 
     @Override
@@ -82,17 +105,27 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
       final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final DefaultBuildingInstance building)
     {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
-        if (assign && !building.isFull() && !building.equals(citizen.getHomeBuilding()))
+        final AbstractAssignedCitizenModule module;
+        if (jobEntry == null)
+        {
+            module = building.getFirstModuleOccurance(LivingBuildingModule.class);
+        }
+        else
+        {
+            module = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry));
+        }
+
+        if (assign && !module.isFull() && !building.equals(citizen.getHomeBuilding()))
         {
             if (citizen.getHomeBuilding() != null)
             {
-                citizen.getHomeBuilding().removeCitizen(citizen);
+                citizen.getHomeBuilding().getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
             }
-            building.assignCitizen(citizen);
+            module.assignCitizen(citizen);
         }
-        else if (building.hasAssignedCitizen(citizen))
+        else if (module.hasAssignedCitizen(citizen))
         {
-            building.removeCitizen(citizen);
+            module.removeCitizen(citizen);
         }
     }
 }

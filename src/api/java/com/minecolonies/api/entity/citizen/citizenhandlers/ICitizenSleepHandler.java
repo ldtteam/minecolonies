@@ -14,14 +14,6 @@ public interface ICitizenSleepHandler
     boolean isAsleep();
 
     /**
-     * Returns the orientation of the bed in degrees.
-     *
-     * @return the bed orientation.
-     */
-    @OnlyIn(Dist.CLIENT)
-    float getBedOrientationInDegrees();
-
-    /**
      * Attempts a sleep interaction with the citizen and the given bed.
      *
      * @param bedLocation The possible location to sleep.
@@ -47,20 +39,6 @@ public interface ICitizenSleepHandler
      * @return the bed location.
      */
     BlockPos getBedLocation();
-
-    /**
-     * Get the X render offset.
-     *
-     * @return the offset.
-     */
-    float getRenderOffsetX();
-
-    /**
-     * Get the z render offset.
-     *
-     * @return the offset.
-     */
-    float getRenderOffsetZ();
 
     /**
      * Whether we should start to go sleeping

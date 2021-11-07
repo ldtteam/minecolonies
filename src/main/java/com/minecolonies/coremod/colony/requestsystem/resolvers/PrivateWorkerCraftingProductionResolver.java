@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -24,9 +25,9 @@ public class PrivateWorkerCraftingProductionResolver extends AbstractCraftingPro
      * @param location the location.
      * @param token    the id.
      */
-    public PrivateWorkerCraftingProductionResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public PrivateWorkerCraftingProductionResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, @NotNull final JobEntry entry)
     {
-        super(location, token, PrivateCrafting.class);
+        super(location, token, entry, PrivateCrafting.class);
     }
 
     @Nullable

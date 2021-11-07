@@ -6,12 +6,12 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.buildings.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
         super.onOpened();
         final List<IToken<?>> tasks = new ArrayList<>();
 
-        for (final int citizenId : ((IBuildingView) buildingView).getWorkerId())
+        for (final int citizenId : buildingView.getModuleView(WorkerBuildingModuleView.class).getWorkerId())
         {
             ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
             if (citizen != null)

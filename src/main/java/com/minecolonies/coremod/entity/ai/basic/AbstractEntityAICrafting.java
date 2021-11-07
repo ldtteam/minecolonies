@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
+
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
@@ -17,6 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
@@ -448,7 +449,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
      */
     private int getRequiredProgressForMakingRawMaterial()
     {
-        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((IBuildingPublicCrafter) getOwnBuilding()).getCraftSpeedSkill()) / 2;
+        final int jobModifier = worker.getCitizenData().getCitizenSkillHandler().getLevel(((CraftingWorkerBuildingModule) getModuleForJob()).getCraftSpeedSkill()) / 2;
         return PROGRESS_MULTIPLIER / Math.min(jobModifier + 1, MAX_LEVEL) * HITTING_TIME;
     }
 

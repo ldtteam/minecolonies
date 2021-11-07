@@ -1,30 +1,25 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.coremod.client.gui.huts.WindowHutSifterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobSifter;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURRENT_DAILY;
 
 /**
  * Class of the sifter building.
  */
-public class BuildingSifter extends AbstractBuilding implements IBuildingPublicCrafter
+public class BuildingSifter extends AbstractBuilding
 {
     /**
      * The multiplier to define the max craft per day.
@@ -70,34 +65,6 @@ public class BuildingSifter extends AbstractBuilding implements IBuildingPublicC
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobSifter(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return SIFTER_DESC;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Focus;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Strength;
     }
 
     /**
@@ -230,11 +197,14 @@ public class BuildingSifter extends AbstractBuilding implements IBuildingPublicC
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobSifter(null));
+            super(jobEntry);
         }
     }
 }

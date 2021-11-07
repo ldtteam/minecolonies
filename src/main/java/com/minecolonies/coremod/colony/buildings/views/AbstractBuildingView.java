@@ -18,7 +18,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingWorkerModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HutRenameMessage;
 import net.minecraft.nbt.CompoundNBT;
@@ -371,7 +371,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     @Nullable
     public Window getWindow()
     {
-        if (!getModuleViews(BuildingWorkerModuleView.class).isEmpty())
+        if (!getModuleViews(WorkerBuildingModuleView.class).isEmpty())
         {
             return new WindowHutWorkerModulePlaceholder<>(this, getCustomName().isEmpty() ? new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts." + schematicName).getString(): getCustomName());
         }

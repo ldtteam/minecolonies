@@ -4,8 +4,9 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
+
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
@@ -23,7 +24,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the glassblower building.
  */
-public class BuildingGlassblower extends AbstractBuilding implements IBuildingPublicCrafter
+public class BuildingGlassblower extends AbstractBuilding
 {
     /**
      * Description string of the building.
@@ -55,46 +56,6 @@ public class BuildingGlassblower extends AbstractBuilding implements IBuildingPu
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobGlassblower(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return GLASS_BLOWER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Creativity;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Focus;
-    }
-
-    @Override
-    public void onColonyTick(@NotNull final IColony colony)
-    {
-        super.onColonyTick(colony);
-    }
-
-    @Override
-    public Skill getCraftSpeedSkill()
-    {
-        return getSecondarySkill();
-    }
-
     /**
      * Stone smeltery View.
      */
@@ -121,11 +82,14 @@ public class BuildingGlassblower extends AbstractBuilding implements IBuildingPu
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobGlassblower(null));
+            super(jobEntry);
         }
 
         @Override
@@ -141,11 +105,14 @@ public class BuildingGlassblower extends AbstractBuilding implements IBuildingPu
 
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public SmeltingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobGlassblower(null));
+            super(jobEntry);
         }
 
         @Override
