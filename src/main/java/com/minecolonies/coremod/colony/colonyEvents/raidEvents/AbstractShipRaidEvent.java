@@ -236,7 +236,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PROGRESSING;
         colony.getRaiderManager().setNightsSinceLastRaid(0);
 
-        if (spawners.size() <= 0 && raiders.size() == 0)
+        if (spawners.size() <= 0 && raiders.size() == 0 && respawns.isEmpty())
         {
             status = EventStatus.WAITING;
             return;
@@ -343,6 +343,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         raiders.remove(entity);
         if (raiders.isEmpty() && spawners.isEmpty())
         {
+            status = EventStatus.WAITING;
             LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE, colony.getName());
         }
     }
@@ -350,7 +351,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void registerEntity(final Entity entity)
     {
-        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive())
+        if (!(entity instanceof AbstractEntityMinecoloniesMob) || !entity.isAlive() || status != EventStatus.PROGRESSING)
         {
             entity.remove();
             return;
