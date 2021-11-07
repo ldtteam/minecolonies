@@ -33,6 +33,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
             onRemoval(citizen);
             return true;
         }
+        onRemoval(citizen);
         return false;
     }
 
