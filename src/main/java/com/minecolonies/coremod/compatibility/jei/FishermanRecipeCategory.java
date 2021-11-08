@@ -12,6 +12,7 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -49,6 +50,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     @Override
     public void setIngredients(@NotNull final FishingRecipe recipe, @NotNull final IIngredients ingredients)
     {
+        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(Items.FISHING_ROD));
         ingredients.setOutputLists(VanillaTypes.ITEM, new ArrayList<>(recipe.getDrops().stream()
                 .map(LootTableAnalyzer.LootDrop::getItemStacks)
                 .collect(Collectors.toList())));
@@ -59,6 +61,10 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     {
         final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
 
+        guiItemStacks.init(0, true, WIDTH - 18, CITIZEN_Y - 20);
+        guiItemStacks.setBackground(0, slot);
+        guiItemStacks.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
+
         if (!recipe.getDrops().isEmpty())
         {
             final int initialColumns = LOOT_SLOTS_W / this.slot.getWidth();
@@ -68,7 +74,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
             int x = startX;
             int y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
             int c = 0;
-            int slot = 0;
+            int slot = 1;
 
             guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops()));
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
