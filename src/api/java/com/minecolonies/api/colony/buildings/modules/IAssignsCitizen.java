@@ -27,8 +27,16 @@ public interface IAssignsCitizen extends IBuildingModule
      */
     boolean assignCitizen(ICitizenData citizen);
 
+    /**
+     * Get all assigned citizens to this module.
+     * @return the list.
+     */
     List<ICitizenData> getAssignedCitizen();
 
+    /**
+     * Check if we can fit additional citizens into the module.
+     * @return true if so.
+     */
     boolean isFull();
 
     /**
@@ -37,10 +45,22 @@ public interface IAssignsCitizen extends IBuildingModule
      */
     int getModuleMax();
 
+    /**
+     * Check if a given citizen is assigned to this module.
+     * @param citizen the citizen to check.
+     * @return true if so.
+     */
     boolean hasAssignedCitizen(ICitizenData citizen);
 
-    @Nullable
+    /**
+     * Get a list of entities from the assigned citizens.
+     * @return optional list of entities.
+     */
     List<Optional<AbstractEntityCitizen>> getAssignedEntities();
 
+    /**
+     * Check if there are any assigned citizens in the module.
+     * @return true if so.
+     */
     boolean hasAssignedCitizen();
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
@@ -11,6 +10,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,11 +49,6 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
     private Skill secondary = Skill.Intelligence;
 
     /**
-     * The job display name
-     */
-    private String jobDisplayName;
-
-    /**
      * Job entry of the module view.
      */
     private JobEntry jobEntry;
@@ -83,7 +78,6 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
         this.maxInhabitants = buf.readInt();
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
-        this.jobDisplayName = buf.readUtf();
     }
 
     @Override
@@ -162,9 +156,13 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
         return this.maxInhabitants;
     }
 
+    /**
+     * Get the display name of the job.
+     * @return the display name.
+     */
     public String getJobDisplayName()
     {
-        return jobDisplayName;
+        return new TranslationTextComponent(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull
@@ -181,5 +179,14 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
     public JobEntry getJobEntry()
     {
         return jobEntry;
+    }
+
+    /**
+     * Check if the module is full.
+     * @return true if so.
+     */
+    public boolean isFull()
+    {
+        return getWorkerId().size() >= getMaxInhabitants();
     }
 }

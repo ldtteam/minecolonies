@@ -113,6 +113,7 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
             final Pair<ILocation, AbstractBuildingGuards.View> guardTower = guardTowers.get(index);
 
+            //todo we probably want to display the exact mix.
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
             final AbstractBuildingGuards.View guardTowerView = guardTower.getSecond();
 

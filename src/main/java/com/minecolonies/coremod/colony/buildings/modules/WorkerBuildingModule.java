@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The living module for citizen to call their home.
  */
-public class WorkerBuildingModule extends AbstractAssignedCitizenModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class WorkerBuildingModule extends AbstractAssignedCitizenModule
+  implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
      * Module specific skills.
@@ -50,7 +52,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     /**
      * Check if this worker by default can work in the rain.
      */
-    private final boolean                                 canWorkingDuringRain;
+    private final boolean canWorkingDuringRain;
 
     /**
      * Max size in terms of assignees.
@@ -60,14 +62,10 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     /**
      * The hiring mode of this particular building, by default overriden by colony mode.
      */
-    private HiringMode  hiringMode = HiringMode.DEFAULT;
+    private HiringMode hiringMode = HiringMode.DEFAULT;
 
-    /**
-     * The display name of the job - post localization
-     */
-    private String jobDisplayName = "";
-
-    public WorkerBuildingModule(final JobEntry entry,
+    public WorkerBuildingModule(
+      final JobEntry entry,
       final Skill primary,
       final Skill secondary,
       final boolean canWorkingDuringRain,
@@ -169,7 +167,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
         buf.writeInt(getModuleMax());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
-        buf.writeUtf(getJobDisplayName());
     }
 
     @Override
@@ -181,7 +178,9 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
             module.updateWorkerAvailableForRecipes();
         }
         citizen.getJob().onLevelUp();
-        building.getColony().getProgressManager().progressEmploy((int) building.getColony().getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).count());
+        building.getColony()
+          .getProgressManager()
+          .progressEmploy((int) building.getColony().getCitizenManager().getCitizens().stream().filter(citizenData -> citizenData.getJob() != null).count());
     }
 
     @Override
@@ -216,11 +215,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
      */
     public String getJobDisplayName()
     {
-        if (jobDisplayName.isEmpty())
-        {
-            jobDisplayName = createJob(null).getJobRegistryEntry().getTranslationKey();
-        }
-        return jobDisplayName;
+        return new TranslationTextComponent(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull
@@ -268,11 +263,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
         builder.add(new BuildingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
+                                                                                         .getFactoryController().getNewInstance(TypeConstants.ITOKEN)),
           new PrivateWorkerCraftingRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                   .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
+                                                                                            .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry),
           new PrivateWorkerCraftingProductionResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
-                                                                                      .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
+                                                                                               .getFactoryController().getNewInstance(TypeConstants.ITOKEN), jobEntry));
         return builder.build();
     }
 

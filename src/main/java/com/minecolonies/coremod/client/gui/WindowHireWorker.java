@@ -287,14 +287,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if ((citizen.getWorkBuilding() == null || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom) && selectedModule.canAssign(citizen) && (selectedModule.getWorkerId().size() < selectedModule.getMaxInhabitants()) && !selectedModule.getWorkerId().contains(citizen.getId()))
+                if ((citizen.getWorkBuilding() == null || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom) && selectedModule.canAssign(citizen) && (!selectedModule.isFull()) && !selectedModule.getWorkerId().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
                     isPaused.off();
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
-                else if ((selectedModule.getWorkerId().size() >= selectedModule.getMaxInhabitants()) && !selectedModule.getWorkerId().contains(citizen.getId()))
+                else if ((selectedModule.isFull()) && !selectedModule.getWorkerId().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).off();

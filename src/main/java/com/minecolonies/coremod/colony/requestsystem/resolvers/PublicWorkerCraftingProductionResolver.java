@@ -137,7 +137,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (requester instanceof IBuildingView)
         {
             final IBuildingView bwv = (IBuildingView) requester;
-            return new TranslationTextComponent(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry().equals(getJobEntry())).getJobDisplayName().toLowerCase());
+            return new TranslationTextComponent(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry().equals(getJobEntry())).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
     }
