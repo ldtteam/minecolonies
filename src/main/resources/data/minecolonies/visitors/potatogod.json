@@ -1,0 +1,10 @@
+{
+  "texture": "8b42e881-a4ee-4f7d-9a68-52cf3f3e65ae",
+  "citizensuffix": "_w",
+  "name": "Cactus Jack",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.potatogod",
+  "recruitcost": "minecraft:cactus",
+  "recruitcostcount": 7,
+  "gender": "male"
+}

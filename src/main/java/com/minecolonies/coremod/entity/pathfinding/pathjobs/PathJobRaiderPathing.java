@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
+import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.coremod.colony.managers.RaidManager;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
 import net.minecraft.world.level.block.state.BlockState;
@@ -90,7 +91,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
     @Override
     protected boolean onLadderGoingUp(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
     {
-        if (isWalkableSurface(world.getBlockState(currentNode.pos), currentNode.pos) == SurfaceType.WALKABLE)
+        if (SurfaceType.getSurfaceType(world, world.getBlockState(currentNode.pos), currentNode.pos) == SurfaceType.WALKABLE)
         {
             return true;
         }
@@ -125,7 +126,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
         }
 
         if ((parent.pos.getX() - pos.getX() == 0 && parent.pos.getZ() - pos.getZ() == 0)
-              || (Math.abs(height - pos.getY()) > 1) && isWalkableSurface(world.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE)
+              || (Math.abs(height - pos.getY()) > 1) && SurfaceType.getSurfaceType(world, world.getBlockState(pos.below()), pos.below()) == SurfaceType.WALKABLE)
         {
             addCost = 3.5;
             return pos.getY();
@@ -152,7 +153,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
             modifier *= THROUGH_BLOCK_COST;
         }
 
-        if (!corner && isWalkableSurface(world.getBlockState(blockPos.below()), blockPos.below()) != SurfaceType.WALKABLE)
+        if (!corner && SurfaceType.getSurfaceType(world, world.getBlockState(blockPos.below()), blockPos.below()) != SurfaceType.WALKABLE)
         {
             modifier *= THROUGH_BLOCK_COST;
         }

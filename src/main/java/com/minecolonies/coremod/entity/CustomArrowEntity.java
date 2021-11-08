@@ -20,7 +20,7 @@ public class CustomArrowEntity extends Arrow
     /**
      * Max time the arrow is stuck before removing it
      */
-    private static final int MAX_TIME_IN_GROUND = 100;
+    private static final int MAX_LIVE_TIME = 10 * 20;
 
     /**
      * Whether the arrow entity pierces players
@@ -98,7 +98,7 @@ public class CustomArrowEntity extends Arrow
     {
         super.tick();
 
-        if (this.inGroundTime > MAX_TIME_IN_GROUND)
+        if (this.tickCount > MAX_LIVE_TIME)
         {
             remove(RemovalReason.DISCARDED);
         }
