@@ -14,16 +14,12 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -183,6 +179,13 @@ public class WindowListRecipes extends AbstractModuleWindow
                         removeButton.setVisible(false);
                     }
                 }
+
+                final Text intermediate = rowPane.findPaneOfTypeByID("intermediate", Text.class);
+                if(recipe.getIntermediate() != Blocks.AIR)
+                {
+                    intermediate.setText(recipe.getIntermediate().getName());
+                }
+                intermediate.setVisible(false);
 
                 // Some special recipes might not include all necessary air blocks.
                 if (recipe.getInput().size() < 4)
