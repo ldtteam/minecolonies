@@ -32,7 +32,7 @@ public class JobCook extends AbstractJob<EntityAIWorkCook, JobCook>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.cook;
+        return ModModelTypes.COOK;
     }
 
     /**

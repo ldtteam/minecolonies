@@ -81,7 +81,7 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.crafter;
+        return ModModelTypes.CRAFTER;
     }
 
     @Override

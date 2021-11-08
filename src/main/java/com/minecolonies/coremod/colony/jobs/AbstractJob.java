@@ -101,7 +101,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.citizen;
+        return ModModelTypes.CITIZEN;
     }
 
     @Override

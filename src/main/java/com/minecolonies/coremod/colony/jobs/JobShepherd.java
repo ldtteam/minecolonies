@@ -46,6 +46,6 @@ public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.sheepFarmer;
+        return ModModelTypes.SHEEP_FARMER;
     }
 }

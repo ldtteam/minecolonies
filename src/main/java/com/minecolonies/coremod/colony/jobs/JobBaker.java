@@ -32,7 +32,7 @@ public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.baker;
+        return ModModelTypes.BAKER;
     }
 
     /**

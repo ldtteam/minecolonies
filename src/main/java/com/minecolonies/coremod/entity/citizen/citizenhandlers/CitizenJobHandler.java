@@ -49,7 +49,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
     {
         if (citizen.isBaby())
         {
-            citizen.setModelId(ModModelTypes.child);
+            citizen.setModelId(ModModelTypes.CHILD);
             citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName().toString());
             citizen.setRenderMetadata("");
             return;
@@ -62,22 +62,22 @@ public class CitizenJobHandler implements ICitizenJobHandler
                 switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
                 {
                     case 3:
-                        citizen.setModelId(ModModelTypes.citizen);
+                        citizen.setModelId(ModModelTypes.CITIZEN);
                         break;
                     case 4:
-                        citizen.setModelId(ModModelTypes.noble);
+                        citizen.setModelId(ModModelTypes.NOBLE);
                         break;
                     case 5:
-                        citizen.setModelId(ModModelTypes.aristocrat);
+                        citizen.setModelId(ModModelTypes.ARISTOCRAT);
                         break;
                     default:
-                        citizen.setModelId(ModModelTypes.settler);
+                        citizen.setModelId(ModModelTypes.SETTLER);
                         break;
                 }
             }
             else
             {
-                citizen.setModelId(ModModelTypes.settler);
+                citizen.setModelId(ModModelTypes.SETTLER);
             }
         }
         else

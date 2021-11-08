@@ -50,7 +50,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.student;
+        return ModModelTypes.STUDENT;
     }
 
     @Override

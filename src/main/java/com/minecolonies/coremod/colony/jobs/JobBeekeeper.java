@@ -78,6 +78,6 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.beekeeper;
+        return ModModelTypes.BEEKEEPER;
     }
 }

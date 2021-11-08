@@ -27,7 +27,7 @@ public class JobDyer extends AbstractJobCrafter<EntityAIWorkDyer, JobDyer>
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.dyer;
+        return ModModelTypes.DYER;
     }
 
     /**

@@ -27,7 +27,7 @@ public class JobBlacksmith extends AbstractJobCrafter<EntityAIWorkBlacksmith, Jo
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.blacksmith;
+        return ModModelTypes.BLACKSMITH;
     }
 
     /**

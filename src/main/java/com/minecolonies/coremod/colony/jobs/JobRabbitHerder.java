@@ -45,6 +45,6 @@ public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRa
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.rabbitHerder;
+        return ModModelTypes.RABBIT_HERDER;
     }
 }

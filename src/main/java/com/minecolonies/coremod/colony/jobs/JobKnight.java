@@ -85,7 +85,7 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.knightGuard;
+        return ModModelTypes.KNIGHT_GUARD;
     }
 
     /**

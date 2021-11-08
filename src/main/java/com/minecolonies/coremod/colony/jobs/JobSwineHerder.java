@@ -45,7 +45,7 @@ public class JobSwineHerder extends AbstractJob<EntityAIWorkSwineHerder, JobSwin
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.pigFarmer;
+        return ModModelTypes.PIG_FARMER;
     }
 
     @Override

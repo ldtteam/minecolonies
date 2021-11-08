@@ -39,6 +39,6 @@ public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFle
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.fletcher;
+        return ModModelTypes.FLETCHER;
     }
 }

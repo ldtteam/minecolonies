@@ -51,7 +51,7 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.student;
+        return ModModelTypes.STUDENT;
     }
 
     /**

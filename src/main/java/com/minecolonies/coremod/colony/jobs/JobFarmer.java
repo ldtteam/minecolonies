@@ -27,7 +27,7 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.farmer;
+        return ModModelTypes.FARMER;
     }
 
     /**

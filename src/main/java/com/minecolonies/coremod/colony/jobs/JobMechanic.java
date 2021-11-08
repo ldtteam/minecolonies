@@ -39,6 +39,6 @@ public class JobMechanic extends AbstractJobCrafter<EntityAIWorkMechanic, JobMec
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.mechanist;
+        return ModModelTypes.MECHANIST;
     }
 }

@@ -27,7 +27,7 @@ public class JobTeacher extends AbstractJob<EntityAIWorkTeacher, JobTeacher>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.teacher;
+        return ModModelTypes.TEACHER;
     }
 
     /**

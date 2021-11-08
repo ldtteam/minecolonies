@@ -31,7 +31,7 @@ public class JobComposter extends AbstractJob<EntityAIWorkComposter, JobComposte
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.composter;
+        return ModModelTypes.COMPOSTER;
     }
 
     @Override

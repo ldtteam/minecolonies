@@ -27,7 +27,7 @@ public class JobPupil extends AbstractJob<EntityAIWorkPupil, JobPupil>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.child;
+        return ModModelTypes.CHILD;
     }
 
     /**

@@ -26,7 +26,7 @@ public class JobCombatTraining extends AbstractJob<EntityAICombatTraining, JobCo
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.knightGuard;
+        return ModModelTypes.KNIGHT_GUARD;
     }
 
     @Override

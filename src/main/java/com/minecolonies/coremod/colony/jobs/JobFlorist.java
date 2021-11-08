@@ -24,7 +24,7 @@ public class JobFlorist extends AbstractJob<EntityAIWorkFlorist, JobFlorist>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.composter;
+        return ModModelTypes.COMPOSTER;
     }
 
     @Override

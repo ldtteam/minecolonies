@@ -38,6 +38,6 @@ public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.student;
+        return ModModelTypes.STUDENT;
     }
 }

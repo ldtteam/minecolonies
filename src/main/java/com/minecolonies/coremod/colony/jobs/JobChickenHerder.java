@@ -58,6 +58,6 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.chickenFarmer;
+        return ModModelTypes.CHICKEN_FARMER;
     }
 }

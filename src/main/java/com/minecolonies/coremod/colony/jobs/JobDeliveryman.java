@@ -106,7 +106,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.deliveryman;
+        return ModModelTypes.DELIVERYMAN;
     }
 
     @Override

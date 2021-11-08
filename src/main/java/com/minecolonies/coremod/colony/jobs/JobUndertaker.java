@@ -27,7 +27,7 @@ public class JobUndertaker extends AbstractJobCrafter<EntityAIWorkUndertaker, Jo
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.undertaker;
+        return ModModelTypes.UNDERTAKER;
     }
 
     /**

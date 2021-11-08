@@ -30,7 +30,7 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.miner;
+        return ModModelTypes.MINER;
     }
 
     /**

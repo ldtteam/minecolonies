@@ -27,7 +27,7 @@ public class JobCookAssistant extends AbstractJobCrafter<EntityAIWorkCookAssista
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.cook;
+        return ModModelTypes.COOK;
     }
 
     /**

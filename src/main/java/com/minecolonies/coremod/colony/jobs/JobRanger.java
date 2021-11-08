@@ -49,6 +49,6 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.archerGuard;
+        return ModModelTypes.ARCHER_GUARD;
     }
 }

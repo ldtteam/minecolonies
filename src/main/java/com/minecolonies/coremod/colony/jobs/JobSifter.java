@@ -32,7 +32,7 @@ public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.smelter;
+        return ModModelTypes.SMELTER;
     }
 
     /**

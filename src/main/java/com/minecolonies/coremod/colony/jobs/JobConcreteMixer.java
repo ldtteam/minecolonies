@@ -39,6 +39,6 @@ public class JobConcreteMixer extends AbstractJobCrafter<EntityAIConcreteMixer, 
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.concreteMixer;
+        return ModModelTypes.CONCRETE_MIXER;
     }
 }

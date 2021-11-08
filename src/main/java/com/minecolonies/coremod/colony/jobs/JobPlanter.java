@@ -28,7 +28,7 @@ public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlant
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.planter;
+        return ModModelTypes.PLANTER;
     }
 
     /**

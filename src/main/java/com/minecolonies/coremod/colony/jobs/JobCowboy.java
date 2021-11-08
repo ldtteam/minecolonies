@@ -45,6 +45,6 @@ public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.cowFarmer;
+        return ModModelTypes.COW_FARMER;
     }
 }

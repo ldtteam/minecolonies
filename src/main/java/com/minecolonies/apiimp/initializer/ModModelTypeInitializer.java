@@ -8,117 +8,119 @@ import com.minecolonies.coremod.client.model.*;
 
 public class ModModelTypeInitializer
 {
-    private ModModelTypeInitializer() {
+    private ModModelTypeInitializer()
+    {
         throw new IllegalStateException("Tried to initialize: ModModelTypeInitializer but this is a Utility class.");
     }
 
-    public static void init() {
+    public static void init()
+    {
         final IModelTypeRegistry reg = IModelTypeRegistry.getInstance();
 
-        ModModelTypes.settler = new BipedModelType(ModModelTypes.SETTLER_ID,3, new CitizenModel<>(), new ModelEntityFemaleCitizen());
-        reg.register(ModModelTypes.settler);
+        ModModelTypes.SETTLER = new BipedModelType(ModModelTypes.SETTLER_ID, 3, new CitizenModel<>(), new ModelEntityFemaleCitizen());
+        reg.register(ModModelTypes.SETTLER);
 
-        ModModelTypes.citizen = new BipedModelType(ModModelTypes.CITIZEN_ID, 3, new CitizenModel<>(), new ModelEntityFemaleCitizen());
-        reg.register(ModModelTypes.citizen);
+        ModModelTypes.CITIZEN = new BipedModelType(ModModelTypes.CITIZEN_ID, 3, new CitizenModel<>(), new ModelEntityFemaleCitizen());
+        reg.register(ModModelTypes.CITIZEN);
 
-        ModModelTypes.noble = new BipedModelType(ModModelTypes.NOBLE_ID, 3, new CitizenModel<>(), new ModelEntityCitizenFemaleNoble());
-        reg.register(ModModelTypes.noble);
+        ModModelTypes.NOBLE = new BipedModelType(ModModelTypes.NOBLE_ID, 3, new CitizenModel<>(), new ModelEntityCitizenFemaleNoble());
+        reg.register(ModModelTypes.NOBLE);
 
-        ModModelTypes.aristocrat = new BipedModelType(ModModelTypes.ARISTOCRAT_ID, 3, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
-        reg.register(ModModelTypes.aristocrat);
+        ModModelTypes.ARISTOCRAT = new BipedModelType(ModModelTypes.ARISTOCRAT_ID, 3, new CitizenModel<>(), new ModelEntityFemaleAristocrat());
+        reg.register(ModModelTypes.ARISTOCRAT);
 
-        ModModelTypes.builder = new BipedModelType(ModModelTypes.BUILDER_ID, 1, new CitizenModel<>(), new ModelEntityBuilderFemale());
-        reg.register(ModModelTypes.builder);
+        ModModelTypes.BUILDER = new BipedModelType(ModModelTypes.BUILDER_ID, 1, new CitizenModel<>(), new ModelEntityBuilderFemale());
+        reg.register(ModModelTypes.BUILDER);
 
-        ModModelTypes.deliveryman = new BipedModelType(ModModelTypes.DELIVERYMAN_ID, 1, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
-        reg.register(ModModelTypes.deliveryman);
+        ModModelTypes.DELIVERYMAN = new BipedModelType(ModModelTypes.DELIVERYMAN_ID, 1, new ModelEntityDeliverymanMale(), new ModelEntityDeliverymanFemale());
+        reg.register(ModModelTypes.DELIVERYMAN);
 
-        ModModelTypes.miner = new BipedModelType(ModModelTypes.MINER_ID, 1, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
-        reg.register(ModModelTypes.miner);
+        ModModelTypes.MINER = new BipedModelType(ModModelTypes.MINER_ID, 1, new ModelEntityMinerMale(), new ModelEntityMinerFemale());
+        reg.register(ModModelTypes.MINER);
 
         // Lumberjack: 4 male, 1 female
-        ModModelTypes.lumberjack = new BipedModelType(ModModelTypes.LUMBERJACK_ID, 1, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
-        reg.register(ModModelTypes.lumberjack);
+        ModModelTypes.LUMBERJACK = new BipedModelType(ModModelTypes.LUMBERJACK_ID, 1, new ModelEntityLumberjackMale(), new ModelEntityLumberjackFemale());
+        reg.register(ModModelTypes.LUMBERJACK);
 
-        ModModelTypes.farmer = new BipedModelType(ModModelTypes.FARMER_ID, 1, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
-        reg.register(ModModelTypes.farmer);
+        ModModelTypes.FARMER = new BipedModelType(ModModelTypes.FARMER_ID, 1, new ModelEntityFarmerMale(), new ModelEntityFarmerFemale());
+        reg.register(ModModelTypes.FARMER);
 
-        ModModelTypes.fisherman = new BipedModelType(ModModelTypes.FISHERMAN_ID, 1, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
-        reg.register(ModModelTypes.fisherman);
+        ModModelTypes.FISHERMAN = new BipedModelType(ModModelTypes.FISHERMAN_ID, 1, new ModelEntityFishermanMale(), new ModelEntityFishermanFemale());
+        reg.register(ModModelTypes.FISHERMAN);
 
-        ModModelTypes.undertaker = new BipedModelType(ModModelTypes.UNDERTAKER_ID, 1, new ModelEntityUndertakerMale(), new ModelEntityUndertakerFemale());
-        reg.register(ModModelTypes.undertaker);
+        ModModelTypes.UNDERTAKER = new BipedModelType(ModModelTypes.UNDERTAKER_ID, 1, new ModelEntityUndertakerMale(), new ModelEntityUndertakerFemale());
+        reg.register(ModModelTypes.UNDERTAKER);
 
-        ModModelTypes.archerGuard = new BipedModelType(ModModelTypes.ARCHER_GUARD_ID, 1, new CitizenModel<>(), new CitizenModel<>());
-        reg.register(ModModelTypes.archerGuard);
+        ModModelTypes.ARCHER_GUARD = new BipedModelType(ModModelTypes.ARCHER_GUARD_ID, 1, new CitizenModel<>(), new CitizenModel<>());
+        reg.register(ModModelTypes.ARCHER_GUARD);
 
-        ModModelTypes.knightGuard = new BipedModelType(ModModelTypes.KNIGHT_GUARD_ID, 1, new CitizenModel<>(), new CitizenModel<>());
-        reg.register(ModModelTypes.knightGuard);
+        ModModelTypes.KNIGHT_GUARD = new BipedModelType(ModModelTypes.KNIGHT_GUARD_ID, 1, new CitizenModel<>(), new CitizenModel<>());
+        reg.register(ModModelTypes.KNIGHT_GUARD);
 
-        ModModelTypes.baker = new BipedModelType(ModModelTypes.BAKER_ID, 1, new ModelEntityBakerMale(), new ModelEntityBakerFemale());
-        reg.register(ModModelTypes.baker);
+        ModModelTypes.BAKER = new BipedModelType(ModModelTypes.BAKER_ID, 1, new ModelEntityBakerMale(), new ModelEntityBakerFemale());
+        reg.register(ModModelTypes.BAKER);
 
-        ModModelTypes.sheepFarmer = new BipedModelType(ModModelTypes.SHEEP_FARMER_ID, 1, new ModelEntitySheepFarmerMale(), new ModelEntitySheepFarmerFemale());
-        reg.register(ModModelTypes.sheepFarmer);
+        ModModelTypes.SHEEP_FARMER = new BipedModelType(ModModelTypes.SHEEP_FARMER_ID, 1, new ModelEntitySheepFarmerMale(), new ModelEntitySheepFarmerFemale());
+        reg.register(ModModelTypes.SHEEP_FARMER);
 
-        ModModelTypes.cowFarmer = new BipedModelType(ModModelTypes.COW_FARMER_ID, 1, new ModelEntityCowFarmerMale(), new ModelEntityCowFarmerFemale());
-        reg.register(ModModelTypes.cowFarmer);
+        ModModelTypes.COW_FARMER = new BipedModelType(ModModelTypes.COW_FARMER_ID, 1, new ModelEntityCowFarmerMale(), new ModelEntityCowFarmerFemale());
+        reg.register(ModModelTypes.COW_FARMER);
 
-        ModModelTypes.pigFarmer = new BipedModelType(ModModelTypes.PIG_FARMER_ID, 1, new ModelEntityPigFarmerMale(), new ModelEntityPigFarmerFemale());
-        reg.register(ModModelTypes.pigFarmer);
+        ModModelTypes.PIG_FARMER = new BipedModelType(ModModelTypes.PIG_FARMER_ID, 1, new ModelEntityPigFarmerMale(), new ModelEntityPigFarmerFemale());
+        reg.register(ModModelTypes.PIG_FARMER);
 
-        ModModelTypes.chickenFarmer = new BipedModelType(ModModelTypes.CHICKEN_FARMER_ID, 1, new ModelEntityChickenFarmerMale(), new ModelEntityChickenFarmerFemale());
-        reg.register(ModModelTypes.chickenFarmer);
+        ModModelTypes.CHICKEN_FARMER = new BipedModelType(ModModelTypes.CHICKEN_FARMER_ID, 1, new ModelEntityChickenFarmerMale(), new ModelEntityChickenFarmerFemale());
+        reg.register(ModModelTypes.CHICKEN_FARMER);
 
-        ModModelTypes.composter = new BipedModelType(ModModelTypes.COMPOSTER_ID, 1, new ModelEntityComposterMale(), new ModelEntityComposterFemale());
-        reg.register(ModModelTypes.composter);
+        ModModelTypes.COMPOSTER = new BipedModelType(ModModelTypes.COMPOSTER_ID, 1, new ModelEntityComposterMale(), new ModelEntityComposterFemale());
+        reg.register(ModModelTypes.COMPOSTER);
 
-        ModModelTypes.smelter = new BipedModelType(ModModelTypes.SMELTER_ID, 1, new ModelEntitySmelterMale(), new ModelEntitySmelterFemale());
-        reg.register(ModModelTypes.smelter);
+        ModModelTypes.SMELTER = new BipedModelType(ModModelTypes.SMELTER_ID, 1, new ModelEntitySmelterMale(), new ModelEntitySmelterFemale());
+        reg.register(ModModelTypes.SMELTER);
 
-        ModModelTypes.cook = new BipedModelType(ModModelTypes.COOK_ID, 1, new ModelEntityCookMale(), new ModelEntityCookFemale());
-        reg.register(ModModelTypes.cook);
+        ModModelTypes.COOK = new BipedModelType(ModModelTypes.COOK_ID, 1, new ModelEntityCookMale(), new ModelEntityCookFemale());
+        reg.register(ModModelTypes.COOK);
 
-        ModModelTypes.student = new BipedModelType(ModModelTypes.STUDENT_ID, 6, new ModelEntityStudentMale(), new ModelEntityStudentFemale());
-        reg.register(ModModelTypes.student);
+        ModModelTypes.STUDENT = new BipedModelType(ModModelTypes.STUDENT_ID, 6, new ModelEntityStudentMale(), new ModelEntityStudentFemale());
+        reg.register(ModModelTypes.STUDENT);
 
-        ModModelTypes.crafter = new BipedModelType(ModModelTypes.CRAFTER_ID, 1, new ModelEntityCrafterMale(), new ModelEntityCrafterFemale());
-        reg.register(ModModelTypes.crafter);
+        ModModelTypes.CRAFTER = new BipedModelType(ModModelTypes.CRAFTER_ID, 1, new ModelEntityCrafterMale(), new ModelEntityCrafterFemale());
+        reg.register(ModModelTypes.CRAFTER);
 
-        ModModelTypes.blacksmith = new BipedModelType(ModModelTypes.BLACKSMITH_ID, 1, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
-        reg.register(ModModelTypes.blacksmith);
+        ModModelTypes.BLACKSMITH = new BipedModelType(ModModelTypes.BLACKSMITH_ID, 1, new ModelEntityBlacksmithMale(), new ModelEntityBlacksmithFemale());
+        reg.register(ModModelTypes.BLACKSMITH);
 
-        ModModelTypes.child = new BipedModelType(ModModelTypes.CHILD_ID, 4, new ModelEntityChildMale(), new ModelEntityChildFemale());
-        reg.register(ModModelTypes.child);
+        ModModelTypes.CHILD = new BipedModelType(ModModelTypes.CHILD_ID, 4, new ModelEntityChildMale(), new ModelEntityChildFemale());
+        reg.register(ModModelTypes.CHILD);
 
-        ModModelTypes.healer = new BipedModelType(ModModelTypes.HEALER_ID, 1, new ModelEntityHealerMale(), new ModelEntityHealerFemale());
-        reg.register(ModModelTypes.healer);
+        ModModelTypes.HEALER = new BipedModelType(ModModelTypes.HEALER_ID, 1, new ModelEntityHealerMale(), new ModelEntityHealerFemale());
+        reg.register(ModModelTypes.HEALER);
 
-        ModModelTypes.teacher = new BipedModelType(ModModelTypes.TEACHER_ID, 1, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
-        reg.register(ModModelTypes.teacher);
+        ModModelTypes.TEACHER = new BipedModelType(ModModelTypes.TEACHER_ID, 1, new ModelEntityTeacherMale(), new ModelEntityTeacherFemale());
+        reg.register(ModModelTypes.TEACHER);
 
-        ModModelTypes.glassblower = new BipedModelType(ModModelTypes.GLASSBLOWER_ID, 3, new ModelEntityGlassblowerMale(), new ModelEntityGlassblowerFemale());
-        reg.register(ModModelTypes.glassblower);
+        ModModelTypes.GLASSBLOWER = new BipedModelType(ModModelTypes.GLASSBLOWER_ID, 3, new ModelEntityGlassblowerMale(), new ModelEntityGlassblowerFemale());
+        reg.register(ModModelTypes.GLASSBLOWER);
 
-        ModModelTypes.dyer = new BipedModelType(ModModelTypes.DYER_ID, 3, new ModelEntityDyerMale(), new ModelEntityDyerFemale());
-        reg.register(ModModelTypes.dyer);
+        ModModelTypes.DYER = new BipedModelType(ModModelTypes.DYER_ID, 3, new ModelEntityDyerMale(), new ModelEntityDyerFemale());
+        reg.register(ModModelTypes.DYER);
 
-        ModModelTypes.mechanist = new BipedModelType(ModModelTypes.MECHANIST_ID, 1, new ModelEntityMechanistMale(), new ModelEntityMechanistFemale());
-        reg.register(ModModelTypes.mechanist);
+        ModModelTypes.MECHANIST = new BipedModelType(ModModelTypes.MECHANIST_ID, 1, new ModelEntityMechanistMale(), new ModelEntityMechanistFemale());
+        reg.register(ModModelTypes.MECHANIST);
 
-        ModModelTypes.fletcher = new BipedModelType(ModModelTypes.FLETCHER_ID, 1, new ModelEntityFletcherMale(), new ModelEntityFletcherFemale());
-        reg.register(ModModelTypes.fletcher);
+        ModModelTypes.FLETCHER = new BipedModelType(ModModelTypes.FLETCHER_ID, 1, new ModelEntityFletcherMale(), new ModelEntityFletcherFemale());
+        reg.register(ModModelTypes.FLETCHER);
 
-        ModModelTypes.concreteMixer = new BipedModelType(ModModelTypes.CONCRETE_MIXER_ID, 1, new ModelEntityConcreteMixerMale(), new ModelEntityConcreteMixerFemale());
-        reg.register(ModModelTypes.concreteMixer);
+        ModModelTypes.CONCRETE_MIXER = new BipedModelType(ModModelTypes.CONCRETE_MIXER_ID, 1, new ModelEntityConcreteMixerMale(), new ModelEntityConcreteMixerFemale());
+        reg.register(ModModelTypes.CONCRETE_MIXER);
 
-        ModModelTypes.rabbitHerder = new BipedModelType(ModModelTypes.RABBIT_HERDER_ID, 1, new ModelEntityRabbitHerderMale(), new ModelEntityRabbitHerderFemale());
-        reg.register(ModModelTypes.rabbitHerder);
+        ModModelTypes.RABBIT_HERDER = new BipedModelType(ModModelTypes.RABBIT_HERDER_ID, 1, new ModelEntityRabbitHerderMale(), new ModelEntityRabbitHerderFemale());
+        reg.register(ModModelTypes.RABBIT_HERDER);
 
-        ModModelTypes.planter = new BipedModelType(ModModelTypes.PLANTER_ID, 1, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
-        reg.register(ModModelTypes.planter);
+        ModModelTypes.PLANTER = new BipedModelType(ModModelTypes.PLANTER_ID, 1, new ModelEntityPlanterMale(), new ModelEntityPlanterFemale());
+        reg.register(ModModelTypes.PLANTER);
 
-        ModModelTypes.beekeeper = new BipedModelType(ModModelTypes.BEEKEEPER_ID, 1, new ModelEntityBeekeeperMale(), new ModelEntityBeekeeperFemale());
-        reg.register(ModModelTypes.beekeeper);
+        ModModelTypes.BEEKEEPER = new BipedModelType(ModModelTypes.BEEKEEPER_ID, 1, new ModelEntityBeekeeperMale(), new ModelEntityBeekeeperFemale());
+        reg.register(ModModelTypes.BEEKEEPER);
     }
 }

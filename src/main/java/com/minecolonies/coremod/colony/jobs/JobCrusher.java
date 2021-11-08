@@ -40,7 +40,7 @@ public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrush
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.smelter;
+        return ModModelTypes.SMELTER;
     }
 
     /**

@@ -27,7 +27,7 @@ public class JobGlassblower extends AbstractJobCrafter<EntityAIWorkGlassblower, 
     @Override
     public IModelType getModel()
     {
-        return ModModelTypes.glassblower;
+        return ModModelTypes.GLASSBLOWER;
     }
 
     /**

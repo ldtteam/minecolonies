@@ -32,7 +32,7 @@ public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.smelter;
+        return ModModelTypes.SMELTER;
     }
 
     /**

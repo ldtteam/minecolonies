@@ -44,7 +44,7 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.healer;
+        return ModModelTypes.HEALER;
     }
 
     /**

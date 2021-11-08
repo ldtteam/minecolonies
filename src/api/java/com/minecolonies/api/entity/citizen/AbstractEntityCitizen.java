@@ -74,7 +74,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The default model.
      */
-    private IModelType modelId = ModModelTypes.settler;
+    private IModelType modelId = ModModelTypes.SETTLER;
 
     /**
      * The texture id.

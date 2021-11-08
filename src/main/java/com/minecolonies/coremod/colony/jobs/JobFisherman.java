@@ -58,7 +58,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
     @Override
     public BipedModelType getModel()
     {
-        return ModModelTypes.fisherman;
+        return ModModelTypes.FISHERMAN;
     }
 
     @Override
