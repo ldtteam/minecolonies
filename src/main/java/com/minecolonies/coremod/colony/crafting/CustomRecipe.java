@@ -619,7 +619,7 @@ public class CustomRecipe
     @Override
     public int hashCode()
     {
-        return Objects.hash(result, researchId, excludedResearchId, inputs);
+        return Objects.hash(result, researchId, excludedResearchId, lootTable, inputs);
     }
 
     @Override
@@ -640,6 +640,7 @@ public class CustomRecipe
         return ItemStackUtils.compareItemStacksIgnoreStackSize(result, that.result)
             && Objects.equals(researchId, that.researchId)
             && Objects.equals(excludedResearchId, that.excludedResearchId)
+            && Objects.equals(lootTable, that.lootTable)
             && inputs.equals(that.inputs);
     }
 

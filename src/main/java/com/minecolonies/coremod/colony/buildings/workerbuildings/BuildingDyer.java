@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -95,6 +96,8 @@ public class BuildingDyer extends AbstractBuilding
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
+        private List<ItemStorage> woolItems;
+
         /**
          * Create a new module.
          *
@@ -126,11 +129,7 @@ public class BuildingDyer extends AbstractBuilding
                     return null;
                 }
 
-                final List<ItemStorage> woolItems = ItemTags.WOOL.getValues().stream()
-                                                      .filter(item -> !item.equals(Items.WHITE_WOOL))
-                                                      .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
-
-                for(ItemStorage color : woolItems)
+                for(ItemStorage color : getWoolItems())
                 {
                     for(IBuilding wareHouse: building.getColony().getBuildingManager().getWareHouses())
                     {
@@ -141,15 +140,7 @@ public class BuildingDyer extends AbstractBuilding
 
                 ItemStorage woolToUse = inventoryCounts.entrySet().stream().min(java.util.Map.Entry.comparingByValue(Comparator.reverseOrder())).get().getKey();
 
-                final IRecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
-                  TypeConstants.RECIPE,
-                  StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                  ImmutableList.of(woolToUse, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
-                  1,
-                  new ItemStack(Items.WHITE_WOOL, 1),
-                  Blocks.AIR);
-
-                final IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
+                final IToken<?> token = getTokenForWool(woolToUse);
                 recipe = IColonyManager.getInstance().getRecipeManager().getRecipe(token);
             }
             return recipe;
@@ -164,6 +155,67 @@ public class BuildingDyer extends AbstractBuilding
             }
 
             return IColonyManager.getInstance().getRecipeManager().getRecipe(token).getPrimaryOutput().getItem() == Items.WHITE_WOOL;
+        }
+
+        @Override
+        public IRecipeStorage getFirstFulfillableRecipe(final Predicate<ItemStack> stackPredicate, final int count, final boolean considerReservation)
+        {
+            IRecipeStorage recipe = super.getFirstFulfillableRecipe(stackPredicate, count, considerReservation);
+            if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
+            {
+                final Set<IItemHandler> handlers = new HashSet<>();
+                for (final ICitizenData workerEntity : building.getAssignedCitizen())
+                {
+                    handlers.add(workerEntity.getInventory());
+                }
+
+                for (ItemStorage color : getWoolItems())
+                {
+                    IToken<?> token = getTokenForWool(color);
+
+                    final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
+
+                    IRecipeStorage toTest = storage.getRecipeType() instanceof MultiOutputRecipe ? storage.getClassicForMultiOutput(stackPredicate) : storage;
+                    if (toTest.canFullFillRecipe(count, considerReservation ? reservedStacks() : Collections.emptyMap(), new ArrayList<>(handlers), building))
+                    {
+                        return toTest;
+                    }
+                }
+            }
+            return recipe;
+        }
+
+        /**
+         * Builds and returns a list of all colored wool types
+         * @return the list
+         */
+        private List<ItemStorage> getWoolItems()
+        {
+            if (woolItems == null)
+            {
+                woolItems = ItemTags.WOOL.getValues().stream()
+                  .filter(item -> !item.equals(Items.WHITE_WOOL))
+                  .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
+            }
+            return woolItems;
+        }
+
+        /**
+         * Creates the recipe to undye the given wool and returns its token
+         * @param wool the wool to undye
+         * @return the recipe token
+         */
+        private IToken<?> getTokenForWool(ItemStorage wool)
+        {
+            final IRecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
+              TypeConstants.RECIPE,
+              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+              ImmutableList.of(wool, new ItemStorage(new ItemStack(Items.WHITE_DYE, 1))),
+              1,
+              new ItemStack(Items.WHITE_WOOL, 1),
+              Blocks.AIR);
+
+            return IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
         }
     }
 
