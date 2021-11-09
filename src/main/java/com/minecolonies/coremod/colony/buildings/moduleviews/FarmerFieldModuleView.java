@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.FarmerFieldsModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.farmer.AssignFieldMessage;
@@ -113,11 +114,12 @@ public class FarmerFieldModuleView extends AbstractBuildingModuleView
         Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, addNewField, id));
         scarecrowTileEntity.setTaken(addNewField);
 
-        if (buildingView instanceof IBuildingView)
+        if (buildingView != null)
         {
-            if (addNewField && !(buildingView.getModuleView(WorkerBuildingModuleView.class).getWorkerId().isEmpty()))
+            final WorkerBuildingModuleView view = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry().equals(ModJobs.farmer));
+            if (addNewField && !view.getWorkerId().isEmpty())
             {
-                scarecrowTileEntity.setOwner(buildingView.getModuleView(WorkerBuildingModuleView.class).getWorkerId().get(0), getColony());
+                scarecrowTileEntity.setOwner(view.getWorkerId().get(0), getColony());
                 amountOfFields++;
             }
             else

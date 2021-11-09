@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -79,9 +80,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingView && ((IBuildingView) requester).getModuleView(CraftingModuleView.class) != null)
+        if (requester instanceof IBuildingView)
         {
-            return new TranslationTextComponent(((IBuildingView) requester).getModuleView(CraftingModuleView.class).getJobEntry().getTranslationKey());
+            final CraftingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(CraftingModuleView.class, m -> m.getJobEntry().equals(getJobEntry()));
+            if (moduleView != null)
+            {
+                return new TranslationTextComponent(moduleView.getJobEntry().getTranslationKey());
+            }
         }
         return super.getRequesterDisplayName(manager, request);
     }

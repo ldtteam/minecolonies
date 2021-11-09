@@ -48,18 +48,22 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
         super.onOpened();
         final List<IToken<?>> tasks = new ArrayList<>();
 
-        for (final int citizenId : buildingView.getModuleView(WorkerBuildingModuleView.class).getWorkerId())
+
+        for (final WorkerBuildingModuleView moduleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
-            if (citizen != null)
+            for (final int citizenId : moduleView.getWorkerId())
             {
-                if (citizen.getJobView() instanceof CrafterJobView)
+                ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
+                if (citizen != null)
                 {
-                    tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
-                }
-                else if( citizen.getJobView() instanceof DmanJobView)
-                {
-                    tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                    if (citizen.getJobView() instanceof CrafterJobView)
+                    {
+                        tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
+                    }
+                    else if (citizen.getJobView() instanceof DmanJobView)
+                    {
+                        tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                    }
                 }
             }
         }

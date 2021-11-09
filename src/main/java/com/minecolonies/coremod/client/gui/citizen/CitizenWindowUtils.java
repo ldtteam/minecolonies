@@ -360,9 +360,14 @@ public class CitizenWindowUtils
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingView && !(building instanceof BuildingLibrary.View) && building.getModuleView(WorkerBuildingModuleView.class) != null)
+        if (building instanceof AbstractBuildingView && !(building instanceof BuildingLibrary.View) && citizen.getJobView() != null)
         {
-            final WorkerBuildingModuleView moduleView = building.getModuleView(WorkerBuildingModuleView.class);
+            final WorkerBuildingModuleView moduleView = building.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry().equals(citizen.getJobView().getEntry()));
+            if (moduleView == null)
+            {
+                return;
+            }
+
             windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
               LanguageHandler.format(citizen.getJob())));
             windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));

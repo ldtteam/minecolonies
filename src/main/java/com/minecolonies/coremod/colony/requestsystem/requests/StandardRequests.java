@@ -260,16 +260,10 @@ public final class StandardRequests
             for (IBuildingView view : colony.getBuildings())
             if (view instanceof BuildingDeliveryman.View)
             {
-                for (int worker : view.getModuleView(WorkerBuildingModuleView.class).getWorkerId())
+                posInList = getPosInList(colony, view, getId());
+                if (posInList >= 0)
                 {
-                    final ICitizenDataView citizen = colony.getCitizen(worker);
-                    if (citizen != null)
-                    {
-                        if (citizen.getJobView() instanceof DmanJobView && ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
-                        {
-                            posInList = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
-                        }
-                    }
+                    break;
                 }
             }
 
@@ -381,22 +375,7 @@ public final class StandardRequests
                 final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
                 final IBuildingView view = colony.getBuilding(resolver);
 
-                int posInList = -1;
-                if (view.getModuleView(WorkerBuildingModuleView.class) != null)
-                {
-                    for (int worker : view.getModuleView(WorkerBuildingModuleView.class).getWorkerId())
-                    {
-                        final ICitizenDataView citizen = colony.getCitizen(worker);
-                        if (citizen != null)
-                        {
-                            if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
-                            {
-                                posInList = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
-                            }
-                        }
-                    }
-                }
-
+                int posInList = getPosInList(colony, view, getId());
                 if (posInList >= 0)
                 {
                 	return posInList == 0 ? ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(IN_PROGRESS)) : ImmutableList.of(new TranslationTextComponent(FROM, requester), new TranslationTextComponent(IN_QUEUE, posInList));
@@ -710,5 +689,30 @@ public final class StandardRequests
 
             return burnableExamples;
         }
+    }
+
+    /**
+     * Find the position the request is in the list.
+     * @return the position.
+     * @param colony the colony.
+     * @param view the building view.
+     */
+    private static int getPosInList(final IColonyView colony, final IBuildingView view, final IToken<?> id)
+    {
+        for (final WorkerBuildingModuleView moduleView : view.getModuleViews(WorkerBuildingModuleView.class))
+        {
+            for (int worker : moduleView.getWorkerId())
+            {
+                final ICitizenDataView citizen = colony.getCitizen(worker);
+                if (citizen != null)
+                {
+                    if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(id))
+                    {
+                        return ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                    }
+                }
+            }
+        }
+        return -1;
     }
 }

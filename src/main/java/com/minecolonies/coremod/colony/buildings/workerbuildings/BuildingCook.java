@@ -399,7 +399,7 @@ public class BuildingCook extends AbstractBuilding
                 if (storage != null)
                 {
                     final Set<IItemHandler> handlers = new HashSet<>();
-                    for (final ICitizenData workerEntity :  building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(getCraftingJob().getJobRegistryEntry())).getAssignedCitizen())
+                    for (final ICitizenData workerEntity :  building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getAssignedCitizen())
                     {
                         handlers.add(workerEntity.getInventory());
                     }

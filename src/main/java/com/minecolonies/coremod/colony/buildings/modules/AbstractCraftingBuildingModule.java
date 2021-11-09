@@ -787,12 +787,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public String getCustomRecipeKey()
     {
-        if (getCraftingJob() == null)
+        if (jobEntry == null)
         {
             return "";
         }
-        return Objects.requireNonNull(getCraftingJob()).getJobRegistryEntry().getRegistryName().getPath()
-                + "_" + getId();
+        return jobEntry.getRegistryName().getPath() + "_" + getId();
     }
 
     /** This module is for standard crafters (3x3 by default) */
