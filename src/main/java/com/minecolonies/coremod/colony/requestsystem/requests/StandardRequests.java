@@ -258,12 +258,14 @@ public final class StandardRequests
 
             int posInList = -1;
             for (IBuildingView view : colony.getBuildings())
-            if (view instanceof BuildingDeliveryman.View)
             {
-                posInList = getPosInList(colony, view, getId());
-                if (posInList >= 0)
+                if (view instanceof BuildingDeliveryman.View)
                 {
-                    break;
+                    posInList = getPosInList(colony, view, getId());
+                    if (posInList >= 0)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -706,9 +708,21 @@ public final class StandardRequests
                 final ICitizenDataView citizen = colony.getCitizen(worker);
                 if (citizen != null)
                 {
-                    if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(id))
+                    if (citizen.getJobView() instanceof CrafterJobView)
                     {
-                        return ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        int index = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        if (index >= 0)
+                        {
+                            return index;
+                        }
+                    }
+                    else if (citizen.getJobView() instanceof DmanJobView)
+                    {
+                        int index = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        if (index >= 0)
+                        {
+                            return index;
+                        }
                     }
                 }
             }
