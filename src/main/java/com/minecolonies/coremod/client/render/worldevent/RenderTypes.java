@@ -46,7 +46,7 @@ public class RenderTypes
                     .setTextureState(new TextureStateShard(resLoc, false, false))
                     .setShaderState(POSITION_TEX_SHADER)
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                    .setDepthTestState(LEQUAL_DEPTH_TEST)
+                    .setDepthTestState(NO_DEPTH_TEST)
                     .setCullState(CULL)
                     .setLightmapState(NO_LIGHTMAP)
                     .setOverlayState(NO_OVERLAY)
