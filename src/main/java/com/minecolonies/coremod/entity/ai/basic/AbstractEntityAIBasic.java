@@ -135,7 +135,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * The current position the worker should walk to.
      */
-    protected BlockPos walkTo = null;
+    public BlockPos walkTo = null;
 
     /**
      * Already kept items during the dumping cycle.
@@ -215,10 +215,27 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AITarget(PAUSED, this::bePaused, 10),
           /*
+           * Walk to goal.
+           */
+          new AITarget(WALK_TO, this::walkToState, 10),
+          /*
            * Start paused with inventory dump
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
+    }
+
+    /**
+     * Special walk state..
+     * @return IDLE once arrived.
+     */
+    private IAIState walkToState()
+    {
+        if (walkToBlock(walkTo, DEFAULT_RANGE_FOR_DELAY))
+        {
+            return getState();
+        }
+        return IDLE;
     }
 
     /**

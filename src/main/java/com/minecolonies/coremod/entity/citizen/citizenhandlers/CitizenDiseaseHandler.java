@@ -120,7 +120,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     @Override
     public boolean isSick()
     {
-        return !disease.isEmpty() || (!(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() <= SEEK_DOCTOR_HEALTH);
+        return !disease.isEmpty();
     }
 
     @Override

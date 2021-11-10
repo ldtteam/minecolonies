@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -108,15 +109,15 @@ public class GraveManager implements IGraveManager
                 continue;
             }
 
-            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
-            if (graveEntity == null)
+            final TileEntity graveEntity = colony.getWorld().getBlockEntity(pos);
+            if (!(graveEntity instanceof TileEntityGrave))
             {
                 iterator.remove();
                 colony.markDirty();
                 continue;
             }
 
-            if (!graveEntity.onColonyTick(MAX_TICKRATE))
+            if (!((TileEntityGrave) graveEntity).onColonyTick(MAX_TICKRATE))
             {
                 iterator.remove();
                 colony.markDirty();

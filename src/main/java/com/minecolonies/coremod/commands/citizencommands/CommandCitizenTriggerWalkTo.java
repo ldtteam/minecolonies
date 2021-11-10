@@ -4,9 +4,14 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
+import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -14,6 +19,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.ILocationArgument;
 import net.minecraft.command.arguments.Vec3Argument;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -68,7 +74,16 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
 
         if (context.getSource().getLevel() == entityCitizen.level)
         {
-            entityCitizen.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1f);
+            if (entityCitizen instanceof EntityCitizen && entityCitizen.getCitizenJobHandler().getColonyJob() != null)
+            {
+                final AbstractEntityAIBasic basic = ((AbstractEntityAIBasic) entityCitizen.getCitizenJobHandler().getColonyJob().getWorkerAI());
+                basic.walkTo = targetPos;
+                basic.registerTarget(new AIOneTimeEventTarget(AIWorkerState.WALK_TO));
+            }
+            else
+            {
+                entityCitizen.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1f);
+            }
         }
 
         return 1;

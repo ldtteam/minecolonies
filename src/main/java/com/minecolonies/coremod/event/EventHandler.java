@@ -618,7 +618,7 @@ public class EventHandler
                     if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
                     {
                         event.setCanceled(true);
-                        LanguageHandler.sendPlayerMessage(player, "tile.bed.occupied");
+                        LanguageHandler.sendPlayerMessage(player, "block.minecraft.bed.occupied");
                     }
                 }
             }
