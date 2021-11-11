@@ -56,7 +56,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
             return;
         }
 
-        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) && Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) < 3)
+        if (worker.isWorkerAtSiteWithMove(buildingGuards.getGuardPos(), 10) || Math.abs(buildingGuards.getGuardPos().getY() - worker.blockPosition().getY()) > 3)
         {
             // Moves the ranger randomly to close edges, for better vision to mobs
             ((MinecoloniesAdvancedPathNavigate) worker.getNavigation()).setPathJob(new PathJobWalkRandomEdge(world, buildingGuards.getGuardPos(), 20, worker),
