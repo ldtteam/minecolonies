@@ -63,7 +63,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * End position trying to reach.
      */
-    protected BlockPos end;
+    protected BlockPos end = null;
 
     /**
      * The pathing cache.
