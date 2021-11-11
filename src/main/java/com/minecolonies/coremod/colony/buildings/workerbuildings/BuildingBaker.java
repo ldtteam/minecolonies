@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -8,25 +7,21 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
 import com.minecolonies.coremod.colony.jobs.JobBaker;
-import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -197,33 +192,6 @@ public class BuildingBaker extends AbstractBuildingWorker implements IBuildingPu
         }
 
         @Override
-        public boolean addRecipe(final IToken<?> token)
-        {
-            final boolean recipeAdded = super.addRecipe(token);
-
-            if(recipeAdded)
-            {
-                final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
-
-                ItemStack smeltResult = FurnaceRecipes.getInstance().getSmeltingResult(storage.getPrimaryOutput());
-
-                if(smeltResult != null)
-                {
-                    final IRecipeStorage smeltingRecipe =  StandardFactoryController.getInstance().getNewInstance(
-                      TypeConstants.RECIPE,
-                      StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-                      ImmutableList.of(new ItemStorage(storage.getPrimaryOutput().copy())),
-                      1,
-                      smeltResult,
-                      Blocks.FURNACE);
-                    addRecipeToList(IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(smeltingRecipe), false);
-                }
-            }
-
-            return recipeAdded;
-        }
-
-        @Override
         public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
         {
             final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> map = super.getRequiredItemsAndAmount();
@@ -238,6 +206,34 @@ public class BuildingBaker extends AbstractBuildingWorker implements IBuildingPu
             }
 
             return map;
+        }
+       
+    }
+
+    public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
+    {
+        @Nullable
+        @Override
+        public IJob<?> getCraftingJob()
+        {
+            return getMainBuildingJob().orElseGet(() -> new JobBaker(null));
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, BAKER).orElse(false);
+        }
+
+        @Override
+        public boolean canLearnFurnaceRecipes()
+        {
+            if (building == null) return true;  // because it can learn at *some* level
+            return building.getBuildingLevel() >= 3;
         }
     }
 

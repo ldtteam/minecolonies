@@ -305,8 +305,7 @@ public class CustomRecipe
         }
         if (recipeJson.has(RECIPE_INTERMEDIATE_PROP))
         {
-            final String[] split = recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString().split(":");
-            recipe.intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0], split[1]));
+            recipe.intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(recipeJson.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
         }
         else
         {
@@ -358,7 +357,7 @@ public class CustomRecipe
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
       @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, @Nullable final ResourceLocation lootTable, final List<ItemStorage> inputs,
-      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs)
+      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
         this.recipeId = recipeId;
@@ -373,6 +372,7 @@ public class CustomRecipe
         this.secondary = secondaryOutput;
         this.altOutputs = altOutputs;
         this.lootTable = lootTable;
+        this.intermediate = intermediate;
     }
 
     /**
@@ -650,6 +650,14 @@ public class CustomRecipe
     public boolean getMustExist()
     {
         return mustExist;
+    }
+
+    /**
+     * What is the intermediate block for this recipe?
+     */
+    public Block getIntermediate()
+    {
+        return intermediate;
     }
 
     /**
