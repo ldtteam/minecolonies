@@ -53,7 +53,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
      */
     private JobEntry jobEntry;
 
-    public List<Integer> getWorkerId()
+    public List<Integer> getWorkerIdList()
     {
         return new ArrayList<>(workerIDs);
     }
@@ -122,7 +122,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
      */
     public boolean hasEnoughWorkers()
     {
-        return getWorkerId().size() >= maxInhabitants;
+        return getWorkerIdList().size() >= maxInhabitants;
     }
 
     public HiringMode getHiringMode()
@@ -187,6 +187,6 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
      */
     public boolean isFull()
     {
-        return getWorkerId().size() >= getMaxInhabitants();
+        return getWorkerIdList().size() >= getMaxInhabitants();
     }
 }

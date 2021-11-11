@@ -686,7 +686,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         final Set<Integer> assignees = new HashSet<>();
         for (final WorkerBuildingModuleView view : getModuleViews(WorkerBuildingModuleView.class))
         {
-            assignees.addAll(view.getWorkerId());
+            assignees.addAll(view.getWorkerIdList());
         }
         return assignees;
     }

@@ -88,8 +88,8 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IAs
 
             for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
             {
-                if ((getJobEntry().equals(ModJobs.archer) && trainee.getJob() instanceof JobArcherTraining)
-                      || (getJobEntry().equals(ModJobs.knight) && trainee.getJob() instanceof JobCombatTraining)
+                if ((getJobEntry() == ModJobs.archer && trainee.getJob() instanceof JobArcherTraining)
+                      || (getJobEntry() == ModJobs.knight && trainee.getJob() instanceof JobCombatTraining)
                            && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());

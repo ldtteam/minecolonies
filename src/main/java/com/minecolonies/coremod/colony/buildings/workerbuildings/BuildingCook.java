@@ -176,7 +176,7 @@ public class BuildingCook extends AbstractBuilding
      */
     public boolean getIsCooking()
     {
-        final ICitizenData citizen = this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(ModJobs.cookassistant)).getFirstCitizen();
+        final ICitizenData citizen = this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant).getFirstCitizen();
         return citizen != null && isCooking && isCookingTimeout > 0;
     }
 
@@ -211,7 +211,7 @@ public class BuildingCook extends AbstractBuilding
     public boolean canBeGathered()
     {
         return super.canBeGathered() &&
-                 this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(ModJobs.cookassistant)).getAssignedCitizen().stream()
+                 this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant).getAssignedCitizen().stream()
                    .map(c -> c.getJob(AbstractJobCrafter.class))
                    .filter(Objects::nonNull)
                    .allMatch(AbstractJobCrafter::hasTask);
@@ -364,7 +364,7 @@ public class BuildingCook extends AbstractBuilding
         @Nullable
         public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
         {
-            if (building.getBuildingLevel() < 3 || building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getAssignedCitizen().isEmpty())
+            if (building.getBuildingLevel() < 3 || building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
             {
                 return null;
             }
@@ -400,7 +400,7 @@ public class BuildingCook extends AbstractBuilding
                 if (storage != null)
                 {
                     final Set<IItemHandler> handlers = new HashSet<>();
-                    for (final ICitizenData workerEntity :  building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getAssignedCitizen())
+                    for (final ICitizenData workerEntity :  building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen())
                     {
                         handlers.add(workerEntity.getInventory());
                     }

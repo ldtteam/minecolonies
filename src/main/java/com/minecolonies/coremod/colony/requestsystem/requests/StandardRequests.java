@@ -703,7 +703,7 @@ public final class StandardRequests
     {
         for (final WorkerBuildingModuleView moduleView : view.getModuleViews(WorkerBuildingModuleView.class))
         {
-            for (int worker : moduleView.getWorkerId())
+            for (int worker : moduleView.getWorkerIdList())
             {
                 final ICitizenDataView citizen = colony.getCitizen(worker);
                 if (citizen != null)

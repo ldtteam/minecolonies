@@ -82,7 +82,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
         if (requester instanceof IBuildingView)
         {
-            final CraftingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(CraftingModuleView.class, m -> m.getJobEntry().equals(getJobEntry()));
+            final CraftingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(CraftingModuleView.class, m -> m.getJobEntry() == getJobEntry());
             if (moduleView != null)
             {
                 return new TranslationTextComponent(moduleView.getJobEntry().getTranslationKey());

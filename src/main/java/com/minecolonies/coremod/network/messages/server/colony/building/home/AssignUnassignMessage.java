@@ -112,7 +112,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
         }
         else
         {
-            module = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry));
+            module = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry);
         }
 
         if (assign && !module.isFull() && !building.equals(citizen.getHomeBuilding()))

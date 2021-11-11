@@ -140,7 +140,7 @@ public class BuildingUniversity extends AbstractBuilding
         super.onColonyTick(colony);
 
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
-        final WorkerBuildingModule module = getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(ModJobs.researcher));
+        final WorkerBuildingModule module = getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.researcher);
 
         int i = 1;
         for (final ILocalResearch research : inProgress)

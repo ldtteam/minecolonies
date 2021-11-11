@@ -362,7 +362,7 @@ public class CitizenWindowUtils
 
         if (building instanceof AbstractBuildingView && !(building instanceof BuildingLibrary.View) && citizen.getJobView() != null)
         {
-            final WorkerBuildingModuleView moduleView = building.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry().equals(citizen.getJobView().getEntry()));
+            final WorkerBuildingModuleView moduleView = building.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == citizen.getJobView().getEntry());
             if (moduleView == null)
             {
                 return;

@@ -33,7 +33,7 @@ import java.util.function.Function;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- * The living module for citizen to call their home.
+ * The worker module for citizen where they are assigned to if they work at it.
  */
 public class WorkerBuildingModule extends AbstractAssignedCitizenModule
   implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
@@ -83,7 +83,13 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     {
         if (citizen.getWorkBuilding() != null)
         {
-            citizen.getWorkBuilding().getFirstOptionalModuleOccurance(WorkerBuildingModule.class).ifPresent(m -> m.removeCitizen(citizen));
+            for (final WorkerBuildingModule module : citizen.getWorkBuilding().getModules(WorkerBuildingModule.class))
+            {
+                if (module.hasAssignedCitizen(citizen))
+                {
+                    module.removeCitizen(citizen);
+                }
+            }
         }
 
         if (!super.assignCitizen(citizen))
@@ -103,7 +109,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
             for (int i = 0; i < workersTagList.size(); ++i)
             {
                 final ICitizenData data = building.getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));
-                if (data != null && data.getJob() != null && data.getJob().getJobRegistryEntry().equals(jobEntry))
+                if (data != null && data.getJob() != null && data.getJob().getJobRegistryEntry() == jobEntry)
                 {
                     assignCitizen(data);
                 }

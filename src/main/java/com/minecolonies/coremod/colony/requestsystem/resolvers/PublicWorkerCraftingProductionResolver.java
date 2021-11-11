@@ -137,7 +137,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (requester instanceof IBuildingView)
         {
             final IBuildingView bwv = (IBuildingView) requester;
-            return new TranslationTextComponent(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry().equals(getJobEntry())).getJobDisplayName());
+            return new TranslationTextComponent(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
     }
@@ -151,7 +151,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         //Check if we even have a worker available
-        return building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(getJobEntry())).getAssignedCitizen()
+        return building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                  .stream()
                  .anyMatch(c -> c.getJob() instanceof AbstractJobCrafter);
     }
@@ -168,7 +168,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(getJobEntry())).getAssignedCitizen()
+        final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                                            .stream()
                                            .filter(c -> c.getJob() instanceof AbstractJobCrafter)
                                            .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().size()
@@ -195,7 +195,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(getJobEntry())).getAssignedCitizen()
+        final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                                            .stream()
                                            .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks()
                                                                                                       .contains(request.getId()))

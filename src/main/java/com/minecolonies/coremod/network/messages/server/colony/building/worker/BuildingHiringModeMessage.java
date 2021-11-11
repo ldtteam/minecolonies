@@ -64,6 +64,6 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobId)).setHiringMode(mode);
+        building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobId).setHiringMode(mode);
     }
 }

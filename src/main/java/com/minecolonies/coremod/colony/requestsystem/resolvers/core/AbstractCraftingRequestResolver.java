@@ -125,7 +125,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (building.getBuildingLevel() <= 0 || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getAssignedCitizen().isEmpty())
+        if (building.getBuildingLevel() <= 0 || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
         {
             return false;
         }

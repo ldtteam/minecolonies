@@ -51,7 +51,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
 
         for (final WorkerBuildingModuleView moduleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            for (final int citizenId : moduleView.getWorkerId())
+            for (final int citizenId : moduleView.getWorkerIdList())
             {
                 ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
                 if (citizen != null)

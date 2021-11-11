@@ -492,7 +492,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final List<ItemStorage> inputs = recipe.getCleanedInput().stream().sorted(Comparator.comparingInt(ItemStorage::getAmount).reversed()).collect(Collectors.toList());
 
 
-        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getRecipeImprovementSkill())));
+        final double actualChance = Math.min(5.0, (BASE_CHANCE * count) + (BASE_CHANCE * citizen.getCitizenSkillHandler().getLevel(building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getRecipeImprovementSkill())));
         final double roll = citizen.getRandom().nextDouble() * 100;
 
         ItemStorage reducedItem = null;
@@ -662,7 +662,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public boolean fullFillRecipe(final IRecipeStorage storage)
     {
         final List<IItemHandler> handlers = building.getHandlers();
-        final ICitizenData data = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getFirstCitizen();
+        final ICitizenData data = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getFirstCitizen();
 
         if (data == null || !data.getEntity().isPresent())
         {
@@ -670,7 +670,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             return storage.fullfillRecipe(building.getColony().getWorld(), handlers);
         }
         final AbstractEntityCitizen worker = data.getEntity().get();
-        final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(jobEntry)).getPrimarySkill());
+        final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getPrimarySkill());
         final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerWorld) building.getColony().getWorld())

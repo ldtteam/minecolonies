@@ -49,7 +49,7 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
     {
         if (pickedUpStack.getItem() == Items.FEATHER || pickedUpStack.getItem() == Items.EGG)
         {
-            return getCitizen().getRandom().nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(getJobRegistryEntry())).getPrimarySkill()))) > 1;
+            return getCitizen().getRandom().nextInt((getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobRegistryEntry()).getPrimarySkill()))) > 1;
         }
         return true;
     }

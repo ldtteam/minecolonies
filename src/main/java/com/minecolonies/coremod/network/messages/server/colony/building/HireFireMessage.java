@@ -88,11 +88,11 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
         citizen.setPaused(false);
         if (hire)
         {
-            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(entry)).assignCitizen(citizen);
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == entry).assignCitizen(citizen);
         }
         else
         {
-            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(entry)).removeCitizen(citizen);
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == entry).removeCitizen(citizen);
         }
     }
 }
