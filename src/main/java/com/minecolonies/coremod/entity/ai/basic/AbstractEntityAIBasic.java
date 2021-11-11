@@ -135,7 +135,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     /**
      * The current position the worker should walk to.
      */
-    public BlockPos walkTo = null;
+    protected BlockPos walkTo = null;
 
     /**
      * Already kept items during the dumping cycle.
@@ -223,6 +223,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
+    }
+
+    /**
+     * Set a position to walk to.
+     * @param walkto the position to walk to.
+     */
+    public void setWalkTo(final BlockPos walkto)
+    {
+        this.walkTo = walkto;
     }
 
     /**

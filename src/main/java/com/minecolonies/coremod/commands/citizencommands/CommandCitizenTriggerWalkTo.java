@@ -77,7 +77,7 @@ public class CommandCitizenTriggerWalkTo implements IMCColonyOfficerCommand
             if (entityCitizen instanceof EntityCitizen && entityCitizen.getCitizenJobHandler().getColonyJob() != null)
             {
                 final AbstractEntityAIBasic basic = ((AbstractEntityAIBasic) entityCitizen.getCitizenJobHandler().getColonyJob().getWorkerAI());
-                basic.walkTo = targetPos;
+                basic.setWalkTo(targetPos);
                 basic.registerTarget(new AIOneTimeEventTarget(AIWorkerState.WALK_TO));
             }
             else
