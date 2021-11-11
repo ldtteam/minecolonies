@@ -30,7 +30,7 @@ public class PathJobCanSee extends AbstractPathJob
       final World world,
       @NotNull final BlockPos start, final int range)
     {
-        super(world, start, start, range, searchingEntity);
+        super(world, searchingEntity.blockPosition(), start, range, searchingEntity);
 
         this.searchingEntity = searchingEntity;
         this.lookTarget = lookTarget;
@@ -45,7 +45,7 @@ public class PathJobCanSee extends AbstractPathJob
     @Override
     protected boolean isAtDestination(final Node n)
     {
-        if (start.getY() - n.pos.getY() > 2)
+        if (end.getY() - n.pos.getY() > 2)
         {
             return false;
         }

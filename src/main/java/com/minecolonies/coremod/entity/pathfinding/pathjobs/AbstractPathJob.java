@@ -61,6 +61,11 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected final BlockPos start;
 
     /**
+     * End position trying to reach.
+     */
+    protected final BlockPos end;
+
+    /**
      * The pathing cache.
      */
     @NotNull
@@ -165,6 +170,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
         this.start = new BlockPos(start);
+        this.end = end;
+
         this.maxRange = range;
 
         this.result = result;
@@ -244,6 +251,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
         this.start = start;
+        this.end = endRestriction;
         this.maxRange = range;
 
         this.result = result;
