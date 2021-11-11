@@ -28,9 +28,9 @@ public class PathJobCanSee extends AbstractPathJob
       final LivingEntity searchingEntity,
       final LivingEntity lookTarget,
       final World world,
-      @NotNull final BlockPos start, final int range)
+      @NotNull final BlockPos pos, final int range)
     {
-        super(world, searchingEntity.blockPosition(), start, range, searchingEntity);
+        super(world, searchingEntity.blockPosition(), pos, range, searchingEntity);
 
         this.searchingEntity = searchingEntity;
         this.lookTarget = lookTarget;
