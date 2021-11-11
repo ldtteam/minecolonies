@@ -481,6 +481,7 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
                 return storage;
             }
 
+
             //If we didn't have a stored recipe, see if there is a smelting recipe that is also a food output, and use it.
             storage = FurnaceRecipes.getInstance().getFirstSmeltingRecipeByResult(stackPredicate);
             if(storage != null && storage.getRecipeSource() != null && ISFOOD.test(storage.getPrimaryOutput().getStack()) && isRecipeCompatible(GenericRecipe.of(storage)))
