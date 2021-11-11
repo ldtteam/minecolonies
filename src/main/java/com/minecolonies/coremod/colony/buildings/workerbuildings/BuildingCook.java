@@ -462,7 +462,7 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput());
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, COOK_DESC).orElse(ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput()));
         }
 
         @Override

@@ -13,6 +13,8 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -61,14 +63,14 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         }
 
         return getNewInstance((String)context[0], (int)context[1], (int)context[2], (boolean)context[3], (boolean)context[4], (ResourceLocation)context[5], (ResourceLocation)context[6], (ResourceLocation)context[7],
-          (ResourceLocation)context[8], (List<ItemStorage>)context[9], (ItemStack)context[10], (List<ItemStack>) context[11],  (List<ItemStack>) context[12]);
+          (ResourceLocation)context[8], (List<ItemStorage>)context[9], (ItemStack)context[10], (List<ItemStack>) context[11],  (List<ItemStack>) context[12], (Block) context[13]);
     }
 
     private CustomRecipe getNewInstance(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
       final ResourceLocation researchReq, final ResourceLocation researchExclude, final ResourceLocation lootTable, final List<ItemStorage> inputs,
-      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs)
+      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, final Block intermediate)
     {
-        return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs);
+        return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     @NotNull
@@ -140,6 +142,8 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             }
             compound.put(RECIPE_ALTERNATE_PROP, altOutputs);
         }
+
+        compound.putString(RECIPE_INTERMEDIATE_PROP, recipe.getIntermediate().getRegistryName().toString());
 
         return compound;
     }
@@ -220,7 +224,9 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             }
         }
 
-        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs);
+        final Block intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(nbt.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
+
+        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     @Override
@@ -265,6 +271,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             packetBuffer.writeItem(alts);
         }
+        packetBuffer.writeResourceLocation(recipe.getIntermediate().getRegistryName());
     }
 
     @NotNull
@@ -320,8 +327,10 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             altOutputs.add(buffer.readItem());
         }
+        
+        final Block intermediate = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
 
-        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs);
+        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     @Override

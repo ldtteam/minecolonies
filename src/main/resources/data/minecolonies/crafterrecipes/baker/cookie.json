@@ -1,6 +1,6 @@
 {
   "type" : "recipe",
-  "crafter": "baker_crafting",
+  "crafter": "baker_smelting",
   "inputs": [
     {
         "item" : "minecolonies:cookie_dough",
