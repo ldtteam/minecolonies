@@ -18,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -108,15 +109,15 @@ public class GraveManager implements IGraveManager
                 continue;
             }
 
-            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
-            if (graveEntity == null)
+            final BlockEntity graveEntity = colony.getWorld().getBlockEntity(pos);
+            if (!(graveEntity instanceof TileEntityGrave))
             {
                 iterator.remove();
                 colony.markDirty();
                 continue;
             }
 
-            if (!graveEntity.onColonyTick(MAX_TICKRATE))
+            if (!((TileEntityGrave) graveEntity).onColonyTick(MAX_TICKRATE))
             {
                 iterator.remove();
                 colony.markDirty();

@@ -216,10 +216,36 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
            */
           new AITarget(PAUSED, this::bePaused, 10),
           /*
+           * Walk to goal.
+           */
+          new AITarget(WALK_TO, this::walkToState, 10),
+          /*
            * Start paused with inventory dump
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, this::isStartingPaused, INVENTORY_FULL, TICKS_SECOND)
         );
+    }
+
+    /**
+     * Set a position to walk to.
+     * @param walkto the position to walk to.
+     */
+    public void setWalkTo(final BlockPos walkto)
+    {
+        this.walkTo = walkto;
+    }
+
+    /**
+     * Special walk state..
+     * @return IDLE once arrived.
+     */
+    private IAIState walkToState()
+    {
+        if (walkToBlock(walkTo, DEFAULT_RANGE_FOR_DELAY))
+        {
+            return getState();
+        }
+        return IDLE;
     }
 
     /**
