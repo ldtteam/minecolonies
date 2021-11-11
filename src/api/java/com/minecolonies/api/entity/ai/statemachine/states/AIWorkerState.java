@@ -65,6 +65,10 @@ public enum AIWorkerState implements IAIState
      * Do not work, can be used for freetime activities.
      */
     PAUSED(true),
+    /**
+     * Walk to goal for debugging.
+     */
+    WALK_TO(true),
     /*
 ###FISHERMAN###
      */

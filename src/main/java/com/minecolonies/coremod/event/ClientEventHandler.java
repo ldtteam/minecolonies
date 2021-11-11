@@ -120,6 +120,11 @@ public class ClientEventHandler
     private static final Lazy<Map<String, BuildingEntry>> crafterToBuilding = Lazy.of(ClientEventHandler::buildCrafterToBuildingMap);
 
     /**
+     * Set of already requested structures.
+     */
+    public static Set<String> alreadyRequestedStructures = new HashSet<>();
+
+    /**
      * Used to catch the renderWorldLastEvent in order to draw the debug nodes for pathfinding.
      *
      * @param event the catched event.
@@ -150,6 +155,10 @@ public class ClientEventHandler
         else if (player.getMainHandItem().getItem() == com.ldtteam.structurize.items.ModItems.buildTool.get())
         {
             handleRenderBuildTool(event, world, player);
+        }
+        else
+        {
+            alreadyRequestedStructures.clear();
         }
 
         DebugRendererChunkBorder.renderWorldLastEvent(event);
@@ -424,12 +433,18 @@ public class ClientEventHandler
                       true);
                     if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
                     {
-                        Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
+                        if (alreadyRequestedStructures.contains(structureName))
+                        {
+                            continue;
+                        }
+                        alreadyRequestedStructures.add(structureName);
+
+                        Log.getLogger().error("Couldn't find schematic: " + structureName + " requesting to server if possible.");
                         if (ServerLifecycleHooks.getCurrentServer() == null)
                         {
                             Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                            continue;
                         }
+                        continue;
                     }
 
                     final Blueprint blueprint = wrapper.getBluePrint();

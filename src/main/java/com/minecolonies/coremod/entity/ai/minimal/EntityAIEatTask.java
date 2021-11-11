@@ -40,11 +40,13 @@ import java.util.EnumSet;
 import static com.minecolonies.api.research.util.ResearchConstants.SATURATION;
 import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.ItemStackUtils.ISCOOKABLE;
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.SECONDS_A_MINUTE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.*;
+import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.
@@ -196,7 +198,7 @@ public class EntityAIEatTask extends Goal
 
         if (citizenData.getSaturation() <= CitizenConstants.AVERAGE_SATURATION)
         {
-            if (citizenData.getSaturation() <= RESTAURANT_LIMIT)
+            if (citizenData.getSaturation() <= RESTAURANT_LIMIT || (citizenData.getSaturation() < LOW_SATURATION && citizen.getHealth() < SEEK_DOCTOR_HEALTH))
             {
                 return true;
             }

@@ -63,6 +63,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingViewProducer(() -> EmptyView::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BAKERY_ID))
                                 .addBuildingModuleProducer(() -> new BuildingBaker.CraftingModule(ModJobs.baker), () -> CraftingModuleView::new)
+                                .addBuildingModuleProducer(() -> new BuildingBaker.SmeltingModule(ModJobs.baker), () -> CraftingModuleView::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(FurnaceUserModule::new)
                                 .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.baker, Skill.Knowledge, Skill.Dexterity, false, (b) -> 1, Skill.Dexterity, Skill.Knowledge), () -> WorkerBuildingModuleView::new)
@@ -373,6 +374,7 @@ public final class ModBuildingsInitializer
                                       .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                         (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                       .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                       .createBuildingEntry();
 
         ModBuildings.swineHerder = new BuildingEntry.Builder()

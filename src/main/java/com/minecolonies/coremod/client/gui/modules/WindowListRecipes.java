@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -183,6 +184,13 @@ public class WindowListRecipes extends AbstractModuleWindow
                         removeButton.setVisible(false);
                     }
                 }
+
+                final Text intermediate = rowPane.findPaneOfTypeByID("intermediate", Text.class);
+                if(recipe.getIntermediate() != Blocks.AIR)
+                {
+                    intermediate.setText(recipe.getIntermediate().getName());
+                }
+                intermediate.setVisible(false);
 
                 // Some special recipes might not include all necessary air blocks.
                 if (recipe.getInput().size() < 4)

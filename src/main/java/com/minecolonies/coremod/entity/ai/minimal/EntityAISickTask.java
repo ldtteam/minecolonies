@@ -4,18 +4,21 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
+import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.IState;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Disease;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import net.minecraft.block.BedBlock;
@@ -36,6 +39,7 @@ import net.minecraft.world.World;
 import java.util.EnumSet;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.GuardConstants.BASIC_VOLUME;
 import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITAL;
@@ -79,6 +83,11 @@ public class EntityAISickTask extends Goal
     private static final int GOING_TO_BED_ATTEMPTS = 20;
 
     /**
+     * Citizen data.
+     */
+    private final ICitizenData citizenData;
+
+    /**
      * The waiting ticks.
      */
     private int waitingTicks = 0;
@@ -91,7 +100,7 @@ public class EntityAISickTask extends Goal
     /**
      * The different types of AIStates related to eating.
      */
-    public enum DiseaseState
+    public enum DiseaseState implements IState
     {
         IDLE,
         CHECK_FOR_CURE,
@@ -109,19 +118,14 @@ public class EntityAISickTask extends Goal
     private final EntityCitizen citizen;
 
     /**
-     * The state the task is in currently.
-     */
-    private DiseaseState currentState = IDLE;
-
-    /**
      * Restaurant to which the citizen should path.
      */
     private BlockPos placeToPath;
 
     /**
-     * Delay ticks.
+     * AI statemachine
      */
-    private int delayTicks = 0;
+    private final ITickRateStateMachine<DiseaseState> stateMachine;
 
     /**
      * Instantiates this task.
@@ -132,20 +136,39 @@ public class EntityAISickTask extends Goal
     {
         super();
         this.citizen = citizen;
+        this.citizenData = citizen.getCitizenData();
         this.setFlags(EnumSet.of(Flag.MOVE));
+
+        stateMachine = new TickRateStateMachine<>(IDLE, e -> Log.getLogger().warn("Disease AI threw exception:", e));
+        stateMachine.addTransition(new TickingTransition<>(IDLE, this::isSick, () -> CHECK_FOR_CURE, 20));
+        stateMachine.addTransition(new AIEventTarget<DiseaseState>(AIBlockingEventType.AI_BLOCKING, () -> true, this::setNotWorking, 20));
+
+        stateMachine.addTransition(new TickingTransition<>(CHECK_FOR_CURE, () -> true, this::checkForCure, 20));
+        stateMachine.addTransition(new TickingTransition<>(GO_TO_HUT, () -> true, this::goToHut, 20));
+        stateMachine.addTransition(new TickingTransition<>(SEARCH_HOSPITAL, () -> true, this::searchHospital, 20));
+        stateMachine.addTransition(new TickingTransition<>(GO_TO_HOSPITAL, () -> true, this::goToHospital, 20));
+        stateMachine.addTransition(new TickingTransition<>(WAIT_FOR_CURE, () -> true, this::waitForCure, 20));
+        stateMachine.addTransition(new TickingTransition<>(APPLY_CURE, () -> true, this::applyCure, 20));
+        stateMachine.addTransition(new TickingTransition<>(FIND_EMPTY_BED, () -> true, this::findEmptyBed, 20));
     }
 
-    @Override
-    public boolean canUse()
+    private DiseaseState setNotWorking()
+    {
+        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+        if (job != null && stateMachine.getState() != IDLE)
+        {
+            citizenData.setWorking(false);
+            citizen.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
+        }
+
+        return null;
+    }
+
+    private boolean isSick()
     {
         if (citizen.getDesiredActivity() == DesiredActivity.SLEEP && !citizen.isSleeping())
         {
             return false;
-        }
-
-        if (currentState != IDLE)
-        {
-            return true;
         }
 
         if (citizen.getCitizenJobHandler().getColonyJob() != null && !citizen.getCitizenJobHandler().getColonyJob().canAIBeInterrupted())
@@ -153,58 +176,19 @@ public class EntityAISickTask extends Goal
             return false;
         }
 
-        return citizen.getCitizenDiseaseHandler().isSick();
+        return citizen.getCitizenDiseaseHandler().isSick()
+                 || (!(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() < SEEK_DOCTOR_HEALTH && citizenData.getSaturation() > LOW_SATURATION);
     }
 
     @Override
-    public void tick()
+    public boolean canUse()
     {
-        if (++delayTicks != TICKS_SECOND)
+        if (citizen.getDesiredActivity() == DesiredActivity.SLEEP)
         {
-            return;
+            return false;
         }
-        delayTicks = 0;
-
-        final ICitizenData citizenData = citizen.getCitizenData();
-        if (citizenData == null)
-        {
-            return;
-        }
-
-        final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-        if (job != null)
-        {
-            citizenData.setWorking(false);
-        }
-
-        citizen.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, TICKS_SECOND * 30));
-        switch (currentState)
-        {
-            case CHECK_FOR_CURE:
-                currentState = checkForCure(citizenData);
-                return;
-            case GO_TO_HUT:
-                currentState = goToHut(citizenData);
-                return;
-            case SEARCH_HOSPITAL:
-                currentState = searchHospital(citizenData);
-                return;
-            case GO_TO_HOSPITAL:
-                currentState = goToHospital();
-                return;
-            case WAIT_FOR_CURE:
-                currentState = waitForCure(citizenData);
-                return;
-            case APPLY_CURE:
-                currentState = applyCure(citizenData);
-                return;
-            case FIND_EMPTY_BED:
-                currentState = findEmptyBed();
-                return;
-            default:
-                reset();
-                break;
-        }
+        stateMachine.tick();
+        return stateMachine.getState() != IDLE;
     }
 
     /**
@@ -281,12 +265,11 @@ public class EntityAISickTask extends Goal
     /**
      * Actual action of eating.
      *
-     * @param citizenData the citizen.
      * @return the next state to go to, if successful idle.
      */
-    private DiseaseState applyCure(final ICitizenData citizenData)
+    private DiseaseState applyCure()
     {
-        if (checkForCure(citizenData) != APPLY_CURE)
+        if (checkForCure() != APPLY_CURE)
         {
             return CHECK_FOR_CURE;
         }
@@ -310,16 +293,15 @@ public class EntityAISickTask extends Goal
             return APPLY_CURE;
         }
 
-        cure(citizenData);
+        cure();
         return IDLE;
     }
 
     /**
      * Cure the citizen.
      *
-     * @param citizenData the data of the citizen to cure.
      */
-    private void cure(final ICitizenData citizenData)
+    private void cure()
     {
         final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
         if (disease != null)
@@ -353,10 +335,9 @@ public class EntityAISickTask extends Goal
     /**
      * Stay in bed while waiting to be cured.
      *
-     * @param citizenData the citizen to check.
      * @return the next state to go to.
      */
-    private DiseaseState waitForCure(final ICitizenData citizenData)
+    private DiseaseState waitForCure()
     {
         final IColony colony = citizenData.getColony();
         placeToPath = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
@@ -366,7 +347,7 @@ public class EntityAISickTask extends Goal
             return SEARCH_HOSPITAL;
         }
 
-        final DiseaseState state = checkForCure(citizenData);
+        final DiseaseState state = checkForCure();
         if (state == APPLY_CURE)
         {
             return APPLY_CURE;
@@ -379,7 +360,7 @@ public class EntityAISickTask extends Goal
 
         if (citizen.getRandom().nextInt(10000) < CHANCE_FOR_RANDOM_CURE)
         {
-            cure(citizenData);
+            cure();
             return IDLE;
         }
 
@@ -412,12 +393,11 @@ public class EntityAISickTask extends Goal
     /**
      * Go to the hut to try to get food there first.
      *
-     * @param data the citizens data.
      * @return the next state to go to.
      */
-    private DiseaseState goToHut(final ICitizenData data)
+    private DiseaseState goToHut()
     {
-        final IBuilding buildingWorker = data.getWorkBuilding();
+        final IBuilding buildingWorker = citizenData.getWorkBuilding();
         if (buildingWorker == null)
         {
             return SEARCH_HOSPITAL;
@@ -452,10 +432,9 @@ public class EntityAISickTask extends Goal
     /**
      * Search for a placeToPath within the colony of the citizen.
      *
-     * @param citizenData the citizen.
      * @return the next state to go to.
      */
-    private DiseaseState searchHospital(final ICitizenData citizenData)
+    private DiseaseState searchHospital()
     {
         final IColony colony = citizenData.getColony();
         placeToPath = colony.getBuildingManager().getBestBuilding(citizen, BuildingHospital.class);
@@ -487,10 +466,9 @@ public class EntityAISickTask extends Goal
     /**
      * Checks if the citizen has the cure in the inventory and makes a decision based on that.
      *
-     * @param citizenData the citizen to check.
      * @return the next state to go to.
      */
-    private DiseaseState checkForCure(final ICitizenData citizenData)
+    private DiseaseState checkForCure()
     {
         final String id = citizen.getCitizenDiseaseHandler().getDisease();
         if (id.isEmpty())
@@ -498,7 +476,6 @@ public class EntityAISickTask extends Goal
             if (citizen.getHealth() > SEEK_DOCTOR_HEALTH)
             {
                 reset();
-                currentState = IDLE;
                 return IDLE;
             }
             return GO_TO_HUT;
@@ -515,7 +492,6 @@ public class EntityAISickTask extends Goal
                 }
 
                 reset();
-                currentState = IDLE;
                 return IDLE;
             }
         }
@@ -532,7 +508,14 @@ public class EntityAISickTask extends Goal
         citizen.stopUsingItem();
         citizen.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
         placeToPath = null;
-        currentState = CHECK_FOR_CURE;
+    }
+
+    @Override
+    public void stop()
+    {
+        reset();
+        stateMachine.reset();
+        citizen.getCitizenData().setVisibleStatus(null);
     }
 
     @Override
