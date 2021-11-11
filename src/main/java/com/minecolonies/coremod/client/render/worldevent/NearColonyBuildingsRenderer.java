@@ -25,7 +25,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class NearColonyBuildingsRenderer
 {
@@ -47,6 +49,11 @@ public class NearColonyBuildingsRenderer
     private static BlockPos lastCacheRebuild = null;
 
     /**
+     * Set of already requested structures.
+     */
+    public static Set<String> alreadyRequestedStructures = new HashSet<>();
+
+    /**
      * Renders building bounding boxes into the client.
      * 
      * @param ctx rendering context
@@ -63,6 +70,7 @@ public class NearColonyBuildingsRenderer
 
         if (ctx.mainHandItem.getItem() != ModItems.buildTool.get())
         {
+            alreadyRequestedStructures.clear();
             return;
         }
 
@@ -140,7 +148,13 @@ public class NearColonyBuildingsRenderer
                     true);
                 if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
                 {
-                    Log.getLogger().debug("Blueprint error, requesting" + structureName + " from server.");
+                    if (alreadyRequestedStructures.contains(structureName))
+                    {
+                        continue;
+                    }
+                    alreadyRequestedStructures.add(structureName);
+
+                    Log.getLogger().error("Couldn't find schematic: " + structureName + " requesting to server if possible.");
                     if (ServerLifecycleHooks.getCurrentServer() == null)
                     {
                         Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));

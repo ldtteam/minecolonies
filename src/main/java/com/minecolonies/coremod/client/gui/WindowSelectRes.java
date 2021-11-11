@@ -9,6 +9,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Log;
 import net.minecraft.world.item.ItemStack;
@@ -153,13 +154,16 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     private void updateResources()
     {
         this.allItems.clear();
-        this.allItems.addAll(ImmutableList.copyOf(StreamSupport.stream(Spliterators.spliteratorUnknownSize(ForgeRegistries.ITEMS.iterator(), Spliterator.ORDERED), false)
-                                                    .map(ItemStack::new)
-                                                    .filter((stack) -> (test.test(stack) && (this.filter.isEmpty() || stack.getDescriptionId().toLowerCase(Locale.US)
-                                                                                                                        .contains(this.filter.toLowerCase(Locale.US))
-                                                                                                                   || stack.getHoverName().getString().toLowerCase(Locale.US)
-                                                                                                                        .contains(filter.toLowerCase(Locale.US)))))
-                                                    .collect(Collectors.toList())));
+
+        for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
+        {
+            if (test.test(stack) && (this.filter.isEmpty()
+                                       || stack.getDescriptionId().toLowerCase(Locale.US).contains(this.filter.toLowerCase(Locale.US))
+                                       || stack.getHoverName().getString().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))))
+            {
+                this.allItems.add(stack);
+            }
+        }
 
         allItems.sort(Comparator.comparingInt(s1 -> StringUtils.getLevenshteinDistance(s1.getHoverName().getString(), filter)));
         this.updateResourceList();
