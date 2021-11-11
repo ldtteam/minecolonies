@@ -1,0 +1,25 @@
+{
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "quality": 1,
+          "name": "minecraft:prismarine_shard"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "quality": 1,
+          "name": "minecraft:prismarine_crystals"
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 950
+        }
+      ]
+    }
+  ]
+}

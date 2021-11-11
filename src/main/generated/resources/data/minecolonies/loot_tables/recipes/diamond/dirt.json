@@ -1,9 +1,7 @@
 {
-  "type": "minecraft:generic",
   "pools": [
     {
-      "rolls": 1,
-      "bonus_rolls": 0.035,
+      "rolls": 1.0,
       "entries": [
         {
           "type": "minecraft:empty",
@@ -11,65 +9,66 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:wheat_seeds",
-          "weight": 25
+          "weight": 25,
+          "name": "minecraft:wheat_seeds"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:oak_sapling",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:oak_sapling"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:birch_sapling",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:birch_sapling"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:spruce_sapling",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:spruce_sapling"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:jungle_sapling",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:jungle_sapling"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:carrot",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:carrot"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:potato",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:potato"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:pumpkin_seeds",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:pumpkin_seeds"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:melon_seeds",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:melon_seeds"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:beetroot_seeds",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:beetroot_seeds"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:dark_oak_sapling",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:dark_oak_sapling"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:acacia_sapling",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:acacia_sapling"
         }
-      ]
+      ],
+      "bonus_rolls": 0.035
     }
   ]
 }
