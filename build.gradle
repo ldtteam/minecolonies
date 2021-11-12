@@ -537,3 +537,10 @@ publishing {
         }
     }
 }
+
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.fork = true
+    }
+
+}
