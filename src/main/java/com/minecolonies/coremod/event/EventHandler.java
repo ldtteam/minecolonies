@@ -141,7 +141,7 @@ public class EventHandler
         ITag<EntityType<?>> mobBlacklist = EntityTypeTags.getAllTags().getTag(new ResourceLocation(Constants.MOD_ID,"mob_attack_blacklist" ));
         if (!event.getWorld().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob)  && !(event.getEntity().getTags().contains(mobBlacklist)))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob)  && !(mobBlacklist.contains(event.getEntity().getType())))
             {
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityMercenary.class, true));
