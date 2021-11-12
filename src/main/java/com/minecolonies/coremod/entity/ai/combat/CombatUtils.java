@@ -27,7 +27,7 @@ public class CombatUtils
      */
     private static final double AIM_HEIGHT                     = 2.0D;
     private static final double ARROW_SPEED                    = 1.4D;
-    private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
+    private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.18;
     private static final double SPEED_FOR_DIST                 = 35;
 
     /**
