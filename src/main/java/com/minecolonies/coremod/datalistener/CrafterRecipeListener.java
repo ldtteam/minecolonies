@@ -1,19 +1,15 @@
 package com.minecolonies.coremod.datalistener;
 
 import com.google.gson.*;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.ServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -74,20 +70,7 @@ public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
             }
         }
 
-        recipeManager.buildLootData(dataPackRegistries.getLootTables());
-
         final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(Map::size).sum();
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");
-
-        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateRecipes(dataPackRegistries.getRecipeManager());
-
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if(server != null)
-        {
-            for (ServerPlayer player : server.getPlayerList().getPlayers())
-            {
-                recipeManager.sendCustomRecipeManagerPackets(player);
-            }
-        }
     }
 }
