@@ -18,11 +18,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -211,16 +213,17 @@ public class GraveManager implements IGraveManager
     @Override
     public BlockPos reserveNextFreeGrave()
     {
-        for (@NotNull final BlockPos pos : graves.keySet())
+        for (@NotNull final BlockPos pos : new ArrayList<>(graves.keySet()))
         {
             if (!WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
                 continue;
             }
 
-            final TileEntityGrave graveEntity = (TileEntityGrave) colony.getWorld().getBlockEntity(pos);
-            if (graveEntity == null)
+            final BlockEntity graveEntity = colony.getWorld().getBlockEntity(pos);
+            if (!(graveEntity instanceof TileEntityGrave))
             {
+                graves.remove(pos);
                 continue;
             }
 
