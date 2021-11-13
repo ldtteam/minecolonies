@@ -163,7 +163,7 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public void discover()
+    public void discover(@NotNull final RecipeManager recipeManager)
     {
         saplings.clear();
         oreBlocks.clear();
@@ -172,6 +172,7 @@ public class CompatibilityManager implements ICompatibilityManager
         food.clear();
         edibles.clear();
         fuel.clear();
+        compostRecipes.clear();
 
         luckyOres.clear();
         recruitmentCostsWeights.clear();
@@ -189,6 +190,7 @@ public class CompatibilityManager implements ICompatibilityManager
         discoverFood();
         discoverFuel();
         discoverMobs();
+        discoverCompostRecipes(recipeManager);
 
         discoverLuckyOres();
         discoverRecruitCosts();
@@ -385,13 +387,6 @@ public class CompatibilityManager implements ICompatibilityManager
     public boolean isFreePos(final BlockPos block)
     {
         return freePositions.contains(block);
-    }
-
-    @Override
-    public void invalidateRecipes(@NotNull final RecipeManager recipeManager)
-    {
-        compostRecipes.clear();
-        discoverCompostRecipes(recipeManager);
     }
 
     @Override
