@@ -1,23 +1,15 @@
 import groovy.json.*
 
 processResources {
-    inputs.file 'gradle.properties'
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'config': project
-    }
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
+
     doLast {
-        if(file('src/datagen/generated/minecolonies/assets/minecolonies/lang/default.json').exists()) {
+        if(project.rootProject.file('src/datagen/generated/minecolonies/assets/minecolonies/lang/default.json').exists()) {
             def slurper = new JsonSlurper()
-            def standard = slurper.parse(file('src/main/resources/assets/minecolonies/lang/en_us.json'), 'UTF-8')
-            def generated = slurper.parse(file('src/datagen/generated/minecolonies/assets/minecolonies/lang/default.json'), 'UTF-8')
+            def standard = slurper.parse(project.rootProject.file('src/main/resources/assets/minecolonies/lang/en_us.json'), 'UTF-8')
+            def generated = slurper.parse(project.rootProject.file('src/datagen/generated/minecolonies/assets/minecolonies/lang/default.json'), 'UTF-8')
 
             standard += generated
-
-            file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)), 'UTF-8')
+            project.rootProject.file('build/resources/main/assets/minecolonies/lang/en_us.json').write(JsonOutput.prettyPrint(JsonOutput.toJson(standard)), 'UTF-8')
         }
     }
 }
