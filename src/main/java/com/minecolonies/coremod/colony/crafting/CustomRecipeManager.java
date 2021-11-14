@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.crafting;
 
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.coremod.Network;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -228,11 +229,25 @@ public class CustomRecipeManager
      */
     public void buildLootData(@NotNull final LootTableManager lootTableManager)
     {
+        final List<ResourceLocation> lootIds = new ArrayList<>();
+        for (final Map<ResourceLocation, CustomRecipe> recipes : recipeMap.values())
+        {
+            for (final CustomRecipe recipe : recipes.values())
+            {
+                final ResourceLocation lootTable = recipe.getLootTable();
+                if (lootTable != null)
+                {
+                    lootIds.add(lootTable);
+                }
+            }
+        }
+
+        lootIds.add(ModLootTables.FISHING);
+        lootIds.addAll(ModLootTables.FISHERMAN_BONUS.values());
+
         lootTables.clear();
-        lootTables.putAll(recipeMap.values().stream()
-                .flatMap(r -> r.values().stream())
-                .map(CustomRecipe::getLootTable)
-                .filter(Objects::nonNull)
+        lootTables.putAll(lootIds.stream()
+                .filter(Objects::nonNull)   // just in case
                 .distinct()
                 .collect(Collectors.toConcurrentMap(Function.identity(),
                         id -> LootTableAnalyzer.toDrops(lootTableManager, id))));

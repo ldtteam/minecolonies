@@ -256,7 +256,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             {
                 final LootTableAnalyzer.LootDrop drop = this.drops.get(index);
                 final String key = TranslationConstants.COM_MINECOLONIES_JEI_PREFIX +
-                        (drop.getVariableQuality() ? "chanceskill.tip" : "chance.tip");
+                        (drop.getQuality() < 0 ? "chancenegskill.tip" : drop.getQuality() > 0 ? "chanceskill.tip" : "chance.tip");
                 final float probability = drop.getProbability() * 100;
 
                 if (probability >= 1)
@@ -268,6 +268,11 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                 {
                     tooltip.add(new TranslationTextComponent(key,
                             Math.round(probability * 100) / 100f));
+                }
+
+                if (drop.getConditional())
+                {
+                    tooltip.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "conditions.tip"));
                 }
             }
         }

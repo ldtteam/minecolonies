@@ -26,8 +26,10 @@ public interface ICompatibilityManager
 {
     /**
      * Method called to instantiate internal data.
+     *
+     * @param recipeManager The vanilla recipe manager.
      */
-    void discover();
+    void discover(@NotNull final RecipeManager recipeManager);
 
     /**
      * Gets the sapling matching a leave.
@@ -217,9 +219,4 @@ public interface ICompatibilityManager
      * @return true if so.
      */
     boolean isFreePos(BlockPos block);
-
-    /**
-     * Called when recipes are reloaded and cached info needs to be discarded.
-     */
-    void invalidateRecipes(@NotNull final RecipeManager recipeManager);
 }
