@@ -94,8 +94,7 @@ public class ModelEntityFarmerMale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
           CubeListBuilder.create()
             .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)
-            .texOffs(32, 0).addBox(-4.0F, -8.0F, -5.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F))
-          , PartPose.offset(0.0F, 0.0F, 1.0F));
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition headDetailDefinition = headDefinition.addOrReplaceChild("headDetail",
           CubeListBuilder.create()

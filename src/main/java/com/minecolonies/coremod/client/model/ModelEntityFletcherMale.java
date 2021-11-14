@@ -74,8 +74,7 @@ public class ModelEntityFletcherMale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition headDefinition = partDefinition.addOrReplaceChild("head",
           CubeListBuilder.create()
             .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F)
-            .texOffs(32, 0).addBox(-4.0F, -32.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.5F)).mirror()
-          , PartPose.offset(0.0F, 24.0F, 0.0F));
+          , PartPose.offset(0.0F, 0.0F, 0.0F));
 
         PartDefinition hairDefinition = headDefinition.addOrReplaceChild("hair",
           CubeListBuilder.create()
