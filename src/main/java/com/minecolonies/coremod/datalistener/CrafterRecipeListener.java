@@ -1,19 +1,15 @@
 package com.minecolonies.coremod.datalistener;
 
 import com.google.gson.*;
-import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -74,20 +70,7 @@ public class CrafterRecipeListener extends JsonReloadListener
             }
         }
 
-        recipeManager.buildLootData(dataPackRegistries.getLootTables());
-
         final int totalRecipes = recipeManager.getAllRecipes().values().stream().mapToInt(Map::size).sum();
         Log.getLogger().info("Loaded " + totalRecipes + " recipes for " + recipeManager.getAllRecipes().size() + " crafters");
-
-        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateRecipes(dataPackRegistries.getRecipeManager());
-
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if(server != null)
-        {
-            for (ServerPlayerEntity player : server.getPlayerList().getPlayers())
-            {
-                recipeManager.sendCustomRecipeManagerPackets(player);
-            }
-        }
     }
 }
