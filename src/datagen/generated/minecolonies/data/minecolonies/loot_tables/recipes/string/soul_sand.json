@@ -1,8 +1,8 @@
 {
-  "type": "minecraft:generic",
   "pools": [
     {
-      "rolls": 1,
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:empty",
@@ -10,13 +10,13 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:nether_wart",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:nether_wart"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:quartz",
-          "weight": 5
+          "weight": 5,
+          "name": "minecraft:quartz"
         }
       ]
     }

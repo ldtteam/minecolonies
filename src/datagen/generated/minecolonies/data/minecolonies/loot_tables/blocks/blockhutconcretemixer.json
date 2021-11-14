@@ -2,24 +2,26 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
-      "rolls": 1,
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecolonies:blockhutconcretemixer",
           "functions": [
             {
               "function": "minecraft:copy_name",
               "source": "block_entity"
             }
-          ]
+          ],
+          "name": "minecolonies:blockhutconcretemixer"
         }
-      ]
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "functions": []
     }
   ]
 }

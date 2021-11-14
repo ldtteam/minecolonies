@@ -1,9 +1,12 @@
 {
-  "type": "minecraft:generic",
   "pools": [
     {
-      "rolls": 1,
-      "bonus_rolls": 0.025,
+      "rolls": 1.0,
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "min": 0.025,
+        "max": 0.025
+      },
       "entries": [
         {
           "type": "minecraft:empty",
@@ -11,28 +14,26 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:nether_wart",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:nether_wart"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:quartz",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:quartz"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:glowstone_dust",
-          "weight": 10
+          "weight": 10,
+          "name": "minecraft:glowstone_dust"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:blaze_powder",
-          "weight": 1
+          "name": "minecraft:blaze_powder"
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:magma_cream",
-          "weight": 1
+          "name": "minecraft:magma_cream"
         }
       ]
     }
