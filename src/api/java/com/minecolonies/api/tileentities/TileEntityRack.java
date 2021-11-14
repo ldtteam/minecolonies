@@ -489,6 +489,7 @@ public class TileEntityRack extends AbstractTileEntityRack
         if (version != VERSION)
         {
             updateBlockState();
+            version = VERSION;
         }
 
         if (!remove && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
