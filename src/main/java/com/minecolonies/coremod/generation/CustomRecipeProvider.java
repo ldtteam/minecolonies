@@ -84,13 +84,6 @@ public abstract class CustomRecipeProvider implements DataProvider
         }
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "CustomRecipes";
-    }
-
     protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);
 
     public static class CustomRecipeBuilder

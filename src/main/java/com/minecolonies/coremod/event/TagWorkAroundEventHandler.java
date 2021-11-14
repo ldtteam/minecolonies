@@ -2,8 +2,14 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
+import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
@@ -21,16 +27,31 @@ import org.jetbrains.annotations.NotNull;
  * primarily because of timing problems between CompatibilityManager and smelting recipes.
  * If Forge changes its behavior for TagCollectionManager and ItemTags, some of the logic in here can be cleaned up and moved to normal FooEventHandlers.
  *
- * For Single Player, startup pattern is :
- *  -- onTagUpdate (populate ModTagsInitializer) to onServerStarted (populate CompatibilityManager and FurnaceRecipes) to onRecipesUpdate (repeat FurnaceRecipes).
- * For Dedicated Servers, startup pattern is :
- *  -- onTagUpdate (populate ModTagsInitializer) to onServerStarted (populate CompatibilityManager and FurnaceRecipes).
- * For Remote Clients either connecting to Open To Lan Single Player, or a Dedicated Server, startup pattern is :
- *  -- onRecipesUpdated fires (populates FurnaceRecipes) to onTagUpdate fires (populates CompatibilityManager and ModTagsInitializer).
- * Data Pack Reloads during live play will fire onTagUpdate in all cases.
+ * As of Forge 36.2.4, at least, events happen in this order:
+ *
+ * For Single Player, on startup:
+ *  -- JsonReloadListeners, TagsUpdatedEvent, FMLServerAboutToStart, FMLServerStarted, OnDatapackSyncEvent, RecipesUpdatedEvent
+ * For Dedicated Server, on startup:
+ *  -- JsonReloadListeners, TagsUpdatedEvent, FMLServerAboutToStart, FMLServerStarted
+ * For Remote Client, on login:
+ *  -- OnDatapackSyncEvent [server], PlayerLoggedInEvent [server], RecipesUpdatedEvent [client], TagsUpdatedEvent [client]
+ * On /reload:
+ *  -- JsonReloadListeners, TagsUpdatedEvent [server], OnDatapackSyncEvent [server], TagsUpdatedEvent [remote client], RecipesUpdatedEvent [client]
  */
 public class TagWorkAroundEventHandler
 {
+    /**
+     * Updates internal caches of vanilla recipes and tags.
+     * This is mostly called server-side, but can be called on the client too.
+     *
+     * @param recipeManager The vanilla recipe manager.
+     */
+    private static void loadRecipes(@NotNull final RecipeManager recipeManager)
+    {
+        FurnaceRecipes.getInstance().loadRecipes(recipeManager);
+        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(recipeManager);
+    }
+
     public static class TagEventHandler
     {
         /**
@@ -47,11 +68,36 @@ public class TagWorkAroundEventHandler
             // This Tag Supplier is guaranteed to have the output of a transmitted TagSupplier on remote clients.
             // _Only_ these events and ClientWorld.getTags() are guaranteed to be consistent on remote clients.
             ModTagsInitializer.init(event.getTagManager());
-            // TagUpdatedEvents can be sent during initial logical server setup before a server has FMLServerStartedEvent or the server recipe manager is finished.
-            // To avoid extraneous log messages, do not run in those cases when possible.  This test can't prevent a discover() in cases where a FurnaceRecipes exists, but those situations are harmless.
-            if(FurnaceRecipes.getInstance().loaded())
+        }
+
+        /**
+         * This event fires on server-side both at initial world load and whenever a new player
+         * joins the server (with getPlayer() != null), and also on datapack reload (with null).
+         *
+         * @param event {@link net.minecraftforge.event.OnDatapackSyncEvent}
+         */
+        @SubscribeEvent
+        public static void onDataPackSync(final OnDatapackSyncEvent event)
+        {
+            final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
+
+            if (event.getPlayer() == null)
             {
-                IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover();
+                // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
+                final MinecraftServer server = event.getPlayerList().getServer();
+
+                loadRecipes(server.getRecipeManager());
+                recipeManager.buildLootData(server.getLootTables());
+
+                // and then finally update every player with the results
+                for (final ServerPlayer player : event.getPlayerList().getPlayers())
+                {
+                    recipeManager.sendCustomRecipeManagerPackets(player);
+                }
+            }
+            else
+            {
+                recipeManager.sendCustomRecipeManagerPackets(event.getPlayer());
             }
         }
     }
@@ -59,15 +105,18 @@ public class TagWorkAroundEventHandler
     public static class TagClientEventHandler
     {
         /**
-         * Fires only on client-side, immediately after a client has received
+         * Fires only on client-side, immediately after a client has received recipes
          * This event consistently fires before TagUpdatedEvent does on remote clients.
          * @param event  {@link net.minecraftforge.client.event.RecipesUpdatedEvent}
          */
         @SubscribeEvent
         public static void onRecipesUpdated(final RecipesUpdatedEvent event)
         {
-            FurnaceRecipes.getInstance().loadRecipes(event.getRecipeManager());
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().invalidateRecipes(event.getRecipeManager());
+            // skip on integrated server (already done)
+            if (!Minecraft.getInstance().hasSingleplayerServer())
+            {
+                loadRecipes(event.getRecipeManager());
+            }
         }
     }
 
@@ -82,8 +131,10 @@ public class TagWorkAroundEventHandler
         @SubscribeEvent
         public static void onServerStarted(@NotNull final FMLServerStartedEvent event)
         {
-            FurnaceRecipes.getInstance().loadRecipes(event.getServer().getRecipeManager());
-            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover();
+            final MinecraftServer server = event.getServer();
+
+            loadRecipes(server.getRecipeManager());
+            CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
         }
     }
 }

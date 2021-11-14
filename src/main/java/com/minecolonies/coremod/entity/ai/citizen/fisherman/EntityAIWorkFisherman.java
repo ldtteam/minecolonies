@@ -6,10 +6,10 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.WaterPathResult;
+import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFisherman;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
@@ -17,25 +17,34 @@ import com.minecolonies.coremod.entity.NewBobberEntity;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_FAR;
+import static com.minecolonies.coremod.entity.NewBobberEntity.XP_PER_CATCH;
 
 /**
  * Fisherman AI class.
@@ -105,11 +114,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
      * Time out fo fish again.
      */
     private static final int FISHING_TIMEOUT = 5;
-
-    /**
-     * Required level for sponge/prismarine drop.
-     */
-    private static final int LEVEL_FOR_BONUS = 3;
 
     /**
      * Per level lure speed.
@@ -425,33 +429,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             playCaughtFishSound();
 
-            if(getOwnBuilding().getBuildingLevel() >= LEVEL_FOR_BONUS)
-            {
-                final double primarySkillFactor = worker.getCitizenData().getCitizenSkillHandler().getSkills().get(getOwnBuilding().getPrimarySkill()).getB() / 10;
-                final double rollResult = worker.getRandom().nextDouble() * ONE_HUNDRED_PERCENT;
-                final double spongeTarget = MineColonies.getConfig().getServer().fisherSpongeChance.get() + primarySkillFactor; 
-                final double shardTarget = spongeTarget + MineColonies.getConfig().getServer().fisherPrismarineChance.get() + primarySkillFactor;
-                final double crystalTarget = shardTarget + MineColonies.getConfig().getServer().fisherPrismarineChance.get() + primarySkillFactor;
-                ItemStack bonusItemStack = null;
-                if (rollResult < spongeTarget)
-                {
-                    bonusItemStack = new ItemStack(Blocks.SPONGE);
-                }
-                else if (rollResult < shardTarget)
-                {
-                    bonusItemStack = new ItemStack(Items.PRISMARINE_SHARD);
-                }
-                else if (rollResult < crystalTarget)
-                {
-                    bonusItemStack = new ItemStack(Items.PRISMARINE_CRYSTALS);
-                }
-
-                if (bonusItemStack != null)
-                {
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), bonusItemStack);
-                }
-            }
-
             this.incrementActionsDoneAndDecSaturation();
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)
@@ -644,9 +621,43 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             worker.swing(worker.getUsedItemHand());
             final int i = entityFishHook.getDamage();
+            generateBonusLoot();
             entityFishHook.remove(Entity.RemovalReason.DISCARDED);
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, i);
             entityFishHook = null;
+        }
+    }
+
+    /**
+     * Generates bonus fishing loot according to the building-level table
+     */
+    private void generateBonusLoot()
+    {
+        final LootContext context = (new LootContext.Builder((ServerLevel) this.world))
+                .withParameter(LootContextParams.ORIGIN, entityFishHook.position())
+                .withParameter(LootContextParams.THIS_ENTITY, entityFishHook)
+                .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
+                .withParameter(LootContextParams.KILLER_ENTITY, worker)
+                .withRandom(worker.getRandom())
+                .withLuck((float) getPrimarySkillLevel())
+                .create(LootContextParamSets.FISHING);
+        final LootTable bonusLoot = this.world.getServer().getLootTables().get(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.getOwnBuilding().getBuildingLevel(), new ResourceLocation("")));
+        final List<ItemStack> loot = bonusLoot.getRandomItems(context);
+
+        for (final ItemStack itemstack : loot)
+        {
+            final ItemEntity itementity = new ItemEntity(this.world, entityFishHook.position().x, entityFishHook.position().y, entityFishHook.position().z, itemstack);
+            final double d0 = worker.getX() - entityFishHook.position().x;
+            final double d1 = (worker.getY() + 0.5D) - entityFishHook.position().y;
+            final double d2 = worker.getZ() - entityFishHook.position().z;
+            itementity.noPhysics = true;
+            itementity.setDeltaMovement(d0 * 0.1D, d1 * 0.1D + Math.sqrt(Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2)) * 0.08D, d2 * 0.1D);
+            this.world.addFreshEntity(itementity);
+            worker.level.addFreshEntity(new ExperienceOrb(worker.level,
+                    worker.getX(),
+                    worker.getY() + 0.5D,
+                    worker.getZ() + 0.5D,
+                    XP_PER_CATCH));
         }
     }
 
