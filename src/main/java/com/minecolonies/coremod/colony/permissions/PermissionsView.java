@@ -125,8 +125,7 @@ public class PermissionsView implements IPermissions
      */
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank.getId() == OWNER_RANK_ID && action != Action.GUARDS_ATTACK)
-                 || (permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag()));
+        return permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag());
     }
 
     /**

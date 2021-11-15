@@ -45,6 +45,7 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -1197,7 +1198,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
 
         final Entity sourceEntity = damageSource.getEntity();
-        if (!checkIfValidDamageSource(sourceEntity))
+        if (!checkIfValidDamageSource(damageSource, damage))
         {
             return false;
         }
@@ -1228,11 +1229,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Check if the damage source is valid.
      *
-     * @param sourceEntity the entity.
+     * @param source the damage source.
+     * @param damage the dealt damage.
      * @return true if valid.
      */
-    private boolean checkIfValidDamageSource(final Entity sourceEntity)
+    private boolean checkIfValidDamageSource(final DamageSource source, final float damage)
     {
+        final Entity sourceEntity = source.getEntity();
         if (sourceEntity instanceof EntityCitizen)
         {
             if (((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
@@ -1255,10 +1258,20 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 return false;
             }
 
+            if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_CITIZEN))
+            {
+                return false;
+            }
+
             if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
             {
                 return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
             }
+        }
+        else if (sourceEntity instanceof ClientPlayerEntity)
+        {
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+            return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_CITIZEN);
         }
         return true;
     }

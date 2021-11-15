@@ -185,6 +185,8 @@ public class Permissions implements IPermissions
                     break;
                 case HOSTILE:
                     this.setPermission(rank, Action.GUARDS_ATTACK);
+                    this.setPermission(rank, Action.HURT_CITIZEN);
+                    this.setPermission(rank, Action.HURT_VISITOR);
                     rank.setHostile(true);
                     break;
                 default:
@@ -571,8 +573,7 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank == ranks.get(OWNER_RANK_ID) && action != Action.GUARDS_ATTACK)
-                 || Utils.testFlag(permissionMap.get(rank), action.getFlag())
+        return Utils.testFlag(permissionMap.get(rank), action.getFlag())
                  || (fullyAbandoned && Utils.testFlag(fullyAbandonedPermissionsFlag, action.getFlag()));
     }
 
