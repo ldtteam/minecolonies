@@ -427,34 +427,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         if (caughtFish())
         {
             playCaughtFishSound();
-
-            if(getOwnBuilding().getBuildingLevel() >= LEVEL_FOR_BONUS)
-            {
-                final double primarySkillFactor = worker.getCitizenData().getCitizenSkillHandler().getSkills().get(getModuleForJob().getPrimarySkill()).getB() / 10;
-                final double rollResult = worker.getRandom().nextDouble() * ONE_HUNDRED_PERCENT;
-                final double spongeTarget = MineColonies.getConfig().getServer().fisherSpongeChance.get() + primarySkillFactor; 
-                final double shardTarget = spongeTarget + MineColonies.getConfig().getServer().fisherPrismarineChance.get() + primarySkillFactor;
-                final double crystalTarget = shardTarget + MineColonies.getConfig().getServer().fisherPrismarineChance.get() + primarySkillFactor;
-                ItemStack bonusItemStack = null;
-                if (rollResult < spongeTarget)
-                {
-                    bonusItemStack = new ItemStack(Blocks.SPONGE);
-                }
-                else if (rollResult < shardTarget)
-                {
-                    bonusItemStack = new ItemStack(Items.PRISMARINE_SHARD);
-                }
-                else if (rollResult < crystalTarget)
-                {
-                    bonusItemStack = new ItemStack(Items.PRISMARINE_CRYSTALS);
-                }
-
-                if (bonusItemStack != null)
-                {
-                    InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), bonusItemStack);
-                }
-            }
-
             this.incrementActionsDoneAndDecSaturation();
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)
