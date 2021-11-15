@@ -440,7 +440,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final PlayerEntity playerEntity = Minecraft.getInstance().player;
         final Rank owner = building.getColony().getPermissions().getRankOwner();
         if (!permissions.hasPermission(playerEntity, Action.EDIT_PERMISSIONS)
-              || (actionsRank == owner && building.getColony().getPermissions().getRank(playerEntity) != owner))
+              || (actionsRank == owner && (building.getColony().getPermissions().getRank(playerEntity) != owner || action == Action.EDIT_PERMISSIONS)))
         {
             return;
         }
