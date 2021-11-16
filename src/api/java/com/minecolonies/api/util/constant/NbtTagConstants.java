@@ -593,6 +593,11 @@ public final class NbtTagConstants
     public static final String MATCH_NBTIGNORE = "ignore";
 
     /**
+     * Version tag.
+     */
+    public static final String TAG_VERSION = "version";
+
+    /**
      * Private constructor to hide the implicit one.
      */
     private NbtTagConstants()

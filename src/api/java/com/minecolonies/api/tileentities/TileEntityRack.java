@@ -49,6 +49,16 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 public class TileEntityRack extends AbstractTileEntityRack implements IRotatableBlockEntity
 {
     /**
+     * All Racks current version id
+     */
+    private static final byte VERSION = 2;
+
+    /**
+     * The racks version
+     */
+    private byte version = 0;
+
+    /**
      * The content of the chest.
      */
     private final Map<ItemStorage, Integer> content = new HashMap<>();
@@ -399,6 +409,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         {
             this.buildingPos = BlockPosUtil.read(compound, TAG_POS);
         }
+        version = compound.getByte(TAG_VERSION);
 
         invalidateCap();
     }
@@ -433,6 +444,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         compound.putBoolean(TAG_MAIN, main);
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         BlockPosUtil.write(compound, TAG_POS, buildingPos);
+        compound.putByte(TAG_VERSION, version);
         return compound;
     }
 
@@ -489,6 +501,12 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
+        if (version != VERSION)
+        {
+            updateBlockState();
+            version = VERSION;
+        }
+
         if (!remove && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             if (lastOptional != null && lastOptional.isPresent())
