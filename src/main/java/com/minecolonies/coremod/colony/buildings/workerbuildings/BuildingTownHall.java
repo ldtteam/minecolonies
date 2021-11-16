@@ -4,7 +4,6 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
@@ -136,13 +135,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     public boolean canBeGathered()
     {
         return false;
-    }
-
-    @Override
-    public void onBuildingMove(final IBuilding oldBuilding)
-    {
-        super.onBuildingMove(oldBuilding);
-        colony.getBuildingManager().setTownHall(this);
     }
 
     /**

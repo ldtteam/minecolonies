@@ -427,7 +427,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         if (caughtFish())
         {
             playCaughtFishSound();
-
             this.incrementActionsDoneAndDecSaturation();
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)

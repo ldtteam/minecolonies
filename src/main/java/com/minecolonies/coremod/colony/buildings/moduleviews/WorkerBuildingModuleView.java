@@ -1,14 +1,16 @@
-package com.minecolonies.coremod.colony.buildings.views;
+package com.minecolonies.coremod.colony.buildings.moduleviews;
 
+import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,9 +19,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * AbstractBuildingWorker View for clients.
+ * AbstractBuilding View for clients.
  */
-public abstract class AbstractBuildingWorkerView extends AbstractBuildingView implements IBuildingWorkerView
+public class WorkerBuildingModuleView extends AbstractBuildingModuleView
 {
     /**
      * List of the worker ids.
@@ -30,11 +32,6 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
      * The hiring mode of the building.
      */
     private HiringMode hiringMode;
-
-    /**
-     * The name of the job.
-     */
-    private String jobName;
 
     /**
      * The max amount of inhabitants
@@ -52,28 +49,15 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
     private Skill secondary = Skill.Intelligence;
 
     /**
-     * The job display name
+     * Job entry of the module view.
      */
-    private String jobDisplayName;
+    private JobEntry jobEntry;
 
-    /**
-     * Creates the view representation of the building.
-     *
-     * @param c the colony.
-     * @param l the location.
-     */
-    public AbstractBuildingWorkerView(final IColonyView c, @NotNull final BlockPos l)
-    {
-        super(c, l);
-    }
-
-    @Override
-    public List<Integer> getWorkerId()
+    public List<Integer> getWorkerIdList()
     {
         return new ArrayList<>(workerIDs);
     }
 
-    @Override
     public void addWorkerId(final int workerId)
     {
         workerIDs.add(workerId);
@@ -82,7 +66,6 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        super.deserialize(buf);
         final int size = buf.readInt();
         workerIDs.clear();
         for (int i = 0; i < size; i++)
@@ -90,69 +73,77 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
             workerIDs.add(buf.readInt());
         }
 
+        this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);;
         this.hiringMode = HiringMode.values()[buf.readInt()];
-        this.jobName = buf.readUtf(32767);
         this.maxInhabitants = buf.readInt();
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
-        this.maxInhabitants = buf.readInt();
-        this.jobDisplayName = buf.readUtf();
     }
 
     @Override
+    public String getIcon()
+    {
+        return "";
+    }
+
+    @Override
+    public String getDesc()
+    {
+        return "";
+    }
+
+    @Override
+    public boolean isPageVisible()
+    {
+        return false;
+    }
+
     @NotNull
     public Skill getPrimarySkill()
     {
         return primary;
     }
 
-    @Override
     @NotNull
     public Skill getSecondarySkill()
     {
         return secondary;
     }
 
-    @Override
     public void removeWorkerId(final int id)
     {
         workerIDs.remove(id);
     }
 
-    @Override
+    /**
+     * Check if it has enough workers.
+     *
+     * @return true if so.
+     */
     public boolean hasEnoughWorkers()
     {
-        return !workerIDs.isEmpty();
+        return getWorkerIdList().size() >= maxInhabitants;
     }
 
-    @Override
     public HiringMode getHiringMode()
     {
         return hiringMode;
     }
 
-    @Override
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode));
-    }
-
-    @Override
-    public String getJobName()
-    {
-        return this.jobName;
+        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, jobEntry));
     }
 
     /**
-     * Check if it is possible to assign the citizen to this building.
-     *
-     * @param citizenDataView the citizen to test.
+     * Check if citizens can be assigned.
+     * @param data the data to check.
      * @return true if so.
      */
-    public boolean canAssign(final ICitizenDataView citizenDataView)
+    public boolean canAssign(ICitizenDataView data)
     {
-        return true;
+        return !data.isChild();
     }
 
     /**
@@ -165,9 +156,37 @@ public abstract class AbstractBuildingWorkerView extends AbstractBuildingView im
         return this.maxInhabitants;
     }
 
-    @Override
+    /**
+     * Get the display name of the job.
+     * @return the display name.
+     */
     public String getJobDisplayName()
     {
-        return jobDisplayName;
+        return new TranslationTextComponent(jobEntry.getTranslationKey()).getString();
+    }
+
+    @NotNull
+    @Override
+    public Window getWindow()
+    {
+        return new WindowHutWorkerModulePlaceholder<>(buildingView, "");
+    }
+
+    /**
+     * Getter for the job entry of the module view.
+     * @return the entry.
+     */
+    public JobEntry getJobEntry()
+    {
+        return jobEntry;
+    }
+
+    /**
+     * Check if the module is full.
+     * @return true if so.
+     */
+    public boolean isFull()
+    {
+        return getWorkerIdList().size() >= getMaxInhabitants();
     }
 }

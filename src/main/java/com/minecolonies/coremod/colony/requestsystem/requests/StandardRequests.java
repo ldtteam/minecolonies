@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
@@ -18,6 +17,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
@@ -258,17 +258,13 @@ public final class StandardRequests
 
             int posInList = -1;
             for (IBuildingView view : colony.getBuildings())
-            if (view instanceof BuildingDeliveryman.View)
             {
-                for (int worker : ((BuildingDeliveryman.View) view).getWorkerId())
+                if (view instanceof BuildingDeliveryman.View)
                 {
-                    final ICitizenDataView citizen = colony.getCitizen(worker);
-                    if (citizen != null)
+                    posInList = getPosInList(colony, view, getId());
+                    if (posInList >= 0)
                     {
-                        if (citizen.getJobView() instanceof DmanJobView && ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
-                        {
-                            posInList = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
-                        }
+                        break;
                     }
                 }
             }
@@ -381,22 +377,7 @@ public final class StandardRequests
                 final BlockPos resolver = colony.getRequestManager().getResolverForRequest(getId()).getLocation().getInDimensionLocation();
                 final IBuildingView view = colony.getBuilding(resolver);
 
-                int posInList = -1;
-                if (view instanceof IBuildingWorkerView)
-                {
-                    for (int worker : ((IBuildingWorkerView) view).getWorkerId())
-                    {
-                        final ICitizenDataView citizen = colony.getCitizen(worker);
-                        if (citizen != null)
-                        {
-                            if (citizen.getJobView() instanceof CrafterJobView && ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().contains(getId()))
-                            {
-                                posInList = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(getId());
-                            }
-                        }
-                    }
-                }
-
+                int posInList = getPosInList(colony, view, getId());
                 if (posInList >= 0)
                 {
                 	return posInList == 0 ? ImmutableList.of(new TranslationTextComponent(AT, requester), new TranslationTextComponent(IN_PROGRESS)) : ImmutableList.of(new TranslationTextComponent(FROM, requester), new TranslationTextComponent(IN_QUEUE, posInList));
@@ -710,5 +691,42 @@ public final class StandardRequests
 
             return burnableExamples;
         }
+    }
+
+    /**
+     * Find the position the request is in the list.
+     * @return the position.
+     * @param colony the colony.
+     * @param view the building view.
+     */
+    private static int getPosInList(final IColonyView colony, final IBuildingView view, final IToken<?> id)
+    {
+        for (final WorkerBuildingModuleView moduleView : view.getModuleViews(WorkerBuildingModuleView.class))
+        {
+            for (int worker : moduleView.getWorkerIdList())
+            {
+                final ICitizenDataView citizen = colony.getCitizen(worker);
+                if (citizen != null)
+                {
+                    if (citizen.getJobView() instanceof CrafterJobView)
+                    {
+                        int index = ((CrafterJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        if (index >= 0)
+                        {
+                            return index;
+                        }
+                    }
+                    else if (citizen.getJobView() instanceof DmanJobView)
+                    {
+                        int index = ((DmanJobView) citizen.getJobView()).getDataStore().getQueue().indexOf(id);
+                        if (index >= 0)
+                        {
+                            return index;
+                        }
+                    }
+                }
+            }
+        }
+        return -1;
     }
 }

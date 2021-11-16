@@ -31,13 +31,6 @@ public class JobDyer extends AbstractJobCrafter<EntityAIWorkDyer, JobDyer>
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.dyer";
-    }
-
-    @NotNull
-    @Override
     public IModelType getModel()
     {
         return BipedModelType.DYER;

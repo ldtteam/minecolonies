@@ -138,7 +138,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private IAIState trainWithPartner()
     {
-        if (trainingPartner == null || !getOwnBuilding().getAssignedCitizen().contains(trainingPartner.getCitizenData()))
+        if (trainingPartner == null || !getModuleForJob().getAssignedCitizen().contains(trainingPartner.getCitizenData()))
         {
             trainingPartner = null;
             return COMBAT_TRAINING;

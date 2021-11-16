@@ -47,8 +47,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.WAITING_FO
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
-
 /**
  * The AI task for citizens to execute when they are supposed to eat.
  */

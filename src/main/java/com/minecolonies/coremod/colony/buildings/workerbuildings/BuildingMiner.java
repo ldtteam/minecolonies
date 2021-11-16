@@ -6,8 +6,6 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,6 +14,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
@@ -149,19 +148,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         super.onUpgradeComplete(newLevel);
     }
 
-    /**
-     * Create the job for the miner.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the new job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobMiner(citizen);
-    }
-
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
@@ -180,27 +166,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         BlockPosUtil.writeOptional(compound, TAG_LLOCATION, ladderLocation);
 
         return compound;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return MINER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Strength;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Stamina;
     }
 
     /**
@@ -284,7 +249,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Override
     public void searchWorkOrder()
     {
-        final ICitizenData citizen = getMainCitizen();
+        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
         if (citizen == null)
         {
             return;

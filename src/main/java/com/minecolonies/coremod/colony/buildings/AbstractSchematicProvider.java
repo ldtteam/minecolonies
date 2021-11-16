@@ -38,7 +38,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * The Colony for this schematic Provider
      */
-    private final IColony colony;
+    protected final IColony colony;
 
     /**
      * The location of the building.
@@ -223,6 +223,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
+    public IColony getColony()
+    {
+        return colony;
+    }
+
+    @Override
     public BlockPos getPosition()
     {
         return location;
@@ -386,7 +392,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             return;
         }
 
-        final TileEntityColonyBuilding te = (TileEntityColonyBuilding) getColony().getWorld().getBlockEntity(getPosition());
+        final TileEntityColonyBuilding te = (TileEntityColonyBuilding) colony.getWorld().getBlockEntity(getPosition());
 
         try
         {
@@ -405,7 +411,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
         catch (final Exception ex)
         {
-            LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStyle());
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.invalidbuilding", getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStyle());
         }
     }
 

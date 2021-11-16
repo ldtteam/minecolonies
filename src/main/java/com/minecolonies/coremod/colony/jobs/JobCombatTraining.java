@@ -28,18 +28,6 @@ public class JobCombatTraining extends AbstractJob<EntityAICombatTraining, JobCo
     }
 
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.combattraining";
-    }
-
-    @Override
-    public String getExperienceTag()
-    {
-        return JobKnight.DESC;
-    }
-
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.KNIGHT_GUARD;

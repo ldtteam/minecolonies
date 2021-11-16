@@ -348,7 +348,8 @@ public class BuildingManager implements IBuildingManager
         {
             if (building.hasModule(LivingBuildingModule.class))
             {
-                if (building.getAssignedCitizen().size() < building.getMaxInhabitants())
+                final LivingBuildingModule module = building.getFirstModuleOccurance(LivingBuildingModule.class);
+                if (module.getAssignedCitizen().size() < module.getModuleMax())
                 {
                     return building;
                 }

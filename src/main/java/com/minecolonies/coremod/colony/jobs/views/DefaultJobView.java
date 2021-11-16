@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.jobs.views;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJobView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.network.PacketBuffer;
@@ -26,9 +27,9 @@ public class DefaultJobView implements IJobView
     private final IColonyView colonyView;
 
     /**
-     * The synched job name.
+     * The synched job registry entry.
      */
-    private String name;
+    private JobEntry entry;
 
     /**
      * Instantiate the default job view.
@@ -44,18 +45,24 @@ public class DefaultJobView implements IJobView
     public void deserialize(final PacketBuffer buffer)
     {
         this.asyncRequests.clear();
-        this.name = buffer.readUtf(32767);
         final int size = buffer.readInt();
         for (int i = 0; i < size; i++)
         {
             asyncRequests.add(StandardFactoryController.getInstance().deserialize(buffer));
         }
+        entry = buffer.readRegistryId();
     }
 
     @Override
     public String getName()
     {
-        return this.name;
+        return this.entry.getTranslationKey();
+    }
+
+    @Override
+    public JobEntry getEntry()
+    {
+        return entry;
     }
 
     /**
@@ -76,5 +83,11 @@ public class DefaultJobView implements IJobView
     public Set<IToken<?>> getAsyncRequests()
     {
         return asyncRequests;
+    }
+
+    @Override
+    public void setEntry(final JobEntry entry)
+    {
+        this.entry = entry;
     }
 }

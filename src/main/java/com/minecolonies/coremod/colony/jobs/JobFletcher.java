@@ -29,13 +29,6 @@ public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFle
         return ModJobs.fletcher;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.fletcher";
-    }
-
     /**
      * Generate your AI class to register.
      *

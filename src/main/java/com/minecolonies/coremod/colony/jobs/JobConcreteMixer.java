@@ -29,13 +29,6 @@ public class JobConcreteMixer extends AbstractJobCrafter<EntityAIConcreteMixer, 
         return ModJobs.concreteMixer;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.concretemixer";
-    }
-
     /**
      * Generate your AI class to register.
      *

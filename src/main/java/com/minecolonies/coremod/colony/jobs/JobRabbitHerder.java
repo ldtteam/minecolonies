@@ -29,13 +29,6 @@ public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRa
         return ModJobs.rabbitHerder;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.rabbitherder";
-    }
-
     /**
      * Generate your AI class to register.
      *

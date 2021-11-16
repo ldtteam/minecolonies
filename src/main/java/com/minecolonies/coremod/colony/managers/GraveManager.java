@@ -265,7 +265,7 @@ public class GraveManager implements IGraveManager
             graveData.setCitizenName(citizenData.getName());
             if (citizenData.getJob() != null)
             {
-                final IFormattableTextComponent jobName = new TranslationTextComponent(citizenData.getJob().getName().toLowerCase());
+                final IFormattableTextComponent jobName = new TranslationTextComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
                 graveData.setCitizenJobName(jobName.getString());
             }
             graveData.setCitizenDataNBT(citizenData.serializeNBT());

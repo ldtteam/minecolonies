@@ -6,12 +6,12 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.IDeliverymanRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import org.jetbrains.annotations.NotNull;
@@ -48,18 +48,22 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
         super.onOpened();
         final List<IToken<?>> tasks = new ArrayList<>();
 
-        for (final int citizenId : ((IBuildingWorkerView) buildingView).getWorkerId())
+
+        for (final WorkerBuildingModuleView moduleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
-            if (citizen != null)
+            for (final int citizenId : moduleView.getWorkerIdList())
             {
-                if (citizen.getJobView() instanceof CrafterJobView)
+                ICitizenDataView citizen = buildingView.getColony().getCitizen(citizenId);
+                if (citizen != null)
                 {
-                    tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
-                }
-                else if( citizen.getJobView() instanceof DmanJobView)
-                {
-                    tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                    if (citizen.getJobView() instanceof CrafterJobView)
+                    {
+                        tasks.addAll(((CrafterJobView) citizen.getJobView()).getDataStore().getQueue());
+                    }
+                    else if (citizen.getJobView() instanceof DmanJobView)
+                    {
+                        tasks.addAll(((DmanJobView) citizen.getJobView()).getDataStore().getQueue());
+                    }
                 }
             }
         }

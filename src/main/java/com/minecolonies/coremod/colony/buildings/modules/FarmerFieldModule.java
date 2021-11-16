@@ -127,6 +127,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
         final List<BlockPos> fields = new ArrayList<>(building.getColony().getBuildingManager().getFields());
         final List<BlockPos> cleanList = new ArrayList<>();
 
+        final WorkerBuildingModule module = building.getFirstModuleOccurance(WorkerBuildingModule.class);
         for (@NotNull final BlockPos field : fields)
         {
             if (WorldUtil.isBlockLoaded(building.getColony().getWorld(), field))
@@ -136,7 +137,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
                 {
                     if (((ScarecrowTileEntity) scareCrow).isTaken())
                     {
-                        if (building.getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == building.getMainCitizen().getId())
+                        if (module.getAssignedCitizen().isEmpty() || ((ScarecrowTileEntity) scareCrow).getOwnerId() == module.getFirstCitizen().getId())
                         {
                             cleanList.add(field);
                             size++;
@@ -224,7 +225,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
         if (!farmerFields.isEmpty())
         {
             @NotNull final ArrayList<BlockPos> tempFields = new ArrayList<>(farmerFields);
-
+            final WorkerBuildingModule module = building.getFirstModuleOccurance(WorkerBuildingModule.class);
             for (@NotNull final BlockPos field : tempFields)
             {
                 final TileEntity scarecrow = world.getBlockEntity(field);
@@ -236,7 +237,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
                         building.getColony().getWorld().getBlockState(scarecrow.getBlockPos()),
                         BLOCK_UPDATE_FLAG);
                     ((ScarecrowTileEntity) scarecrow).setTaken(true);
-                    ((ScarecrowTileEntity) scarecrow).setOwner(building.getMainCitizen() != null? building.getMainCitizen().getId() : 0);
+                    ((ScarecrowTileEntity) scarecrow).setOwner(module.getFirstCitizen() != null? module.getFirstCitizen().getId() : 0);
                     ((ScarecrowTileEntity) scarecrow).setColony(building.getColony());
                 }
                 else
@@ -354,10 +355,10 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
         if (scarecrow instanceof ScarecrowTileEntity)
         {
             ((ScarecrowTileEntity) scarecrow).setTaken(true);
-
-            if (building.getMainCitizen() != null)
+            final WorkerBuildingModule module = building.getFirstModuleOccurance(WorkerBuildingModule.class);
+            if (module.getFirstCitizen() != null)
             {
-                ((ScarecrowTileEntity) scarecrow).setOwner(building.getMainCitizen().getId());
+                ((ScarecrowTileEntity) scarecrow).setOwner(module.getFirstCitizen().getId());
             }
             farmerFields.add(position);
         }

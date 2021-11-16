@@ -9,7 +9,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.EnchanterStationsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
@@ -280,7 +280,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return getState();
         }
 
-        final AbstractBuildingWorker buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuildingWorker.class);
+        final AbstractBuilding buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuilding.class);
 
         if (buildingWorker == null)
         {
@@ -292,7 +292,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         if (citizenToGatherFrom == null)
         {
             final List<AbstractEntityCitizen> workers = new ArrayList<>();
-            for (final Optional<AbstractEntityCitizen> citizen : buildingWorker.getAssignedEntities())
+            for (final Optional<AbstractEntityCitizen> citizen : getModuleForJob().getAssignedEntities())
             {
                 citizen.ifPresent(workers::add);
             }

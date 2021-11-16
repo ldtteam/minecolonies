@@ -25,12 +25,6 @@ public class JobFlorist extends AbstractJob<EntityAIWorkFlorist, JobFlorist>
         return ModJobs.florist;
     }
 
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.florist";
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

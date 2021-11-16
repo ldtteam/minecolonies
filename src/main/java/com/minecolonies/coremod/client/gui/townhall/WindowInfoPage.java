@@ -17,9 +17,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSchool;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
@@ -131,46 +130,15 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final Map<String, Tuple<Integer, Integer>> jobMaxCountMap = new HashMap<>();
         for (@NotNull final IBuildingView building : building.getColony().getBuildings())
         {
-            if (building instanceof AbstractBuildingWorkerView)
+            if (building instanceof AbstractBuildingView)
             {
-                int max = ((AbstractBuildingWorkerView) building).getMaxInhabitants();
-                int workers = ((AbstractBuildingWorkerView) building).getWorkerId().size();
-
-                String jobName = ((AbstractBuildingWorkerView) building).getJobDisplayName().toLowerCase(Locale.ENGLISH);
-                if (building instanceof AbstractBuildingGuards.View)
+                for (final WorkerBuildingModuleView module : building.getModuleViews(WorkerBuildingModuleView.class))
                 {
-                    jobName = ((AbstractBuildingGuards.View) building).getGuardType().getJobTranslationKey();
-                }
+                    int max = module.getMaxInhabitants();
+                    int workers = module.getWorkerIdList().size();
 
-                if (building instanceof BuildingSchool.View)
-                {
-                    // For schools, getJobDisplayName will always be the teacher's key, as it's derived from createJob(null),
-                    // while getJobName will always be the pupil, as it's derived from the hardcoded job name for the school.
-                    final String teacherJobName = jobName;
-                    final String pupilJobName = ((BuildingSchool.View) building).getJobName();
+                    final String jobName = module.getJobDisplayName().toLowerCase(Locale.ENGLISH);
 
-                    int maxTeachers = 1;
-                    max = max - 1;
-                    int teachers = workers = 0;
-                    for (@NotNull final Integer workerId : ((BuildingSchool.View) building).getWorkerId())
-                    {
-                        final ICitizenDataView view = building.getColony().getCitizen(workerId);
-                        if (view != null && view.isChild())
-                        {
-                            workers += 1;
-                        }
-                        else
-                        {
-                            teachers += 1;
-                        }
-                    }
-                    final Tuple<Integer, Integer> teacherTuple = jobMaxCountMap.getOrDefault(teacherJobName, new Tuple<>(0, 0));
-                    jobMaxCountMap.put(teacherJobName, new Tuple<>(teacherTuple.getA() + teachers, teacherTuple.getB() + maxTeachers));
-                    final Tuple<Integer, Integer> pupilTuple = jobMaxCountMap.getOrDefault(pupilJobName, new Tuple<>(0, 0));
-                    jobMaxCountMap.put(pupilJobName, new Tuple<>(pupilTuple.getA() + workers, pupilTuple.getB() + max));
-                }
-                else
-                {
                     final Tuple<Integer, Integer> tuple = jobMaxCountMap.getOrDefault(jobName, new Tuple<>(0, 0));
                     jobMaxCountMap.put(jobName, new Tuple<>(tuple.getA() + workers, tuple.getB() + max));
                 }

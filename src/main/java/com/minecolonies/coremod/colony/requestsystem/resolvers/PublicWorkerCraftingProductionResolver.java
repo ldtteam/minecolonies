@@ -3,7 +3,8 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -13,7 +14,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
 import net.minecraft.item.ItemStack;
@@ -37,9 +39,10 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
      */
     public PublicWorkerCraftingProductionResolver(
       @NotNull final ILocation location,
-      @NotNull final IToken<?> token)
+      @NotNull final IToken<?> token,
+      @NotNull final JobEntry jobEntry)
     {
-        super(location, token, PublicCrafting.class);
+        super(location, token, jobEntry, PublicCrafting.class);
     }
 
     @Override
@@ -131,16 +134,16 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingWorkerView)
+        if (requester instanceof IBuildingView)
         {
-            final IBuildingWorkerView bwv = (IBuildingWorkerView) requester;
-            return new TranslationTextComponent(bwv.getJobDisplayName().toLowerCase());
+            final IBuildingView bwv = (IBuildingView) requester;
+            return new TranslationTextComponent(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
     }
 
     @Override
-    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuilding building, @NotNull final ItemStack stack)
     {
         if (manager.getColony().getWorld().isClientSide)
         {
@@ -148,7 +151,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         }
 
         //Check if we even have a worker available
-        return building.getAssignedCitizen()
+        return building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                  .stream()
                  .anyMatch(c -> c.getJob() instanceof AbstractJobCrafter);
     }
@@ -165,7 +168,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final ICitizenData freeCrafter = building.getAssignedCitizen()
+        final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                                            .stream()
                                            .filter(c -> c.getJob() instanceof AbstractJobCrafter)
                                            .min(Comparator.comparing((ICitizenData c) -> ((AbstractJobCrafter<?, ?>) c.getJob()).getTaskQueue().size()
@@ -192,7 +195,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
             return;
         }
 
-        final ICitizenData freeCrafter = building.getAssignedCitizen()
+        final ICitizenData freeCrafter = building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getAssignedCitizen()
                                            .stream()
                                            .filter(c -> c.getJob() instanceof AbstractJobCrafter && ((AbstractJobCrafter<?, ?>) c.getJob()).getAssignedTasks()
                                                                                                       .contains(request.getId()))

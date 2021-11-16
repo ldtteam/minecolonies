@@ -29,13 +29,6 @@ public class JobSwineHerder extends AbstractJob<EntityAIWorkSwineHerder, JobSwin
         return ModJobs.swineHerder;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.SwineHerder";
-    }
-
     /**
      * Generate your AI class to register.
      *

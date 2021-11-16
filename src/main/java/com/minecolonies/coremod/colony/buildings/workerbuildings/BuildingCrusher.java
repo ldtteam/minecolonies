@@ -2,21 +2,18 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.google.common.collect.ImmutableMap;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutCrusherModule;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobCrusher;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.crusher.CrusherSetModeMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -24,7 +21,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +33,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Class of the crusher building.
  */
-public class BuildingCrusher extends AbstractBuildingWorker
+public class BuildingCrusher extends AbstractBuilding
 {
     /**
      * The multiplier to define the max craft per day.
@@ -138,40 +134,6 @@ public class BuildingCrusher extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return CRUSHER_DESC;
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobCrusher(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return CRUSHER_DESC;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Stamina;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Strength;
     }
 
     /**
@@ -304,7 +266,7 @@ public class BuildingCrusher extends AbstractBuildingWorker
     /**
      * BuildingCrusher View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Daily quantity to produce.
@@ -394,11 +356,15 @@ public class BuildingCrusher extends AbstractBuildingWorker
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobCrusher(null));
+            super(jobEntry);
         }
     }
 }

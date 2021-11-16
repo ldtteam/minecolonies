@@ -74,7 +74,7 @@ public class CombatUtils
      */
     public static void notifyGuardsOfTarget(final AbstractEntityCitizen user, final LivingEntity target, final int callRange)
     {
-        for (final ICitizenData citizen : user.getCitizenData().getWorkBuilding().getAssignedCitizen())
+        for (final ICitizenData citizen : user.getCitizenData().getWorkBuilding().getAllAssignedCitizen())
         {
             if (citizen.getEntity().isPresent() && citizen.getEntity().get().getLastHurtByMob() == null)
             {

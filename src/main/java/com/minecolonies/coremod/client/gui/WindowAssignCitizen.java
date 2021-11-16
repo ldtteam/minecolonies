@@ -215,7 +215,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
             {
                 ((LivingBuildingView) building).addResident(data.getId());
             }
-            Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId()));
+            Network.getNetwork().sendToServer(new AssignUnassignMessage(this.building, true, data.getId(), null));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

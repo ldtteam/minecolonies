@@ -29,18 +29,6 @@ public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.student";
-    }
-
-    /**
      * Generate your AI class to register.
      *
      * @return your personal AI instance.

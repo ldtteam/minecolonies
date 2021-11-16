@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.entity.ai.citizen.healer.EntityAIWorkHealer;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -40,18 +41,6 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.healer";
-    }
-
-    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.
@@ -81,7 +70,8 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
         if (getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen worker = getCitizen().getEntity().get();
-            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
+            final AttributeModifier speedModifier = new AttributeModifier(SKILL_BONUS_ADD, getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(
+              WorkerBuildingModule.class, m -> m.getJobEntry() == getJobRegistryEntry()).getPrimarySkill()) * BONUS_SPEED_PER_LEVEL, AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }

@@ -28,7 +28,8 @@ public class UpdateHandler implements IUpdateHandler
       new ResetRSForDeliveryResolverChange(),
       new ResetRSToFixLumberjack(),
       new ResetRSToFixRecipeHandling(),
-      new ResetRSToFixPrivatePublic()
+      new ResetRSToFixPrivatePublic(),
+      new ResetRSToStoreJobInResolvers()
     );
 
     private final IStandardRequestManager manager;

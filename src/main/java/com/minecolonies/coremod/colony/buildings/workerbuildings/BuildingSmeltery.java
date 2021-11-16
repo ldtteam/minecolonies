@@ -1,24 +1,21 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobSmelter;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -29,7 +26,6 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +40,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the smeltery building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingSmeltery extends AbstractBuildingWorker
+public class BuildingSmeltery extends AbstractBuilding
 {
     /**
      * The smelter string.
@@ -89,34 +85,6 @@ public class BuildingSmeltery extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobSmelter(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "smelter";
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Athletics;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Strength;
-    }
-
     @SuppressWarnings(MAGIC_NUMBERS_SHOULD_NOT_BE_USED)
     public int ingotMultiplier(final int skillLevel, final Random random)
     {
@@ -140,7 +108,7 @@ public class BuildingSmeltery extends AbstractBuildingWorker
     /**
      * Smelter building View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the smeltery view.
@@ -163,11 +131,14 @@ public class BuildingSmeltery extends AbstractBuildingWorker
 
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public SmeltingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobSmelter(null));
+            super(jobEntry);
         }
 
         @Override

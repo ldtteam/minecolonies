@@ -6,25 +6,24 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
+
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
-import com.minecolonies.coremod.colony.jobs.JobCook;
-import com.minecolonies.coremod.colony.jobs.JobCookAssistant;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -47,7 +46,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the cook building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingCook extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingCook extends AbstractBuilding
 {
     /**
      * The cook string.
@@ -69,11 +68,6 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
      * This blocks the auto-smelting of the cook
      */
     private boolean isCooking = false;
-
-    /**
-     * Current Assistant If there is an assistant working
-     */
-    private ICitizenData assistant = null;
 
     /**
      * Failsafe for isCooking. Number of Colony Ticks before setting isCooking false. 
@@ -104,7 +98,7 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
     public BuildingCook(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(stack -> isAllowedFood(stack), new Tuple<>(STACKSIZE, true));
+        keepX.put(this::isAllowedFood, new Tuple<>(STACKSIZE, true));
         keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
@@ -176,14 +170,13 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
         return sitPositions.get(lastSitting);
     }
 
-
     /**
      * Get the status of the assistant processing requests
      * @return true if currently crafting
      */
     public boolean getIsCooking()
     {
-        ICitizenData citizen = getAssistant();
+        final ICitizenData citizen = this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant).getFirstCitizen();
         return citizen != null && isCooking && isCookingTimeout > 0;
     }
 
@@ -201,30 +194,6 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
         }
     }
 
-    /**
-     * Get the citizen that is currently assigned as the Assistant Cook
-     */
-    public ICitizenData getAssistant()
-    {
-
-        if(getBuildingLevel() <3)
-        {
-            return null; 
-        }
-
-        if(assistant == null)
-        {
-            for (final ICitizenData citizen : getAssignedCitizen())
-            {
-                if (citizen.getJob() instanceof JobCookAssistant)   
-                {
-                    assistant = citizen;
-                }
-            }
-        }
-        return assistant;
-    }
-
     @NotNull
     @Override
     public String getSchematicName()
@@ -238,79 +207,14 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            for (final ICitizenData leadCitizen : getAssignedCitizen())
-            {
-                if (leadCitizen.getJob() instanceof JobCook)
-                {
-                    assistant = citizen;
-                    return new JobCookAssistant(citizen);
-                }
-            }
-        }
-        return new JobCook(citizen);
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if(citizen.getJob() instanceof JobCookAssistant)
-        {
-            assistant = null;
-        }
-        super.removeCitizen(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return COOK_DESC;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        if(getBuildingLevel() < 3)
-        {
-            return 1;
-        }
-        return 2;
-    }
-
     @Override
     public boolean canBeGathered()
     {
         return super.canBeGathered() &&
-                 this.getAssignedCitizen().stream()
+                 this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant).getAssignedCitizen().stream()
                    .map(c -> c.getJob(AbstractJobCrafter.class))
                    .filter(Objects::nonNull)
                    .allMatch(AbstractJobCrafter::hasTask);
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Adaptability;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @Override
-    public boolean canWorkDuringTheRain()
-    {
-        return true;
     }
 
     @Override
@@ -355,7 +259,6 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        // TODO: Request on tick if no food, so that food gets distributed from the warehouse even when there is currently no cook
         super.onColonyTick(colony);
         if(isCookingTimeout > 0)
         {
@@ -363,16 +266,10 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
         }
     }
 
-    @Override
-    public Skill getCraftSpeedSkill()
-    {
-        return getSecondarySkill();
-    }
-
     /**
      * BuildingCook View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the cook view.
@@ -395,19 +292,14 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            if (this.building != null)
-            {
-                final ICitizenData assistant = ((BuildingCook) this.building).getAssistant();
-                if (assistant != null)
-                {
-                    return assistant.getJob();
-                }
-            }
-            return new JobCookAssistant(null);
+            super(jobEntry);
         }
 
         @Override
@@ -451,11 +343,14 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
 
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public SmeltingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobCook(null));
+            super(jobEntry);
         }
 
         @Override
@@ -469,7 +364,7 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
         @Nullable
         public IRecipeStorage getFirstRecipe(final Predicate<ItemStack> stackPredicate)
         {
-            if (building.getBuildingLevel() < 3 || ((BuildingCook) building).getAssistant() == null)
+            if (building.getBuildingLevel() < 3 || building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
             {
                 return null;
             }
@@ -505,10 +400,11 @@ public class BuildingCook extends AbstractBuildingWorker implements IBuildingPub
                 if (storage != null)
                 {
                     final Set<IItemHandler> handlers = new HashSet<>();
-                    for (final ICitizenData workerEntity : building.getAssignedCitizen())
+                    for (final ICitizenData workerEntity :  building.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen())
                     {
                         handlers.add(workerEntity.getInventory());
                     }
+
                     if (!storage.canFullFillRecipe(count, Collections.emptyMap(), new ArrayList<>(handlers), building))
                     {
                         return null;

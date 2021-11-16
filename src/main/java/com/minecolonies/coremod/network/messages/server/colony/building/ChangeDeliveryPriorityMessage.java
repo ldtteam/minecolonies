@@ -3,7 +3,8 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.PacketBuffer;
@@ -64,7 +65,7 @@ public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building instanceof AbstractBuildingWorker || building instanceof Stash)
+        if ((building != null && building.hasModule(WorkerBuildingModule.class)) || building instanceof Stash)
         {
             if (up)
             {

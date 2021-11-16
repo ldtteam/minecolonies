@@ -29,18 +29,6 @@ public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
     }
 
     /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.sifter";
-    }
-
-    /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
      * @return Model of the citizen.

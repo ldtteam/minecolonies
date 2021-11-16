@@ -8,6 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
@@ -29,7 +30,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The structureBuilder building.
  */
-public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingWorker
+public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
 {
     /**
      * The maximum upgrade of the building.
@@ -253,7 +254,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuildingW
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         super.serializeToView(buf);
-        buf.writeUtf((getMainCitizen() == null || colony.getCitizenManager().getCivilian(getMainCitizen().getId()) == null) ? "" : getMainCitizen().getName());
+        getFirstOptionalModuleOccurance(WorkerBuildingModule.class).ifPresent(m -> buf.writeUtf((m.getFirstCitizen() == null || colony.getCitizenManager().getCivilian(m.getFirstCitizen().getId()) == null) ? "" : m.getFirstCitizen().getName()));
     }
 
     /**

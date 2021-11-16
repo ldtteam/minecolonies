@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -26,20 +27,6 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      * @return The {@link JobEntry}.
      */
     JobEntry getJobRegistryEntry();
-
-    /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    String getName();
-
-    /**
-     * Getter for the job which will be associated with the experience.
-     *
-     * @return the getName() or the specialized class name.
-     */
-    String getExperienceTag();
 
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.

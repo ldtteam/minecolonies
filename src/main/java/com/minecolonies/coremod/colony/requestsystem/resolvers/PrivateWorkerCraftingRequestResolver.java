@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -10,7 +11,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PrivateCra
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -30,9 +31,9 @@ import static com.minecolonies.api.util.constant.RSConstants.CONST_CRAFTING_RESO
  */
 public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingRequestResolver
 {
-    public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public PrivateWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, @NotNull final JobEntry entry)
     {
-        super(location, token, false);
+        super(location, token, entry,false);
     }
 
     @Nullable
@@ -92,7 +93,7 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final Predicate<ItemStack> stackPredicate)
     {
         for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {

@@ -27,13 +27,6 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
         return ModJobs.sawmill;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Sawmill";
-    }
-
     /**
      * Generate your AI class to register.
      *

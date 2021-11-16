@@ -27,13 +27,6 @@ public class JobStoneSmeltery extends AbstractJobCrafter<EntityAIWorkStoneSmelte
         return ModJobs.stoneSmeltery;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.StoneSmeltery";
-    }
-
     /**
      * Generate your AI class to register.
      *

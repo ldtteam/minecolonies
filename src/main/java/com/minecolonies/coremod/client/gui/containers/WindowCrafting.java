@@ -8,7 +8,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -82,7 +82,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     /**
      * The building the window belongs to.
      */
-    private final AbstractBuildingWorkerView building;
+    private final AbstractBuildingView building;
 
     /**
      * Check if the GUI should display for 9 or 4 slots.
@@ -104,13 +104,13 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     public WindowCrafting(final ContainerCrafting container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
-        this.building = (AbstractBuildingWorkerView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
+        this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
         completeCrafting = module.canLearnLargeRecipes();
     }
 
     @NotNull
-    public AbstractBuildingWorkerView getBuildingView()
+    public AbstractBuildingView getBuildingView()
     {
         return building;
     }

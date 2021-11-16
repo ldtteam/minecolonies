@@ -15,9 +15,10 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.modules.WorkAtHomeBuildingModule;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import net.minecraft.block.Block;
 import net.minecraft.block.CarvedPumpkinBlock;
@@ -40,7 +41,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Combat Academy.
  */
-public class BuildingCombatAcademy extends AbstractBuildingWorker
+public class BuildingCombatAcademy extends AbstractBuilding
 {
     /**
      * The Schematic name.
@@ -72,48 +73,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     {
         super(c, l);
     }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobCombatTraining(citizen);
-    }
     
-    @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        if (super.assignCitizen(citizen) && citizen != null)
-        {
-            // Set new home, since guards are housed at their workerbuilding.
-            final IBuilding building = citizen.getHomeBuilding();
-            if (building != null && !building.getID().equals(this.getID()))
-            {
-                if (building.hasModule(LivingBuildingModule.class))
-                {
-                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                      "com.minecolonies.coremod.gui.workerhuts.knighttraineeassignbed",
-                      citizen.getName(),
-                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
-                      BlockPosUtil.getString(building.getID()));
-                }
-                building.removeCitizen(citizen);
-            }
-            citizen.setHomeBuilding(this);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (isCitizenAssigned(citizen))
-        {
-            citizen.setHomeBuilding(null);
-        }
-        super.removeCitizen(citizen);
-    }
 
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final World world)
@@ -182,33 +142,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         return 5;
     }
 
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "melee";
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Adaptability;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Stamina;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return getBuildingLevel();
-    }
-
     /**
      * Get a random position to shoot at.
      *
@@ -235,7 +168,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         final ICitizenData citizenData = citizen.getCitizenData();
         if (citizenData != null)
         {
-            final ICitizenData partner = getAssignedCitizen().stream()
+            final ICitizenData partner = getFirstModuleOccurance(WorkAtHomeBuildingModule.class).getAssignedCitizen().stream()
                                            .filter(data -> data.getId() != citizenData.getId())
                                            .filter(data -> !trainingPartners.containsKey(data.getId()))
                                            .filter(data -> !trainingPartners.containsValue(data.getId()))
@@ -287,7 +220,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
                 return null;
             }
 
-            final ICitizenData citizenData =
+            final ICitizenData citizenData = getFirstModuleOccurance(WorkAtHomeBuildingModule.class).
               getAssignedCitizen().stream().filter(cit -> cit.getId() != data.getId()).filter(cit -> cit.getId() == citizenId).findFirst().orElse(null);
             if (citizenData != null)
             {
@@ -321,7 +254,7 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingWorkerView implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingView implements IBuildingCanBeHiredFrom
     {
         /**
          * The client view constructor for the AbstractGuardBuilding.
@@ -339,17 +272,6 @@ public class BuildingCombatAcademy extends AbstractBuildingWorker
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, DESC);
-        }
-
-        /**
-         * Check if it has enough workers.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean hasEnoughWorkers()
-        {
-            return getWorkerId().size() >= getBuildingLevel();
         }
     }
 }

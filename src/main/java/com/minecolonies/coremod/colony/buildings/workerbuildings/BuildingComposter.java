@@ -3,21 +3,17 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobComposter;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -35,7 +31,7 @@ import java.util.List;
 
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
 
-public class BuildingComposter extends AbstractBuildingWorker
+public class BuildingComposter extends AbstractBuilding
 {
     /**
      * Settings key for the composting mode.
@@ -92,34 +88,6 @@ public class BuildingComposter extends AbstractBuildingWorker
     public List<BlockPos> getBarrels()
     {
         return ImmutableList.copyOf(barrels);
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobComposter(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return COMPOSTER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Stamina;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Athletics;
     }
 
     @NotNull
@@ -181,7 +149,7 @@ public class BuildingComposter extends AbstractBuildingWorker
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

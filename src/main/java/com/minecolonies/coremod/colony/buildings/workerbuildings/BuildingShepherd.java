@@ -1,18 +1,14 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobShepherd;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
@@ -22,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Creates a new building for the Shepherd.
  */
-public class BuildingShepherd extends AbstractBuildingWorker
+public class BuildingShepherd extends AbstractBuilding
 {
     /**
      * Automatic dyeing.
@@ -73,34 +69,6 @@ public class BuildingShepherd extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return SHEPHERD;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Focus;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Strength;
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobShepherd(citizen);
-    }
-
     @Override
     public boolean canEat(final ItemStack stack)
     {
@@ -114,7 +82,7 @@ public class BuildingShepherd extends AbstractBuildingWorker
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.
