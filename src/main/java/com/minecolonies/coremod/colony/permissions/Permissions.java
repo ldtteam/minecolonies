@@ -229,17 +229,25 @@ public class Permissions implements IPermissions
         }
     }
 
-    /**
-     * Toggle permission for a specific rank.
-     *
-     * @param rank   Rank to toggle permission.
-     * @param action Action to toggle permission.
-     */
     @Override
-    public void togglePermission(final Rank rank, @NotNull final Action action)
+    public void togglePermission(final Rank actor, final Rank rank, @NotNull final Action action)
     {
+        if (!canAlterPermission(actor, rank, action))
+        {
+            return;
+        }
         permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.getFlag()));
         markDirty();
+    }
+
+    @Override
+    public boolean canAlterPermission(final Rank actor, final Rank rank, @NotNull final Action action)
+    {
+        if (rank == getRankOwner() && actor != getRankOwner())
+        {
+            return false;
+        }
+        return rank != getRankOwner() || (action != Action.EDIT_PERMISSIONS && action != Action.MANAGE_HUTS && action != Action.GUARDS_ATTACK  && action != Action.ACCESS_HUTS);
     }
 
     /**
@@ -637,13 +645,7 @@ public class Permissions implements IPermissions
         return hasPermission(getRank(player), action);
     }
 
-    /**
-     * Returns the rank of a player.
-     *
-     * @param player player to check rank.
-     * @return Rank of the player.
-     */
-    @NotNull
+    @Override
     public Rank getRank(@NotNull final PlayerEntity player)
     {
         return getRank(player.getGameProfile().getId());

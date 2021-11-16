@@ -172,15 +172,25 @@ public class PermissionsView implements IPermissions
         return false;
     }
 
-    /**
-     * Toggle a permission flag.
-     *
-     * @param rank   the rank.
-     * @param action the action.
-     */
-    public void togglePermission(final Rank rank, @NotNull final Action action)
+    @Override
+    public void togglePermission(final Rank actor, final Rank rank, @NotNull final Action action)
     {
+        if (!canAlterPermission(actor, rank, action))
+        {
+            return;
+        }
         permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.getFlag()));
+    }
+
+    @Override
+    public boolean canAlterPermission(final Rank actor, final Rank rank, @NotNull final Action action)
+    {
+        if (rank == getRankOwner() && actor != getRankOwner())
+        {
+            return false;
+        }
+
+        return rank != getRankOwner() || (action != Action.EDIT_PERMISSIONS && action != Action.MANAGE_HUTS && action != Action.GUARDS_ATTACK && action != Action.ACCESS_HUTS);
     }
 
     @Nullable
@@ -270,13 +280,7 @@ public class PermissionsView implements IPermissions
         }
     }
 
-    /**
-     * Get the rank of a certain player.
-     *
-     * @param player the player.
-     * @return the rank.
-     */
-    @NotNull
+    @Override
     public Rank getRank(@NotNull final PlayerEntity player)
     {
         return getRank(player.getUUID());

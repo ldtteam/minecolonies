@@ -438,16 +438,14 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         final IPermissions permissions = building.getColony().getPermissions();
         final PlayerEntity playerEntity = Minecraft.getInstance().player;
-        final Rank owner = building.getColony().getPermissions().getRankOwner();
-        if (!permissions.hasPermission(playerEntity, Action.EDIT_PERMISSIONS)
-              || (actionsRank == owner && (building.getColony().getPermissions().getRank(playerEntity) != owner || action == Action.EDIT_PERMISSIONS)))
+        if (!permissions.hasPermission(playerEntity, Action.EDIT_PERMISSIONS) || !permissions.canAlterPermission(permissions.getRank(playerEntity), actionsRank, action))
         {
             return;
         }
 
         final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
         Network.getNetwork().sendToServer(new PermissionsMessage.Permission(building.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, actionsRank, action));
-        building.getColony().getPermissions().togglePermission(actionsRank, action);
+        building.getColony().getPermissions().togglePermission(permissions.getRank(playerEntity), actionsRank, action);
 
         if (trigger)
         {
