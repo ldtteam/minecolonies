@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -79,11 +80,16 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
             Validate.notNull(registryName);
             Validate.notNull(jobViewProducer);
 
-            return new JobEntry(jobProducer, jobViewProducer).setRegistryName(registryName);
+            return new JobEntry(jobProducer, jobViewProducer, registryName).setRegistryName(registryName);
         }
     }
 
     private final Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer;
+
+    /**
+     * The job key.
+     */
+    private final ResourceLocation key;
 
     /**
      * The producer for the {@link IJob}. Creates the job from a {@link ICitizenData} instance.
@@ -97,11 +103,45 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
 
     private JobEntry(
       final Function<ICitizenData, IJob<?>> jobProducer,
-      final Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer)
+      final Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer,
+      final ResourceLocation key)
     {
         super();
         this.jobProducer = jobProducer;
         this.jobViewProducer = jobViewProducer;
+        this.key = key;
+    }
+
+    public String getTranslationKey()
+    {
+        return "com." + key.getNamespace() + ".job." + key.getPath();
+    }
+
+
+    public ResourceLocation getKey()
+    {
+        return key;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        final JobEntry jobEntry = (JobEntry) o;
+        return Objects.equals(key, jobEntry.key);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(key);
     }
 
     public Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> getJobViewProducer()

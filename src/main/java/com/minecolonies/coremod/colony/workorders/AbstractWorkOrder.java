@@ -518,7 +518,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
                  .getBuildings()
                  .values()
                  .stream()
-                 .anyMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null && building.getBuildingLevel() >= level);
+                 .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
     }
 
     /**

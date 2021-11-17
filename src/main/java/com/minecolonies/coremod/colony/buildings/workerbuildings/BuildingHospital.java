@@ -13,8 +13,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import com.minecolonies.coremod.entity.ai.citizen.healer.Patient;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
@@ -43,7 +43,7 @@ import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
  * Class of the hospital building.
  */
 @SuppressWarnings(OVERRIDE_EQUALS)
-public class BuildingHospital extends AbstractBuildingWorker
+public class BuildingHospital extends AbstractBuilding
 {
     /**
      * The hospital string.
@@ -88,40 +88,6 @@ public class BuildingHospital extends AbstractBuildingWorker
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
-    }
-
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobHealer(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "com.minecolonies.coremod.job.healer";
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Mana;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @Override
-    public boolean canWorkDuringTheRain()
-    {
-        return true;
     }
 
     @Override
@@ -201,17 +167,6 @@ public class BuildingHospital extends AbstractBuildingWorker
                 bedMap.put(registrationPosition, 0);
             }
         }
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (citizen != null)
-        {
-            final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-            optCitizen.ifPresent(entityCitizen -> AttributeModifierUtils.removeModifier(entityCitizen, SKILL_BONUS_ADD, Attributes.MOVEMENT_SPEED));
-        }
-        super.removeCitizen(citizen);
     }
 
     /**
@@ -398,7 +353,7 @@ public class BuildingHospital extends AbstractBuildingWorker
     /**
      * BuildingHospital View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the hospital view.

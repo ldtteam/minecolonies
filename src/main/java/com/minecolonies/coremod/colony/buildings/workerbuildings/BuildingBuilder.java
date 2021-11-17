@@ -5,15 +5,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutBuilderModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
@@ -151,49 +150,10 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         return getSetting(MODE).getValue().equals(MANUAL_SETTING);
     }
 
-    /**
-     * Create the job for the builder.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the new job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobBuilder(citizen);
-    }
-
-    /**
-     * Getter of the job description.
-     *
-     * @return the description of the builder job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BUILDER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Adaptability;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Athletics;
-    }
-
     @Override
     public void searchWorkOrder()
     {
-        final ICitizenData citizen = getMainCitizen();
+        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
         if (citizen == null)
         {
             return;
@@ -262,7 +222,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      */
     public void setWorkOrder(int orderId)
     {
-        final ICitizenData citizen = getMainCitizen();
+        final ICitizenData citizen = getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen();
         if (citizen == null)
         {
             return;

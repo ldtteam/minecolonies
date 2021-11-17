@@ -15,6 +15,14 @@ import java.util.List;
  */
 public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Crafting
 {
+    /**
+     * Create a new module.
+     */
+    public SimpleCraftingModule()
+    {
+        super(null);
+    }
+
     @Nullable
     @Override
     public IJob<?> getCraftingJob()

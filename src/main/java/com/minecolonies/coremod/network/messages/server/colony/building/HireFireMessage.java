@@ -2,7 +2,9 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWorker>
+public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
      * If hiring (true) else firing.
@@ -23,6 +25,11 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
      * The citizen to hire/fire.
      */
     private int citizenID;
+
+    /**
+     * The job entry,
+     */
+    private JobEntry entry;
 
     /**
      * Empty public constructor.
@@ -39,11 +46,12 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID)
+    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID, final JobEntry entry)
     {
         super(building);
         this.hire = hire;
         this.citizenID = citizenID;
+        this.entry = entry;
     }
 
     /**
@@ -54,9 +62,9 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         hire = buf.readBoolean();
         citizenID = buf.readInt();
+        entry = buf.readRegistryId();
     }
 
     /**
@@ -67,25 +75,24 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuildingWork
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
+        buf.writeRegistryId(entry);
     }
 
     @Override
     protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         final ICitizenData citizen = colony.getCitizenManager().getCivilian(citizenID);
         citizen.setPaused(false);
         if (hire)
         {
-
-            building.assignCitizen(citizen);
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == entry).assignCitizen(citizen);
         }
         else
         {
-            building.removeCitizen(citizen);
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == entry).removeCitizen(citizen);
         }
     }
 }

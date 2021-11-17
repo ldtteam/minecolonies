@@ -34,6 +34,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.*;
@@ -1152,10 +1153,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private boolean shouldWorkWhileRaining()
     {
-
         return MineColonies.getConfig().getServer().workersAlwaysWorkInRain.get() ||
                  getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(WORKING_IN_RAIN) > 0 ||
-                 (citizenColonyHandler.getWorkBuilding() != null && citizenColonyHandler.getWorkBuilding().canWorkDuringTheRain());
+                 (citizenColonyHandler.getWorkBuilding() != null
+                    && citizenColonyHandler.getWorkBuilding().hasModule(WorkerBuildingModule.class)
+                    && citizenColonyHandler.getWorkBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).canWorkDuringTheRain());
     }
 
     @Override
@@ -1290,6 +1292,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (getCitizenData() != null && getCitizenData().isAsleep())
             {
                 getCitizenSleepHandler().onWakeUp();
+            }
+            else if (getPose() == Pose.SLEEPING)
+            {
+                updatePose(Pose.STANDING);
             }
         }
         super.move(typeIn, pos);

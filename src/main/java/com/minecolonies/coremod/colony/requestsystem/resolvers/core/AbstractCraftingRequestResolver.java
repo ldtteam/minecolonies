@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -17,7 +18,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
@@ -43,6 +45,11 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     public final boolean isPublicCrafter;
 
     /**
+     * The matching job entry.
+     */
+    private final JobEntry jobEntry;
+
+    /**
      * Constructor to initialize.
      *
      * @param location        the location.
@@ -51,10 +58,22 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public AbstractCraftingRequestResolver(
       @NotNull final ILocation location,
-      @NotNull final IToken<?> token, final boolean isPublicCrafter)
+      @NotNull final IToken<?> token,
+      @NotNull final JobEntry entry,
+      final boolean isPublicCrafter)
     {
         super(location, token);
         this.isPublicCrafter = isPublicCrafter;
+        this.jobEntry = entry;
+    }
+
+    /**
+     * Getter of the job entry.
+     * @return the entry.
+     */
+    public JobEntry getJobEntry()
+    {
+        return jobEntry;
     }
 
     @Override
@@ -106,7 +125,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      */
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (building.getBuildingLevel() <= 0 || building.getAssignedCitizen().isEmpty())
+        if (building.getBuildingLevel() <= 0 || building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getAssignedCitizen().isEmpty())
         {
             return false;
         }
@@ -119,18 +138,18 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
         // As long as we're not resolving food, fast resolve
         if(!(request.getRequest() instanceof Food))
         {
-            return building instanceof AbstractBuildingWorker && canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+            return building.hasModule(WorkerBuildingModule.class) && canBuildingCraftStack(building, itemStack -> request.getRequest().matches(itemStack));
         }
 
         // If this building is resolving a generic food request, then only allow it to resolve non-smeltables. 
-        if(building instanceof AbstractBuildingWorker)
+        if(building.hasModule(WorkerBuildingModule.class))
         {
             for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
             {
                 final IRecipeStorage recipe = module.getFirstRecipe(itemStack -> request.getRequest().matches(itemStack));
                 if (recipe != null && recipe.getIntermediate() != Blocks.FURNACE)
                 {
-                    return canBuildingCraftStack((AbstractBuildingWorker) building, itemStack -> request.getRequest().matches(itemStack));
+                    return canBuildingCraftStack(building, itemStack -> request.getRequest().matches(itemStack));
                 }
             }
         }
@@ -215,7 +234,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
      * @param stackPredicate predicate used to check if a building knows the recipe.
      * @return true if so.
      */
-    public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, Predicate<ItemStack> stackPredicate);
+    public abstract boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, Predicate<ItemStack> stackPredicate);
 
     @Nullable
     @Override
@@ -231,9 +250,8 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
       @NotNull final IRequest<? extends IDeliverable> request,
       @NotNull final AbstractBuilding building)
     {
-        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
         return attemptResolveForBuildingAndStack(manager,
-          buildingWorker,
+          building,
           itemStack -> request.getRequest().matches(itemStack),
           request.getRequest().getCount(),
           request.getRequest().getMinimumCount());
@@ -242,7 +260,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
     @Nullable
     protected List<IToken<?>> attemptResolveForBuildingAndStack(
       @NotNull final IRequestManager manager,
-      @NotNull final AbstractBuildingWorker building,
+      @NotNull final AbstractBuilding building,
       @NotNull final Predicate<ItemStack> stackPrecicate,
       final int count,
       final int minCount)

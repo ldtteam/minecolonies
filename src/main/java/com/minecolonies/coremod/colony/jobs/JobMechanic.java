@@ -29,13 +29,6 @@ public class JobMechanic extends AbstractJobCrafter<EntityAIWorkMechanic, JobMec
         return ModJobs.mechanic;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.mechanic";
-    }
-
     /**
      * Generate your AI class to register.
      *

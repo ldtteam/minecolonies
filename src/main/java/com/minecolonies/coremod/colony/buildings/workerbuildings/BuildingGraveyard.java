@@ -3,12 +3,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -16,13 +12,12 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobUndertaker;
-import net.minecraft.core.BlockPos;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,7 +33,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class which handles the graveyard building.
  */
-public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingGraveyard extends AbstractBuilding
 {
     /**
      * Descriptive string of the building.
@@ -134,13 +129,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
         return currentGrave;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(@Nullable final ICitizenData citizen)
-    {
-        return new JobUndertaker(citizen);
-    }
-
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
@@ -182,24 +170,6 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
         }
         compound.put(TAG_VISUAL_GRAVES, visualGraveTagList);
         return compound;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return UNDERTAKER;
-}
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill() { return Skill.Strength; }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Mana;
     }
 
     @NotNull
@@ -256,7 +226,7 @@ public class BuildingGraveyard extends AbstractBuildingWorker implements IBuildi
     /**
      * Provides a view of the farmer building class.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Public constructor of the view, creates an instance of it.

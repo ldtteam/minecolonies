@@ -194,4 +194,10 @@ public interface ICitizenDataView extends ICitizen
      * @return the res location.
      */
     ResourceLocation getCustomTexture();
+
+    /**
+     * Force set the job view.
+     * @param view the job view to set.
+     */
+    void setJobView(IJobView view);
 }

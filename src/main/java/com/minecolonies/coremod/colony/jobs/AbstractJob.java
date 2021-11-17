@@ -86,11 +86,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         citizen = entity;
     }
 
-    @Override
-    public String getExperienceTag()
-    {
-        return getName();
-    }
 
     @Override
     public boolean pickupSuccess(@NotNull ItemStack pickedUpStack)
@@ -147,12 +142,12 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public void serializeToView(final FriendlyByteBuf buffer)
     {
         buffer.writeUtf(getJobRegistryEntry().getRegistryName().toString());
-        buffer.writeUtf(getName());
         buffer.writeInt(getAsyncRequests().size());
         for (final IToken<?> token : getAsyncRequests())
         {
             StandardFactoryController.getInstance().serialize(buffer, token);
         }
+        buffer.writeRegistryId(getJobRegistryEntry());
     }
 
     /**

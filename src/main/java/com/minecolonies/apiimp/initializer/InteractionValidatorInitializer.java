@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
@@ -141,7 +141,7 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerPosBasedPredicate(
           new TranslatableComponent(BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
           {
-              final IBuildingWorker workBuilding = citizen.getWorkBuilding();
+              final IBuilding workBuilding = citizen.getWorkBuilding();
               if (workBuilding != null)
               {
                   final IColony colony = citizen.getColony();
@@ -244,7 +244,7 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(NO_COMPOST),
           citizen ->
           {
-              final IBuildingWorker buildingFlorist = citizen.getWorkBuilding();
+              final IBuilding buildingFlorist = citizen.getWorkBuilding();
               if (buildingFlorist instanceof BuildingFlorist && buildingFlorist.getColony().getWorld() != null)
               {
                   return InventoryUtils.getItemCountInItemHandler(citizen.getInventory(), IS_COMPOST) == 0 && !isThereCompostedLand((BuildingFlorist) buildingFlorist,

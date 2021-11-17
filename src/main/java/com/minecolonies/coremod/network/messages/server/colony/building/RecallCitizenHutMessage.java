@@ -47,7 +47,7 @@ public class RecallCitizenHutMessage extends AbstractBuildingServerMessage<IBuil
     {
         final BlockPos location = building.getPosition();
         final Level world = colony.getWorld();
-        for (final ICitizenData citizenData : building.getAssignedCitizen())
+        for (final ICitizenData citizenData : building.getAllAssignedCitizen())
         {
             Optional<AbstractEntityCitizen> optionalEntityCitizen = citizenData.getEntity();
             if (!optionalEntityCitizen.isPresent())

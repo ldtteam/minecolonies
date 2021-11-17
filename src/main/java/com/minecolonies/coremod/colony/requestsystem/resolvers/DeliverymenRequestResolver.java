@@ -13,6 +13,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.DeliverymanAssignmentModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
@@ -70,7 +71,7 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(hut));
             if (building instanceof BuildingDeliveryman)
             {
-                for (final ICitizenData data : building.getAssignedCitizen())
+                for (final ICitizenData data : building.getFirstModuleOccurance(DeliverymanAssignmentModule.class).getAssignedCitizen())
                 {
                     if (data.isWorking())
                     {

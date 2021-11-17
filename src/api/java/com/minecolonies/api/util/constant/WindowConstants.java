@@ -913,9 +913,19 @@ public final class WindowConstants
     public static final String BUTTON_MODE = "mode";
 
     /**
+     * Id of the job module button in the GUI.
+     */
+    public static final String BUTTON_JOB = "job";
+
+    /**
      * Id of the citizen list in the GUI.
      */
     public static final String CITIZEN_LIST_UNEMP = "unemployed";
+
+    /**
+     * Id of the job list in the GUI.
+     */
+    public static final String JOB_LIST = "jobs";
 
     /**
      * Id of the attributes label in the GUI.

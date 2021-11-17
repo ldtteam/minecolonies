@@ -84,7 +84,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             qty += resource.getAmount();
         }
 
-        final ICitizenData data = building.getMainCitizen();
+        final Set<ICitizenData> set = building.getAllAssignedCitizen();
+        final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
         if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
@@ -114,8 +115,14 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
      */
     private void updateAvailableResources()
     {
-        building.getMainCitizenEntity().ifPresent(structureBuilder -> {
-            final InventoryCitizen structureBuilderInventory = building.getMainCitizen().getInventory();
+        final Set<ICitizenData> set = building.getAllAssignedCitizen();
+        final ICitizenData data = set.isEmpty() ? null : set.iterator().next();
+        if (data == null)
+        {
+            return;
+        }
+        data.getEntity().ifPresent(structureBuilder -> {
+            final InventoryCitizen structureBuilderInventory = data.getInventory();
             if (structureBuilderInventory == null)
             {
                 return;
@@ -203,7 +210,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         BuilderBucket last = buckets.isEmpty() ? null : buckets.removeLast();
 
         final int stacks = (int) Math.ceil((double) amount / res.getMaxStackSize());
-        final int max = building.getMainCitizen().getInventory().getSlots() - 9;
+        final int max = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen().getInventory().getSlots() - 9;
 
         if (last == null || last.getTotalStacks() >= max || last.getTotalStacks() + stacks >= max)
         {

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
@@ -40,7 +41,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Class containing the container action of the buildings.
  */
-public abstract class AbstractBuildingContainer extends AbstractCitizenAssignable implements IBuildingContainer
+public abstract class AbstractBuildingContainer extends AbstractSchematicProvider implements IBuildingContainer
 {
     /**
      * A list which contains the position of all containers which belong to the worker building.

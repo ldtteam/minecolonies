@@ -14,7 +14,8 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -365,13 +366,19 @@ public class CitizenWindowUtils
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingWorkerView && !(building instanceof BuildingLibrary.View))
+        if (building instanceof AbstractBuildingView && !(building instanceof BuildingLibrary.View) && citizen.getJobView() != null)
         {
-            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.label",
-              new TranslatableComponent(citizen.getJob())));
-            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.desc"));
+            final WorkerBuildingModuleView moduleView = building.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == citizen.getJobView().getEntry());
+            if (moduleView == null)
+            {
+                return;
+            }
 
-            final Skill primary = ((AbstractBuildingWorkerView) building).getPrimarySkill();
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
+              LanguageHandler.format(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
+
+            final Skill primary = moduleView.getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
               .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)).getString() + " (100% XP)");
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
@@ -392,7 +399,7 @@ public class CitizenWindowUtils
                   .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
 
-            final Skill secondary = ((AbstractBuildingWorkerView) building).getSecondarySkill();
+            final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
               .setText(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)).getString() + " (50% XP)");
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)

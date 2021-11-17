@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
@@ -20,19 +23,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_MAXIMUM;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
-public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester
+public interface IBuilding extends IBuildingContainer, IRequestResolverProvider, IRequester, ISchematicProvider
 {
+    /**
+     * Minimal level to ask for wood tools. (WOOD_HUT_LEVEL + 1 == stone)
+     */
+    int WOOD_HUT_LEVEL = 0;
+
     /**
      * Check if the building has a particular module.
      * @param clazz the class or interface of the module to check.
@@ -135,19 +143,17 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     boolean isMatchingBlock(@NotNull Block block);
 
     /**
-     * When the building is repositioned.
-     *
-     * @param oldBuilding the moved building.
-     */
-    void onBuildingMove(final IBuilding oldBuilding);
-
-    /**
      * Destroys the block. Calls {@link #onDestroyed()}.
      */
     void destroy();
 
-    @Override
     void onDestroyed();
+
+    /**
+     * Get the colony from a building.
+     * @return the colony it belongs to.
+     */
+    IColony getColony();
 
     /**
      * Method to define if a builder can build this although the builder is not level 1 yet.
@@ -401,18 +407,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void calculateCorners();
 
     /**
-     * Get the Building type
-     * @return building type
-     */
-    BuildingEntry getBuildingType();
-
-    /**
-     * Set the building type
-     * @param buildingType
-     */
-    void setBuildingType(BuildingEntry buildingType);
-
-    /**
      * Check if a certain vec is within this building.
      * @param pos the pos to check.
      * @return true if so.
@@ -435,4 +429,80 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param player the player picking it up.
      */
     void pickUp(final Player player);
+
+    /**
+     * Get the Building type
+     *
+     * @return building type
+     */
+    BuildingEntry getBuildingType();
+
+    /**
+     * Set the building type
+     *
+     * @param buildingType
+     */
+    void setBuildingType(BuildingEntry buildingType);
+
+    /**
+     * On tick of the colony.
+     *
+     * @param colony {@link net.minecraftforge.event.TickEvent.WorldTickEvent}
+     */
+    void onColonyTick(IColony colony);
+
+    /**
+     * Check if a certain ItemStack is in the request of a worker.
+     *
+     * @param stack the stack to chest.
+     * @return true if so.
+     */
+    boolean isItemStackInRequest(@Nullable ItemStack stack);
+
+    /**
+     * Get the max tool level useable by the worker.
+     *
+     * @return the integer.
+     */
+    default int getMaxToolLevel()
+    {
+        if (getBuildingLevel() >= getMaxBuildingLevel())
+        {
+            return TOOL_LEVEL_MAXIMUM;
+        }
+        else if (getBuildingLevel() <= WOOD_HUT_LEVEL)
+        {
+            return TOOL_LEVEL_WOOD_OR_GOLD;
+        }
+        return getBuildingLevel() - WOOD_HUT_LEVEL;
+    }
+
+    /**
+     * Get the set of all assigned citizens in the colony.
+     * @return the list
+     */
+    Set<ICitizenData> getAllAssignedCitizen();
+
+    /**
+     * Get all handlers associated with this building.
+     *
+     * @return the handlers of the building + citizen.
+     */
+    List<IItemHandler> getHandlers();
+
+    /**
+     * Get setting for key. Utility function.
+     * @param key the key.
+     * @param <T> the key type.
+     * @return the optional wrapping the value.
+     */
+    <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key);
+
+    /**
+     * Check if the assigned citizens are allowed to eat the following stack.
+     *
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    boolean canEat(final ItemStack stack);
 }

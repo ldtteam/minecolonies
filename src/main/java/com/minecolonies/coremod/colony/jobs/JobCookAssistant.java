@@ -32,13 +32,6 @@ public class JobCookAssistant extends AbstractJobCrafter<EntityAIWorkCookAssista
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.cookassistant";
-    }
-
-    @NotNull
-    @Override
     public IModelType getModel()
     {
         return BipedModelType.COOK;

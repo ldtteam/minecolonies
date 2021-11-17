@@ -7,8 +7,6 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_BAKER;
-
 /**
  * The fisherman's job class. implements some useful things for him.
  */
@@ -28,18 +26,6 @@ public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
     public JobEntry getJobRegistryEntry()
     {
         return ModJobs.baker;
-    }
-
-    /**
-     * Return a Localization textContent for the Job.
-     *
-     * @return localization textContent String.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return COM_MINECOLONIES_COREMOD_JOB_BAKER;
     }
 
     /**

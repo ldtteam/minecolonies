@@ -209,7 +209,7 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
                  .getBuildings()
                  .values()
                  .stream()
-                 .noneMatch(building -> building instanceof BuildingBuilder && building.getMainCitizen() != null
+                 .noneMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty()
                                           && building.getPosition().distSqr(this.getSchematicLocation()) <= MAX_DISTANCE_SQ);
     }
 

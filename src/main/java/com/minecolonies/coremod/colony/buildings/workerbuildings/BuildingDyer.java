@@ -7,23 +7,20 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobDyer;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +28,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -42,7 +38,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT
 /**
  * Class of the dyer building.
  */
-public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingDyer extends AbstractBuilding
 {
     /**
      * Description string of the building.
@@ -74,44 +70,10 @@ public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPub
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobDyer(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return DYER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Creativity;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
-    @Override
-    public Skill getCraftSpeedSkill()
-    {
-        return getSecondarySkill();
-    }
-
     /**
      * Dyer View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
 
         /**
@@ -137,11 +99,14 @@ public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPub
     {
         private List<ItemStorage> woolItems;
 
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobDyer(null));
+            super(jobEntry);
         }
 
         @Override
@@ -200,7 +165,7 @@ public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPub
             if (recipe == null && stackPredicate.test(new ItemStack(Items.WHITE_WOOL)))
             {
                 final Set<IItemHandler> handlers = new HashSet<>();
-                for (final ICitizenData workerEntity : building.getAssignedCitizen())
+                for (final ICitizenData workerEntity : building.getAllAssignedCitizen())
                 {
                     handlers.add(workerEntity.getInventory());
                 }
@@ -257,11 +222,14 @@ public class BuildingDyer extends AbstractBuildingWorker implements IBuildingPub
 
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public SmeltingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobDyer(null));
+            super(jobEntry);
         }
 
         @Override

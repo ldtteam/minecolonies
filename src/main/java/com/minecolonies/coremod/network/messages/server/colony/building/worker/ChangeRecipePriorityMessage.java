@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.worker;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message to change priorities of recipes.
  */
-public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<IBuildingWorker>
+public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
      * The workOrder to remove or change priority.
@@ -79,7 +79,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     }
 
     @Override
-    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
+    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
         if (up)

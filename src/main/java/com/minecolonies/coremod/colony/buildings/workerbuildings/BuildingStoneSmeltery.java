@@ -1,29 +1,24 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobStoneSmeltery;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
  * Class of the stone smeltery building.
  */
-public class BuildingStoneSmeltery extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingStoneSmeltery extends AbstractBuilding
 {
     /**
      * Description string of the building.
@@ -54,44 +49,10 @@ public class BuildingStoneSmeltery extends AbstractBuildingWorker implements IBu
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobStoneSmeltery(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return STONE_SMELTERY;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Athletics;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
-    @Override
-    public Skill getCraftSpeedSkill()
-    {
-        return getSecondarySkill();
-    }
-
     /**
      * Stone smeltery View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
 
         /**
@@ -115,11 +76,14 @@ public class BuildingStoneSmeltery extends AbstractBuildingWorker implements IBu
 
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public SmeltingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobStoneSmeltery(null));
+            super(jobEntry);
         }
 
         @Override

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -49,11 +50,18 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
         {
             final CompoundTag entryCompound = list.getCompound(i);
             final ResourceLocation key = new ResourceLocation(entryCompound.getString("key"));
-            final ISetting setting = StandardFactoryController.getInstance().deserialize(entryCompound.getCompound("value"));
-            final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
-            if (settings.containsKey(settingsKey))
+            try
             {
-                settings.put(settingsKey, setting);
+                final ISetting setting = StandardFactoryController.getInstance().deserialize(entryCompound.getCompound("value"));
+                final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
+                if (settings.containsKey(settingsKey))
+                {
+                    settings.put(settingsKey, setting);
+                }
+            }
+            catch (final IllegalArgumentException ex)
+            {
+                Log.getLogger().warn("Detected Removed Setting");
             }
         }
     }

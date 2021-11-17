@@ -53,13 +53,6 @@ public interface IBuildingWorkerView extends IBuildingView
     boolean hasEnoughWorkers();
 
     /**
-     * Get the hiring mode of the building.
-     *
-     * @return the mode.
-     */
-    HiringMode getHiringMode();
-
-    /**
      * Set the hiring mode and sync to the server.
      *
      * @param hiringMode the mode to set.

@@ -151,7 +151,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             wanderPos = null;
             worker.decreaseSaturationForAction();
-            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getOwnBuilding().getSecondarySkill(), XP_PER_WANDER, worker.getCitizenData());
+            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getSecondarySkill(), XP_PER_WANDER, worker.getCitizenData());
         }
         else
         {
@@ -263,7 +263,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             }
 
             worker.decreaseSaturationForAction();
-            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getOwnBuilding().getPrimarySkill(), XP_PER_DIG, worker.getCitizenData());
+            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getPrimarySkill(), XP_PER_DIG, worker.getCitizenData());
             return BURY_CITIZEN;
         }
 

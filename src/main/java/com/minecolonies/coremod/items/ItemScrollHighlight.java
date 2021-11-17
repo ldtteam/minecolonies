@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
@@ -71,7 +72,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
             }
 
             final TileEntityColonyBuilding building = (TileEntityColonyBuilding) te;
-            final List<ICitizenData> citizens = building.getColony().getBuildingManager().getBuilding(ctx.getClickedPos()).getAssignedCitizen();
+            final Set<ICitizenData> citizens = building.getColony().getBuildingManager().getBuilding(ctx.getClickedPos()).getAllAssignedCitizen();
 
             for (final ICitizenData citizenData : citizens)
             {

@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.requestable.Food;
@@ -261,7 +261,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         }
         if (!citizenToServe.isEmpty())
         {
-            final IBuildingWorker building = citizenToServe.get(0).getCitizenData().getWorkBuilding();
+            final IBuilding building = citizenToServe.get(0).getCitizenData().getWorkBuilding();
             if (building != null)
             {
                 return building.canEat(stack);

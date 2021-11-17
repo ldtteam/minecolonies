@@ -28,18 +28,6 @@ public class JobArcherTraining extends AbstractJob<EntityAIArcherTraining, JobAr
     }
 
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.archertraining";
-    }
-
-    @Override
-    public String getExperienceTag()
-    {
-        return JobRanger.DESC;
-    }
-
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.ARCHER_GUARD;

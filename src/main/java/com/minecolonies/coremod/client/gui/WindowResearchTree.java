@@ -737,7 +737,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             // one half-hour, and we're going to round up to increments of fifteen minutes.
             final int hours = (int) (progressToGo / (BASE_RESEARCH_TIME * 2));
             final int increments = (int) Math.ceil(progressToGo % (BASE_RESEARCH_TIME * 2) / (BASE_RESEARCH_TIME / 2d));
-            // TranslationTextComponents don't play well with advanced Java format() tricks,
+            // TranslatableComponents don't play well with advanced Java format() tricks,
             // so we'll map just the numeric parts of the string.
             final String timeRemaining;
             if (increments == 4)

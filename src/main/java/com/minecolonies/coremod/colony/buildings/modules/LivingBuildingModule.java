@@ -2,29 +2,39 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.colony.buildings.AbstractCitizenAssignable;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LIVING_RESIDENTS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RESIDENTS;
 
 /**
- * The class of the citizen hut.
+ * The living module for citizen to call their home.
  */
-public class LivingBuildingModule extends AbstractBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
+public class LivingBuildingModule extends AbstractAssignedCitizenModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
 {
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        if (compound.getAllKeys().contains(TAG_RESIDENTS))
+        if (compound.contains(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
+            for (final int citizenId : residentIds)
+            {
+                final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
+                if (citizen != null)
+                {
+                    assignCitizen(citizen);
+                }
+            }
+        }
+        else if (compound.contains(TAG_LIVING_RESIDENTS))
+        {
+            final int[] residentIds = compound.getIntArray(TAG_LIVING_RESIDENTS);
             for (final int citizenId : residentIds)
             {
                 final ICitizenData citizen = building.getColony().getCitizenManager().getCivilian(citizenId);
@@ -39,127 +49,62 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        if (building.hasAssignedCitizen())
+        if (!assignedCitizen.isEmpty())
         {
-            @NotNull final int[] residentIds = new int[building.getAssignedCitizen().size()];
-            for (int i = 0; i < building.getAssignedCitizen().size(); ++i)
+            @NotNull final int[] residentIds = new int[assignedCitizen.size()];
+            for (int i = 0; i < assignedCitizen.size(); ++i)
             {
-                residentIds[i] = building.getAssignedCitizen().get(i).getId();
+                residentIds[i] = assignedCitizen.get(i).getId();
             }
-            compound.putIntArray(TAG_RESIDENTS, residentIds);
+            compound.putIntArray(TAG_LIVING_RESIDENTS, residentIds);
         }
-    }
-
-    @Override
-    public void onDestroyed()
-    {
-        building.getAssignedCitizen().stream()
-          .filter(Objects::nonNull)
-          .forEach(citizen -> citizen.setHomeBuilding(null));
-    }
-
-    @Override
-    public boolean removeCitizen(@NotNull final ICitizenData citizen)
-    {
-        if (building.isCitizenAssigned(citizen))
-        {
-            ((AbstractCitizenAssignable) building).removeAssignedCitizen(citizen);
-            building.getColony().getCitizenManager().calculateMaxCitizens();
-            markDirty();
-            citizen.setHomeBuilding(null);
-            return true;
-        }
-        return false;
     }
 
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (!building.isFull() && !building.getColony().isManualHousing())
+        if (!isFull() && !building.getColony().isManualHousing())
         {
             // 'Capture' as many citizens into this house as possible
-            addHomelessCitizens();
-        }
-    }
-
-    /**
-     * Looks for a homeless citizen to add to the current building Calls. {@link #assignCitizen(ICitizenData)}
-     */
-    private void addHomelessCitizens()
-    {
-        for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())
-        {
-            if (building.isFull())
+            for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())
             {
-                break;
-            }
-            moveCitizenToHut(citizen);
-        }
-    }
+                if (isFull())
+                {
+                    break;
+                }
 
-    /**
-     * Moves the citizen into his new hut
-     *
-     * @param citizen the citizen to move
-     */
-    private void moveCitizenToHut(final ICitizenData citizen)
-    {
-        // Move the citizen to a better hut
-        if (citizen.getHomeBuilding() instanceof LivingBuildingModule && citizen.getHomeBuilding().getBuildingLevel() < building.getBuildingLevel())
-        {
-            citizen.getHomeBuilding().removeCitizen(citizen);
-        }
-        if (citizen.getHomeBuilding() == null)
-        {
-            assignCitizen(citizen);
+                if (citizen.getHomeBuilding() == null)
+                {
+                    assignCitizen(citizen);
+                }
+            }
         }
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
+    void onAssignment(final ICitizenData citizen)
     {
-        if (citizen.getHomeBuilding() != null)
-        {
-            citizen.getHomeBuilding().removeCitizen(citizen);
-        }
-
-        if (!buildingAssignmentLogic(citizen))
-        {
-            return false;
-        }
-
         citizen.setHomeBuilding(building);
-        return true;
+        building.getColony().getCitizenManager().calculateMaxCitizens();
+    }
+
+    @Override
+    void onRemoval(final ICitizenData citizen)
+    {
+        citizen.setHomeBuilding(null);
+        building.getColony().getCitizenManager().calculateMaxCitizens();
     }
 
     @Override
     public int getModuleMax()
     {
-        return building.getMaxInhabitants();
-    }
-
-    private boolean buildingAssignmentLogic(final ICitizenData citizen)
-    {
-        if (building.getAssignedCitizen().contains(citizen) || building.isFull())
-        {
-            return false;
-        }
-
-        // If we set a worker, inform it of such
-        if (citizen != null)
-        {
-            ((AbstractCitizenAssignable) building).addAssignedCitizen(citizen);
-        }
-
-        building.getColony().getCitizenManager().calculateMaxCitizens();
-        markDirty();
-        return true;
+        return building.getBuildingLevel();
     }
 
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
-        for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(building.getAssignedEntities()))
+        for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(getAssignedEntities()))
         {
             if (entityCitizen.isPresent() && entityCitizen.get().getCitizenJobHandler().getColonyJob() == null)
             {
@@ -167,26 +112,5 @@ public class LivingBuildingModule extends AbstractBuildingModule implements IAss
             }
         }
         building.getColony().getCitizenManager().calculateMaxCitizens();
-    }
-
-    @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
-    {
-        buf.writeInt(building.getAssignedCitizen().size());
-        for (@NotNull final ICitizenData citizen : building.getAssignedCitizen())
-        {
-            buf.writeInt(citizen.getId());
-        }
-    }
-
-    @Override
-    public void onBuildingMove(final IBuilding oldBuilding)
-    {
-        final List<ICitizenData> residents = oldBuilding.getAssignedCitizen();
-        for (final ICitizenData citizen : residents)
-        {
-            citizen.setHomeBuilding(building);
-            this.assignCitizen(citizen);
-        }
     }
 }

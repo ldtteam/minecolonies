@@ -27,7 +27,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> extends AbstractModuleWindow
 {
     /**
-     * Type B is a class that extends {@link com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView}.
+     * Type B is a class that extends {@link com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView}.
      */
     protected final B      building;
     private final   Text   title;

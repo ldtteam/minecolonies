@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers.core;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -17,7 +18,7 @@ import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,7 @@ import java.util.Optional;
 public abstract class AbstractCraftingProductionResolver<C extends AbstractCrafting> extends AbstractRequestResolver<C> implements IBuildingBasedRequester
 {
     private final Class<C> cClass;
+    private final JobEntry jobEntry;
 
     /**
      * Constructor to initialize.
@@ -43,16 +45,27 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
      */
     public AbstractCraftingProductionResolver(
       @NotNull final ILocation location,
-      @NotNull final IToken<?> token, final Class<C> cClass)
+      @NotNull final IToken<?> token,
+      @NotNull final JobEntry jobEntry, final Class<C> cClass)
     {
         super(location, token);
         this.cClass = cClass;
+        this.jobEntry = jobEntry;
     }
 
     @Override
     public TypeToken<? extends C> getRequestType()
     {
         return TypeToken.of(cClass);
+    }
+
+    /**
+     * Get the job entry for the production resolver.
+     * @return the entry.
+     */
+    public JobEntry getJobEntry()
+    {
+        return this.jobEntry;
     }
 
     @Override
@@ -89,7 +102,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     public List<IToken<?>> attemptResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
-        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
+        final AbstractBuilding buildingWorker = (AbstractBuilding) building;
         return attemptResolveForBuildingAndStack(
           manager,
           buildingWorker,
@@ -102,7 +115,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     protected List<IToken<?>> attemptResolveForBuildingAndStack(
       @NotNull final IRequestManager manager,
-      @NotNull final AbstractBuildingWorker building,
+      @NotNull final AbstractBuilding building,
       final ItemStack stack,
       final int count,
       final int minCount,
@@ -134,7 +147,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
         return createRequestsForRecipe(manager, building, count, minCount, craftableCrafting);
     }
 
-    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuildingWorker building, @NotNull final ItemStack stack)
+    protected boolean canBuildingCraftStack(@NotNull final IRequestManager manager, @NotNull final AbstractBuilding building, @NotNull final ItemStack stack)
     {
         return true;
     }
@@ -142,7 +155,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
     @Nullable
     protected List<IToken<?>> createRequestsForRecipe(
       @NotNull final IRequestManager manager,
-      @NotNull final AbstractBuildingWorker building,
+      @NotNull final AbstractBuilding building,
       final int count,
       final int minCount,
       @NotNull final IRecipeStorage storage)
@@ -226,7 +239,7 @@ public abstract class AbstractCraftingProductionResolver<C extends AbstractCraft
      */
     public void resolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends C> request, @NotNull final AbstractBuilding building)
     {
-        final AbstractBuildingWorker buildingWorker = (AbstractBuildingWorker) building;
+        final AbstractBuilding buildingWorker = (AbstractBuilding) building;
         final ICraftingBuildingModule module = buildingWorker.getCraftingModuleForRecipe(request.getId());
         if (module == null)
         {

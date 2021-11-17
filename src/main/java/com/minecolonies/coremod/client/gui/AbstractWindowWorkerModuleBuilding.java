@@ -6,8 +6,11 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDeliveryPriorityMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
@@ -15,12 +18,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Abstract class for window for worker building.
  *
- * @param <B> Class extending {@link AbstractBuildingWorkerView}
+ * @param <B> Class extending {@link AbstractBuildingView}
  */
-public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuildingWorkerView> extends AbstractWindowModuleBuilding<B>
+public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView> extends AbstractWindowModuleBuilding<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -46,11 +52,6 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
      * Id of the name label in the GUI.
      */
     private static final String LABEL_WORKERNAME = "workerName";
-
-    /**
-     * Id of the level label in the GUI.
-     */
-    private static final String LABEL_WORKERLEVEL = "workerLevel";
 
     /**
      * Name string of the builder hut.
@@ -80,7 +81,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
     /**
      * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link AbstractBuildingWorkerView}.
+     * @param building class extending {@link AbstractBuildingView}.
      * @param resource Resource of the window.
      */
     protected AbstractWindowWorkerModuleBuilding(final B building, final String resource)
@@ -161,6 +162,15 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
     public void onOpened()
     {
         super.onOpened();
+        final List<Tuple<String, Integer>> workers = new ArrayList<>();
+
+        for (final WorkerBuildingModuleView module : buildingView.getModuleViews(WorkerBuildingModuleView.class))
+        {
+            for (final int worker : module.getWorkerIdList())
+            {
+                workers.add(new Tuple<>(new TranslatableComponent(module.getJobEntry().getTranslationKey()).getString(), worker));
+            }
+        }
 
         if (findPaneByID(LIST_WORKERS) != null)
         {
@@ -170,22 +180,18 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends AbstractBuild
                 @Override
                 public int getElementCount()
                 {
-                    return building.getWorkerId().size();
+                    return workers.size();
                 }
 
                 @Override
                 public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
-                    if (!building.getWorkerId().isEmpty())
+
+                    final ICitizenDataView worker = building.getColony().getCitizen(workers.get(index).getB());
+                    if (worker != null)
                     {
-                        final ICitizenDataView worker = building.getColony().getCitizen(building.getWorkerId().get(index));
-                        if (worker != null)
-                        {
-                            rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(worker.getName());
-                            rowPane.findPaneOfTypeByID(LABEL_WORKERLEVEL, Text.class)
-                              .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.workerlevel",
-                                worker.getCitizenSkillHandler().getJobModifier(building)));
-                        }
+                        rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
+                          .setText(new TranslatableComponent(workers.get(index).getA()).getString() + ": " + worker.getName());
                     }
                 }
             });

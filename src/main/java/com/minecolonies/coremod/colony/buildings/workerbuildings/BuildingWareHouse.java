@@ -17,7 +17,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
@@ -154,7 +154,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         {
             final IColony colony = getColony();
             final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
-            if (!(building instanceof BuildingDeliveryman) || !building.hasAssignedCitizen())
+            if (!(building instanceof BuildingDeliveryman) || building.getAllAssignedCitizen().isEmpty())
             {
                 registeredDeliverymen.remove(pos);
             }
@@ -195,7 +195,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         for (int i = 0; i < deliverymanTagList.size(); i++)
         {
             final BlockPos pos = NbtUtils.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof AbstractBuildingWorker)
+            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof BuildingDeliveryman)
             {
                 registeredDeliverymen.add(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
             }

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.worker;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
@@ -16,6 +16,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,7 +25,7 @@ import java.util.Optional;
  *
  * @author Colton
  */
-public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildingWorker>
+public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     /**
      * Empty public constructor.
@@ -51,18 +53,13 @@ public class RecallCitizenMessage extends AbstractBuildingServerMessage<IBuildin
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuildingWorker building)
+    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        if (building.getAssignedEntities() == null)
+        final List<ICitizenData> citizens = new ArrayList<>(building.getAllAssignedCitizen());
+        for (int i = 0; i < building.getAllAssignedCitizen().size(); i++)
         {
-            return;
-        }
-
-        for (int i = 0; i < building.getAssignedEntities().size(); i++)
-        {
-            Optional<AbstractEntityCitizen> optionalEntityCitizen = building.getAssignedEntities().get(i);
-            final ICitizenData citizenData = building.getAssignedCitizen().get(i);
+            Optional<AbstractEntityCitizen> optionalEntityCitizen = citizens.get(i).getEntity();
+            final ICitizenData citizenData = citizens.get(i);
             if (!optionalEntityCitizen.isPresent())
             {
                 if (citizenData != null)

@@ -5,19 +5,20 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
+
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -45,7 +46,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Class of the plantation building. Worker will grow sugarcane/bamboo/cactus + craft paper and books.
  */
-public class BuildingPlantation extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingPlantation extends AbstractBuilding
 {
     /**
      * Settings key for the building mode.
@@ -164,34 +165,6 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
         return filtered;
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobPlanter(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return PLANTATION;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Agility;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
     /**
      * Iterates over available plants
      * @return the item of the new or unchanged plant phase
@@ -236,7 +209,7 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
     /**
      * Plantation View.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiate the plantation view.
@@ -259,11 +232,14 @@ public class BuildingPlantation extends AbstractBuildingWorker implements IBuild
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobPlanter(null));
+            super(jobEntry);
         }
 
         @Override

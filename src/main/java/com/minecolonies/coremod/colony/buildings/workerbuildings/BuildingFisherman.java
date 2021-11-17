@@ -1,18 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +17,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * The fishermans building.
  */
-public class BuildingFisherman extends AbstractBuildingWorker
+public class BuildingFisherman extends AbstractBuilding
 {
     /**
      * The maximum upgrade of the building.
@@ -78,48 +73,9 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
-     * Create the job for the fisherman.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the new job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobFisherman(citizen);
-    }
-
-    /**
-     * Getter of the job description.
-     *
-     * @return the description of the fisherman job.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return FISHERMAN;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Focus;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Agility;
-    }
-
-    /**
      * Provides a view of the fisherman building class.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Public constructor of the view, creates an instance of it.

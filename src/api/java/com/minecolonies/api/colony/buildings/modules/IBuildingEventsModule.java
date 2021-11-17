@@ -20,12 +20,6 @@ public interface IBuildingEventsModule extends IBuildingModule
     default void onUpgradeComplete(int newLevel) { }
 
     /**
-     * On building move hook for modules.
-     * @param oldBuilding the building that is going to be moved.
-     */
-    default void onBuildingMove(IBuilding oldBuilding) { }
-
-    /**
      * Specific wakeup hook in modules.
      */
     default void onWakeUp() { }

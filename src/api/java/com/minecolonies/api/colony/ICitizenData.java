@@ -1,7 +1,7 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -53,14 +53,14 @@ public interface ICitizenData extends ICivilianData
      * @return home building of a citizen.
      */
     @Nullable
-    IBuildingWorker getWorkBuilding();
+    IBuilding getWorkBuilding();
 
     /**
      * Sets the work building of a citizen.
      *
      * @param building work building.
      */
-    void setWorkBuilding(@Nullable IBuildingWorker building);
+    void setWorkBuilding(@Nullable IBuilding building);
 
     /**
      * Returns the job of the citizen.
@@ -195,13 +195,6 @@ public interface ICitizenData extends ICivilianData
      * @param justAte true if justAte, false to reset.
      */
     void setJustAte(boolean justAte);
-
-    /**
-     * Get the clean job modifier. Primary skill + secondary divided by 4.
-     *
-     * @return the int modifier.
-     */
-    int getJobModifier();
 
     /**
      * If is idle at job.

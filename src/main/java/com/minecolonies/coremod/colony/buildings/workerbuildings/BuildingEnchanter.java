@@ -1,30 +1,25 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingPublicCrafter;
-import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobEnchanter;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 
 /**
  * The enchanter building.
  */
-public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildingPublicCrafter
+public class BuildingEnchanter extends AbstractBuilding
 {
     /**
      * Enchanter.
@@ -50,34 +45,6 @@ public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildi
 
     @NotNull
     @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobEnchanter(citizen);
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return ENCHANTER;
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Mana;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Knowledge;
-    }
-
-    @NotNull
-    @Override
     public String getSchematicName()
     {
         return ENCHANTER;
@@ -92,7 +59,7 @@ public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildi
     /**
      * The client side representation of the building.
      */
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.
@@ -115,11 +82,14 @@ public class BuildingEnchanter extends AbstractBuildingWorker implements IBuildi
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {
-        @Nullable
-        @Override
-        public IJob<?> getCraftingJob()
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public CraftingModule(final JobEntry jobEntry)
         {
-            return getMainBuildingJob().orElseGet(() -> new JobEnchanter(null));
+            super(jobEntry);
         }
 
         @Override

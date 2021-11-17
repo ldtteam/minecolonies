@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
-import com.minecolonies.api.colony.buildings.IBuildingWorkerView;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -10,7 +11,9 @@ import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
@@ -34,9 +37,9 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
      * @param location the location of the resolver.
      * @param token    its id.
      */
-    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token)
+    public PublicWorkerCraftingRequestResolver(@NotNull final ILocation location, @NotNull final IToken<?> token, final JobEntry entry)
     {
-        super(location, token, true);
+        super(location, token, entry, true);
     }
 
     @Nullable
@@ -77,10 +80,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
-        if (requester instanceof IBuildingWorkerView)
+        if (requester instanceof IBuildingView)
         {
-            final IBuildingWorkerView bwv = (IBuildingWorkerView) requester;
-            return new TranslatableComponent(bwv.getJobDisplayName().toLowerCase());
+            final CraftingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(CraftingModuleView.class, m -> m.getJobEntry() == getJobEntry());
+            if (moduleView != null)
+            {
+                return new TranslatableComponent(moduleView.getJobEntry().getTranslationKey());
+            }
         }
         return super.getRequesterDisplayName(manager, request);
     }
@@ -92,7 +98,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
     }
 
     @Override
-    public boolean canBuildingCraftStack(@NotNull final AbstractBuildingWorker building, final Predicate<ItemStack> stackPredicate)
+    public boolean canBuildingCraftStack(@NotNull final AbstractBuilding building, final Predicate<ItemStack> stackPredicate)
     {
         for (final ICraftingBuildingModule module : building.getModules(ICraftingBuildingModule.class))
         {

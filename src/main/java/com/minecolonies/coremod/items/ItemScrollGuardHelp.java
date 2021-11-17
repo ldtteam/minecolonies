@@ -34,6 +34,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -74,7 +75,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         }
 
         itemStack.shrink(1);
-        final List<ICitizenData> guards = building.getAssignedCitizen();
+        final List<ICitizenData> guards = new ArrayList<>(building.getAllAssignedCitizen());
 
         if (world.random.nextInt(10) == 0 || colony.getWorld() != world)
         {

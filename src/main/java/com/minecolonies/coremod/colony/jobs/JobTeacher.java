@@ -30,13 +30,6 @@ public class JobTeacher extends AbstractJob<EntityAIWorkTeacher, JobTeacher>
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.teacher";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.TEACHER;

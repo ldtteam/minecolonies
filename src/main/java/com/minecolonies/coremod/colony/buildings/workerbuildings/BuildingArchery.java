@@ -1,21 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -35,17 +23,12 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * Building class for the Archery.
  */
-public class BuildingArchery extends AbstractBuildingWorker
+public class BuildingArchery extends AbstractBuilding
 {
     /**
      * The Schematic name.
      */
     private static final String SCHEMATIC_NAME = "archery";
-
-    /**
-     * The Schematic name.
-     */
-    private static final String DESC = "archery";
 
     /**
      * List of shooting stands in the building.
@@ -68,47 +51,6 @@ public class BuildingArchery extends AbstractBuildingWorker
         super(c, l);
     }
 
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobArcherTraining(citizen);
-    }
-
-    @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        if (super.assignCitizen(citizen) && citizen != null)
-        {
-            // Set new home, since guards are housed at their workerbuilding.
-            final IBuilding building = citizen.getHomeBuilding();
-            if (building != null && !building.getID().equals(this.getID()))
-            {
-                if (building.hasModule(LivingBuildingModule.class))
-                {
-                    LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                      "com.minecolonies.coremod.gui.workerhuts.archertraineeassignbed",
-                      citizen.getName(),
-                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
-                      BlockPosUtil.getString(building.getID()));
-                }
-                building.removeCitizen(citizen);
-            }
-            citizen.setHomeBuilding(this);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void removeCitizen(final ICitizenData citizen)
-    {
-        if (isCitizenAssigned(citizen))
-        {
-            citizen.setHomeBuilding(null);
-        }
-        super.removeCitizen(citizen);
-    }
 
     @Override
     public void registerBlockPosition(@NotNull final Block block, @NotNull final BlockPos pos, @NotNull final Level world)
@@ -159,40 +101,6 @@ public class BuildingArchery extends AbstractBuildingWorker
         return SCHEMATIC_NAME;
     }
 
-    @SuppressWarnings("squid:S109")
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 5;
-    }
-
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return "archer";
-    }
-
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Agility;
-    }
-
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Adaptability;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return getBuildingLevel();
-    }
-
     /**
      * Get a random position to shoot from.
      *
@@ -221,40 +129,5 @@ public class BuildingArchery extends AbstractBuildingWorker
             return shootingTargets.get(random.nextInt(shootingTargets.size()));
         }
         return null;
-    }
-
-    /**
-     * The client view for the bakery building.
-     */
-    public static class View extends AbstractBuildingWorkerView implements IBuildingCanBeHiredFrom
-    {
-        /**
-         * The client view constructor for the AbstractGuardBuilding.
-         *
-         * @param c the colony.
-         * @param l the location.
-         */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, DESC);
-        }
-
-        /**
-         * Check if it has enough workers.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean hasEnoughWorkers()
-        {
-            return getWorkerId().size() >= getBuildingLevel();
-        }
     }
 }

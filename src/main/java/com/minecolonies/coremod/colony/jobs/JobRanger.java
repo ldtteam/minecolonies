@@ -47,17 +47,6 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     }
 
     /**
-     * Gets the name of our ranger.
-     *
-     * @return The name.
-     */
-    @Override
-    public String getName()
-    {
-        return DESC;
-    }
-
-    /**
      * Gets the {@link BipedModelType} to use for our ranger.
      *
      * @return The model to use.

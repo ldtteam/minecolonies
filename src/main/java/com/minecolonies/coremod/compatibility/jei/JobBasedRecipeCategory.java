@@ -97,7 +97,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     public Component getTitleAsTextComponent()
     {
-        return new TranslatableComponent(this.job.getName().toLowerCase());
+        return new TranslatableComponent(this.job.getJobRegistryEntry().getTranslationKey());
     }
 
     @NotNull

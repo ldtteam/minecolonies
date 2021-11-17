@@ -9,7 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -63,7 +63,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     /**
      * The building assigned to this.
      */
-    private final AbstractBuildingWorkerView building;
+    private final AbstractBuildingView building;
 
     /**
      * The module this crafting window is for.
@@ -81,12 +81,12 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
-        this.building = (AbstractBuildingWorkerView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
+        this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
     }
 
     @NotNull
-    public AbstractBuildingWorkerView getBuildingView()
+    public AbstractBuildingView getBuildingView()
     {
         return building;
     }

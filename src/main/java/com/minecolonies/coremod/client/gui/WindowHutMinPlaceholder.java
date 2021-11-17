@@ -2,13 +2,13 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * BOWindow for worker. Placeholder for many different jobs.
  *
- * @param <B> Object extending {@link AbstractBuildingWorkerView}.
+ * @param <B> Object extending {@link AbstractBuildingView}.
  */
 public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends AbstractWindowModuleBuilding<B>
 {
@@ -18,7 +18,7 @@ public class WindowHutMinPlaceholder<B extends AbstractBuildingView> extends Abs
     /**
      * BOWindow for worker placeholder. Used by buildings not listed above this file.
      *
-     * @param building AbstractBuilding extending {@link AbstractBuildingWorkerView}.
+     * @param building AbstractBuilding extending {@link AbstractBuildingView}.
      * @param name     Name of the the view (resource).
      */
     public WindowHutMinPlaceholder(final B building, final String name)

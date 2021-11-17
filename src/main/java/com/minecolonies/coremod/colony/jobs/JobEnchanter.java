@@ -46,12 +46,6 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
         return ModJobs.enchanter;
     }
 
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.enchanter";
-    }
-
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *

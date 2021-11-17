@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.SettingsModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message handling setting triggering.
  */
-public class TriggerSettingMessage extends AbstractBuildingServerMessage<AbstractBuildingWorker>
+public class TriggerSettingMessage extends AbstractBuildingServerMessage<AbstractBuilding>
 {
     /**
      * The unique setting key.
@@ -65,7 +65,7 @@ public class TriggerSettingMessage extends AbstractBuildingServerMessage<Abstrac
     }
 
     @Override
-    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuildingWorker building)
+    public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
         building.getFirstOptionalModuleOccurance(SettingsModule.class).ifPresent(m -> m.updateSetting(new SettingKey<>(this.value.getClass(), this.key), this.value, ctxIn.getSender()));
     }

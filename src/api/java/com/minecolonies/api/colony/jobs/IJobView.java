@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.jobs;
 
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -26,4 +27,16 @@ public interface IJobView
      * @param buffer the buffer to read it from.
      */
     void deserialize(final FriendlyByteBuf buffer);
+
+    /**
+     * Getter for the job entry of the job.
+     * @return the entry.
+     */
+    JobEntry getEntry();
+
+    /**
+     * Set the job entry of the view.
+     * @param jobEntry the entry to set.
+     */
+    void setEntry(JobEntry jobEntry);
 }

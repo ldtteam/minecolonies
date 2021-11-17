@@ -28,13 +28,6 @@ public class JobPlaceholder extends AbstractJob<AbstractAISkeleton<JobPlaceholde
         return ModJobs.placeHolder;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Placeholder";
-    }
-
     /**
      * Generate your AI class to register.
      *

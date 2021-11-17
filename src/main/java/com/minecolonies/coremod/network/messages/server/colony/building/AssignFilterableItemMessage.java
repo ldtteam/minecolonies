@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Message which handles the assignment of items to filterable item lists.
  */
-public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuildingWorker>
+public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<AbstractBuilding>
 {
     /**
      * True if assign, false if remove.
@@ -74,7 +74,7 @@ public class AssignFilterableItemMessage extends AbstractBuildingServerMessage<A
 
     @Override
     public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuildingWorker building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final AbstractBuilding building)
     {
         if (building.hasModule(ItemListModule.class))
         {

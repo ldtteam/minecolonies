@@ -1,20 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingWorkerView;
-import com.minecolonies.coremod.colony.jobs.JobBeekeeper;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -37,7 +33,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Building of the beekeeper (apiary).
  */
-public class BuildingBeekeeper extends AbstractBuildingWorker
+public class BuildingBeekeeper extends AbstractBuilding
 {
     /**
      * The beekeeper mode.
@@ -73,55 +69,6 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
         keepX.put(stack -> ItemTags.FLOWERS.contains(stack.getItem()), new Tuple<>(STACKSIZE,true));
-    }
-
-    /**
-     * The abstract method which creates a job for the building.
-     *
-     * @param citizen the citizen to take the job.
-     * @return the Job.
-     */
-    @NotNull
-    @Override
-    public IJob<?> createJob(final ICitizenData citizen)
-    {
-        return new JobBeekeeper(citizen);
-    }
-
-    /**
-     * The abstract method which returns the name of the job.
-     *
-     * @return the job name.
-     */
-    @NotNull
-    @Override
-    public String getJobName()
-    {
-        return BEEKEEPER;
-    }
-
-    /**
-     * Primary skill getter.
-     *
-     * @return the primary skill.
-     */
-    @NotNull
-    @Override
-    public Skill getPrimarySkill()
-    {
-        return Skill.Dexterity;
-    }
-
-    /**
-     * Secondary skill getter.
-     *
-     * @return the secondary skill.
-     */
-    @NotNull
-    @Override
-    public Skill getSecondarySkill()
-    {
-        return Skill.Adaptability;
     }
 
     /**
@@ -220,7 +167,7 @@ public class BuildingBeekeeper extends AbstractBuildingWorker
         return (int) Math.pow(2, getBuildingLevel() - 1);
     }
 
-    public static class View extends AbstractBuildingWorkerView
+    public static class View extends AbstractBuildingView
     {
         /**
          * Creates a building view.

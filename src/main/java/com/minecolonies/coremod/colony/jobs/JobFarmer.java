@@ -30,13 +30,6 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Farmer";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.FARMER;

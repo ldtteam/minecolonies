@@ -31,13 +31,6 @@ public class JobGlassblower extends AbstractJobCrafter<EntityAIWorkGlassblower, 
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.glassblower";
-    }
-
-    @NotNull
-    @Override
     public IModelType getModel()
     {
         return BipedModelType.GLASSBLOWER;

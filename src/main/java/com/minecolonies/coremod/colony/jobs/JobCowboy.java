@@ -29,13 +29,6 @@ public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
         return ModJobs.cowboy;
     }
 
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.Cowboy";
-    }
-
     /**
      * Generate your AI class to register.
      *

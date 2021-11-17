@@ -54,13 +54,6 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
 
     @NotNull
     @Override
-    public String getName()
-    {
-        return "com.minecolonies.coremod.job.researcher";
-    }
-
-    @NotNull
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.STUDENT;

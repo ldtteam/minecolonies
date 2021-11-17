@@ -14,6 +14,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.colony.interactionhandling.ServerCitizenInteraction;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenHappinessHandler;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenSkillHandler;
@@ -492,5 +493,35 @@ public class CitizenDataView implements ICitizenDataView
     public ResourceLocation getCustomTexture()
     {
         return null;
+    }
+
+    @Override
+    public void setJobView(final IJobView jobView)
+    {
+        this.jobView = jobView;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return id;
+    }
+
+    @SuppressWarnings(Suppression.TOO_MANY_RETURNS)
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final ICitizenDataView data = (ICitizenDataView) o;
+
+        return id == data.getId();
     }
 }

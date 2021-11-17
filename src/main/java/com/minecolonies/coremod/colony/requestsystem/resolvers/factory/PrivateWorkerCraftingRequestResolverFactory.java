@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
@@ -9,6 +11,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class PrivateWorkerCraftingRequestResolverFactory implements IRequestResolverFactory<PrivateWorkerCraftingRequestResolver>
@@ -16,6 +19,7 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_TOKEN    = "Token";
     private static final String NBT_LOCATION = "Location";
+    private static final String NBT_JOB = "Job";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
@@ -39,7 +43,7 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
       @NotNull final ILocation iLocation,
       @NotNull final Object... context)
     {
-        return new PrivateWorkerCraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN));
+        return new PrivateWorkerCraftingRequestResolver(iLocation, factoryController.getNewInstance(TypeConstants.ITOKEN), (JobEntry) context[0]);
     }
 
     @NotNull
@@ -50,6 +54,7 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
         final CompoundTag compound = new CompoundTag();
         compound.put(NBT_TOKEN, controller.serialize(privateWorkerCraftingRequestResolverFactory.getId()));
         compound.put(NBT_LOCATION, controller.serialize(privateWorkerCraftingRequestResolverFactory.getLocation()));
+        compound.putString(NBT_JOB, IJobRegistry.getInstance().getKey(privateWorkerCraftingRequestResolverFactory.getJobEntry()).toString());
         return compound;
     }
 
@@ -59,8 +64,9 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     {
         final IToken<?> token = controller.deserialize(nbt.getCompound(NBT_TOKEN));
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
+        final JobEntry entry = IJobRegistry.getInstance().getValue(new ResourceLocation(nbt.getString(NBT_JOB)));
 
-        return new PrivateWorkerCraftingRequestResolver(location, token);
+        return new PrivateWorkerCraftingRequestResolver(location, token, entry);
     }
 
     @Override
@@ -68,6 +74,7 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
+        packetBuffer.writeRegistryId(input.getJobEntry());
     }
 
     @Override
@@ -75,8 +82,9 @@ public class PrivateWorkerCraftingRequestResolverFactory implements IRequestReso
     {
         final IToken<?> token = controller.deserialize(buffer);
         final ILocation location = controller.deserialize(buffer);
+        final JobEntry entry = buffer.readRegistryId();
 
-        return new PrivateWorkerCraftingRequestResolver(location, token);
+        return new PrivateWorkerCraftingRequestResolver(location, token, entry);
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
@@ -116,24 +115,17 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
             final Pair<ILocation, AbstractBuildingGuards.View> guardTower = guardTowers.get(index);
 
+            //todo we probably want to display the exact mix.
             final ItemIcon exampleStackDisplay = rowPane.findPaneOfTypeByID(ICON_GUARD, ItemIcon.class);
             final AbstractBuildingGuards.View guardTowerView = guardTower.getSecond();
 
             if (guardTowerView != null)
             {
-                final GuardType guardType = guardTowerView.getGuardType();
-                if (ModGuardTypes.knight.equals(guardType))
-                {
-                    exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
-                }
-                else if (ModGuardTypes.ranger.equals(guardType))
-                {
-                    exampleStackDisplay.setItem(new ItemStack(Items.BOW));
-                }
-
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(new TranslatableComponent(guardTowerView.getGuardType().getJobTranslationKey().toLowerCase(Locale.ROOT)).getString() + ": " + guardTowerView.getGuards().size());
-
+                exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(LanguageHandler.format(ModGuardTypes.knight.getJobTranslationKey())
+                                                                                  + "|"
+                                                                                  + LanguageHandler.format(ModGuardTypes.ranger.getJobTranslationKey())
+                                                                                  + ": " + guardTowerView.getGuards().size());
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }
             else

@@ -83,17 +83,6 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     }
 
     /**
-     * Gets the name of our knight.
-     *
-     * @return The name.
-     */
-    @Override
-    public String getName()
-    {
-        return DESC;
-    }
-
-    /**
      * Gets the {@link BipedModelType} to use for our ranger.
      *
      * @return The model to use.

@@ -5,9 +5,10 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuildingWorker;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -26,7 +27,8 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -70,7 +72,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
  *
  * @param <J> The job this ai has to fulfil
  */
-public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B extends AbstractBuildingWorker> extends AbstractAISkeleton<J>
+public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractAISkeleton<J>
 {
     /**
      * The standard delay after each terminated action.
@@ -355,7 +357,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 final String name = this.worker.getName().getString();
                 final BlockPos workerPosition = worker.blockPosition();
                 final IJob<?> colonyJob = worker.getCitizenJobHandler().getColonyJob();
-                final String jobName = colonyJob == null ? "null" : colonyJob.getName();
+                final String jobName = colonyJob == null ? "null" : colonyJob.getJobRegistryEntry().getTranslationKey();
                 Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
             }
             else
@@ -623,7 +625,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getPrimarySkillLevel()
     {
-        return worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getPrimarySkill());
+        return worker.getCitizenData().getCitizenSkillHandler().getLevel(getModuleForJob().getPrimarySkill());
     }
 
     /**
@@ -632,7 +634,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getSecondarySkillLevel()
     {
-        return worker.getCitizenData().getCitizenSkillHandler().getLevel(getOwnBuilding().getSecondarySkill());
+        return worker.getCitizenData().getCitizenSkillHandler().getLevel(getModuleForJob().getSecondarySkill());
+    }
+
+    /**
+     * Utility method to get a given module for this AI.
+     * @return the right module.
+     */
+    protected WorkerBuildingModule getModuleForJob()
+    {
+        return getOwnBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == job.getJobRegistryEntry());
     }
 
     /**
@@ -707,7 +718,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected final boolean walkToBuilding()
     {
-        @Nullable final IBuildingWorker ownBuilding = getOwnBuilding();
+        @Nullable final IBuilding ownBuilding = getOwnBuilding();
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                  || walkToBlock(ownBuilding.getPosition());
@@ -722,7 +733,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkAndTransferFromHut(@Nullable final ItemStack is)
     {
-        @Nullable final IBuildingWorker building = getOwnBuilding();
+        @Nullable final IBuilding building = getOwnBuilding();
         for (final BlockPos pos : building.getContainers())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
@@ -939,7 +950,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean retrieveToolInHut(final IToolType toolType, final int minimalLevel)
     {
-        @Nullable final IBuildingWorker building = getOwnBuilding();
+        @Nullable final IBuilding building = getOwnBuilding();
 
         if (building != null)
         {
@@ -1066,7 +1077,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        @Nullable final IBuildingWorker buildingWorker = getOwnBuilding();
+        @Nullable final IBuilding buildingWorker = getOwnBuilding();
 
         ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
         final int totalSize = worker.getInventoryCitizen().getSlots();

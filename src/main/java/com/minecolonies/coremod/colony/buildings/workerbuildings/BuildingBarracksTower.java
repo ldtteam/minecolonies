@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -86,23 +85,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
-    {
-        final boolean assignalResult = super.assignCitizen(citizen);
-        if (citizen != null && assignalResult)
-        {
-            final IBuilding building = citizen.getHomeBuilding();
-            if (building != null && !(building instanceof AbstractBuildingGuards))
-            {
-                building.removeCitizen(citizen);
-            }
-            citizen.setHomeBuilding(this);
-            citizen.setWorkBuilding(this);
-        }
-        return assignalResult;
-    }
-
-    @Override
     public int getClaimRadius(final int newLevel)
     {
         return 0;
@@ -153,12 +135,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         return compound;
     }
 
-    @Override
-    public int getMaxInhabitants()
-    {
-        return getBuildingLevel();
-    }
-
     /**
      * Adds the position of the main barracks.
      *
@@ -183,17 +159,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         public View(final IColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
-        }
-
-        /**
-         * Check if it has enough workers.
-         *
-         * @return true if so.
-         */
-        @Override
-        public boolean hasEnoughWorkers()
-        {
-            return getWorkerId().size() >= getBuildingLevel();
         }
 
         /**

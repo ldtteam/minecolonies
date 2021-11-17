@@ -156,7 +156,7 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
             final int row = citizen.getListElementIndexByPane(button);
             final int citizenid = home.getResidents().get(row);
             home.removeResident(row);
-            Network.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid));
+            Network.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid, null));
             refreshView();
         }
     }

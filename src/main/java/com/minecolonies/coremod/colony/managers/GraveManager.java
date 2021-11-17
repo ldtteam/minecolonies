@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
@@ -268,7 +269,7 @@ public class GraveManager implements IGraveManager
             graveData.setCitizenName(citizenData.getName());
             if (citizenData.getJob() != null)
             {
-                final MutableComponent jobName = new TranslatableComponent(citizenData.getJob().getName().toLowerCase());
+                final BaseComponent jobName = new TranslatableComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
                 graveData.setCitizenJobName(jobName.getString());
             }
             graveData.setCitizenDataNBT(citizenData.serializeNBT());
