@@ -517,7 +517,7 @@ public final class ModBuildingsInitializer
                                 .setBuildingViewProducer(() -> TavernBuildingModule.View::new)
                                 .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.TAVERN_ID))
                                 .addBuildingModuleProducer(BedHandlingModule::new)
-                                .addBuildingModuleProducer(LivingBuildingModule::new)
+                                .addBuildingModuleProducer(TavernLivingBuildingModule::new)
                                 .addBuildingModuleProducer(TavernBuildingModule::new)
                                 .createBuildingEntry();
 
