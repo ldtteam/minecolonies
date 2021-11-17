@@ -74,8 +74,7 @@ public class ModelEntityMinerFemale extends CitizenModel<AbstractEntityCitizen>
         PartDefinition ponytailDefinition = headDefinition.addOrReplaceChild("ponytail",
           CubeListBuilder.create()
             .texOffs(66, 0).addBox(-4.0667F, -1.5334F, -0.6287F, 0.9667F, 5.2667F, 0.8667F)
-            .texOffs(66, 7).addBox(-0.35F, -2.5F, -0.3667F, 0.7F, 5.0F, 0.7334F)
-          , PartPose.offsetAndRotation(-3.5833F, 5.9396F, -0.9715F, -0.3491F, 0.0F, 0.0F));
+          , PartPose.offsetAndRotation(3.3333F, -4.0F, 4.9333F, 0.4364F, 0.0F, 0.0F));
 
         PartDefinition ponytail2Definition = ponytailDefinition.addOrReplaceChild("ponytail2",
           CubeListBuilder.create()
