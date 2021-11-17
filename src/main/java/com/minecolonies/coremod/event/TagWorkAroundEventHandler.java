@@ -11,9 +11,11 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Handles forge events specifically focused around mitigating Minecraft Forge behavior for tags on remote clients.
@@ -60,9 +62,11 @@ public class TagWorkAroundEventHandler
          * VanillaTagTypes only guarantees block, item, fluid, and entity_type tags are completely filled and updated.
          * If we need support for enchantment, potion, or block_entity_type, use {@link net.minecraftforge.event.TagsUpdatedEvent}.
          *
+         * Uses high priority to ensure it runs before TagClientEventHandler or other mods that might try to access our tags.
+         *
          * @param event {@link net.minecraftforge.event.TagsUpdatedEvent}
          */
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.HIGH)
         public static void onTagUpdate(final TagsUpdatedEvent event)
         {
             // This Tag Supplier is guaranteed to have the output of a transmitted TagSupplier on remote clients.
@@ -104,19 +108,56 @@ public class TagWorkAroundEventHandler
 
     public static class TagClientEventHandler
     {
+        private static int eventCounter = 0;
+        private static RecipeManager recipeManager;
+
+        /**
+         * The RecipesUpdatedEvent and TagsUpdatedEvent occur in unspecified order on the client side
+         * (or rather, a different order for initial connect vs. /reload) so we have to handle them
+         * happening either way around -- but we also don't want to trigger our recipe reload sequence
+         * until we have both of them.
+         *
+         * @param maybeRecipeManager null or a new RecipeManager to temporarily cache
+         */
+        private static void maybeLoadRecipes(@Nullable final RecipeManager maybeRecipeManager)
+        {
+            if (maybeRecipeManager != null)
+            {
+                recipeManager = maybeRecipeManager;
+            }
+
+            ++eventCounter;
+            if (eventCounter >= 2)
+            {
+                // skip on integrated server (already done)
+                if (recipeManager != null && !Minecraft.getInstance().hasSingleplayerServer())
+                {
+                    loadRecipes(recipeManager);
+                }
+
+                recipeManager = null;
+                eventCounter = 0;
+            }
+        }
+
         /**
          * Fires only on client-side, immediately after a client has received recipes
-         * This event consistently fires before TagUpdatedEvent does on remote clients.
          * @param event  {@link net.minecraftforge.client.event.RecipesUpdatedEvent}
          */
         @SubscribeEvent
         public static void onRecipesUpdated(final RecipesUpdatedEvent event)
         {
-            // skip on integrated server (already done)
-            if (!Minecraft.getInstance().hasSingleplayerServer())
-            {
-                loadRecipes(event.getRecipeManager());
-            }
+            maybeLoadRecipes(event.getRecipeManager());
+        }
+
+        /**
+         * Fires only on client-side, after receiving tags.
+         * @param event {@link net.minecraftforge.event.TagsUpdatedEvent}
+         */
+        @SubscribeEvent
+        public static void onTagsUpdated(final TagsUpdatedEvent event)
+        {
+            maybeLoadRecipes(null);
         }
     }
 
