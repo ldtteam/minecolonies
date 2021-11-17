@@ -475,7 +475,7 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                      .addBuildingModuleProducer(() -> new BuildingGlassblower.CraftingModule(ModJobs.glassblower), () -> CraftingModuleView::new)
                                      .addBuildingModuleProducer(() -> new BuildingGlassblower.SmeltingModule(ModJobs.glassblower), () -> CraftingModuleView::new)
-                                     .addBuildingModuleProducer(() -> new BuildingGlassblower.CraftingModule(ModJobs.glassblower), () -> DOCraftingModuleView::new)
+                                     .addBuildingModuleProducer(() -> new BuildingGlassblower.DOCraftingModule(ModJobs.glassblower), () -> DOCraftingModuleView::new)
                                      .addBuildingModuleProducer(FurnaceUserModule::new)
                                      .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.glassblower, Skill.Creativity, Skill.Focus, false, (b) -> 1, Skill.Focus, Skill.Creativity), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
