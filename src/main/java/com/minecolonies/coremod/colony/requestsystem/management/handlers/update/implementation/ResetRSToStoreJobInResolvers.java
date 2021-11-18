@@ -13,7 +13,7 @@ public class ResetRSToStoreJobInResolvers implements IUpdateStep
     @Override
     public int updatesToVersion()
     {
-        return 12;
+        return 13;
     }
 
     @Override

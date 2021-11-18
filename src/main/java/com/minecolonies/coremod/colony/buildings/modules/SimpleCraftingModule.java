@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +19,9 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     /**
      * Create a new module.
      */
-    public SimpleCraftingModule()
+    public SimpleCraftingModule(final JobEntry entry)
     {
-        super(null);
+        super(entry);
     }
 
     @Nullable

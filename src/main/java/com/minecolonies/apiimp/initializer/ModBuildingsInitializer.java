@@ -122,7 +122,7 @@ public final class ModBuildingsInitializer
                                                                     .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
                                                                     .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
                                                                     .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting()), () -> SettingsModuleView::new)
-                                 .addBuildingModuleProducer(SimpleCraftingModule::new, () -> CraftingModuleView::new)
+                                 .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.builder), () -> CraftingModuleView::new)
                                  .addBuildingModuleViewProducer(() -> WorkOrderListModuleView::new)
                                  .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                  .createBuildingEntry();
@@ -296,7 +296,7 @@ public final class ModBuildingsInitializer
                                .setBuildingViewProducer(() -> BuildingMiner.View::new)
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
                                .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                               .addBuildingModuleProducer(SimpleCraftingModule::new, () -> CraftingModuleView::new)
+                               .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
