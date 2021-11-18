@@ -522,7 +522,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingProducer(BuildingMechanic::new)
                                   .setBuildingViewProducer(() -> BuildingMechanic.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
-                                  .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.mechanic, Skill.Knowledge, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                  .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.mechanic, Skill.Knowledge, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                   .addBuildingModuleProducer(() -> new BuildingMechanic.CraftingModule(ModJobs.mechanic), () -> CraftingModuleView::new)
                                   .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
