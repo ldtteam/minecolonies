@@ -33,7 +33,7 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
         {
             // Set new home, since guards are housed at their workerbuilding.
             final IBuilding oldHome = citizen.getHomeBuilding();
-            if (oldHome != null && !oldHome.getID().equals(oldHome.getID()))
+            if (oldHome != null && !oldHome.getID().equals(building.getID()))
             {
                 if (oldHome.hasModule(LivingBuildingModule.class))
                 {
