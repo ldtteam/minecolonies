@@ -32,19 +32,19 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
         if (super.assignCitizen(citizen) && citizen != null)
         {
             // Set new home, since guards are housed at their workerbuilding.
-            final IBuilding building = citizen.getHomeBuilding();
-            if (building != null && !building.getID().equals(building.getID()))
+            final IBuilding oldHome = citizen.getHomeBuilding();
+            if (oldHome != null && !oldHome.getID().equals(oldHome.getID()))
             {
-                if (building.hasModule(LivingBuildingModule.class))
+                if (oldHome.hasModule(LivingBuildingModule.class))
                 {
-                    LanguageHandler.sendPlayersMessage(building.getColony().getMessagePlayerEntities(),
+                    LanguageHandler.sendPlayersMessage(oldHome.getColony().getMessagePlayerEntities(),
                       "com.minecolonies.coremod.gui.workerhuts.assignedbed",
                       citizen.getName(),
                       new TranslatableComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey()),
-                      LanguageHandler.format("block.minecolonies." + building.getBuildingType().getBuildingBlock().getHutName() + ".name"),
-                      BlockPosUtil.getString(building.getID()));
+                      LanguageHandler.format("block.minecolonies." + oldHome.getBuildingType().getBuildingBlock().getHutName() + ".name"),
+                      BlockPosUtil.getString(oldHome.getID()));
                 }
-                building.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
+                oldHome.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
             }
             citizen.setHomeBuilding(building);
             return true;
