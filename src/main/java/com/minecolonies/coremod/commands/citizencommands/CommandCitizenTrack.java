@@ -5,17 +5,21 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
+import com.minecolonies.coremod.network.messages.client.SyncPathMessage;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,6 +75,7 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
         {
             context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizentrack.success.disable"), true);
             AbstractPathJob.trackingMap.remove((Player) sender);
+            Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
         }
         else
         {

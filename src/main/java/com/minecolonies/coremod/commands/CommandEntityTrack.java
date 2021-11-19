@@ -2,18 +2,22 @@ package com.minecolonies.coremod.commands;
 
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
+import com.minecolonies.coremod.network.messages.client.SyncPathMessage;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 
 /**
@@ -49,6 +53,7 @@ public class CommandEntityTrack implements IMCColonyOfficerCommand
             {
                 context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizentrack.success.disable"), true);
                 AbstractPathJob.trackingMap.remove((Player) sender);
+                Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
             }
             else
             {

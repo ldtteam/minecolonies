@@ -198,7 +198,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         result.setJob(this);
         allowJumpPointSearchTypeWalk = false;
 
-        if (trackingMap.containsValue(entity.getUUID()))
+        if (entity != null && trackingMap.containsValue(entity.getUUID()))
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -279,7 +279,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         this.allowJumpPointSearchTypeWalk = false;
 
-        if (trackingMap.containsValue(entity.getUUID()))
+        if (entity != null && trackingMap.containsValue(entity.getUUID()))
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
