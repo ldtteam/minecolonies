@@ -159,7 +159,7 @@ public class AttackMoveAI<T extends MobEntity & IThreatTableEntity> extends Targ
      */
     public boolean canAttack()
     {
-        return !this.user.isDeadOrDying();
+        return true;
     }
 
     /**
