@@ -23,7 +23,7 @@ public class EntryPoint
 
     public static void register(final CommandDispatcher<CommandSourceStack> dispatcher)
     {
-        /**
+        /*
          * Kill commands subtree
          */
         final CommandTree killCommands = new CommandTree("kill")
@@ -35,7 +35,7 @@ public class EntryPoint
                                            .addNode(new CommandKillRaider().build())
                                            .addNode(new CommandKillSheep().build());
 
-        /**
+        /*
          * Colony commands subtree
          */
         final CommandTree colonyCommands = new CommandTree("colony")
@@ -57,7 +57,7 @@ public class EntryPoint
                                              .addNode(new CommandSetAbandoned().build())
                                              .addNode(new CommandExportColony().build());
 
-        /**
+        /*
          * Citizen commands subtree
          */
         final CommandTree citizenCommands = new CommandTree("citizens")
@@ -67,9 +67,10 @@ public class EntryPoint
                                               .addNode(new CommandCitizenReload().build())
                                               .addNode(new CommandCitizenSpawnNew().build())
                                               .addNode(new CommandCitizenTeleport().build())
-                                              .addNode(new CommandCitizenTriggerWalkTo().build());
+                                              .addNode(new CommandCitizenTriggerWalkTo().build())
+                                              .addNode(new CommandCitizenTrack().build());
 
-        /**
+        /*
          * Root minecolonies command tree, all subtrees are added here.
          */
         final CommandTree minecoloniesRoot = new CommandTree(Constants.MOD_ID)
@@ -87,10 +88,11 @@ public class EntryPoint
                                                .addNode(new CommandHelp().build())
                                                .addNode(new CommandPruneWorld().build());
 
-        /**
+        /*
          * Root minecolonies alias command tree, all subtrees are added here.
          */
         final CommandTree minecoloniesRootAlias = new CommandTree("mc")
+                                                    .addNode(new CommandEntityTrack().build())
                                                     .addNode(killCommands)
                                                     .addNode(colonyCommands)
                                                     .addNode(new CommandHomeTeleport().build())
