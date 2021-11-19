@@ -29,11 +29,6 @@ public class PathfindingDebugRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (!MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
-        {
-            return;
-        }
-
         try
         {
             for (final MNode n : lastDebugNodesVisited)

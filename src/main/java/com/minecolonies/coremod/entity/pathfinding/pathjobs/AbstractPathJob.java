@@ -198,7 +198,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         result.setJob(this);
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get() || trackingMap.containsValue(entity.getUUID()))
+        if (trackingMap.containsValue(entity.getUUID()))
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -279,7 +279,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         this.allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
+        if (trackingMap.containsValue(entity.getUUID()))
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();

@@ -8,7 +8,6 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class ClientConfiguration extends AbstractConfiguration
 {
     public final ForgeConfigSpec.BooleanValue citizenVoices;
-    public final ForgeConfigSpec.BooleanValue pathfindingDebugDraw;
     public final ForgeConfigSpec.BooleanValue neighborbuildingrendering;
 
     /**
@@ -23,7 +22,6 @@ public class ClientConfiguration extends AbstractConfiguration
         neighborbuildingrendering = defineBoolean(builder, "neighborbuildingrendering", true);
 
         swapToCategory(builder, "pathfinding");
-        pathfindingDebugDraw = defineBoolean(builder, "pathfindingdebugdraw", false);
 
         finishCategory(builder);
     }
