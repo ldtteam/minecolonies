@@ -129,7 +129,7 @@ public class KnightCombatAI extends AttackMoveAI<EntityCitizen>
         if (weaponSlot != -1)
         {
             user.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, weaponSlot);
-            return true;
+            return super.canAttack();
         }
 
         return false;
