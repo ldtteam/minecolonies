@@ -37,12 +37,12 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
             {
                 if (oldHome.hasModule(LivingBuildingModule.class))
                 {
-                    LanguageHandler.sendPlayersMessage(oldHome.getColony().getMessagePlayerEntities(),
-                      "com.minecolonies.coremod.gui.workerhuts.assignedbed",
+                    oldHome.getColony().notifyPlayers(
+                      new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.assignedbed",
                       citizen.getName(),
                       new TranslatableComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey()),
-                      LanguageHandler.format("block.minecolonies." + oldHome.getBuildingType().getBuildingBlock().getHutName() + ".name"),
-                      BlockPosUtil.getString(oldHome.getID()));
+                      new TranslatableComponent("block.minecolonies." + oldHome.getBuildingType().getBuildingBlock().getHutName() + ".name"),
+                      BlockPosUtil.getString(oldHome.getID())));
                 }
                 oldHome.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
             }
