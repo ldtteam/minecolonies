@@ -384,6 +384,11 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     @Override
     public void aiStep()
     {
+        if (!this.isAlive())
+        {
+            return;
+        }
+
         updateSwingTime();
 
         if (invulTime > 0)
