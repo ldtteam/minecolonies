@@ -384,7 +384,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingSwineHerder::new)
                                      .setBuildingViewProducer(() -> BuildingSwineHerder.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SWINE_HERDER_ID))
-                                     .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.swineHerder, Skill.Strength, Skill.Athletics, true, ISchematicProvider::getBuildingLevel), () -> WorkerBuildingModuleView::new)
+                                     .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.swineHerder, Skill.Strength, Skill.Athletics, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
                                      .createBuildingEntry();
@@ -505,7 +505,7 @@ public final class ModBuildingsInitializer
                                   .setBuildingViewProducer(() -> BuildingFletcher.View::new)
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
                                   .addBuildingModuleProducer(() -> new BuildingFletcher.CraftingModule(ModJobs.fletcher), () -> CraftingModuleView::new)
-                                  .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.fletcher, Skill.Dexterity, Skill.Creativity, true, ISchematicProvider::getBuildingLevel, Skill.Creativity, Skill.Dexterity), () -> WorkerBuildingModuleView::new)
+                                  .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.fletcher, Skill.Dexterity, Skill.Creativity, true, (b) -> 1, Skill.Creativity, Skill.Dexterity), () -> WorkerBuildingModuleView::new)
                                   .addBuildingModuleProducer(() -> new BuildingFletcher.DOCraftingModule(ModJobs.fletcher), () -> DOCraftingModuleView::new)
                                   .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
