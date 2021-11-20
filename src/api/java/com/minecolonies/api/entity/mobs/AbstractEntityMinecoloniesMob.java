@@ -378,6 +378,11 @@ public abstract class AbstractEntityMinecoloniesMob extends MobEntity implements
     @Override
     public void aiStep()
     {
+        if (!this.isAlive())
+        {
+            return;
+        }
+
         updateSwingTime();
 
         if (invulTime > 0)
