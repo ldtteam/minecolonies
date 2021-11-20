@@ -15,6 +15,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -435,4 +436,16 @@ public interface IColony
      * @return the string id of the style.
      */
     String getTextureStyleId();
+
+    /**
+     * Notify the players in the colony.
+     * @param component the message.
+     */
+    void notifyPlayers(ITextComponent component);
+
+    /**
+     * Notify the managing players in the colony.
+     * @param component the message.
+     */
+    void notifyColonyManagers(ITextComponent component);
 }

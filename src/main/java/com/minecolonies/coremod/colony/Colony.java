@@ -50,6 +50,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -1857,6 +1858,24 @@ public class Colony implements IColony
     public String getTextureStyleId()
     {
         return this.textureStyle;
+    }
+
+    @Override
+    public void notifyPlayers(final ITextComponent component)
+    {
+        for (final PlayerEntity player : getMessagePlayerEntities())
+        {
+            player.sendMessage(component, player.getUUID());
+        }
+    }
+
+    @Override
+    public void notifyColonyManagers(final ITextComponent component)
+    {
+        for (final PlayerEntity player : getImportantMessageEntityPlayers())
+        {
+            player.sendMessage(component, player.getUUID());
+        }
     }
 
     /**
