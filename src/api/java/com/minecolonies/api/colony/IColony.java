@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -435,4 +437,10 @@ public interface IColony
      * @return the string id of the style.
      */
     String getTextureStyleId();
+
+    /**
+     * Notify the players in the colony.
+     * @param component the message.
+     */
+    void notifyPlayers(Component component);
 }

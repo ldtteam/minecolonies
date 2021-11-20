@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
+import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -109,7 +110,8 @@ public class EntityAISickTask extends Goal
         GO_TO_HOSPITAL,
         WAIT_FOR_CURE,
         FIND_EMPTY_BED,
-        APPLY_CURE
+        APPLY_CURE,
+        WANDER
     }
 
     /**
@@ -142,6 +144,8 @@ public class EntityAISickTask extends Goal
         stateMachine = new TickRateStateMachine<>(IDLE, e -> Log.getLogger().warn("Disease AI threw exception:", e));
         stateMachine.addTransition(new TickingTransition<>(IDLE, this::isSick, () -> CHECK_FOR_CURE, 20));
         stateMachine.addTransition(new AIEventTarget<DiseaseState>(AIBlockingEventType.AI_BLOCKING, () -> true, this::setNotWorking, 20));
+        stateMachine.addTransition(new TickingTransition<>(CHECK_FOR_CURE, () -> true, this::checkForCure, 20));
+        stateMachine.addTransition(new TickingTransition<>(WANDER, () -> true, this::wander, 200));
 
         stateMachine.addTransition(new TickingTransition<>(CHECK_FOR_CURE, () -> true, this::checkForCure, 20));
         stateMachine.addTransition(new TickingTransition<>(GO_TO_HUT, () -> true, this::goToHut, 20));
@@ -179,6 +183,17 @@ public class EntityAISickTask extends Goal
         return citizen.getCitizenDiseaseHandler().isSick()
                  || (!(citizen.getCitizenJobHandler() instanceof AbstractJobGuard) && citizen.getHealth() < SEEK_DOCTOR_HEALTH && citizenData.getSaturation() > LOW_SATURATION);
     }
+
+    /**
+     * Do a bit of wandering.
+     * @return start over.
+     */
+    public DiseaseState wander()
+    {
+        citizen.getNavigation().moveToRandomPos(10, 0.6D);
+        return CHECK_FOR_CURE;
+    }
+
 
     @Override
     public boolean canUse()
@@ -450,7 +465,7 @@ public class EntityAISickTask extends Goal
             citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
               new TranslatableComponent(NO_HOSPITAL),
               ChatPriority.BLOCKING));
-            return IDLE;
+            return WANDER;
         }
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
