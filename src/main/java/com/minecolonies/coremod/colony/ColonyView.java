@@ -625,10 +625,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void notifyPlayers(final Component component)
     {
-        for (final Player player : getMessagePlayerEntities())
-        {
-            player.sendMessage(component, player.getUUID());
-        }
+        //noop
     }
 
     /**
