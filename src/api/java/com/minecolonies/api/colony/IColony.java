@@ -443,4 +443,10 @@ public interface IColony
      * @param component the message.
      */
     void notifyPlayers(Component component);
+
+    /**
+     * Notify the managing players in the colony.
+     * @param component the message.
+     */
+    void notifyColonyManagers(Component component);
 }

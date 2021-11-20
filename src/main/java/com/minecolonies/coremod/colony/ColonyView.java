@@ -628,6 +628,12 @@ public final class ColonyView implements IColonyView
         //noop
     }
 
+    @Override
+    public void notifyColonyManagers(final Component component)
+    {
+        //noop
+    }
+
     /**
      * Sets if citizens can move in.
      *

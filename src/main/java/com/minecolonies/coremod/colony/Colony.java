@@ -1864,6 +1864,15 @@ public class Colony implements IColony
         }
     }
 
+    @Override
+    public void notifyColonyManagers(final Component component)
+    {
+        for (final Player player : getImportantMessageEntityPlayers())
+        {
+            player.sendMessage(component, player.getUUID());
+        }
+    }
+
     /**
      * Check if we need to update the view's chunk ticket info
      *
