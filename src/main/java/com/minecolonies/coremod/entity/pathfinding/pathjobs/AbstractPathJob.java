@@ -296,14 +296,6 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public void synchToClient(final LivingEntity mob)
     {
-        for (final Player entry : new ArrayList<>(trackingMap.keySet()))
-        {
-            if (entry.isRemoved())
-            {
-                trackingMap.remove(entry);
-            }
-        }
-
         for (final Iterator<Map.Entry<Player, UUID>> iter = trackingMap.entrySet().iterator(); iter.hasNext(); )
         {
             final Map.Entry<Player, UUID> entry = iter.next();
