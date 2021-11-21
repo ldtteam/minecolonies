@@ -7,7 +7,9 @@ import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagContainer;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
@@ -15,7 +17,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Handles forge events specifically focused around mitigating Minecraft Forge behavior for tags on remote clients.
@@ -106,58 +107,66 @@ public class TagWorkAroundEventHandler
         }
     }
 
+    /**
+     * Events handled only on client side (single-player or multi-player).
+     */
     public static class TagClientEventHandler
     {
-        private static int eventCounter = 0;
         private static RecipeManager recipeManager;
+        private static TagContainer tagManager;
 
         /**
          * The RecipesUpdatedEvent and TagsUpdatedEvent occur in unspecified order on the client side
          * (or rather, a different order for initial connect vs. /reload) so we have to handle them
          * happening either way around -- but we also don't want to trigger our recipe reload sequence
          * until we have both of them.
-         *
-         * @param maybeRecipeManager null or a new RecipeManager to temporarily cache
          */
-        private static void maybeLoadRecipes(@Nullable final RecipeManager maybeRecipeManager)
+        private static void maybeLoadRecipes()
         {
-            if (maybeRecipeManager != null)
-            {
-                recipeManager = maybeRecipeManager;
-            }
-
-            ++eventCounter;
-            if (eventCounter >= 2)
+            if (recipeManager != null && tagManager != null)
             {
                 // skip on integrated server (already done)
-                if (recipeManager != null && !Minecraft.getInstance().hasSingleplayerServer())
+                if (!Minecraft.getInstance().hasSingleplayerServer())
                 {
                     loadRecipes(recipeManager);
                 }
 
                 recipeManager = null;
-                eventCounter = 0;
+                tagManager = null;
             }
         }
 
         /**
-         * Fires only on client-side, immediately after a client has received recipes
+         * Fires immediately after a client has received recipes
          * @param event  {@link net.minecraftforge.client.event.RecipesUpdatedEvent}
          */
         @SubscribeEvent
         public static void onRecipesUpdated(final RecipesUpdatedEvent event)
         {
-            maybeLoadRecipes(event.getRecipeManager());
+            recipeManager = event.getRecipeManager();
+            maybeLoadRecipes();
         }
 
         /**
-         * Fires only on client-side, after receiving tags.
+         * Fires after receiving tags.
          * @param event {@link net.minecraftforge.event.TagsUpdatedEvent}
          */
         @SubscribeEvent
         public static void onTagsUpdated(final TagsUpdatedEvent event)
         {
-            maybeLoadRecipes(null);
+            tagManager = event.getTagManager();
+            maybeLoadRecipes();
+        }
+
+        /**
+         * Fires whenever unloading the client -- which is more often than you might first think, so be careful.
+         * @param event {@link net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent}
+         */
+        @SubscribeEvent
+        public static void onLoggedOut(final ClientPlayerNetworkEvent.LoggedOutEvent event)
+        {
+            recipeManager = null;
+            tagManager = null;
         }
     }
 
