@@ -699,6 +699,8 @@
   "com.minecolonies.coremod.permission.attack_entity": "Attack Entities",
   "com.minecolonies.coremod.permission.access_free_blocks": "Access Free-Blocks",
   "com.minecolonies.coremod.permission.explode": "Explode",
+  "com.minecolonies.coremod.permission.hurt_citizen": "Hurt Citizen",
+  "com.minecolonies.coremod.permission.hurt_visitor": "Hurt Visitor",
 
   "com.minecolonies.coremod.permission.receive_messages_far_away": "Distant Messages",
   "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "Keep Colony Loaded",

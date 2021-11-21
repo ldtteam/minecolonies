@@ -186,7 +186,7 @@ public class PermissionsMessage
                     colony.getPermissions().removePermission(rank, action);
                     break;
                 case TOGGLE_PERMISSION:
-                    colony.getPermissions().togglePermission(rank, action);
+                    colony.getPermissions().togglePermission(colony.getPermissions().getRank(ctxIn.getSender()), rank, action);
                     break;
                 default:
                     Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()), new Exception());
@@ -508,7 +508,7 @@ public class PermissionsMessage
                 return;
             }
             final PlayerEntity player = ctxIn.getSender();
-            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID))
+            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
             {
                 Log.getLogger().error(rank.getName());
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());

@@ -38,7 +38,9 @@ public enum Action
     EXPLODE(25),
     RECEIVE_MESSAGES_FAR_AWAY(26),
     CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(27),
-    RALLY_GUARDS(28);
+    RALLY_GUARDS(28),
+    HURT_CITIZEN(29),
+    HURT_VISITOR(30);
 
     private final int flag;
 
