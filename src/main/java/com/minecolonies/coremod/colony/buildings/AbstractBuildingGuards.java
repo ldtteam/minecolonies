@@ -49,6 +49,7 @@ import java.util.*;
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.coremod.util.ServerUtils.getPlayerFromUUID;
 
 /**
  * Abstract class for Guard huts.
@@ -115,9 +116,9 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     protected List<BlockPos> patrolTargets = new ArrayList<>();
 
     /**
-     * The player the guard has been set to follow.
+     * The UUID of the player the guard has been set to follow.
      */
-    private PlayerEntity followPlayer;
+    private UUID followPlayerUUID;
 
     /**
      * The location the guard has been set to rally to.
@@ -290,7 +291,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Nullable
     public PlayerEntity getPlayerToFollowOrRally()
     {
-        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : followPlayer;
+        return rallyLocation != null && rallyLocation instanceof EntityLocation ? ((EntityLocation) rallyLocation).getPlayerEntity() : getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
     }
 
     /**
@@ -529,6 +530,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Override
     public BlockPos getPositionToFollow()
     {
+        PlayerEntity followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
         if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null)
         {
             return new BlockPos(followPlayer.position());
@@ -616,7 +618,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Override
     public void setPlayerToFollow(final PlayerEntity player)
     {
-        this.followPlayer = player;
+        this.followPlayerUUID = player.getUUID();
 
         for (final ICitizenData iCitizenData : getAllAssignedCitizen())
         {
