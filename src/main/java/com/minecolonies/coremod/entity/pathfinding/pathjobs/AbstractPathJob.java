@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
 
@@ -123,7 +121,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Which citizens are being tracked by which players.
      */
-    public static final ConcurrentHashMap<Player, UUID> trackingMap = new ConcurrentHashMap<>();
+    public static final Map<Player, UUID> trackingMap = new HashMap<>();
 
     /**
      * Are there xz restrictions.
@@ -657,8 +655,6 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         @NotNull final Path path = finalizePath(bestNode);
 
-        handleDebugDraw();
-
         return path;
     }
 
@@ -749,14 +745,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected boolean onLadderGoingDown(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
     {
         return (dPos.getY() <= 0 || dPos.getX() != 0 || dPos.getZ() != 0) && isLadder(currentNode.pos.below());
-    }
-
-    private void handleDebugDraw()
-    {
-        if (debugDrawEnabled)
-        {
-            synchToClient(entity.get());
-        }
     }
 
     @NotNull

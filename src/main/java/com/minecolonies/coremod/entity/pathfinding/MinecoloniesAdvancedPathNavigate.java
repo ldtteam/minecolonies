@@ -508,6 +508,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     private boolean processCompletedCalculationResult()
     {
+        pathResult.getJob().synchToClient(mob);
         moveTo(pathResult.getPath(), getSpeedFactor());
         pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
         return false;
