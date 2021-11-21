@@ -551,7 +551,7 @@ public final class ModBuildingsInitializer
                                      .setBuildingProducer(BuildingRabbitHutch::new)
                                      .setBuildingViewProducer(() -> BuildingRabbitHutch.View::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
-                                     .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.shepherd, Skill.Agility, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                     .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.rabbitHerder, Skill.Agility, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
                                      .createBuildingEntry();
