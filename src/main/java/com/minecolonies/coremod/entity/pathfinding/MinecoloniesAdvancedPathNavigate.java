@@ -803,6 +803,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         this.maxDistanceToWaypoint = 0.5F;
         boolean wentAhead = false;
+        boolean isTracking = AbstractPathJob.trackingMap.containsValue(ourEntity.getUUID());
 
         final HashSet<BlockPos> reached = new HashSet<>();
         // Look at multiple points, incase we're too fast
@@ -816,12 +817,15 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 this.path.advance();
                 wentAhead = true;
 
-                final Node point = path.getNode(i);
-                reached.add(new BlockPos(point.x, point.y, point.z));
+                if (isTracking)
+                {
+                    final Node point = path.getNode(i);
+                    reached.add(new BlockPos(point.x, point.y, point.z));
+                }
             }
         }
 
-        if (!reached.isEmpty())
+        if (isTracking)
         {
             AbstractPathJob.synchToClient(reached, ourEntity);
             reached.clear();
@@ -857,7 +861,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     this.path.setNextNodeIndex(currentIndex);
                 }
-                else
+                else if (isTracking)
                 {
                     reached.add(new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z));
                 }
@@ -865,7 +869,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
         }
 
-        if (!reached.isEmpty())
+        if (isTracking)
         {
             AbstractPathJob.synchToClient(reached, ourEntity);
             reached.clear();

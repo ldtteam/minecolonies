@@ -93,7 +93,7 @@ public class CommandCitizenTrack implements IMCColonyOfficerCommand
     @Override
     public String getName()
     {
-        return "track";
+        return "trackPath";
     }
 
     @Override

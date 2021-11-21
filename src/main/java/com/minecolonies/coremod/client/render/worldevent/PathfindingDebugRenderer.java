@@ -18,8 +18,19 @@ import java.util.Set;
 
 public class PathfindingDebugRenderer
 {
+    /**
+     * Set of visited nodes.
+     */
     public static Set<MNode> lastDebugNodesVisited = new HashSet<>();
+
+    /**
+     * Set of not visited nodes.
+     */
     public static Set<MNode> lastDebugNodesNotVisited  = new HashSet<>();
+
+    /**
+     * Set of nodes that belong to the chosen path.
+     */
     public static Set<MNode> lastDebugNodesPath = new HashSet<>();
 
     /**

@@ -14,12 +14,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Asks the client to play a specific music
+ * Message to sync some path over to the client.
  */
 public class SyncPathMessage implements IMessage
 {
+    /**
+     * Set of visited nodes.
+     */
     public Set<MNode> lastDebugNodesVisited = new HashSet<>();
+
+    /**
+     * Set of not visited nodes.
+     */
     public Set<MNode> lastDebugNodesNotVisited  = new HashSet<>();
+
+    /**
+     * Set of chosen nodes for the path.
+     */
     public Set<MNode> lastDebugNodesPath  = new HashSet<>();
 
     /**
@@ -31,8 +42,7 @@ public class SyncPathMessage implements IMessage
     }
 
     /**
-     * Create a play music message with a specific sound event.
-     *
+     * Create a new path message with the filled pathpoints.
      */
     public SyncPathMessage(final Set<MNode> lastDebugNodesVisited, final Set<MNode> lastDebugNodesNotVisited, final Set<MNode>  lastDebugNodesPath)
     {

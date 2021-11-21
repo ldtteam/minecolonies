@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
 
@@ -122,7 +123,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Which citizens are being tracked by which players.
      */
-    public static final Map<Player, UUID> trackingMap = new HashMap<>();
+    public static final ConcurrentHashMap<Player, UUID> trackingMap = new ConcurrentHashMap<>();
 
     /**
      * Are there xz restrictions.
@@ -289,6 +290,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         this.entity = new WeakReference<>(entity);
     }
 
+    /**
+     * Sync the path of a given mob to the client.
+     * @param mob the tracked mob.
+     */
     public void synchToClient(final LivingEntity mob)
     {
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet())
@@ -300,8 +305,18 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
     }
 
+    /**
+     * Set the set of reached blocks to the client.
+     * @param reached the reached blocks.
+     * @param mob the tracked mob.
+     */
     public static void synchToClient(final HashSet<BlockPos> reached, final Mob mob)
     {
+        if (reached.isEmpty())
+        {
+            return;
+        }
+
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet())
         {
             if (entry.getValue().equals(mob.getUUID()))

@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Asks the client to play a specific music
+ * Message to sync the reached positions over to the client for rendering.
  */
 public class SyncPathReachedMessage implements IMessage
 {
@@ -33,7 +33,7 @@ public class SyncPathReachedMessage implements IMessage
     }
 
     /**
-     * Create a play music message with a specific sound event.
+     * Create the message to send a set of positions over to the client side.
      *
      */
     public SyncPathReachedMessage(final Set<BlockPos> reached)

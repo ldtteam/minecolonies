@@ -75,7 +75,7 @@ public class CommandEntityTrack implements IMCColonyOfficerCommand
     @Override
     public String getName()
     {
-        return "track";
+        return "trackPath";
     }
 
     @Override
