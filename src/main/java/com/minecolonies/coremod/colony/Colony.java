@@ -41,6 +41,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -1852,6 +1853,24 @@ public class Colony implements IColony
     public String getTextureStyleId()
     {
         return this.textureStyle;
+    }
+
+    @Override
+    public void notifyPlayers(final Component component)
+    {
+        for (final Player player : getMessagePlayerEntities())
+        {
+            player.sendMessage(component, player.getUUID());
+        }
+    }
+
+    @Override
+    public void notifyColonyManagers(final Component component)
+    {
+        for (final Player player : getImportantMessageEntityPlayers())
+        {
+            player.sendMessage(component, player.getUUID());
+        }
     }
 
     /**
