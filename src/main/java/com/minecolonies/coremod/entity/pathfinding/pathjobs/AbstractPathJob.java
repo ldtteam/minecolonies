@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.pathfinding.PathResult;
@@ -11,11 +10,17 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.entity.pathfinding.ChunkCache;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
 import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
+import com.minecolonies.coremod.network.messages.client.SyncPathMessage;
+import com.minecolonies.coremod.network.messages.client.SyncPathReachedMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.pathfinder.Node;
@@ -63,13 +68,6 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public abstract class AbstractPathJob implements Callable<Path>
 {
-    @Nullable
-    public static Set<MNode> lastDebugNodesVisited;
-    @Nullable
-    public static Set<MNode> lastDebugNodesNotVisited;
-    @Nullable
-    public static Set<MNode> lastDebugNodesPath;
-
     /**
      * Start position to path from.
      */
@@ -119,6 +117,11 @@ public abstract class AbstractPathJob implements Callable<Path>
     private final    boolean    allowJumpPointSearchTypeWalk;
     private          int                totalNodesAdded      = 0;
     private          int                totalNodesVisited    = 0;
+
+    /**
+     * Which citizens are being tracked by which players.
+     */
+    public static final Map<Player, UUID> trackingMap = new HashMap<>();
 
     /**
      * Are there xz restrictions.
@@ -194,7 +197,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         result.setJob(this);
         allowJumpPointSearchTypeWalk = false;
 
-        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
+        if (entity != null && trackingMap.containsValue(entity.getUUID()))
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -275,7 +278,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         this.allowJumpPointSearchTypeWalk = false;
 
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().pathfindingDebugDraw.get()) // this is automatically false when on server
+        if (entity != null && trackingMap.containsValue(entity.getUUID()))
         {
             debugDrawEnabled = true;
             debugNodesVisited = new HashSet<>();
@@ -283,6 +286,47 @@ public abstract class AbstractPathJob implements Callable<Path>
             debugNodesPath = new HashSet<>();
         }
         this.entity = new WeakReference<>(entity);
+    }
+
+    /**
+     * Sync the path of a given mob to the client.
+     * @param mob the tracked mob.
+     */
+    public void synchToClient(final LivingEntity mob)
+    {
+        for (final Iterator<Map.Entry<Player, UUID>> iter = trackingMap.entrySet().iterator(); iter.hasNext(); )
+        {
+            final Map.Entry<Player, UUID> entry = iter.next();
+            if (entry.getKey().isRemoved())
+            {
+                iter.remove();
+            }
+            else if (entry.getValue().equals(mob.getUUID()))
+            {
+                Network.getNetwork().sendToPlayer(new SyncPathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath), (ServerPlayer) entry.getKey());
+            }
+        }
+    }
+
+    /**
+     * Set the set of reached blocks to the client.
+     * @param reached the reached blocks.
+     * @param mob the tracked mob.
+     */
+    public static void synchToClient(final HashSet<BlockPos> reached, final Mob mob)
+    {
+        if (reached.isEmpty())
+        {
+            return;
+        }
+
+        for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet())
+        {
+            if (entry.getValue().equals(mob.getUUID()))
+            {
+                Network.getNetwork().sendToPlayer(new SyncPathReachedMessage(reached), (ServerPlayer) entry.getKey());
+            }
+        }
     }
 
     protected boolean onLadderGoingUp(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
@@ -611,8 +655,6 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         @NotNull final Path path = finalizePath(bestNode);
 
-        handleDebugDraw();
-
         return path;
     }
 
@@ -703,19 +745,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected boolean onLadderGoingDown(@NotNull final MNode currentNode, @NotNull final BlockPos dPos)
     {
         return (dPos.getY() <= 0 || dPos.getX() != 0 || dPos.getZ() != 0) && isLadder(currentNode.pos.below());
-    }
-
-    private void handleDebugDraw()
-    {
-        if (debugDrawEnabled)
-        {
-            synchronized (debugNodeMonitor)
-            {
-                lastDebugNodesNotVisited = debugNodesNotVisited;
-                lastDebugNodesVisited = debugNodesVisited;
-                lastDebugNodesPath = debugNodesPath;
-            }
-        }
     }
 
     @NotNull

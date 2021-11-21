@@ -10,7 +10,6 @@ public final class PathingConstants
     //  Debug Output
     public static final int      DEBUG_VERBOSITY_NONE = 0;
     public static final int      DEBUG_VERBOSITY_FULL = 2;
-    public static final Object   debugNodeMonitor     = new Object();
     public static final BlockPos BLOCKPOS_IDENTITY    = new BlockPos(0, 0, 0);
     public static final BlockPos BLOCKPOS_UP          = new BlockPos(0, 1, 0);
     public static final BlockPos BLOCKPOS_DOWN        = new BlockPos(0, -1, 0);
@@ -18,8 +17,6 @@ public final class PathingConstants
     public static final BlockPos BLOCKPOS_SOUTH       = new BlockPos(0, 0, 1);
     public static final BlockPos BLOCKPOS_EAST        = new BlockPos(1, 0, 0);
     public static final BlockPos BLOCKPOS_WEST        = new BlockPos(-1, 0, 0);
-    public static final int      MAX_Y                = 256;
-    public static final int      MIN_Y                = 0;
 
     /**
      * Distance which is considered to be on one side of the fence/glasspane/wall etc.

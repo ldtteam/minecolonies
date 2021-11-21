@@ -2,10 +2,8 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.PathingConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
-import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
@@ -13,11 +11,28 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Set;
 
 public class PathfindingDebugRenderer
 {
+    /**
+     * Set of visited nodes.
+     */
+    public static Set<MNode> lastDebugNodesVisited = new HashSet<>();
+
+    /**
+     * Set of not visited nodes.
+     */
+    public static Set<MNode> lastDebugNodesNotVisited  = new HashSet<>();
+
+    /**
+     * Set of nodes that belong to the chosen path.
+     */
+    public static Set<MNode> lastDebugNodesPath = new HashSet<>();
+
     /**
      * Render debugging information for the pathfinding system.
      *
@@ -25,35 +40,19 @@ public class PathfindingDebugRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        if (!MineColonies.getConfig().getClient().pathfindingDebugDraw.get() || AbstractPathJob.lastDebugNodesNotVisited == null)
-        {
-            return;
-        }
-
-        final Set<MNode> debugNodesNotVisited;
-        final Set<MNode> debugNodesVisited;
-        final Set<MNode> debugNodesPath;
-
-        synchronized (PathingConstants.debugNodeMonitor)
-        {
-            debugNodesNotVisited = AbstractPathJob.lastDebugNodesNotVisited;
-            debugNodesVisited = AbstractPathJob.lastDebugNodesVisited;
-            debugNodesPath = AbstractPathJob.lastDebugNodesPath;
-        }
-
         try
         {
-            for (final MNode n : debugNodesNotVisited)
+            for (final MNode n : lastDebugNodesVisited)
             {
                 debugDrawNode(n, 0xffff0000, ctx);
             }
 
-            for (final MNode n : debugNodesVisited)
+            for (final MNode n : lastDebugNodesNotVisited)
             {
                 debugDrawNode(n, 0xff0000ff, ctx);
             }
 
-            for (final MNode n : debugNodesPath)
+            for (final MNode n : lastDebugNodesPath)
             {
                 if (n.isReachedByWorker())
                 {

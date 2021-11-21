@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -122,6 +123,42 @@ public class MNode implements Comparable<MNode>
         this.heuristic = heuristic;
         this.score = score;
         this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
+    }
+
+    /**
+     * Create an MNode from a bytebuf.
+     * @param byteBuf the buffer to load it from.
+     */
+    public MNode(final FriendlyByteBuf byteBuf)
+    {
+        if (byteBuf.readBoolean())
+        {
+            this.parent = new MNode(byteBuf.readBlockPos(), 0);
+        }
+        this.pos = byteBuf.readBlockPos();
+        this.cost = byteBuf.readDouble();
+        this.heuristic = byteBuf.readDouble();
+        this.score = byteBuf.readDouble();
+        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
+        this.isReachedByWorker = byteBuf.readBoolean();
+    }
+
+    /**
+     * Serialize the Node to buf.
+     * @param byteBuf
+     */
+    public void serializeToBuf(final FriendlyByteBuf byteBuf)
+    {
+        byteBuf.writeBoolean(this.parent != null);
+        if (this.parent != null)
+        {
+            byteBuf.writeBlockPos(this.parent.pos);
+        }
+        byteBuf.writeBlockPos(this.pos);
+        byteBuf.writeDouble(this.cost);
+        byteBuf.writeDouble(this.heuristic);
+        byteBuf.writeDouble(this.score);
+        byteBuf.writeBoolean(this.isReachedByWorker);
     }
 
     @Override

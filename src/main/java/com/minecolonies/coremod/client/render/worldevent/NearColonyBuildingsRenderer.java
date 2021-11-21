@@ -158,8 +158,8 @@ public class NearColonyBuildingsRenderer
                     if (ServerLifecycleHooks.getCurrentServer() == null)
                     {
                         Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                        continue;
                     }
+                    continue;
                 }
 
                 final Blueprint blueprint = wrapper.getBluePrint();
