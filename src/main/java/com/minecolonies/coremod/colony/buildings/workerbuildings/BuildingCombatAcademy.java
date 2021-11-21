@@ -6,7 +6,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
@@ -248,7 +248,7 @@ public class BuildingCombatAcademy extends AbstractBuilding
     /**
      * The client view for the bakery building.
      */
-    public static class View extends AbstractBuildingView implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingView
     {
         /**
          * The client view constructor for the AbstractGuardBuilding.
