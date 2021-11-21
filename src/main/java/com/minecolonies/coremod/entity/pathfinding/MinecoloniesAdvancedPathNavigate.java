@@ -180,10 +180,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             desiredPos = dest;
             desiredPosTimeout = 50 * 20;
         }
-        else
-        {
-            desiredPos = null;
-        }
+
         this.walkSpeedFactor = speedFactor;
 
         if (speedFactor > MAX_SPEED_ALLOWED || speedFactor < MIN_SPEED_ALLOWED)
