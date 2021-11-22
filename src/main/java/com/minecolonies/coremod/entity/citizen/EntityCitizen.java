@@ -46,7 +46,6 @@ import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -1253,27 +1252,30 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        if (sourceEntity instanceof ServerPlayerEntity)
+        if (sourceEntity instanceof PlayerEntity)
         {
-            if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+            if (sourceEntity instanceof ServerPlayerEntity)
             {
-                return false;
-            }
+                if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+                {
+                    return false;
+                }
 
-            if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_CITIZEN))
-            {
-                return false;
-            }
+                if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_CITIZEN))
+                {
+                    return false;
+                }
 
-            if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
-            {
-                return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+                if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                {
+                    return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (PlayerEntity) sourceEntity);
+                }
             }
-        }
-        else if (sourceEntity instanceof ClientPlayerEntity)
-        {
-            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
-            return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_CITIZEN);
+            else
+            {
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+                return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_CITIZEN);
+            }
         }
         return true;
     }
