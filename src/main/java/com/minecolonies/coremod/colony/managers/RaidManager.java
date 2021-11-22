@@ -478,8 +478,6 @@ public class RaidManager implements IRaiderManager
               10,
               15,
               DOUBLE_AIR_POS_SELECTOR);
-
-            // PIrates only or spawn a platform? platform stays?
         }
 
         return spawnPos;
