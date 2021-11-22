@@ -132,10 +132,7 @@ public class ClientEventHandler
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
-        if (MineColonies.getConfig().getClient().pathfindingDebugDraw.get())
-        {
-            Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
-        }
+        Pathfinding.debugDraw(event.getPartialTicks(), event.getMatrixStack());
         final Blueprint structure = Settings.instance.getActiveStructure();
         final ClientWorld world = Minecraft.getInstance().level;
         final PlayerEntity player = Minecraft.getInstance().player;

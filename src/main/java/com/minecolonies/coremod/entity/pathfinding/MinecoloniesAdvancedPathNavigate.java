@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -179,6 +180,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             desiredPos = dest;
             desiredPosTimeout = 50 * 20;
         }
+
         this.walkSpeedFactor = speedFactor;
 
         if (speedFactor > MAX_SPEED_ALLOWED || speedFactor < MIN_SPEED_ALLOWED)
@@ -503,6 +505,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
     private boolean processCompletedCalculationResult()
     {
+        pathResult.getJob().synchToClient(mob);
         moveTo(pathResult.getPath(), getSpeedFactor());
         pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
         return false;
@@ -798,8 +801,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         this.maxDistanceToWaypoint = 0.5F;
         boolean wentAhead = false;
+        boolean isTracking = AbstractPathJob.trackingMap.containsValue(ourEntity.getUUID());
 
-
+        final HashSet<BlockPos> reached = new HashSet<>();
         // Look at multiple points, incase we're too fast
         for (int i = this.path.getNextNodeIndex(); i < Math.min(this.path.getNodeCount(), this.path.getNextNodeIndex() + 4); i++)
         {
@@ -810,21 +814,19 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 this.path.advance();
                 wentAhead = true;
-                // Mark reached nodes for debug path drawing
-                if (AbstractPathJob.lastDebugNodesPath != null)
+
+                if (isTracking)
                 {
                     final PathPoint point = path.getNode(i);
-                    final BlockPos pos = new BlockPos(point.x, point.y, point.z);
-                    for (final Node node : AbstractPathJob.lastDebugNodesPath)
-                    {
-                        if (!node.isReachedByWorker() && node.pos.equals(pos))
-                        {
-                            node.setReachedByWorker(true);
-                            break;
-                        }
-                    }
+                    reached.add(new BlockPos(point.x, point.y, point.z));
                 }
             }
+        }
+
+        if (isTracking)
+        {
+            AbstractPathJob.synchToClient(reached, ourEntity);
+            reached.clear();
         }
 
         if (path.isDone())
@@ -857,24 +859,18 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 {
                     this.path.setNextNodeIndex(currentIndex);
                 }
-                else
+                else if (isTracking)
                 {
-                    // Mark nodes as unreached for debug path drawing
-                    if (AbstractPathJob.lastDebugNodesPath != null)
-                    {
-                        final BlockPos pos = new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z);
-                        for (final Node node : AbstractPathJob.lastDebugNodesPath)
-                        {
-                            if (node.isReachedByWorker() && node.pos.equals(pos))
-                            {
-                                node.setReachedByWorker(false);
-                                break;
-                            }
-                        }
-                    }
+                    reached.add(new BlockPos(tempoPos.x, tempoPos.y, tempoPos.z));
                 }
                 currentIndex--;
             }
+        }
+
+        if (isTracking)
+        {
+            AbstractPathJob.synchToClient(reached, ourEntity);
+            reached.clear();
         }
     }
 

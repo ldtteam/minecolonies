@@ -246,7 +246,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         citizens = colony.getCitizens().values().stream()
                      .filter(citizen -> selectedModule.canAssign(citizen))
                      .filter(citizen ->  citizen.getWorkBuilding() == null
-                                           || (citizen.getJobView() != null && citizen.getJobView().getEntry().equals(selectedModule.getJobEntry()))
+                                           || (citizen.getJobView() != null && citizen.getJobView().getEntry().equals(selectedModule.getJobEntry()) && Objects.equals(citizen.getWorkBuilding(), building.getPosition()))
                                            || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom)
                      .sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());

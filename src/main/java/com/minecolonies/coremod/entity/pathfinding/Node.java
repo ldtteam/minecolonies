@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,6 +123,42 @@ public class Node implements Comparable<Node>
         this.heuristic = heuristic;
         this.score = score;
         this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
+    }
+
+    /**
+     * Create an MNode from a bytebuf.
+     * @param byteBuf the buffer to load it from.
+     */
+    public Node(final PacketBuffer byteBuf)
+    {
+        if (byteBuf.readBoolean())
+        {
+            this.parent = new Node(byteBuf.readBlockPos(), 0);
+        }
+        this.pos = byteBuf.readBlockPos();
+        this.cost = byteBuf.readDouble();
+        this.heuristic = byteBuf.readDouble();
+        this.score = byteBuf.readDouble();
+        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
+        this.isReachedByWorker = byteBuf.readBoolean();
+    }
+
+    /**
+     * Serialize the Node to buf.
+     * @param byteBuf
+     */
+    public void serializeToBuf(final PacketBuffer byteBuf)
+    {
+        byteBuf.writeBoolean(this.parent != null);
+        if (this.parent != null)
+        {
+            byteBuf.writeBlockPos(this.parent.pos);
+        }
+        byteBuf.writeBlockPos(this.pos);
+        byteBuf.writeDouble(this.cost);
+        byteBuf.writeDouble(this.heuristic);
+        byteBuf.writeDouble(this.score);
+        byteBuf.writeBoolean(this.isReachedByWorker);
     }
 
     @Override

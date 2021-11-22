@@ -22,10 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.*;
-
-import static com.minecolonies.api.util.constant.PathingConstants.debugNodeMonitor;
 
 /**
  * Static class the handles all the Pathfinding.
@@ -34,6 +33,21 @@ public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
     private static       ThreadPoolExecutor      executor;
+
+    /**
+     * Set of visited nodes.
+     */
+    public static Set<Node> lastDebugNodesVisited = new HashSet<>();
+
+    /**
+     * Set of not visited nodes.
+     */
+    public static Set<Node> lastDebugNodesNotVisited  = new HashSet<>();
+
+    /**
+     * Set of nodes that belong to the chosen path.
+     */
+    public static Set<Node> lastDebugNodesPath = new HashSet<>();
 
     /**
      * Minecolonies specific thread factory.
@@ -104,7 +118,7 @@ public final class Pathfinding
     @OnlyIn(Dist.CLIENT)
     public static void debugDraw(final double frame, final MatrixStack matrixStack)
     {
-        if (AbstractPathJob.lastDebugNodesNotVisited == null)
+        if (lastDebugNodesNotVisited.isEmpty() || lastDebugNodesPath.isEmpty() || lastDebugNodesVisited.isEmpty())
         {
             return;
         }
@@ -122,30 +136,19 @@ public final class Pathfinding
         RenderSystem.disableBlend();
         RenderSystem.disableLighting();
 
-        final Set<Node> debugNodesNotVisited;
-        final Set<Node> debugNodesVisited;
-        final Set<Node> debugNodesPath;
-
-        synchronized (debugNodeMonitor)
-        {
-            debugNodesNotVisited = AbstractPathJob.lastDebugNodesNotVisited;
-            debugNodesVisited = AbstractPathJob.lastDebugNodesVisited;
-            debugNodesPath = AbstractPathJob.lastDebugNodesPath;
-        }
-
         try
         {
-            for (@NotNull final Node n : debugNodesNotVisited)
+            for (@NotNull final Node n : lastDebugNodesNotVisited)
             {
                 debugDrawNode(n, 1.0F, 0F, 0F, matrixStack);
             }
 
-            for (@NotNull final Node n : debugNodesVisited)
+            for (@NotNull final Node n : lastDebugNodesVisited)
             {
                 debugDrawNode(n, 0F, 0F, 1.0F, matrixStack);
             }
 
-            for (@NotNull final Node n : debugNodesPath)
+            for (@NotNull final Node n : lastDebugNodesPath)
             {
                 if (n.isReachedByWorker())
                 {

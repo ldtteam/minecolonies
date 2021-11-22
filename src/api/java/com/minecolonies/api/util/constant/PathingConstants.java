@@ -10,7 +10,6 @@ public final class PathingConstants
     //  Debug Output
     public static final int      DEBUG_VERBOSITY_NONE = 0;
     public static final int      DEBUG_VERBOSITY_FULL = 2;
-    public static final Object   debugNodeMonitor     = new Object();
     public static final BlockPos BLOCKPOS_IDENTITY    = new BlockPos(0, 0, 0);
     public static final BlockPos BLOCKPOS_UP          = new BlockPos(0, 1, 0);
     public static final BlockPos BLOCKPOS_DOWN        = new BlockPos(0, -1, 0);
