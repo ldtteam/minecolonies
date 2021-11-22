@@ -106,12 +106,27 @@ public interface IPermissions
      */
     boolean isColonyMember(Player player);
 
-    void togglePermission(Rank rank, @NotNull Action action);
+    /**
+     * Toggle permission for a specific rank.
+     * @param actor the acting rank.
+     * @param rank   Rank to toggle permission.
+     * @param action Action to toggle permission.
+     */
+    void togglePermission(final Rank actor, Rank rank, @NotNull Action action);
 
     @Nullable
     Map.Entry<UUID, ColonyPlayer> getOwnerEntry();
 
     boolean setOwner(Player player);
+
+    /**
+     * Check if a specific permission can be altered.
+     * @param actor acting rank.
+     * @param rank the rank to check it for.
+     * @param action the action to check.
+     * @return true if so.
+     */
+    boolean canAlterPermission(Rank actor, Rank rank, @NotNull Action action);;
 
     /**
      * Sets the owner to abandoned
@@ -142,6 +157,12 @@ public interface IPermissions
     @NotNull
     Rank getRank(UUID player);
 
+    /**
+     * Get the rank of a certain player.
+     *
+     * @param player the player.
+     * @return the rank.
+     */
     Rank getRank(Player player);
 
     void restoreOwnerIfNull();

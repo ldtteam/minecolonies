@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -186,7 +187,7 @@ public class PermissionsMessage
                     colony.getPermissions().removePermission(rank, action);
                     break;
                 case TOGGLE_PERMISSION:
-                    colony.getPermissions().togglePermission(rank, action);
+                    colony.getPermissions().togglePermission(colony.getPermissions().getRank(ctxIn.getSender()), rank, action);
                     break;
                 default:
                     Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()), new Exception());
@@ -507,8 +508,8 @@ public class PermissionsMessage
                 Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, colonyID), new Exception());
                 return;
             }
-            final ServerPlayer player = ctxIn.getSender();
-            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRank(colony.getPermissions().OWNER_RANK_ID))
+            final Player player = ctxIn.getSender();
+            if (colony.getPermissions().hasPermission(player, Action.EDIT_PERMISSIONS) && rank != colony.getPermissions().getRankOwner())
             {
                 Log.getLogger().error(rank.getName());
                 colony.getPermissions().setPlayerRank(playerID, rank, colony.getWorld());

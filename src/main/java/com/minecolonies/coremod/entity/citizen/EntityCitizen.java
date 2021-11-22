@@ -1217,7 +1217,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
 
         final Entity sourceEntity = damageSource.getEntity();
-        if (!checkIfValidDamageSource(sourceEntity))
+        if (!checkIfValidDamageSource(damageSource, damage))
         {
             return false;
         }
@@ -1248,11 +1248,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Check if the damage source is valid.
      *
-     * @param sourceEntity the entity.
+     * @param source the damage source.
+     * @param damage the dealt damage.
      * @return true if valid.
      */
-    private boolean checkIfValidDamageSource(final Entity sourceEntity)
+    private boolean checkIfValidDamageSource(final DamageSource source, final float damage)
     {
+        final Entity sourceEntity = source.getEntity();
         if (sourceEntity instanceof EntityCitizen)
         {
             if (((EntityCitizen) sourceEntity).citizenColonyHandler.getColonyId() == citizenColonyHandler.getColonyId())
@@ -1268,16 +1270,29 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
 
-        if (sourceEntity instanceof ServerPlayer)
+        if (sourceEntity instanceof Player)
         {
-            if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+            if (sourceEntity instanceof ServerPlayer)
             {
-                return false;
-            }
+                if (citizenColonyHandler.getColony().getRaiderManager().isRaided())
+                {
+                    return false;
+                }
 
-            if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                if (damage > 1 && !getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_CITIZEN))
+                {
+                    return false;
+                }
+
+                if (getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard)
+                {
+                    return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (Player) sourceEntity);
+                }
+            }
+            else
             {
-                return IGuardBuilding.checkIfGuardShouldTakeDamage(this, (Player) sourceEntity);
+                final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+                return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((Player) sourceEntity, Action.HURT_CITIZEN);
             }
         }
         return true;

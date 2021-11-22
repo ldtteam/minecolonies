@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -690,49 +689,6 @@ public final class ColonyView implements IColonyView
     public Map<UUID, ColonyPlayer> getPlayers()
     {
         return permissions.getPlayers();
-    }
-
-    /**
-     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
-     *
-     * @param rank   Rank to get the permission.
-     * @param action Permission to get.
-     */
-    @Override
-    public void setPermission(final Rank rank, @NotNull final Action action)
-    {
-        if (permissions.setPermission(rank, action))
-        {
-            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.SET_PERMISSION, rank, action));
-        }
-    }
-
-    /**
-     * removes a specific permission from a rank. If the permission was set, it sends a message to the server.
-     *
-     * @param rank   Rank to remove permission from.
-     * @param action Action to remove permission of.
-     */
-    @Override
-    public void removePermission(final Rank rank, @NotNull final Action action)
-    {
-        if (permissions.removePermission(rank, action))
-        {
-            Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.REMOVE_PERMISSION, rank, action));
-        }
-    }
-
-    /**
-     * Toggles a specific permission to a rank. Sends a message to the server.
-     *
-     * @param rank   Rank to toggle permission of.
-     * @param action Action to toggle permission of.
-     */
-    @Override
-    public void togglePermission(final Rank rank, @NotNull final Action action)
-    {
-        permissions.togglePermission(rank, action);
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
     /**

@@ -20,6 +20,7 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.*;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -68,6 +69,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      * A list of ranks (excluding owner)
      */
     private final List<Rank> rankList = new LinkedList<>();
+    private final List<Rank> allRankList = new LinkedList<>();
 
     /**
      * The currently selected rank to edit or delete
@@ -281,6 +283,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 rankList.add(rank);
             }
         }
+        allRankList.clear();
+        allRankList.addAll(building.getColony().getPermissions().getRanks().values());
     }
 
     /**
@@ -292,13 +296,13 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             @Override
             public int getElementCount()
             {
-                return rankList.size();
+                return allRankList.size();
             }
 
             @Override
             public void updateElement(final int i, final Pane pane)
             {
-                final Rank rank = rankList.get(i);
+                final Rank rank = allRankList.get(i);
                 final Button button = pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class);
                 button.setText(rank.getName());
                 button.setEnabled(!rank.equals(actionsRank));
@@ -314,7 +318,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     private void onRankButtonClicked(@NotNull final Button button)
     {
         final int rankId = rankButtonList.getListElementIndexByPane(button);
-        final Rank rank = rankList.get(rankId);
+        final Rank rank = allRankList.get(rankId);
         if (rank != null)
         {
             actionsRank = rank;
@@ -424,12 +428,19 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void trigger(@NotNull final Button button)
     {
-        final int index = Integer.valueOf(button.getParent().findPaneOfTypeByID("index", Text.class).getTextAsString());
-        final boolean trigger = new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).getString().equals(button.getTextAsString());
+        final int index = actionsList.getListElementIndexByPane(button);
         final Action action = actions.get(index);
 
+        final IPermissions permissions = building.getColony().getPermissions();
+        final Player playerEntity = Minecraft.getInstance().player;
+        if (!permissions.hasPermission(playerEntity, Action.EDIT_PERMISSIONS) || !permissions.canAlterPermission(permissions.getRank(playerEntity), actionsRank, action))
+        {
+            return;
+        }
+
+        final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
         Network.getNetwork().sendToServer(new PermissionsMessage.Permission(building.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, actionsRank, action));
-        building.getColony().getPermissions().togglePermission(actionsRank, action);
+        building.getColony().getPermissions().togglePermission(permissions.getRank(playerEntity), actionsRank, action);
 
         if (trigger)
         {

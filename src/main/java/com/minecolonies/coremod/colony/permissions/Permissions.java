@@ -182,6 +182,8 @@ public class Permissions implements IPermissions
                     break;
                 case HOSTILE:
                     this.setPermission(rank, Action.GUARDS_ATTACK);
+                    this.setPermission(rank, Action.HURT_CITIZEN);
+                    this.setPermission(rank, Action.HURT_VISITOR);
                     rank.setHostile(true);
                     break;
                 default:
@@ -224,17 +226,25 @@ public class Permissions implements IPermissions
         }
     }
 
-    /**
-     * Toggle permission for a specific rank.
-     *
-     * @param rank   Rank to toggle permission.
-     * @param action Action to toggle permission.
-     */
     @Override
-    public void togglePermission(final Rank rank, @NotNull final Action action)
+    public void togglePermission(final Rank actor, final Rank rank, @NotNull final Action action)
     {
+        if (!canAlterPermission(actor, rank, action))
+        {
+            return;
+        }
         permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.getFlag()));
         markDirty();
+    }
+
+    @Override
+    public boolean canAlterPermission(final Rank actor, final Rank rank, @NotNull final Action action)
+    {
+        if (rank == getRankOwner() && actor != getRankOwner())
+        {
+            return false;
+        }
+        return rank != getRankOwner() || (action != Action.EDIT_PERMISSIONS && action != Action.MANAGE_HUTS && action != Action.GUARDS_ATTACK  && action != Action.ACCESS_HUTS);
     }
 
     /**
@@ -557,8 +567,7 @@ public class Permissions implements IPermissions
     @Override
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return (rank == ranks.get(OWNER_RANK_ID) && action != Action.GUARDS_ATTACK)
-                 || permissionMap.get(rank) != null && Utils.testFlag(permissionMap.get(rank), action.getFlag())
+        return Utils.testFlag(permissionMap.get(rank), action.getFlag())
                  || (fullyAbandoned && Utils.testFlag(fullyAbandonedPermissionsFlag, action.getFlag()));
     }
 
@@ -622,13 +631,7 @@ public class Permissions implements IPermissions
         return hasPermission(getRank(player), action);
     }
 
-    /**
-     * Returns the rank of a player.
-     *
-     * @param player player to check rank.
-     * @return Rank of the player.
-     */
-    @NotNull
+    @Override
     public Rank getRank(@NotNull final Player player)
     {
         return getRank(player.getGameProfile().getId());
