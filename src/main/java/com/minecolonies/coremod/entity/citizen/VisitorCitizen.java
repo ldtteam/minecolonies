@@ -30,7 +30,6 @@ import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.ai.goal.LookAtWithoutMovingGoal;
@@ -48,6 +47,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -199,15 +199,19 @@ public class VisitorCitizen extends AbstractEntityCitizen
                 }
 
                 final Entity sourceEntity = damageSource.getEntity();
-                if (sourceEntity instanceof ServerPlayerEntity)
+                if (sourceEntity instanceof PlayerEntity)
                 {
-                    return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_VISITOR);
+                    if (sourceEntity instanceof ServerPlayerEntity)
+                    {
+                        return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_VISITOR);
+                    }
+                    else
+                    {
+                        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+                        return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_VISITOR);
+                    }
                 }
-                else if (sourceEntity instanceof ClientPlayerEntity)
-                {
-                    final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
-                    return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((PlayerEntity) sourceEntity, Action.HURT_VISITOR);
-                }
+
             }
             return true;
         }
