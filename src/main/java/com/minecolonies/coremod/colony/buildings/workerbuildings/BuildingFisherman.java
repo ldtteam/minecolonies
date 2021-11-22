@@ -71,33 +71,4 @@ public class BuildingFisherman extends AbstractBuilding
     {
         super.onUpgradeComplete(newLevel);
     }
-
-    /**
-     * Provides a view of the fisherman building class.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        /**
-         * Gets the blockui Window.
-         *
-         * @return the window of the fisherman building.
-         */
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, FISHERMAN);
-        }
-    }
 }

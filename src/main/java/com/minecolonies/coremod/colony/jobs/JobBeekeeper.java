@@ -33,17 +33,6 @@ public class JobBeekeeper extends AbstractJob<EntityAIWorkBeekeeper, JobBeekeepe
     }
 
     /**
-     * The {@link JobEntry} for this job.
-     *
-     * @return The {@link JobEntry}.
-     */
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.beekeeper;
-    }
-
-    /**
      * Generate your AI class to register.
      * <p>
      * Suppressing Sonar Rule squid:S1452 This rule does "Generic wildcard types should not be used in return parameters" But in this case the rule does not apply because We are

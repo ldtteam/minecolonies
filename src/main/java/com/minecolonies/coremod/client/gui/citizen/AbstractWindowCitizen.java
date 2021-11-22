@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui.citizen;
 import com.ldtteam.blockui.PaneBuilders;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowRequestTree;
@@ -49,7 +50,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingView && !(building instanceof BuildingLibrary.View))
+        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library)
         {
             findPaneByID("jobTab").setVisible(true);
             findPaneByID("jobIcon").setVisible(true);

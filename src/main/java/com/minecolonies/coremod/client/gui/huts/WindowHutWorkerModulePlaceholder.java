@@ -34,6 +34,6 @@ public class WindowHutWorkerModulePlaceholder<B extends IBuildingView> extends A
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.coremod.gui.workerhuts." + name;
+        return name.isEmpty() ? super.getBuildingName() : name;
     }
 }

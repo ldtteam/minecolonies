@@ -22,12 +22,6 @@ public class JobPlaceholder extends AbstractJob<AbstractAISkeleton<JobPlaceholde
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.placeHolder;
-    }
-
     /**
      * Generate your AI class to register.
      *

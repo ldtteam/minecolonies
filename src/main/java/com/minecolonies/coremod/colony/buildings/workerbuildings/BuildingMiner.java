@@ -368,28 +368,4 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
             return Structures.SCHEMATICS_PREFIX + shaft;
         }
     }
-
-    /**
-     * Provides a view of the miner building class.
-     */
-    public static class View extends AbstractBuildingBuilderView
-    {
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, MINER);
-        }
-    }
 }

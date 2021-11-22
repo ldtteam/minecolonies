@@ -341,30 +341,6 @@ public class BuildingLumberjack extends AbstractBuilding
         bonemealFungi();
     }
 
-    /**
-     * Provides a view of the lumberjack building class.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, LUMBERJACK);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {
         /**

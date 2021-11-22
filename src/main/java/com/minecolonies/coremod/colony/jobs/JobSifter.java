@@ -22,12 +22,6 @@ public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.sifter;
-    }
-
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *

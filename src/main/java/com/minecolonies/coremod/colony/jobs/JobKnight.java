@@ -76,12 +76,6 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
         }
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.knight;
-    }
-
     /**
      * Gets the {@link BipedModelType} to use for our ranger.
      *

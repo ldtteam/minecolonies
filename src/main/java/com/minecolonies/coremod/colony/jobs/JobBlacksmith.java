@@ -22,12 +22,6 @@ public class JobBlacksmith extends AbstractJobCrafter<EntityAIWorkBlacksmith, Jo
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.blacksmith;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

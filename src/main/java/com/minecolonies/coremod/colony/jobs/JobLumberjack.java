@@ -59,12 +59,6 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
         return compound;
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.lumberjack;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

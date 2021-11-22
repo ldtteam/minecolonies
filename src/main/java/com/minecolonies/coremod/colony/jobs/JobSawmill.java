@@ -21,12 +21,6 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.sawmill;
-    }
-
     /**
      * Generate your AI class to register.
      *

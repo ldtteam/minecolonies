@@ -26,12 +26,6 @@ public class JobChickenHerder extends AbstractJob<EntityAIWorkChickenHerder, Job
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.chickenHerder;
-    }
-
     /**
      * Generate your AI class to register.
      *

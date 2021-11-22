@@ -22,12 +22,6 @@ public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.smelter;
-    }
-
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *

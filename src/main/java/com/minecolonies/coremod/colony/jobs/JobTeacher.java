@@ -22,12 +22,6 @@ public class JobTeacher extends AbstractJob<EntityAIWorkTeacher, JobTeacher>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.teacher;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

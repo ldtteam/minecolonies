@@ -22,12 +22,6 @@ public class JobStudent extends AbstractJob<EntityAIStudy, JobStudent>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.student;
-    }
-
     /**
      * Generate your AI class to register.
      *

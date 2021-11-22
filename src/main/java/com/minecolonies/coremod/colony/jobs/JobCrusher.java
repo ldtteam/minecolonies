@@ -24,12 +24,6 @@ public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrush
     }
 
     @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.crusher;
-    }
-
-    @Override
     public int getDiseaseModifier()
     {
         final int skill = getCitizen().getCitizenSkillHandler().getLevel(getCitizen().getWorkBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobRegistryEntry()).getPrimarySkill());

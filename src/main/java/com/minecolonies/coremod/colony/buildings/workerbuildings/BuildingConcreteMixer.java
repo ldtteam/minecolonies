@@ -226,31 +226,6 @@ public class BuildingConcreteMixer extends AbstractBuilding
         return count;
     }
 
-    /**
-     * Concrete Mason View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-
-        /**
-         * Instantiate the Concrete Mason view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, CONCRETE_MIXER);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {
         /**

@@ -95,13 +95,13 @@ public class BuildingResearchRequirement implements IResearchRequirement
         if(singleBuilding)
         {
             return new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.mandatory.level",
-              new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts." + this.building),
+              new TranslatableComponent("com.minecolonies.building." + building),
               this.buildingLevel);
         }
         else
         {
             return new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.level",
-              new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts." + this.building),
+              new TranslatableComponent("com.minecolonies.building." + building),
               this.buildingLevel);
         }
     }
