@@ -74,7 +74,7 @@ public class FoodIngredient extends Ingredient
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
     public static final Predicate<ItemStack> ISFOOD
-            = stack -> ItemStackUtils.isNotEmpty(stack) && stack.getItem().isEdible() && stack.getItem().getFoodProperties().getNutrition() > 0 && stack.getItem().getFoodProperties().getSaturationModifier() > 0;
+            = stack -> ItemStackUtils.isNotEmpty(stack) && stack.getItem().isEdible() && stack.getItem().getFoodProperties() != null && stack.getItem().getFoodProperties().getNutrition() > 0 && stack.getItem().getFoodProperties().getSaturationModifier() > 0;
 
     private static Stream<IItemList> buildItemLists(final Builder builder)
     {
