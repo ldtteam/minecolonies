@@ -35,7 +35,7 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
             final IBuilding oldHome = citizen.getHomeBuilding();
             if (oldHome != null && !oldHome.getID().equals(building.getID()))
             {
-                if (oldHome.hasModule(LivingBuildingModule.class))
+                if (oldHome.hasModule(LivingBuildingModule.class) && !oldHome.hasModule(WorkAtHomeBuildingModule.class))
                 {
                     oldHome.getColony().notifyPlayers(
                       new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.assignedbed",
