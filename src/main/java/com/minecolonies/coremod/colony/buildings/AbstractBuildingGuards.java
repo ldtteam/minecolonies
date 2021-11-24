@@ -422,7 +422,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             }
             else
             {
-                pos = colony.getBuildingManager().getRandomBuilding(b -> true);
+                pos = colony.getBuildingManager().getRandomBuilding(b -> b.getBuildingLevel() >= 1);
             }
 
             if (pos != null)
