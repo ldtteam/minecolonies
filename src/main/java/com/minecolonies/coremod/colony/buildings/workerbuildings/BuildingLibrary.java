@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
 import com.minecolonies.api.entity.ai.util.StudyItem;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
@@ -195,7 +194,7 @@ public class BuildingLibrary extends AbstractBuilding
     /**
      * ClientSide representation of the building.
      */
-    public static class View extends AbstractBuildingView implements IBuildingCanBeHiredFrom
+    public static class View extends AbstractBuildingView
     {
         /**
          * Instantiates the view of the building.

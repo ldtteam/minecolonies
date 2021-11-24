@@ -10,7 +10,6 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.IBuildingCanBeHiredFrom;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
@@ -247,7 +246,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                      .filter(citizen -> selectedModule.canAssign(citizen))
                      .filter(citizen ->  citizen.getWorkBuilding() == null
                                            || (citizen.getJobView() != null && citizen.getJobView().getEntry().equals(selectedModule.getJobEntry()) && Objects.equals(citizen.getWorkBuilding(), building.getPosition()))
-                                           || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom)
+                                           || colony.getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(selectedModule.getJobEntry())) != null)
                      .sorted(Comparator.comparing(ICitizenDataView::getName))
                      .collect(Collectors.toList());
 
@@ -286,7 +285,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
 
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if ((citizen.getWorkBuilding() == null || colony.getBuilding(citizen.getWorkBuilding()) instanceof IBuildingCanBeHiredFrom) && selectedModule.canAssign(citizen) && (!selectedModule.isFull()) && !selectedModule.getWorkerIdList().contains(citizen.getId()))
+                if ((citizen.getWorkBuilding() == null || colony.getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(selectedModule.getJobEntry())) != null) && selectedModule.canAssign(citizen) && (!selectedModule.isFull()) && !selectedModule.getWorkerIdList().contains(citizen.getId()))
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_FIRE, Button.class).off();
                     rowPane.findPaneOfTypeByID(BUTTON_DONE, Button.class).on();
