@@ -413,8 +413,8 @@ public class CitizenManager implements ICitizenManager
                 if (b.hasModule(BedHandlingModule.class) && b.hasModule(WorkAtHomeBuildingModule.class))
                 {
                     final WorkAtHomeBuildingModule module = b.getFirstModuleOccurance(WorkAtHomeBuildingModule.class);
-                    newMaxCitizens += module.getAssignedCitizen().size();
-                    potentialMax += module.getModuleMax() - module.getAssignedCitizen().size();
+                    newMaxCitizens += b.getAllAssignedCitizen().size();
+                    potentialMax += module.getModuleMax() - b.getAllAssignedCitizen().size();
                 }
                 else if (b.hasModule(LivingBuildingModule.class))
                 {
