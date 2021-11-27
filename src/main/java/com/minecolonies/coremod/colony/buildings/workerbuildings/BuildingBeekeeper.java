@@ -4,13 +4,19 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -23,9 +29,8 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -185,6 +190,46 @@ public class BuildingBeekeeper extends AbstractBuilding
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, BEEKEEPER);
+        }
+    }
+
+    /**
+     * Bee herding module
+     */
+    public static class HerdingModule extends AnimalHerdingModule
+    {
+        // note that the beekeeper is a bit different from regular herders as they never
+        // over-breed and kill the bees (bees don't drop any loot anyway).  currently this
+        // doesn't matter but if we extend the AnimalHerdingModule with additional AI
+        // functionality then this may need special behaviour.
+
+        public HerdingModule()
+        {
+            super(ModJobs.beekeeper, EntityType.BEE, ItemStack.EMPTY);
+        }
+
+        @Override
+        public @NotNull List<ItemStack> getBreedingItems()
+        {
+            if (building != null)
+            {
+                // todo: if we use this in AI then it should use the item list module settings from the building instead.
+            }
+
+            return CompatibilityManager.getAllBeekeeperFlowers().stream()
+                    .map(flower -> new ItemStack(flower.getItem(), 2))
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public @NotNull List<LootTableAnalyzer.LootDrop> getExpectedLoot()
+        {
+            final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
+
+            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEYCOMB, 3)), 1, 0, false));
+            drops.add(new LootTableAnalyzer.LootDrop(Collections.singletonList(new ItemStack(Items.HONEY_BOTTLE)), 1, 0, false));
+
+            return drops;
         }
     }
 }

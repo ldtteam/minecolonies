@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.compatibility.jei;
 
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -17,6 +19,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +36,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
     @NotNull private final ResourceLocation uid;
+    @NotNull private final ItemStack catalyst;
     @NotNull private final IDrawableStatic background;
     @NotNull private final IDrawable icon;
     @NotNull protected final IDrawableStatic slot;
@@ -55,6 +59,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     {
         this.job = job;
         this.uid = uid;
+        this.catalyst = icon;
 
         this.background = guiHelper.createDrawable(TEXTURE, 0, 0, WIDTH, HEIGHT);
         this.icon = guiHelper.createDrawableIngredient(icon);
@@ -67,6 +72,18 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         this.description = wordWrap(breakLines(translateDescription(
                 TranslationConstants.COM_MINECOLONIES_JEI_PREFIX +
                         this.job.getJobRegistryEntry().getRegistryName().getPath())));
+    }
+
+    @NotNull
+    public ItemStack getCatalyst()
+    {
+        return this.catalyst;
+    }
+
+    @NotNull
+    protected static ItemStack getCatalyst(@NotNull final BuildingEntry building)
+    {
+        return new ItemStack(building.getBuildingBlock());
     }
 
     @NotNull
@@ -110,6 +127,11 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return this.icon;
     }
 
+    public Collection<?> findRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla)
+    {
+        return Collections.emptyList();
+    }
+
     @Override
     public void draw(@NotNull final T recipe, @NotNull final MatrixStack matrixStack, final double mouseX, final double mouseY)
     {
@@ -118,8 +140,11 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final int citizen_cy = CITIZEN_Y + (CITIZEN_H / 2);
         final int citizen_by = CITIZEN_Y + CITIZEN_H;
         final int offsetY = 4;
+        final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
+        final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
+        final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
         RenderHelper.scissor(matrixStack, CITIZEN_X, CITIZEN_Y, CITIZEN_W, CITIZEN_H);
-        RenderHelper.renderEntity(matrixStack, citizen_cx, citizen_by - offsetY, scale, citizen_cx - mouseX, citizen_cy - offsetY - mouseY, this.citizen);
+        RenderHelper.renderEntity(matrixStack, citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
         RenderHelper.stopScissor();
 
         int y = 0;

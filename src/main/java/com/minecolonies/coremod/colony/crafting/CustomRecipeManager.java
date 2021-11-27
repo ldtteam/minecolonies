@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.colony.crafting;
 
+import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
@@ -17,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -240,6 +244,15 @@ public class CustomRecipeManager
                     lootIds.add(lootTable);
                 }
             }
+        }
+
+        for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
+        {
+            building.getModuleProducers().stream()
+                    .map(Supplier::get)
+                    .filter(m -> m instanceof AnimalHerdingModule)
+                    .map(m -> (AnimalHerdingModule) m)
+                    .forEach(herding -> lootIds.add(herding.getDefaultLootTable()));
         }
 
         lootIds.add(ModLootTables.FISHING);

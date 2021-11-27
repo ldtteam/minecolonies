@@ -65,17 +65,6 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     private final int outputSlotY;
 
     @NotNull
-    private static ItemStack getCatalyst(@NotNull final BuildingEntry building)
-    {
-        return new ItemStack(building.getBuildingBlock().asItem());
-    }
-
-    public ItemStack getCatalyst()
-    {
-        return getCatalyst(this.building);
-    }
-
-    @NotNull
     @Override
     public Class<? extends IGenericRecipe> getRecipeClass()
     {
