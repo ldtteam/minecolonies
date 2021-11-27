@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -99,6 +100,12 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
     public int getModuleMax()
     {
         return building.getBuildingLevel();
+    }
+
+    @Override
+    public JobEntry getJobEntry()
+    {
+        return null;
     }
 
     @Override

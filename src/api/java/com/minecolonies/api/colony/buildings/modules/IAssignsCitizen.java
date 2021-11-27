@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,4 +64,10 @@ public interface IAssignsCitizen extends IBuildingModule
      * @return true if so.
      */
     boolean hasAssignedCitizen();
+
+    /**
+     * The job entry of the assignment.
+     * @return the job entry.
+     */
+    JobEntry getJobEntry();
 }

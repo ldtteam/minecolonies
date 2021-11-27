@@ -296,21 +296,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     @Nullable
     private IWareHouse getAndCheckWareHouse()
     {
-        final List<IWareHouse> wareHouses = new ArrayList<>(job.getColony().getBuildingManager().getWareHouses());
-        wareHouses.sort((wh1, wh2) -> (int) (wh1.getPosition().distSqr(getOwnBuilding().getPosition()) - wh2.getPosition().distSqr(getOwnBuilding().getPosition())));
-        for (final IWareHouse wareHouse : wareHouses)
-        {
-           wareHouse.unregisterFromWareHouse(this.getOwnBuilding());
-        }
-
-        for (final IWareHouse wareHouse : wareHouses)
-        {
-            if (wareHouse.registerWithWareHouse(this.getOwnBuilding()))
-            {
-                return wareHouse;
-            }
-        }
-        return null;
+        return job.findWareHouse();
     }
 
     /**

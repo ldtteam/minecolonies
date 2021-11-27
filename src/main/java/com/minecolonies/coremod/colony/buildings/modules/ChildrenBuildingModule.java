@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 /**
@@ -44,7 +45,7 @@ public class ChildrenBuildingModule extends WorkerBuildingModule implements IAss
             }
         }
 
-        for (final ICitizenData citizenData : getAssignedCitizen())
+        for (final ICitizenData citizenData : new ArrayList<>(getAssignedCitizen()))
         {
             if (!citizenData.isChild())
             {

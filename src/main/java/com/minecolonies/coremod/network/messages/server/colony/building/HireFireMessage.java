@@ -3,9 +3,9 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsCitizen;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fmllegacy.network.NetworkEvent;
@@ -46,7 +46,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull final AbstractBuildingView building, final boolean hire, final int citizenID, final JobEntry entry)
+    public HireFireMessage(@NotNull final IBuildingView building, final boolean hire, final int citizenID, final JobEntry entry)
     {
         super(building);
         this.hire = hire;
@@ -88,11 +88,11 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
         citizen.setPaused(false);
         if (hire)
         {
-            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == entry).assignCitizen(citizen);
+            building.getModuleMatching(IAssignsCitizen.class, m -> m.getJobEntry() == entry).assignCitizen(citizen);
         }
         else
         {
-            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == entry).removeCitizen(citizen);
+            building.getModuleMatching(IAssignsCitizen.class, m -> m.getJobEntry() == entry).removeCitizen(citizen);
         }
     }
 }

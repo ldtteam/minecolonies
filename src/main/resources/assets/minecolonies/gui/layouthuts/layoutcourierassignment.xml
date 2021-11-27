@@ -1,0 +1,17 @@
+<window size="190 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <label size="164 11" pos="13 32" textalign="MIDDLE" color="black"
+           label="$(com.minecolonies.coremod.gui.workerhuts.workerassigned)"/>
+
+    <list id="workers" size="164 30" pos="13 43">
+        <view size="100% 11">
+            <box size="100% 11" linewidth="0">
+                <label id="workerName" size="100% 11" pos="0 0" textalign="MIDDLE" color="black"/>
+            </box>
+        </view>
+    </list>
+
+    <buttonimage id="hire" size="129 17" pos="30 74" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
+</window>
