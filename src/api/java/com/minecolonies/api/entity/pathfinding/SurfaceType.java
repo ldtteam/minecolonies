@@ -67,7 +67,7 @@ public enum SurfaceType
             return SurfaceType.WALKABLE;
         }
 
-        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock)
+        if (block instanceof AbstractBlockMinecoloniesConstructionTape || block instanceof SignBlock || block instanceof VineBlock)
         {
             return SurfaceType.DROPABLE;
         }

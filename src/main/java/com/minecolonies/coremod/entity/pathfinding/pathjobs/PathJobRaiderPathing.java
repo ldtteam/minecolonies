@@ -144,6 +144,7 @@ public class PathJobRaiderPathing extends AbstractPathJob
       final boolean railsExit,
       final boolean swimStart,
       final boolean corner,
+      final BlockState state,
       final BlockPos blockPos)
     {
         double modifier = addCost;
@@ -158,6 +159,6 @@ public class PathJobRaiderPathing extends AbstractPathJob
             modifier *= THROUGH_BLOCK_COST;
         }
 
-        return super.computeCost(dPos, isSwimming, onPath, onRails, railsExit, swimStart, corner, blockPos) * modifier;
+        return super.computeCost(dPos, isSwimming, onPath, onRails, railsExit, swimStart, corner, state, blockPos) * modifier;
     }
 }

@@ -151,7 +151,7 @@ public class EntityAICitizenAvoidEntity extends Goal
 
         closestLivingEntity = citizen.getThreatTable().getTargetMob();
 
-        return closestLivingEntity != null && !(citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard);
+        return closestLivingEntity != null && citizen.getSensing().hasLineOfSight(closestLivingEntity) && targetEntityClass.isInstance(closestLivingEntity);
     }
 
     /**
@@ -192,7 +192,7 @@ public class EntityAICitizenAvoidEntity extends Goal
         if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone())
         {
             moveAwayPath =
-              citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed);
+              citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
             citizen.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.avoiding"));
             return true;
         }

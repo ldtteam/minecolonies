@@ -46,6 +46,11 @@ public class PathingOptions
     public double traverseToggleAbleCost = 2D;
 
     /**
+     * Cost to climb a vine.
+     */
+    public double vineCost = 2D;
+
+    /**
      * Whether to use minecart rail pathing
      */
     private boolean canUseRails  = false;
@@ -61,6 +66,10 @@ public class PathingOptions
      * Allowed to open doors?
      */
     private boolean canOpenDoors = false;
+    /**
+     * Whether to path through vines.
+     */
+    private boolean canClimbVines  = false;
 
     public PathingOptions()
     {}
@@ -80,9 +89,19 @@ public class PathingOptions
         return canUseRails;
     }
 
+    public boolean canClimbVines()
+    {
+        return canClimbVines;
+    }
+
     public void setCanUseRails(final boolean canUseRails)
     {
         this.canUseRails = canUseRails;
+    }
+
+    public void setCanClimbVines(final boolean canClimbVines)
+    {
+        this.canClimbVines = canClimbVines;
     }
 
     public boolean canSwim()
@@ -150,6 +169,12 @@ public class PathingOptions
     public PathingOptions withToggleCost(final double toggleCost)
     {
         traverseToggleAbleCost = toggleCost;
+        return this;
+    }
+
+    public PathingOptions withVineCost(final double vineCost)
+    {
+        this.vineCost = vineCost;
         return this;
     }
 

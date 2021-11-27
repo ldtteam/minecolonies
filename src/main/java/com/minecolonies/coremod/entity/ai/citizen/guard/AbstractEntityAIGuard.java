@@ -213,6 +213,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     private void onCombatLeave()
     {
         worker.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) worker).canPathOnRails());
+        worker.getNavigation().getPathingOptions().setCanClimbVines(((EntityCitizen) worker).canClimbVines());
         worker.setCanBeStuck(true);
     }
 

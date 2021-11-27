@@ -296,7 +296,7 @@ public class PathingStuckHandler implements IStuckHandler
             stuckLevel++;
             delayToNextUnstuckAction = 300;
             navigator.stop();
-            navigator.moveAwayFromXYZ(navigator.getOurEntity().blockPosition(), 10, 1.0f);
+            navigator.moveAwayFromXYZ(navigator.getOurEntity().blockPosition(), 10, 1.0f, false);
             moveAwayStartPos = navigator.getOurEntity().blockPosition();
             return;
         }

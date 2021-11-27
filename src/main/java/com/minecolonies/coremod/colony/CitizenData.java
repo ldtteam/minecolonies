@@ -1439,6 +1439,7 @@ public class CitizenData implements ICitizenData
 
             // Applies entity related research effects.
             citizen.getNavigation().getPathingOptions().setCanUseRails(((EntityCitizen) citizen).canPathOnRails());
+            citizen.getNavigation().getPathingOptions().setCanClimbVines(((EntityCitizen) citizen).canClimbVines());
 
             final AttributeModifier speedModifier = new AttributeModifier(RESEARCH_BONUS_MULTIPLIER,
               colony.getResearchManager().getResearchEffects().getEffectStrength(WALKING),
