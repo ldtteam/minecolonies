@@ -53,6 +53,7 @@ public class ModTagsInitializer
         ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK, supplier);
         ModTags.pathingBlocks = getBlockTags(PATHING_BLOCKS, supplier);
         ModTags.floristFlowers = getItemTags(FLORIST_FLOWERS, supplier);
+        ModTags.excludedFood = getItemTags(EXCLUDED_FOOD, supplier);
         ModTags.fungi = getItemTags(FUNGI, supplier);
         ModTags.meshes = getItemTags(MESHES, supplier);
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS, supplier);

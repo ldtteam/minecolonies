@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
+import com.minecolonies.api.colony.buildings.modules.IItemListModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import net.minecraft.item.ItemStack;
@@ -11,7 +13,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 
@@ -36,6 +40,11 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     private final String id;
 
     /**
+     * Action to take when resetting to defaults.
+     */
+    private Consumer<ItemListModule> resetToDefaultsAction;
+
+    /**
      * Construct a new grouped itemlist module with the unique list identifier.
      * @param id the list id.
      */
@@ -43,6 +52,20 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     {
         super();
         this.id = id;
+        this.resetToDefaultsAction = ItemListModule::clearItems;
+    }
+
+    /**
+     * Change the action taken when resetting the list to defaults.
+     * (Intended to be called as a fluent builder.)
+     *
+     * @param action The action.
+     */
+    public ItemListModule onResetToDefaults(final Consumer<ItemListModule> action)
+    {
+        this.resetToDefaultsAction = action;
+        resetToDefaults();      // also actually call it for first-build
+        return this;
     }
 
     @Override
@@ -142,6 +165,13 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
     public void clearItems()
     {
         itemsAllowed = ImmutableList.of();
+        markDirty();
+    }
+
+    @Override
+    public void resetToDefaults()
+    {
+        this.resetToDefaultsAction.accept(this);
     }
 
     @Override

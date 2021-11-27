@@ -57,7 +57,7 @@ public class ResetFilterableItemMessage extends AbstractBuildingServerMessage<Ab
     {
         if (building.hasModule(ItemListModule.class))
         {
-            building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).clearItems();
+            building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(id)).resetToDefaults();
         }
     }
 }
