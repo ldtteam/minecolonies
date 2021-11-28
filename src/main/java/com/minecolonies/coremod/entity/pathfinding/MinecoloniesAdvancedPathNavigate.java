@@ -175,14 +175,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
 
         this.destination = dest;
         this.originalDestination = dest;
-        if (dest != null)
+        if (safeDestination)
         {
             desiredPos = dest;
-            desiredPosTimeout = 50 * 20;
-        }
-        else if (safeDestination)
-        {
-            desiredPos = dest;
+            if (dest != null)
+            {
+                desiredPosTimeout = 50 * 20;
+            }
         }
 
         this.walkSpeedFactor = speedFactor;
