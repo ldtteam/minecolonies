@@ -151,6 +151,20 @@ public class SpearEntity extends AbstractArrowEntity implements ICustomAttackSou
         nbt.putBoolean(NBT_DEALT_DAMAGE, this.dealtDamage);
     }
 
+    /**
+     * Remove spear after certain time alive.
+     */
+    @Override
+    public void tick()
+    {
+        super.tick();
+
+        if (tickCount > MAX_TIME_ALIVE)
+        {
+            remove();
+        }
+    }
+
     @Override
     public void tickDespawn()
     {
