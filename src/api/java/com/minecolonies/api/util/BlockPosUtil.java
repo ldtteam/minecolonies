@@ -55,7 +55,7 @@ public final class BlockPosUtil
     /**
      * Selects a solid position with air above
      */
-    public static final BiPredicate<IBlockReader, BlockPos> SOLID_AIR_POS_SELECTOR = (world, pos) -> {
+    public static final BiPredicate<BlockGetter, BlockPos> SOLID_AIR_POS_SELECTOR = (world, pos) -> {
         return (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
           pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR;
     };
@@ -63,7 +63,7 @@ public final class BlockPosUtil
     /**
      * Selects a double air position
      */
-    public static final BiPredicate<IBlockReader, BlockPos> DOUBLE_AIR_POS_SELECTOR = (world, pos) -> {
+    public static final BiPredicate<BlockGetter, BlockPos> DOUBLE_AIR_POS_SELECTOR = (world, pos) -> {
         return world.getBlockState(pos).getMaterial() == Material.AIR && world.getBlockState(pos.above(1)).getMaterial() == Material.AIR;
     };
 
