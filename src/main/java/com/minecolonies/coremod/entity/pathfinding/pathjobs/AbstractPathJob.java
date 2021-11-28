@@ -509,6 +509,7 @@ public abstract class AbstractPathJob implements Callable<Path>
       final boolean railsExit,
       final boolean swimStart,
       final boolean corner,
+      final BlockState state,
       final BlockPos blockPos)
     {
         double cost = Math.sqrt(dPos.getX() * dPos.getX() + dPos.getY() * dPos.getY() + dPos.getZ() * dPos.getZ());
@@ -543,6 +544,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (railsExit)
         {
             cost *= pathingOptions.railsExitCost;
+        }
+
+        if (state.getBlock() instanceof VineBlock)
+        {
+            cost *= pathingOptions.vineCost;
         }
 
         if (isSwimming)
@@ -1013,11 +1019,12 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         final boolean swimStart = isSwimming && !parent.isSwimming();
+        final BlockState state = world.getBlockState(pos);
         final boolean onRoad = WorkerUtil.isPathBlock(world.getBlockState(pos.below()).getBlock());
         final boolean onRails = pathingOptions.canUseRails() && world.getBlockState(corner ? pos.below() : pos).getBlock() instanceof BaseRailBlock;
         final boolean railsExit = !onRails && parent != null && parent.isOnRails();
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(dPos, isSwimming, onRoad, onRails, railsExit, swimStart, corner, pos);
+        final double stepCost = computeCost(dPos, isSwimming, onRoad, onRails, railsExit, swimStart, corner, state, pos);
         final double heuristic = computeHeuristic(pos);
         final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
@@ -1393,7 +1400,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected boolean isLadder(@NotNull final Block block, final BlockPos pos)
     {
-        return block.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
+        return block.isLadder(this.world.getBlockState(pos), world, pos, entity.get()) && (block != Blocks.VINE || pathingOptions.canClimbVines());
     }
 
     protected boolean isLadder(final BlockPos pos)

@@ -592,7 +592,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
               workAt,
               SEARCH_RANGE,
               worker,
-              this::isPassable), workAt, 1.0d);
+              this::isPassable), workAt, 1.0d, true);
         }
 
         return false;

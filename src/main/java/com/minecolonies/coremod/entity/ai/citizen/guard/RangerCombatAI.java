@@ -255,13 +255,13 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         if (((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getTask().equals(GuardTaskSetting.GUARD))
         {
             final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
-            final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed());
+            final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
 
         final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level, AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
-        final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed());
+        final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;
     }
