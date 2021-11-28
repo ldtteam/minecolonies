@@ -546,7 +546,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             cost *= pathingOptions.railsExitCost;
         }
 
-        if (state.getBlock() == Blocks.VINE)
+        if (state.getBlock() instanceof VineBlock)
         {
             cost *= pathingOptions.vineCost;
         }

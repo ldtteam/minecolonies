@@ -115,7 +115,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Nullable
-    public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speedFactor, final boolean overrideDest)
+    public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speedFactor, final boolean safeDestination)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
 
@@ -124,7 +124,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           avoid,
           (int) range,
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
-          ourEntity), null, speedFactor, overrideDest);
+          ourEntity), null, speedFactor, safeDestination);
     }
 
     @Nullable
@@ -169,7 +169,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     public PathResult setPathJob(
       @NotNull final AbstractPathJob job,
       final BlockPos dest,
-      final double speedFactor, final boolean overrideDest)
+      final double speedFactor, final boolean safeDestination)
     {
         stop();
 
@@ -180,7 +180,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             desiredPos = dest;
             desiredPosTimeout = 50 * 20;
         }
-        else if (overrideDest)
+        else if (safeDestination)
         {
             desiredPos = dest;
         }
