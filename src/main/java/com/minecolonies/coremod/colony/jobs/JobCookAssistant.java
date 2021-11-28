@@ -24,12 +24,6 @@ public class JobCookAssistant extends AbstractJobCrafter<EntityAIWorkCookAssista
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.cookassistant;
-    }
-
     @NotNull
     @Override
     public IModelType getModel()

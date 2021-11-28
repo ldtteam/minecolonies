@@ -46,12 +46,6 @@ public class JobResearch extends AbstractJob<EntityAIWorkResearcher, JobResearch
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.researcher;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

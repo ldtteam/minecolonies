@@ -21,11 +21,6 @@ public class JobCombatTraining extends AbstractJob<EntityAICombatTraining, JobCo
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.combat;
-    }
 
     @Override
     public BipedModelType getModel()

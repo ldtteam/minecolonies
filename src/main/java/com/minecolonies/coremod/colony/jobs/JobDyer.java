@@ -23,12 +23,6 @@ public class JobDyer extends AbstractJobCrafter<EntityAIWorkDyer, JobDyer>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.dyer;
-    }
-
     @NotNull
     @Override
     public IModelType getModel()

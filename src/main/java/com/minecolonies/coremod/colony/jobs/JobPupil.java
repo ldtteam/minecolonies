@@ -22,12 +22,6 @@ public class JobPupil extends AbstractJob<EntityAIWorkPupil, JobPupil>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.pupil;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

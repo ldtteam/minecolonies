@@ -132,7 +132,10 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      *
      * @return Name of a building.
      */
-    public abstract String getBuildingName();
+    public String getBuildingName()
+    {
+        return  "com." + buildingView.getBuildingType().getRegistryName().getNamespace() + ".building." + buildingView.getBuildingType().getRegistryName().getPath();
+    }
 
     /**
      * Update the state and label for the Build button.

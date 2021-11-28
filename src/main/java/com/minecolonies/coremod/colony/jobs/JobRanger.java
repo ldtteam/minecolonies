@@ -40,12 +40,6 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
         return new EntityAIRanger(this);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.ranger;
-    }
-
     /**
      * Gets the {@link BipedModelType} to use for our ranger.
      *

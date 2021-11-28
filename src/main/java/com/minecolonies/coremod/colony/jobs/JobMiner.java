@@ -25,12 +25,6 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.miner;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

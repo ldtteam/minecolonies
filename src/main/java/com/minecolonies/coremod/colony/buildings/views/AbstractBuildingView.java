@@ -373,7 +373,7 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         if (!getModuleViews(WorkerBuildingModuleView.class).isEmpty())
         {
-            return new WindowHutWorkerModulePlaceholder<>(this, getCustomName().isEmpty() ? new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts." + schematicName).getString(): getCustomName());
+            return new WindowHutWorkerModulePlaceholder<>(this, getCustomName());
         }
         return null;
     }

@@ -152,16 +152,4 @@ public class WindowHutCitizen extends AbstractWindowModuleBuilding<HomeBuildingM
     {
         Network.getNetwork().sendToServer(new RecallCitizenHutMessage(building));
     }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.home";
-    }
 }

@@ -23,12 +23,6 @@ public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFle
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.fletcher;
-    }
-
     /**
      * Generate your AI class to register.
      *

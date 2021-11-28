@@ -464,20 +464,6 @@
   "com.minecolonies.coremod.status.shepherd.shearing": "Shearing",
 
   "com.minecolonies.coremod.gui.allinventory": "All Items",
-  "com.minecolonies.coremod.gui.workerhuts.shepherdhut": "Shepherd's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.swineherderhut": "Swineherd's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.cowboyhut": "Cowhand's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.chickenherderhut": "Chicken Farmer's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.rabbithutch": "Rabbit Hutch",
-  "com.minecolonies.coremod.gui.workerhuts.beekeeper": "Apiary",
-  "com.minecolonies.coremod.gui.workerhuts.home": "House",
-  "com.minecolonies.coremod.gui.workerhuts.tavern": "Tavern",
-  "com.minecolonies.coremod.gui.workerhuts.buildershut": "Builder's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.lumberjack": "Forester's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.mysticalsite": "Mystical Site",
-  "com.minecolonies.coremod.gui.workerhuts.florist": "Flower Shop",
-  "com.minecolonies.coremod.gui.workerhuts.townhall": "Town Hall",
-
   "com.minecolonies.coremod.gui.workerhuts.minerminenode": "Mine Level",
   "com.minecolonies.coremod.gui.workerhuts.minerrepairnode": "Repair",
   "com.minecolonies.coremod.gui.workerhuts.minerguards": "Guards",
@@ -588,13 +574,11 @@
   "com.minecolonies.coremod.gui.cowboy.notcollect": "Not Collecting Milk",
   "com.minecolonies.coremod.gui.cowboy.collect": "Collecting Milk",
   "com.minecolonies.coremod.gui.workerhuts.settings": "Settings",
-  "com.minecolonies.coremod.gui.workerhuts.farmer": "Farmer",
-
   "com.minecolonies.coremod.gui.workerhuts.workorder": "Work Orders",
 
   "com.minecolonies.coremod.gui.workerhuts.minernodelist": "Levels",
   "com.minecolonies.coremod.gui.workerhuts.resourcelist": "Required Resources",
-  "com.minecolonies.coremod.gui.workerhuts.fisherman": "Fisher's Hut",
+
   "com.minecolonies.coremod.gui.workerhuts.recall": "Recall Worker",
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
@@ -603,7 +587,6 @@
   "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
-  "com.minecolonies.coremod.gui.workerhuts.graveyard": "Graveyard",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.rip": "Citizens buried here",
 
@@ -615,10 +598,6 @@
   "com.minecolonies.coremod.gui.debugscreen.noclosecolony": "No close colony!",
   "com.minecolonies.coremod.gui.debugscreen.nextcolony": "Next colony is %d blocks away (too close to found a new one)!",
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
-  "com.minecolonies.coremod.gui.workerhuts.guardtower": "Guard Tower",
-  "com.minecolonies.coremod.gui.workerhuts.barrackstower": "Barracks Tower",
-
-  "com.minecolonies.coremod.gui.workerhuts.university": "University",
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
 
@@ -661,9 +640,6 @@
   "com.minecolonies.coremod.workerhuts.recallfail": "Recall failed. Please make more space around the location.",
   "com.minecolonies.coremod.warehouse.full": "The Warehouse is full, please upgrade it!",
   "com.minecolonies.coremod.warehouse.full.max": "The Warehouse is full, please use an emerald block to make more space in the racks!",
-  "com.minecolonies.coremod.gui.workerhuts.warehouse": "Warehouse",
-
-  "com.minecolonies.coremod.gui.workerhuts.deliveryman": "Courier's Hut",
   "com.minecolonies.coremod.gui.workerhuts.cancelbuild": "Cancel Build",
   "com.minecolonies.coremod.gui.workerhuts.cancelupgrade": "Cancel Upgrade",
   "com.minecolonies.coremod.gui.workerhuts.cancelrepair": "Cancel Repair",
@@ -741,7 +717,6 @@
   "tile.blockhut.warehouse.limit": "The amount of Warehouses is limited to 1 per colony. You cannot place any more in this colony without adjusting the config.",
   "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place any more in this colony.",
 
-  "com.minecolonies.coremod.gui.workerhuts.baker": "Bakery",
   "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 
   "com.minecolonies.coremod.gui.workerhuts.saplinglist": "Saplings",
@@ -786,7 +761,6 @@
   "com.minecolonies.coremod.gravespawned": "A grave spawned, collect it before it decays!",
   "com.minecolonies.coremod.nospaceforgrave": "Your Graveyard is full and %s couldn't be buried. Upgrade it or build more Graveyards before this happens again!",
 
-  "com.minecolonies.coremod.gui.workerhuts.buildbarracks": "Barracks",
   "com.minecolonies.coremod.gui.barracks.spieshire": "Hire",
   "com.minecolonies.coremod.gui.barracks.spies.desc": "During raids, you can hire spies here to infiltrate the enemy lines. The spies then let you know enemy positions, although they demand some gold as payment. Put the gold into the Barracks inventory to automatically pay them.",
   "com.minecolonies.coremod.gui.workerhuts.spies": "Hire Spies",
@@ -798,8 +772,6 @@
   "com.minecolonies.coremod.worker.needbarracks": "Please upgrade the Barracks first.",
   "com.minecolonies.coremod.gui.warehouse.upgrade": "Upgrade Storage",
   "com.minecolonies.coremod.gui.warehouse.allinventory": "Stored Items",
-
-  "com.minecolonies.coremod.gui.workerhuts.cook": "Cook",
 
   "com.minecolonies.coremod.ai.norestaurant": "Please build a Restaurant or get me something to eat!",
   "com.minecolonies.coremod.ai.nohospital": "I have %s and need to be cured with %s! Please build a Hospital (or give me the items directly).",
@@ -958,8 +930,6 @@
   "com.minecolonies.coremod.pvp.townhall.broke": "Beware!!! %s broke your Town Hall by over %d%%! At 100%% it will be lost!!!",
   "com.minecolonies.coremod.gui.townhall.pickteamcolor": "Pick Team Color:",
 
-  "com.minecolonies.coremod.gui.workerhuts.library": "Library",
-
   "item.minecolonies.resourcescroll": "Resource Scroll",
 
   "com.minecolonies.coremod.gui.guardtower.gettool": "Get Guard Tool",
@@ -1056,14 +1026,10 @@
   "com.minecolonies.coremod.request.compostable": "Compostable",
   "com.minecolonies.coremod.request.fertilizer": "Fertilizer",
   "com.minecolonies.coremod.request.flowers": "Flowers",
-  "com.minecolonies.coremod.gui.workerhuts.composter": "Composter's Hut",
   "block.minecolonies.blockpostbox.name": "Postbox",
 
   "com.minecolonies.coremod.gui.citizen.stacks": "Items to Request:",
   "com.minecolonies.coremod.gui.workerhuts.request": "Request",
-
-  "com.minecolonies.coremod.gui.workerhuts.smelter": "Smeltery",
-  "com.minecolonies.coremod.gui.workerhuts.stonesmelter": "Stone Smeltery",
 
   "com.minecolonies.coremod.ai.wrongfood": "The food I have is too raw to eat!",
   "com.minecolonies.coremod.ai.betterfood": "Can I have better food please?",
@@ -1071,7 +1037,6 @@
 
   "com.minecolonies.coremod.gui.home.current": "Current home: %d %d %d",
   "com.minecolonies.coremod.gui.home.currently": "Currently: %d blocks",
-  "com.minecolonies.coremod.gui.workerhuts.crusher": "Crusher",
   "com.minecolonies.coremod.gui.workerhuts.crushersettings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.save": "Save",
   "com.minecolonies.coremod.crusher.toomuch": "Set to the current daily max of %d blocks.",
@@ -1092,7 +1057,6 @@
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo": "of %d allowed",
   "com.minecolonies.coremod.gui.workerhuts.sifterinfo.unlimited": "of Unlimited",
 
-  "com.minecolonies.coremod.gui.workerhuts.sifter": "Sifter",
   "com.minecolonies.coremod.sifter.toomuch": "Set to the current daily max of %d.",
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
 
@@ -1144,7 +1108,6 @@
   "com.minecolonies.coremod.gui.townhall.population.universitys": "Universities: %d/%d",
 
   "com.minecolonies.coremod.job.enchanter": "Enchanter",
-  "com.minecolonies.coremod.gui.workerhuts.enchanter": "Enchanter's Tower",
   "com.minecolonies.gui.workerhuts.enchanter.workers": "Gather Targets",
   "com.minecolonies.gui.workerhuts.enchanter.daily": "Daily XP drain",
   "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can drain experience from so I can work!",
@@ -1671,9 +1634,7 @@
   "com.minecolonies.coremod.gui.back": "Back",
   "com.minecolonies.coremod.research.research.maxunlocked": "Max 1 Level 6 per branch",
   "com.minecolonies.coremod.research.research.or": "or",
-  "com.minecolonies.coremod.gui.workerhuts.glassblower": "Glassblower's Hut",
   "com.minecolonies.coremod.job.glassblower": "Glassblower",
-  "com.minecolonies.coremod.gui.workerhuts.dyer": "Dyer's Hut",
   "com.minecolonies.coremod.job.dyer": "Dyer",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman.deliveries": "Deliveries",
   "com.minecolonies.coremod.gui.workerhuts.deliveryman.priority": "Priority: ",
@@ -1687,8 +1648,6 @@
   "death.attack.entity.minecolonies.mummy": "%s was scared to death by a Mummy!",
   "death.attack.entity.minecolonies.pharao": "%s was put to sleep by a Pharaoh!",
   "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glare!",
-
-  "com.minecolonies.coremod.gui.workerhuts.fletcher": "Fletcher's Hut",
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
   "entity.amazon": "Amazon",
   "entity.minecolonies.amazonchief": "Amazon Leader",
@@ -1696,10 +1655,7 @@
   "entity.amazonchief": "Amazon Leader",
   "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader!",
   "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow!",
-  "com.minecolonies.coremod.gui.workerhuts.mechanic": "Mechanic's Hut",
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
-
-  "com.minecolonies.coremod.gui.workerhuts.plantation": "Plantation",
   "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "Planting:",
   "com.minecolonies.coremod.job.planter": "Planter",
 
@@ -1724,7 +1680,6 @@
   "com.minecolonies.coremod.playerinvfull": "You can't pick up this item, as your inventory is full!",
   "com.minecolonies.coremod.playerinvfull.hotbarinsert": " was dropped in front of you, as your inventory is full!",
 
-  "com.minecolonies.coremod.gui.workerhuts.concretemixer": "Concrete Mixer's Hut",
   "com.minecolonies.coremod.job.concretemixer": "Concrete Mixer",
 
   "com.minecolonies.coremod.gui.workerhuts.guide.confirm": "Understood",
@@ -1831,17 +1786,6 @@
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
   "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
-
-  "com.minecolonies.coremod.gui.workerhuts.archery": "Archery",
-  "com.minecolonies.coremod.gui.workerhuts.combatacademy": "Combat Academy",
-  "com.minecolonies.coremod.gui.workerhuts.sawmill": "Sawmill",
-  "com.minecolonies.coremod.gui.workerhuts.blacksmith": "Blacksmith's Hut",
-  "com.minecolonies.coremod.gui.workerhuts.stonemason": "Stonemason",
-  "com.minecolonies.coremod.gui.workerhuts.hospital": "Hospital",
-  "com.minecolonies.coremod.gui.workerhuts.healer": "Hospital",
-  "com.minecolonies.coremod.gui.workerhuts.school": "School",
-  "com.minecolonies.coremod.gui.workerhuts.teacher": "Teacher",
-  "com.minecolonies.coremod.gui.workerhuts.pupil": "Pupil",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
   "block.minecolonies.blockconstructiontape": "Construction Tape",
@@ -2056,6 +2000,54 @@
   "com.minecolonies.job.concretemixer": "Concrete Mixer",
   "com.minecolonies.job.beekeeper": "Beekeeper",
   "com.minecolonies.job.cookassistant": "Assistant Cook",
+  "com.minecolonies.job.smelter": "Smelter",
+
+  "com.minecolonies.building.miner": "Mine",
+  "com.minecolonies.building.farmer": "Farm",
+  "com.minecolonies.building.fisherman": "Fisher's Hut",
+  "com.minecolonies.building.shepherd": "Shepherd's Hut",
+  "com.minecolonies.building.swineherder": "Swineherd's Hut",
+  "com.minecolonies.building.cowboy": "Cowhand's Hut",
+  "com.minecolonies.building.chickenherder": "Chicken Farmer's Hut",
+  "com.minecolonies.building.rabbithutch": "Rabbit Hutch",
+  "com.minecolonies.building.stonesmeltery": "Stone Smeltery",
+  "com.minecolonies.building.beekeeper": "Apiary",
+  "com.minecolonies.building.home": "House",
+  "com.minecolonies.building.tavern": "Tavern",
+  "com.minecolonies.building.builder": "Builder's Hut",
+  "com.minecolonies.building.lumberjack": "Forester's Hut",
+  "com.minecolonies.building.mysticalsite": "Mystical Site",
+  "com.minecolonies.building.florist": "Flower Shop",
+  "com.minecolonies.building.townhall": "Town Hall",
+  "com.minecolonies.building.archery": "Archery",
+  "com.minecolonies.building.combatacademy": "Combat Academy",
+  "com.minecolonies.building.sawmill": "Sawmill",
+  "com.minecolonies.building.blacksmith": "Blacksmith's Hut",
+  "com.minecolonies.building.stonemason": "Stonemason",
+  "com.minecolonies.building.hospital": "Hospital",
+  "com.minecolonies.building.school": "School",
+  "com.minecolonies.building.mechanic": "Mechanic's Hut",
+  "com.minecolonies.building.fletcher": "Fletcher's Hut",
+  "com.minecolonies.building.dyer": "Dyer's Hut",
+  "com.minecolonies.building.glassblower": "Glassblower's Hut",
+  "com.minecolonies.building.plantation": "Plantation",
+  "com.minecolonies.building.concretemixer": "Concrete Mixer's Hut",
+  "com.minecolonies.building.graveyard": "Graveyard",
+  "com.minecolonies.building.guardtower": "Guard Tower",
+  "com.minecolonies.building.barrackstower": "Barracks Tower",
+  "com.minecolonies.building.warehouse": "Warehouse",
+  "com.minecolonies.building.deliveryman": "Courier's Hut",
+  "com.minecolonies.building.university": "University",
+  "com.minecolonies.building.baker": "Bakery",
+  "com.minecolonies.building.barracks": "Barracks",
+  "com.minecolonies.building.cook": "Restaurant",
+  "com.minecolonies.building.library": "Library",
+  "com.minecolonies.building.smeltery": "Smeltery",
+  "com.minecolonies.building.crusher": "Crusher",
+  "com.minecolonies.building.sifter": "Sifter",
+  "com.minecolonies.building.enchanter": "Enchanter's Tower",
+  "com.minecolonies.building.composter": "Composter's Hut",
+
   "com.minecolonies.coremod.gui.chat.potatogod": "I used to be just Jack then I made a bet with the Devil.. What was his name?.. 'Ray', I think. Anyways, being a cactus has.. interrupted my relationships. I've been wandering these lands for as long as I can remember. Then finally, I saw your pathetic village and thought 'hmm.. someone that lame could definitely use my help!'",
   "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!"
 }

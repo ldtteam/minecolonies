@@ -23,12 +23,6 @@ public class JobRabbitHerder extends AbstractJob<EntityAIWorkRabbitHerder, JobRa
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.rabbitHerder;
-    }
-
     /**
      * Generate your AI class to register.
      *
