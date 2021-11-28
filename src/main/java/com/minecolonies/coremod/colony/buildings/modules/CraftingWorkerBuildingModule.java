@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * Assignment module for crafting workers.
  */
-public class CraftingWorkerBuildingModule extends WorkerBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class CraftingWorkerBuildingModule extends WorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
      * Skill influencing crafting behaviour.
