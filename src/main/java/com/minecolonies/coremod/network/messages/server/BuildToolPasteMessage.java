@@ -324,18 +324,11 @@ public class BuildToolPasteMessage implements IMessage
                     building.getTileEntity().setColony(colony);
                 }
             }
-            String name = sn.toString();
-            name = name.substring(name.length() - 1);
 
-            try
-            {
-                final int level = Integer.parseInt(name);
-                building.setBuildingLevel(level);
-            }
-            catch (final NumberFormatException e)
-            {
-                Log.getLogger().warn("Couldn't parse the level.", e);
-            }
+            // Don't set the building level here; that will be set later in
+            // readSchematicDataFromNBT (provided that the schematic has
+            // TAG_BLUEPRINTDATA, but buildings always should).  This allows
+            // level 0 -> N upgrade events to properly be triggered on paste.
 
             building.setStyle(sn.getStyle());
 

@@ -1,12 +1,12 @@
 package com.minecolonies.api.items;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.tags.Tag;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModTags
 {
@@ -30,6 +30,7 @@ public class ModTags
     public static Tag<Item> meshes;
 
     public static Tag<Item> floristFlowers;
+    public static Tag<Item> excludedFood;
 
     public static Tag<EntityType<?>> hostile;
 

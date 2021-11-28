@@ -21,7 +21,10 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     public void markDirty()
     {
         this.isDirty = true;
-        building.markDirty();
+        if (building != null)
+        {
+            building.markDirty();
+        }
     }
 
     @Override
