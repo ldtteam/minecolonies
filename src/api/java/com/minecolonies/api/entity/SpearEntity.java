@@ -21,13 +21,39 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Custom arrow entity used for spear throwing, acts similar to the trident without any of the special effects.
+ */
 public class SpearEntity extends AbstractArrowEntity implements ICustomAttackSound
 {
-    public static final int       BASE_DAMAGE      = 8;
-    public static final String    NBT_WEAPON       = "Weapon";
-    public static final String    NBT_DEALT_DAMAGE = "DealtDamage";
-    protected           ItemStack weapon           = new ItemStack(ModItems.spear);
-    private             boolean   dealtDamage;
+    /**
+     * Max time the arrow is alive before removing it, currently gets removed after 60 seconds.
+     */
+    private static final int MAX_TIME_ALIVE = 1200;
+
+    /**
+     * The spears base damage before any modifications.
+     */
+    public static final int BASE_DAMAGE = 8;
+
+    /**
+     * The NBT key for the spear ItemStack.
+     */
+    public static final String NBT_WEAPON       = "Weapon";
+    /**
+     * The NBT key for the spears dealt damage value.
+     */
+    public static final String NBT_DEALT_DAMAGE = "DealtDamage";
+
+    /**
+     * The weapon item stack, defaults to a generic ItemStack of the spear.
+     */
+    protected ItemStack weapon = new ItemStack(ModItems.spear);
+
+    /**
+     * The value of damage the spear has dealt.
+     */
+    private boolean dealtDamage;
 
     public SpearEntity(EntityType<? extends AbstractArrowEntity> type, World world)
     {

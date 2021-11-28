@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
 /**
- * Class for the Spearman amazon entity
+ * Class for the Amazon Spearman entity.
  */
 public class EntityAmazonSpearman extends AbstractEntityAmazon implements IAmazonSpearman
 {

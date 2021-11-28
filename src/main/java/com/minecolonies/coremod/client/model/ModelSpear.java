@@ -9,6 +9,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Model for the Spear. The model is a long wooden rod with an iron head and leather handle.
+ */
 @OnlyIn(Dist.CLIENT)
 public class ModelSpear extends Model
 {
