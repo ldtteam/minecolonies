@@ -11,8 +11,8 @@ import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.DefaultBuildingInstance;
 import com.minecolonies.coremod.colony.buildings.modules.*;
@@ -21,6 +21,8 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.*;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -135,6 +137,7 @@ public final class ModBuildingsInitializer
                                        .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.chickenHerder, Skill.Adaptability, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                        .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                        .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                       .addBuildingModuleProducer(BuildingChickenHerder.HerdingModule::new)
                                        .createBuildingEntry();
 
         ModBuildings.combatAcademy = new BuildingEntry.Builder()
@@ -186,6 +189,8 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                      .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
+                                .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy, EntityType.COW, new ItemStack(Items.WHEAT, 2)))
+                                .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
                                 .createBuildingEntry();
 
         ModBuildings.crusher = new BuildingEntry.Builder()
@@ -326,6 +331,7 @@ public final class ModBuildingsInitializer
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                                        .with(BuildingShepherd.DYEING, new BoolSetting(true))
                                                                                        .with(BuildingShepherd.SHEARING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                  .addBuildingModuleProducer(BuildingShepherd.HerdingModule::new)
                                   .createBuildingEntry();
 
         ModBuildings.sifter = new BuildingEntry.Builder()
@@ -387,6 +393,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.swineHerder, Skill.Strength, Skill.Athletics, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder, EntityType.PIG, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry();
 
         ModBuildings.townHall = new BuildingEntry.Builder()
@@ -555,6 +562,7 @@ public final class ModBuildingsInitializer
                                      .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.rabbitHerder, Skill.Agility, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                      .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                     .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder, EntityType.RABBIT, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry();
 
         //todo we want two here, one custom for the concrete placement, and one crafting for the normal crafting of the powder.
@@ -582,6 +590,7 @@ public final class ModBuildingsInitializer
                                    .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, false,
                                      (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
                                    .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterBeekeeper))
+                                   .addBuildingModuleProducer(BuildingBeekeeper.HerdingModule::new)
                                    .createBuildingEntry();
 
         ModBuildings.mysticalSite = new BuildingEntry.Builder()

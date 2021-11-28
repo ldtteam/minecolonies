@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.compatibility.jei.GenericRecipeCategory;
 import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
 import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
@@ -23,8 +22,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
-
 /**
  * Common base class for JEI teaching GUI extensions.
  */
@@ -32,9 +29,9 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
         implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
 {
     @NotNull
-    private final Map<ResourceLocation, GenericRecipeCategory> categories;
+    private final Map<ResourceLocation, JobBasedRecipeCategory<?>> categories;
 
-    protected AbstractTeachingGuiHandler(@NotNull final List<GenericRecipeCategory> categories)
+    protected AbstractTeachingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
     {
         this.categories = categories.stream()
                 .collect(Collectors.toMap(JobBasedRecipeCategory::getUid, Function.identity()));
@@ -52,7 +49,7 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
     protected abstract void updateServer(@NotNull W gui);
 
     @Nullable
-    protected GenericRecipeCategory getRecipeCategory(@NotNull final AbstractBuildingView view)
+    protected JobBasedRecipeCategory<?> getRecipeCategory(@NotNull final AbstractBuildingView view)
     {
         for (final CraftingModuleView moduleView : view.getModuleViews(CraftingModuleView.class))
         {
@@ -62,7 +59,7 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
             if (jobEntry != null)
             {
                 final ResourceLocation uid = ICraftingBuildingModule.getUid(jobEntry, moduleView.getId());
-                final GenericRecipeCategory category = this.categories.get(uid);
+                final JobBasedRecipeCategory<?> category = this.categories.get(uid);
                 if (category != null)
                 {
                     return category;
