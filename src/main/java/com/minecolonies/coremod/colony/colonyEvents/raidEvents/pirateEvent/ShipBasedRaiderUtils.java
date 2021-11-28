@@ -155,8 +155,14 @@ public final class ShipBasedRaiderUtils
     public static boolean canPlaceShipAt(final BlockPos pos, final Blueprint ship, final World world)
     {
         final BlockPos zeroPos = pos.subtract(ship.getPrimaryBlockOffset());
+        final List<Material> allowedShipMaterials = Lists.newArrayList(Material.WATER, Material.ICE, Material.WATER_PLANT);
 
-        return isSurfaceAreaMostlyMaterial(Lists.newArrayList(Material.WATER, Material.ICE, Material.WATER_PLANT), world, pos.getY(),
+        if (MineColonies.getConfig().getServer().skyRaiders.get())
+        {
+            allowedShipMaterials.add(Material.AIR);
+        }
+
+        return isSurfaceAreaMostlyMaterial(allowedShipMaterials, world, pos.getY(),
           zeroPos,
           new BlockPos(zeroPos.getX() + ship.getSizeX() - 1, zeroPos.getY(), zeroPos.getZ() + ship.getSizeZ() - 1),
           0.99);

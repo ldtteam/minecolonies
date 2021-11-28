@@ -63,9 +63,13 @@
   "item.minecolonies.scepterlumberjack.usedend": "Second position set. Click the same position to finish.",
   "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
   "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
-  
+
   "minecolonies.config.maxtreesize": "Max Tree Size",
   "minecolonies.config.maxtreesize.comment": "Max log count in one tree for the Forester to check during their tree search.",
+  "minecolonies.config.nosupplyplacementrestrictions": "No supply camp placing restrictions",
+  "minecolonies.config.nosupplyplacementrestrictions.comment": "Disables supply camp placing restrictions, intended for skyworlds and similar",
+  "minecolonies.config.skyraiders": "Enable raiders to spawn in the sky",
+  "minecolonies.config.skyraiders.comment": "Raiders will spawn in the sky if this is enabled",
 
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "Restriction (off)",

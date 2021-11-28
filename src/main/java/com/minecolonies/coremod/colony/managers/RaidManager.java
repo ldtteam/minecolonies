@@ -42,6 +42,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.BlockPosUtil.DOUBLE_AIR_POS_SELECTOR;
+import static com.minecolonies.api.util.BlockPosUtil.SOLID_AIR_POS_SELECTOR;
 import static com.minecolonies.api.util.constant.ColonyConstants.BIG_HORDE_SIZE;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_BARBARIAN_DIFFICULTY;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NIGHTS_SINCE_LAST_RAID;
@@ -267,7 +269,7 @@ public class RaidManager implements IRaiderManager
     }
 
     @Override
-    public void raiderEvent(final String raidType)
+    public void raiderEvent(String raidType)
     {
         if (colony.getWorld() == null || !canRaid() || raidType == null)
         {
@@ -313,6 +315,12 @@ public class RaidManager implements IRaiderManager
                 LanguageHandler.sendPlayersMessage(
                   colony.getMessagePlayerEntities(),
                   "Horde Spawn Point: " + targetSpawnPoint);
+            }
+
+            if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
+                  && colony.getWorld().getBlockState(targetSpawnPoint.below()).getMaterial() == Material.AIR)
+            {
+                raidType = PirateRaidEvent.PIRATE_RAID_EVENT_TYPE_ID.getPath();
             }
 
             // No rotation till spawners are moved into schematics
@@ -457,12 +465,22 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        return BlockPosUtil.findAround(colony.getWorld(),
+        spawnPos = BlockPosUtil.findAround(colony.getWorld(),
           BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
           3,
           30,
-          (world, pos) -> (world.getBlockState(pos).canOcclude() || world.getBlockState(pos).getMaterial().isLiquid()) && world.getBlockState(
-            pos.above()).getMaterial() == Material.AIR && world.getBlockState(pos.above(2)).getMaterial() == Material.AIR);
+          SOLID_AIR_POS_SELECTOR);
+
+        if (spawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
+        {
+            spawnPos = BlockPosUtil.findAround(colony.getWorld(),
+              BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
+              10,
+              15,
+              DOUBLE_AIR_POS_SELECTOR);
+        }
+
+        return spawnPos;
     }
 
     /**
@@ -732,7 +750,7 @@ public class RaidManager implements IRaiderManager
         }
 
         return world.random.nextDouble() < 1.0 / (MineColonies.getConfig().getServer().averageNumberOfNightsBetweenRaids.get() - MineColonies.getConfig()
-                                                                                                                                 .getServer().minimumNumberOfNightsBetweenRaids.get());
+          .getServer().minimumNumberOfNightsBetweenRaids.get());
     }
 
     @Override
