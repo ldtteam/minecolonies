@@ -4,16 +4,28 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.crafting.GenericRecipe;
+import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapelessRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 /**
  * Creates a new building for the Cowboy.
@@ -38,7 +50,7 @@ public class BuildingCowboy extends AbstractBuilding
     /**
      * Milking setting.
      */
-    public static final ISettingKey<BoolSetting> MILKING  = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "milking"));
+    public static final ISettingKey<BoolSetting> MILKING  = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "milking"));
 
     /**
      * Instantiates the building.
@@ -95,6 +107,31 @@ public class BuildingCowboy extends AbstractBuilding
         public Window getWindow()
         {
             return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
+        }
+    }
+
+    /**
+     * Custom crafting module to indicate that we produce milk buckets.
+     * (This is just for JEI and does not mean they're crafted on demand... although that could be changed.)
+     */
+    public static class MilkingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        public MilkingModule()
+        {
+            super(ModJobs.cowboy);
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+
+            final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "",
+                    new ItemStack(Items.MILK_BUCKET), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BUCKET)));
+            recipes.add(GenericRecipe.of(milk));
+
+            return recipes;
         }
     }
 }

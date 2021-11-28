@@ -3,7 +3,7 @@ package com.minecolonies.coremod.compatibility.jei.transfer;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.containers.WindowCrafting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
-import com.minecolonies.coremod.compatibility.jei.GenericRecipeCategory;
+import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import net.minecraft.inventory.CraftingInventory;
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCrafting>
 {
-    public CraftingGuiHandler(@NotNull final List<GenericRecipeCategory> categories)
+    public CraftingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
     {
         super(categories);
     }
@@ -38,7 +38,7 @@ public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCraftin
                                                               final double mouseY)
     {
         final List<IGuiClickableArea> areas = new ArrayList<>();
-        final GenericRecipeCategory category = getRecipeCategory(containerScreen.getBuildingView());
+        final JobBasedRecipeCategory<?> category = getRecipeCategory(containerScreen.getBuildingView());
         if (category != null)
         {
             areas.add(IGuiClickableArea.createBasic(90, 34, 22, 17, category.getUid()));

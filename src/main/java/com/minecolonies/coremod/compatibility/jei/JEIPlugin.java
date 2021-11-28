@@ -3,6 +3,7 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -12,6 +13,7 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipesReloadedEvent;
 import com.minecolonies.coremod.compatibility.jei.transfer.CraftingGuiHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.FurnaceCraftingGuiHandler;
@@ -39,7 +41,10 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -58,7 +63,7 @@ public class JEIPlugin implements IModPlugin
         return new ResourceLocation(Constants.MOD_ID);
     }
 
-    private final List<GenericRecipeCategory> categories = new ArrayList<>();
+    private final List<JobBasedRecipeCategory<?>> categories = new ArrayList<>();
     private boolean recipesLoaded;
     private WeakReference<IJeiRuntime> weakRuntime;
 
@@ -74,21 +79,34 @@ public class JEIPlugin implements IModPlugin
         categories.clear();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            building.getModuleProducers().stream()
-                    .map(Supplier::get)
-                    .filter(m -> m instanceof ICraftingBuildingModule)
-                    .map(m -> (ICraftingBuildingModule) m)
-                    .forEach(crafting ->
+            for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
+            {
+                final IBuildingModule module = producer.get();
+
+                if (module instanceof ICraftingBuildingModule)
+                {
+                    final ICraftingBuildingModule crafting = (ICraftingBuildingModule) module;
+                    final IJob<?> job = crafting.getCraftingJob();
+                    if (job != null)
                     {
-                        final IJob<?> job = crafting.getCraftingJob();
-                        if (job != null)
-                        {
-                            final GenericRecipeCategory category = new GenericRecipeCategory(building, job, crafting, guiHelper);
-                            categories.add(category);
-                            registration.addRecipeCategories(category);
-                        }
-                    });
+                        registerCategory(registration, new GenericRecipeCategory(building, job, crafting, guiHelper));
+                    }
+                }
+
+                if (module instanceof AnimalHerdingModule)
+                {
+                    final AnimalHerdingModule herding = (AnimalHerdingModule) module;
+                    registerCategory(registration, new HerderRecipeCategory(building, herding.getHerdingJob(), herding, guiHelper));
+                }
+            }
         }
+    }
+
+    private void registerCategory(@NotNull final IRecipeCategoryRegistration registration,
+                                  @NotNull final JobBasedRecipeCategory<?> category)
+    {
+        categories.add(category);
+        registration.addRecipeCategories(category);
     }
 
     @Override
@@ -121,7 +139,7 @@ public class JEIPlugin implements IModPlugin
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutComposter), CompostRecipe.ID);
         registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFisherman), ModJobs.FISHERMAN_ID);
 
-        for (final GenericRecipeCategory category : this.categories)
+        for (final JobBasedRecipeCategory<?> category : this.categories)
         {
             registration.addRecipeCatalyst(category.getCatalyst(), category.getUid());
         }
@@ -195,7 +213,7 @@ public class JEIPlugin implements IModPlugin
         registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
         registrar.accept(FishermanRecipeCategory.findRecipes(), ModJobs.FISHERMAN_ID);
 
-        for (final GenericRecipeCategory category : this.categories)
+        for (final JobBasedRecipeCategory<?> category : this.categories)
         {
             try
             {

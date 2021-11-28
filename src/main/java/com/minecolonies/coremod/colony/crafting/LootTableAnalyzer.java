@@ -6,11 +6,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.*;
+import net.minecraft.loot.LootSerializers;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.loot.RandomValueRange;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -91,14 +95,17 @@ public final class LootTableAnalyzer
                     final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(JSONUtils.getAsString(entryJson, "name")));
                     final float weight = JSONUtils.getAsFloat(entryJson, "weight", 1);
                     final float quality = JSONUtils.getAsFloat(entryJson, "quality", 0);
+                    float modifier = 1.0F;
                     final boolean conditional = JSONUtils.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
                     ItemStack stack = new ItemStack(item);
                     if (entryJson.has("functions"))
                     {
-                        stack = processFunctions(stack, JSONUtils.getAsJsonArray(entryJson, "functions"));
+                        final Tuple<ItemStack, Float> result = processFunctions(stack, JSONUtils.getAsJsonArray(entryJson, "functions"));
+                        stack = result.getA();
+                        modifier = result.getB();
                     }
 
-                    drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight, quality, conditional));
+                    drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight * modifier, quality, conditional));
                 }
                 else if (type.equals("minecraft:loot_table") && lootTableManager != null)
                 {
@@ -130,8 +137,10 @@ public final class LootTableAnalyzer
                 .collect(Collectors.toList());
     }
 
-    private static ItemStack processFunctions(@NotNull ItemStack stack, @NotNull final JsonArray functions)
+    private static Tuple<ItemStack, Float> processFunctions(@NotNull ItemStack stack, @NotNull final JsonArray functions)
     {
+        float modifier = 1.0F;
+
         for (final JsonElement je : functions)
         {
             final JsonObject function = je.getAsJsonObject();
@@ -140,7 +149,9 @@ public final class LootTableAnalyzer
             switch (name)
             {
                 case "minecraft:set_count":
-                    stack.setCount(processNumber(function.get("count"), 1));
+                    final Tuple<Integer, Float> result = processCount(function.get("count"));
+                    stack.setCount(result.getA());
+                    modifier *= result.getB();
                     break;
 
                 case "minecraft:set_damage":
@@ -168,13 +179,38 @@ public final class LootTableAnalyzer
                     stack = EnchantmentHelper.enchantItem(ThreadLocalRandom.current(), stack, levels, treasure);
                     break;
 
+                case "minecraft:looting_enchant":
+                    // just ignore this for now; we could possibly increase the count a little or
+                    // add a tooltip to indicate it's boosted by looting, but meh.
+                    break;
+
+                case "minecraft:furnace_smelt":
+                    // this is mostly just to cook the meat if an animal is on fire, which
+                    // we can safely ignore.
+                    break;
+
                 default:
                     Log.getLogger().warn("Unhandled modifier in loot table: " + name);
                     break;
             }
         }
 
-        return stack;
+        return new Tuple<>(stack, modifier);
+    }
+
+    private static Tuple<Integer, Float> processCount(@Nullable final JsonElement json)
+    {
+        if (json == null) return new Tuple<>(1, 1.0F);
+
+        final RandomValueRange range = GSON.fromJson(json, RandomValueRange.class);
+        if (range.getMin() > 0)
+        {
+            return new Tuple<>(range.getInt(ThreadLocalRandom.current()), 1.0F);
+        }
+
+        // the extra wrinkle is to alter the probability when 0 is a possible count;
+        // this assumes a uniform distribution, which isn't necessarily true, but usually is.
+        return new Tuple<>((int) range.getMax(), range.getMax() / (range.getMax() + 1.0F));
     }
 
     private static int processNumber(@Nullable final JsonElement json, final int defaultValue)
