@@ -77,28 +77,4 @@ public class BuildingDeliveryman extends AbstractBuilding implements IBuildingDe
         }
         return super.canEat(stack);
     }
-
-    /**
-     * BuildingDeliveryman View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiate the deliveryman view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, DELIVERYMAN);
-        }
-    }
 }

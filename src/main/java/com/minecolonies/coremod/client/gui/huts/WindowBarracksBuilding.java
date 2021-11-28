@@ -102,18 +102,6 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
     }
 
     /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.buildbarracks";
-    }
-
-    /**
      * Open the spies gui when the button is clicked.
      *
      * @param button the clicked button.

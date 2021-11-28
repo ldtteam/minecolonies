@@ -10,6 +10,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.HappinessConstants;
@@ -366,7 +367,7 @@ public class CitizenWindowUtils
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingView && !(building instanceof BuildingLibrary.View) && citizen.getJobView() != null)
+        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library && citizen.getJobView() != null)
         {
             final WorkerBuildingModuleView moduleView = building.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == citizen.getJobView().getEntry());
             if (moduleView == null)

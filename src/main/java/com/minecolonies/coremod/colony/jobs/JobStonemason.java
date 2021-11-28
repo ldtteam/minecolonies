@@ -21,12 +21,6 @@ public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, Jo
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.stoneMason;
-    }
-
     /**
      * Generate your AI class to register.
      *

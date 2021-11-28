@@ -691,7 +691,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             return null;
         }
-        return jobEntry.getHandlerProducer().apply(null);
+        return jobEntry.produceJob(null);
     }
 
     @Override

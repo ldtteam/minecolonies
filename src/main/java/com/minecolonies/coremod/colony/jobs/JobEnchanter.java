@@ -40,12 +40,6 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.enchanter;
-    }
-
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *

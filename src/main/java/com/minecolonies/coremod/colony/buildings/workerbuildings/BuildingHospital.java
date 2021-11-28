@@ -349,28 +349,4 @@ public class BuildingHospital extends AbstractBuilding
 
         return super.canEat(stack);
     }
-
-    /**
-     * BuildingHospital View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiate the hospital view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, HOSPITAL_DESC);
-        }
-    }
 }

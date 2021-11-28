@@ -21,12 +21,6 @@ public class JobStoneSmeltery extends AbstractJobCrafter<EntityAIWorkStoneSmelte
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.stoneSmeltery;
-    }
-
     /**
      * Generate your AI class to register.
      *

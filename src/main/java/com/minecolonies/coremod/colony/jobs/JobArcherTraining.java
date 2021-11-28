@@ -22,12 +22,6 @@ public class JobArcherTraining extends AbstractJob<EntityAIArcherTraining, JobAr
     }
 
     @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.archer;
-    }
-
-    @Override
     public BipedModelType getModel()
     {
         return BipedModelType.ARCHER_GUARD;

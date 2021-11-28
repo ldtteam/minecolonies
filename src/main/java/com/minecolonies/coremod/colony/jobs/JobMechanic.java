@@ -23,12 +23,6 @@ public class JobMechanic extends AbstractJobCrafter<EntityAIWorkMechanic, JobMec
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.mechanic;
-    }
-
     /**
      * Generate your AI class to register.
      *

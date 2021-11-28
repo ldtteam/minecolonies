@@ -22,12 +22,6 @@ public class JobFarmer extends AbstractJobCrafter<EntityAIWorkFarmer, JobFarmer>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.farmer;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

@@ -108,12 +108,5 @@ public class WindowHutCrusherModule extends AbstractWindowWorkerModuleBuilding<B
             crushingSettingsButton.setText(this.mode.getItemStack().getHoverName());
         }
     }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.crusher";
-    }
 }
 

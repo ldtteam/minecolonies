@@ -228,7 +228,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule
     @Override
     public IJob<?> createJob(final ICitizenData citizen)
     {
-        return jobEntry.getHandlerProducer().apply(citizen);
+        return jobEntry.produceJob(citizen);
     }
 
     @Override

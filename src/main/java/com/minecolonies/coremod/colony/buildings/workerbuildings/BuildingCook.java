@@ -266,30 +266,6 @@ public class BuildingCook extends AbstractBuilding
         }
     }
 
-    /**
-     * BuildingCook View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiate the cook view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, COOK_DESC);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
         /**
