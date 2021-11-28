@@ -64,10 +64,4 @@ public interface IAssignsCitizen extends IBuildingModule
      * @return true if so.
      */
     boolean hasAssignedCitizen();
-
-    /**
-     * The job entry of the assignment.
-     * @return the job entry.
-     */
-    JobEntry getJobEntry();
 }

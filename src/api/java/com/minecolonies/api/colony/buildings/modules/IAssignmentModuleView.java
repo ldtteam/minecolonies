@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * AbstractBuilding View for clients.
+ * Assignment module view interface.
  */
 public interface IAssignmentModuleView extends IBuildingModuleView
 {

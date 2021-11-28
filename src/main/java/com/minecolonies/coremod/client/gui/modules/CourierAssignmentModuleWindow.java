@@ -21,7 +21,6 @@ import java.util.List;
 
 /**
  * Assignment module for couriers to warehouse.
- *
  */
 public class CourierAssignmentModuleWindow extends AbstractModuleWindow
 {

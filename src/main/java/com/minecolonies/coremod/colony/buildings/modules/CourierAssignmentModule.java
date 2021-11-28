@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
- * The worker module for citizen where they are assigned to if they work at it.
+ * The Courier module for the warehouse.
  */
-public class CourierAssignmentModule extends AbstractAssignedCitizenModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule
+public class CourierAssignmentModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule
 {
     /**
      * The hiring mode of this particular building, by default overriden by colony mode.

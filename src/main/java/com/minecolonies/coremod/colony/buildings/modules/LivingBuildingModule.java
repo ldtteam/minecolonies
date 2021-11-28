@@ -103,12 +103,6 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
     }
 
     @Override
-    public JobEntry getJobEntry()
-    {
-        return null;
-    }
-
-    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         for (final Optional<AbstractEntityCitizen> entityCitizen : Objects.requireNonNull(getAssignedEntities()))
