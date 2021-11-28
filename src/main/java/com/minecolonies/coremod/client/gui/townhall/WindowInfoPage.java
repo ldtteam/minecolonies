@@ -135,7 +135,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 for (final WorkerBuildingModuleView module : building.getModuleViews(WorkerBuildingModuleView.class))
                 {
                     int max = module.getMaxInhabitants();
-                    int workers = module.getWorkerIdList().size();
+                    int workers = module.getAssignedCitizens().size();
 
                     final String jobName = module.getJobDisplayName().toLowerCase(Locale.ENGLISH);
 

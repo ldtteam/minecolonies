@@ -116,9 +116,9 @@ public class FarmerFieldModuleView extends AbstractBuildingModuleView
         if (buildingView != null)
         {
             final WorkerBuildingModuleView view = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == ModJobs.farmer);
-            if (addNewField && !view.getWorkerIdList().isEmpty())
+            if (addNewField && !view.getAssignedCitizens().isEmpty())
             {
-                scarecrowTileEntity.setOwner(view.getWorkerIdList().get(0), getColony());
+                scarecrowTileEntity.setOwner(view.getAssignedCitizens().get(0), getColony());
                 amountOfFields++;
             }
             else

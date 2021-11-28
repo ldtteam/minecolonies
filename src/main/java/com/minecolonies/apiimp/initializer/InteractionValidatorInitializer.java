@@ -96,14 +96,7 @@ public class InteractionValidatorInitializer
           cit -> {
               if (cit.getJob() instanceof JobDeliveryman && cit.getWorkBuilding() != null)
               {
-                  for (final IWareHouse wareHouse : cit.getJob().getColony().getBuildingManager().getWareHouses())
-                  {
-                      if (wareHouse.registerWithWareHouse((IBuildingDeliveryman) cit.getWorkBuilding()))
-                      {
-                          return false;
-                      }
-                  }
-                  return true;
+                  return ((JobDeliveryman) cit.getJob()).findWareHouse() == null;
               }
               return false;
           });

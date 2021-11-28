@@ -4,10 +4,12 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -21,7 +23,7 @@ import java.util.Set;
 /**
  * AbstractBuilding View for clients.
  */
-public class WorkerBuildingModuleView extends AbstractBuildingModuleView
+public class WorkerBuildingModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
 {
     /**
      * List of the worker ids.
@@ -53,14 +55,28 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
      */
     private JobEntry jobEntry;
 
-    public List<Integer> getWorkerIdList()
+    @Override
+    public List<Integer> getAssignedCitizens()
     {
         return new ArrayList<>(workerIDs);
     }
 
-    public void addWorkerId(final int workerId)
+    @Override
+    public void addCitizen(final @NotNull ICitizenDataView citizen)
     {
-        workerIDs.add(workerId);
+        workerIDs.add(citizen.getId());
+        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, true, citizen.getId(), getJobEntry()));
+        citizen.setWorkBuilding(buildingView.getPosition());
+        citizen.setJobView(getJobEntry().getJobViewProducer().get().apply(buildingView.getColony(), citizen));
+        citizen.getJobView().setEntry(getJobEntry());
+    }
+
+    @Override
+    public void removeCitizen(final @NotNull ICitizenDataView citizen)
+    {
+        workerIDs.remove(citizen.getId());
+        Network.getNetwork().sendToServer(new HireFireMessage(buildingView, false, citizen.getId(), getJobEntry()));
+        citizen.setWorkBuilding(null);
     }
 
     @Override
@@ -110,47 +126,29 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
         return secondary;
     }
 
-    public void removeWorkerId(final int id)
-    {
-        workerIDs.remove(id);
-    }
-
-    /**
-     * Check if it has enough workers.
-     *
-     * @return true if so.
-     */
-    public boolean hasEnoughWorkers()
-    {
-        return getWorkerIdList().size() >= maxInhabitants;
-    }
-
+    @Override
     public HiringMode getHiringMode()
     {
         return hiringMode;
     }
 
+    @Override
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
         Network.getNetwork().sendToServer(new BuildingHiringModeMessage(buildingView, hiringMode, jobEntry));
     }
 
-    /**
-     * Check if citizens can be assigned.
-     * @param data the data to check.
-     * @return true if so.
-     */
-    public boolean canAssign(ICitizenDataView data)
+    @Override
+    public boolean canAssign(final ICitizenDataView citizen)
     {
-        return !data.isChild();
+        return !citizen.isChild() &&
+        (citizen.getWorkBuilding() == null
+           || workerIDs.contains(citizen.getId())
+           || buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry())) != null);
     }
 
-    /**
-     * Get the max number of inhabitants
-     *
-     * @return max inhabitants
-     */
+    @Override
     public int getMaxInhabitants()
     {
         return this.maxInhabitants;
@@ -181,12 +179,9 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView
         return jobEntry;
     }
 
-    /**
-     * Check if the module is full.
-     * @return true if so.
-     */
+    @Override
     public boolean isFull()
     {
-        return getWorkerIdList().size() >= getMaxInhabitants();
+        return getAssignedCitizens().size() >= getMaxInhabitants();
     }
 }

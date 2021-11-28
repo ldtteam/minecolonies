@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

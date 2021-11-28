@@ -166,7 +166,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
 
         for (final WorkerBuildingModuleView module : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            for (final int worker : module.getWorkerIdList())
+            for (final int worker : module.getAssignedCitizens())
             {
                 workers.add(new Tuple<>(new TranslationTextComponent(module.getJobEntry().getTranslationKey()).getString(), worker));
             }

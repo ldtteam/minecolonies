@@ -13,6 +13,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.coremod.colony.buildings.modules.DeliverymanAssignmentModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -66,18 +67,11 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return citizenList;
         }
 
-        for (final Vector3d hut : wareHouse.getRegisteredDeliverymen())
+        for (final ICitizenData data : wareHouse.getFirstModuleOccurance(CourierAssignmentModule.class).getAssignedCitizen())
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(hut));
-            if (building instanceof BuildingDeliveryman)
+            if (data.isWorking())
             {
-                for (final ICitizenData data : building.getFirstModuleOccurance(DeliverymanAssignmentModule.class).getAssignedCitizen())
-                {
-                    if (data.isWorking())
-                    {
-                        citizenList.add(data);
-                    }
-                }
+                citizenList.add(data);
             }
         }
 
