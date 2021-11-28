@@ -17,7 +17,7 @@ import java.util.function.Function;
 /**
  * Assignment module for pupils.
  */
-public class ChildrenBuildingModule extends WorkerBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class ChildrenBuildingModule extends WorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     public ChildrenBuildingModule(final JobEntry entry,
       final Skill primary,

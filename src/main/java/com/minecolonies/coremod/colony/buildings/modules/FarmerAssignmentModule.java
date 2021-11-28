@@ -16,7 +16,7 @@ import java.util.function.Function;
 /**
  * Assignment module for couriers
  */
-public class FarmerAssignmentModule extends CraftingWorkerBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class FarmerAssignmentModule extends CraftingWorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     public FarmerAssignmentModule(final JobEntry entry,
       final Skill primary,

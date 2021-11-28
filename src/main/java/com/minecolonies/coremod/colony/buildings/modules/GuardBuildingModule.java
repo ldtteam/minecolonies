@@ -30,7 +30,7 @@ import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.H
 /**
  * Assignment module for jobs that have to live at the work place mandatorily.
  */
-public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
      * Random obj.

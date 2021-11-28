@@ -18,7 +18,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_AD
 /**
  * Assignment module for foresters.
  */
-public class LumberjackAssignmentModule extends CraftingWorkerBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
+public class LumberjackAssignmentModule extends CraftingWorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     public LumberjackAssignmentModule(final JobEntry entry,
       final Skill primary,
