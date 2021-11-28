@@ -1,0 +1,23 @@
+{
+  "branch": "minecolonies:civilian",
+  "parentResearch": "minecolonies:civilian/keen",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.civilian.vines.subtitle",
+  "sortOrder": 4,
+  "icon": "minecraft:vine",
+  "requirements": [
+    {
+      "building": "home",
+      "level": 3
+    },
+    {
+      "item": "minecraft:vine",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/vinesunlock": 1
+    }
+  ]
+}

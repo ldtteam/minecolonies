@@ -111,6 +111,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(PLANT_2).setTranslatedName("Plantations Grow Two Crops at Once"));
         effects.add(new ResearchEffect(BEEKEEP_2).setTranslatedName("Beekeepers Can Harvest Both Honey Bottles and Combs at Once"));
         effects.add(new ResearchEffect(RAILS).setTranslatedName("Citizens use Rails"));
+        effects.add(new ResearchEffect(VINES).setTranslatedName("Citizens can climb Vines"));
         effects.add(new ResearchEffect(RETREAT).setTranslatedName("Guards Flee Under 20% HP"));
         effects.add(new ResearchEffect(SHIELD_USAGE).setTranslatedName("Knights Unlock Shield Use"));
         effects.add(new ResearchEffect(SLEEP_LESS).setTranslatedName("Guards Need %3$s%% Less Sleep"));
@@ -361,6 +362,15 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                   .addItemCost(Items.RABBIT_FOOT, 1)
                                   .addEffect(WALKING, 1)
                                   .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/vines"), CIVIL).setParentResearch(keen)
+                                 .setTranslatedName("Aaaiooooiooo")
+                                 .setTranslatedSubtitle("Me Tarzan, you Jane.")
+                                 .setSortOrder(4)
+                                 .setIcon(Items.VINE)
+                                 .addBuildingRequirement(ModBuildings.HOME_ID, 3)
+                                 .addItemCost(Items.VINE, 64)
+                                 .addEffect(VINES, 1)
+                                 .addToList(r);
         final Research agile = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/agile"), CIVIL).setParentResearch(nimble)
                                  .setTranslatedName("Agile")
                                  .setTranslatedSubtitle("So this is how it feels to be young again...")

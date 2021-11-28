@@ -470,6 +470,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 this.citizenDataView = colonyView.getCitizen(citizenId);
                 this.getNavigation().getPathingOptions().setCanUseRails(canPathOnRails());
+                this.getNavigation().getPathingOptions().setCanClimbVines(canClimbVines());
             }
         }
         return false;
@@ -582,6 +583,26 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         }
         return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(RAILS) > 0;
     }
+
+    /**
+     * A boolean check to test if the citizen can climb vines.
+     *
+     * @return true if so.
+     */
+    public boolean canClimbVines()
+    {
+        if (level.isClientSide)
+        {
+            final IColonyView colonyView = IColonyManager.getInstance().getColonyView(citizenColonyHandler.getColonyId(), level.dimension());
+            if (colonyView != null)
+            {
+                return colonyView.getResearchManager().getResearchEffects().getEffectStrength(VINES) > 0;
+            }
+            return false;
+        }
+        return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(VINES) > 0;
+    }
+
 
     /**
      * Reduces saturation for walking every 25 blocks.

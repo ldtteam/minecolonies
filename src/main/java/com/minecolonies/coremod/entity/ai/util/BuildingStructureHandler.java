@@ -179,7 +179,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
               && MathHelper.floor(structureAI.getWorker().getZ()) == worldPos.getZ()
               && structureAI.getWorker().getNavigation().isDone())
         {
-            structureAI.getWorker().getNavigation().moveAwayFromXYZ(worldPos, RUN_AWAY_SPEED, 1);
+            structureAI.getWorker().getNavigation().moveAwayFromXYZ(worldPos, RUN_AWAY_SPEED, 1, true);
         }
 
         structureAI.getWorker().swing(Hand.MAIN_HAND);

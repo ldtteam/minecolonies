@@ -53,9 +53,10 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param currentPosition the position to avoid.
      * @param range the range he should move out of.
      * @param speed the speed to run at.
+     * @param safeDestination if the destination is save and should be set.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveAwayFromXYZ(final BlockPos currentPosition, final double range, final double speed);
+    public abstract PathResult moveAwayFromXYZ(final BlockPos currentPosition, final double range, final double speed, final boolean safeDestination);
 
     /**
      * Try to move to a certain position.

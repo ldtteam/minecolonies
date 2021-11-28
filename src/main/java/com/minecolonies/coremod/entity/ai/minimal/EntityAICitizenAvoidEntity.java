@@ -9,7 +9,6 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingHospital;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -149,7 +148,7 @@ public class EntityAICitizenAvoidEntity extends Goal
 
         closestLivingEntity = citizen.getThreatTable().getTargetMob();
 
-        return closestLivingEntity != null && !(citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard);
+        return closestLivingEntity != null && citizen.getSensing().canSee(closestLivingEntity) && targetEntityClass.isInstance(closestLivingEntity);
     }
 
     /**
@@ -190,7 +189,7 @@ public class EntityAICitizenAvoidEntity extends Goal
         if ((moveAwayPath == null || !moveAwayPath.isInProgress()) && citizen.getNavigation().isDone())
         {
             moveAwayPath =
-              citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed);
+              citizen.getNavigation().moveAwayFromXYZ(citizen.blockPosition().offset(rand.nextInt(2), 0, rand.nextInt(2)), distanceFromEntity + getMoveAwayDist(citizen), nearSpeed, true);
             citizen.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.avoiding"));
             return true;
         }
