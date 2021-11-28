@@ -49,31 +49,6 @@ public class BuildingStonemason extends AbstractBuilding
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    /**
-     * Crafter building View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-
-        /**
-         * Instantiate the stonemason view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, STONEMASON);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
         /**

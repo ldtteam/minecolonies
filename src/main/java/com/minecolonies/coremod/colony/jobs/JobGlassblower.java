@@ -23,12 +23,6 @@ public class JobGlassblower extends AbstractJobCrafter<EntityAIWorkGlassblower, 
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.glassblower;
-    }
-
     @NotNull
     @Override
     public IModelType getModel()

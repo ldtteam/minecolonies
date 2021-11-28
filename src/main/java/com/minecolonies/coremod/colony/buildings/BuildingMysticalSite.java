@@ -62,7 +62,7 @@ public class BuildingMysticalSite extends AbstractBuilding implements IMysticalS
         @Override
         public Window getWindow()
         {
-            return new WindowHutMinPlaceholder<>(this, MYSTICAL_SITE);
+            return new WindowHutMinPlaceholder<>(this);
         }
     }
 }

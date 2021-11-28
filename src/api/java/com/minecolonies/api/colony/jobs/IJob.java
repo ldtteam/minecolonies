@@ -244,4 +244,10 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     {
         //noop.
     }
+
+    /**
+     * Set the registry entry of the job.
+     * @param jobEntry the job entry belonging to it.
+     */
+    void setRegistryEntry(JobEntry jobEntry);
 }

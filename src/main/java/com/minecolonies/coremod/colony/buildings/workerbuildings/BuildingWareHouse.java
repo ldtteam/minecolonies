@@ -375,7 +375,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         @Override
         public Window getWindow()
         {
-            return new WindowHutMinPlaceholder<>(this, WAREHOUSE);
+            return new WindowHutMinPlaceholder<>(this);
         }
     }
 }

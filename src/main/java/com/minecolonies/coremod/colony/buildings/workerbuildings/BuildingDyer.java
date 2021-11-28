@@ -70,31 +70,6 @@ public class BuildingDyer extends AbstractBuilding
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    /**
-     * Dyer View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-
-        /**
-         * Instantiate the dyer view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, DYER);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
         private List<ItemStorage> woolItems;

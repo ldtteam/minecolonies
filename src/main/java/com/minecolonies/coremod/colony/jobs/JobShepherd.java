@@ -24,12 +24,6 @@ public class JobShepherd extends AbstractJob<EntityAIWorkShepherd, JobShepherd>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.shepherd;
-    }
-
     /**
      * Generate your AI class to register.
      *

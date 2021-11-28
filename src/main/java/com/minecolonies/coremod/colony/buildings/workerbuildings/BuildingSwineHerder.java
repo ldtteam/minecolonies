@@ -68,28 +68,4 @@ public class BuildingSwineHerder extends AbstractBuilding
         }
         return super.canEat(stack);
     }
-
-    /**
-     * ClientSide representation of the building.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiates the view of the building.
-         *
-         * @param c the colonyView.
-         * @param l the location of the block.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
-        }
-    }
 }

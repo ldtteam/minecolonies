@@ -21,6 +21,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -225,7 +226,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         builders.add(new Tuple<>(new TranslationTextComponent(ModJobs.builder.getTranslationKey()).getString() + ":", BlockPos.ZERO));
         builders.addAll(building.getColony().getBuildings().stream()
                           .filter(build -> build instanceof AbstractBuildingBuilderView && !((AbstractBuildingBuilderView) build).getWorkerName().isEmpty()
-                                             && !(build instanceof BuildingMiner.View))
+                                             && build.getBuildingType() != ModBuildings.miner)
                           .map(build -> new Tuple<>(((AbstractBuildingBuilderView) build).getWorkerName(), build.getPosition()))
                           .sorted(Comparator.comparing(item -> item.getB().distSqr(building.getPosition())))
                           .collect(Collectors.toList()));

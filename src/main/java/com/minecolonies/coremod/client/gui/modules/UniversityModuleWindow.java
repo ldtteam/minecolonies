@@ -32,7 +32,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the window of the lumberjack.
      *
-     * @param building {@link BuildingUniversity.View}.
+     * @param building {@link com.minecolonies.coremod.colony.buildings.views.EmptyView}.
      */
     public UniversityModuleWindow(final IBuildingView building)
     {
@@ -106,7 +106,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
 
         if (button.getParent() != null && ResourceLocation.isValidResourceLocation(button.getParent().getID()) && IGlobalResearchTree.getInstance().getBranches().contains(new ResourceLocation(button.getParent().getID())))
         {
-            new WindowResearchTree(new ResourceLocation(button.getParent().getID()), (BuildingUniversity.View) buildingView, this).open();
+            new WindowResearchTree(new ResourceLocation(button.getParent().getID()), buildingView, this).open();
         }
     }
 

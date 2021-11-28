@@ -155,30 +155,6 @@ public class BuildingFarmer extends AbstractBuilding
         return super.canEat(stack);
     }
 
-    /**
-     * Provides a view of the farmer building class.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @Override
-        @NotNull
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, FARMER);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
         /**

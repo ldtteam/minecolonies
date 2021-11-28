@@ -64,16 +64,4 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
         }
         super.onOpened();
     }
-
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.buildersHut";
-    }
 }

@@ -171,28 +171,6 @@ public class BuildingBeekeeper extends AbstractBuilding
     {
         return (int) Math.pow(2, getBuildingLevel() - 1);
     }
-
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Creates a building view.
-         *
-         * @param c ColonyView the building is in.
-         * @param l The location of the building.
-         */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @Nullable
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, BEEKEEPER);
-        }
-    }
-
     /**
      * Bee herding module
      */

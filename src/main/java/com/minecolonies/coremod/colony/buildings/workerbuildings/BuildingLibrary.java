@@ -190,28 +190,4 @@ public class BuildingLibrary extends AbstractBuilding
     {
         return studyItems;
     }
-
-    /**
-     * ClientSide representation of the building.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiates the view of the building.
-         *
-         * @param c the colonyView.
-         * @param l the location of the block.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<AbstractBuildingView>(this, LIBRARY_HUT_NAME);
-        }
-    }
 }

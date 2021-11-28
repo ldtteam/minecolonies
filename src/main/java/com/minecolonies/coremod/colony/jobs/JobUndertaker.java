@@ -22,12 +22,6 @@ public class JobUndertaker extends AbstractJobCrafter<EntityAIWorkUndertaker, Jo
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.undertaker;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

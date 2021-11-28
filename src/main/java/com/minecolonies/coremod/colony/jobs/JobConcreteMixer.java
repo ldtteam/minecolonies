@@ -23,12 +23,6 @@ public class JobConcreteMixer extends AbstractJobCrafter<EntityAIConcreteMixer, 
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.concreteMixer;
-    }
-
     /**
      * Generate your AI class to register.
      *

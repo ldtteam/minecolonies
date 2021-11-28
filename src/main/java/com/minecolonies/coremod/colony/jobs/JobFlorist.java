@@ -19,12 +19,6 @@ public class JobFlorist extends AbstractJob<EntityAIWorkFlorist, JobFlorist>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.florist;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

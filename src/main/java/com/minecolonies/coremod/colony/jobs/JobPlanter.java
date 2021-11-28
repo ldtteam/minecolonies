@@ -23,12 +23,6 @@ public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlant
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.planter;
-    }
-
     @NotNull
     @Override
     public BipedModelType getModel()

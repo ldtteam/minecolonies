@@ -23,12 +23,6 @@ public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.cowboy;
-    }
-
     /**
      * Generate your AI class to register.
      *

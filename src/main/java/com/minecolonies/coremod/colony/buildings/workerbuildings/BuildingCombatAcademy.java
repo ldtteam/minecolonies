@@ -245,28 +245,4 @@ public class BuildingCombatAcademy extends AbstractBuilding
             }
         }
     }
-
-    /**
-     * The client view for the bakery building.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * The client view constructor for the AbstractGuardBuilding.
-         *
-         * @param c the colony.
-         * @param l the location.
-         */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, DESC);
-        }
-    }
 }

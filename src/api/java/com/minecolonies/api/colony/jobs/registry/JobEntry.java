@@ -96,9 +96,21 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
      *
      * @return The created {@link IJob}.
      */
-    public Function<ICitizenData, IJob<?>> getHandlerProducer()
+    private Function<ICitizenData, IJob<?>> getHandlerProducer()
     {
         return jobProducer;
+    }
+
+    /**
+     * Construct a new job instance.
+     * @param data the assigned citizen to the job.
+     * @return a new job instance.
+     */
+    public IJob<?> produceJob(final ICitizenData data)
+    {
+        final IJob<?> job = jobProducer.apply(data);
+        job.setRegistryEntry(this);
+        return job;
     }
 
     private JobEntry(

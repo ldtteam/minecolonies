@@ -6,6 +6,7 @@ import com.ldtteam.blockout.views.ZoomDragView;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.*;
 import com.minecolonies.api.research.util.ResearchState;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.UniversityModuleWindow;
+import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
@@ -47,7 +49,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     /**
      * The university building.
      */
-    private final BuildingUniversity.View building;
+    private final IBuildingView building;
 
     /**
      * The previous window.
@@ -103,7 +105,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
      * @param building the associated university.
      * @param last     the GUI we opened this from.
      */
-    public WindowResearchTree(final ResourceLocation branch, final BuildingUniversity.View building, final UniversityModuleWindow last)
+    public WindowResearchTree(final ResourceLocation branch, final IBuildingView building, final UniversityModuleWindow last)
     {
         super(Constants.MOD_ID + R_TREE_RESOURCE_SUFFIX, last);
         this.branch = branch;

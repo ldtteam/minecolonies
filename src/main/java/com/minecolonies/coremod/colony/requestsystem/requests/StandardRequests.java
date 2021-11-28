@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.*;
@@ -259,7 +260,7 @@ public final class StandardRequests
             int posInList = -1;
             for (IBuildingView view : colony.getBuildings())
             {
-                if (view instanceof BuildingDeliveryman.View)
+                if (view.getBuildingType() == ModBuildings.deliveryman)
                 {
                     posInList = getPosInList(colony, view, getId());
                     if (posInList >= 0)

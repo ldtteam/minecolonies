@@ -5,6 +5,7 @@ import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
@@ -40,6 +41,11 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
 {
     private static final String TAG_ASYNC_REQUESTS = "asyncRequests";
     private static final String TAG_ACTIONS_DONE   = "actionsDone";
+
+    /**
+     * Job associated to the abstract job.
+     */
+    private JobEntry entry;
 
     /**
      * A counter to dump the inventory after x actions.
@@ -83,9 +89,8 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
      */
     public AbstractJob(final ICitizenData entity)
     {
-        citizen = entity;
+        this.citizen = entity;
     }
-
 
     @Override
     public boolean pickupSuccess(@NotNull ItemStack pickedUpStack)
@@ -103,6 +108,18 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     public IColony getColony()
     {
         return citizen.getColony();
+    }
+
+    @Override
+    public void setRegistryEntry(final JobEntry jobEntry)
+    {
+        this.entry = jobEntry;
+    }
+
+    @Override
+    final public JobEntry getJobRegistryEntry()
+    {
+        return this.entry;
     }
 
     @Override

@@ -206,30 +206,6 @@ public class BuildingPlantation extends AbstractBuilding
         return Items.SUGAR_CANE;
     }
 
-    /**
-     * Plantation View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiate the plantation view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, PLANTATION);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
         /**

@@ -34,12 +34,6 @@ public class JobHealer extends AbstractJob<EntityAIWorkHealer, JobHealer>
         super(entity);
     }
 
-    @Override
-    public JobEntry getJobRegistryEntry()
-    {
-        return ModJobs.healer;
-    }
-
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *

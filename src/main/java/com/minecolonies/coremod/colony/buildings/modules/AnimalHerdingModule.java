@@ -40,7 +40,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
     @NotNull
     public IJob<?> getHerdingJob()
     {
-        return jobEntry.getHandlerProducer().apply(null);
+        return jobEntry.produceJob(null);
     }
 
     /**

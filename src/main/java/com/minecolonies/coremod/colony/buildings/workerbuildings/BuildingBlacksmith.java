@@ -51,29 +51,6 @@ public class BuildingBlacksmith extends AbstractBuilding
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
     }
 
-    /**
-     * ClientSide representation of the building.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiates the view of the building.
-         *
-         * @param c the colonyView.
-         * @param l the location of the block.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, BLACKSMITH);
-        }
-    }
-
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
         /**

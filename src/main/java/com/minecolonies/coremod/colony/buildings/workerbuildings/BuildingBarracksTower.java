@@ -144,32 +144,4 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     {
         barracks = pos;
     }
-
-    /**
-     * The client view for the bakery building.
-     */
-    public static class View extends AbstractBuildingGuards.View
-    {
-        /**
-         * The client view constructor for the AbstractGuardBuilding.
-         *
-         * @param c the colony.
-         * @param l the location.
-         */
-        public View(final IColonyView c, @NotNull final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        /**
-         * Creates a new window for the building
-         * @return a BlockOut window
-         */
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, getSchematicName());
-        }
-    }
 }

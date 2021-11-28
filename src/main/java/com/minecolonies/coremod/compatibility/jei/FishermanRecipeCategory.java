@@ -33,7 +33,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
 {
     public FishermanRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        super(ModJobs.fisherman.getHandlerProducer().apply(null), ModJobs.FISHERMAN_ID,
+        super(ModJobs.fisherman.produceJob(null), ModJobs.FISHERMAN_ID,
                 new ItemStack(ModBuildings.fisherman.getBuildingBlock()), guiHelper);
     }
 

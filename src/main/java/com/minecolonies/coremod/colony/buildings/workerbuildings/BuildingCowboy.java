@@ -87,30 +87,6 @@ public class BuildingCowboy extends AbstractBuilding
     }
 
     /**
-     * ClientSide representation of the building.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Instantiates the view of the building.
-         *
-         * @param c the colonyView.
-         * @param l the location of the block.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, HUT_NAME);
-        }
-    }
-
-    /**
      * Custom crafting module to indicate that we produce milk buckets.
      * (This is just for JEI and does not mean they're crafted on demand... although that could be changed.)
      */

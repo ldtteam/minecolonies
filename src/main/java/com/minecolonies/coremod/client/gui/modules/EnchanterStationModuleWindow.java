@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -79,7 +80,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
         super.onOpened();
         selectedBuildings = module.getBuildingsToGatherFrom();
         allBuildings = buildingView.getColony().getBuildings().stream()
-                         .filter(b -> b instanceof AbstractBuildingView && !(b instanceof BuildingEnchanter.View))
+                         .filter(b -> b instanceof AbstractBuildingView && b.getBuildingType() != ModBuildings.enchanter)
                          .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
                            b2.getPosition())))
                          .collect(Collectors.toList());

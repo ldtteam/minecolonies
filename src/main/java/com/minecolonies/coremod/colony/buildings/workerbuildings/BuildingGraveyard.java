@@ -222,28 +222,4 @@ public class BuildingGraveyard extends AbstractBuilding
         Collections.shuffle(availablePos);
         return availablePos.get(0);
     }
-
-    /**
-     * Provides a view of the farmer building class.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @Override
-        @NotNull
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, GRAVEYARD);
-        }
-    }
 }

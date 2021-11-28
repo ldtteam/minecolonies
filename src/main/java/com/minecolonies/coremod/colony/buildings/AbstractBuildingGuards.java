@@ -710,18 +710,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         }
 
         /**
-         * Creates a new window for the building.
-         *
-         * @return a BlockOut window.
-         */
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutWorkerModulePlaceholder<>(this, getSchematicName());
-        }
-
-        /**
          * Getter for the list of residents.
          *
          * @return an unmodifiable list.

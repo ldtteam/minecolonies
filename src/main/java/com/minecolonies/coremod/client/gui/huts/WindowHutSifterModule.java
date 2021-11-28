@@ -46,12 +46,5 @@ public class WindowHutSifterModule extends AbstractWindowWorkerModuleBuilding<Bu
         sifterSettingsInput.setText(String.valueOf(building.getCurrentDailyQuantity()));
         sifterSettingsInput.setEnabled(false);
     }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerhuts.Sifter";
-    }
 }
 
