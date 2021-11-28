@@ -198,7 +198,7 @@ public abstract class AbstractCraftingRequestResolver extends AbstractRequestRes
                 if (requestable.equals(request.getRequest())
                       && request.getRequest() instanceof IDeliverable
                       && requestable instanceof IDeliverable
-                      && ((IDeliverable) request.getRequest()).getCount() < ((IDeliverable) requestable).getCount())
+                      && ((IDeliverable) request.getRequest()).getCount() <= ((IDeliverable) requestable).getCount())
                 {
                     return true;
                 }

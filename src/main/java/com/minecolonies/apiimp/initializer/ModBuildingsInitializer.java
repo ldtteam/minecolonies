@@ -53,7 +53,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingViewProducer(() -> EmptyView::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
                                  .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                 .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.archer, Skill.Agility, Skill.Adaptability, false, ISchematicProvider::getBuildingLevel), () -> WorkerBuildingModuleView::new)
+                                 .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.archer, Skill.Agility, Skill.Adaptability, false, ISchematicProvider::getBuildingLevel), () -> ArcherSquireModuleView::new)
                                  .addBuildingModuleProducer(BedHandlingModule::new)
                                  .createBuildingEntry();
 
@@ -142,7 +142,7 @@ public final class ModBuildingsInitializer
                                        .setBuildingProducer(BuildingCombatAcademy::new)
                                        .setBuildingViewProducer(() -> EmptyView::new)
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID))
-                                       .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.combat, Skill.Adaptability, Skill.Stamina, false, ISchematicProvider::getBuildingLevel), () -> WorkerBuildingModuleView::new)
+                                       .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.combat, Skill.Adaptability, Skill.Stamina, false, ISchematicProvider::getBuildingLevel), () -> KnightSquireBuildingModuleView::new)
                                        .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                        .addBuildingModuleProducer(BedHandlingModule::new)
                                        .createBuildingEntry();
@@ -267,7 +267,7 @@ public final class ModBuildingsInitializer
                                  .setBuildingProducer(BuildingLibrary::new)
                                  .setBuildingViewProducer(() -> EmptyView::new)
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LIBRARY_ID))
-                                 .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.student, Skill.Intelligence, Skill.Intelligence, true, (b) -> 2 * b.getBuildingLevel()), () -> WorkerBuildingModuleView::new)
+                                 .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.student, Skill.Intelligence, Skill.Intelligence, true, (b) -> 2 * b.getBuildingLevel()), () -> StudentBuildingModuleView::new)
                                  .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                  .createBuildingEntry();
 

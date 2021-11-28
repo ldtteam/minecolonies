@@ -148,30 +148,6 @@ public interface IColonyView extends IColony
     Map<UUID, ColonyPlayer> getPlayers();
 
     /**
-     * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
-     *
-     * @param rank   Rank to get the permission.
-     * @param action Permission to get.
-     */
-    void setPermission(Rank rank, @NotNull Action action);
-
-    /**
-     * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
-     *
-     * @param rank   Rank to remove permission from.
-     * @param action Action to remove permission of.
-     */
-    void removePermission(Rank rank, @NotNull Action action);
-
-    /**
-     * Toggles a specific permission to a rank. Sends a message to the server.
-     *
-     * @param rank   Rank to toggle permission of.
-     * @param action Action to toggle permission of.
-     */
-    void togglePermission(Rank rank, @NotNull Action action);
-
-    /**
      * Returns the maximum amount of total citizen beds in the colony.
      *
      * @return maximum amount of citizens.

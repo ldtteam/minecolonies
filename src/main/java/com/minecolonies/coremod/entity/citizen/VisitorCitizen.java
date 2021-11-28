@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.citizen;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -10,7 +11,6 @@ import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.inventory.InventoryCitizen;
@@ -23,12 +23,14 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.InteractGoal;
@@ -192,6 +194,20 @@ public class VisitorCitizen extends AbstractEntityCitizen
                         {
                             data.getEntity().get().setLastHurtByMob((LivingEntity) damageSource.getEntity());
                         }
+                    }
+                }
+
+                final Entity sourceEntity = damageSource.getEntity();
+                if (sourceEntity instanceof Player)
+                {
+                    if (sourceEntity instanceof ServerPlayer)
+                    {
+                        return damage <= 1 || getCitizenColonyHandler().getColony().getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
+                    }
+                    else
+                    {
+                        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(getCitizenColonyHandler().getColonyId(), level.dimension());
+                        return damage <= 1 || colonyView == null || colonyView.getPermissions().hasPermission((Player) sourceEntity, Action.HURT_VISITOR);
                     }
                 }
             }
