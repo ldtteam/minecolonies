@@ -1,12 +1,10 @@
 package com.minecolonies.api.colony.guardtype;
 
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-
-import java.util.function.Function;
 
 /**
  * Guard type class.
@@ -14,9 +12,9 @@ import java.util.function.Function;
 public class GuardType extends ForgeRegistryEntry<GuardType>
 {
     /**
-     * Producer function.
+     * The job entry.
      */
-    private final Function<ICitizenData, IJob<?>> guardJobProducer;
+    private final JobEntry jobEntry;
 
     /**
      * Job translation key.
@@ -51,7 +49,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     /**
      * Constructor to create the type.
      *
-     * @param guardJobProducer     the producer.
+     * @param jobEntry             the job entry..
      * @param jobTranslationKey    job translation key.
      * @param buttonTranslationKey button translation ky.
      * @param primarySkill         primary skill.
@@ -60,7 +58,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * @param clazz                  the class of the job.
      */
     public GuardType(
-      final Function<ICitizenData, IJob<?>> guardJobProducer,
+      final JobEntry jobEntry,
       final String jobTranslationKey,
       final String buttonTranslationKey,
       final Skill primarySkill,
@@ -69,7 +67,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
       final Class<IJob<?>> clazz)
     {
         super();
-        this.guardJobProducer = guardJobProducer;
+        this.jobEntry = jobEntry;
         this.jobTranslationKey = jobTranslationKey;
         this.buttonTranslationKey = buttonTranslationKey;
         this.primarySkill = primarySkill;
@@ -83,9 +81,9 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      *
      * @return the producer.
      */
-    public Function<ICitizenData, IJob<?>> getGuardJobProducer()
+    public JobEntry getJobEntry()
     {
-        return guardJobProducer;
+        return jobEntry;
     }
 
     /**
@@ -153,7 +151,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      */
     public static class Builder
     {
-        private Function<ICitizenData, IJob<?>> guardJobProducer;
+        private JobEntry jobEntry;
         private String                          jobTranslationKey;
         private String                          buttonTranslationKey;
         private Skill                           primarySkill;
@@ -162,9 +160,9 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         private ResourceLocation                registryName;
         private Class<IJob<?>>                  clazz;
 
-        public Builder setGuardJobProducer(final Function<ICitizenData, IJob<?>> guardJobProducer)
+        public Builder setJobEntry(final JobEntry jobEntry)
         {
-            this.guardJobProducer = guardJobProducer;
+            this.jobEntry = jobEntry;
             return this;
         }
 
@@ -212,7 +210,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
         public GuardType createGuardType()
         {
-            return new GuardType(guardJobProducer, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz).setRegistryName(registryName);
+            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz).setRegistryName(registryName);
         }
     }
 }

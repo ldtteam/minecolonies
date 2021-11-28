@@ -2,6 +2,7 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
@@ -27,7 +28,7 @@ public final class ModGuardTypesInitializer
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
                                  .setWorkerSoundName("archer")
-                                 .setGuardJobProducer(JobKnight::new)
+                                 .setJobEntry(ModJobs.knight)
                                  .setRegistryName(ModGuardTypes.KNIGHT_ID)
                                  .setClazz(JobKnight.class)
                                  .createGuardType();
@@ -38,7 +39,7 @@ public final class ModGuardTypesInitializer
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
-                                 .setGuardJobProducer(JobRanger::new)
+                                 .setJobEntry(ModJobs.ranger)
                                  .setRegistryName(ModGuardTypes.RANGER_ID)
                                  .setClazz(JobRanger.class)
                                  .createGuardType();
