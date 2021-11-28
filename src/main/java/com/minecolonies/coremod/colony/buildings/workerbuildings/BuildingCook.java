@@ -6,7 +6,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -14,6 +13,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
@@ -25,6 +25,7 @@ import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Tuple;
@@ -144,6 +145,20 @@ public class BuildingCook extends AbstractBuilding
     {
         super.onUpgradeComplete(newLevel);
         initTags = false;
+    }
+
+    /**
+     * On initial construction or reset request, excludes the tagged food by default.
+     *
+     * @param listModule The food exclusion module.
+     */
+    public static void onResetFoodExclusionList(final ItemListModule listModule)
+    {
+        listModule.clearItems();
+        for (final Item item : ModTags.excludedFood.getValues())
+        {
+            listModule.addItem(new ItemStorage(new ItemStack(item)));
+        }
     }
 
     /**

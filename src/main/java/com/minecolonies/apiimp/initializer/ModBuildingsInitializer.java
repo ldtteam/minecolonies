@@ -175,7 +175,7 @@ public final class ModBuildingsInitializer
                               .addBuildingModuleProducer(FurnaceUserModule::new)
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
-                              .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
+                              .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingCook::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
                               .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                               .createBuildingEntry();
