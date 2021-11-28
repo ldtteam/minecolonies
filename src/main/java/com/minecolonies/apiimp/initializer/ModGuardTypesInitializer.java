@@ -28,7 +28,7 @@ public final class ModGuardTypesInitializer
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
                                  .setWorkerSoundName("archer")
-                                 .setJobEntry(ModJobs.knight)
+                                 .setJobEntry(() -> ModJobs.knight)
                                  .setRegistryName(ModGuardTypes.KNIGHT_ID)
                                  .setClazz(JobKnight.class)
                                  .createGuardType();
@@ -39,7 +39,7 @@ public final class ModGuardTypesInitializer
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
-                                 .setJobEntry(ModJobs.ranger)
+                                 .setJobEntry(() -> ModJobs.ranger)
                                  .setRegistryName(ModGuardTypes.RANGER_ID)
                                  .setClazz(JobRanger.class)
                                  .createGuardType();

@@ -6,6 +6,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import java.util.function.Supplier;
+
 /**
  * Guard type class.
  */
@@ -14,7 +16,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     /**
      * The job entry.
      */
-    private final JobEntry jobEntry;
+    private final Supplier<JobEntry> jobEntry;
 
     /**
      * Job translation key.
@@ -58,7 +60,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * @param clazz                  the class of the job.
      */
     public GuardType(
-      final JobEntry jobEntry,
+      final Supplier<JobEntry> jobEntry,
       final String jobTranslationKey,
       final String buttonTranslationKey,
       final Skill primarySkill,
@@ -81,7 +83,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      *
      * @return the producer.
      */
-    public JobEntry getJobEntry()
+    public Supplier<JobEntry> getJobEntry()
     {
         return jobEntry;
     }
@@ -151,8 +153,8 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      */
     public static class Builder
     {
-        private JobEntry jobEntry;
-        private String                          jobTranslationKey;
+        private Supplier<JobEntry> jobEntry;
+        private String             jobTranslationKey;
         private String                          buttonTranslationKey;
         private Skill                           primarySkill;
         private Skill                           secondarySkill;
@@ -160,7 +162,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         private ResourceLocation                registryName;
         private Class<IJob<?>>                  clazz;
 
-        public Builder setJobEntry(final JobEntry jobEntry)
+        public Builder setJobEntry(final Supplier<JobEntry> jobEntry)
         {
             this.jobEntry = jobEntry;
             return this;
