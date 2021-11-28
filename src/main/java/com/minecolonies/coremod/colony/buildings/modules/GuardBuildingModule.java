@@ -42,7 +42,7 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IAs
       final boolean canWorkingDuringRain,
       final Function<IBuilding, Integer> sizeLimit)
     {
-        super(type.getGuardJobProducer().apply(null).getJobRegistryEntry(), type.getPrimarySkill(), type.getSecondarySkill(), canWorkingDuringRain, sizeLimit);
+        super(type.getJobEntry(), type.getPrimarySkill(), type.getSecondarySkill(), canWorkingDuringRain, sizeLimit);
     }
 
     @Override
