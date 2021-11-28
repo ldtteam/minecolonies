@@ -13,7 +13,7 @@
             <button id="fire" size="45 15" pos="190 2" label="$(com.minecolonies.coremod.gui.hiring.buttonfire)"/>
             <button id="pause" size="65 15" pos="240 2" label=""/>
             <button id="restart" size="65 15" pos="310 2" label="$(com.minecolonies.coremod.gui.hiring.restart)"/>
-            <label id="attributes" size="350 38" pos="1 12" color="white"/>
+            <label id="attributes" size="100% 38" pos="1 12" color="white"/>
         </view>
     </list>
     <label id="buildingHireMode" size="200 11" pos="110 165" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
