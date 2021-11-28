@@ -271,8 +271,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if ((citizen.getWorkBuilding() == null || colony.getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(selectedModule.getJobEntry())) != null)
-                      && selectedModule.canAssign(citizen)
+                if (selectedModule.canAssign(citizen)
                       && !selectedModule.isFull()
                       && !selectedModule.getAssignedCitizens().contains(citizen.getId()))
                 {
