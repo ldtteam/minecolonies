@@ -8,8 +8,8 @@ import com.minecolonies.api.colony.ICitizenDataView;
 public class PupilBuildingModuleView extends WorkerBuildingModuleView
 {
     @Override
-    public boolean canAssign(final ICitizenDataView data)
+    public boolean canAssign(final ICitizenDataView citizen)
     {
-        return data.isChild();
+        return citizen.isChild() && (citizen.getWorkBuilding() == null || getAssignedCitizens().contains(citizen.getId()));
     }
 }

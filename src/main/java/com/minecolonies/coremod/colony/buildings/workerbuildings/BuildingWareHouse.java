@@ -4,10 +4,9 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
@@ -17,7 +16,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.DeliveryRequestResolver;
@@ -27,15 +26,11 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestR
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,16 +47,6 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
      * String describing the Warehouse.
      */
     private static final String WAREHOUSE = "warehouse";
-
-    /**
-     * Tag to store the deliverymen.
-     */
-    private static final String TAG_DELIVERYMAN = "deliveryman";
-
-    /**
-     * The list of deliverymen registered to this building.
-     */
-    private final Set<Vec3> registeredDeliverymen = new HashSet<>();
 
     /**
      * Max level of the building.
@@ -104,115 +89,9 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     }
 
     @Override
-    public boolean registerWithWareHouse(final IBuildingDeliveryman buildingWorker)
+    public boolean canAccessWareHouse(final ICitizenData citizenData)
     {
-        if (registeredDeliverymen.contains(new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ())))
-        {
-            return true;
-        }
-
-        if (registeredDeliverymen.size() >= getMaxAssignedDmen())
-        {
-            if (!registeredDeliverymen.isEmpty())
-            {
-                checkForRegisteredDeliverymen();
-            }
-
-            if (registeredDeliverymen.size() >= getMaxAssignedDmen())
-            {
-                return false;
-            }
-        }
-
-        registeredDeliverymen.add(new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
-        return true;
-    }
-
-    @Override
-    public void unregisterFromWareHouse(final IBuildingDeliveryman buildingWorker)
-    {
-        final Vec3 vec = new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ());
-        registeredDeliverymen.remove(vec);
-    }
-
-    /**
-     * Get the maximimum number of dmen that can be assigned to the warehoue.
-     *
-     * @return the maximum amount.
-     */
-    private int getMaxAssignedDmen()
-    {
-        return getBuildingLevel() * 2;
-    }
-
-    /**
-     * Check the registered deliverymen and see if one of their huts got destroyed.
-     */
-    private void checkForRegisteredDeliverymen()
-    {
-        for (final Vec3 pos : new ArrayList<>(registeredDeliverymen))
-        {
-            final IColony colony = getColony();
-            final IBuilding building = colony.getBuildingManager().getBuilding(new BlockPos(pos));
-            if (!(building instanceof BuildingDeliveryman) || building.getAllAssignedCitizen().isEmpty())
-            {
-                registeredDeliverymen.remove(pos);
-            }
-        }
-    }
-
-    /**
-     * Check if deliveryman is allowed to access warehouse.
-     *
-     * @param buildingWorker the building of the deliveryman.
-     * @return true if able to.
-     */
-    @Override
-    public boolean canAccessWareHouse(final IBuildingDeliveryman buildingWorker)
-    {
-        return registeredDeliverymen.contains(new Vec3(buildingWorker.getID().getX(), buildingWorker.getID().getY(), buildingWorker.getID().getZ()));
-    }
-
-    /**
-     * Get the deliverymen connected with this building.
-     *
-     * @return the unmodifiable List of positions of them.
-     */
-    @Override
-    public Set<Vec3> getRegisteredDeliverymen()
-    {
-        return new HashSet<>(Collections.unmodifiableSet(registeredDeliverymen));
-    }
-
-    @Override
-    public void deserializeNBT(final CompoundTag compound)
-    {
-        super.deserializeNBT(compound);
-
-        registeredDeliverymen.clear();
-
-        final ListTag deliverymanTagList = compound.getList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < deliverymanTagList.size(); i++)
-        {
-            final BlockPos pos = NbtUtils.readBlockPos(deliverymanTagList.getCompound(i));
-            if (getColony() != null && getColony().getBuildingManager().getBuilding(pos) instanceof BuildingDeliveryman)
-            {
-                registeredDeliverymen.add(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-            }
-        }
-    }
-
-    @Override
-    public CompoundTag serializeNBT()
-    {
-        final CompoundTag compound = super.serializeNBT();
-        @NotNull final ListTag levelTagList = new ListTag();
-        for (@NotNull final Vec3 deliverymanBuilding : registeredDeliverymen)
-        {
-            levelTagList.add(NbtUtils.writeBlockPos(new BlockPos(deliverymanBuilding)));
-        }
-        compound.put(TAG_DELIVERYMAN, levelTagList);
-        return compound;
+        return getFirstModuleOccurance(CourierAssignmentModule.class).hasAssignedCitizen(citizenData);
     }
 
     @NotNull

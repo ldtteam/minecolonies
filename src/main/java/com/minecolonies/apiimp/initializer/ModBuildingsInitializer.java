@@ -401,6 +401,7 @@ public final class ModBuildingsInitializer
                                    .setBuildingProducer(BuildingWareHouse::new)
                                    .setBuildingViewProducer(() -> BuildingWareHouse.View::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.WAREHOUSE_ID))
+                                   .addBuildingModuleProducer(CourierAssignmentModule::new, () -> CourierAssignmentModuleView::new)
                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                    .addBuildingModuleProducer(WarehouseModule::new, () -> WarehouseOptionsModuleView::new)
                                    .createBuildingEntry();

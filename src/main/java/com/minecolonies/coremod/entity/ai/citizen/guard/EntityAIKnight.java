@@ -25,9 +25,7 @@ public class EntityAIKnight extends AbstractEntityAIGuard<JobKnight, AbstractBui
     public EntityAIKnight(@NotNull final JobKnight job)
     {
         super(job);
-        super.registerTargets(
-
-        );
+        super.registerTargets();
 
         toolsNeeded.add(ToolType.SWORD);
 

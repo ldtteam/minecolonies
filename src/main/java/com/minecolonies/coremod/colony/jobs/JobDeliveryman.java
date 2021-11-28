@@ -22,6 +22,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.buildings.modules.CourierAssignmentModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
@@ -644,12 +645,11 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
      *
      * @return warehouse building or null
      */
-    private IWareHouse findWareHouse()
+    public IWareHouse findWareHouse()
     {
         for (final IWareHouse building : getColony().getBuildingManager().getWareHouses())
         {
-            final BlockPos pos = getCitizen().getWorkBuilding().getID();
-            if (building.getRegisteredDeliverymen().contains(new Vec3(pos.getX(), pos.getY(), pos.getZ())))
+            if (building.getFirstModuleOccurance(CourierAssignmentModule.class).hasAssignedCitizen(getCitizen()))
             {
                 return building;
             }

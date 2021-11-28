@@ -236,7 +236,7 @@ public interface IBuildingView extends IRequester
      * @param <T> the optional type.
      * @return the module.
      */
-    @NotNull
+    @Nullable
     <T extends IBuildingModuleView> T getModuleViewMatching(Class<T> clazz, Predicate<? super T> modulePredicate);
 
     /**
