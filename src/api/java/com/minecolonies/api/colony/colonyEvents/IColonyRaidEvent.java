@@ -3,6 +3,8 @@ package com.minecolonies.api.colony.colonyEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.List;
+
 /**
  * Interface type for raid events
  */
@@ -35,4 +37,9 @@ public interface IColonyRaidEvent extends IColonyEntitySpawnEvent
      * @param pos the pos to add the spawner at.
      */
     void addSpawner(final BlockPos pos);
+
+    /**
+     * Gets the list of waypoints
+     */
+    List<BlockPos> getWayPoints();
 }

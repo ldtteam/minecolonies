@@ -51,6 +51,11 @@ import static com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEven
 public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFireRaidEvent
 {
     /**
+     * Spacing between waypoints
+     */
+    private static final int WAYPOINT_SPACING = 20;
+
+    /**
      * The max distance a barbarian is allowed to spawn from the original spawn position
      */
     public static int MAX_SPAWN_DEVIATION = 300;
@@ -126,6 +131,11 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      * The path result towards the intended spawn point
      */
     private PathResult spawnPathResult;
+
+    /**
+     * Waypoints helping raiders travel
+     */
+    private List<BlockPos> wayPoints = new ArrayList<>();
 
     public HordeRaidEvent(IColony colony)
     {
@@ -314,6 +324,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
             {
                 spawnPoint = path.getEndNode().asBlockPos();
             }
+            this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
         }
 
         final BlockPos spawnPos = ShipBasedRaiderUtils.getLoadedPositionTowardsCenter(spawnPoint, colony, MAX_SPAWN_DEVIATION, spawnPoint, MIN_CENTER_DISTANCE, 10);
@@ -490,6 +501,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         compound.putInt(TAG_EVENT_STATUS, status.ordinal());
         compound.putInt(TAG_DAYS_LEFT, daysToGo);
         horde.writeToNbt(compound);
+
+        BlockPosUtil.writePosListToNBT(compound, TAG_WAYPOINT, wayPoints);
         return compound;
     }
 
@@ -507,6 +520,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
+        wayPoints = BlockPosUtil.readPosListFromNBT(compound, TAG_WAYPOINT);
     }
 
     @Override
@@ -519,6 +533,12 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     public void addSpawner(final BlockPos pos)
     {
         // do noting
+    }
+
+    @Override
+    public List<BlockPos> getWayPoints()
+    {
+        return wayPoints;
     }
 
     /**

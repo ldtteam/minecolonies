@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.mobs.aitasks;
 
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
+import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.entity.ai.IStateAI;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -10,6 +11,7 @@ import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
+import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -62,7 +64,8 @@ public class RaiderWalkAI implements IStateAI
             if (targetBlock == null || raider.getNavigation().isDone() || (targetBlock != null && raider.blockPosition().distSqr(targetBlock) < 25))
             {
                 targetBlock = raider.getColony().getRaiderManager().getRandomBuilding();
-                raider.getNavigation().moveToXYZ(targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(), 1.1);
+                final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(((IColonyRaidEvent) event).getWayPoints(), raider.blockPosition(), targetBlock);
+                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.1);
             }
         }
 
