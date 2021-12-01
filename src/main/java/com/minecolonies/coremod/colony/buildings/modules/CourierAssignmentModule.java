@@ -24,13 +24,6 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     private HiringMode hiringMode = HiringMode.DEFAULT;
 
     @Override
-    public void deserializeNBT(final CompoundNBT compound)
-    {
-        final CompoundNBT jobCompound = compound.getCompound("warehouse");
-        this.hiringMode = HiringMode.values()[jobCompound.getInt(TAG_HIRING_MODE)];
-    }
-
-    @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
@@ -47,9 +40,9 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     }
 
     @Override
-    public void deserializeNBT(final CompoundTag compound)
+    public void deserializeNBT(final CompoundNBT compound)
     {
-        final CompoundTag jobCompound = compound.getCompound("warehouse");
+        final CompoundNBT jobCompound = compound.getCompound("warehouse");
         this.hiringMode = HiringMode.values()[jobCompound.getInt(TAG_HIRING_MODE)];
         final int[] residentIds = jobCompound.getIntArray(TAG_COURIERS);
         for (final int citizenId : residentIds)
@@ -63,7 +56,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     }
 
     @Override
-    public void serializeNBT(final CompoundTag compound)
+    public void serializeNBT(final CompoundNBT compound)
     {
         final CompoundNBT jobCompound = new CompoundNBT();
         jobCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
