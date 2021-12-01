@@ -456,7 +456,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return MINER_BUILDING_SHAFT;
         }
 
-        if (!mineBlock(nextCobble, safeStand) || !mineBlock(nextLadder, safeStand))
+        if ((!mineBlock(nextCobble, safeStand) && !world.getBlockState(nextCobble).getMaterial().isReplaceable())
+              || (!mineBlock(nextLadder, safeStand) && !world.getBlockState(nextLadder).getMaterial().isReplaceable()))
         {
             //waiting until blocks are mined
             return state;
