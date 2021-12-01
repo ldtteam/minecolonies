@@ -214,6 +214,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 desiredPos = null;
             }
         }
+        else if (desiredPos != null && pathResult == null)
+        {
+            desiredPos = null;
+        }
 
         if (pathResult != null)
         {
