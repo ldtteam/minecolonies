@@ -19,7 +19,6 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
@@ -702,6 +701,11 @@ public final class StandardRequests
      */
     private static int getPosInList(final IColonyView colony, final IBuildingView view, final IToken<?> id)
     {
+        if (view == null)
+        {
+            return 0;
+        }
+
         for (final WorkerBuildingModuleView moduleView : view.getModuleViews(WorkerBuildingModuleView.class))
         {
             for (int worker : moduleView.getAssignedCitizens())

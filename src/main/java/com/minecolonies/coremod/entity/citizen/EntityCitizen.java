@@ -1467,7 +1467,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     protected void doPush(final Entity entity)
     {
-        super.doPush(entity);
+        if (!citizenSleepHandler.isAsleep())
+        {
+            super.doPush(entity);
+        }
+
         if (!level.isClientSide && entity instanceof AbstractEntityCitizen)
         {
             getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
