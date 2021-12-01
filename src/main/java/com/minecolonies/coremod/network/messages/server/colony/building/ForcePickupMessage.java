@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;

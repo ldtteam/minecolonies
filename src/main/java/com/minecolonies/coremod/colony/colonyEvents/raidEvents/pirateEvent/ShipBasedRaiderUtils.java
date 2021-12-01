@@ -111,8 +111,8 @@ public final class ShipBasedRaiderUtils
         spawner.getSpawner().requiredPlayerRange = SPAWNER_DISTANCE;
         spawner.getSpawner().setEntityId(mob);
         // Sets nbt for mobs to spawn, assumes colony in same dimension as mob.
-        spawner.getSpawner().nextSpawnData.getTag().putInt(TAG_EVENT_ID, event.getID());
-        spawner.getSpawner().nextSpawnData.getTag().putInt(TAG_COLONY_ID, colonyId);
+        spawner.getSpawner().nextSpawnData.getEntityToSpawn().putInt(TAG_EVENT_ID, event.getID());
+        spawner.getSpawner().nextSpawnData.getEntityToSpawn().putInt(TAG_COLONY_ID, colonyId);
 
         event.addSpawner(location);
         world.setBlockEntity(spawner);

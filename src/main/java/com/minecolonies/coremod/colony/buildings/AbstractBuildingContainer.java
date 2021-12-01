@@ -9,6 +9,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +23,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +79,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     {
         super.deserializeNBT(compound);
 
-        final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
+        final ListTag containerTagList = compound.getList(TAG_CONTAINERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.size(); ++i)
         {
             final CompoundTag containerCompound = containerTagList.getCompound(i);

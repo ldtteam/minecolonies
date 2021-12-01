@@ -36,6 +36,7 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -43,7 +44,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,7 +126,7 @@ public class BuildingManager implements IBuildingManager
         minChunkZ = colony.getCenter().getZ() >> 4;
 
         //  Buildings
-        final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND);
+        final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.size(); ++i)
         {
             final CompoundTag buildingCompound = buildingTagList.getCompound(i);
@@ -140,7 +141,7 @@ public class BuildingManager implements IBuildingManager
         if (compound.getAllKeys().contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
-            final ListTag fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
+            final ListTag fieldTagList = compound.getList(TAG_NEW_FIELDS, Tag.TAG_COMPOUND);
             for (int i = 0; i < fieldTagList.size(); ++i)
             {
                 addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));

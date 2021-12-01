@@ -28,6 +28,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -214,8 +215,7 @@ public class ChunkCache implements LevelReader
     }
 
     @Override
-    public Stream<VoxelShape> getEntityCollisions(
-      @Nullable final Entity entity, final AABB axisAlignedBB, final Predicate<Entity> predicate)
+    public List<VoxelShape> getEntityCollisions(@org.jetbrains.annotations.Nullable final Entity p_186427_, final AABB p_186428_)
     {
         return null;
     }

@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerBossEvent;
@@ -38,7 +39,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -496,7 +497,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.values()[compound.getInt(TAG_EVENT_STATUS)];
         daysToGo = compound.getInt(TAG_DAYS_LEFT);
 
-        @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Constants.NBT.TAG_COMPOUND);
+        @NotNull final ListTag spawnerListCompound = compound.getList(TAG_SPAWNERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < spawnerListCompound.size(); i++)
         {
             spawners.add(NbtUtils.readBlockPos(spawnerListCompound.getCompound(i).getCompound(TAG_POS)));

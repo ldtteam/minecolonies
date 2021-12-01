@@ -10,8 +10,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -40,11 +40,11 @@ public class WorldEventContext
      */
     int clientRenderDist;
 
-    public void renderWorldLastEvent(final RenderWorldLastEvent event)
+    public void renderWorldLastEvent(final RenderLevelLastEvent event)
     {
         bufferSource = WorldRenderMacros.getBufferSource();
-        poseStack = event.getMatrixStack();
-        partialTicks = event.getPartialTicks();
+        poseStack = event.getPoseStack();
+        partialTicks = event.getPartialTick();
         clientLevel = Minecraft.getInstance().level;
         clientPlayer = Minecraft.getInstance().player;
         mainHandItem = clientPlayer.getMainHandItem();

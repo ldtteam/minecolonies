@@ -65,11 +65,10 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
         }
     }
 
-    @NotNull
     @Override
-    public CompoundTag save(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
 
         @NotNull final ListTag lines = new ListTag();
         for (@NotNull final String line : textLines)
@@ -77,22 +76,19 @@ public class AbstractTileEntityNamedGrave extends BlockEntity
             lines.add(StringTag.valueOf(line));
         }
         compound.put(TAG_CONTENT, lines);
-
-        return compound;
     }
 
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundTag compound = new CompoundTag();
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.save(compound));
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundTag());
+        return this.saveWithId();
     }
 
     @Override

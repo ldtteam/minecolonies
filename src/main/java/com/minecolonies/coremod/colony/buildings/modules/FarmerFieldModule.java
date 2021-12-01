@@ -9,11 +9,12 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,7 +84,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        final ListTag fieldTagList = compound.getList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final ListTag fieldTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.size(); ++i)
         {
             final CompoundTag fieldCompound = fieldTagList.getCompound(i);

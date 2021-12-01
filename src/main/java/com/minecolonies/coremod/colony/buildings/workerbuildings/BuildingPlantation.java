@@ -24,6 +24,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
@@ -32,7 +33,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +117,7 @@ public class BuildingPlantation extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
+        final ListTag sandPos = compound.getList(TAG_PLANTGROUND, Tag.TAG_COMPOUND);
         for (int i = 0; i < sandPos.size(); ++i)
         {
             sand.add(NbtUtils.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));

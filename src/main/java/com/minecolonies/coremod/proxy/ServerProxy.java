@@ -3,7 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.io.File;
 
@@ -23,6 +23,6 @@ public class ServerProxy extends CommonProxy
     @Override
     public Level getWorld(final ResourceKey<Level> dimension)
     {
-        return ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
+        return net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(dimension);
     }
 }

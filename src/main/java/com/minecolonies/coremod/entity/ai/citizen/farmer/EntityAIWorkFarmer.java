@@ -45,13 +45,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;

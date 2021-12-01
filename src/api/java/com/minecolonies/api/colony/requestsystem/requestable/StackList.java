@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -214,7 +215,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
     {
         final List<ItemStack> stacks = new ArrayList<>();
 
-        final ListTag neededResTagList = compound.getList(NBT_STACK_LIST, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListTag neededResTagList = compound.getList(NBT_STACK_LIST, Tag.TAG_COMPOUND);
         for (int i = 0; i < neededResTagList.size(); ++i)
         {
             final CompoundTag neededRes = neededResTagList.getCompound(i);

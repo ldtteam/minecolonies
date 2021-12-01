@@ -13,12 +13,13 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,7 +145,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
         this.asyncRequests.clear();
         if (compound.getAllKeys().contains(TAG_ASYNC_REQUESTS))
         {
-            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Constants.NBT.TAG_COMPOUND))
+            this.asyncRequests.addAll(NBTUtils.streamCompound(compound.getList(TAG_ASYNC_REQUESTS, Tag.TAG_COMPOUND))
                                         .map(StandardFactoryController.getInstance()::deserialize)
                                         .map(o -> (IToken<?>) o)
                                         .collect(Collectors.toSet()));

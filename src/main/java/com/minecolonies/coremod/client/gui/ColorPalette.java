@@ -94,7 +94,7 @@ public class ColorPalette
             int color = this.color.getTextColor();
             boolean pressed = selected == this.color;
 
-            this.fillButton(stack, 0, 0, 0, 0, isHovered() ? 0xFFFFFF : pressed ? brighten(color, 0.5F) : 0x0);
+            this.fillButton(stack, 0, 0, 0, 0, isHovered ? 0xFFFFFF : pressed ? brighten(color, 0.5F) : 0x0);
             this.fillButton(stack,1, 1, 1, 1, brighten(color, 0.8F));
 
             if (pressed)

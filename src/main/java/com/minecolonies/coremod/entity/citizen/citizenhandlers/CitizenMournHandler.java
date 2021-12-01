@@ -5,7 +5,7 @@ import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenMournHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.nbt.Tag;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ public class CitizenMournHandler implements ICitizenMournHandler
     public void read(final CompoundTag compound)
     {
         isMourning = compound.getBoolean(TAG_MOURNING);
-        final ListTag tag = compound.getList(TAG_DECEASED, Constants.NBT.TAG_STRING);
+        final ListTag tag = compound.getList(TAG_DECEASED, Tag.TAG_STRING);
         for (int i = 0; i < tag.size(); i++)
         {
             deceasedCitizens.add(tag.getString(i));

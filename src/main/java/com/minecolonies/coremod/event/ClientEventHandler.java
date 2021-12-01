@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -66,7 +66,7 @@ public class ClientEventHandler
     private static final Lazy<Map<String, BuildingEntry>> crafterToBuilding = Lazy.of(ClientEventHandler::buildCrafterToBuildingMap);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
+    public static void renderWorldLastEvent(@NotNull final RenderLevelLastEvent event)
     {
         WorldEventContext.INSTANCE.renderWorldLastEvent(event);
     }
@@ -95,7 +95,7 @@ public class ClientEventHandler
             final String mobName = path.substring(MOB_SOUND_EVENT_PREFIX.length(), secondDotPos);
             if (ModSoundEvents.CITIZEN_SOUND_EVENTS.containsKey(mobName))
             {
-                event.setResultSound(null);
+                event.setSound(null);
             }
         }
     }

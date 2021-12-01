@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -514,14 +515,14 @@ public class Tree
         tree.location = BlockPosUtil.read(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
-        final ListTag logs = compound.getList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
+        final ListTag logs = compound.getList(TAG_LOGS, Tag.TAG_COMPOUND);
         for (int i = 0; i < logs.size(); i++)
         {
             tree.woodBlocks.add(BlockPosUtil.readFromListNBT(logs, i));
         }
 
         tree.stumpLocations = new ArrayList<>();
-        final ListTag stumps = compound.getList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
+        final ListTag stumps = compound.getList(TAG_STUMPS, Tag.TAG_COMPOUND);
         for (int i = 0; i < stumps.size(); i++)
         {
             tree.stumpLocations.add(BlockPosUtil.readFromListNBT(stumps, i));
@@ -552,7 +553,7 @@ public class Tree
 
         if (compound.contains(TAG_LEAVES))
         {
-            final ListTag leavesBin = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
+            final ListTag leavesBin = compound.getList(TAG_LEAVES, Tag.TAG_COMPOUND);
             for (int i = 0; i < leavesBin.size(); i++)
             {
                 tree.leaves.add(BlockPosUtil.readFromListNBT(leavesBin, i));
@@ -721,7 +722,7 @@ public class Tree
         }
         for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for (int locY = locYMin; locY < world.getLogicalHeight(); locY++)
+            for (int locY = locYMin; locY < world.getHeight(); locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {

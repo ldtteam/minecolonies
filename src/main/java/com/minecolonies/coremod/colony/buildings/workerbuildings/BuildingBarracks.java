@@ -14,13 +14,14 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.Constants;
+
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -185,7 +186,7 @@ public class BuildingBarracks extends AbstractBuilding
     {
         super.deserializeNBT(compound);
         towers.clear();
-        towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Constants.NBT.TAG_COMPOUND))
+        towers.addAll(NBTUtils.streamCompound(compound.getList(TAG_TOWERS, Tag.TAG_COMPOUND))
                         .map(resultCompound -> BlockPosUtil.read(resultCompound, TAG_POS))
                         .collect(Collectors.toList()));
     }

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.proxy;
 
 import com.ldtteam.structurize.helpers.Settings;
-import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
@@ -21,7 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,7 +136,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public File getSchematicsFolder()
     {
-        if (ServerLifecycleHooks.getCurrentServer() == null)
+        if (net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer() == null)
         {
             if (IColonyManager.getInstance().getServerUUID() != null)
             {

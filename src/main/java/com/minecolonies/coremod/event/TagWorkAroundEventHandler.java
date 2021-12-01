@@ -13,9 +13,9 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -176,10 +176,10 @@ public class TagWorkAroundEventHandler
          * Fires on a server side only, when the server has started.
          * This event is the first reliable point for server-only parsing of available smelting recipes, which are
          * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
-         * @param event  {@link net.minecraftforge.fmlserverevents.FMLServerStartedEvent}
+         * @param event  {@link ServerStartedEvent}
          */
         @SubscribeEvent
-        public static void onServerStarted(@NotNull final FMLServerStartedEvent event)
+        public static void onServerStarted(@NotNull final ServerStartedEvent event)
         {
             final MinecraftServer server = event.getServer();
 

@@ -92,7 +92,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
     {
         if (stateIn.getValue(WATERLOGGED))
         {
-            worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+            worldIn.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         }
 
         return BlockConstructionTape.getPlacementState(

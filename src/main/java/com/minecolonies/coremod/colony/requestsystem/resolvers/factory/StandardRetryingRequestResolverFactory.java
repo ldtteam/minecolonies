@@ -9,8 +9,9 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -93,14 +94,14 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     @Override
     public StandardRetryingRequestResolver deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
-        final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Constants.NBT.TAG_COMPOUND)).map(assignmentCompound -> {
+        final Map<IToken<?>, Integer> assignments = NBTUtils.streamCompound(nbt.getList(NBT_TRIES, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
             IToken<?> token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
 
             return new HashMap.SimpleEntry<>(token, tries);
         }).collect(Collectors.toMap(HashMap.SimpleEntry::getKey, HashMap.SimpleEntry::getValue));
 
-        final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Constants.NBT.TAG_COMPOUND)).map(assignmentCompound -> {
+        final Map<IToken<?>, Integer> delays = NBTUtils.streamCompound(nbt.getList(NBT_DELAYS, Tag.TAG_COMPOUND)).map(assignmentCompound -> {
             IToken<?> token = controller.deserialize(assignmentCompound.getCompound(NBT_TOKEN));
             Integer tries = assignmentCompound.getInt(NBT_VALUE);
 

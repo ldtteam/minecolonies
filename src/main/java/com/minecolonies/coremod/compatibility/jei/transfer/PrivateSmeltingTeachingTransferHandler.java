@@ -3,11 +3,11 @@ package com.minecolonies.coremod.compatibility.jei.transfer;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
-import mezz.jei.api.gui.IRecipeLayout;
+/*import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;*/
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
@@ -20,9 +20,9 @@ import java.util.Map;
 /**
  * JEI recipe transfer handler for teaching furnace recipes
  */
-public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, SmeltingRecipe>
+public class PrivateSmeltingTeachingTransferHandler //implements IRecipeTransferHandler<ContainerCraftingFurnace, SmeltingRecipe>
 {
-    private final IRecipeTransferHandlerHelper handlerHelper;
+    /*private final IRecipeTransferHandlerHelper handlerHelper;
 
     public PrivateSmeltingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
     {
@@ -70,5 +70,5 @@ public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHa
         }
 
         return null;
-    }
+    }*/
 }

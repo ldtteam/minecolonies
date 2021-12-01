@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * Send a message to the server to mark the building as dirty. Created: January 20, 2017

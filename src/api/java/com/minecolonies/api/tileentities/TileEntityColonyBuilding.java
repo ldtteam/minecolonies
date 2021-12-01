@@ -244,16 +244,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundTag compound = new CompoundTag();
-        save(compound);
-        return new ClientboundBlockEntityDataPacket(this.getPosition(), 0, compound);
+        return  ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return save(new CompoundTag());
+        return saveWithId();
     }
 
     @Override
@@ -343,16 +341,14 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         single = true;
     }
 
-    @NotNull
     @Override
-    public CompoundTag save(@NotNull final CompoundTag compound)
+    public void saveAdditional(@NotNull final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_STYLE, style);
         compound.putString(TAG_BUILDING_TYPE, registryName.toString());
-        return compound;
     }
 
     @Override

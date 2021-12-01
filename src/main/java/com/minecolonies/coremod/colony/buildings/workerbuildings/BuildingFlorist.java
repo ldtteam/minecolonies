@@ -16,13 +16,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,7 +107,7 @@ public class BuildingFlorist extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Constants.NBT.TAG_COMPOUND);
+        final ListTag compostBinTagList = compound.getList(TAG_PLANTGROUND, Tag.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
             plantGround.add(NbtUtils.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));

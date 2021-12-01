@@ -37,10 +37,7 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
@@ -58,7 +55,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -739,7 +735,7 @@ public class Colony implements IColony
 
         wayPoints.clear();
         // Waypoints
-        final ListTag wayPointTagList = compound.getList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
+        final ListTag wayPointTagList = compound.getList(TAG_WAYPOINT, Tag.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
             final CompoundTag blockAtPos = wayPointTagList.getCompound(i);
@@ -750,7 +746,7 @@ public class Colony implements IColony
 
         // Free blocks
         freeBlocks.clear();
-        final ListTag freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
+        final ListTag freeBlockTagList = compound.getList(TAG_FREE_BLOCKS, Tag.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.size(); ++i)
         {
             freeBlocks.add(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(freeBlockTagList.getString(i))));
@@ -758,7 +754,7 @@ public class Colony implements IColony
 
         freePositions.clear();
         // Free positions
-        final ListTag freePositionTagList = compound.getList(TAG_FREE_POSITIONS, NBT.TAG_COMPOUND);
+        final ListTag freePositionTagList = compound.getList(TAG_FREE_POSITIONS, Tag.TAG_COMPOUND);
         for (int i = 0; i < freePositionTagList.size(); ++i)
         {
             final CompoundTag blockTag = freePositionTagList.getCompound(i);

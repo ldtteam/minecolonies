@@ -20,9 +20,10 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraf
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingRequestResolver;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -104,7 +105,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         if (compound.getAllKeys().contains(TAG_WORKER))
         {
-            final ListTag workersTagList = compound.getList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
+            final ListTag workersTagList = compound.getList(TAG_WORKER, Tag.TAG_COMPOUND);
             for (int i = 0; i < workersTagList.size(); ++i)
             {
                 final ICitizenData data = building.getColony().getCitizenManager().getCivilian(workersTagList.getCompound(i).getInt(TAG_WORKER_ID));

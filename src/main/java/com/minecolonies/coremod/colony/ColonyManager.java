@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,12 +10,10 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
-import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -28,12 +25,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -238,7 +234,7 @@ public final class ColonyManager implements IColonyManager
     @Nullable
     public IColony getColonyByDimension(final int id, final ResourceKey<Level> registryKey)
     {
-        final Level world = ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
+        final Level world = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getLevel(registryKey);
         if (world == null)
         {
             return null;
@@ -334,7 +330,7 @@ public final class ColonyManager implements IColonyManager
     public List<IColony> getAllColonies()
     {
         final List<IColony> allColonies = new ArrayList<>();
-        for (final Level world : ServerLifecycleHooks.getCurrentServer().getAllLevels())
+        for (final Level world : net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getAllLevels())
         {
             world.getCapability(COLONY_MANAGER_CAP, null).ifPresent(c -> allColonies.addAll(c.getColonies()));
         }

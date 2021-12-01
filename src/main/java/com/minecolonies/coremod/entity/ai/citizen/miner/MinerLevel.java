@@ -7,9 +7,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,7 +156,7 @@ public class MinerLevel
             this.levelSign = null;
         }
 
-        final ListTag nodeTagList = compound.getList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListTag nodeTagList = compound.getList(TAG_NODES, Tag.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.size(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompound(i));
@@ -180,7 +181,7 @@ public class MinerLevel
         this.ladderNode = this.nodes.get(new Vec2i(ladderX, ladderZ));
 
 
-        final ListTag openNodeTagList = compound.getList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListTag openNodeTagList = compound.getList(TAG_OPEN_NODES, Tag.TAG_COMPOUND);
         for (int i = 0; i < openNodeTagList.size(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompound(i));

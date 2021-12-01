@@ -15,7 +15,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -223,7 +223,7 @@ public class EventManager implements IEventManager
         if (compound.contains(TAG_EVENT_MANAGER))
         {
             final CompoundTag eventManagerNBT = compound.getCompound(TAG_EVENT_MANAGER);
-            final ListTag eventListNBT = eventManagerNBT.getList(TAG_EVENT_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag eventListNBT = eventManagerNBT.getList(TAG_EVENT_LIST, Tag.TAG_COMPOUND);
             for (final Tag base : eventListNBT)
             {
                 final CompoundTag tagCompound = (CompoundTag) base;

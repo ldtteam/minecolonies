@@ -18,12 +18,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class BuildingComposter extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListTag compostBinTagList = compound.getList(TAG_BARRELS, Constants.NBT.TAG_COMPOUND);
+        final ListTag compostBinTagList = compound.getList(TAG_BARRELS, Tag.TAG_COMPOUND);
         for (int i = 0; i < compostBinTagList.size(); ++i)
         {
             barrels.add(NbtUtils.readBlockPos(compostBinTagList.getCompound(i).getCompound(TAG_POS)));

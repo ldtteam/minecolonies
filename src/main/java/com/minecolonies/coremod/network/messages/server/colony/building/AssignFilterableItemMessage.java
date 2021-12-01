@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**

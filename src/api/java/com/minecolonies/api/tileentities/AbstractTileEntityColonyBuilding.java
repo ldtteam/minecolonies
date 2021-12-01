@@ -235,14 +235,12 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
         this.version = VERSION;
     }
 
-    @NotNull
     @Override
-    public CompoundTag save(@NotNull final CompoundTag compound)
+    public void saveAdditional(@NotNull final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
         compound.putInt(TAG_VERSION, this.version);
-        return compound;
     }
 
     @Override

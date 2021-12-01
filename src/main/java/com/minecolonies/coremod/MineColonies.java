@@ -34,7 +34,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
@@ -53,14 +54,11 @@ import java.util.function.Consumer;
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
-    @CapabilityInject(IColonyTagCapability.class)
-    public static Capability<IColonyTagCapability> CLOSE_COLONY_CAP;
+    public static final Capability<IColonyTagCapability> CLOSE_COLONY_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 
-    @CapabilityInject(IChunkmanagerCapability.class)
-    public static Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP;
+    public static final Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 
-    @CapabilityInject(IColonyManagerCapability.class)
-    public static Capability<IColonyManagerCapability> COLONY_MANAGER_CAP;
+    public static final Capability<IColonyManagerCapability> COLONY_MANAGER_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 
     /**
      * The config instance.
@@ -115,7 +113,7 @@ public class MineColonies
     @OnlyIn(Dist.CLIENT)
     public static void onStitch(final TextureStitchEvent.Pre event)
     {
-        if (!event.getMap().location().equals(TextureAtlas.LOCATION_BLOCKS))
+        if (!event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS))
         {
             return;
         }

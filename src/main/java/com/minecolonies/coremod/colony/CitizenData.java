@@ -47,7 +47,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1214,7 +1214,7 @@ public class CitizenData implements ICitizenData
         //  Citizen chat options.
         if (nbtTagCompound.getAllKeys().contains(TAG_CHAT_OPTIONS))
         {
-            final ListTag handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Constants.NBT.TAG_COMPOUND);
+            final ListTag handlerTagList = nbtTagCompound.getList(TAG_CHAT_OPTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < handlerTagList.size(); ++i)
             {
                 final ServerCitizenInteraction handler =
@@ -1232,7 +1232,7 @@ public class CitizenData implements ICitizenData
         {
             citizenSkillHandler.init((int) citizenHappinessHandler.getHappiness(getColony()));
             final Map<String, Integer> levels = new HashMap<>();
-            final ListTag levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+            final ListTag levelTagList = nbtTagCompound.getList(TAG_LEVEL_MAP, Tag.TAG_COMPOUND);
             for (int i = 0; i < levelTagList.size(); ++i)
             {
                 final CompoundTag levelExperienceAtJob = levelTagList.getCompound(i);
@@ -1257,13 +1257,13 @@ public class CitizenData implements ICitizenData
         final String parentB = nbtTagCompound.getString(TAG_PARENT_B);
 
         this.parents = new Tuple<>(parentA, parentB);
-        @NotNull final ListTag siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Constants.NBT.TAG_INT);
+        @NotNull final ListTag siblingsNBT = nbtTagCompound.getList(TAG_SIBLINGS, Tag.TAG_INT);
         for (int i = 0; i < siblingsNBT.size(); i++)
         {
             siblings.add(siblingsNBT.getInt(i));
         }
 
-        @NotNull final ListTag childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Constants.NBT.TAG_INT);
+        @NotNull final ListTag childrenNBT = nbtTagCompound.getList(TAG_CHILDREN, Tag.TAG_INT);
         for (int i = 0; i < childrenNBT.size(); i++)
         {
             children.add(childrenNBT.getInt(i));

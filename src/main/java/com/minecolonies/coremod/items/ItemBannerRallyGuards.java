@@ -30,7 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -41,8 +41,6 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.

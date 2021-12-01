@@ -7,10 +7,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WoolCarpetBlock;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +90,7 @@ public class BuildingSchool extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListTag carpetTagList = compound.getList(TAG_CARPET, Constants.NBT.TAG_COMPOUND);
+        final ListTag carpetTagList = compound.getList(TAG_CARPET, Tag.TAG_COMPOUND);
         for (int i = 0; i < carpetTagList.size(); ++i)
         {
             final CompoundTag bedCompound = carpetTagList.getCompound(i);

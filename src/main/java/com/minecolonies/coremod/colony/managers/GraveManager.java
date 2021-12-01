@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -22,7 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class GraveManager implements IGraveManager
     public void read(@NotNull final CompoundTag compound)
     {
         graves.clear();
-        final ListTag gravesTagList = compound.getList(TAG_GRAVE, Constants.NBT.TAG_COMPOUND);
+        final ListTag gravesTagList = compound.getList(TAG_GRAVE, Tag.TAG_COMPOUND);
         for (int i = 0; i < gravesTagList.size(); ++i)
         {
             final CompoundTag graveCompound = gravesTagList.getCompound(i);

@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractColonyServerMessage implements IMessage
@@ -110,7 +110,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     }
 
     @Override
-    public final void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
+    public final void onExecute(final net.minecraftforge.network.NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         final ServerPlayer player = ctxIn.getSender();
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, dimensionId);

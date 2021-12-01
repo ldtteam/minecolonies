@@ -10,8 +10,9 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -105,10 +106,10 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         public StandardRequestSystemDeliveryManJobDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
-            final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND))
+            final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
                                                   .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
                                                   .collect(Collectors.toCollection(LinkedList::new));
-            final HashSet<IToken<?>> ongoingDeliveries = NBTUtils.streamCompound(nbt.getList(TAG_ONGOING_LIST, Constants.NBT.TAG_COMPOUND))
+            final HashSet<IToken<?>> ongoingDeliveries = NBTUtils.streamCompound(nbt.getList(TAG_ONGOING_LIST, Tag.TAG_COMPOUND))
                                                   .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
                                                   .collect(Collectors.toCollection(HashSet::new));
             return new StandardRequestSystemDeliveryManJobDataStore(token, queue, ongoingDeliveries);

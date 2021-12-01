@@ -10,7 +10,6 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 

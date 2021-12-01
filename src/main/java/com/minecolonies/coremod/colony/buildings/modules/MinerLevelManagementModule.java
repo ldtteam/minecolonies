@@ -8,9 +8,10 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     {
         startingLevelShaft = compound.getInt(TAG_STARTING_LEVEL);
         currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
-        final ListTag levelTagList = compound.getList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        final ListTag levelTagList = compound.getList(TAG_LEVELS, Tag.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); i++)
         {
             this.levels.add(new MinerLevel(levelTagList.getCompound(i)));

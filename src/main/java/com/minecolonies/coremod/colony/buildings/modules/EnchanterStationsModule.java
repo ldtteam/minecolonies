@@ -7,10 +7,11 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +39,7 @@ public class EnchanterStationsModule extends AbstractBuildingModule implements I
     public void deserializeNBT(final CompoundTag compound)
     {
         buildingToGatherFrom.clear();
-        NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Constants.NBT.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getList(TAG_GATHER_LIST, Tag.TAG_COMPOUND))
           .map(this::deserializeListElement)
           .forEach(t -> buildingToGatherFrom.put(t.getA(), t.getB()));
     }

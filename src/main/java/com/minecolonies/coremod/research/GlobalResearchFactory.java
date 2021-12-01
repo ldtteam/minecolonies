@@ -12,13 +12,13 @@ import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -136,7 +136,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
         final IGlobalResearch research = getNewInstance(id, branch, parent, desc, depth, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
 
-        NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Constants.NBT.TAG_COMPOUND)).forEach(compound ->
+        NBTUtils.streamCompound(nbt.getList(TAG_COSTS, Tag.TAG_COMPOUND)).forEach(compound ->
         {
             String[] costParts = compound.getString(TAG_COST_ITEM).split(":");
             if(costParts.length == 3)
@@ -150,16 +150,16 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
                 research.addCost(new ItemStorage(is, false, !is.hasTag()));
             }
         });
-        NBTUtils.streamCompound(nbt.getList(TAG_REQS, Constants.NBT.TAG_COMPOUND)).
+        NBTUtils.streamCompound(nbt.getList(TAG_REQS, Tag.TAG_COMPOUND)).
              forEach(compound ->
                      research.addRequirement(Objects.requireNonNull(IResearchRequirementRegistry.getInstance()
                                                                       .getValue(ResourceLocation.tryParse(compound.getString(TAG_REQ_TYPE)))).readFromNBT(compound.getCompound(TAG_REQ_ITEM))));
 
-        NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Constants.NBT.TAG_COMPOUND)).forEach(compound ->
+        NBTUtils.streamCompound(nbt.getList(TAG_EFFECTS, Tag.TAG_COMPOUND)).forEach(compound ->
             research.addEffect(Objects.requireNonNull(IResearchEffectRegistry.getInstance()
                                                         .getValue(ResourceLocation.tryParse(compound.getString(TAG_EFFECT_TYPE)))).readFromNBT(compound.getCompound(TAG_EFFECT_ITEM))));
 
-        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Constants.NBT.TAG_COMPOUND)).forEach(compound -> research.addChild(new ResourceLocation(compound.getString(TAG_RESEARCH_CHILD))));
+        NBTUtils.streamCompound(nbt.getList(TAG_CHILDS, Tag.TAG_COMPOUND)).forEach(compound -> research.addChild(new ResourceLocation(compound.getString(TAG_RESEARCH_CHILD))));
         return research;
     }
 

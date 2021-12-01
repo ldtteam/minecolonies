@@ -3,12 +3,11 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class ChangeDeliveryPriorityMessage extends AbstractBuildingServerMessage<IBuilding>

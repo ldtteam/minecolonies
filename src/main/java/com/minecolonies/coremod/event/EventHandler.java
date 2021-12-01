@@ -489,11 +489,11 @@ public class EventHandler
             if (spawner instanceof SpawnerBlockEntity)
             {
                 final IColony colony = IColonyManager.getInstance()
-                                         .getColonyByDimension(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getTag().getInt(TAG_COLONY_ID),
+                                         .getColonyByDimension(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_COLONY_ID),
                                            world.dimension());
                 if (colony != null)
                 {
-                    colony.getEventManager().onTileEntityBreak(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getTag().getInt(TAG_EVENT_ID), spawner);
+                    colony.getEventManager().onTileEntityBreak(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_EVENT_ID), spawner);
                 }
             }
         }

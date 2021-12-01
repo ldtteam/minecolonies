@@ -8,6 +8,7 @@ import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.tileentities.ScarecrowFieldStage;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,7 +33,6 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -383,21 +383,14 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundTag compound = new CompoundTag();
-
-        this.save(compound);
-        if (colony != null)
-        {
-            compound.putInt(TAG_COLONY_ID, colony.getID());
-        }
-        return new ClientboundBlockEntityDataPacket(this.getPosition(), 0, compound);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return save(new CompoundTag());
+        return saveWithId();
     }
 
     @Override
@@ -416,7 +409,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public void load(final CompoundTag compound)
     {
-        final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
+        final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, Tag.TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); ++i)
         {
             final CompoundTag inventoryCompound = inventoryTagList.getCompound(i);
@@ -445,7 +438,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
 
     @NotNull
     @Override
-    public CompoundTag save(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound)
     {
         @NotNull final ListTag inventoryTagList = new ListTag();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -475,8 +468,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
         {
             compound.putInt(TAG_COLONY_ID, colony.getID());
         }
-
-        return super.save(compound);
     }
 
     /**

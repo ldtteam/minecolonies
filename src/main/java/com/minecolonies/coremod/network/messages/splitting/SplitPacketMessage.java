@@ -10,7 +10,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;

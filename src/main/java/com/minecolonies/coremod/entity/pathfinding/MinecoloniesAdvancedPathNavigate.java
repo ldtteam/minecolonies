@@ -402,11 +402,11 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    protected boolean canMoveDirectly(final Vec3 start, final Vec3 end, final int sizeX, final int sizeY, final int sizeZ)
+    protected boolean canMoveDirectly(final Vec3 start, final Vec3 end)
     {
         // TODO improve road walking. This is better in some situations, but still not great.
         return !WorkerUtil.isPathBlock(level.getBlockState(new BlockPos(start.x, start.y - 1, start.z)).getBlock())
-                 && super.canMoveDirectly(start, end, sizeX, sizeY, sizeZ);
+                 && super.canMoveDirectly(start, end);
     }
 
     public double getSpeedFactor()

@@ -79,7 +79,7 @@ public class CommandPruneWorld implements IMCOPCommand
         final ServerLevel world = context.getSource().getLevel();
 
         // Local save folder for this word
-        final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(LevelResource.ROOT).toFile()), REGION_FOLDER);
+        final File saveDir = new File(DimensionType.getStorageFolder(world.dimension(), world.getServer().getWorldPath(LevelResource.ROOT)).toFile(), REGION_FOLDER);
 
         // Colony list for this world
         List<IColony> colonies = new ArrayList<>();

@@ -8,9 +8,10 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +51,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        final ListTag filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Constants.NBT.TAG_STRING);
+        final ListTag filterableList = compound.getCompound(id).getList(TAG_MOBLIST, Tag.TAG_STRING);
         for (int i = 0; i < filterableList.size(); ++i)
         {
             final ResourceLocation res = new ResourceLocation(filterableList.getString(i));

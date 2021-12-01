@@ -14,9 +14,10 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -115,7 +116,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         public StandardRequestResolversIdentitiesDataStore deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
-            final ListTag list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
             final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
                 final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));

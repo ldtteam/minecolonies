@@ -31,6 +31,7 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -43,7 +44,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.util.Constants;
+
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -205,12 +206,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final ListTag recipesTags;
         if (compound.contains(TAG_RECIPES))
         {
-            recipesTags = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+            recipesTags = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
         }
         else
         {
             final CompoundTag compoundNBT = compound.getCompound(getId());
-            recipesTags = compoundNBT.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+            recipesTags = compoundNBT.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
         }
 
         for (int i = 0; i < recipesTags.size(); i++)

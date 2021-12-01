@@ -7,8 +7,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.network.NetworkEvent;
 
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks.SPIES_GOLD_COST;
 

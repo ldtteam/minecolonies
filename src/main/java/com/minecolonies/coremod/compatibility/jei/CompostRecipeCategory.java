@@ -6,14 +6,14 @@ import com.minecolonies.api.blocks.types.BarrelType;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mezz.jei.api.constants.VanillaTypes;
+/*import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.category.IRecipeCategory;*/
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
  * JEI compost recipe category renderer
  */
 @SuppressWarnings("MethodParameterOfConcreteClass")
-public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
+public class CompostRecipeCategory //implements IRecipeCategory<CompostRecipe>
 {
-    private final String title;
+    /*private final String title;
     private final IDrawable background;
     private final IDrawable icon;
     private final IDrawable slot;
@@ -118,5 +118,5 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
                 .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
                 .setValue(AbstractBlockBarrel.VARIANT, type);
         RenderHelper.renderBlock(matrixStack, barrel, 40, 20, 100, -30F, 20F, 25F);
-    }
+    }*/
 }

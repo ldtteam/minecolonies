@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +11,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -31,7 +32,7 @@ public class BedHandlingModule extends AbstractBuildingModule implements IModule
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        final ListTag bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
             final CompoundTag bedCompound = bedTagList.getCompound(i);

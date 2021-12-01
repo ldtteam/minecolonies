@@ -31,6 +31,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -40,7 +41,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,7 +215,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     {
         super.deserializeNBT(compound);
 
-        final ListTag wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
+        final ListTag wayPointTagList = compound.getList(NBT_PATROL_TARGETS, Tag.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.size(); ++i)
         {
             final CompoundTag blockAtPos = wayPointTagList.getCompound(i);

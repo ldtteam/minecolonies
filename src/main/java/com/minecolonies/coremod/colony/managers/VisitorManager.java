@@ -20,7 +20,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -116,7 +116,7 @@ public class VisitorManager implements IVisitorManager
         if (compound.contains(TAG_VISIT_MANAGER))
         {
             final CompoundTag visitorManagerNBT = compound.getCompound(TAG_VISIT_MANAGER);
-            final ListTag citizenList = visitorManagerNBT.getList(TAG_VISITORS, Constants.NBT.TAG_COMPOUND);
+            final ListTag citizenList = visitorManagerNBT.getList(TAG_VISITORS, Tag.TAG_COMPOUND);
             for (final Tag citizen : citizenList)
             {
                 final IVisitorData data = VisitorData.loadVisitorFromNBT(colony, (CompoundTag) citizen);

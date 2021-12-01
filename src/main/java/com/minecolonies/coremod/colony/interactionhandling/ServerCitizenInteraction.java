@@ -11,6 +11,7 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -19,7 +20,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -177,7 +178,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
         super.deserializeNBT(compoundNBT);
         this.displayAtWorldTick = compoundNBT.getInt(TAG_DELAY);
         this.parents.clear();
-        final ListTag list = compoundNBT.getList(TAG_PARENTS, Constants.NBT.TAG_COMPOUND);
+        final ListTag list = compoundNBT.getList(TAG_PARENTS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             this.parents.add(Component.Serializer.fromJson(compoundNBT.getString(TAG_PARENT)));

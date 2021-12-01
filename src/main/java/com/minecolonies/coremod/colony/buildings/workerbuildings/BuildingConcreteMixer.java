@@ -16,13 +16,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,14 +121,14 @@ public class BuildingConcreteMixer extends AbstractBuilding
         super.deserializeNBT(compound);
 
         waterPos.clear();
-        final ListTag waterMapList = compound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
+        final ListTag waterMapList = compound.getList(TAG_WATER, Tag.TAG_COMPOUND);
         for (int i = 0; i < waterMapList.size(); ++i)
         {
             final CompoundTag waterCompound = waterMapList.getCompound(i);
             final int level = waterCompound.getInt(TAG_LEVEL);
             minWaterLevel = Math.min(minWaterLevel, level);
 
-            final ListTag waterTagList = waterCompound.getList(TAG_WATER, Constants.NBT.TAG_COMPOUND);
+            final ListTag waterTagList = waterCompound.getList(TAG_WATER, Tag.TAG_COMPOUND);
             final List<BlockPos> water = new ArrayList<>();
             for (int j = 0; j < waterTagList.size(); ++j)
             {

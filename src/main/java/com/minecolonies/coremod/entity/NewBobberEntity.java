@@ -33,9 +33,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -72,7 +72,7 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
         this.noCulling = true;
     }
 
-    public NewBobberEntity(final FMLPlayMessages.SpawnEntity spawnEntity, final Level world)
+    public NewBobberEntity(final PlayMessages.SpawnEntity spawnEntity, final Level world)
     {
         this(ModEntities.FISHHOOK, world);
     }

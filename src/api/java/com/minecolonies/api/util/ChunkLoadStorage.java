@@ -2,10 +2,10 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,16 +89,16 @@ public class ChunkLoadStorage
         this.xz = compound.getLong(TAG_POS);
         this.dimension = new ResourceLocation(compound.getString(TAG_DIMENSION));
 
-        colonyId.addAll(NBTUtils.streamCompound(compound.getList(TAG_CLAIM_LIST, Constants.NBT.TAG_COMPOUND))
+        colonyId.addAll(NBTUtils.streamCompound(compound.getList(TAG_CLAIM_LIST, Tag.TAG_COMPOUND))
                           .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
-        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_ADD, Constants.NBT.TAG_COMPOUND))
+        coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_ADD, Tag.TAG_COMPOUND))
                                .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
-        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_REMOVE, Constants.NBT.TAG_COMPOUND))
+        coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_REMOVE, Tag.TAG_COMPOUND))
                                   .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
 
-        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND))
+        claimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Tag.TAG_COMPOUND))
                                   .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
-        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_UNCLAIM, Constants.NBT.TAG_COMPOUND))
+        unClaimingBuilding.addAll(NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_UNCLAIM, Tag.TAG_COMPOUND))
                                     .map(ChunkLoadStorage::readTupleFromNbt).collect(Collectors.toList()));
     }
 
@@ -264,7 +264,7 @@ public class ChunkLoadStorage
                 cap.addBuildingClaim(tuple.getA(), tuple.getB(), chunk);
             }
         }
-        chunk.markUnsaved();
+        chunk.setUnsaved(true);
     }
 
     /**

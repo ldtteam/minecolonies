@@ -19,12 +19,13 @@ import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.*;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -1065,7 +1066,7 @@ public final class StandardRequestFactories
         final T requested = typeDeserialization.apply(controller, compound.getCompound(NBT_REQUESTED));
 
         final List<IToken<?>> childTokens = new ArrayList<>();
-        final ListTag childCompound = compound.getList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
+        final ListTag childCompound = compound.getList(NBT_CHILDREN, Tag.TAG_COMPOUND);
         for (int i = 0; i < childCompound.size(); i++)
         {
             childTokens.add(controller.deserialize(childCompound.getCompound(i)));
@@ -1088,7 +1089,7 @@ public final class StandardRequestFactories
         if (compound.getAllKeys().contains(NBT_DELIVERIES))
         {
             final ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
-            final ListTag deliveriesList = compound.getList(NBT_DELIVERIES, Constants.NBT.TAG_COMPOUND);
+            final ListTag deliveriesList = compound.getList(NBT_DELIVERIES, Tag.TAG_COMPOUND);
             NBTUtils.streamCompound(deliveriesList).forEach(itemStackCompound -> stackBuilder.add(ItemStack.of(itemStackCompound)));
 
             request.overrideCurrentDeliveries(stackBuilder.build());

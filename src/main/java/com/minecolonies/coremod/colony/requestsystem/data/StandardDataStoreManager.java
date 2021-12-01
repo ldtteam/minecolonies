@@ -12,9 +12,10 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -113,7 +114,7 @@ public class StandardDataStoreManager implements IDataStoreManager
         @Override
         public StandardDataStoreManager deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Constants.NBT.TAG_COMPOUND)).map(CompoundNBT -> {
+            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundNBT -> {
                 final IToken<?> token = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
                 final IDataStore store = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_VALUE));
 

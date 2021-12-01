@@ -6,11 +6,12 @@ import com.minecolonies.api.colony.buildings.modules.IItemListModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class ItemListModule extends AbstractBuildingModule implements IItemListM
         final List<ItemStorage> allowedItems = new ArrayList<>();
         if (compound.contains(id))
         {
-            final ListTag filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag filterableList = compound.getCompound(id).getList(TAG_ITEMLIST, Tag.TAG_COMPOUND);
             for (int i = 0; i < filterableList.size(); ++i)
             {
                 allowedItems.add(new ItemStorage(ItemStack.of(filterableList.getCompound(i))));

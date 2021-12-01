@@ -10,9 +10,10 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class JobFisherman extends AbstractJob<EntityAIWorkFisherman, JobFisherma
 
         if (compound.getAllKeys().contains(TAG_PONDS))
         {
-            final ListTag listOfPonds = compound.getList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+            final ListTag listOfPonds = compound.getList(TAG_PONDS, Tag.TAG_COMPOUND);
             for (int i = 0; i < listOfPonds.size(); i++)
             {
                 ponds.add(new Tuple<>(BlockPosUtil.read(listOfPonds.getCompound(i), TAG_WATER_POND), BlockPosUtil.read(listOfPonds.getCompound(i), TAG_PARENT_POND)));

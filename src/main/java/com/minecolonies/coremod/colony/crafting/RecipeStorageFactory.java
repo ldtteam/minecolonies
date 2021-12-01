@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -158,7 +159,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     public RecipeStorage deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
     {
         final List<ItemStorage> input = new ArrayList<>();
-        final ListTag inputTagList = nbt.getList(INPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListTag inputTagList = nbt.getList(INPUT_TAG, Tag.TAG_COMPOUND);
         for (int i = 0; i < inputTagList.size(); ++i)
         {
             final CompoundTag inputTag = inputTagList.getCompound(i);
@@ -184,7 +185,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ResourceLocation type = nbt.contains(TYPE_TAG) ? new ResourceLocation(nbt.getString(TYPE_TAG).toLowerCase()): ModRecipeTypes.CLASSIC_ID;
 
-        final ListTag altOutputTagList = nbt.getList(ALTOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListTag altOutputTagList = nbt.getList(ALTOUTPUT_TAG, Tag.TAG_COMPOUND);
 
         final List<ItemStack> altOutputs = new ArrayList<>();
         for (int i = 0; i < altOutputTagList.size(); ++i)
@@ -193,7 +194,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             altOutputs.add(ItemStack.of(altOutputTag));
         }
 
-        final ListTag secOutputTagList = nbt.getList(SECOUTPUT_TAG, Constants.NBT.TAG_COMPOUND);
+        final ListTag secOutputTagList = nbt.getList(SECOUTPUT_TAG, Tag.TAG_COMPOUND);
 
         final List<ItemStack> secOutputs = new ArrayList<>();
         for (int i = 0; i < secOutputTagList.size(); ++i)

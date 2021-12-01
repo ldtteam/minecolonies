@@ -13,8 +13,8 @@ import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,7 +134,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
     @Override
     public void read(@NotNull final CompoundTag compoundNBT)
     {
-        final ListTag levelTagList = compoundNBT.getList(TAG_LEVEL_MAP, Constants.NBT.TAG_COMPOUND);
+        final ListTag levelTagList = compoundNBT.getList(TAG_LEVEL_MAP, Tag.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.size(); ++i)
         {
             final CompoundTag levelExperienceAtJob = levelTagList.getCompound(i);

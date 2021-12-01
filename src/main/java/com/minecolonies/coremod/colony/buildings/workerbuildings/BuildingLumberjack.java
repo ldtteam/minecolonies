@@ -27,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
@@ -36,7 +37,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -180,7 +181,7 @@ public class BuildingLumberjack extends AbstractBuilding
             endRestriction = null;
         }
 
-        final ListTag netherTreeBinTagList = compound.getList(TAG_NETHER_TREE_LIST, Constants.NBT.TAG_COMPOUND);
+        final ListTag netherTreeBinTagList = compound.getList(TAG_NETHER_TREE_LIST, Tag.TAG_COMPOUND);
         for (int i = 0; i < netherTreeBinTagList.size(); i++)
         {
             netherTrees.add(BlockPosUtil.readFromListNBT(netherTreeBinTagList, i));

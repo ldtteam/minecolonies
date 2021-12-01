@@ -166,9 +166,9 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     @NotNull
     @Override
-    public CompoundTag save(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
 
         @NotNull final ListTag inventoryTagList = new ListTag();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -193,22 +193,19 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         {
             compound.put(TAG_GRAVE_DATA, graveData.write());
         }
-
-        return compound;
     }
 
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundTag compound = new CompoundTag();
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.save(compound));
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundTag());
+        return this.saveWithId();
     }
 
     @Override

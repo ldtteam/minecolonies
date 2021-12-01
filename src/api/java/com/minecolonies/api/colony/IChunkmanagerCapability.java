@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -108,7 +107,7 @@ public interface IChunkmanagerCapability
         {
             if (nbt instanceof CompoundTag && ((CompoundTag) nbt).getAllKeys().contains(TAG_ALL_CHUNK_STORAGES))
             {
-                NBTUtils.streamCompound(((CompoundTag) nbt).getList(TAG_ALL_CHUNK_STORAGES, Constants.NBT.TAG_COMPOUND))
+                NBTUtils.streamCompound(((CompoundTag) nbt).getList(TAG_ALL_CHUNK_STORAGES, Tag.TAG_COMPOUND))
                   .map(Storage::read).forEach(key -> instance.addChunkStorage(key.getA().x, key.getA().z, key.getB()));
             }
         }

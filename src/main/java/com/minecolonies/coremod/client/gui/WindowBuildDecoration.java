@@ -26,9 +26,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -36,7 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -174,7 +174,7 @@ public class EventStructureManager implements IEventStructureManager
         {
             backupSchematics.clear();
             final CompoundTag structureManagerCompound = compound.getCompound(TAG_EVENT_STRUCTURE_MANAGER);
-            final ListTag schematicTags = structureManagerCompound.getList(TAG_SCHEMATIC_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag schematicTags = structureManagerCompound.getList(TAG_SCHEMATIC_LIST, Tag.TAG_COMPOUND);
 
             for (final Tag base : schematicTags)
             {

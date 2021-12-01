@@ -8,12 +8,13 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     public void deserializeNBT(final CompoundTag compound)
     {
         final CompoundTag settingsCompound = compound.getCompound("settings");
-        final ListTag list = settingsCompound.getList("settingslist", Constants.NBT.TAG_COMPOUND);
+        final ListTag list = settingsCompound.getList("settingslist", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundTag entryCompound = list.getCompound(i);

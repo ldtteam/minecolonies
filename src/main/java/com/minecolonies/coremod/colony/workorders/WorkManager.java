@@ -16,11 +16,11 @@ import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -210,7 +210,7 @@ public class WorkManager implements IWorkManager
     {
         workOrders.clear();
         //  Work Orders
-        final ListTag list = compound.getList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
+        final ListTag list = compound.getList(TAG_WORK_ORDERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i)
         {
             final CompoundTag orderCompound = list.getCompound(i);

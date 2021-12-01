@@ -9,12 +9,13 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -258,7 +259,7 @@ public class Permissions implements IPermissions
         if (compound.contains(TAG_RANKS))
         {
             ranks.clear();
-            final ListTag rankTagList = compound.getList(TAG_RANKS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            final ListTag rankTagList = compound.getList(TAG_RANKS, Tag.TAG_COMPOUND);
             for (int i = 0; i < rankTagList.size(); ++i)
             {
                 final CompoundTag rankCompound = rankTagList.getCompound(i);
@@ -278,7 +279,7 @@ public class Permissions implements IPermissions
         }
         players.clear();
         //  Owners
-        final ListTag ownerTagList = compound.getList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final ListTag ownerTagList = compound.getList(TAG_OWNERS, Tag.TAG_COMPOUND);
         final int version = compound.getInt(TAG_VERSION);
         for (int i = 0; i < ownerTagList.size(); ++i)
         {
@@ -316,14 +317,14 @@ public class Permissions implements IPermissions
         if (compound.getInt(TAG_VERSION) == permissionsVersion)
         {
             permissionMap.clear();
-            final ListTag permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+            final ListTag permissionsTagList = compound.getList(TAG_PERMISSIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < permissionsTagList.size(); ++i)
             {
                 final CompoundTag permissionsCompound = permissionsTagList.getCompound(i);
                 final Rank rank = ranks.get(permissionsCompound.getInt(TAG_RANK));
                 if (rank != null)
                 {
-                    final ListTag flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+                    final ListTag flagsTagList = permissionsCompound.getList(TAG_FLAGS, Tag.TAG_STRING);
 
                     int flags = 0;
 
@@ -385,7 +386,7 @@ public class Permissions implements IPermissions
         final Map.Entry<UUID, ColonyPlayer> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)
         {
-            final GameProfile player = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID).orElse(null);
+            final GameProfile player = net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getProfileCache().get(ownerUUID).orElse(null);
 
             if (player != null)
             {

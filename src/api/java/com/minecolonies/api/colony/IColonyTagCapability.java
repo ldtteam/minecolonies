@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -126,7 +125,7 @@ public interface IColonyTagCapability
         public void addColony(final int id, final LevelChunk chunk)
         {
             colonies.add(id);
-            chunk.markUnsaved();
+            chunk.setUnsaved(true);
         }
 
         @Override
@@ -137,7 +136,7 @@ public interface IColonyTagCapability
             {
                 this.owningColony = 0;
             }
-            chunk.markUnsaved();
+            chunk.setUnsaved(true);
         }
 
         @Override
@@ -152,7 +151,7 @@ public interface IColonyTagCapability
             colonies.clear();
             owningColony = 0;
             claimingBuildings.clear();
-            chunk.markUnsaved();
+            chunk.setUnsaved(true);
         }
 
         @Override
@@ -173,7 +172,7 @@ public interface IColonyTagCapability
                 newList.add(pos);
                 claimingBuildings.put(colonyId, newList);
             }
-            chunk.markUnsaved();
+            chunk.setUnsaved(true);
         }
 
         @Override
@@ -205,14 +204,14 @@ public interface IColonyTagCapability
                     }
                 }
             }
-            chunk.markUnsaved();
+            chunk.setUnsaved(true);
         }
 
         @Override
         public void setOwningColony(final int id, final LevelChunk chunk)
         {
             this.owningColony = id;
-            chunk.markUnsaved();
+            chunk.setUnsaved(true);
         }
 
         @Override
@@ -242,11 +241,11 @@ public interface IColonyTagCapability
             owningColony = compound.getInt(TAG_ID);
 
             // Fill colonies list
-            NBTUtils.streamCompound(compound.getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+            NBTUtils.streamCompound(compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND))
               .map(c -> c.getInt(TAG_ID)).forEach(colonies::add);
 
             // Fill claim buildings list
-            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Constants.NBT.TAG_COMPOUND)).forEach(this::readClaims);
+            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS_CLAIM, Tag.TAG_COMPOUND)).forEach(this::readClaims);
         }
 
         /**
@@ -257,7 +256,7 @@ public interface IColonyTagCapability
         private void readClaims(final CompoundTag compound)
         {
             final int id = compound.getInt(TAG_ID);
-            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Constants.NBT.TAG_COMPOUND)).forEach(
+            NBTUtils.streamCompound(compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND)).forEach(
               tag -> {
                   final BlockPos pos = BlockPosUtil.read((tag), TAG_BUILDING);
                   if (claimingBuildings.containsKey(id))

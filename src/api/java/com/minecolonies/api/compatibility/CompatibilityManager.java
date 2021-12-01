@@ -12,6 +12,7 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.*;
@@ -30,7 +31,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -356,7 +356,7 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public void read(@NotNull final CompoundTag compound)
     {
-        NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Constants.NBT.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getList(TAG_SAP_LEAF, Tag.TAG_COMPOUND))
                 .map(CompatibilityManager::readLeafSaplingEntryFromNBT)
                 .filter(key -> !leavesToSaplingMap.containsKey(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true)) && !leavesToSaplingMap.containsValue(key.getB()))
                 .forEach(key -> leavesToSaplingMap.put(new BlockStateStorage(key.getA(), leafCompareWithoutProperties, true), key.getB()));

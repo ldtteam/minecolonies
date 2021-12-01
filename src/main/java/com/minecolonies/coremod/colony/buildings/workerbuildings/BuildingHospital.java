@@ -21,6 +21,7 @@ import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -29,7 +30,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -94,7 +95,7 @@ public class BuildingHospital extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final ListTag bedTagList = compound.getList(TAG_BEDS, Constants.NBT.TAG_COMPOUND);
+        final ListTag bedTagList = compound.getList(TAG_BEDS, Tag.TAG_COMPOUND);
         for (int i = 0; i < bedTagList.size(); ++i)
         {
             final CompoundTag bedCompound = bedTagList.getCompound(i);
@@ -105,7 +106,7 @@ public class BuildingHospital extends AbstractBuilding
             }
         }
 
-        final ListTag patientTagList = compound.getList(TAG_PATIENTS, Constants.NBT.TAG_COMPOUND);
+        final ListTag patientTagList = compound.getList(TAG_PATIENTS, Tag.TAG_COMPOUND);
         for (int i = 0; i < patientTagList.size(); ++i)
         {
             final CompoundTag patientCompound = patientTagList.getCompound(i);

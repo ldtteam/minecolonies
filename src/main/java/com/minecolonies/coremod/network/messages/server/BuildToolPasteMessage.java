@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
@@ -33,8 +32,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

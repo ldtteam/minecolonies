@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -21,7 +22,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -98,7 +99,7 @@ public class BuildingBeekeeper extends AbstractBuilding
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        NBTUtils.streamCompound(compound.getList(NbtTagConstants.TAG_HIVES, Constants.NBT.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getList(NbtTagConstants.TAG_HIVES, Tag.TAG_COMPOUND))
           .map(NbtUtils::readBlockPos)
           .forEach(this.hives::add);
     }

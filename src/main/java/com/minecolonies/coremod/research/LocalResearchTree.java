@@ -10,12 +10,12 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -330,7 +330,7 @@ public class LocalResearchTree implements ILocalResearchTree
         inProgress.clear();
         isComplete.clear();
         maxLevelResearchCompleted.clear();
-        NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Constants.NBT.TAG_COMPOUND))
+        NBTUtils.streamCompound(compound.getList(TAG_RESEARCH_TREE, Tag.TAG_COMPOUND))
           .map(researchCompound -> (ILocalResearch) StandardFactoryController.getInstance().deserialize(researchCompound))
           .forEach(research -> {
               /// region Updated ID helper.

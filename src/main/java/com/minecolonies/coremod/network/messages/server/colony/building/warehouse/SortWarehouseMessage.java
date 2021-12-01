@@ -7,8 +7,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.SortingUtils;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * Sort the warehouse if level bigger than 3.

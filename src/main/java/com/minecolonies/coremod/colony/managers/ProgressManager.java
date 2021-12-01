@@ -11,10 +11,11 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -196,7 +197,7 @@ public class ProgressManager implements IProgressManager
     {
         notifiedProgress.clear();
         final CompoundTag progressCompound = compound.getCompound(TAG_PROGRESS_MANAGER);
-        final ListTag progressTags = progressCompound.getList(TAG_PROGRESS_LIST, Constants.NBT.TAG_COMPOUND);
+        final ListTag progressTags = progressCompound.getList(TAG_PROGRESS_LIST, Tag.TAG_COMPOUND);
         notifiedProgress.addAll(NBTUtils.streamCompound(progressTags)
                                   .map(progressTypeCompound -> values()[progressTypeCompound.getInt(TAG_PROGRESS_TYPE)])
                                   .collect(Collectors.toList()));

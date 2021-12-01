@@ -217,7 +217,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     {
         return () ->
         {
-            final BlockState curBlockState = world.getBlockState(blockToBreak);
+            /*final BlockState curBlockState = world.getBlockState(blockToBreak);
             final Block curBlock = curBlockState.getBlock();
 
             if (world.getServer() == null)
@@ -246,7 +246,7 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
                 fake.setItemInHand(InteractionHand.MAIN_HAND, toolToUse);
             }
 
-            curBlock.removedByPlayer(curBlockState, world, blockToBreak, fake, true, world.getFluidState(blockToBreak));
+            curBlock.removedByPlayer(curBlockState, world, blockToBreak, fake, true, world.getFluidState(blockToBreak));*/
         };
     }
 

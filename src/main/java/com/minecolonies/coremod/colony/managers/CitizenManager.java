@@ -25,13 +25,14 @@ import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -168,7 +169,7 @@ public class CitizenManager implements ICitizenManager
     {
         citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
-        citizens.putAll(NBTUtils.streamCompound(compound.getList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))
+        citizens.putAll(NBTUtils.streamCompound(compound.getList(TAG_CITIZENS, Tag.TAG_COMPOUND))
                           .map(this::deserializeCitizen)
                           .collect(Collectors.toMap(ICitizenData::getId, Function.identity())));
 

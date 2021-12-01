@@ -1,12 +1,12 @@
 package com.minecolonies.api.inventory.api;
 
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -109,8 +109,8 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     @Override
     public void deserializeNBT(final CompoundTag nbt)
     {
-        final ListTag handlerList = nbt.getList(NBT_KEY_NAME, Constants.NBT.TAG_COMPOUND);
-        final ListTag indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Constants.NBT.TAG_INT);
+        final ListTag handlerList = nbt.getList(NBT_KEY_NAME, Tag.TAG_COMPOUND);
+        final ListTag indexList = nbt.getList(NBT_KEY_HANDLERS_INDEXLIST, Tag.TAG_INT);
 
         if (handlerList.size() == handlers.length)
         {

@@ -503,7 +503,7 @@ public class WindowBannerPicker extends Screen
         {
             if (this.visible)
             {
-                if (this.isHovered() && this.active)
+                if (this.isHovered && this.active)
                     fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0xDDFFFFFF);
 
                 if (activeLayer < layers.size() && layers.get(activeLayer).getFirst() == this.pattern)

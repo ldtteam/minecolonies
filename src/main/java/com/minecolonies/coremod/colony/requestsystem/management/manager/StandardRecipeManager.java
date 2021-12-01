@@ -10,7 +10,8 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.NBTUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraftforge.common.util.Constants;
+
+import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -94,7 +95,7 @@ public class StandardRecipeManager implements IRecipeManager
     @Override
     public void read(@NotNull final CompoundTag compound)
     {
-        final ListTag list = compound.getList(TAG_RECIPES, Constants.NBT.TAG_COMPOUND);
+        final ListTag list = compound.getList(TAG_RECIPES, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             IRecipeStorage recipe = StandardFactoryController.getInstance().deserialize(list.getCompound(i));

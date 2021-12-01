@@ -10,11 +10,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.Constants;
+
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +62,7 @@ public class FurnaceUserModule extends AbstractBuildingModule implements IPersis
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        final ListTag furnaceTagList = compound.getList(TAG_FURNACES, Constants.NBT.TAG_COMPOUND);
+        final ListTag furnaceTagList = compound.getList(TAG_FURNACES, Tag.TAG_COMPOUND);
         for (int i = 0; i < furnaceTagList.size(); ++i)
         {
             if(furnaceTagList.getCompound(i).contains(TAG_POS))

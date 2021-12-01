@@ -13,8 +13,8 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -63,12 +63,12 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onServerAboutToStart(@NotNull final FMLServerAboutToStartEvent event)
+    public static void onServerAboutToStart(@NotNull final ServerAboutToStartEvent event)
     {
         IColonyManager.getInstance().getRecipeManager().reset();
     }
 
-    public static void onServerStopped(final FMLServerStoppingEvent event)
+    public static void onServerStopped(final ServerStoppingEvent event)
     {
         Pathfinding.shutdown();
     }

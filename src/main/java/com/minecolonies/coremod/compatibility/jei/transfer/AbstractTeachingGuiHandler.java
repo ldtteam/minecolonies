@@ -5,9 +5,9 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
-import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
-import mezz.jei.api.gui.handlers.IGuiContainerHandler;
-import mezz.jei.api.registration.IGuiHandlerRegistration;
+//import mezz.jei.api.gui.handlers.IGhostIngredientHandler;
+//import mezz.jei.api.gui.handlers.IGuiContainerHandler;
+//import mezz.jei.api.registration.IGuiHandlerRegistration;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.inventory.Slot;
@@ -25,10 +25,9 @@ import java.util.stream.Collectors;
 /**
  * Common base class for JEI teaching GUI extensions.
  */
-public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScreen<?>>
-        implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
+public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScreen<?>> //implements IGuiContainerHandler<W>, IGhostIngredientHandler<W>
 {
-    @NotNull
+   /* @NotNull
     private final Map<ResourceLocation, JobBasedRecipeCategory<?>> categories;
 
     protected AbstractTeachingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
@@ -108,5 +107,5 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
     @Override
     public void onComplete()
     {
-    }
+    }*/
 }

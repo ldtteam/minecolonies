@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.EntityUtils;
-import com.mojang.math.Vector3d;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,7 +14,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

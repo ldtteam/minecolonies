@@ -220,28 +220,27 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
 
     @NotNull
     @Override
-    public CompoundTag save(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
         compound.putString(TAG_NAME, schematicPath);
         compound.putInt(TAG_LEVEL, tier);
         compound.putInt(TAG_FACING, basicFacing.get2DDataValue());
-        return compound;
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0x9, this.getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundTag());
+        return this.saveWithId();
     }
 
     @Override

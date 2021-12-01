@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -287,38 +287,6 @@ public class MinecoloniesMinecart extends AbstractMinecart
     public boolean isPushable()
     {
         return false;
-    }
-
-    @NotNull
-    @Override
-    public Vec3 collide(Vec3 vec)
-    {
-        final AABB axisalignedbb = this.getBoundingBox();
-        final CollisionContext iselectioncontext = CollisionContext.of(this);
-        final VoxelShape voxelshape = this.level.getWorldBorder().getCollisionShape();
-        final Stream<VoxelShape> stream = Shapes.joinIsNotEmpty(voxelshape, Shapes.create(axisalignedbb.deflate(1.0E-7D)), BooleanOp.AND) ? Stream.empty() : Stream.of(voxelshape);
-        final RewindableStream<VoxelShape> reuseablestream = new RewindableStream<>(stream);
-        final Vec3 vector3d = vec.lengthSqr() == 0.0D ? vec : collideBoundingBoxHeuristically(this, vec, axisalignedbb, this.level, iselectioncontext, reuseablestream);
-        final boolean xDif = vec.x != vector3d.x;
-        final boolean yDif = vec.y != vector3d.y;
-        final boolean zDif = vec.z != vector3d.z;
-        final boolean groundDif = this.onGround || yDif && vec.y < 0.0D;
-        if (this.maxUpStep > 0.0F && groundDif && (xDif || zDif)) {
-            Vec3 vector3d1 = collideBoundingBoxHeuristically(this, new Vec3(vec.x, (double)this.maxUpStep, vec.z), axisalignedbb, this.level, iselectioncontext, reuseablestream);
-            final Vec3 vector3d2 = collideBoundingBoxHeuristically(this, new Vec3(0.0D, (double)this.maxUpStep, 0.0D), axisalignedbb.expandTowards(vec.x, 0.0D, vec.z), this.level, iselectioncontext, reuseablestream);
-            if (vector3d2.y < (double)this.maxUpStep) {
-                Vec3 vector3d3 = collideBoundingBoxHeuristically(this, new Vec3(vec.x, 0.0D, vec.z), axisalignedbb.move(vector3d2), this.level, iselectioncontext, reuseablestream).add(vector3d2);
-                if (vector3d3.horizontalDistanceSqr() > vector3d1.horizontalDistanceSqr()) {
-                    vector3d1 = vector3d3;
-                }
-            }
-
-            if (vector3d1.horizontalDistanceSqr() > vector3d.horizontalDistanceSqr()) {
-                return vector3d1.add(collideBoundingBoxHeuristically(this, new Vec3(0.0D, -vector3d1.y + vec.y, 0.0D), axisalignedbb.move(vector3d1), this.level, iselectioncontext, reuseablestream));
-            }
-        }
-
-        return vector3d;
     }
 
     @Override

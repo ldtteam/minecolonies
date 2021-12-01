@@ -414,11 +414,10 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         invalidateCap();
     }
 
-    @NotNull
     @Override
-    public CompoundTag save(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
         compound.putInt(TAG_SIZE, size);
 
         if (relativeNeighbor != null)
@@ -445,21 +444,19 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         BlockPosUtil.write(compound, TAG_POS, buildingPos);
         compound.putByte(TAG_VERSION, version);
-        return compound;
     }
 
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundTag compound = new CompoundTag();
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, this.save(compound));
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return this.save(new CompoundTag());
+        return this.saveWithId();
     }
 
     @Override

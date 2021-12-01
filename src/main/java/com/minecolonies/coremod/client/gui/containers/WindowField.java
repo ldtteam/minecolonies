@@ -130,7 +130,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         {
             if (widget instanceof AbstractWidget)
             {
-                if (((AbstractWidget) widget).isHovered())
+                if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
                 {
                     ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
                     break;
@@ -268,7 +268,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
             RenderSystem.setShaderTexture(0, TEXTURE);
 
-            int i = this.getYImage(this.isHovered());
+            int i = this.getYImage(this.isHovered);
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

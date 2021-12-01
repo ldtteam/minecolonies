@@ -13,7 +13,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
@@ -194,7 +194,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         final int maxBldgLevel = nbt.getInt(RECIPE_BUILDING_MAX_LEVEL_PROP);
         final boolean mustExist = nbt.getBoolean(RECIPE_MUST_EXIST);
         final boolean showTooltip = nbt.getBoolean(RECIPE_SHOW_TOOLTIP);
-        final ListTag inputList = nbt.getList(RECIPE_INPUTS_PROP, Constants.NBT.TAG_COMPOUND);
+        final ListTag inputList = nbt.getList(RECIPE_INPUTS_PROP, Tag.TAG_COMPOUND);
         final List<ItemStorage> inputs = new ArrayList<>();
         for(Tag input : inputList)
         {
@@ -205,7 +205,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         }
         final ItemStack primaryOutput = ItemStack.of(nbt.getCompound(RECIPE_RESULT_PROP));
 
-        final ListTag secondaryList = nbt.getList(RECIPE_SECONDARY_PROP, Constants.NBT.TAG_COMPOUND);
+        final ListTag secondaryList = nbt.getList(RECIPE_SECONDARY_PROP, Tag.TAG_COMPOUND);
         final List<ItemStack> secondaryOutput = new ArrayList<>();
         for(Tag secondary : secondaryList)
         {
@@ -215,7 +215,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             }
         }
 
-        final ListTag altList = nbt.getList(RECIPE_ALTERNATE_PROP, Constants.NBT.TAG_COMPOUND);
+        final ListTag altList = nbt.getList(RECIPE_ALTERNATE_PROP, Tag.TAG_COMPOUND);
         final List<ItemStack> altOutputs = new ArrayList<>();
         for(Tag alt : altList)
         {

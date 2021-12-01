@@ -19,14 +19,14 @@ import com.minecolonies.coremod.compatibility.jei.transfer.CraftingGuiHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.FurnaceCraftingGuiHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.PrivateCraftingTeachingTransferHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.PrivateSmeltingTeachingTransferHandler;
-import mezz.jei.api.IModPlugin;
+/*import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.registration.*;
-import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.api.runtime.IJeiRuntime;*/
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.Container;
@@ -48,10 +48,10 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-@mezz.jei.api.JeiPlugin
-public class JEIPlugin implements IModPlugin
+//@mezz.jei.api.JeiPlugin
+public class JEIPlugin //implements IModPlugin
 {
-    public JEIPlugin()
+    /*public JEIPlugin()
     {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, CustomRecipesReloadedEvent.class, this::onCustomRecipesReloaded);
     }
@@ -252,5 +252,5 @@ public class JEIPlugin implements IModPlugin
             }
         }
         recipesLoaded = true;
-    }
+    }*/
 }

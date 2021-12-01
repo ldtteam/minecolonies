@@ -7,10 +7,11 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -73,10 +74,10 @@ public class BuildingArchery extends AbstractBuilding
         shootingTargets.clear();
         shootingStands.clear();
 
-        final ListTag targetList = compound.getList(TAG_ARCHERY_TARGETS, Constants.NBT.TAG_COMPOUND);
+        final ListTag targetList = compound.getList(TAG_ARCHERY_TARGETS, Tag.TAG_COMPOUND);
         shootingTargets.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
-        final ListTag standTagList = compound.getList(TAG_ARCHERY_STANDS, Constants.NBT.TAG_COMPOUND);
+        final ListTag standTagList = compound.getList(TAG_ARCHERY_STANDS, Tag.TAG_COMPOUND);
         shootingStands.addAll(NBTUtils.streamCompound(standTagList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_STAND)).collect(Collectors.toList()));
     }
 

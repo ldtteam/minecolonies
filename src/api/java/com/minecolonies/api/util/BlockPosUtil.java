@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -232,7 +232,7 @@ public final class BlockPosUtil
     public static List<BlockPos> readPosListFromNBT(final CompoundTag compoundNBT, final String tagname)
     {
         final List<BlockPos> result = new ArrayList<>();
-        ListTag listNBT = compoundNBT.getList(tagname, Constants.NBT.TAG_COMPOUND);
+        ListTag listNBT = compoundNBT.getList(tagname, Tag.TAG_COMPOUND);
         for (int i = 0; i < listNBT.size(); i++)
         {
             result.add(readFromListNBT(listNBT, i));
@@ -834,7 +834,7 @@ public final class BlockPosUtil
             y_offset = y_offset > 0 ? y_offset + 1 : y_offset - 1;
             y_offset *= -1;
 
-            if (world.getLogicalHeight() <= start.getY() + y)
+            if (world.getHeight() <= start.getY() + y)
             {
                 return null;
             }

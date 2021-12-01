@@ -17,11 +17,12 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CarvedPumpkinBlock;
 import net.minecraft.world.level.block.HayBlock;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -86,10 +87,10 @@ public class BuildingCombatAcademy extends AbstractBuilding
 
         fightingPos.clear();
 
-        final ListTag targetList = compound.getList(TAG_COMBAT_TARGET, Constants.NBT.TAG_COMPOUND);
+        final ListTag targetList = compound.getList(TAG_COMBAT_TARGET, Tag.TAG_COMPOUND);
         fightingPos.addAll(NBTUtils.streamCompound(targetList).map(targetCompound -> BlockPosUtil.read(targetCompound, TAG_TARGET)).collect(Collectors.toList()));
 
-        final ListTag partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Constants.NBT.TAG_COMPOUND);
+        final ListTag partnersTagList = compound.getList(TAG_COMBAT_PARTNER, Tag.TAG_COMPOUND);
         trainingPartners.putAll(NBTUtils.streamCompound(partnersTagList)
                                   .collect(Collectors.toMap(targetCompound -> targetCompound.getInt(TAG_PARTNER1), targetCompound -> targetCompound.getInt(TAG_PARTNER2))));
     }

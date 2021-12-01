@@ -22,7 +22,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
 import java.util.HashSet;

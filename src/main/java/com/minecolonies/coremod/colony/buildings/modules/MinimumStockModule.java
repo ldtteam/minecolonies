@@ -12,11 +12,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
+
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -174,7 +175,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
     public void deserializeNBT(final CompoundTag compound)
     {
         minimumStock.clear();
-        final ListTag minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Constants.NBT.TAG_COMPOUND);
+        final ListTag minimumStockTagList = compound.getList(TAG_MINIMUM_STOCK, Tag.TAG_COMPOUND);
         for (int i = 0; i < minimumStockTagList.size(); i++)
         {
             final CompoundTag compoundNBT = minimumStockTagList.getCompound(i);

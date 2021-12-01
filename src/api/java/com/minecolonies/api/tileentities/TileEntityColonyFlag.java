@@ -38,16 +38,14 @@ public class TileEntityColonyFlag extends BlockEntity
     public TileEntityColonyFlag(final BlockPos pos, final BlockState state) { super(MinecoloniesTileEntities.COLONY_FLAG, pos, state); }
 
     @Override
-    public CompoundTag save(CompoundTag compound)
+    public void saveAdditional(CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
 
         compound.put(TAG_FLAG_PATTERNS, this.flag);
         compound.put(TAG_BANNER_PATTERNS, this.patterns);
 
         compound.putInt(TAG_COLONY_ID, colonyId);
-
-        return compound;
     }
 
     @Override
@@ -73,11 +71,11 @@ public class TileEntityColonyFlag extends BlockEntity
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 6, this.getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public CompoundTag getUpdateTag() { return this.save(new CompoundTag()); }
+    public CompoundTag getUpdateTag() { return this.saveWithId(); }
 
     @Override
     public void onDataPacket(final Connection net, final ClientboundBlockEntityDataPacket packet)

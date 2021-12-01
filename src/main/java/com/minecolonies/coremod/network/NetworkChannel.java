@@ -44,10 +44,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
-import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
-import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -249,7 +249,7 @@ public class NetworkChannel
             msg.fromBytes(buf);
             return msg;
         }, (msg, ctxIn) -> {
-            final NetworkEvent.Context ctx = ctxIn.get();
+            final net.minecraftforge.network.NetworkEvent.Context ctx = ctxIn.get();
             final LogicalSide packetOrigin = ctx.getDirection().getOriginationSide();
             ctx.setPacketHandled(true);
             msg.onExecute(ctx, packetOrigin.equals(LogicalSide.CLIENT));
@@ -328,7 +328,7 @@ public class NetworkChannel
      * @param pos target position and radius
      * @see PacketDistributor.TargetPoint
      */
-    public void sendToPosition(final IMessage msg, final PacketDistributor.TargetPoint pos)
+    public void sendToPosition(final IMessage msg, final net.minecraftforge.network.PacketDistributor.TargetPoint pos)
     {
         handleSplitting(msg, s -> rawChannel.send(PacketDistributor.NEAR.with(() -> pos), s));
     }

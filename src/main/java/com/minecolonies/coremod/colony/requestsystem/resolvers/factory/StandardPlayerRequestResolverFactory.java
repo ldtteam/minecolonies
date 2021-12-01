@@ -10,8 +10,9 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -87,7 +88,7 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
         final ILocation location = controller.deserialize(nbt.getCompound(NBT_LOCATION));
 
         final Set<IToken<?>> assignedRequests =
-          NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Constants.NBT.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(Collectors.toSet());
+          NBTUtils.streamCompound(nbt.getList(NBT_ASSIGNED_REQUESTS, Tag.TAG_COMPOUND)).map(c -> (IToken<?>) controller.deserialize(c)).collect(Collectors.toSet());
 
         final StandardPlayerRequestResolver resolver = new StandardPlayerRequestResolver(location, token);
         resolver.setAllAssignedRequests(assignedRequests);

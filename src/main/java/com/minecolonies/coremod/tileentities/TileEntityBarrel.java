@@ -181,15 +181,13 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     }
 
     @Override
-    public CompoundTag save(final CompoundTag compound)
+    public void saveAdditional(final CompoundTag compound)
     {
-        super.save(compound);
+        super.saveAdditional(compound);
 
         compound.putInt("items", this.items);
         compound.putInt("timer", this.timer);
         compound.putBoolean("done", this.done);
-
-        return compound;
     }
 
     @Override
@@ -204,16 +202,14 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        final CompoundTag compound = new CompoundTag();
-        this.save(compound);
-        return new ClientboundBlockEntityDataPacket(this.worldPosition, 0, compound);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
     @Override
     public CompoundTag getUpdateTag()
     {
-        return save(new CompoundTag());
+        return saveWithId();
     }
 
     @Override

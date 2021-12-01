@@ -13,7 +13,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -157,7 +156,7 @@ public interface IColonyManagerCapability
 
                 // Load all colonies from Nbt
                 Multimap<BlockPos, IColony> tempColonies = ArrayListMultimap.create();
-                for (final Tag tag : compound.getList(TAG_COLONIES, Constants.NBT.TAG_COMPOUND))
+                for (final Tag tag : compound.getList(TAG_COLONIES, Tag.TAG_COMPOUND))
                 {
                     final IColony colony = Colony.loadColony((CompoundTag) tag, null);
                     if (colony != null)

@@ -6,9 +6,9 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,7 +125,7 @@ public abstract class AbstractInteractionResponseHandler implements IInteraction
     public void deserializeNBT(@NotNull final CompoundTag compoundNBT)
     {
         this.inquiry = Component.Serializer.fromJson(compoundNBT.getString(TAG_INQUIRY));
-        final ListTag list = compoundNBT.getList(TAG_RESPONSES, Constants.NBT.TAG_COMPOUND);
+        final ListTag list = compoundNBT.getList(TAG_RESPONSES, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++)
         {
             final CompoundTag nbt = list.getCompound(i);

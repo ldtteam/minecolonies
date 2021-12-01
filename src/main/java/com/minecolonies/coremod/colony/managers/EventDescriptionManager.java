@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -72,7 +72,7 @@ public class EventDescriptionManager implements IEventDescriptionManager
     @Override
     public void deserializeNBT(@NotNull final CompoundTag eventManagerNBT)
     {
-        final ListTag eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Constants.NBT.TAG_COMPOUND);
+        final ListTag eventDescListNBT = eventManagerNBT.getList(TAG_EVENT_DESC_LIST, Tag.TAG_COMPOUND);
         for (final Tag event : eventDescListNBT)
         {
             final CompoundTag eventCompound = (CompoundTag) event;

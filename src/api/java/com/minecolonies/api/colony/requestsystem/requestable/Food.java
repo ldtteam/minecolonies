@@ -7,11 +7,11 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -108,7 +108,7 @@ public class Food implements IDeliverable
 
         if (compound.contains(NBT_EXCLUSION))
         {
-            final ListTag filterableItems = compound.getList(NBT_EXCLUSION, Constants.NBT.TAG_COMPOUND);
+            final ListTag filterableItems = compound.getList(NBT_EXCLUSION, Tag.TAG_COMPOUND);
             for (int i = 0; i < filterableItems.size(); ++i)
             {
                 items.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(i))));

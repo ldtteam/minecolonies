@@ -5,13 +5,14 @@ import com.minecolonies.api.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
+
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -149,7 +150,7 @@ public class SettingsFactories
         {
             final int current = nbt.getInt(TAG_VALUE);
             final List<String> settings = new ArrayList<>();
-            final ListTag list = nbt.getList(TAG_LIST, Constants.NBT.TAG_COMPOUND);
+            final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++)
             {
                 settings.add(list.getCompound(i).getString(TAG_VALUE));
