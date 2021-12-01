@@ -71,23 +71,22 @@ public class RenderHelper
      * @param x horizontal center position
      * @param y vertical bottom position
      * @param scale scaling factor
-     * @param yaw adjusts look rotation
+     * @param headYaw adjusts look rotation
+     * @param yaw adjusts body rotation
      * @param pitch adjusts look rotation
      * @param livingEntity the entity to render
      */
     public static void renderEntity(final PoseStack poseStack, final int x, final int y, final double scale,
-                                    final double yaw, final double pitch, final LivingEntity livingEntity)
+                                    final float headYaw, final float yaw, final float pitch, final LivingEntity livingEntity)
     {
         final Minecraft mc = Minecraft.getInstance();
         if (livingEntity.level == null) livingEntity.level = mc.level;
-        final float yawAngle = (float) Math.atan(yaw / 40.0F);
-        final float pitchAngle = (float) Math.atan(pitch / 40.0F);
         poseStack.pushPose();
         poseStack.translate((float) x, (float) y, 1050.0F);
         poseStack.scale(1.0F, 1.0F, -1.0F);
         poseStack.translate(0.0D, 0.0D, 1000.0D);
         poseStack.scale((float) scale, (float) scale, (float) scale);
-        final Quaternion pitchRotation = Vector3f.XP.rotationDegrees(pitchAngle * 20.0F);
+        final Quaternion pitchRotation = Vector3f.XP.rotationDegrees(pitch);
         poseStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
         poseStack.mulPose(pitchRotation);
         final float oldYawOffset = livingEntity.yBodyRot;
@@ -95,9 +94,9 @@ public class RenderHelper
         final float oldPitch = livingEntity.getXRot();
         final float oldPrevYawHead = livingEntity.yHeadRotO;
         final float oldYawHead = livingEntity.yHeadRot;
-        livingEntity.yBodyRot = 180.0F + yawAngle * 20.0F;
-        livingEntity.setYRot(180.0F + yawAngle * 40.0F);
-        livingEntity.setXRot(-pitchAngle * 20.0F);
+        livingEntity.yBodyRot = 180.0F + yaw;
+        livingEntity.setYRot(180.0F + (float) headYaw);
+        livingEntity.setXRot(-pitch);
         livingEntity.yHeadRot = livingEntity.getYRot();
         livingEntity.yHeadRotO = livingEntity.getYRot();
         final EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();

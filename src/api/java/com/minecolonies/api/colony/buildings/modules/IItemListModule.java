@@ -45,9 +45,14 @@ public interface IItemListModule
     String getListIdentifier();
 
     /**
-     * Clear all in the list to reset to default.
+     * Clear all in the list.
      */
     void clearItems();
+
+    /**
+     * Reset to defaults (usually but not necessarily the same as {@link #clearItems()}).
+     */
+    void resetToDefaults();
 
     /**
      * Get the unique id of this module.
