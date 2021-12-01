@@ -209,14 +209,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         if (desiredPosTimeout > 0)
         {
-            if (desiredPosTimeout-- <= 0)
+            if (--desiredPosTimeout <= 0)
             {
                 desiredPos = null;
             }
-        }
-        else if (desiredPos != null && pathResult == null)
-        {
-            desiredPos = null;
         }
 
         if (pathResult != null)
