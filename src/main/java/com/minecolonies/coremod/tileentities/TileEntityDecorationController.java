@@ -218,7 +218,6 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         this.basicFacing = Direction.from2DDataValue(compound.getInt(TAG_FACING));
     }
 
-    @NotNull
     @Override
     public void saveAdditional(final CompoundTag compound)
     {
