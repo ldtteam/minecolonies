@@ -90,7 +90,7 @@ public class CustomArrowEntity extends ArrowEntity
 
         // Set the old actual damage value back
         setBaseDamage(prevDamage);
-        if (onHitCallback.test(traceResult))
+        if (onHitCallback != null && onHitCallback.test(traceResult))
         {
             onHitCallback = null;
         }
