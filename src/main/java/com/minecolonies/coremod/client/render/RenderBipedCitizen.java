@@ -81,7 +81,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        model = citizen.isFemale() ? citizen.getModelType().getFemaleMap() : citizen.getModelType().getMaleModel();
+        model = citizen.isFemale() ? citizen.getModelType().getFemaleModel() : citizen.getModelType().getMaleModel();
         if (model == null)
         {
             model = (citizen.isFemale() ? new ModelEntityFemaleCitizen() : new CitizenModel<>(0.0F));

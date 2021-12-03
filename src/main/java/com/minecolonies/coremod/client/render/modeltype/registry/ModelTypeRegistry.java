@@ -1,15 +1,14 @@
 package com.minecolonies.coremod.client.render.modeltype.registry;
 
-import com.google.common.collect.Maps;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ModelTypeRegistry implements IModelTypeRegistry
 {
-    private final ConcurrentMap<ResourceLocation, IModelType> modelMap = Maps.newConcurrentMap();
+    private final ConcurrentHashMap<ResourceLocation, IModelType> modelMap = new ConcurrentHashMap<>();
 
     public ModelTypeRegistry()
     {

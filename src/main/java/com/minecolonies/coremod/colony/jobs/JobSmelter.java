@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -30,7 +30,7 @@ public class JobSmelter extends AbstractJob<EntityAIWorkSmelter, JobSmelter>
      */
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public IModelType getModel()
     {
         return ModModelTypes.SMELTER;
     }

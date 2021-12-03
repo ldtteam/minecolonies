@@ -36,5 +36,5 @@ public interface IModelType
      *
      * @return The female model
      */
-    CitizenModel<AbstractEntityCitizen> getFemaleMap();
+    CitizenModel<AbstractEntityCitizen> getFemaleModel();
 }

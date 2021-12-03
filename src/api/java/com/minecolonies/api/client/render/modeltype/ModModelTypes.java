@@ -3,7 +3,7 @@ package com.minecolonies.api.client.render.modeltype;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 
-public class ModModelTypes
+public final class ModModelTypes
 {
     public static final ResourceLocation SETTLER_ID        = new ResourceLocation(Constants.MOD_ID, "settler");
     public static final ResourceLocation CITIZEN_ID        = new ResourceLocation(Constants.MOD_ID, "citizen");
@@ -41,41 +41,41 @@ public class ModModelTypes
     public static final ResourceLocation PLANTER_ID        = new ResourceLocation(Constants.MOD_ID, "planter");
     public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
 
-    public static BipedModelType SETTLER;
-    public static BipedModelType CITIZEN;
-    public static BipedModelType NOBLE;
-    public static BipedModelType ARISTOCRAT;
-    public static BipedModelType BUILDER;
-    public static BipedModelType DELIVERYMAN;
-    public static BipedModelType MINER;
-    public static BipedModelType LUMBERJACK;
-    public static BipedModelType FARMER;
-    public static BipedModelType FISHERMAN;
-    public static BipedModelType UNDERTAKER;
-    public static BipedModelType ARCHER_GUARD;
-    public static BipedModelType KNIGHT_GUARD;
-    public static BipedModelType BAKER;
-    public static BipedModelType SHEEP_FARMER;
-    public static BipedModelType COW_FARMER;
-    public static BipedModelType PIG_FARMER;
-    public static BipedModelType CHICKEN_FARMER;
-    public static BipedModelType COMPOSTER;
-    public static BipedModelType SMELTER;
-    public static BipedModelType COOK;
-    public static BipedModelType STUDENT;
-    public static BipedModelType CRAFTER;
-    public static BipedModelType BLACKSMITH;
-    public static BipedModelType CHILD;
-    public static BipedModelType HEALER;
-    public static BipedModelType TEACHER;
-    public static BipedModelType GLASSBLOWER;
-    public static BipedModelType DYER;
-    public static BipedModelType MECHANIST;
-    public static BipedModelType FLETCHER;
-    public static BipedModelType CONCRETE_MIXER;
-    public static BipedModelType RABBIT_HERDER;
-    public static BipedModelType PLANTER;
-    public static BipedModelType BEEKEEPER;
+    public static IModelType SETTLER;
+    public static IModelType CITIZEN;
+    public static IModelType NOBLE;
+    public static IModelType ARISTOCRAT;
+    public static IModelType BUILDER;
+    public static IModelType DELIVERYMAN;
+    public static IModelType MINER;
+    public static IModelType LUMBERJACK;
+    public static IModelType FARMER;
+    public static IModelType FISHERMAN;
+    public static IModelType UNDERTAKER;
+    public static IModelType ARCHER_GUARD;
+    public static IModelType KNIGHT_GUARD;
+    public static IModelType BAKER;
+    public static IModelType SHEEP_FARMER;
+    public static IModelType COW_FARMER;
+    public static IModelType PIG_FARMER;
+    public static IModelType CHICKEN_FARMER;
+    public static IModelType COMPOSTER;
+    public static IModelType SMELTER;
+    public static IModelType COOK;
+    public static IModelType STUDENT;
+    public static IModelType CRAFTER;
+    public static IModelType BLACKSMITH;
+    public static IModelType CHILD;
+    public static IModelType HEALER;
+    public static IModelType TEACHER;
+    public static IModelType GLASSBLOWER;
+    public static IModelType DYER;
+    public static IModelType MECHANIST;
+    public static IModelType FLETCHER;
+    public static IModelType CONCRETE_MIXER;
+    public static IModelType RABBIT_HERDER;
+    public static IModelType PLANTER;
+    public static IModelType BEEKEEPER;
 
     private ModModelTypes()
     {

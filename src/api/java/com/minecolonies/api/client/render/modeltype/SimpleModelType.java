@@ -4,9 +4,9 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Enum with possible citizens.
+ * A class that implements the ISimpleModelType interface. Used to store references to female and male models for citizens.
  */
-public class BipedModelType implements ISimpleModelType
+public class SimpleModelType implements ISimpleModelType
 {
     /**
      * String describing the citizen. Used by the renderer. Starts with a capital, and does not contain spaces or other special characters.
@@ -28,7 +28,7 @@ public class BipedModelType implements ISimpleModelType
      */
     private final CitizenModel<AbstractEntityCitizen> femaleModel;
 
-    public BipedModelType(
+    public SimpleModelType(
       final ResourceLocation name,
       final int numTextures,
       final CitizenModel<AbstractEntityCitizen> maleModel,
@@ -65,7 +65,7 @@ public class BipedModelType implements ISimpleModelType
     }
 
     @Override
-    public CitizenModel<AbstractEntityCitizen> getFemaleMap()
+    public CitizenModel<AbstractEntityCitizen> getFemaleModel()
     {
         return femaleModel;
     }
