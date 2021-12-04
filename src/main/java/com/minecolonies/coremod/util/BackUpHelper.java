@@ -32,7 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper

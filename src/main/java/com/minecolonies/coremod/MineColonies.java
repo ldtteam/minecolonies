@@ -82,8 +82,6 @@ import java.util.function.Consumer;
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
-    public static final Capability<IColonyTagCapability> CLOSE_COLONY_CAP = CapabilityManager.get(new CapabilityToken<>() {});
-
     public static final Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
     public static final Capability<IColonyManagerCapability> COLONY_MANAGER_CAP = CapabilityManager.get(new CapabilityToken<>() {});
@@ -182,7 +180,7 @@ public class MineColonies
                 }
             }
             ImmutableMap.Builder<StructureFeature<?>, ImmutableMultimap<ConfiguredStructureFeature<?, ?>, ResourceKey<Biome>>> tempStructureToMultiMap = ImmutableMap.builder();
-            worldStructureConfig.configuredStructures.entrySet().forEach(tempStructureToMultiMap::put);
+            worldStructureConfig.configuredStructures.entrySet().stream().filter(entry -> !map.containsKey(entry.getKey())).forEach(tempStructureToMultiMap::put);
 
             map.forEach((key, value) -> tempStructureToMultiMap.put(key, ImmutableMultimap.copyOf(value)));
             worldStructureConfig.configuredStructures = tempStructureToMultiMap.build();

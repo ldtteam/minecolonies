@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * Helper class for late applying caps on client side, due to loading order

@@ -54,7 +54,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * Client side representation of the Colony.

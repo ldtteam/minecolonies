@@ -21,7 +21,7 @@
       }
     },
     {
-      "weight": 75,
+      "weight": 40,
       "element": {
         "location": "minecolonies:crossroad",
         "processors": "minecraft:empty",
@@ -48,7 +48,7 @@
       }
     },
     {
-      "weight": 30,
+      "weight": 40,
       "element": {
         "location": "minecolonies:house",
         "processors": "minecraft:empty",
@@ -68,9 +68,27 @@
     {
       "weight": 20,
       "element": {
-        "location": "minecolonies:farm",
+        "location": "minecolonies:farmer",
         "processors": "minecraft:empty",
 		"projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:miner",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:courier",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     },
@@ -84,7 +102,7 @@
       }
     },
     {
-      "weight": 25,
+      "weight": 15,
       "element": {
         "location": "minecolonies:field",
         "processors": "minecraft:empty",

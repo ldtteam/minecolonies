@@ -6,6 +6,7 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -42,6 +43,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Rotation;
+
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -174,7 +177,29 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
          */
         if (worldIn.isClientSide)
         {
+            if (hand == InteractionHand.OFF_HAND)
+            {
+                return InteractionResult.FAIL;
+            }
+
             @Nullable final IBuildingView building = IColonyManager.getInstance().getBuildingView(worldIn.dimension(), pos);
+
+            final IColonyTagCapability cap = worldIn.getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+            final BlockEntity entity = worldIn.getBlockEntity(pos);
+            if (entity instanceof final TileEntityColonyBuilding te && te.getPositionedTags().containsKey(BlockPos.ZERO) && te.getPositionedTags().get(BlockPos.ZERO).contains("deactivated"))
+            {
+                if (building == null && cap.getOwningColony() == 0)
+                {
+                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.building.missingcolony");
+                    return InteractionResult.FAIL;
+                }
+
+                if (building == null && !cap.getAllClaimingBuildings().values().contains(pos))
+                {
+                    IColonyManager.getInstance().openReactivationWindow(pos);
+                    return InteractionResult.SUCCESS;
+                }
+            }
 
             if (building == null)
             {

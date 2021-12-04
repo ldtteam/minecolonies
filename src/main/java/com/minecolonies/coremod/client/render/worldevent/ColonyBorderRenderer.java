@@ -18,7 +18,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class ColonyBorderRenderer
 {
