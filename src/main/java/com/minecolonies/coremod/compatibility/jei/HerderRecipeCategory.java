@@ -6,12 +6,12 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.vertex.PoseStack;
-/*import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;*/
+import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
  * The JEI recipe category for animal herders.
  */
 @OnlyIn(Dist.CLIENT)
-public class HerderRecipeCategory //extends JobBasedRecipeCategory<HerderRecipeCategory.HerdingRecipe>
+public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCategory.HerdingRecipe>
 {
-    /*private final AnimalHerdingModule herding;
+    private final AnimalHerdingModule herding;
     private final ITickTimer animalTimer;
 
     public HerderRecipeCategory(@NotNull final BuildingEntry building,
@@ -180,5 +180,5 @@ public class HerderRecipeCategory //extends JobBasedRecipeCategory<HerderRecipeC
         {
             return this.drops;
         }
-    }*/
+    }
 }
