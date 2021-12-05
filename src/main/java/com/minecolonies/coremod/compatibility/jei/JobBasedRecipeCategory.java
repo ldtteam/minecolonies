@@ -10,11 +10,11 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
-//import mezz.jei.api.gui.drawable.IDrawable;
-//import mezz.jei.api.gui.drawable.IDrawableStatic;
-//import mezz.jei.api.gui.ingredient.ITooltipCallback;
-//import mezz.jei.api.helpers.IGuiHelper;
-//import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.drawable.IDrawableStatic;
+import mezz.jei.api.gui.ingredient.ITooltipCallback;
+import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
@@ -33,9 +33,9 @@ import java.util.stream.Collectors;
  * Base class for a JEI recipe category that displays a Minecolonies citizen based on a job.
  //* @param <T> The recipe type.
  */
-public abstract class JobBasedRecipeCategory//<T> implements IRecipeCategory<T>
+public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 {
-    /*protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
+    protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
     @NotNull private final ResourceLocation uid;
     @NotNull private final ItemStack catalyst;
@@ -303,5 +303,5 @@ public abstract class JobBasedRecipeCategory//<T> implements IRecipeCategory<T>
                 }
             }
         }
-    }*/
+    }
 }

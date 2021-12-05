@@ -5,7 +5,7 @@ import com.minecolonies.coremod.client.gui.containers.WindowCrafting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.compatibility.jei.JobBasedRecipeCategory;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
-//import mezz.jei.api.gui.handlers.IGuiClickableArea;
+import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -17,9 +17,9 @@ import java.util.*;
  * Implements a "show recipes" button on the crafting teaching window, and allows you to drag
  * individual ingredients directly from JEI to the teaching grid without using cheat mode.
  */
-public class CraftingGuiHandler //extends AbstractTeachingGuiHandler<WindowCrafting>
+public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCrafting>
 {
-    /*public CraftingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
+    public CraftingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
     {
         super(categories);
     }
@@ -80,5 +80,5 @@ public class CraftingGuiHandler //extends AbstractTeachingGuiHandler<WindowCraft
 
         final TransferRecipeCraftingTeachingMessage message = new TransferRecipeCraftingTeachingMessage(matrix, gui.isCompleteCrafting());
         Network.getNetwork().sendToServer(message);
-    }*/
+    }
 }

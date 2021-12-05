@@ -6,11 +6,11 @@ import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
-/*import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;*/
+import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
  * The JEI recipe category for the fisherman.
  */
 @OnlyIn(Dist.CLIENT)
-public class FishermanRecipeCategory //extends JobBasedRecipeCategory<FishermanRecipeCategory.FishingRecipe>
+public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRecipeCategory.FishingRecipe>
 {
-    /*public FishermanRecipeCategory(@NotNull final IGuiHelper guiHelper)
+    public FishermanRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
         super(ModJobs.fisherman.produceJob(null), ModJobs.FISHERMAN_ID,
                 new ItemStack(ModBuildings.fisherman.getBuildingBlock()), guiHelper);
@@ -139,5 +139,5 @@ public class FishermanRecipeCategory //extends JobBasedRecipeCategory<FishermanR
         {
             return drops;
         }
-    }*/
+    }
 }

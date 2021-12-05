@@ -5,12 +5,12 @@ import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
-/*import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiIngredient;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;*/
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -27,9 +27,9 @@ import java.util.Set;
 /**
  * JEI recipe transfer handler for teaching crafting recipes
  */
-public class PrivateCraftingTeachingTransferHandler// implements IRecipeTransferHandler<ContainerCrafting, CraftingRecipe>
+public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCrafting, CraftingRecipe>
 {
-   /*private final IRecipeTransferHandlerHelper handlerHelper;
+    private final IRecipeTransferHandlerHelper handlerHelper;
 
     public PrivateCraftingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
     {
@@ -130,5 +130,5 @@ public class PrivateCraftingTeachingTransferHandler// implements IRecipeTransfer
         }
 
         return null;
-    }*/
+    }
 }

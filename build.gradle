@@ -40,7 +40,7 @@ minecraft.runs.all {
 }
 
 dependencies {
-    //implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
 
     apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"){
         transitive = false
