@@ -5,7 +5,7 @@
     {
       "weight": 30,
       "element": {
-        "location": "minecolonies:oak_medieval_builder1",
+        "location": "minecolonies:asian_builder1",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -14,7 +14,7 @@
     {
       "weight": 2,
       "element": {
-        "location": "minecolonies:oak_medieval_builder2",
+        "location": "minecolonies:asian_builder2",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -23,7 +23,7 @@
     {
       "weight": 100,
       "element": {
-        "location": "minecolonies:oak_medieval_road",
+        "location": "minecolonies:asian_road",
         "processors": "minecraft:empty",
 		"projection": "terrain_matching",
         "element_type": "minecraft:single_pool_element"
@@ -32,7 +32,7 @@
     {
       "weight": 30,
       "element": {
-        "location": "minecolonies:oak_medieval_crossroad",
+        "location": "minecolonies:asian_crossroad",
         "processors": "minecraft:empty",
 		"projection": "terrain_matching",
         "element_type": "minecraft:single_pool_element"
@@ -41,7 +41,7 @@
     {
       "weight": 15,
       "element": {
-        "location": "minecolonies:oak_medieval_corner",
+        "location": "minecolonies:asian_corner",
         "processors": "minecraft:empty",
         "projection": "terrain_matching",
         "element_type": "minecraft:single_pool_element"
@@ -50,7 +50,7 @@
     {
       "weight": 15,
       "element": {
-        "location": "minecolonies:oak_medieval_junction",
+        "location": "minecolonies:asian_junction",
         "processors": "minecraft:empty",
         "projection": "terrain_matching",
         "element_type": "minecraft:single_pool_element"
@@ -59,7 +59,7 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:oak_medieval_square",
+        "location": "minecolonies:asian_square",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -68,7 +68,7 @@
     {
       "weight": 20,
       "element": {
-        "location": "minecolonies:oak_medieval_forester1",
+        "location": "minecolonies:asian_forester1",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -77,7 +77,7 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:oak_medieval_forester2",
+        "location": "minecolonies:asian_forester2",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -86,7 +86,7 @@
     {
       "weight": 40,
       "element": {
-        "location": "minecolonies:oak_medieval_house1",
+        "location": "minecolonies:asian_house1",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -95,7 +95,25 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:oak_medieval_house1",
+        "location": "minecolonies:asian_house2",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 40,
+      "element": {
+        "location": "minecolonies:asian_housex1",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:asian_housex2",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -104,7 +122,7 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:oak_medieval_tavern",
+        "location": "minecolonies:asian_tavern",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -113,7 +131,7 @@
     {
       "weight": 20,
       "element": {
-        "location": "minecolonies:oak_medieval_farm",
+        "location": "minecolonies:asian_farm",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -122,7 +140,7 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:oak_medieval_miner",
+        "location": "minecolonies:asian_miner",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -131,7 +149,7 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:oak_medieval_courier",
+        "location": "minecolonies:asian_courier",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -140,7 +158,7 @@
     {
       "weight": 25,
       "element": {
-        "location": "minecolonies:oak_medieval_guardtower1",
+        "location": "minecolonies:asian_guardtower1",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -149,7 +167,7 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:oak_medieval_guardtower2",
+        "location": "minecolonies:asian_guardtower2",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -158,7 +176,7 @@
     {
       "weight": 15,
       "element": {
-        "location": "minecolonies:oak_medieval_field",
+        "location": "minecolonies:asian_field",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -167,7 +185,7 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:oak_medieval_cook",
+        "location": "minecolonies:asian_cook",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -176,7 +194,7 @@
     {
       "weight": 5,
       "element": {
-        "location": "minecolonies:oak_medieval_warehouse",
+        "location": "minecolonies:asian_warehouse",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
