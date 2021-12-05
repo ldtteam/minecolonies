@@ -3,9 +3,9 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 25,
+      "weight": 100,
       "element": {
-        "location": "minecolonies:townhall",
+        "location": "minecolonies:oak_medieval_townhall",
         "processors": "minecraft:empty",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
