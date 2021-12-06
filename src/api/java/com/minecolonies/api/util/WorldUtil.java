@@ -1,10 +1,14 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
@@ -61,7 +67,15 @@ public class WorldUtil
     {
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
-            return ((ServerChunkCache)world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false).isDone();
+            final CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>> future = ((ServerChunkCache)world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false);
+            try
+            {
+                return future.isDone() && future.get().left().isPresent();
+            }
+            catch (ExecutionException | InterruptedException e)
+            {
+                return false;
+            }
         }
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
     }

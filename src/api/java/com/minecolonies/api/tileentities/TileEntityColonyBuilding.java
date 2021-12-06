@@ -1,6 +1,12 @@
 package com.minecolonies.api.tileentities;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -10,9 +16,9 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,7 +43,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -513,5 +521,53 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
     {
         return new ContainerBuildingInventory(id, inv, colonyId, getBlockPos());
+    }
+
+    /**
+     * Reactivate the hut of this tileEntity.
+     * Load the schematic data and set the style correctly.
+     */
+    public void reactivate()
+    {
+        final List<String> tags = new ArrayList<>(this.getPositionedTags().get(BlockPos.ZERO));
+        tags.remove("deactivated");
+        if (!tags.isEmpty())
+        {
+            this.setStyle(tags.get(0));
+        }
+
+        String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, this.getStyle(), this.getSchematicName()).toString();
+
+        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(level, this.getPosition(), structureName, new PlacementSettings(), true);
+        final Blueprint blueprint = structure.getBluePrint();
+
+        final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
+        if (structureState != null)
+        {
+            if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
+            {
+                Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
+                return;
+            }
+            final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
+            final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
+
+            final int rotation;
+            if (structureRotation <= worldRotation)
+            {
+                rotation = worldRotation - structureRotation;
+            }
+            else
+            {
+                rotation = 4 + worldRotation - structureRotation;
+            }
+
+            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), this.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, level);
+            final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+            if (info.getTileEntityData() != null)
+            {
+                this.readSchematicDataFromNBT(info.getTileEntityData());
+            }
+        }
     }
 }

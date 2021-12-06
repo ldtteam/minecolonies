@@ -22,6 +22,9 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN;
 
@@ -92,9 +95,15 @@ public class CreateColonyMessage implements IMessage
             return;
         }
 
-        if (!((AbstractTileEntityColonyBuilding) tileEntity).getStyle().isEmpty())
+        final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+
+        if (!hut.getStyle().isEmpty())
         {
-            style = ((AbstractTileEntityColonyBuilding) tileEntity).getStyle();
+            style = hut.getStyle();
+        }
+        else if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains("deactivated"))
+        {
+            hut.reactivate();
         }
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
@@ -129,7 +138,7 @@ public class CreateColonyMessage implements IMessage
             if (ownedColony == null)
             {
                 IColonyManager.getInstance().createColony(world, townHall, sender, style);
-                IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+                IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding(hut, world);
                 LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.coremod.progress.colony_founded");
                 return;
             }

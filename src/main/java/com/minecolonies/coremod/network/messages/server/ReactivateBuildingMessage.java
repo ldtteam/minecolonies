@@ -1,20 +1,34 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.BlockInfo;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reactivate a building.
@@ -82,12 +96,13 @@ public class ReactivateBuildingMessage implements IMessage
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
-            final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+            AbstractBuilding building = (AbstractBuilding) colony.getBuildingManager().getBuilding(pos);
             if (building == null)
             {
                 final BlockEntity tileEntity = world.getBlockEntity(pos);
                 if (tileEntity instanceof @NotNull final TileEntityColonyBuilding hut)
                 {
+                    hut.reactivate();
                     colony.getBuildingManager().addNewBuilding(hut, world);
                     colony.getProgressManager().progressBuildingPlacement(tileEntity.getBlockState().getBlock());
                 }
