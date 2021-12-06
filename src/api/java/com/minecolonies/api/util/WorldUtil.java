@@ -68,14 +68,8 @@ public class WorldUtil
         {
             final CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>
               future = ((ServerChunkCache)world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false);
-            try
-            {
-                return future.isDone() && future.get().left().isPresent();
-            }
-            catch (ExecutionException | InterruptedException e)
-            {
-                return false;
-            }
+
+            return future.isDone() && future.getNow(ChunkHolder.UNLOADED_CHUNK).left().isPresent();
         }
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
     }
