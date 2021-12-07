@@ -32,6 +32,9 @@ public class ModTags
     public static Tag<Item> floristFlowers;
     public static Tag<Item> excludedFood;
 
+    public static Tag<Item> breakable_ore;
+    public static Tag<Item> raw_ore;
+
     public static Tag<EntityType<?>> hostile;
 
     public static final Map<String, Tag<Item>> crafterProduct              = new HashMap<>();

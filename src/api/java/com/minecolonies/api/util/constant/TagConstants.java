@@ -19,6 +19,8 @@ public final class TagConstants
     public static final ResourceLocation INDESTRUCTIBLE = new ResourceLocation(MOD_ID, "indestructible");
     public static final ResourceLocation MESHES = new ResourceLocation(MOD_ID, "meshes");
     public static final ResourceLocation HOSTILE = new ResourceLocation(MOD_ID, "hostile");
+    public static final ResourceLocation BREAKABLE_ORE = new ResourceLocation(MOD_ID,"breakable_ore");
+    public static final ResourceLocation RAW_ORE = new ResourceLocation(MOD_ID, "raw_ore");
 
     /**
      * Private constructor to hide implicit public one.

@@ -58,6 +58,8 @@ public class ModTagsInitializer
         ModTags.excludedFood = getItemTags(EXCLUDED_FOOD);
         ModTags.fungi = getItemTags(FUNGI);
         ModTags.meshes = getItemTags(MESHES);
+        ModTags.breakable_ore = getItemTags(BREAKABLE_ORE);
+        ModTags.raw_ore = getItemTags(RAW_ORE);
         ModTags.oreChanceBlocks = getBlockTags(ORECHANCEBLOCKS);
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE);

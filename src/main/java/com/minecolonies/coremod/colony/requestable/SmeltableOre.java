@@ -103,7 +103,7 @@ public class SmeltableOre implements IDeliverable
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return ItemStackUtils.IS_SMELTABLE.and(itemStack -> IColonyManager.getInstance().getCompatibilityManager().isOre(itemStack)).test(stack);
+        return IColonyManager.getInstance().getCompatibilityManager().isOre(stack);
     }
 
     @Override
