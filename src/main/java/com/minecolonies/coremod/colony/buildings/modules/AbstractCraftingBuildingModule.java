@@ -670,18 +670,35 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             return storage.fullfillRecipe(building.getColony().getWorld(), handlers);
         }
         final AbstractEntityCitizen worker = data.getEntity().get();
-        final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getPrimarySkill());
-        final int luck = (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
 
         LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) building.getColony().getWorld())
                                           .withParameter(LootContextParams.ORIGIN, worker.position())
                                           .withParameter(LootContextParams.THIS_ENTITY, worker)
-                                          .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
+                                          .withParameter(LootContextParams.TOOL, getCraftingTool(worker))
                                           .withRandom(worker.getRandom())
-                                          .withLuck((float) luck));
+                                          .withLuck(getCraftingLuck(worker)));
 
         return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);
     }
+
+    @Override 
+    public ItemStack getCraftingTool(final AbstractEntityCitizen worker)
+    {
+        return worker != null ? worker.getMainHandItem() : ItemStack.EMPTY;
+    }
+
+    @Override
+    public float getCraftingLuck(final AbstractEntityCitizen worker)
+    {
+        if (worker != null)
+        {
+            WorkerBuildingModule workerModule = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry);
+            final int primarySkill =worker.getCitizenData().getCitizenSkillHandler().getLevel(workerModule.getPrimarySkill());
+            return (int)(((primarySkill + 1) * 2) - Math.pow((primarySkill + 1 ) / 10.0, 2));
+        }
+        return 0;
+    }
+
 
     @Nullable
     @Override

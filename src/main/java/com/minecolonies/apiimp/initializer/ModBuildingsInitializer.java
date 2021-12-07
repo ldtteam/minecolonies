@@ -352,6 +352,7 @@ public final class ModBuildingsInitializer
                                   .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.smelter, Skill.Athletics, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                   .addBuildingModuleProducer(() -> new BuildingSmeltery.SmeltingModule(ModJobs.smelter), () -> CraftingModuleView::new)
                                   .addBuildingModuleProducer(FurnaceUserModule::new)
+                                  .addBuildingModuleProducer(() -> new BuildingSmeltery.CraftingModule(ModJobs.smelter), () -> CraftingModuleView::new)
                                   .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                                   .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
