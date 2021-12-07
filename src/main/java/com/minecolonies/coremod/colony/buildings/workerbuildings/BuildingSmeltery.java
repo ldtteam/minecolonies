@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -17,10 +14,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -183,11 +178,11 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             super.checkForWorkerSpecificRecipes();
 
-            for(Item input: ModTags.breakable_ore.getValues())
+            for (Item input: ModTags.breakable_ore.getValues())
             {
                 Block b = Block.byItem(input);
                 List<ItemStack> drops = Block.getDrops(b.defaultBlockState(), (ServerLevel) building.getColony().getWorld(), building.getID(), null);
-                for(ItemStack drop: drops)
+                for(ItemStack drop : drops)
                 {
                     if(!drop.isEmpty())
                     {
@@ -218,7 +213,7 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
             int fortuneLevel = building.getBuildingLevel() - 1;
-            if(fortuneLevel > 0)
+            if (fortuneLevel > 0)
             {
                 pick.enchant(Enchantments.BLOCK_FORTUNE, fortuneLevel);
             }
@@ -227,7 +222,7 @@ public class BuildingSmeltery extends AbstractBuilding
 
         protected ResourceLocation getLootTable(Item item)
         {
-            if(item instanceof BlockItem)
+            if (item instanceof BlockItem)
             {
                 Block itemBlock = Block.byItem(item);
                 return itemBlock.getLootTable();
