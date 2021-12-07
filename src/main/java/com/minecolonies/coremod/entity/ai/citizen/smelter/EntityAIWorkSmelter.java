@@ -103,7 +103,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             return INVENTORY_FULL;
         }
 
-        final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSmeltery.CraftingModule.class);
+        final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
 
         final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 

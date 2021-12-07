@@ -32,13 +32,11 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -173,9 +171,9 @@ public class BuildingSmeltery extends AbstractBuilding
         }
     }
 
-    public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
+    public static class OreBreakingModule extends AbstractCraftingBuildingModule.Custom
     {
-        public CraftingModule(JobEntry jobEntry)
+        public OreBreakingModule(JobEntry jobEntry)
         {
             super(jobEntry);
         }
