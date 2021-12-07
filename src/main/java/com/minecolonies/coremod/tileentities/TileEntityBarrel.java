@@ -226,7 +226,10 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
     @Override
     public void setChanged()
     {
-        WorldUtil.markChunkDirty(level, worldPosition);
+        if (level != null)
+        {
+            WorldUtil.markChunkDirty(level, worldPosition);
+        }
     }
 
     @Override

@@ -109,6 +109,9 @@ public class AbstractTileEntityNamedGrave extends TileEntity
     @Override
     public void setChanged()
     {
-        WorldUtil.markChunkDirty(level, worldPosition);
+        if (level != null)
+        {
+            WorldUtil.markChunkDirty(level, worldPosition);
+        }
     }
 }

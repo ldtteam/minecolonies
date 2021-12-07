@@ -111,6 +111,9 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
     @Override
     public void setChanged()
     {
-        WorldUtil.markChunkDirty(level, worldPosition);
+        if (level != null)
+        {
+            WorldUtil.markChunkDirty(level, worldPosition);
+        }
     }
 }

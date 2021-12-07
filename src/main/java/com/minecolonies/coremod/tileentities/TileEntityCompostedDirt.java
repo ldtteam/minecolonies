@@ -128,7 +128,10 @@ public class TileEntityCompostedDirt extends TileEntity implements ITickableTile
     @Override
     public void setChanged()
     {
-        WorldUtil.markChunkDirty(level, worldPosition);
+        if (level != null)
+        {
+            WorldUtil.markChunkDirty(level, worldPosition);
+        }
     }
 
     /**
