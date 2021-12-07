@@ -25,15 +25,9 @@ import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectM
 import com.minecolonies.coremod.util.WorkerUtil;
 
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +39,7 @@ import static com.minecolonies.api.util.constant.Constants.RESULT_SLOT;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+
 /**
  * Smelter AI class.
  */
@@ -85,33 +80,11 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected void extractFromFurnace(final FurnaceBlockEntity furnace)
     {
-        final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = getOwnBuilding().ingotMultiplier((int) (getSecondarySkillLevel()), worker.getRandom());
-        int amount = ingots.getCount(); //* multiplier;
-
-        while (amount > 0)
-        {
-            final ItemStack copyStack = ingots.copy();
-            if (amount < ingots.getMaxStackSize())
-            {
-                copyStack.setCount(amount);
-            }
-            else
-            {
-                copyStack.setCount(ingots.getMaxStackSize());
-            }
-            amount -= copyStack.getCount();
-
-            final ItemStack resultStack = InventoryUtils.addItemStackToItemHandlerWithResult(worker.getInventoryCitizen(), copyStack);
-            if (!ItemStackUtils.isEmpty(resultStack))
-            {
-                resultStack.setCount(resultStack.getCount() + amount / multiplier);
-                new InvWrapper(furnace).setStackInSlot(RESULT_SLOT, resultStack);
-                return;
-            }
-            worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
-            worker.decreaseSaturationForAction();
-        }
+        InventoryUtils.transferItemStackIntoNextFreeSlotInItemHandler(
+            new InvWrapper(furnace), RESULT_SLOT,
+            worker.getInventoryCitizen());
+        worker.getCitizenExperienceHandler().addExperience(BASE_XP_GAIN);
+        this.incrementActionsDoneAndDecSaturation();
     }
 
 
