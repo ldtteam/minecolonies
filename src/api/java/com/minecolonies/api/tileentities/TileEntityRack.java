@@ -601,7 +601,10 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     @Override
     public void setChanged()
     {
-        WorldUtil.markChunkDirty(level, worldPosition);
+        if (level != null)
+        {
+            WorldUtil.markChunkDirty(level, worldPosition);
+        }
     }
 
     @Nullable
