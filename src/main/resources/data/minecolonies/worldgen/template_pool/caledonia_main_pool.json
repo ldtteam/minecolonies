@@ -86,7 +86,7 @@
     {
       "weight": 10,
       "element": {
-        "location": "minecolonies:caledonia_house1",
+        "location": "minecolonies:caledonia_house2",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"

@@ -268,6 +268,11 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      */
     public void neighborChanged(final BlockPos newNeighbor)
     {
+        if (level == null)
+        {
+            return;
+        }
+
         final BlockEntity entity = level.getBlockEntity(newNeighbor);
 
         if (relativeNeighbor == null && level.getBlockState(newNeighbor).getBlock() instanceof AbstractBlockMinecoloniesRack
