@@ -223,7 +223,10 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     @Override
     public void setChanged()
     {
-        WorldUtil.markChunkDirty(level, worldPosition);
+        if (level != null)
+        {
+            WorldUtil.markChunkDirty(level, worldPosition);
+        }
     }
 
     @Override

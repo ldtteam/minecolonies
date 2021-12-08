@@ -1676,6 +1676,8 @@
   "death.attack.entity.minecolonies.norsemenchief": "%s was grounded by the great Viking Chief!",
   "death.attack.entity.minecolonies.norsemenarcher": "%s was hit by an Archer Viking!",
   "death.attack.entity.minecolonies.shieldmaiden": "%s was crushed by a Shieldmaiden!",
+  "death.attack.entity.minecolonies.visitor": "%s died after starting a brawl at the local tavern. They brought it upon themself!",
+  "death.attack.entity.minecolonies.training": "%s got killed during Training. What happened?",
 
   "item.minecolonies.shieldmaidenegg": "Shieldmaiden Spawn Egg",
   "item.minecolonies.norsemenarcheregg": "Archer Norseman Spawn Egg",
