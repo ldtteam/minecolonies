@@ -52,6 +52,11 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColonyStructureSpawnEvent
 {
     /**
+     * Spacing between waypoints
+     */
+    private static final int WAYPOINT_SPACING = 30;
+
+    /**
      * NBT Tags
      */
     public static final String TAG_DAYS_LEFT     = "pirateDaysLeft";
@@ -143,6 +148,11 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     private PathResult spawnPathResult;
 
     /**
+     * Waypoints helping raiders travel
+     */
+    private List<BlockPos> wayPoints = new ArrayList<>();
+
+    /**
      * Create a new ship based raid event.
      *
      * @param colony the colony.
@@ -186,6 +196,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
                     structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
                 }
             }
+            this.wayPoints = ShipBasedRaiderUtils.createWaypoints(colony.getWorld(), path, WAYPOINT_SPACING);
         }
 
         if (!ShipBasedRaiderUtils.canPlaceShipAt(spawnPoint, structure.getBluePrint(), colony.getWorld()))
@@ -486,6 +497,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         BlockPosUtil.write(compound, TAG_SPAWN_POS, spawnPoint);
         compound.putInt(TAG_SHIPSIZE, shipSize.ordinal());
         compound.putInt(TAG_SHIPROTATION, shipRotation);
+        BlockPosUtil.writePosListToNBT(compound, TAG_WAYPOINT, wayPoints);
         return compound;
     }
 
@@ -506,6 +518,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         spawnPoint = BlockPosUtil.read(compound, TAG_SPAWN_POS);
         shipSize = ShipSize.values()[compound.getInt(TAG_SHIPSIZE)];
         shipRotation = compound.getInt(TAG_SHIPROTATION);
+        wayPoints = BlockPosUtil.readPosListFromNBT(compound, TAG_WAYPOINT);
     }
 
     @Override
@@ -513,6 +526,12 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     {
         this.spawners.add(pos);
         maxSpawners++;
+    }
+
+    @Override
+    public List<BlockPos> getWayPoints()
+    {
+        return wayPoints;
     }
 
     /**
