@@ -46,7 +46,7 @@ project {
         param("Default.Branch", "version/main")
         param("filename.prefix", "minecolonies")
         param("env.GRADLE_VERSION", "7.2")
-        param("env.JDK_VERSION", "jdk16")
+        param("env.JDK_VERSION", "jdk8")
         text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
     }
 
