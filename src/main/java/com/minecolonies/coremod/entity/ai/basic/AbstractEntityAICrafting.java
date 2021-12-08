@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -116,12 +117,16 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (job.getTaskQueue().isEmpty())
         {
-            return START_WORKING;
+            if (worker.getNavigation().isDone())
+            {
+                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners());
+            }
+            return IDLE;
         }
 
         if (job.getCurrentTask() == null)
         {
-            return START_WORKING;
+            return IDLE;
         }
 
         if (walkToBuilding())
