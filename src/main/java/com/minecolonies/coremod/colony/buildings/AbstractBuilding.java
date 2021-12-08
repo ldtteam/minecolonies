@@ -1858,6 +1858,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onRequestedRequestComplete(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
+        if (!getCitizensByRequest().containsKey(request.getId()))
+        {
+            return;
+        }
+        
         final int citizenThatRequested = getCitizensByRequest().remove(request.getId());
 
         if (getOpenRequestsByCitizen().containsKey(citizenThatRequested))

@@ -135,7 +135,7 @@ public class EntityAIVisitor extends Goal
         if (citizen.isWorkerAtSiteWithMove(new BlockPos(target.position()), 2) && citizen.canSee(target))
         {
             citizen.swing(Hand.MAIN_HAND);
-            target.hurt(new NamedDamageSource(citizen.getName().getString(), citizen), 10.0f);
+            target.hurt(new NamedDamageSource("death.attack.entity.minecolonies.visitor", citizen), 10.0f);
         }
 
         return false;

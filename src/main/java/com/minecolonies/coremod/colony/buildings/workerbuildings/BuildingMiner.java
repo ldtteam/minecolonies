@@ -226,13 +226,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         return cobbleLocation;
     }
 
-    @Override
-    public void setTileEntity(final AbstractTileEntityColonyBuilding te)
-    {
-        super.setTileEntity(te);
-        loadLadderPos();
-    }
-
     private void loadLadderPos()
     {
         final Map<String, Set<BlockPos>> map = tileEntity.getWorldTagNamePosMap();

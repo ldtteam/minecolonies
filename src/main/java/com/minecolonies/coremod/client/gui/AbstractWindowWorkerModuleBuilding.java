@@ -6,6 +6,7 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
@@ -140,7 +141,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      */
     protected void hireClicked(@NotNull final Button button)
     {
-        if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
+        if (building.getBuildingLevel() == 0 && !ModBuildings.builder.equals(building.getBuildingType()))
         {
             LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerhuts.level0");
             return;
