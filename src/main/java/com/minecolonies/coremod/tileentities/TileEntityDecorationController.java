@@ -168,6 +168,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
     {
         tagPosMap = positionedTags;
+        setChanged();
     }
 
     @Override
