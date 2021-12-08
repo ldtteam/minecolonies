@@ -45,7 +45,7 @@ public class WindowHutCrusherModule extends AbstractWindowWorkerModuleBuilding<B
     /**
      * Constructor for the window of the miner hut.
      *
-     * @param building {@link BuildingMiner.View}.
+     * @param building {@link BuildingCrusher.View}.
      */
     public WindowHutCrusherModule(final BuildingCrusher.View building)
     {

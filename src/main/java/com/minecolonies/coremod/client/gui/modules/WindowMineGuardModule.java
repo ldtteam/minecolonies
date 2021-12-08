@@ -36,7 +36,7 @@ public class WindowMineGuardModule  extends AbstractModuleWindow
     /**
      * Constructor for the window of the miner hut.
      *
-     * @param building {@link BuildingMiner.View}.
+     * @param building {@link IBuildingView}.
      */
     public WindowMineGuardModule(final IBuildingView building)
     {

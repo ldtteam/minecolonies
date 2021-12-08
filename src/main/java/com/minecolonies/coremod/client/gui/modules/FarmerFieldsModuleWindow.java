@@ -113,7 +113,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the window of the farmer.
      *
-     * @param building {@link BuildingFarmer.View}.
+     * @param moduleView {@link FarmerFieldModuleView}.
      */
     public FarmerFieldsModuleWindow(final IBuildingView building, final FarmerFieldModuleView moduleView)
     {
