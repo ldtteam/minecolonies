@@ -120,13 +120,13 @@ public class CitizenManager implements ICitizenManager
         if (!existingCitizen.isPresent())
         {
             data.setEntity(entity);
-            colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
         if (existingCitizen.get() == entity)
         {
-            colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
@@ -135,7 +135,7 @@ public class CitizenManager implements ICitizenManager
             existingCitizen.get().remove(Entity.RemovalReason.DISCARDED);
             data.setEntity(entity);
             entity.setCivilianData(data);
-            colony.getWorld().getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
+            entity.level.getScoreboard().addPlayerToTeam(entity.getScoreboardName(), colony.getTeam());
             return;
         }
 
@@ -475,13 +475,13 @@ public class CitizenManager implements ICitizenManager
     @Override
     public int getMaxCitizens()
     {
-        return (int) Math.min(maxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getServer().maxCitizenPerColony.get()));
+        return (int) Math.max(1, Math.min(maxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getServer().maxCitizenPerColony.get())));
     }
 
     @Override
     public int getPotentialMaxCitizens()
     {
-        return (int) Math.min(potentialMaxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getServer().maxCitizenPerColony.get()));
+        return (int) Math.max(1, Math.min(potentialMaxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getServer().maxCitizenPerColony.get())));
     }
 
     /**

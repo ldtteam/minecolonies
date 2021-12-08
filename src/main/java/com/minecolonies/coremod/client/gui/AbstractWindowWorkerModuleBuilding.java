@@ -6,6 +6,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
@@ -52,11 +53,6 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      * Id of the name label in the GUI.
      */
     private static final String LABEL_WORKERNAME = "workerName";
-
-    /**
-     * Name string of the builder hut.
-     */
-    private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerhuts.buildershut";
 
     /**
      * Button to increase delivery prio.
@@ -140,7 +136,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      */
     protected void hireClicked(@NotNull final Button button)
     {
-        if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
+        if (building.getBuildingLevel() == 0 && !ModBuildings.builder.equals(building.getBuildingType()))
         {
             LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerhuts.level0");
             return;
