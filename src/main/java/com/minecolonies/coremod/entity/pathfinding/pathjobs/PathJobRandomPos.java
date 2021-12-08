@@ -93,6 +93,32 @@ public class PathJobRandomPos extends AbstractPathJob
         this.destination = dest;
     }
 
+    /**
+     * Prepares the PathJob for the path finding system.
+     *
+     * @param world    world the entity is in.
+     * @param start    starting location.
+     * @param minDistFromStart how far to move away.
+     * @param range    max range to search.
+     * @param entity   the entity.
+     */
+    public PathJobRandomPos(
+      final World world,
+      @NotNull final BlockPos start,
+      final int minDistFromStart,
+      final int range,
+      final LivingEntity entity,
+      final BlockPos startRestriction,
+      final BlockPos endRestriction)
+    {
+        super(world, start, startRestriction, endRestriction, range, false, new PathResult<PathJobRandomPos>(), entity);
+        this.minDistFromStart = minDistFromStart;
+        this.maxDistToDest = range;
+
+        final Tuple<Direction, Direction> dir = BlockPosUtil.getRandomDirectionTuple(random);
+        this.destination = start.relative(dir.getA(), minDistFromStart).relative(dir.getB(), minDistFromStart);
+    }
+
     @Nullable
     @Override
     protected Path search()
@@ -115,7 +141,7 @@ public class PathJobRandomPos extends AbstractPathJob
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
-        if (random.nextInt(10) == 0 && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
+        if (random.nextInt(10) == 0 && isInRestrictedArea(n.pos) && (start.distSqr(n.pos) > minDistFromStart * minDistFromStart)
               && SurfaceType.getSurfaceType(world, world.getBlockState(n.pos.below()), n.pos.below()) == SurfaceType.WALKABLE
               && destination.distSqr(n.pos) < this.maxDistToDest * this.maxDistToDest)
         {
