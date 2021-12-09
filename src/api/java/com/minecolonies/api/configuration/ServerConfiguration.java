@@ -54,7 +54,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue forceLoadColony;
     public final ForgeConfigSpec.IntValue     colonyLoadStrictness;
     public final ForgeConfigSpec.IntValue     badVisitorsChance;
-    public final ForgeConfigSpec.BooleanValue generateSupplyLoot;
     public final ForgeConfigSpec.IntValue     maxTreeSize;
     public final ForgeConfigSpec.BooleanValue noSupplyPlacementRestrictions;
     public final ForgeConfigSpec.BooleanValue skyRaiders;
@@ -144,9 +143,9 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Pathfinding Settings ######## ------------------- *
      *  ------------------------------------------------------------------------------ */
 
-    public final ForgeConfigSpec.IntValue     pathfindingDebugVerbosity;
-    public final ForgeConfigSpec.IntValue     pathfindingMaxThreadCount;
-    public final ForgeConfigSpec.IntValue     minimumRailsToPath;
+    public final ForgeConfigSpec.IntValue pathfindingDebugVerbosity;
+    public final ForgeConfigSpec.IntValue pathfindingMaxThreadCount;
+    public final ForgeConfigSpec.IntValue minimumRailsToPath;
 
     /*  --------------------------------------------------------------------------------- *
      *  ------------------- ######## Request System Settings ######## ------------------- *
@@ -201,7 +200,6 @@ public class ServerConfiguration extends AbstractConfiguration
         forceLoadColony = defineBoolean(builder, "forceloadcolony", false);
         colonyLoadStrictness = defineInteger(builder, "colonyloadstrictness", 3, 1, 15);
         badVisitorsChance = defineInteger(builder, "badvisitorchance", 2, 1, 100);
-        generateSupplyLoot = defineBoolean(builder, "generatesupplyloot", true);
         maxTreeSize = defineInteger(builder, "maxtreesize", 400, 1, 1000);
         noSupplyPlacementRestrictions = defineBoolean(builder, "nosupplyplacementrestrictions", false);
         skyRaiders = defineBoolean(builder, "skyraiders", false);
@@ -209,10 +207,10 @@ public class ServerConfiguration extends AbstractConfiguration
         swapToCategory(builder, "research");
         researchCreativeCompletion = defineBoolean(builder, "researchcreativecompletion", true);
         researchDebugLog = defineBoolean(builder, "researchdebuglog", false);
-        researchResetCost = defineList(builder, "researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s-> s instanceof String);
+        researchResetCost = defineList(builder, "researchresetcost", Arrays.asList("minecolonies:ancienttome:1"), s -> s instanceof String);
 
         swapToCategory(builder, "commands");
-        
+
         canPlayerUseRTPCommand = defineBoolean(builder, "canplayerusertpcommand", false);
         canPlayerUseColonyTPCommand = defineBoolean(builder, "canplayerusecolonytpcommand", false);
         canPlayerUseAllyTHTeleport = defineBoolean(builder, "canplayeruseallytownhallteleport", true);
@@ -260,12 +258,12 @@ public class ServerConfiguration extends AbstractConfiguration
         turnOffExplosionsInColonies = defineEnum(builder, "turnoffexplosionsincolonies", Explosions.DAMAGE_ENTITIES);
         specialPermGroup = defineList(builder, "specialpermgroup",
           Arrays.asList
-                   ("_Raycoms_"),
+                  ("_Raycoms_"),
           s -> s instanceof String);
         freeToInteractBlocks = defineList(builder, "freetointeractblocks",
           Arrays.asList
-                   ("dirt",
-                     "0 0 0"),
+                  ("dirt",
+                    "0 0 0"),
           s -> s instanceof String);
         secondsBetweenPermissionMessages = defineInteger(builder, "secondsBetweenPermissionMessages", 30, 1, 1000);
 
@@ -435,34 +433,34 @@ public class ServerConfiguration extends AbstractConfiguration
 
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
-                   ("minecraft:paper;400;100", "minecraft:book;600;10"),
+                  ("minecraft:paper;400;100", "minecraft:book;600;10"),
           s -> s instanceof String);
 
         configListRecruitmentItems = defineList(builder, "configlistrecruitmentitems",
           Arrays.asList
-                   ("minecraft:hay_block;3",
-                     "minecraft:book;2",
-                     "minecraft:enchanted_book;9",
-                     "minecraft:diamond;9",
-                     "minecraft:emerald;8",
-                     "minecraft:baked_potato;1",
-                     "minecraft:gold_ingot;2",
-                     "minecraft:redstone;2",
-                     "minecraft:lapis_lazuli;2",
-                     "minecraft:cake;11",
-                     "minecraft:sunflower;5",
-                     "minecraft:honeycomb;6",
-                     "minecraft:quartz;3"),
+                  ("minecraft:hay_block;3",
+                    "minecraft:book;2",
+                    "minecraft:enchanted_book;9",
+                    "minecraft:diamond;9",
+                    "minecraft:emerald;8",
+                    "minecraft:baked_potato;1",
+                    "minecraft:gold_ingot;2",
+                    "minecraft:redstone;2",
+                    "minecraft:lapis_lazuli;2",
+                    "minecraft:cake;11",
+                    "minecraft:sunflower;5",
+                    "minecraft:honeycomb;6",
+                    "minecraft:quartz;3"),
           s -> s instanceof String);
         luckyOres = defineList(builder, "luckyores",
           Arrays.asList
-                   ("minecraft:coal_ore!64",
-                     "minecraft:iron_ore!32",
-                     "minecraft:gold_ore!16",
-                     "minecraft:redstone_ore!8",
-                     "minecraft:lapis_ore!4",
-                     "minecraft:diamond_ore!2",
-                     "minecraft:emerald_ore!1"),
+                  ("minecraft:coal_ore!64",
+                    "minecraft:iron_ore!32",
+                    "minecraft:gold_ore!16",
+                    "minecraft:redstone_ore!8",
+                    "minecraft:lapis_ore!4",
+                    "minecraft:diamond_ore!2",
+                    "minecraft:emerald_ore!1"),
           s -> s instanceof String);
 
         enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
