@@ -1169,7 +1169,7 @@ if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("
     if (System.getenv().containsKey("crowdInApiKey")) {
     project.crowdin { crowdinSpec ->
         crowdinSpec.credentials { credentialsSpec ->
-            credentialsSpec.getToken().set(System.getenv().get("crowdInApiKey"))
+            credentialsSpec.getToken().set(System.getenv("crowdInApiKey"))
         }
 
         crowdinSpec.configuration { configurationSpec ->
