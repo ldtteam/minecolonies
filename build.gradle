@@ -1232,14 +1232,6 @@ if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("
         tasks.crowdinCopyProjectTranslations.dependsOn crowdinDownloadProjectTranslation
         tasks.processResources.dependsOn normalizeTranslationFilesToRuntimeDir
         tasks.sourcesJar.dependsOn normalizeTranslationFilesToRuntimeDir
-
-    }
-    else
-    {
-        project.afterEvaluate {
-            project.logger.lifecycle "No CrowdIn API Key was provided. Can not sync translations!"
-        }
-    }
 }
 else
 {
