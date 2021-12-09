@@ -163,7 +163,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     protected IAIState decide()
     {
         final IAIState nextState = super.decide();
-        if (nextState != START_WORKING)
+        if (nextState != START_WORKING && nextState != IDLE)
         {
             return nextState;
         }
