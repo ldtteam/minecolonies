@@ -4,9 +4,9 @@ projects:
       - dir: "%crowdin_download_path%"
         crowdinPath:
           dir: "/lang"
-          filename: "en_us.json"
+          filename: "entries.json"
         exportPattern:
           dir: "/lang"
           filename: "%locale_with_underscore%.json"
         includes:
-          - pattern: "en_us.json"
+          - pattern: "entries.json"
