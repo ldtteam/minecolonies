@@ -108,11 +108,11 @@ public abstract class AbstractPathJob implements Callable<Path>
     //  Debug Rendering
     protected        boolean    debugDrawEnabled     = false;
     @Nullable
-    protected        Set<MNode> debugNodesVisited    = null;
+    protected        Set<MNode> debugNodesVisited    = new HashSet<>();
     @Nullable
-    protected        Set<MNode> debugNodesNotVisited = null;
+    protected        Set<MNode> debugNodesNotVisited = new HashSet<>();
     @Nullable
-    protected        Set<MNode> debugNodesPath       = null;
+    protected        Set<MNode> debugNodesPath       = new HashSet<>();
     //  May be faster, but can produce strange results
     private final    boolean    allowJumpPointSearchTypeWalk;
     private          int                totalNodesAdded      = 0;
@@ -227,7 +227,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final BlockPos endRestriction,
         final int range,
         final boolean hardRestriction,
-        final PathResult<AbstractPathJob> result,
+        final PathResult result,
         final LivingEntity entity)
     {
         this(world, start, startRestriction, endRestriction, range, Vec3i.ZERO, hardRestriction, result, entity);
@@ -256,7 +256,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final int range,
         final Vec3i grow,
         final boolean hardRestriction,
-        final PathResult<AbstractPathJob> result,
+        final PathResult result,
         final LivingEntity entity)
     {
         this.minX = Math.min(startRestriction.getX(), endRestriction.getX()) - grow.getX();
