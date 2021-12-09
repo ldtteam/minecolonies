@@ -38,26 +38,31 @@ public class CreateColonyMessage implements IMessage
      */
     BlockPos townHall;
 
+    boolean claim;
+
     public CreateColonyMessage()
     {
         super();
     }
 
-    public CreateColonyMessage(final BlockPos townHall)
+    public CreateColonyMessage(final BlockPos townHall, boolean claim)
     {
         this.townHall = townHall;
+        this.claim = claim;
     }
 
     @Override
     public void toBytes(final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(townHall);
+        buf.writeBoolean(claim);
     }
 
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
         townHall = buf.readBlockPos();
+        claim = buf.readBoolean();
     }
 
     @Nullable
@@ -78,7 +83,7 @@ public class CreateColonyMessage implements IMessage
             return;
         }
 
-        if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative())
+        if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative() && !claim)
         {
             LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.supplyneed");
             return;

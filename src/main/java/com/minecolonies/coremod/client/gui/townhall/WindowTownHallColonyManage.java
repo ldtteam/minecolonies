@@ -6,6 +6,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -20,6 +21,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -149,7 +151,13 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
         Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
           SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
-        Network.getNetwork().sendToServer(new CreateColonyMessage(pos));
+        boolean claim  = false;
+        final BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(pos);
+        if (entity instanceof final TileEntityColonyBuilding hut)
+        {
+            claim = hut.getPositionedTags().containsKey(BlockPos.ZERO) && hut.getPositionedTags().get(BlockPos.ZERO).contains("deactivated");
+        }
+        Network.getNetwork().sendToServer(new CreateColonyMessage(pos, claim));
         close();
     }
 
