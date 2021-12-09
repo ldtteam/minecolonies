@@ -157,7 +157,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     protected IAIState decide()
     {
         final IAIState nextState = super.decide();
-        if (nextState != START_WORKING)
+        if (nextState != START_WORKING && nextState != IDLE)
         {
             return nextState;
         }
