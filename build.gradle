@@ -1052,7 +1052,7 @@ if (opc.isFeatureEnabled("curse") && opc.hasPropertySet("curseId")
             def changes = changesXML.change
             out << "# ${project.modId} Changelog \n"
             out << "## Version: _" + version + "_ \n"
-            out << "## Structurize Version: _" + ${project.structurize_version} + "_ \n"
+            out << "## Structurize Version: _" + project.structurize_version + "_ \n"
 
             if (opc.hasPropertySet("customChangelogHeader")) {
                 out << opc.getProperty("customChangelogHeader")
