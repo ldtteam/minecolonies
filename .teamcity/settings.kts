@@ -41,7 +41,6 @@ project {
         param("env.Version.Patch", "0")
         param("env.Version.Suffix", "")
         param("env.Version.Major", "1")
-        password("crowdInApiKey", "credentialsJSON:b1eb97eb-731a-4b4d-9d8b-998b74b5af01", label = "crowdInApiKey", description = "crowdInApiKey", display = ParameterDisplay.HIDDEN)
         text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
         param("Current Minecraft Version", "main")
         text("Repository", "ldtteam/minecolonies", label = "Repository", description = "The repository for minecolonies.", readOnly = true, allowEmpty = true)
@@ -50,6 +49,7 @@ project {
         param("Default.Branch", "version/main")
         param("env.GRADLE_VERSION", "7.2")
         param("filename.prefix", "minecolonies")
+        password("env.crowdInApiKey", "credentialsJSON:b1eb97eb-731a-4b4d-9d8b-998b74b5af01", label = "crowdInApiKey", description = "crowdInApiKey", display = ParameterDisplay.HIDDEN)
     }
 
     features {
@@ -80,7 +80,7 @@ object Alpha : Project({
     buildType(Alpha_Release)
 
     params {
-        text("env.crowdinKey", "credentialsJSON:7964d1b5-3d20-453f-89d6-df8da1ab6458", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        text("env.crowdinKey", "credentialsJSON:2e3899a3-25cc-4c21-b03d-768e57d2c418", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
         param("env.CURSERELEASETYPE", "alpha")
