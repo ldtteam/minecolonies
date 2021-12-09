@@ -1166,19 +1166,18 @@ tasks.withType(GenerateModuleMetadata) {
 }
 
 if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("crowdInDownloadDirectory")) {
-    if (opc.hasPropertySet("crowdInApiKey")) {
-        project.crowdin { crowdinSpec ->
-            crowdinSpec.credentials { credentialsSpec ->
-                credentialsSpec.getToken().set(opc.getProperty("crowdInApiKey"))
-            }
 
-            crowdinSpec.configuration { configurationSpec ->
-                configurationSpec.getFile().set(file("gradle/crowdin.yml"))
-                configurationSpec.tokens.put("%crowdin_download_path%", opc.getProperty("crowdInDownloadDirectory"))
+    project.crowdin { crowdinSpec ->
+        crowdinSpec.credentials { credentialsSpec ->
+            credentialsSpec.getToken().set(System.getenv().get("crowdInApiKey"))
+        }
 
-                if (opc.isFeatureEnabled("crowdInBranchSeparation")) {
-                    configurationSpec.tokens.put("%branch_name%", git.branch.name)
-                }
+        crowdinSpec.configuration { configurationSpec ->
+            configurationSpec.getFile().set(file("gradle/crowdin.yml"))
+            configurationSpec.tokens.put("%crowdin_download_path%", opc.getProperty("crowdInDownloadDirectory"))
+
+            if (opc.isFeatureEnabled("crowdInBranchSeparation")) {
+                configurationSpec.tokens.put("%branch_name%", git.branch.name)
             }
         }
 
