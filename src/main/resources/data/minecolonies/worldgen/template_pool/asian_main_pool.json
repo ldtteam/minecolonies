@@ -120,7 +120,7 @@
       }
     },
     {
-      "weight": 10,
+      "weight": 7,
       "element": {
         "location": "minecolonies:asian_tavern",
         "processors": "minecraft:empty",

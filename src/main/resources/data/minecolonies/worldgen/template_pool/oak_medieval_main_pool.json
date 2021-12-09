@@ -102,7 +102,7 @@
       }
     },
     {
-      "weight": 10,
+      "weight": 7,
       "element": {
         "location": "minecolonies:oak_medieval_tavern",
         "processors": "minecraft:empty",
