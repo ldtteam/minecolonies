@@ -1186,13 +1186,11 @@ if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("
         }
 
         def performsTranslationsBuild = false;
-        if (!opc.isFeatureEnabled("crowdInBuildingWithFilteredBranches") || (opc.hasPropertySet("crowdInBuildingWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInBuildingWithFilteredBranchesSpec"), git.branch.name)))
-        {
+        if (!opc.isFeatureEnabled("crowdInBuildingWithFilteredBranches") || (opc.hasPropertySet("crowdInBuildingWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInBuildingWithFilteredBranchesSpec"), git.branch.name))) {
             tasks.processResources.dependsOn crowdinBuildProjectTranslation
             performsTranslationsBuild = true;
         }
-        if (!opc.isFeatureEnabled("crowdInUploadWithFilteredBranches") || (opc.hasPropertySet("crowdInUploadWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInUploadWithFilteredBranchesSpec"), git.branch.name)))
-        {
+        if (!opc.isFeatureEnabled("crowdInUploadWithFilteredBranches") || (opc.hasPropertySet("crowdInUploadWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInUploadWithFilteredBranchesSpec"), git.branch.name))) {
             tasks.processResources.dependsOn crowdinUploadSourceFiles
             if (performsTranslationsBuild) {
                 tasks.crowdinBuildProjectTranslation.dependsOn crowdinUploadSourceFiles
@@ -1232,9 +1230,9 @@ if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("
         tasks.crowdinCopyProjectTranslations.dependsOn crowdinDownloadProjectTranslation
         tasks.processResources.dependsOn normalizeTranslationFilesToRuntimeDir
         tasks.sourcesJar.dependsOn normalizeTranslationFilesToRuntimeDir
-}
-else
-{
+
+    }
+} else {
     project.logger.lifecycle "CrowdIn disabled."
 }
 
