@@ -1,5 +1,5 @@
 projects:
-  - id: 294861
+  - id: 479625
     sources:
       - dir: "%crowdin_download_path%"
         crowdinPath:
