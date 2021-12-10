@@ -1166,18 +1166,19 @@ tasks.withType(GenerateModuleMetadata) {
 }
 
 if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("crowdInDownloadDirectory")) {
-    if (System.getenv().containsKey("crowdInApiKey")) {
-    project.crowdin { crowdinSpec ->
-        crowdinSpec.credentials { credentialsSpec ->
-            credentialsSpec.getToken().set(System.getenv("crowdInApiKey"))
-        }
+    if (opc.hasPropertySet("crowdInApiKey")) {
+        project.crowdin { crowdinSpec ->
+            crowdinSpec.credentials { credentialsSpec ->
+                credentialsSpec.getToken().set(opc.getProperty("crowdInApiKey"))
+            }
 
-        crowdinSpec.configuration { configurationSpec ->
-            configurationSpec.getFile().set(file("gradle/crowdin.yml"))
-            configurationSpec.tokens.put("%crowdin_download_path%", opc.getProperty("crowdInDownloadDirectory"))
+            crowdinSpec.configuration { configurationSpec ->
+                configurationSpec.getFile().set(file("gradle/crowdin.yml"))
+                configurationSpec.tokens.put("%crowdin_download_path%", opc.getProperty("crowdInDownloadDirectory"))
 
-            if (opc.isFeatureEnabled("crowdInBranchSeparation")) {
-                configurationSpec.tokens.put("%branch_name%", git.branch.name)
+                if (opc.isFeatureEnabled("crowdInBranchSeparation")) {
+                    configurationSpec.tokens.put("%branch_name%", git.branch.name)
+                }
             }
         }
 
@@ -1186,11 +1187,13 @@ if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("
         }
 
         def performsTranslationsBuild = false;
-        if (!opc.isFeatureEnabled("crowdInBuildingWithFilteredBranches") || (opc.hasPropertySet("crowdInBuildingWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInBuildingWithFilteredBranchesSpec"), git.branch.name))) {
+        if (!opc.isFeatureEnabled("crowdInBuildingWithFilteredBranches") || (opc.hasPropertySet("crowdInBuildingWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInBuildingWithFilteredBranchesSpec"), git.branch.name)))
+        {
             tasks.processResources.dependsOn crowdinBuildProjectTranslation
             performsTranslationsBuild = true;
         }
-        if (!opc.isFeatureEnabled("crowdInUploadWithFilteredBranches") || (opc.hasPropertySet("crowdInUploadWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInUploadWithFilteredBranchesSpec"), git.branch.name))) {
+        if (!opc.isFeatureEnabled("crowdInUploadWithFilteredBranches") || (opc.hasPropertySet("crowdInUploadWithFilteredBranchesSpec") && Pattern.matches(opc.getProperty("crowdInUploadWithFilteredBranchesSpec"), git.branch.name)))
+        {
             tasks.processResources.dependsOn crowdinUploadSourceFiles
             if (performsTranslationsBuild) {
                 tasks.crowdinBuildProjectTranslation.dependsOn crowdinUploadSourceFiles
@@ -1230,11 +1233,17 @@ if (opc.isFeatureEnabled("crowdInTranslationManagement") && opc.hasPropertySet("
         tasks.crowdinCopyProjectTranslations.dependsOn crowdinDownloadProjectTranslation
         tasks.processResources.dependsOn normalizeTranslationFilesToRuntimeDir
         tasks.sourcesJar.dependsOn normalizeTranslationFilesToRuntimeDir
+
     }
-    } else {
-        project.logger.lifecycle "No Crowdin API key was provided"
+    else
+    {
+        project.afterEvaluate {
+            project.logger.lifecycle "No CrowdIn API Key was provided. Can not sync translations!"
+        }
     }
-} else {
+}
+else
+{
     project.logger.lifecycle "CrowdIn disabled."
 }
 
