@@ -42,7 +42,7 @@ public enum Action
     HURT_CITIZEN(29),
     HURT_VISITOR(30);
 
-    private final int flag;
+    private final long flag;
 
     /**
      * Stores the action as byte. {@link #ACCESS_HUTS} has value 0000 0000 {@link #SEND_MESSAGES} has value 0100 0000
@@ -51,10 +51,10 @@ public enum Action
      */
     Action(final int bit)
     {
-        this.flag = 0x1 << bit;
+        this.flag = 0x1L << bit;
     }
 
-    public int getFlag()
+    public long getFlag()
     {
         return flag;
     }

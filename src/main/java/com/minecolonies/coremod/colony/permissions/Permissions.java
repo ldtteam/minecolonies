@@ -95,7 +95,7 @@ public class Permissions implements IPermissions
      * Permissions of these players.
      */
     @NotNull
-    private final Map<Rank, Integer> permissionMap = new HashMap<>();
+    private final Map<Rank, Long> permissionMap = new HashMap<>();
 
     /**
      * Used to check if the permissions have to by synchronized.
@@ -147,7 +147,7 @@ public class Permissions implements IPermissions
             name = name.substring(0,1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
             Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
             ranks.put(rank.getId(), rank);
-            permissionMap.put(rank, 0);
+            permissionMap.put(rank, 0L);
             switch (oldRank)
             {
                 case OWNER:
@@ -203,7 +203,7 @@ public class Permissions implements IPermissions
      */
     public final boolean setPermission(final Rank rank, @NotNull final Action action)
     {
-        final int flags = permissionMap.get(rank);
+        final long flags = permissionMap.get(rank);
 
         //check that flag isn't set
         if (!Utils.testFlag(flags, action.getFlag()))
@@ -328,7 +328,7 @@ public class Permissions implements IPermissions
                 {
                     final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
-                    int flags = 0;
+                    long flags = 0;
 
                     for (int j = 0; j < flagsTagList.size(); ++j)
                     {
@@ -377,7 +377,7 @@ public class Permissions implements IPermissions
                 final Rank rank = ranks.get(oldRank.ordinal());
                 final ListNBT flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
-                int flags = 0;
+                long flags = 0;
 
                 for (int j = 0; j < flagsTagList.size(); ++j)
                 {
@@ -528,7 +528,7 @@ public class Permissions implements IPermissions
 
         // Permissions
         @NotNull final ListNBT permissionsTagList = new ListNBT();
-        for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
+        for (@NotNull final Map.Entry<Rank, Long> entry : permissionMap.entrySet())
         {
             @NotNull final CompoundNBT permissionsCompound = new CompoundNBT();
             if (entry.getKey() != null)
@@ -627,7 +627,7 @@ public class Permissions implements IPermissions
      * @return map of permissionMap.
      */
     @NotNull
-    public Map<Rank, Integer> getPermissionMap()
+    public Map<Rank, Long> getPermissionMap()
     {
         return permissionMap;
     }
@@ -659,7 +659,7 @@ public class Permissions implements IPermissions
      */
     public boolean removePermission(final Rank rank, @NotNull final Action action)
     {
-        final int flags = permissionMap.get(rank);
+        final long flags = permissionMap.get(rank);
         if (Utils.testFlag(flags, action.getFlag()))
         {
             permissionMap.put(rank, Utils.unsetFlag(flags, action.getFlag()));
@@ -917,10 +917,10 @@ public class Permissions implements IPermissions
      */
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf, @NotNull final Rank viewerRank)
     {
-        buf.writeInt(ranks.size());
+        buf.writeVarInt(ranks.size());
         for (Rank rank : ranks.values())
         {
-            buf.writeInt(rank.getId());
+            buf.writeVarInt(rank.getId());
             buf.writeUtf(rank.getName());
             buf.writeBoolean(rank.isSubscriber());
             buf.writeBoolean(rank.isInitial());
@@ -928,23 +928,23 @@ public class Permissions implements IPermissions
             buf.writeBoolean(rank.isHostile());
         }
 
-        buf.writeInt(viewerRank.getId());
+        buf.writeVarInt(viewerRank.getId());
 
         //  Owners
-        buf.writeInt(players.size());
+        buf.writeVarInt(players.size());
         for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
             buf.writeUtf(player.getValue().getName());
-            buf.writeInt(player.getValue().getRank().getId());
+            buf.writeVarInt(player.getValue().getRank().getId());
         }
 
         // Permissions
-        buf.writeInt(permissionMap.size());
-        for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
+        buf.writeVarInt(permissionMap.size());
+        for (@NotNull final Map.Entry<Rank, Long> entry : permissionMap.entrySet())
         {
-            buf.writeInt(entry.getKey().getId());
-            buf.writeInt(entry.getValue());
+            buf.writeVarLong(entry.getKey().getId());
+            buf.writeVarLong(entry.getValue());
         }
     }
 
@@ -1051,7 +1051,7 @@ public class Permissions implements IPermissions
         }
         Rank rank = new Rank(id, name, false, false);
         ranks.put(id, rank);
-        permissionMap.put(rank, 0);
+        permissionMap.put(rank, 0L);
         markDirty();
     }
 

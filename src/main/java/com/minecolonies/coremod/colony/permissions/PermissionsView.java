@@ -22,7 +22,7 @@ public class PermissionsView implements IPermissions
     @NotNull
     private final Map<UUID, Player>  players     = new HashMap<>();
     @NotNull
-    private final Map<Rank, Integer> permissions = new HashMap<>();
+    private final Map<Rank, Long>    permissions = new HashMap<>();
     private       Rank               userRank;
     private final Map<Integer, Rank> ranks = new LinkedHashMap<>();
 
@@ -99,7 +99,7 @@ public class PermissionsView implements IPermissions
     }
 
     @NotNull
-    public Map<Rank, Integer> getPermissions()
+    public Map<Rank, Long> getPermissions()
     {
         return permissions;
     }
@@ -137,7 +137,7 @@ public class PermissionsView implements IPermissions
      */
     public boolean setPermission(final Rank rank, @NotNull final Action action)
     {
-        final int flags = permissions.get(rank);
+        final long flags = permissions.get(rank);
 
         //check that flag isn't set
         if (!Utils.testFlag(flags, action.getFlag()))
@@ -157,7 +157,7 @@ public class PermissionsView implements IPermissions
      */
     public boolean removePermission(final Rank rank, @NotNull final Action action)
     {
-        final int flags = permissions.get(rank);
+        final long flags = permissions.get(rank);
         if (Utils.testFlag(flags, action.getFlag()))
         {
             permissions.put(rank, Utils.unsetFlag(flags, action.getFlag()));
@@ -244,23 +244,23 @@ public class PermissionsView implements IPermissions
      */
     public void deserialize(@NotNull final PacketBuffer buf)
     {
-        final int ranksSize = buf.readInt();
+        final int ranksSize = buf.readVarInt();
         for (int i = 0; i < ranksSize; ++i)
         {
-            final int id = buf.readInt();
+            final int id = buf.readVarInt();
             final Rank rank = new Rank(id, buf.readUtf(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
             ranks.put(id, rank);
         }
-        userRank = ranks.get(buf.readInt());
+        userRank = ranks.get(buf.readVarInt());
 
         //  Owners
         players.clear();
-        final int numOwners = buf.readInt();
+        final int numOwners = buf.readVarInt();
         for (int i = 0; i < numOwners; ++i)
         {
             final UUID id = PacketUtils.readUUID(buf);
             final String name = buf.readUtf(32767);
-            final Rank rank = ranks.get(buf.readInt());
+            final Rank rank = ranks.get(buf.readVarInt());
             if (rank.getId() == OWNER_RANK_ID)
             {
                 colonyOwner = id;
@@ -271,11 +271,11 @@ public class PermissionsView implements IPermissions
 
         //Permissions
         permissions.clear();
-        final int numPermissions = buf.readInt();
+        final int numPermissions = buf.readVarInt();
         for (int i = 0; i < numPermissions; ++i)
         {
-            final Rank rank = ranks.get(buf.readInt());
-            final int flags = buf.readInt();
+            final Rank rank = ranks.get(buf.readVarInt());
+            final long flags = buf.readVarLong();
             permissions.put(rank, flags);
         }
     }
