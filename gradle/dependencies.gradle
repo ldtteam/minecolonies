@@ -1,3 +1,12 @@
+repositories {
+    maven { url = 'https://files.minecraftforge.net/maven' }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
 dependencies {
     apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal"){
         transitive = false
@@ -6,30 +15,6 @@ dependencies {
         transitive = false
     }
     runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal"){
-        transitive = false
-    }
-    implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}"){
-        transitive = false
-    }
-    apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"){
-        transitive = false
-    }
-    implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"){
-        transitive = false
-    }
-    apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"){
-        transitive = false
-    }
-    implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"){
-        transitive = false
-    }
-    implementation fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}"){
-        transitive = false
-    }
-    datagenLibrary ("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"){
-        transitive = false
-    }
-    library ("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"){
         transitive = false
     }
 }
