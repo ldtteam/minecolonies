@@ -149,7 +149,7 @@
     {
       "weight": 15,
       "element": {
-        "location": "minecolonies:caledonia_guardtowerx1",
+        "location": "minecolonies:caledonia_guard1",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
@@ -158,7 +158,7 @@
     {
       "weight": 3,
       "element": {
-        "location": "minecolonies:caledonia_guardtowerx2",
+        "location": "minecolonies:caledonia_guard2",
         "processors": "minecraft:empty",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
