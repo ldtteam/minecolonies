@@ -19,6 +19,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -109,7 +110,7 @@ public class NearColonyBuildingsRenderer
 
         for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
         {
-            if (buildingView instanceof PostBox.View || buildingView instanceof EmptyView)
+            if (buildingView instanceof PostBox.View)
             {
                 continue;
             }
