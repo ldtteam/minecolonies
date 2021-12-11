@@ -35,19 +35,19 @@ project {
     description = "The Minecolonies Minecraft Mod"
 
     params {
+        param("env.JDK_VERSION", "jdk17")
+        param("Project.Type", "mods")
+        param("env.Version.Patch", "0")
+        param("env.Version.Suffix", "")
+        param("env.Version.Major", "1")
+        text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
         param("Current Minecraft Version", "main")
         text("Repository", "ldtteam/minecolonies", label = "Repository", description = "The repository for minecolonies.", readOnly = true, allowEmpty = true)
         param("env.Version.Minor", "0")
-        param("Project.Type", "mods")
-        param("env.Version.Patch", "0")
         param("Upsource.Project.Id", "minecolonies")
-        param("env.Version.Suffix", "")
-        param("env.Version.Major", "1")
         param("Default.Branch", "version/main")
-        param("filename.prefix", "minecolonies")
         param("env.GRADLE_VERSION", "7.3")
-        param("env.JDK_VERSION", "jdk17")
-        text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
+        param("filename.prefix", "minecolonies")
     }
 
     features {
@@ -60,14 +60,12 @@ project {
             }
         }
     }
-    subProjectsOrder = arrayListOf(RelativeId("Release"), RelativeId("UpgradeBetaRelease"), RelativeId("Beta"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
+    subProjectsOrder = arrayListOf(RelativeId("UpgradeBetaRelease"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
 
     subProject(Alpha)
-    subProject(Beta)
     subProject(UpgradeAlphaBeta)
     subProject(OfficialPublications)
     subProject(Branches)
-    subProject(Release)
     subProject(UpgradeBetaRelease)
     subProject(PullRequests_2)
 }
@@ -80,7 +78,7 @@ object Alpha : Project({
     buildType(Alpha_Release)
 
     params {
-        text("env.crowdinKey", "credentialsJSON:b0ec3acb-677c-4212-9e76-0fb7fbe265da", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        text("env.crowdinKey", "credentialsJSON:57fbe4f4-13dd-4c72-b6b3-3cc1e3a8240e", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
         param("env.CURSERELEASETYPE", "alpha")
@@ -177,63 +175,6 @@ object Alpha_Release : BuildType({
 })
 
 
-object Beta : Project({
-    name = "Beta"
-    description = "Beta version builds of minecolonies"
-
-    buildType(Beta_Release)
-
-    params {
-        password("env.crowdinKey", "credentialsJSON:be67336c-4ed1-464c-b531-92270ba39b53", label = "Crowdin key", description = "The API for getting the crowdin translations")
-        param("Default.Branch", "testing/%Current Minecraft Version%")
-        param("VCS.Branches", "+:refs/heads/testing/(*)")
-        param("env.CURSERELEASETYPE", "beta")
-        param("env.Version.Suffix", "-BETA")
-    }
-})
-
-object Beta_Release : BuildType({
-    templates(AbsoluteId("LetSDevTogether_BuildWithRelease"))
-    name = "Release"
-    description = "Releases the mod as Alpha to CurseForge"
-
-    params {
-        param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
-    }
-
-    steps {
-        gradle {
-            name = "Compile"
-            id = "RUNNER_9"
-            tasks = "build createChangelog curseforge publish"
-            buildFile = "build.gradle"
-            enableStacktrace = true
-            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
-            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = """
-                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
-                -u 0
-            """.trimIndent()
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
-            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
-            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
-            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
-            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
-        }
-    }
-
-    dependencies {
-        snapshot(OfficialPublications_CommonB) {
-            reuseBuilds = ReuseBuilds.NO
-            onDependencyFailure = FailureAction.FAIL_TO_START
-        }
-    }
-})
-
-
 object Branches : Project({
     name = "Branches"
     description = "All none release branches."
@@ -283,7 +224,7 @@ object Branches_Build : BuildType({
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
     }
-    
+
     disableSettings("BUILD_EXT_14")
 })
 
@@ -362,7 +303,7 @@ object PullRequests_2_BuildAndTest : BuildType({
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
     }
-    
+
     disableSettings("BUILD_EXT_15")
 })
 
@@ -370,61 +311,6 @@ object PullRequests_2_CommonBuildCounter : BuildType({
     templates(AbsoluteId("LetSDevTogether_CommonBuildCounter"))
     name = "Common Build Counter"
     description = "Defines version numbers uniquely over all Pull Request builds"
-})
-
-
-object Release : Project({
-    name = "Release"
-    description = "Beta version builds of minecolonies"
-
-    buildType(Release_Release)
-
-    params {
-        password("env.crowdinKey", "credentialsJSON:be67336c-4ed1-464c-b531-92270ba39b53", label = "Crowdin key", description = "The API key for getting crowdin translations")
-        param("Default.Branch", "release/%Current Minecraft Version%")
-        param("VCS.Branches", "+:refs/heads/release/(*)")
-        param("env.CURSERELEASETYPE", "release")
-        param("env.Version.Suffix", "-RELEASE")
-    }
-})
-
-object Release_Release : BuildType({
-    templates(AbsoluteId("LetSDevTogether_BuildWithRelease"))
-    name = "Release"
-    description = "Releases the mod as Alpha to CurseForge"
-
-    params {
-        param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
-    }
-
-    steps {
-        gradle {
-            name = "Compile"
-            id = "RUNNER_9"
-            tasks = "build createChangelog curseforge publish"
-            buildFile = "build.gradle"
-            useGradleWrapper = false
-            enableStacktrace = true
-            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
-            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = "-u 0 -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches"
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
-            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
-            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
-            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
-            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
-        }
-    }
-
-    dependencies {
-        snapshot(OfficialPublications_CommonB) {
-            reuseBuilds = ReuseBuilds.NO
-            onDependencyFailure = FailureAction.FAIL_TO_START
-        }
-    }
 })
 
 
@@ -458,7 +344,7 @@ object Beta_UpgradeAlphaBeta : BuildType({
             param("revisionRuleBuildBranch", "<default>")
         }
     }
-    
+
     disableSettings("BUILD_EXT_9")
 })
 
