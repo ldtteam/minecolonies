@@ -45,6 +45,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Rotation;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -186,7 +187,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
             final IColonyTagCapability cap = worldIn.getChunkAt(pos).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
             final BlockEntity entity = worldIn.getBlockEntity(pos);
-            if (entity instanceof final TileEntityColonyBuilding te && te.getPositionedTags().containsKey(BlockPos.ZERO) && te.getPositionedTags().get(BlockPos.ZERO).contains("deactivated"))
+            if (entity instanceof final TileEntityColonyBuilding te && te.getPositionedTags().containsKey(BlockPos.ZERO) && te.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED))
             {
                 if (building == null && cap.getOwningColony() == 0)
                 {

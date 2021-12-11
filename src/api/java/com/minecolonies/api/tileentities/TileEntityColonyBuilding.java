@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 
@@ -530,7 +531,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public void reactivate()
     {
         final List<String> tags = new ArrayList<>(this.getPositionedTags().get(BlockPos.ZERO));
-        tags.remove("deactivated");
+        tags.remove(DEACTIVATED);
         if (!tags.isEmpty())
         {
             this.setStyle(tags.get(0));

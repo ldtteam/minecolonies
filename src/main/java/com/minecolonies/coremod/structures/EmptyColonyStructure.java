@@ -26,6 +26,9 @@ import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Class defining our configured feature - the empty colony that is spawning.
+ */
 public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
 {
     public EmptyColonyStructure(Codec<JigsawConfiguration> codec)
