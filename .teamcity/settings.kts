@@ -36,7 +36,6 @@ project {
 
     params {
         param("env.JDK_VERSION", "jdk16")
-        param("env.crowdinKey", "credentialsJSON:5b68f602-a77c-4b53-a0c1-3cfe0311b2f0")
         param("Project.Type", "mods")
         param("env.Version.Patch", "0")
         param("env.Version.Suffix", "")
