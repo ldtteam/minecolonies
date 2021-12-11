@@ -21,6 +21,15 @@
       }
     },
     {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:asian_square",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
       "weight": 100,
       "element": {
         "location": "minecolonies:asian_road",

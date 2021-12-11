@@ -12,6 +12,15 @@
       }
     },
     {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:darkoak_medieval_square",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
       "weight": 2,
       "element": {
         "location": "minecolonies:medieval_dark_oak_builder2",
