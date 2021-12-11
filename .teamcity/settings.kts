@@ -48,7 +48,6 @@ project {
         param("Upsource.Project.Id", "minecolonies")
         param("Default.Branch", "version/main")
         param("env.GRADLE_VERSION", "7.2")
-        password("env.crowdInApiKey", "credentialsJSON:8d4330ba-e29c-4060-9e06-389aece07bfe", label = "crowdInApiKey", description = "crowdInApiKey", display = ParameterDisplay.HIDDEN)
         param("filename.prefix", "minecolonies")
     }
 
@@ -80,7 +79,7 @@ object Alpha : Project({
     buildType(Alpha_Release)
 
     params {
-        text("env.crowdinKey", "credentialsJSON:c25cd13b-210b-4982-89e5-c441aa8e9141", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        text("env.crowdinKey", "credentialsJSON:5d65d4ed-f091-410d-96f3-e50bbae0af32", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
         param("env.CURSERELEASETYPE", "alpha")
