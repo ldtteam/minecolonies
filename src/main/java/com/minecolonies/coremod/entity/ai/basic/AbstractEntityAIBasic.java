@@ -5,10 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -437,7 +435,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return INIT;
         }
 
-        if (!getExpectedBuildingClass().isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        if (getExpectedBuildingClass() != worker.getCitizenColonyHandler().getWorkBuilding().getClass())
         {
             if (worker.getCitizenData() != null)
             {
