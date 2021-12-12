@@ -8,13 +8,13 @@ repositories {
 }
 
 dependencies {
-    apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal"){
+    apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.minecraftVersion}-${project.domumOrnamentumVersion}:universal"){
         transitive = false
     }
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal"){
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.minecraftVersion}-${project.domumOrnamentumVersion}:universal"){
         transitive = false
     }
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal"){
+    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.minecraftVersion}-${project.domumOrnamentumVersion}:universal"){
         transitive = false
     }
 }

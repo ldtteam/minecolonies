@@ -49,14 +49,14 @@ dependencies {
         transitive = false
     }
 
-    apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"){
+    apiImplementation fg.deobf("com.ldtteam:structurize:${project.exactMinecraftVersion}-${project.structurize_version}"){
         transitive = false
     }
-    implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}"){
+    implementation fg.deobf("com.ldtteam:structurize:${project.exactMinecraftVersion}-${project.structurize_version}"){
         transitive = false
     }
 
-    implementation fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}"){
+    implementation fg.deobf("com.ldtteam:multi-piston:${project.minecraftVersion}-${project.multiPistonVersion}"){
         transitive = false
     }
 

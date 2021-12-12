@@ -1,9 +1,9 @@
 project.ext.customChangelogHeader = "\n" +
         "### Required Dependencies: \n" +
-        "- Structurize: ${project.minecraftVersion}-${project.structurize_version}\n" +
-        "- Multi-Piston: ${project.exactMinecraftVersion}-${project.multiPistonVersion}\n" +
+        "- Structurize: ${project.exactMinecraftVersion}-${project.structurize_version}\n" +
+        "- Multi-Piston: ${project.minecraftVersion}-${project.multiPistonVersion}\n" +
         "- BlockUI: ${project.minecraftVersion}-${project.blockUI_version}\n" +
-        "- Domum Ornamentum: ${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}\n" +
+        "- Domum Ornamentum: ${project.minecraftVersion}-${project.domumOrnamentumVersion}\n" +
         "\n" +
         "### Optional Dependencies\n" +
         "- JEI: ${project.minecraftVersion}:${project.jei_version}\n" +
