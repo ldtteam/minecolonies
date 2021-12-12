@@ -60,13 +60,15 @@ project {
             }
         }
     }
-    subProjectsOrder = arrayListOf(RelativeId("UpgradeBetaRelease"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
+    subProjectsOrder = arrayListOf(RelativeId("Release"), RelativeId("UpgradeBetaRelease"), RelativeId("Beta"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
 
-    subProject(Alpha)
+    subProject(Release)
+    subProject(UpgradeBetaRelease)
+    subProject(Beta)
     subProject(UpgradeAlphaBeta)
+    subProject(Alpha)
     subProject(OfficialPublications)
     subProject(Branches)
-    subProject(UpgradeBetaRelease)
     subProject(PullRequests_2)
 }
 
@@ -174,6 +176,211 @@ object Alpha_Release : BuildType({
     }
 })
 
+object Beta : Project({
+    name = "Beta"
+    description = "Beta version builds of minecolonies"
+
+    buildType(Beta_Release)
+
+    params {
+        text("env.crowdinKey", "credentialsJSON:57fbe4f4-13dd-4c72-b6b3-3cc1e3a8240e", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        param("Default.Branch", "version/%Current Minecraft Version%")
+        param("VCS.Branches", "+:refs/heads/testing/(*)")
+        param("env.CURSERELEASETYPE", "beta")
+        param("env.Version.Suffix", "-BETA")
+    }
+})
+
+object Beta_Release : BuildType({
+    templates(AbsoluteId("LetSDevTogether_BuildWithRelease"))
+    name = "Release"
+    description = "Releases the mod as Beta to CurseForge"
+
+    allowExternalStatus = true
+
+    params {
+        param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
+    }
+
+    steps {
+        gradle {
+            name = "Compile"
+            id = "RUNNER_9"
+            tasks = "build createChangelog curseforge publish"
+            buildFile = "build.gradle"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+        }
+        gradle {
+            name = "Analyze"
+            id = "RUNNER_144"
+            tasks = "sonarqube"
+            buildFile = "build.gradle"
+            gradleParams = "-Dsonar.projectKey=ldtteam_minecolonies -Dsonar.host.url=https://code-analysis.ldtteam.com -Dsonar.login=%sonarqube.token%"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.useM2CompatiblePatterns", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildDependencies", "Requires Artifactory Pro.")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishMavenDescriptors", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishIvyDescriptors", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+        }
+        stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9", "RUNNER_144")
+    }
+
+    features {
+        vcsLabeling {
+            id = "BUILD_EXT_11"
+            vcsRootId = "${DslContext.settingsRoot.id}"
+            labelingPattern = "%env.Version%"
+            successfulOnly = true
+            branchFilter = ""
+        }
+        commitStatusPublisher {
+            id = "BUILD_EXT_15"
+            enabled = false
+            vcsRootExtId = "${DslContext.settingsRoot.id}"
+            publisher = upsource {
+                serverUrl = "https://code-analysis.ldtteam.com"
+                projectId = "%Upsource.Project.Id%"
+                userName = "upsource"
+                password = "credentialsJSON:f19631a7-1bc1-4a66-88a0-dc2b9cd36734"
+            }
+        }
+    }
+
+    dependencies {
+        snapshot(OfficialPublications_CommonB) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
+
+object Release : Project({
+    name = "Release"
+    description = "Release version builds of minecolonies"
+
+    buildType(Release_Release)
+
+    params {
+        text("env.crowdinKey", "credentialsJSON:57fbe4f4-13dd-4c72-b6b3-3cc1e3a8240e", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        param("Default.Branch", "version/%Current Minecraft Version%")
+        param("VCS.Branches", "+:refs/heads/testing/(*)")
+        param("env.CURSERELEASETYPE", "release")
+        param("env.Version.Suffix", "-RELEASE")
+    }
+})
+
+object Release_Release : BuildType({
+    templates(AbsoluteId("LetSDevTogether_BuildWithRelease"))
+    name = "Release"
+    description = "Releases the mod as Release to CurseForge"
+
+    allowExternalStatus = true
+
+    params {
+        param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
+    }
+
+    steps {
+        gradle {
+            name = "Compile"
+            id = "RUNNER_9"
+            tasks = "build createChangelog curseforge publish"
+            buildFile = "build.gradle"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+        }
+        gradle {
+            name = "Analyze"
+            id = "RUNNER_144"
+            tasks = "sonarqube"
+            buildFile = "build.gradle"
+            gradleParams = "-Dsonar.projectKey=ldtteam_minecolonies -Dsonar.host.url=https://code-analysis.ldtteam.com -Dsonar.login=%sonarqube.token%"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.useM2CompatiblePatterns", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildDependencies", "Requires Artifactory Pro.")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishMavenDescriptors", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishIvyDescriptors", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+        }
+        stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9", "RUNNER_144")
+    }
+
+    features {
+        vcsLabeling {
+            id = "BUILD_EXT_11"
+            vcsRootId = "${DslContext.settingsRoot.id}"
+            labelingPattern = "%env.Version%"
+            successfulOnly = true
+            branchFilter = ""
+        }
+        commitStatusPublisher {
+            id = "BUILD_EXT_15"
+            enabled = false
+            vcsRootExtId = "${DslContext.settingsRoot.id}"
+            publisher = upsource {
+                serverUrl = "https://code-analysis.ldtteam.com"
+                projectId = "%Upsource.Project.Id%"
+                userName = "upsource"
+                password = "credentialsJSON:f19631a7-1bc1-4a66-88a0-dc2b9cd36734"
+            }
+        }
+    }
+
+    dependencies {
+        snapshot(OfficialPublications_CommonB) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
 
 object Branches : Project({
     name = "Branches"
