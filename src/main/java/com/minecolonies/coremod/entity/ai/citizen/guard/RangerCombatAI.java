@@ -14,6 +14,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.CustomArrowEntity;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -21,6 +22,7 @@ import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavig
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.LivingEntity;
@@ -162,7 +164,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
                 arrow.setKnockback(k);
             }
 
-            double damage = calculateDamage();
+            double damage = calculateDamage(arrow);
 
 
             arrow.setBaseDamage(damage);
@@ -218,9 +220,10 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * Calculates the ranged attack damage
      *
+     * @param arrow
      * @return the attack damage
      */
-    private double calculateDamage()
+    private double calculateDamage(final AbstractArrow arrow)
     {
         int damage = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Agility) / 5;
 
@@ -234,9 +237,19 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
             int slot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
             if (slot != -1)
             {
-                if (!ItemStackUtils.isEmpty(user.getInventoryCitizen().extractItem(slot, 1, false)))
+                if (!ItemStackUtils.isEmpty(user.getInventoryCitizen().extractItem(slot, 1, true)))
                 {
                     damage += ARROW_EXTRA_DAMAGE;
+                    ((CustomArrowEntity) arrow).setOnHitCallback(entityRayTraceResult ->
+                    {
+                        final int arrowSlot = InventoryUtils.findFirstSlotInItemHandlerWith(user.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem);
+                        if (arrowSlot != -1)
+                        {
+                            user.getInventoryCitizen().extractItem(arrowSlot, 1, false);
+                        }
+
+                        return true;
+                    });
                 }
             }
         }

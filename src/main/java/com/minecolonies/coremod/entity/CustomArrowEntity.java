@@ -12,6 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 /**
  * Custom arrow entity class which remove themselves when on the ground for a bit to not cause lag and they do not scale in damage with their motion.
  */
@@ -26,6 +28,11 @@ public class CustomArrowEntity extends Arrow
      * Whether the arrow entity pierces players
      */
     private boolean armorPiercePlayer = false;
+
+    /**
+     * Callback on hitting an entity
+     */
+    private Predicate<EntityHitResult> onHitCallback = null;
 
     public CustomArrowEntity(final EntityType<? extends Arrow> type, final Level world)
     {
@@ -83,6 +90,20 @@ public class CustomArrowEntity extends Arrow
 
         // Set the old actual damage value back
         setBaseDamage(prevDamage);
+        if (onHitCallback != null && onHitCallback.test(traceResult))
+        {
+            onHitCallback = null;
+        }
+    }
+
+    /**
+     * Set the hit callback action
+     *
+     * @param onHitCallback
+     */
+    public void setOnHitCallback(final Predicate<EntityHitResult> onHitCallback)
+    {
+        this.onHitCallback = onHitCallback;
     }
 
     /**
