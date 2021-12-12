@@ -20,6 +20,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +36,7 @@ import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAM
  */
 public interface IColony
 {
+    Capability<IColonyTagCapability> CLOSE_COLONY_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
     void onWorldLoad(@NotNull Level w);
 

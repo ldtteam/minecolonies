@@ -25,7 +25,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.UPDATE_STATE_INTERVAL;
 import static com.minecolonies.api.util.constant.Constants.TICKS_HOUR;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class ColonyPackageManager implements IColonyPackageManager
 {

@@ -25,6 +25,9 @@ import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
+import com.minecolonies.coremod.structures.EmptyColonyStructure;
+import com.minecolonies.coremod.structures.MineColoniesConfiguredStructures;
+import com.minecolonies.coremod.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.resources.ResourceLocation;
@@ -40,6 +43,8 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -47,6 +52,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -54,11 +60,9 @@ import java.util.function.Consumer;
 @Mod(Constants.MOD_ID)
 public class MineColonies
 {
-    public static final Capability<IColonyTagCapability> CLOSE_COLONY_CAP = CapabilityManager.get(new CapabilityToken<>(){});
+    public static final Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
-    public static final Capability<IChunkmanagerCapability> CHUNK_STORAGE_UPDATE_CAP = CapabilityManager.get(new CapabilityToken<>(){});
-
-    public static final Capability<IColonyManagerCapability> COLONY_MANAGER_CAP = CapabilityManager.get(new CapabilityToken<>(){});
+    public static final Capability<IColonyManagerCapability> COLONY_MANAGER_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 
     /**
      * The config instance.
@@ -96,6 +100,14 @@ public class MineColonies
 
         InteractionValidatorInitializer.init();
         proxy.setupApi();
+
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
+        modEventBus.addListener(MineColoniesStructures::setup);
+
+        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        forgeBus.addListener(EventPriority.NORMAL, MineColoniesStructures::addDimensionalSpacing);
+        forgeBus.addListener(EventPriority.NORMAL, EmptyColonyStructure::setupStructureSpawns);
     }
 
     /**
@@ -192,19 +204,20 @@ public class MineColonies
 
     /**
      * Called when MineCraft reloads a configuration file.
+     *
      * @param event event
      */
     @SubscribeEvent
     public static void onConfigReload(final ModConfigEvent.Reloading event)
     {
-        if(event.getConfig().getType() == ModConfig.Type.SERVER)
+        if (event.getConfig().getType() == ModConfig.Type.SERVER)
         {
             // ModConfig fires for each of server, client, and common.
             // Request Systems logging only really needs to be changed on the server, and this reduced log spam.
             RequestSystemInitializer.reconfigureLogging();
         }
     }
-    
+
     /**
      * Get the config handler.
      *

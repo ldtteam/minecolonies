@@ -52,7 +52,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class BuildingManager implements IBuildingManager
 {

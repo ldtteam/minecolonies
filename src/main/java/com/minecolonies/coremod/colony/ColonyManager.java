@@ -13,6 +13,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.WindowReactivateBuilding;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveMessage;
 import com.minecolonies.coremod.util.BackUpHelper;
@@ -35,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
@@ -377,6 +379,12 @@ public final class ColonyManager implements IColonyManager
     public IColony getIColony(@NotNull final Level w, @NotNull final BlockPos pos)
     {
         return w.isClientSide ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
+    }
+
+    @Override
+    public void openReactivationWindow(final BlockPos pos)
+    {
+        new WindowReactivateBuilding(pos).open();
     }
 
     /**

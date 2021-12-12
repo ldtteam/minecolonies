@@ -385,7 +385,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Load updated TE data from the schematic if missing.
      */
-    protected void safeUpdateTEDataFromSchematic()
+    public void safeUpdateTEDataFromSchematic()
     {
         if (buildingLevel <= 0)
         {
