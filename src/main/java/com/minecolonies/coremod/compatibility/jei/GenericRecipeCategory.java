@@ -11,12 +11,12 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.vertex.PoseStack;
-/*import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;*/
+import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.renderer.Rect2i;
@@ -36,9 +36,9 @@ import java.util.stream.Collectors;
  * The main JEI recipe category GUI implementation for IGenericRecipe.
  */
 @OnlyIn(Dist.CLIENT)
-public class GenericRecipeCategory// extends JobBasedRecipeCategory<IGenericRecipe>
+public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe>
 {
-    /*public GenericRecipeCategory(@NotNull final BuildingEntry building,
+    public GenericRecipeCategory(@NotNull final BuildingEntry building,
                                  @NotNull final IJob<?> job,
                                  @NotNull final ICraftingBuildingModule crafting,
                                  @NotNull final IGuiHelper guiHelper)
@@ -334,5 +334,5 @@ public class GenericRecipeCategory// extends JobBasedRecipeCategory<IGenericReci
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)
                     .thenComparing(r -> r.getPrimaryOutput().getItem().getRegistryName()))
                 .collect(Collectors.toList());
-    }*/
+    }
 }

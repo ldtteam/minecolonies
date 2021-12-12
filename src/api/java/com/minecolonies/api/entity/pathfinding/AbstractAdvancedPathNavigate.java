@@ -111,9 +111,20 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
      *
      * @param range the range he should move out of.
      * @param speed the speed to run at.
+     * @param pos the pos to circle around.
      * @return the result of the pathing.
      */
     public abstract PathResult moveToRandomPosAroundX(final int range, final double speed, final BlockPos pos);
+
+    /**
+     * Used to path towards a random pos within some restrictions
+     *
+     * @param range the range he should move out of.
+     * @param speed the speed to run at.
+     * @param corners the corners they can't leave.
+     * @return the result of the pathing.
+     */
+    public abstract PathResult moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners);
 
     /**
      * Used to find a tree.

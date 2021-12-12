@@ -40,16 +40,30 @@ minecraft.runs.all {
 }
 
 dependencies {
-    //implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
 
-    apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
-    implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
+    apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"){
+        transitive = false
+    }
+    implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}"){
+        transitive = false
+    }
 
-    apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
-    implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
+    apiImplementation fg.deobf("com.ldtteam:structurize:${project.exactMinecraftVersion}-${project.structurize_version}"){
+        transitive = false
+    }
+    implementation fg.deobf("com.ldtteam:structurize:${project.exactMinecraftVersion}-${project.structurize_version}"){
+        transitive = false
+    }
 
-    implementation fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${project.minecraftVersion}-${project.multiPistonVersion}"){
+        transitive = false
+    }
 
-    datagenLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
-    library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
+    datagenLibrary ("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"){
+        transitive = false
+    }
+    library ("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}") {
+        transitive = false
+    }
 }

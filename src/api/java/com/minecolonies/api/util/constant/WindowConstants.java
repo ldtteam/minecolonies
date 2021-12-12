@@ -968,9 +968,19 @@ public final class WindowConstants
     public static final String BUTTON_DIRECT = "direct";
 
     /**
+     * Id of the reactivation button.
+     */
+    public static final String BUTTON_REACTIVATE = "reactivate";
+
+    /**
      * String of the suggest building GUI.
      */
     public static final String SUGGEST_BUILDING_SOURCE_SUFFIX = ":gui/windowsuggestbuildtool.xml";
+
+    /**
+     * String of the reactivate building GUI.
+     */
+    public static final String REACTIVATE_BUILDING_SOURCE_SUFFIX = ":gui/windowreactivatebuilding.xml";
 
     /**
      * String of the Townhall colony management GUI.

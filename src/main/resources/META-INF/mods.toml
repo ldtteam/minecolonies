@@ -50,13 +50,13 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17, )"
+    versionRange="[1.18, 1.19)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="structurize"
     mandatory=true
-    versionRange="[1.17.1-0.13.264-ALPHA]"
+    versionRange="[1.18.1-1.0.313-BETA,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.minecolonies]]
@@ -68,12 +68,12 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="domum_ornamentum"
     mandatory=true
-    versionRange="[1.17.1-1.0.9-ALPHA, )"
+    versionRange="[1.18-1.0.25-ALPHA, )"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="multipiston"
     mandatory=true
-    versionRange="[1.17.1-1.2.1-ALPHA, )"
+    versionRange="[1.18-1.2.2-ALPHA, )"
     ordering="AFTER"
     side="BOTH"

@@ -223,6 +223,7 @@ public class NetworkChannel
         registerMessage(++idx, ColonyVisitorViewDataMessage.class, ColonyVisitorViewDataMessage::new);
         registerMessage(++idx, SyncPathMessage.class, SyncPathMessage::new);
         registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
+        registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);

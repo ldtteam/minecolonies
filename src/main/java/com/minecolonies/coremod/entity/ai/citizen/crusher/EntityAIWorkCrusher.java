@@ -63,7 +63,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     protected IAIState decide()
     {
         final IAIState nextState = super.decide();
-        if (nextState != START_WORKING)
+        if (nextState != START_WORKING && nextState != IDLE)
         {
             worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
             return nextState;

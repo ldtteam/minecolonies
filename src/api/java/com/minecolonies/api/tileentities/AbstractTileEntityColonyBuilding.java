@@ -193,6 +193,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
     {
         tagPosMap = positionedTags;
+        setChanged();
     }
 
     @Override

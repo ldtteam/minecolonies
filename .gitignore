@@ -45,7 +45,12 @@ README.txt
 *changelog.txt
 tools/export_lang/.api_key
 tools/fix_model_angle/*.class
+tools/fix_model_angle/*.class
 src/main/generated/resources/.cache/cache
 
 logs/
 gradle/local.gradle
+gradle/local.configuration.gradle
+
+/src/main/resources/assets/minecolonies/lang/**
+!src/main/assets/minecolonies/lang/manual_en_us.json

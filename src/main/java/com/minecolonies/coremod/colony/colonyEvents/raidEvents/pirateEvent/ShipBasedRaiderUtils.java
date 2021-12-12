@@ -19,8 +19,10 @@ import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
@@ -301,7 +303,8 @@ public final class ShipBasedRaiderUtils
             {
                 for (int z = -radius; z <= radius; z++)
                 {
-                    if (world.getBlockState(spawnPos.offset(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.offset(x, y + 1, z)).getBlock() instanceof AirBlock)
+                    if (world.getBlockState(spawnPos.offset(x, y, z)).getBlock() instanceof AirBlock && world.getBlockState(spawnPos.offset(x, y + 1, z))
+                      .getBlock() instanceof AirBlock)
                     {
                         return spawnPos.offset(x, y, z);
                     }
@@ -310,5 +313,65 @@ public final class ShipBasedRaiderUtils
         }
 
         return spawnPos;
+    }
+
+    /**
+     * Creates a list of waypoints of a path
+     *
+     * @param path
+     * @param spacing min distance between waypoints
+     * @return list of waypoints
+     */
+    public static List<BlockPos> createWaypoints(final Level world, final Path path, final int spacing)
+    {
+        List<BlockPos> wayPoints = new ArrayList<>();
+        if (path == null)
+        {
+            return wayPoints;
+        }
+
+        BlockPos lastPoint = BlockPos.ZERO;
+        for (int i = 0; i < path.getNodeCount(); i++)
+        {
+            final BlockPos point = path.getNode(i).asBlockPos();
+            if (lastPoint.distManhattan(point) > spacing
+                  && world.getBlockState(point).getMaterial() == Material.AIR)
+            {
+                wayPoints.add(point);
+                lastPoint = point;
+            }
+        }
+
+        return wayPoints;
+    }
+
+    /**
+     * Chooses the next position to go to
+     *
+     * @param startPos  the Position we're starting from
+     * @param target    original destination
+     * @param wayPoints waypoints to compare
+     * @return position to go to
+     */
+    public static BlockPos chooseWaypointFor(final List<BlockPos> wayPoints, final BlockPos startPos, final BlockPos target)
+    {
+        BlockPos closest = target;
+        BlockPos secondClosest = target;
+        for (final BlockPos wayPoint : wayPoints)
+        {
+            final int distToStart = wayPoint.distManhattan(startPos);
+            if (distToStart > 5 && distToStart < closest.distManhattan(startPos))
+            {
+                secondClosest = closest;
+                closest = wayPoint;
+            }
+        }
+
+        if (secondClosest.distManhattan(target) < closest.distManhattan(target))
+        {
+            return secondClosest;
+        }
+
+        return closest;
     }
 }
