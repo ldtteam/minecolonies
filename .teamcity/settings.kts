@@ -41,7 +41,7 @@ project {
         param("env.Version.Suffix", "")
         param("env.Version.Major", "1")
         text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
-        param("Current Minecraft Version", "1.18")
+        param("Current Minecraft Version", "1.18.1")
         text("Repository", "ldtteam/minecolonies", label = "Repository", description = "The repository for minecolonies.", readOnly = true, allowEmpty = true)
         param("env.Version.Minor", "0")
         param("Upsource.Project.Id", "minecolonies")
