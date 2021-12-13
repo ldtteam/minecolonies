@@ -14,6 +14,6 @@ public class TavernLivingBuildingModule extends LivingBuildingModule implements 
     @Override
     public int getModuleMax()
     {
-        return 4;
+        return building.getBuildingLevel() > 0 ? 4 : 0;
     }
 }
