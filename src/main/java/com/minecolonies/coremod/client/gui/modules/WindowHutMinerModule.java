@@ -42,7 +42,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
     /**
      * Constructor for the window of the miner hut.
      *
-     * @param building {@link BuildingMiner.View}.
+     * @param moduleView {@link MinerLevelManagementModuleView}.
      */
     public WindowHutMinerModule(final IBuildingView building, final MinerLevelManagementModuleView moduleView)
     {

@@ -98,7 +98,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         return worldState.getBlock() instanceof IBuilderUndestroyable
                  || worldState.getBlock() == Blocks.BEDROCK
-                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos));
+                 || (info.getBlockInfo().getState().getBlock() instanceof AbstractBlockHut && handler.getWorldPos().equals(worldPos)
+                       && worldState.getBlock() instanceof AbstractBlockHut);
     };
 
     /**
