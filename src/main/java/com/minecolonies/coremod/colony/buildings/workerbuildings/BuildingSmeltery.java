@@ -1,28 +1,34 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -157,6 +163,71 @@ public class BuildingSmeltery extends AbstractBuilding
                     1,
                     output,
                     intermediate));
+        }
+    }
+
+    public static class OreBreakingModule extends AbstractCraftingBuildingModule.Custom
+    {
+        public OreBreakingModule(JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
+        @Override 
+        public void checkForWorkerSpecificRecipes()
+        {
+            super.checkForWorkerSpecificRecipes();
+
+            for (Item input: ModTags.breakable_ore.getValues())
+            {
+                Block b = Block.byItem(input);
+                List<ItemStack> drops = Block.getDrops(b.defaultBlockState(), (ServerLevel) building.getColony().getWorld(), building.getID(), null);
+                for (ItemStack drop : drops)
+                {
+                    if (!drop.isEmpty())
+                    {
+                        drop.setCount(1);
+                    }
+                }
+
+                final RecipeStorage tempRecipe = StandardFactoryController.getInstance().getNewInstance(
+                    TypeConstants.RECIPE,
+                    StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+                    Collections.singletonList(new ItemStorage(new ItemStack(input))),
+                    1,                  //gridsize
+                    ItemStack.EMPTY,    //Output
+                    null,               //Intermediate
+                    null,               //Source
+                    null,               //Type
+                    null,               //Altoutputs
+                    drops,              //SecOutputs
+                    getLootTable(input) //Loot Table
+                    );
+                IToken<?> token = IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(tempRecipe);
+                this.addRecipeToList(token, false);
+            }
+        }
+
+        @Override
+        public ItemStack getCraftingTool(final AbstractEntityCitizen worker)
+        {
+            ItemStack pick = new ItemStack(Items.DIAMOND_PICKAXE);
+            int fortuneLevel = building.getBuildingLevel() - 1;
+            if (fortuneLevel > 0)
+            {
+                pick.enchant(Enchantments.BLOCK_FORTUNE, fortuneLevel);
+            }
+            return pick;
+        }
+
+        protected ResourceLocation getLootTable(Item item)
+        {
+            if (item instanceof BlockItem)
+            {
+                Block itemBlock = Block.byItem(item);
+                return itemBlock.getLootTable();
+            }
+            return null;
         }
     }
 }

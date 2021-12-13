@@ -6,6 +6,8 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -157,6 +159,21 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return true if successful.
      */
     boolean fullFillRecipe(IRecipeStorage storage);
+
+    /**
+     * Get tool to use during fulFillRecipe
+     * 
+     * @param worker the worker to query for tool
+     */
+    ItemStack getCraftingTool(final AbstractEntityCitizen worker);
+
+
+    /**
+     * Get luck to use during fulFillRecipe
+     * 
+     * @param worker the worker to calculate luck for
+     */
+    float getCraftingLuck(final AbstractEntityCitizen worker);
 
     /**
      * Updates existing requests, if they match the recipes available at this worker
