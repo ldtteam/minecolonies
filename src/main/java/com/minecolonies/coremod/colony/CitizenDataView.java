@@ -324,6 +324,10 @@ public class CitizenDataView implements ICitizenDataView
             final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
             jobView = IJobDataManager.getInstance().createViewFrom(colonyView, this, buf);
         }
+        else
+        {
+            jobView = null;
+        }
 
         children.clear();
         siblings.clear();

@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
@@ -102,6 +103,15 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public boolean canAssign(ICitizenDataView data)
     {
+        for (final IBuildingView bView : buildingView.getColony().getBuildings())
+        {
+            final CourierAssignmentModuleView view = bView.getModuleViewMatching(CourierAssignmentModuleView.class, m-> !m.buildingView.getId().equals(buildingView.getId()));
+            if (view != null && view.getAssignedCitizens().contains(data.getId()))
+            {
+                return false;
+            }
+        }
+        
         return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.delivery;
     }
 
