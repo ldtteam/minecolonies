@@ -327,9 +327,10 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(@NotNull final ItemStack stack)
     {
-        if (isMineableOre(stack))
+        if (isMineableOre(stack) || stack.is(ModTags.raw_ore) || stack.is(ModTags.breakable_ore) )
         {
-            return !MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty();
+            ItemStack smeltingResult = MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack);
+            return ModTags.breakable_ore.contains(stack.getItem()) || !smeltingResult.isEmpty();
         }
 
         return false;
@@ -447,7 +448,12 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (smeltableOres.isEmpty())
         {
-            for(Item item : Tags.Items.ORES.getValues())
+            Set<Item> m = new HashSet<>();
+            m.addAll(Tags.Items.ORES.getValues());
+            m.addAll(ModTags.breakable_ore.getValues());
+            m.addAll(ModTags.raw_ore.getValues());
+
+            for(Item item : m)
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
                 item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
