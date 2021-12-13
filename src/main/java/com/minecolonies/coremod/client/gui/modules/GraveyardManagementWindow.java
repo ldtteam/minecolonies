@@ -72,7 +72,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
     /**
      * Constructor for the window of the graveyard.
      *
-     * @param building {@link BuildingGraveyard.View}.
+     * @param moduleView {@link GraveyardManagementModuleView}.
      */
     public GraveyardManagementWindow(final IBuildingView building, GraveyardManagementModuleView moduleView)
     {
