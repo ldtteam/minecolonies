@@ -12,15 +12,6 @@ accordingly, and delete the patch script.
 changeProject(RelativeId("Alpha")) {
     params {
         expect {
-            param("VCS.Branches", "+:refs/heads/version/(*)")
-        }
-        update {
-            param("VCS.Branches", """
-                +:refs/heads/version/(*)
-                -:refs/heads/%Default.Branch%
-            """.trimIndent())
-        }
-        expect {
             text("env.crowdinKey", "credentialsJSON:57fbe4f4-13dd-4c72-b6b3-3cc1e3a8240e", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         }
         update {
