@@ -35,7 +35,7 @@ project {
     description = "The Minecolonies Minecraft Mod"
 
     params {
-        param("env.JDK_VERSION", "jdk16")
+        param("env.JDK_VERSION", "jdk8")
         param("Project.Type", "mods")
         param("env.Version.Patch", "0")
         param("env.Version.Suffix", "")
