@@ -1,31 +1,41 @@
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+    maven {
+        name 'LDTTeam - Modding'
+        url 'https://ldtteam.jfrog.io/ldtteam/modding/'
+    }
+    maven {
+        url 'https://www.dogforce-games.com/maven/'
+    }
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+        url 'https://dvs1.progwml6.com/files/maven/'
+    }
+    maven {
+        url "https://harleyoconnor.com/maven/"
+    }
+}
+
 dependencies {
-    minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
+    minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
 
-    implementation fg.deobf("com.ldtteam:structurize:${config.minecraft_version}-${config.structurizeVersion}")
-    implementation "com.ldtteam:datagenerators:${config.dataGeneratorsVersion}"
+    library fg.deobf("com.ldtteam:structurize:${project.structurizeVersion}")
+    library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
+    library fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+    library fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
+    library fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
+    library fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
+    library fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
 
-    implementation fg.deobf("mezz.jei:jei-${config.jei_mcversion}:${config.jei_version}")
-    compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
-    compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.dt_mcversion}:${config.dt_version}")
-    compileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${config.tc_mcversion}-${config.tc_version}")
-    compileOnly fg.deobf("slimeknights.mantle:Mantle:${config.mantle_mcversion}-${config.mantle_version}")
-
-    apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${config.rb_version}")
-    apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:${config.mantle_mcversion}-${config.mantle_version}")
-    apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${config.tc_mcversion}-${config.tc_version}")
-    apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${config.dt_mcversion}:${config.dt_version}")
-
-
-    testImplementation  'junit:junit:4.12'
-    testImplementation  "org.mockito:mockito-core:1.+"
-    testImplementation  group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
-    testImplementation  group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
-    testImplementation  group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.6.5'
-
-    testImplementation  'org.assertj:assertj-core:3.9.0'
-
-    testImplementation  group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-
-    implementation 'com.intellij:annotations:+@jar'
-    apiImplementation "com.intellij:annotations:+@jar"
+    apiLibrary fg.deobf("com.ldtteam:structurize:${project.structurizeVersion}")
+    apiLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
+    apiLibrary fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+    apiLibrary fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
+    apiLibrary fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
+    apiLibrary fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
+    apiLibrary fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
 }

@@ -17,7 +17,7 @@ issueTrackerURL="https://github.com/ldtteam/minecolonies/issues/new/choose" #opt
 # The modid of the mod
 modId="minecolonies" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
+version="${version}" #mandatory
  # A display name for the mod
 displayName="MineColonies" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
@@ -41,7 +41,7 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[36.2.4,)" #mandatory
+    versionRange="[${forgeVersion},)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -57,20 +57,20 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="structurize"
     mandatory=true
-    versionRange="[0.13.252-ALPHA]"
+    versionRange="[${structurizeVersion}]"
     ordering="AFTER"
     side="BOTH"
 # The rest of these are not required, but if you have them then they must be at least this version
 [[dependencies.minecolonies]]
     modId="jei"
     mandatory=false
-    versionRange="[7.6.4.90,)"
+    versionRange="[${project.jeiVersion},)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="tconstruct"
     mandatory=false
-    versionRange="[3.0.4.197,)"
+    versionRange="[${project.minecraftVersion}-${project.tinkersConstructVersion},)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
