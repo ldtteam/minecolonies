@@ -29,7 +29,7 @@ changeProject(RelativeId("Branches")) {
                 -:refs/heads/release/*
                 -:refs/pull/*/head
                 -:refs/heads/CI/*
-                -:<default>
+                -:refs/heads/%Default.Branch%
             """.trimIndent())
         }
     }
