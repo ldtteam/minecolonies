@@ -1,0 +1,11 @@
+project.ext.customChangelogHeader = "\n" +
+        "### Required Dependencies: \n" +
+        "- Structurize: ${project.minecraftVersion}-${project.structurize_version}\n" +
+        "\n" +
+        "### Optional Dependencies\n" +
+        "- JEI: ${project.minecraftVersion}:${project.jei_version}\n" +
+        "- Resourceful Bees: ${project.minecraftVersion}-${project.resourceFullBeesVersion}\n" +
+        "- Tinkers Construct: ${project.minecraftVersion}-${project.tinkersConstructVersion}\n" +
+        "- Mantle: ${project.minecraftVersion}-${project.mantleVersion}\n" +
+        "- Dynamic Trees: ${project.dynamicTreesVersion}\n" +
+        "\n"
