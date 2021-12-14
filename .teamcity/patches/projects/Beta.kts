@@ -17,14 +17,14 @@ changeProject(RelativeId("Beta")) {
         update {
             param("VCS.Branches", """
                 +:refs/heads/testing/(*)
-                -:<default>
+                -:refs/heads/%Default.Branch%
             """.trimIndent())
         }
         expect {
             text("env.crowdinKey", "credentialsJSON:57fbe4f4-13dd-4c72-b6b3-3cc1e3a8240e", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         }
         update {
-            text("env.crowdinKey", "credentialsJSON:769784c9-3cf4-4647-b4c8-39d365a8a55a", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+            text("env.crowdinKey", "credentialsJSON:d7587d96-844a-42fc-85b2-5a16006514a3", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         }
     }
 }
