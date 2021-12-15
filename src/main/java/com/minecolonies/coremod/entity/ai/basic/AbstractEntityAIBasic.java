@@ -434,8 +434,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return INIT;
         }
-
-        if (getExpectedBuildingClass() != worker.getCitizenColonyHandler().getWorkBuilding().getClass())
+        
+        if (!getExpectedBuildingClass().isInstance(worker.getCitizenColonyHandler().getWorkBuilding().getClass()))
         {
             if (worker.getCitizenData() != null)
             {
