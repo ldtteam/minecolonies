@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render.modeltype.registry;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,7 +23,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
     }
 
     @Override
-    public IModelType getModelType(final ResourceLocation name)
+    public @Nullable IModelType getModelType(final ResourceLocation name)
     {
         return modelMap.get(name);
     }
