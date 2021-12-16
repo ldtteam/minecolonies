@@ -120,7 +120,7 @@ public class Permissions implements IPermissions
     /**
      * The current version of the permissions, increase upon changes to the preset permissions
      */
-    private static final int permissionsVersion = 3;
+    private static final int permissionsVersion = 4;
 
     /**
      * Saves the permissionMap with allowed actions.
@@ -152,6 +152,8 @@ public class Permissions implements IPermissions
             {
                 case OWNER:
                     this.setPermission(rank, Action.EDIT_PERMISSIONS);
+                    this.setPermission(rank, Action.MAP_BORDER);
+                    this.setPermission(rank, Action.MAP_DEATHS);
                 case OFFICER:
                     this.setPermission(rank, Action.PLACE_HUTS);
                     this.setPermission(rank, Action.BREAK_HUTS);
@@ -167,6 +169,8 @@ public class Permissions implements IPermissions
                     this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
                     this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
                     this.setPermission(rank, Action.RALLY_GUARDS);
+                    this.setPermission(rank, Action.MAP_BORDER);
+                    this.setPermission(rank, Action.MAP_DEATHS);
                     rank.setColonyManager(true);
                 case FRIEND:
                     this.setPermission(rank, Action.ACCESS_HUTS);
@@ -180,19 +184,45 @@ public class Permissions implements IPermissions
                     this.setPermission(rank, Action.ATTACK_CITIZEN);
                     this.setPermission(rank, Action.ATTACK_ENTITY);
                     this.setPermission(rank, Action.TELEPORT_TO_COLONY);
+                    this.setPermission(rank, Action.MAP_BORDER);
                 case NEUTRAL:
                     this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
+                    this.setPermission(rank, Action.MAP_BORDER);
                     break;
                 case HOSTILE:
                     this.setPermission(rank, Action.GUARDS_ATTACK);
                     this.setPermission(rank, Action.HURT_CITIZEN);
                     this.setPermission(rank, Action.HURT_VISITOR);
+                    this.setPermission(rank, Action.MAP_BORDER);
                     rank.setHostile(true);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void upgradePermissions(final int version, final Rank rank)
+    {
+        // keep this consistent with loadRanks(), as that's still used for new colonies
+
+        if (version < 4)
+        {
+            if (rank.isHostile())
+            {
+                this.setPermission(rank, Action.HURT_CITIZEN);
+                this.setPermission(rank, Action.HURT_VISITOR);
+            }
+
+            if (rank.isColonyManager())
+            {
+                this.setPermission(rank, Action.MAP_DEATHS);
+            }
+
+            this.setPermission(rank, Action.MAP_BORDER);
+        }
+
+        // if (version < 5) ...
     }
 
     /**
@@ -293,7 +323,7 @@ public class Permissions implements IPermissions
                 name = ownerCompound.getString(TAG_NAME);
             }
             Rank rank;
-            if (version == permissionsVersion)
+            if (version >= 3)
             {
                 rank = ranks.get(ownerCompound.getInt(TAG_RANK));
             }
@@ -316,7 +346,7 @@ public class Permissions implements IPermissions
         }
 
         //Permissions
-        if (compound.getInt(TAG_VERSION) == permissionsVersion)
+        if (version >= 3)
         {
             permissionMap.clear();
             final ListNBT permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
@@ -336,6 +366,7 @@ public class Permissions implements IPermissions
                         flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
                     }
                     permissionMap.put(rank, flags);
+                    upgradePermissions(version, rank);
                 }
             }
 
@@ -385,6 +416,7 @@ public class Permissions implements IPermissions
                     flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
                 }
                 permissionMap.put(rank, flags);
+                upgradePermissions(version, rank);
             }
         }
 

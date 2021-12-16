@@ -40,7 +40,12 @@ public enum Action
     CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY(27),
     RALLY_GUARDS(28),
     HURT_CITIZEN(29),
-    HURT_VISITOR(30);
+    HURT_VISITOR(30),
+    MAP_BORDER(31),
+    MAP_DEATHS(32);
+
+    // remember to update permissionsVersion and add some upgrade logic in upgradePermissions if you
+    // add new actions that shouldn't just be off by default for everyone
 
     private final long flag;
 

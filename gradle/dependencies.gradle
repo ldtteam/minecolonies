@@ -18,6 +18,10 @@ repositories {
     maven {
         url "https://harleyoconnor.com/maven/"
     }
+    maven {
+        name "JourneyMap"
+        url "https://jm.gserv.me/repository/maven-public/"
+    }
 }
 
 dependencies {
@@ -38,4 +42,9 @@ dependencies {
     apiLibrary fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
     apiLibrary fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
     apiLibrary fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
+
+    compileOnly fg.deobf("info.journeymap:journeymap-api:1.16.5-1.7-SNAPSHOT")
+    //runtimeOnly fg.deobf("flat:journeymap:1.16.5-5.8.0beta4")
+    // Journeymap doesn't have a maven (other than cursemaven); so if you want to use it in dev
+    // then drop the regular jar into the "libs" dir and uncomment the above (editing version if needed)
 }
