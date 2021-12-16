@@ -23,17 +23,17 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
 
-    library fg.deobf("com.ldtteam:structurize:${project.structurizeVersion}")
+    library fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
     library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
-    library fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+    library fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
     library fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
     library fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
     library fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
     library fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
 
-    apiLibrary fg.deobf("com.ldtteam:structurize:${project.structurizeVersion}")
+    apiLibrary fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
     apiLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
-    apiLibrary fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jeiVersion}")
+    apiLibrary fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
     apiLibrary fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
     apiLibrary fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
     apiLibrary fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
