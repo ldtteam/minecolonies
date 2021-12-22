@@ -3,13 +3,9 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
-import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
-import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.Node;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -165,8 +161,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(final BlockPos pos)
     {
-
-        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColonyAndNotInBuilding(pos, colony))
+        if (Tree.checkTree(world, pos, excludedTrees, dyntreesize) && Tree.checkIfInColonyAndNotInBuilding(pos, colony, world))
         {
             getResult().treeLocation = pos;
             return true;
