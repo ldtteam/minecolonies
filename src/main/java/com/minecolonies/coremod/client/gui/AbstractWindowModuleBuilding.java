@@ -5,6 +5,7 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
@@ -70,7 +71,8 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void infoClicked()
     {
-        @NotNull final WindowInfo window = new WindowInfo(building);
+        // @NotNull final WindowInfo window = new WindowInfo(building);
+        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
         window.open();
     }
 
