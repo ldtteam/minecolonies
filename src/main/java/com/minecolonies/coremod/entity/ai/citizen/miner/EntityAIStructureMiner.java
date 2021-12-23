@@ -35,6 +35,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.initStructure;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
@@ -338,11 +339,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
      */
     private Block getMainFillBlock()
     {
-        if (WorldUtil.isNetherType(world))
-        {
-            return Blocks.NETHERRACK;
-        }
-        return Blocks.COBBLESTONE;
+        return getOwnBuilding().getSetting(FILL_BLOCK).getValue().getBlock();
     }
 
     @NotNull

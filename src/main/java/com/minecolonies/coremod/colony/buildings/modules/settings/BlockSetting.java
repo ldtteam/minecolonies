@@ -12,16 +12,30 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Stores a boolean setting.
+ * Stores a solid block setting.
  */
 public class BlockSetting implements ISetting
 {
@@ -104,7 +118,22 @@ public class BlockSetting implements ISetting
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
           building,
-          (stack) -> stack.getItem() instanceof BlockItem, (stack, qty) -> {
+          (stack) -> {
+              final Item item = stack.getItem();
+              if (!( item instanceof BlockItem ))
+              {
+                  return false;
+              }
+
+              final Block block = ((BlockItem) item).getBlock();
+              final BlockState state = block.defaultBlockState();
+              if (block.hasTileEntity(state) || block instanceof FallingBlock)
+              {
+                  return false;
+              }
+
+              return block.getShape(state, new SingleStateBlockGetter(state), BlockPos.ZERO, ISelectionContext.empty()).equals(VoxelShapes.block()) && state.getMaterial().blocksMotion();
+          }, (stack, qty) -> {
             value = (BlockItem) stack.getItem();
             settingsModuleView.trigger(key);
         }, false).open());
@@ -121,5 +150,41 @@ public class BlockSetting implements ISetting
     public void trigger()
     {
 
+    }
+
+    /**
+     * Special block getter for shapes.
+     */
+    public class SingleStateBlockGetter implements IBlockReader
+    {
+        private final BlockState state;
+
+        public SingleStateBlockGetter(BlockState state)
+        {
+            this.state = state;
+        }
+
+        @Nullable
+        @Override
+        public TileEntity getBlockEntity(@NotNull BlockPos pos)
+        {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public BlockState getBlockState(@NotNull BlockPos pos)
+        {
+            if (pos == BlockPos.ZERO)
+                return state;
+            return Blocks.AIR.defaultBlockState();
+        }
+
+        @NotNull
+        @Override
+        public FluidState getFluidState(@NotNull BlockPos pos)
+        {
+            return Fluids.EMPTY.defaultFluidState();
+        }
     }
 }
