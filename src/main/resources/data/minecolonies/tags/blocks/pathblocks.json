@@ -63,11 +63,6 @@
     "minecraft:deepslate_tiles",
     "minecraft:deepslate_tile_slab",
     "minecraft:deepslate_tile_stairs",
-    "domum_ornamentum:beige_bricks",
-    "domum_ornamentum:beige_stone_bricks",
-    "domum_ornamentum:cream_bricks",
-    "domum_ornamentum:cream_stone_bricks",
-    "domum_ornamentum:brown_bricks",
-    "domum_ornamentum:brown_stone_bricks"
+    "#domum_ornamentum:bricks"
   ]
 }
