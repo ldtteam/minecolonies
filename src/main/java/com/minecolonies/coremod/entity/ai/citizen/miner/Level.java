@@ -250,8 +250,23 @@ public class Level
             case TUNNEL:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
                 break;
-            case BEND:
+            case BEND_RIGHT:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                break;
+            case BEND_LEFT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                break;
+            case CROSS_THREE_LEFT_RIGHT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                break;
+            case CROSS_THREE_TOP_LEFT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                break;
+            case CROSS_THREE_TOP_RIGHT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
                 break;
             case CROSSROAD:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
@@ -278,7 +293,7 @@ public class Level
             }
 
             final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Vec2i(tempNode.getX(), tempNode.getZ()));
-            tempNodeToAdd.setStyle(getRandomNodeType());
+            tempNodeToAdd.setStyle(Node.NodeType.SIDE_NODES.get(rand.nextInt(Node.NodeType.SIDE_NODES.size())));
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
@@ -314,21 +329,6 @@ public class Level
             default:
                 return node.getEastNodeCenter();
         }
-    }
-
-    private static Node.NodeType getRandomNodeType()
-    {
-        final int randNumber = rand.nextInt(RANDOM_TYPES);
-        if (randNumber <= 1)
-        {
-            return TUNNEL;
-        }
-        else if (randNumber == 2)
-        {
-            return BEND;
-        }
-
-        return CROSSROAD;
     }
 
     @NotNull
