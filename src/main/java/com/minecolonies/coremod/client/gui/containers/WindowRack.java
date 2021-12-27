@@ -15,6 +15,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.InventoryConstants.*;
+
 @OnlyIn(Dist.CLIENT)
 public class WindowRack extends AbstractContainerScreen<ContainerRack>
 {
@@ -29,29 +31,14 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
     private static final String LOCATION = "textures/gui/gui%s.png";
 
     /**
-     * Amount of slots each row.
-     */
-    private static final int SLOTS_EACH_ROW = 9;
-
-    /**
      * Size of the custom texture.
      */
     private static final int TEXTURE_SIZE = 350;
 
     /**
-     * Offset of each slot.
-     */
-    private static final int SLOT_OFFSET = 18;
-
-    /**
      * Size at which the normal GUI texture still works.
      */
     private static final int GOOD_SIZE = 8;
-
-    /**
-     * Multiply the current size by this amount.
-     */
-    private static final int SIZE_MULTIPLIER = 3;
 
     /**
      * General y offset.
@@ -67,16 +54,6 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
      * Offset inside the texture to use.
      */
     private static final int TEXTURE_OFFSET = 126 * 2 - 17;
-
-    /**
-     * Extra offset to move increase the texture if the inventory is huge.
-     */
-    private static final int EXTRA_OFFSET = 56;
-
-    /**
-     * Extra height to show the whole texture for big inventories.
-     */
-    private static final int EXTRA_HEIGHT = 50;
 
     /**
      * The upper chest inventory.
@@ -107,12 +84,15 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
             this.jointChestInventory = container.rack.getInventory();
         }
 
-        this.inventoryRows = jointChestInventory.getSlots() / SLOTS_EACH_ROW;
+        final int size = jointChestInventory.getSlots();
+        this.inventoryRows = size / INVENTORY_COLUMNS;
+        final int rows = Math.min(this.inventoryRows, INVENTORY_BAR_SIZE);
+        final int columns = this.inventoryRows <= INVENTORY_BAR_SIZE ? INVENTORY_COLUMNS : ((size / INVENTORY_BAR_SIZE) + 1);
 
-        this.imageHeight = Y_OFFSET + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET;
-        if (this.inventoryRows > SLOTS_EACH_ROW - 1)
+        this.imageHeight = Y_OFFSET + rows * PLAYER_INVENTORY_OFFSET_EACH;
+        if (columns > INVENTORY_COLUMNS)
         {
-            this.imageWidth = this.imageWidth + (this.inventoryRows - SLOTS_EACH_ROW) * (SLOTS_EACH_ROW + 1);
+            this.imageWidth += (columns - INVENTORY_COLUMNS) * PLAYER_INVENTORY_OFFSET_EACH;
         }
     }
 
@@ -123,7 +103,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
     protected void renderLabels(@NotNull final PoseStack stack, int mouseX, int mouseY)
     {
         this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.font.draw(stack, this.playerInventoryTitle.getString(), 8.0F, (float) (this.imageHeight - (inventoryRows > 6 ? 110 : 94)), 4210752);
+        this.font.draw(stack, this.playerInventoryTitle.getString(), 8.0F, (float) (this.imageHeight - 94), 4210752);
     }
 
     /**
@@ -135,27 +115,17 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, getCorrectTextureForSlots(inventoryRows));
-        final int i = (this.width - this.imageWidth) / 2;
-        final int j = (this.height - this.imageHeight) / 2;
 
-        if (inventoryRows < SLOTS_EACH_ROW)
+        if (inventoryRows <= GOOD_SIZE)
         {
-            blit(stack, i, j, 0, 0, this.imageWidth, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            blit(stack, i, j + this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, 0,
+            final int rowsHeight = this.inventoryRows * PLAYER_INVENTORY_OFFSET_EACH + PLAYER_INVENTORY_OFFSET_EACH - 1;
+            blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, rowsHeight, TEXTURE_SIZE, TEXTURE_SIZE);
+            blit(stack, this.leftPos, this.topPos + rowsHeight, 0,
               TEXTURE_OFFSET, this.imageWidth, TEXTURE_HEIGHT, TEXTURE_SIZE, TEXTURE_SIZE);
         }
         else
         {
-            final int textureOffset = TEXTURE_OFFSET - EXTRA_OFFSET;
-            blit(stack, i, j, 0, 0, (this.imageWidth * SIZE_MULTIPLIER) / 2, this.inventoryRows * SLOT_OFFSET + SLOT_OFFSET - 1, TEXTURE_SIZE, TEXTURE_SIZE);
-            blit(stack, i,
-              j + Math.min(SLOTS_EACH_ROW, this.inventoryRows) * SLOT_OFFSET + SLOT_OFFSET - 1,
-              0,
-              textureOffset,
-              (this.imageWidth * SIZE_MULTIPLIER) / 2,
-              TEXTURE_HEIGHT + EXTRA_HEIGHT,
-              TEXTURE_SIZE,
-              TEXTURE_SIZE);
+             blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, TEXTURE_SIZE, TEXTURE_SIZE);
         }
     }
 
@@ -173,7 +143,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
         }
         else
         {
-            return new ResourceLocation(Constants.MOD_ID, String.format(LOCATION, Integer.toString(inventoryRows * SLOTS_EACH_ROW)));
+            return new ResourceLocation(Constants.MOD_ID, String.format(LOCATION, inventoryRows * INVENTORY_COLUMNS));
         }
     }
 
