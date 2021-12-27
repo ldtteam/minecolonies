@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -9,8 +10,6 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.BlockStateUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -31,6 +30,8 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +43,7 @@ import java.util.List;
 
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -134,8 +136,8 @@ public class Tree
     /**
      * Creates a new tree Object for the lumberjack. Since the same type of variant of the block old log or new log do not match we have to separate them.
      *
-     * @param world The world where the tree is in.
-     * @param log   the position of the found log.
+     * @param world  The world where the tree is in.
+     * @param log    the position of the found log.
      * @param colony the colony the tree is in.
      */
     public Tree(@NotNull final World world, @NotNull final BlockPos log, final IColony colony)
@@ -297,9 +299,9 @@ public class Tree
         for (int i = 1; i < 100; i++)
         {
             list.addAll(state.getDrops(new LootContext.Builder(world)
-                                         .withParameter(LootParameters.TOOL,
-                                           new ItemStack(Items.WOODEN_AXE)).withLuck(100)
-                                         .withParameter(LootParameters.ORIGIN, new Vector3d(position.getX(), position.getY(), position.getZ()))));
+              .withParameter(LootParameters.TOOL,
+                new ItemStack(Items.WOODEN_AXE)).withLuck(100)
+              .withParameter(LootParameters.ORIGIN, new Vector3d(position.getX(), position.getY(), position.getZ()))));
             if (!list.isEmpty())
             {
                 for (ItemStack stack : list)
@@ -728,7 +730,8 @@ public class Tree
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
                     final BlockPos leaf = new BlockPos(locX, locY, locZ);
-                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().is(BlockTags.WART_BLOCKS) || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
+                    if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).getBlock().is(BlockTags.WART_BLOCKS)
+                          || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
                         leaves.add(leaf);
                     }
@@ -961,13 +964,33 @@ public class Tree
      */
     public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony)
     {
-        if (!colony.isCoordInColony(colony.getWorld(), pos))
+        return checkIfInColonyAndNotInBuilding(pos, colony, colony.getWorld());
+    }
+
+    /**
+     * Calculates with a colony if the position is inside the colony and if it is inside a building.
+     *
+     * @param pos    the position.
+     * @param colony the colony.
+     * @param world  the world to use
+     * @return return false if not inside the colony or if inside a building.
+     */
+    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final IWorldReader world)
+    {
+        final IChunk chunk = world.getChunk(pos);
+        if (!(chunk instanceof Chunk))
+        {
+            return false;
+        }
+
+        final IColonyTagCapability cap = ((Chunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (cap != null && cap.getOwningColony() != colony.getID())
         {
             return false;
         }
 
         // Dynamic tree's are never part of buildings
-        if (colony.getWorld() != null && Compatibility.isDynamicBlock(colony.getWorld().getBlockState(pos).getBlock()))
+        if (Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
         {
             return true;
         }
