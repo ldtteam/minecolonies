@@ -26,16 +26,19 @@ dependencies {
     library fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
     library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
     library fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
-    library fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
-    library fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
-    library fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
-    library fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
 
     apiLibrary fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
     apiLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
     apiLibrary fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
-    apiLibrary fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
-    apiLibrary fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
-    apiLibrary fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
-    apiLibrary fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
+
+    // optional compat mods (not included in test environment by default)
+    // replace "compileOnly" with "library" when you want to include it for testing
+    compileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
+    compileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
+    compileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
+    compileOnly fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
+    apiCompileOnly fg.deobf("com.resourcefulbees:ResourcefulBees:${project.minecraftVersion}-${project.resourceFullBeesVersion}")
+    apiCompileOnly fg.deobf("slimeknights.mantle:Mantle:${project.minecraftVersion}-${project.mantleVersion}")
+    apiCompileOnly fg.deobf("slimeknights.tconstruct:TConstruct:${project.minecraftVersion}-${project.tinkersConstructVersion}")
+    apiCompileOnly fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-${project.minecraftVersion}:${project.dynamicTreesVersion}")
 }
