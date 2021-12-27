@@ -120,7 +120,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void read(@NotNull final CompoundTag compound)
     {
-        buildings.clear();
+        buildings = ImmutableMap.of();
         maxChunkX = colony.getCenter().getX() >> 4;
         minChunkX = colony.getCenter().getX() >> 4;
         maxChunkZ = colony.getCenter().getZ() >> 4;
