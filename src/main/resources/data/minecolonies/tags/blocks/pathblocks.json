@@ -62,6 +62,7 @@
     "minecraft:deepslate_brick_stairs",
     "minecraft:deepslate_tiles",
     "minecraft:deepslate_tile_slab",
-    "minecraft:deepslate_tile_stairs"
+    "minecraft:deepslate_tile_stairs",
+    "#domum_ornamentum:bricks"
   ]
 }
