@@ -1,9 +1,11 @@
 repositories {
-    maven { url = 'https://files.minecraftforge.net/maven' }
-    mavenLocal()
-    mavenCentral()
     maven {
-        url "https://plugins.gradle.org/m2/"
+        name "JEI"
+        url 'https://dvs1.progwml6.com/files/maven/'
+    }
+    maven {
+        name "JourneyMap"
+        url "https://jm.gserv.me/repository/maven-public/"
     }
 }
 
@@ -46,4 +48,9 @@ dependencies {
     // optional dependencies
 
     implementation fg.deobf("mezz.jei:jei-${project.jei_mcversion}:${project.jei_version}")
+
+    compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
+    //runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}")
+    // Journeymap doesn't have a maven (other than cursemaven); so if you want to use it in dev
+    // then drop the regular jar into the "libs" dir and uncomment the above (editing version if needed)
 }
