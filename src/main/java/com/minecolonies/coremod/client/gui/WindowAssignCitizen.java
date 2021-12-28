@@ -6,6 +6,7 @@ import com.ldtteam.blockui.controls.ButtonHandler;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.BOWindow;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -153,7 +154,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         if (work != null)
                         {
                             final double oldDistance = BlockPosUtil.getDistance2D(work, home);
-                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.home.currently", oldDistance).getString();
+                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homehut.currently", oldDistance);
                             better = newDistance < oldDistance;
                             if (oldDistance >= FAR_DISTANCE_THRESHOLD)
                             {
@@ -162,7 +163,7 @@ public class WindowAssignCitizen extends BOWindow implements ButtonHandler
                         }
                         else
                         {
-                            homeString = new TranslatableComponent("com.minecolonies.coremod.gui.home.current", home.getX(), home.getY(), home.getZ()).getString();
+                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homehut.current", home.getX(), home.getY(), home.getZ());
                         }
                     }
 

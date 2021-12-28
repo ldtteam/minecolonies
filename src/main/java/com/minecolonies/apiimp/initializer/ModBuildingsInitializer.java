@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.RegistryEvent;
@@ -305,6 +306,7 @@ public final class ModBuildingsInitializer
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
+                               .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE)), () -> SettingsModuleView::new)
                                .addBuildingModuleViewProducer(() -> MinerGuardAssignModuleView::new)
                                .createBuildingEntry();
 

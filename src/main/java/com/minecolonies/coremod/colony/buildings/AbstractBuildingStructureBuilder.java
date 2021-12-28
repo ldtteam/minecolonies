@@ -140,7 +140,6 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
                 localAlreadyKept.add(new ItemStorage(stack, 1, true));
                 return 0;
             }
-            return stack.getCount();
         }
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
     }

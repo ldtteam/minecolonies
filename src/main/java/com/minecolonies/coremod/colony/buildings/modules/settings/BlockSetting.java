@@ -12,17 +12,35 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
- * Stores a boolean setting.
+ * Stores a solid block setting.
  */
 public class BlockSetting implements ISetting
 {
@@ -105,7 +123,22 @@ public class BlockSetting implements ISetting
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
           building,
-          (stack) -> stack.getItem() instanceof BlockItem, (stack, qty) -> {
+          (stack) -> {
+              final Item item = stack.getItem();
+              if (!( item instanceof BlockItem ))
+              {
+                  return false;
+              }
+
+              final Block block = ((BlockItem) item).getBlock();
+              final BlockState state = block.defaultBlockState();
+              if (block instanceof EntityBlock || block instanceof FallingBlock)
+              {
+                  return false;
+              }
+
+              return block.getShape(state, new SingleStateBlockGetter(state), BlockPos.ZERO, CollisionContext.empty()).equals(Shapes.block()) && state.getMaterial().blocksMotion();
+          }, (stack, qty) -> {
             value = (BlockItem) stack.getItem();
             settingsModuleView.trigger(key);
         }, false).open());
@@ -122,5 +155,53 @@ public class BlockSetting implements ISetting
     public void trigger()
     {
 
+    }
+
+    /**
+     * Special block getter for shapes.
+     */
+    public class SingleStateBlockGetter implements BlockGetter
+    {
+        private final BlockState state;
+
+        public SingleStateBlockGetter(BlockState state)
+        {
+            this.state = state;
+        }
+
+        @Nullable
+        @Override
+        public BlockEntity getBlockEntity(@NotNull BlockPos pos)
+        {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public BlockState getBlockState(@NotNull BlockPos pos)
+        {
+            if (pos == BlockPos.ZERO)
+                return state;
+            return Blocks.AIR.defaultBlockState();
+        }
+
+        @NotNull
+        @Override
+        public FluidState getFluidState(@NotNull BlockPos pos)
+        {
+            return Fluids.EMPTY.defaultFluidState();
+        }
+
+        @Override
+        public int getHeight()
+        {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        public int getMinBuildHeight()
+        {
+            return Integer.MIN_VALUE;
+        }
     }
 }

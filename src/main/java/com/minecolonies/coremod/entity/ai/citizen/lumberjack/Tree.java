@@ -28,6 +28,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -40,9 +42,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -974,15 +976,15 @@ public class Tree
      * @param world  the world to use
      * @return return false if not inside the colony or if inside a building.
      */
-    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final IWorldReader world)
+    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final LevelReader world)
     {
-        final IChunk chunk = world.getChunk(pos);
-        if (!(chunk instanceof Chunk))
+        final ChunkAccess chunk = world.getChunk(pos);
+        if (!(chunk instanceof LevelChunk))
         {
             return false;
         }
 
-        final IColonyTagCapability cap = ((Chunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability cap = ((LevelChunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (cap != null && cap.getOwningColony() != colony.getID())
         {
             return false;

@@ -11,6 +11,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -27,7 +29,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-         if (!isFull() && (this.hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
+        if (!isFull() && (this.hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
@@ -35,6 +37,14 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
                 {
                     assignCitizen(data);
                 }
+            }
+        }
+
+        for (final ICitizenData citizenData : new ArrayList<>(getAssignedCitizen()))
+        {
+            if (!(citizenData.getJob() instanceof JobDeliveryman))
+            {
+                removeCitizen(citizenData);
             }
         }
     }

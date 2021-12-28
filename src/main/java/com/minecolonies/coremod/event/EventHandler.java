@@ -478,7 +478,7 @@ public class EventHandler
     @SubscribeEvent
     public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
     {
-        if (!(event.getWorld() instanceof Level))
+        if (event.getWorld().isClientSide() || !(event.getWorld() instanceof Level))
             return;
 
         final Level world = (Level) event.getWorld();
