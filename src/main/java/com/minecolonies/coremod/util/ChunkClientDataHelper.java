@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.event.ClientChunkUpdatedEvent;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -68,5 +70,7 @@ public class ChunkClientDataHelper
             cap.setOwningColony(chunkCapData.owningColony, chunk);
             cap.setCloseColonies(chunkCapData.closeColonies);
         }
+
+        MinecraftForge.EVENT_BUS.post(new ClientChunkUpdatedEvent(chunk));
     }
 }
