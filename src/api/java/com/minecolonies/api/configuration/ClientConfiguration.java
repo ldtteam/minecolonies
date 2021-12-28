@@ -10,6 +10,9 @@ public class ClientConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.BooleanValue citizenVoices;
     public final ForgeConfigSpec.BooleanValue neighborbuildingrendering;
 
+    public final ForgeConfigSpec.BooleanValue mapColonyBorders;
+    public final ForgeConfigSpec.BooleanValue mapDeathpoints;
+
     /**
      * Builds client configuration.
      *
@@ -22,6 +25,10 @@ public class ClientConfiguration extends AbstractConfiguration
         neighborbuildingrendering = defineBoolean(builder, "neighborbuildingrendering", true);
 
         swapToCategory(builder, "pathfinding");
+
+        swapToCategory(builder, "compatibility");
+        mapColonyBorders = defineBoolean(builder, "mapcolonyborders", true);
+        mapDeathpoints = defineBoolean(builder, "mapdeathpoints", true);
 
         finishCategory(builder);
     }

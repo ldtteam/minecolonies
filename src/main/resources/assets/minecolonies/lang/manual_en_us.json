@@ -26,6 +26,10 @@
 
   "minecolonies.config.neighborbuildingrendering": "Neighbor Building Rendering",
   "minecolonies.config.neighborbuildingrendering.comment": "By default, when placing a schematic near other buildings, the already-placed buildings will show as if they were at level 5 and have a blue outline around them. You can disable that by setting this to false.",
+  "minecolonies.config.mapcolonyborders": "Map Colony Borders",
+  "minecolonies.config.mapcolonyborders.comment": "Whether to display colony boundaries in JourneyMap",
+  "minecolonies.config.mapdeathpoints": "Map Citizen Deathpoints",
+  "minecolonies.config.mapdeathpoints.comment": "Whether to display citizen deathpoints in JourneyMap",
 
   "minecolonies.config.diseasemodifier": "Disease Modifier",
   "minecolonies.config.diseasemodifier.comment": "How common diseases are. 1 = Very common, 100 = extremely rare.",
@@ -688,6 +692,8 @@
   "com.minecolonies.coremod.permission.explode": "Explode",
   "com.minecolonies.coremod.permission.hurt_citizen": "Hurt Citizen",
   "com.minecolonies.coremod.permission.hurt_visitor": "Hurt Visitor",
+  "com.minecolonies.coremod.permission.map_border": "Show Border on Maps",
+  "com.minecolonies.coremod.permission.map_deaths": "Show Deaths on Maps",
 
   "com.minecolonies.coremod.permission.receive_messages_far_away": "Distant Messages",
   "com.minecolonies.coremod.permission.can_keep_colony_active_while_away": "Keep Colony Loaded",
@@ -1550,6 +1556,9 @@
   "com.minecolonies.coremod.jei.stonemason": "Crafts things made from various kinds of stone.",
   "com.minecolonies.coremod.jei.stonesmeltery": "Smelts various kinds of stone and terracotta.",
   "com.minecolonies.coremod.jei.swineherder": "Just happy with pigs in mud.",
+
+  "com.minecolonies.coremod.journeymap.deathpoint_name": "Death: %s",
+  "com.minecolonies.coremod.journeymap.deathpoint_namejob": "Death: %s - %s",
 
   "com.minecolonies.coremod.movebuilding.invalid": "Can't reposition to this position, undestroyable block at destination!",
 
