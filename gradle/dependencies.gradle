@@ -1,18 +1,20 @@
 dependencies {
-    apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.exactMinecraftVersion}-${project.domumOrnamentumVersion}:universal")
+    apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")
+    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")
+    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")
 
-    implementation fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
+    apiImplementation fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")
+    implementation fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")
 
-    apiImplementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
-    implementation fg.deobf("com.ldtteam:blockui:${project.minecraftVersion}-${project.blockUI_version}")
+    apiImplementation fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
+    implementation fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
 
-    apiImplementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
-    implementation fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
-
-    implementation fg.deobf("com.ldtteam:multi-piston:${project.exactMinecraftVersion}-${project.multiPistonVersion}")
+    implementation fg.deobf("com.ldtteam:multi-piston:${project.multiPistonVersion}")
 
     datagenLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
     library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
+
+    // Optional dependencies
+
+    implementation fg.deobf("mezz.jei:jei-${project.jei_mcversion}:${project.jei_version}")
 }
