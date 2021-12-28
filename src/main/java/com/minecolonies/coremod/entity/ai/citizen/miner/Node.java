@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import net.minecraft.nbt.CompoundNBT;
@@ -7,9 +8,7 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Miner Node Data StructureIterator.
@@ -380,17 +379,50 @@ public class Node
     public enum NodeType
     {
         //Main shaft
-        SHAFT,
+        SHAFT("/miner/minermainshaft"),
         //Node on the back of the ladder (Don't mine the ladder)
-        LADDER_BACK,
-        //Simple straight tunnle.
-        TUNNEL,
+        LADDER_BACK(""),
+        //Simple straight tunnel.
+        TUNNEL("/miner/minerx2top"),
         //Crossroad structure
-        CROSSROAD,
-        //Bending tunnle
-        BEND,
+        CROSSROAD("/miner/minerx4"),
+        //Bending tunnel
+        BEND_RIGHT("/miner/minerx2right"),
         //New node, undefined
-        UNDEFINED
+        UNDEFINED(""),
+        BEND_LEFT("/miner/minerx2left"),
+        // Three way cross
+        CROSS_THREE_LEFT_RIGHT("/miner/minerx3leftright"),
+        CROSS_THREE_TOP_LEFT("/miner/minerx3topleft"),
+        CROSS_THREE_TOP_RIGHT("/miner/minerx3topright");
+
+        /**
+         * List of all valid types.
+         */
+        public static final ImmutableList<NodeType> SIDE_NODES = ImmutableList.of(TUNNEL, CROSSROAD, BEND_RIGHT, BEND_LEFT, CROSS_THREE_LEFT_RIGHT, CROSS_THREE_TOP_LEFT, CROSS_THREE_TOP_RIGHT);
+
+        /**
+         * The schematic string.
+         */
+        private String schemName;
+
+        /**
+         * Create a new node type.
+         * @param schemName the schematic name.
+         */
+        NodeType(final String schemName)
+        {
+            this.schemName = schemName;
+        }
+
+        /**
+         * Get the matching schematic name.
+         * @return the file name string.
+         */
+        public String getSchematicName()
+        {
+            return schemName;
+        }
     }
 
     /**
