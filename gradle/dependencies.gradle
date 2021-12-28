@@ -18,6 +18,10 @@ repositories {
     maven {
         url "https://harleyoconnor.com/maven/"
     }
+    maven {
+        name "JourneyMap"
+        url "https://jm.gserv.me/repository/maven-public/"
+    }
 }
 
 dependencies {
@@ -30,6 +34,11 @@ dependencies {
     apiLibrary fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
     apiLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
     apiLibrary fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
+
+    compileOnly fg.deobf("info.journeymap:journeymap-api:${project.minecraftVersion}-${project.jmapApiVersion}")
+    //library fg.deobf("flat:journeymap:${project.minecraftVersion}-${project.jmapVersion}")
+    // Journeymap doesn't have a maven (other than cursemaven); so if you want to use it in dev
+    // then drop the regular jar into the "libs" dir and uncomment the above (editing version if needed)
 
     // optional compat mods (not included in test environment by default)
     // replace "compileOnly" with "library" when you want to include it for testing

@@ -76,12 +76,18 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="resourcefulbees"
     mandatory=false
-    versionRange="[1.16.5-0.6.1b,)"
+    versionRange="[${project.minecraftVersion}-${project.resourceFullBeesVersion},)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
     modId="dynamictrees"
     mandatory=false
-    versionRange="[1.16.5-0.10.0-Beta15,)"
+    versionRange="[${project.minecraftVersion}-${project.dynamicTreesVersion},)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.minecolonies]]
+    modId="journeymap"
+    mandatory=false
+    versionRange="[${project.minecraftVersion}-${project.jmapVersion},)"
     ordering="NONE"
     side="BOTH"

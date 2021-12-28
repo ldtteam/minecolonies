@@ -5,6 +5,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
@@ -733,6 +734,8 @@ public final class ColonyManager implements IColonyManager
             }
         }
         view.handleColonyViewMessage(colonyData, world, isNewSubscription);
+
+        MinecraftForge.EVENT_BUS.post(new ColonyViewUpdatedEvent(view));
     }
 
     @Override
