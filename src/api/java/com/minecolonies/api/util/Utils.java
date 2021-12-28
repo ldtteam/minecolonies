@@ -166,7 +166,7 @@ public final class Utils
      * @param flag Flag to check whether it is set or not.
      * @return True if flag is set, otherwise false.
      */
-    public static boolean testFlag(final int data, final int flag)
+    public static boolean testFlag(final long data, final long flag)
     {
         return mask(data, flag) == flag;
     }
@@ -178,7 +178,7 @@ public final class Utils
      * @param mask Mask to check.
      * @return Byte in which both data bits and mask bits are set.
      */
-    public static int mask(final int data, final int mask)
+    public static long mask(final long data, final long mask)
     {
         return data & mask;
     }
@@ -190,7 +190,7 @@ public final class Utils
      * @param flag Flag to set.
      * @return Data with flags set.
      */
-    public static int setFlag(final int data, final int flag)
+    public static long setFlag(final long data, final long flag)
     {
         return data | flag;
     }
@@ -202,7 +202,7 @@ public final class Utils
      * @param flag Flag to remove.
      * @return Data with flag unset.
      */
-    public static int unsetFlag(final int data, final int flag)
+    public static long unsetFlag(final long data, final long flag)
     {
         return data & ~flag;
     }
@@ -214,7 +214,7 @@ public final class Utils
      * @param flag Flag to toggle.
      * @return Data with flag toggled.
      */
-    public static int toggleFlag(final int data, final int flag)
+    public static long toggleFlag(final long data, final long flag)
     {
         return data ^ flag;
     }

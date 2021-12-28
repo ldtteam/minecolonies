@@ -95,7 +95,7 @@ public class Permissions implements IPermissions
      * Permissions of these players.
      */
     @NotNull
-    private final Map<Rank, Integer> permissionMap = new HashMap<>();
+    private final Map<Rank, Long> permissionMap = new HashMap<>();
 
     /**
      * Used to check if the permissions have to by synchronized.
@@ -120,7 +120,7 @@ public class Permissions implements IPermissions
     /**
      * The current version of the permissions, increase upon changes to the preset permissions
      */
-    private static final int permissionsVersion = 3;
+    private static final int permissionsVersion = 4;
 
     /**
      * Saves the permissionMap with allowed actions.
@@ -147,11 +147,13 @@ public class Permissions implements IPermissions
             name = name.substring(0,1).toUpperCase(Locale.ENGLISH) + name.substring(1).toLowerCase(Locale.ENGLISH);
             Rank rank = new Rank(oldRank.ordinal(), name, oldRank.isSubscriber, true);
             ranks.put(rank.getId(), rank);
-            permissionMap.put(rank, 0);
+            permissionMap.put(rank, 0L);
             switch (oldRank)
             {
                 case OWNER:
                     this.setPermission(rank, Action.EDIT_PERMISSIONS);
+                    this.setPermission(rank, Action.MAP_BORDER);
+                    this.setPermission(rank, Action.MAP_DEATHS);
                 case OFFICER:
                     this.setPermission(rank, Action.PLACE_HUTS);
                     this.setPermission(rank, Action.BREAK_HUTS);
@@ -164,6 +166,8 @@ public class Permissions implements IPermissions
                     this.setPermission(rank, Action.RECEIVE_MESSAGES_FAR_AWAY);
                     this.setPermission(rank, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY);
                     this.setPermission(rank, Action.RALLY_GUARDS);
+                    this.setPermission(rank, Action.MAP_BORDER);
+                    this.setPermission(rank, Action.MAP_DEATHS);
                     rank.setColonyManager(true);
                 case FRIEND:
                     this.setPermission(rank, Action.ACCESS_HUTS);
@@ -177,19 +181,45 @@ public class Permissions implements IPermissions
                     this.setPermission(rank, Action.ATTACK_CITIZEN);
                     this.setPermission(rank, Action.ATTACK_ENTITY);
                     this.setPermission(rank, Action.TELEPORT_TO_COLONY);
+                    this.setPermission(rank, Action.MAP_BORDER);
                 case NEUTRAL:
                     this.setPermission(rank, Action.ACCESS_FREE_BLOCKS);
+                    this.setPermission(rank, Action.MAP_BORDER);
                     break;
                 case HOSTILE:
                     this.setPermission(rank, Action.GUARDS_ATTACK);
                     this.setPermission(rank, Action.HURT_CITIZEN);
                     this.setPermission(rank, Action.HURT_VISITOR);
+                    this.setPermission(rank, Action.MAP_BORDER);
                     rank.setHostile(true);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void upgradePermissions(final int version, final Rank rank)
+    {
+        // keep this consistent with loadRanks(), as that's still used for new colonies
+
+        if (version < 4)
+        {
+            if (rank.isHostile())
+            {
+                this.setPermission(rank, Action.HURT_CITIZEN);
+                this.setPermission(rank, Action.HURT_VISITOR);
+            }
+
+            if (rank.isColonyManager())
+            {
+                this.setPermission(rank, Action.MAP_DEATHS);
+            }
+
+            this.setPermission(rank, Action.MAP_BORDER);
+        }
+
+        // if (version < 5) ...
     }
 
     /**
@@ -200,7 +230,7 @@ public class Permissions implements IPermissions
      */
     public final boolean setPermission(final Rank rank, @NotNull final Action action)
     {
-        final int flags = permissionMap.get(rank);
+        final long flags = permissionMap.get(rank);
 
         //check that flag isn't set
         if (!Utils.testFlag(flags, action.getFlag()))
@@ -290,7 +320,7 @@ public class Permissions implements IPermissions
                 name = ownerCompound.getString(TAG_NAME);
             }
             Rank rank;
-            if (version == permissionsVersion)
+            if (version >= 3)
             {
                 rank = ranks.get(ownerCompound.getInt(TAG_RANK));
             }
@@ -313,7 +343,7 @@ public class Permissions implements IPermissions
         }
 
         //Permissions
-        if (compound.getInt(TAG_VERSION) == permissionsVersion)
+        if (version >= 3)
         {
             permissionMap.clear();
             final ListTag permissionsTagList = compound.getList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
@@ -325,7 +355,7 @@ public class Permissions implements IPermissions
                 {
                     final ListTag flagsTagList = permissionsCompound.getList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
-                    int flags = 0;
+                    long flags = 0;
 
                     for (int j = 0; j < flagsTagList.size(); ++j)
                     {
@@ -343,6 +373,7 @@ public class Permissions implements IPermissions
                         }
                     }
                     permissionMap.put(rank, flags);
+                    upgradePermissions(version, rank);
                 }
             }
 
@@ -514,7 +545,7 @@ public class Permissions implements IPermissions
 
         // Permissions
         @NotNull final ListTag permissionsTagList = new ListTag();
-        for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
+        for (@NotNull final Map.Entry<Rank, Long> entry : permissionMap.entrySet())
         {
             @NotNull final CompoundTag permissionsCompound = new CompoundTag();
             if (entry.getKey() != null)
@@ -613,7 +644,7 @@ public class Permissions implements IPermissions
      * @return map of permissionMap.
      */
     @NotNull
-    public Map<Rank, Integer> getPermissionMap()
+    public Map<Rank, Long> getPermissionMap()
     {
         return permissionMap;
     }
@@ -645,7 +676,7 @@ public class Permissions implements IPermissions
      */
     public boolean removePermission(final Rank rank, @NotNull final Action action)
     {
-        final int flags = permissionMap.get(rank);
+        final long flags = permissionMap.get(rank);
         if (Utils.testFlag(flags, action.getFlag()))
         {
             permissionMap.put(rank, Utils.unsetFlag(flags, action.getFlag()));
@@ -903,10 +934,10 @@ public class Permissions implements IPermissions
      */
     public void serializeViewNetworkData(@NotNull final FriendlyByteBuf buf, @NotNull final Rank viewerRank)
     {
-        buf.writeInt(ranks.size());
+        buf.writeVarInt(ranks.size());
         for (Rank rank : ranks.values())
         {
-            buf.writeInt(rank.getId());
+            buf.writeVarInt(rank.getId());
             buf.writeUtf(rank.getName());
             buf.writeBoolean(rank.isSubscriber());
             buf.writeBoolean(rank.isInitial());
@@ -914,23 +945,23 @@ public class Permissions implements IPermissions
             buf.writeBoolean(rank.isHostile());
         }
 
-        buf.writeInt(viewerRank.getId());
+        buf.writeVarInt(viewerRank.getId());
 
         //  Owners
-        buf.writeInt(players.size());
+        buf.writeVarInt(players.size());
         for (@NotNull final Map.Entry<UUID, ColonyPlayer> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
             buf.writeUtf(player.getValue().getName());
-            buf.writeInt(player.getValue().getRank().getId());
+            buf.writeVarInt(player.getValue().getRank().getId());
         }
 
         // Permissions
-        buf.writeInt(permissionMap.size());
-        for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
+        buf.writeVarInt(permissionMap.size());
+        for (@NotNull final Map.Entry<Rank, Long> entry : permissionMap.entrySet())
         {
-            buf.writeInt(entry.getKey().getId());
-            buf.writeInt(entry.getValue());
+            buf.writeVarLong(entry.getKey().getId());
+            buf.writeVarLong(entry.getValue());
         }
     }
 
@@ -1037,7 +1068,7 @@ public class Permissions implements IPermissions
         }
         Rank rank = new Rank(id, name, false, false);
         ranks.put(id, rank);
-        permissionMap.put(rank, 0);
+        permissionMap.put(rank, 0L);
         markDirty();
     }
 
