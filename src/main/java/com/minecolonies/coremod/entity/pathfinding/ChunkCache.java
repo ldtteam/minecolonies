@@ -168,6 +168,13 @@ public class ChunkCache implements LevelReader
     @Override
     public ChunkAccess getChunk(final int x, final int z, final ChunkStatus requiredStatus, final boolean nonnull)
     {
+        int i = x - this.chunkX;
+        int j = z - this.chunkZ;
+
+        if (i >= 0 && i < this.chunkArray.length && j >= 0 && j < this.chunkArray[i].length)
+        {
+            return this.chunkArray[i][j];
+        }
         return null;
     }
 

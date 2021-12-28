@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
 /**
  * Custom class for Trees. Used by lumberjack
@@ -132,8 +134,8 @@ public class Tree
     /**
      * Creates a new tree Object for the lumberjack. Since the same type of variant of the block old log or new log do not match we have to separate them.
      *
-     * @param world The world where the tree is in.
-     * @param log   the position of the found log.
+     * @param world  The world where the tree is in.
+     * @param log    the position of the found log.
      * @param colony the colony the tree is in.
      */
     public Tree(@NotNull final Level world, @NotNull final BlockPos log, final IColony colony)
@@ -960,13 +962,33 @@ public class Tree
      */
     public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony)
     {
-        if (!colony.isCoordInColony(colony.getWorld(), pos))
+        return checkIfInColonyAndNotInBuilding(pos, colony, colony.getWorld());
+    }
+
+    /**
+     * Calculates with a colony if the position is inside the colony and if it is inside a building.
+     *
+     * @param pos    the position.
+     * @param colony the colony.
+     * @param world  the world to use
+     * @return return false if not inside the colony or if inside a building.
+     */
+    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final IWorldReader world)
+    {
+        final IChunk chunk = world.getChunk(pos);
+        if (!(chunk instanceof Chunk))
+        {
+            return false;
+        }
+
+        final IColonyTagCapability cap = ((Chunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        if (cap != null && cap.getOwningColony() != colony.getID())
         {
             return false;
         }
 
         // Dynamic tree's are never part of buildings
-        if (colony.getWorld() != null && Compatibility.isDynamicBlock(colony.getWorld().getBlockState(pos).getBlock()))
+        if (Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
         {
             return true;
         }
