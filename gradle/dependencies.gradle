@@ -8,13 +8,42 @@ repositories {
 }
 
 dependencies {
-    apiCompileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.minecraftVersion}-${project.domumOrnamentumVersion}:universal"){
+    apiCompileOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
         transitive = false
     }
-    compileOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.minecraftVersion}-${project.domumOrnamentumVersion}:universal"){
+    compileOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
         transitive = false
     }
-    runtimeOnly fg.deobf("com.ldtteam:domum_ornamentum:${project.minecraftVersion}-${project.domumOrnamentumVersion}:universal"){
+    runtimeOnly (fg.deobf("com.ldtteam:domum_ornamentum:${project.domumOrnamentumVersion}:universal")){
         transitive = false
     }
+
+    apiImplementation (fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")){
+        transitive = false
+    }
+    implementation (fg.deobf("com.ldtteam:blockui:${project.blockUI_version}")){
+        transitive = false
+    }
+
+    apiImplementation (fg.deobf("com.ldtteam:structurize:${project.structurize_version}")){
+        transitive = false
+    }
+    implementation (fg.deobf("com.ldtteam:structurize:${project.structurize_version}")){
+        transitive = false
+    }
+
+    implementation (fg.deobf("com.ldtteam:multi-piston:${project.multiPistonVersion}")){
+        transitive = false
+    }
+
+    datagenLibrary (("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}")){
+        transitive = false
+    }
+    library (("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}")) {
+        transitive = false
+    }
+
+    // optional dependencies
+
+    implementation fg.deobf("mezz.jei:jei-${project.jei_mcversion}:${project.jei_version}")
 }
