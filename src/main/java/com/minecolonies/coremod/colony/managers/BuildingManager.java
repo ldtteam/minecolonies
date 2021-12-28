@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.google.common.collect.ImmutableMap;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -59,7 +60,7 @@ public class BuildingManager implements IBuildingManager
      * List of building in the colony.
      */
     @NotNull
-    private final Map<BlockPos, IBuilding> buildings = new HashMap<>();
+    private ImmutableMap<BlockPos, IBuilding> buildings = ImmutableMap.of();
 
     /**
      * List of fields of the colony.
@@ -118,7 +119,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
-        buildings.clear();
+        buildings = ImmutableMap.of();
         maxChunkX = colony.getCenter().getX() >> 4;
         minChunkX = colony.getCenter().getX() >> 4;
         maxChunkZ = colony.getCenter().getZ() >> 4;
@@ -362,7 +363,7 @@ public class BuildingManager implements IBuildingManager
     @Override
     public Map<BlockPos, IBuilding> getBuildings()
     {
-        return Collections.unmodifiableMap(buildings);
+        return buildings;
     }
 
     @Nullable
@@ -506,8 +507,19 @@ public class BuildingManager implements IBuildingManager
     @Override
     public void removeBuilding(@NotNull final IBuilding building, final Set<ServerPlayerEntity> subscribers)
     {
-        if (buildings.remove(building.getID()) != null)
+        if (buildings.containsKey(building.getID()))
         {
+            final ImmutableMap.Builder<BlockPos, IBuilding> builder = new ImmutableMap.Builder<>();
+            for (final IBuilding tbuilding : buildings.values())
+            {
+                if (tbuilding != building)
+                {
+                    builder.put(tbuilding.getID(), tbuilding);
+                }
+            }
+
+            buildings = builder.build();
+
             for (final ServerPlayerEntity player : subscribers)
             {
                 Network.getNetwork().sendToPlayer(new ColonyViewRemoveBuildingMessage(colony, building.getID()), player);
@@ -688,7 +700,8 @@ public class BuildingManager implements IBuildingManager
      */
     private void addBuilding(@NotNull final IBuilding building)
     {
-        buildings.put(building.getID(), building);
+        buildings = new ImmutableMap.Builder<BlockPos, IBuilding>().putAll(buildings).put(building.getID(), building).build();
+
         building.markDirty();
 
         //  Limit 1 town hall

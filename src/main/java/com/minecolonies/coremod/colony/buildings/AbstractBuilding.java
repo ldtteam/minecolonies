@@ -1929,13 +1929,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        if (!getCitizensByRequest().containsKey(request.getId()))
+        final int citizenId = getCitizensByRequest().get(request.getId());
+        if (!getCitizensByRequest().containsKey(citizenId))
         {
             return new StringTextComponent("<UNKNOWN>");
         }
 
-        final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
+        if (citizenData.getJob() == null)
+        {
+            return new StringTextComponent(citizenData.getName());
+        }
         final IFormattableTextComponent jobName =  new TranslationTextComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         return jobName.append(new StringTextComponent(" " + citizenData.getName()));
     }
