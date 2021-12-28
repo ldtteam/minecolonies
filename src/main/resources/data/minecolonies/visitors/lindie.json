@@ -1,0 +1,10 @@
+{
+  "texture": "4c5813ae-e7c8-45f0-a6b4-a3333a5a4025",
+  "citizensuffix": "_w",
+  "name": "Lindie",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.lindie",
+  "recruitcost": "minecraft:rotten_flesh",
+  "recruitcostcount": 169,
+  "gender": "female"
+}
