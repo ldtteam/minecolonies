@@ -8,4 +8,5 @@ project.ext.customChangelogHeader = "\n" +
         "- Tinkers Construct: ${project.minecraftVersion}-${project.tinkersConstructVersion}\n" +
         "- Mantle: ${project.minecraftVersion}-${project.mantleVersion}\n" +
         "- Dynamic Trees: ${project.dynamicTreesVersion}\n" +
+        "- Journeymap: ${project.minecraftVersion}-${project.jmapVersion}\n" +
         "\n"

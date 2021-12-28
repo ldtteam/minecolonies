@@ -217,6 +217,11 @@ public final class ColonyView implements IColonyView
     private String textureStyle;
 
     /**
+     * The grave manager on the client side.
+     */
+    private final IGraveManager graveManager = new GraveManagerView();
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -392,6 +397,10 @@ public final class ColonyView implements IColonyView
         {
             buf.writeInt(-1);
         }
+
+        final CompoundNBT graveTag = new CompoundNBT();
+        colony.getGraveManager().write(graveTag);
+        buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
     }
 
     /**
@@ -857,6 +866,9 @@ public final class ColonyView implements IColonyView
                 ticketedChunks.add(buf.readLong());
             }
         }
+
+        this.graveManager.read(buf.readNbt());
+
         return null;
     }
 
@@ -1398,7 +1410,7 @@ public final class ColonyView implements IColonyView
     @Override
     public IGraveManager getGraveManager()
     {
-        return null;
+        return this.graveManager;
     }
 
     @Override
