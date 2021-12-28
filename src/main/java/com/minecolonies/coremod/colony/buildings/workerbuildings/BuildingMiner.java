@@ -6,21 +6,29 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BlockSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -28,10 +36,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
@@ -43,24 +49,9 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 public class BuildingMiner extends AbstractBuildingStructureBuilder
 {
     /**
-     * Main shaft location.
+     * Setting for solid filling block.
      */
-    private static final String MAIN_SHAFT_NAME = "/miner/minermainshaft";
-
-    /**
-     * X4 shaft location.
-     */
-    private static final String X4_SHAFT_NAME = "/miner/minerx4";
-
-    /**
-     * X2 right shaft location.
-     */
-    private static final String X2_RIGHT_SHAFT_NAME = "/miner/minerx2right";
-
-    /**
-     * X2 top shaft location.
-     */
-    private static final String X2_TOP_SHAFT_NAME = "/miner/minerx2top";
+    public static final ISettingKey<BlockSetting> FILL_BLOCK = new SettingKey<>(BlockSetting.class, new ResourceLocation(Constants.MOD_ID, "fillblock"));
 
     /**
      * The job description.
@@ -88,22 +79,18 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         super(c, l);
 
         final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
-        final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
         final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
         final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
-        final ItemStack stackDirt = new ItemStack(Blocks.DIRT);
 
         keepX.put(stackLadder::sameItem, new Tuple<>(STACKSIZE, true));
-        keepX.put(stackFence::sameItem, new Tuple<>(STACKSIZE, true));
         keepX.put(stackTorch::sameItem, new Tuple<>(STACKSIZE, true));
         keepX.put(stackCobble::sameItem, new Tuple<>(STACKSIZE, true));
 
-        keepX.put(stack -> stack.is(ItemTags.SLABS), new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> stack.is(ItemTags.PLANKS), new Tuple<>(STACKSIZE, true));
-        keepX.put(stackDirt::sameItem, new Tuple<>(STACKSIZE, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.PICKAXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
         keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+
+        keepX.put(itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, new ItemStack(getSetting(FILL_BLOCK).getValue())), new Tuple<>(STACKSIZE, true));
     }
 
     /**
@@ -277,23 +264,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         if (mineNode == null)
         {
             rotateCount = getRotationFromVector(buildingMiner);
-            requiredName = getCorrectStyleLocation(style, MAIN_SHAFT_NAME, world, buildingMiner);
+            requiredName = getCorrectStyleLocation(style, Node.NodeType.SHAFT.getSchematicName(), world, buildingMiner);
         }
+
         else
         {
             rotateCount = rotateTimes;
-            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
-            {
-                requiredName = getCorrectStyleLocation(style, X4_SHAFT_NAME, world, buildingMiner);
-            }
-            else if (mineNode.getStyle() == Node.NodeType.BEND)
-            {
-                requiredName = getCorrectStyleLocation(style, X2_RIGHT_SHAFT_NAME, world, buildingMiner);
-            }
-            else if (mineNode.getStyle() == Node.NodeType.TUNNEL)
-            {
-                requiredName = getCorrectStyleLocation(style, X2_TOP_SHAFT_NAME, world, buildingMiner);
-            }
+            requiredName = getCorrectStyleLocation(style, mineNode.getStyle().getSchematicName(), world, buildingMiner);
         }
 
         if (requiredName != null &&  (job == null || job.getWorkOrder() == null))

@@ -58,6 +58,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -1930,14 +1931,18 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        if (!getCitizensByRequest().containsKey(request.getId()))
+        final int citizenId = getCitizensByRequest().get(request.getId());
+        if (!getCitizensByRequest().containsKey(citizenId))
         {
             return new TextComponent("<UNKNOWN>");
         }
 
-        final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
-        final MutableComponent jobName =  new TranslatableComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
+        if (citizenData.getJob() == null)
+        {
+            return new TextComponent(citizenData.getName());
+        }
+        final BaseComponent jobName =  new TranslatableComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         return jobName.append(new TextComponent(" " + citizenData.getName()));
     }
 

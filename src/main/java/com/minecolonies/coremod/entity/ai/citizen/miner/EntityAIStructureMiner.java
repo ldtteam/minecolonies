@@ -7,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.modules.MinerLevelManagementModule;
@@ -24,6 +25,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +37,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.initStructure;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
@@ -233,6 +237,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             return BUILDING_STEP;
         }
 
+        for (final Direction direction : Direction.values())
+        {
+            final BlockPos pos = blockToMine.relative(direction);
+            final BlockState surroundingState = world.getBlockState(pos);
+
+            final FluidState fluid = world.getFluidState(pos);
+            if (surroundingState.getBlock() == Blocks.LAVA || (fluid != null && !fluid.isEmpty() && (fluid.getType() == Fluids.LAVA || fluid.getType() == Fluids.FLOWING_LAVA)) || SurfaceType.isWater(world, pos, surroundingState, fluid))
+            {
+                setBlockFromInventory(pos, getMainFillBlock());
+            }
+        }
+
         final BlockState blockState = world.getBlockState(blockToMine);
         if (!IColonyManager.getInstance().getCompatibilityManager().isOre(blockState))
         {
@@ -319,7 +335,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             {
                 return getState();
             }
-            setBlockFromInventory(nextCobble, getMainFillBlock());
+            setBlockFromInventory(nextCobble, getLadderBackFillBlock());
             return getState();
         }
 
@@ -344,11 +360,21 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     /**
-     * Get the main fill block. Cobble for overworld, netherrack for nether.
+     * Get the main fill block. Based on the settings.
      *
      * @return the main fill block.
      */
     private Block getMainFillBlock()
+    {
+        return getOwnBuilding().getSetting(FILL_BLOCK).getValue().getBlock();
+    }
+
+    /**
+     * Get the ladderback fill block. Cobble for overworld, netherrack for nether.
+     *
+     * @return the ladderback fill block.
+     */
+    private Block getLadderBackFillBlock()
     {
         if (WorldUtil.isNetherType(world))
         {
@@ -419,7 +445,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private IAIState advanceLadder(final IAIState state)
     {
-        if (!checkIfRequestForItemExistOrCreate(new ItemStack(getMainFillBlock()), COBBLE_REQUEST_BATCHES, 1) ||
+        if (!checkIfRequestForItemExistOrCreate(new ItemStack(getLadderBackFillBlock()), COBBLE_REQUEST_BATCHES, 1) ||
               !checkIfRequestForItemExistOrCreate(new ItemStack(Blocks.LADDER), LADDER_REQUEST_BATCHES, 1))
         {
             return state;
@@ -480,7 +506,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         final BlockState metadata = getBlockState(safeStand);
 
         //set solid block
-        setBlockFromInventory(nextCobble, getMainFillBlock());
+        setBlockFromInventory(nextCobble, getLadderBackFillBlock());
         //set ladder
         setBlockFromInventory(nextLadder, Blocks.LADDER, metadata);
         this.incrementActionsDoneAndDecSaturation();

@@ -194,6 +194,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             onCombatEnter();
         }
 
+        if (!hasTool())
+        {
+            return PREPARING;
+        }
+
         fighttimer = COMBAT_TIME;
         return null;
     }
@@ -634,6 +639,11 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
         {
             incrementActionsDone();
             regularActionTimer = 0;
+        }
+
+        if (!hasTool())
+        {
+            return PREPARING;
         }
 
         if (fighttimer > 0)

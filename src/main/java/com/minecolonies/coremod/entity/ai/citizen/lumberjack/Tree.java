@@ -27,11 +27,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -516,14 +517,14 @@ public class Tree
         tree.location = BlockPosUtil.read(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
-        final ListTag logs = compound.getList(TAG_LOGS, Constants.NBT.TAG_COMPOUND);
+        final ListTag logs = compound.getList(TAG_LOGS, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < logs.size(); i++)
         {
             tree.woodBlocks.add(BlockPosUtil.readFromListNBT(logs, i));
         }
 
         tree.stumpLocations = new ArrayList<>();
-        final ListTag stumps = compound.getList(TAG_STUMPS, Constants.NBT.TAG_COMPOUND);
+        final ListTag stumps = compound.getList(TAG_STUMPS, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < stumps.size(); i++)
         {
             tree.stumpLocations.add(BlockPosUtil.readFromListNBT(stumps, i));
@@ -554,7 +555,7 @@ public class Tree
 
         if (compound.contains(TAG_LEAVES))
         {
-            final ListTag leavesBin = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
+            final ListTag leavesBin = compound.getList(TAG_LEAVES, CompoundTag.TAG_COMPOUND);
             for (int i = 0; i < leavesBin.size(); i++)
             {
                 tree.leaves.add(BlockPosUtil.readFromListNBT(leavesBin, i));
@@ -973,15 +974,15 @@ public class Tree
      * @param world  the world to use
      * @return return false if not inside the colony or if inside a building.
      */
-    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final IWorldReader world)
+    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final LevelReader world)
     {
-        final IChunk chunk = world.getChunk(pos);
-        if (!(chunk instanceof Chunk))
+        final ChunkAccess chunk = world.getChunk(pos);
+        if (!(chunk instanceof LevelChunk))
         {
             return false;
         }
 
-        final IColonyTagCapability cap = ((Chunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
+        final IColonyTagCapability cap = ((LevelChunk) chunk).getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (cap != null && cap.getOwningColony() != colony.getID())
         {
             return false;

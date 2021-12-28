@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
-
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Vec2i;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,7 +152,7 @@ public class MinerLevel
             this.levelSign = null;
         }
 
-        final ListTag nodeTagList = compound.getList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListTag nodeTagList = compound.getList(TAG_NODES, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.size(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompound(i));
@@ -168,8 +165,8 @@ public class MinerLevel
         final int ladderZ;
         if (hasDoubles)
         {
-            ladderX = Mth.floor(compound.getDouble(TAG_LADDERX));
-            ladderZ = Mth.floor(compound.getDouble(TAG_LADDERZ));
+            ladderX = (int) Math.floor(compound.getDouble(TAG_LADDERX));
+            ladderZ = (int) Math.floor(compound.getDouble(TAG_LADDERZ));
         }
         else
         {
@@ -180,7 +177,7 @@ public class MinerLevel
         this.ladderNode = this.nodes.get(new Vec2i(ladderX, ladderZ));
 
 
-        final ListTag openNodeTagList = compound.getList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
+        final ListTag openNodeTagList = compound.getList(TAG_OPEN_NODES, CompoundTag.TAG_COMPOUND);
         for (int i = 0; i < openNodeTagList.size(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompound(i));
@@ -250,8 +247,23 @@ public class MinerLevel
             case TUNNEL:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
                 break;
-            case BEND:
+            case BEND_RIGHT:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                break;
+            case BEND_LEFT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                break;
+            case CROSS_THREE_LEFT_RIGHT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                break;
+            case CROSS_THREE_TOP_LEFT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                break;
+            case CROSS_THREE_TOP_RIGHT:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
                 break;
             case CROSSROAD:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
@@ -278,7 +290,7 @@ public class MinerLevel
             }
 
             final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Vec2i(tempNode.getX(), tempNode.getZ()));
-            tempNodeToAdd.setStyle(getRandomNodeType());
+            tempNodeToAdd.setStyle(Node.NodeType.SIDE_NODES.get(rand.nextInt(Node.NodeType.SIDE_NODES.size())));
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
@@ -314,21 +326,6 @@ public class MinerLevel
             default:
                 return node.getEastNodeCenter();
         }
-    }
-
-    private static Node.NodeType getRandomNodeType()
-    {
-        final int randNumber = rand.nextInt(RANDOM_TYPES);
-        if (randNumber <= 1)
-        {
-            return TUNNEL;
-        }
-        else if (randNumber == 2)
-        {
-            return BEND;
-        }
-
-        return CROSSROAD;
     }
 
     @NotNull

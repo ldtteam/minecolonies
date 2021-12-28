@@ -255,8 +255,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             }
         }
 
-        final ItemStack breedingItem = getBreedingItem();
-        checkIfRequestForItemExistOrCreateAsynch(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
+        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue())
+        {
+            final ItemStack breedingItem = getBreedingItem();
+            checkIfRequestForItemExistOrCreateAsynch(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
+        }
 
         for (final ItemStack item : getExtraItemsNeeded())
         {
