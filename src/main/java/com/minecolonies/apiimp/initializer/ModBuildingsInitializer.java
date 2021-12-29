@@ -124,7 +124,8 @@ public final class ModBuildingsInitializer
                                  .addBuildingModuleProducer(() -> new SettingsModule()
                                                                     .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
                                                                     .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
-                                                                    .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting()), () -> SettingsModuleView::new)
+                                                                    .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
+                                                                    .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE)), () -> SettingsModuleView::new)
                                  .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.builder), () -> CraftingModuleView::new)
                                  .addBuildingModuleViewProducer(() -> WorkOrderListModuleView::new)
                                  .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
@@ -306,7 +307,9 @@ public final class ModBuildingsInitializer
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
-                               .addBuildingModuleProducer(() -> new SettingsModule().with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE)), () -> SettingsModuleView::new)
+                               .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                  .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE))
+                                                                  .with(BuildingMiner.MAX_DEPTH, new IntSetting(-100)), () -> SettingsModuleView::new)
                                .addBuildingModuleViewProducer(() -> MinerGuardAssignModuleView::new)
                                .createBuildingEntry();
 

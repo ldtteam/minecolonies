@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BlockSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
@@ -52,6 +53,11 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * Setting for solid filling block.
      */
     public static final ISettingKey<BlockSetting> FILL_BLOCK = new SettingKey<>(BlockSetting.class, new ResourceLocation(Constants.MOD_ID, "fillblock"));
+
+    /**
+     * Max depth the miner is going for.
+     */
+    public static final ISettingKey<IntSetting> MAX_DEPTH = new SettingKey<>(IntSetting.class, new ResourceLocation(Constants.MOD_ID, "maxdepth"));
 
     /**
      * The job description.
@@ -169,18 +175,31 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     {
         if (this.getBuildingLevel() == 1)
         {
-            return MAX_DEPTH_LEVEL_1;
+            return normalizeMaxDepth(MAX_DEPTH_LEVEL_1, level);
         }
         else if (this.getBuildingLevel() == 2)
         {
-            return MAX_DEPTH_LEVEL_2;
+            return normalizeMaxDepth(MAX_DEPTH_LEVEL_2, level);
         }
-        else if (this.getBuildingLevel() >= 3)
+        else if (this.getBuildingLevel() == 3)
         {
-            return level.getMinBuildHeight() + MAX_DEPTH_LEVEL_3;
+            return normalizeMaxDepth(MAX_DEPTH_MAX, level);
         }
+        else
+        {
+            return normalizeMaxDepth(-100, level);
+        }
+    }
 
-        return MAX_DEPTH_LEVEL_0;
+    public int normalizeMaxDepth(final int max, final Level level)
+    {
+        final int worldMaxDepth = level.getMinBuildHeight() + 5;
+        final IntSetting maxDepth = getSetting(MAX_DEPTH);
+        if (maxDepth.getValue() == maxDepth.getDefault())
+        {
+            return Math.max(worldMaxDepth, max);
+        }
+        return Math.max(worldMaxDepth, Math.max(max, maxDepth.getValue()));
     }
 
     /**

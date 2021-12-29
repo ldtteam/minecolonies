@@ -962,12 +962,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     }
 
     @Override
-    public BlockState getSolidSubstitution(final BlockPos ignored)
-    {
-        return getMainFillBlock().defaultBlockState();
-    }
-
-    @Override
     protected boolean checkIfCanceled()
     {
         if (super.checkIfCanceled())

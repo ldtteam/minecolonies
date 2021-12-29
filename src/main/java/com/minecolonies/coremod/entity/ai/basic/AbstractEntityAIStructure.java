@@ -55,6 +55,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.*;
 import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
 
@@ -850,10 +851,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
      *
-     * @param location the location the block should be at.
+     * @param ignored the location the block should be at.
      * @return the Block.
      */
-    public abstract BlockState getSolidSubstitution(BlockPos location);
+    public BlockState getSolidSubstitution(final BlockPos ignored)
+    {
+        return getOwnBuilding().getSetting(FILL_BLOCK).getValue().getBlock().defaultBlockState();
+    }
 
     /**
      * Execute specific actions on loading a structure.
