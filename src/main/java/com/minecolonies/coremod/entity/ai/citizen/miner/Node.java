@@ -113,7 +113,16 @@ public class Node
             z = compound.getInt(TAG_Z);
         }
 
-        final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
+        NodeType style;
+        try
+        {
+            style = NodeType.valueOf(compound.getString(TAG_STYLE));
+        }
+        catch (final IllegalArgumentException ex)
+        {
+            style = NodeType.BEND_RIGHT;
+        }
+
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
         Vec2i parent = null;
