@@ -607,6 +607,18 @@ public final class ModBuildingsInitializer
                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                    .createBuildingEntry();
 
+        ModBuildings.netherWorker = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutNetherWorker)
+                                    .setBuildingProducer(BuildingNetherWorker::new)
+                                    .setBuildingViewProducer(() -> EmptyView::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.NETHERWORKER_ID))
+                                    .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.netherworker, Skill.Adaptability, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new BuildingNetherWorker.CraftingModule(ModJobs.netherworker), () -> CraftingModuleView::new)
+                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+                                    .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                    .createBuildingEntry();
+
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
         reg.register(ModBuildings.barracks);
@@ -654,5 +666,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
         reg.register(ModBuildings.graveyard);
+        reg.register(ModBuildings.netherWorker);
     }
 }

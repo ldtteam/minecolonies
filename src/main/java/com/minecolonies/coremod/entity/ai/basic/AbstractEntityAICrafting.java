@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
@@ -277,7 +278,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
     {
         final int inProgressCount = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
         final int countPerIteration = currentRecipeStorage.getPrimaryOutput().getCount();
-        final int progressOpsCount = inProgressCount / countPerIteration;
+        final int progressOpsCount = inProgressCount / Math.max(countPerIteration, 1);
 
         final List<ItemStorage> input = storage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
@@ -296,7 +297,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             }
             else
             {
-                remaining = inputStorage.getAmount() * job.getMaxCraftingCount();
+                remaining = inputStorage.getAmount() * Math.max(job.getMaxCraftingCount(), 1);
             }
 
             if (invCount <= 0 || invCount + ((job.getCraftCounter() + progressOpsCount) * inputStorage.getAmount())

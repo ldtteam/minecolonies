@@ -1,0 +1,656 @@
+{
+    "name": "minecolonies:recipes/trip5",
+    "pools": [
+        {
+            "name": "blocks",
+            "rolls": {
+                "type": "uniform",
+                "min": 3,
+                "max": 10
+            },
+            "bonus_rolls": 0.3,
+            "entries": [
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 1,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 20,
+                    "name": "minecraft:netherrack",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 5,
+                                "max": 25
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 1,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 10,
+                    "name": "minecraft:soul_sand",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 7
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "item",
+                    "weight": 8,
+                    "name": "minecraft:soul_soil",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 5
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 4,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:basalt",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 3
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 4,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:blackstone",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 3
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 1,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 10,
+                    "name": "minecraft:gravel",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 10
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:glowstone_dust",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 4,
+                                "max": 8
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 3,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:nether_gold_ore",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 2
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 1,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 15,
+                    "name": "minecraft:quartz",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 12
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : 5
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 1,
+                    "name": "minecraft:ancient_debris",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 2
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 3,
+                    "name": "minecraft:nether_wart",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 2
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 10,
+                    "name": "minecraft:brown_mushroom",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 2
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 10,
+                    "name": "minecraft:red_mushroom",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 2
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:crimson_nylium",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 3,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:warped_nylium",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 10,
+                    "name": "minecraft:crimson_fungus",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 0,
+                                "max": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 3,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 10,
+                    "name": "minecraft:warped_fungus",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 0,
+                                "max": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 3,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:warped_stem",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 3
+                            }
+                        }
+                    ]
+                },
+                {
+                    "conditions" : [
+                        {
+                            "condition": "entity_scores",
+                            "entity": "this",
+                            "scores": 
+                                {
+                                    "HutLevel" : {
+                                        "min" : 2,
+                                        "max" : 5
+                                    }
+                                }
+                        }
+                    ],
+                    "type": "item",
+                    "weight": 5,
+                    "name": "minecraft:crimson_stem",
+                    "functions": [
+                        {
+                            "function": "set_count",
+                            "count":{
+                                "min": 1,
+                                "max": 3
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name" : "mobs",
+            "rolls": {
+                "type": "uniform",
+                "min": 1,
+                "max": 6
+            },
+            "bonus_rolls" : 0.1,
+            "entries": [
+                {
+                    "type": "group",
+                    "weight": 55,
+                    "quality": -0.1,
+                    "children" : [
+                        {
+                            "type": "loot_table",
+                            "name": "minecraft:entities/zombified_piglin"
+                        },
+                        {
+                            "type": "item",
+                            "name": "minecolonies:adventure_token",
+                            "functions" :
+                            [
+                                {
+                                    "function": "set_nbt",
+                                    "tag" : "{\"damage-done\": 5, \"entity-type\": \"minecraft:zombified_piglin\", \"xp-dropped\":5}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "weight": 3,
+                    "quality": 0.1,
+                    "children": [
+                        {
+                            "type": "loot_table",
+                            "name": "minecraft:entities/magma_cube"
+                        },
+                        {
+                            "type": "item",
+                            "name": "minecolonies:adventure_token",
+                            "functions" :
+                            [
+                                {
+                                    "function": "set_nbt",
+                                    "tag" : "{\"damage-done\": 3, \"entity-type\": \"minecraft:magma_cube\", \"xp-dropped\":4}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "weight": 5,
+                    "quality": -0.015,
+                    "children" : [
+                        {
+                            "type": "loot_table",
+                            "name": "minecraft:entities/hoglin"
+                        },
+                        {
+                            "type": "item",
+                            "name": "minecolonies:adventure_token",
+                            "functions" :
+                            [
+                                {
+                                    "function": "set_nbt",
+                                    "tag" : "{\"damage-done\": 3, \"entity-type\": \"minecraft:hoglin\", \"xp-dropped\":5}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "weight": 3,
+                    "quality": -0.03,
+                    "children":[
+                        {
+                            "type": "loot_table",
+                            "name": "minecraft:entities/ghast"
+                        },
+                        {
+                            "type": "item",
+                            "name": "minecolonies:adventure_token",
+                            "functions" :
+                            [
+                                {
+                                    "function": "set_nbt",
+                                    "tag" : "{\"damage-done\": 12, \"entity-type\": \"minecraft:ghast\", \"xp-dropped\":5}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "weight": 3,
+                    "quality": -0.03,
+                    "children":[
+                        {
+                            "type": "loot_table",
+                            "name": "minecraft:entities/enderman"
+                        },
+                        {
+                            "type": "item",
+                            "name": "minecolonies:adventure_token",
+                            "functions" :
+                            [
+                                {
+                                    "function": "set_nbt",
+                                    "tag" : "{\"damage-done\": 7, \"entity-type\": \"minecraft:enderman\", \"xp-dropped\":5}"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "weight": 1,
+                    "quality": 0.1,
+                    "children": [
+                        {
+                            "type": "loot_table",
+                            "name": "minecraft:entities/blaze"
+                        },
+                        {
+                            "type": "item",
+                            "name": "minecolonies:adventure_token",
+                            "functions" :
+                            [
+                                {
+                                    "function": "set_nbt",
+                                    "tag" : "{\"damage-done\": 5, \"entity-type\": \"minecraft:blaze\", \"xp-dropped\":10}"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -15,6 +15,7 @@ public enum BipedModelType implements ISimpleModelType
     // Lumberjack: 4 male, 1 female
     LUMBERJACK("lumberjack", 1),
     FARMER("farmer", 1),
+    NETHER_WORKER("netherworker", 1),
     FISHERMAN("fisherman", 1),
     UNDERTAKER("undertaker", 1),
     ARCHER_GUARD("archer", 1),

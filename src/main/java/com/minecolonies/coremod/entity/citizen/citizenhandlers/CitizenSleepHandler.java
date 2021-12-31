@@ -226,6 +226,11 @@ public class CitizenSleepHandler implements ICitizenSleepHandler
 
         int additionalDist = 0;
 
+        if(citizen.isInvisible())
+        {
+            return false;
+        }
+
         // Additional distance for miners
         if (citizen.getCitizenData().getJob() instanceof JobMiner && citizen.getCitizenData().getWorkBuilding().getPosition().getY() - 20 > citizenPos.getY())
         {

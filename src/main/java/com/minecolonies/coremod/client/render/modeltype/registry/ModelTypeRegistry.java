@@ -51,6 +51,7 @@ public class ModelTypeRegistry implements IModelTypeRegistry
         register(BipedModelType.RABBIT_HERDER, new ModelEntityRabbitHerderMale(), new ModelEntityRabbitHerderFemale());
         register(BipedModelType.CONCRETE_MIXER, new ModelEntityConcreteMixerMale(), new ModelEntityConcreteMixerFemale());
         register(BipedModelType.BEEKEEPER, new ModelEntityBeekeeperMale(), new ModelEntityBeekeeperFemale());
+        register(BipedModelType.NETHER_WORKER, new ModelEntityNetherworkerMale(), new ModelEntityNetherworkerFemale());
     }
 
     @Override

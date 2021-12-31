@@ -372,14 +372,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide && iColonyView != null)
         {
-            if (player.isShiftKeyDown())
+            if (player.isShiftKeyDown() && !isInvisible())
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
             }
             else
             {
                 final ICitizenDataView citizenDataView = getCitizenDataView();
-                if (citizenDataView != null)
+                if (citizenDataView != null && !isInvisible())
                 {
                     MineColonies.proxy.showCitizenWindow(citizenDataView);
                 }
@@ -512,7 +512,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         final ItemStack hat = getItemBySlot(EquipmentSlotType.HEAD);
         if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
               && MineColonies.getConfig().getServer().holidayFeatures.get()
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
+              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent)
+              && !(getCitizenJobHandler().getColonyJob() instanceof JobNetherWorker))
         {
             if (hat.isEmpty())
             {

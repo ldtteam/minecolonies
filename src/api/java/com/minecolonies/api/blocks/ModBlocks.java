@@ -65,6 +65,7 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBeekeeper;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutMysticalSite;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGraveyard;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutNetherWorker;
 
     /**
      * Utility blocks.
@@ -139,6 +140,7 @@ public final class ModBlocks
           blockHutMysticalSite,
           blockHutFlorist,
           blockPostBox,
-          blockHutGraveyard};
+          blockHutGraveyard,
+          blockHutNetherWorker};
     }
 }

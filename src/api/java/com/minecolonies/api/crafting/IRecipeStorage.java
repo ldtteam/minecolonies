@@ -60,7 +60,7 @@ public interface IRecipeStorage
     Block getIntermediate();
 
     /**
-     * Method to check if with the help of inventories this recipe can be fullfilled.
+     * Method to check if with the help of inventories this recipe can be fulfilled.
      * Also check if the inventory has enough to fulfill the existing requirements.
      *
      * @param qty         the quantity to craft.
@@ -71,7 +71,7 @@ public interface IRecipeStorage
     boolean canFullFillRecipe(final int qty, final Map<ItemStorage, Integer> existingRequirements, @NotNull final IItemHandler... inventories);
 
     /**
-     * Method to check if with the help of inventories this recipe can be fullfilled.
+     * Method to check if with the help of inventories this recipe can be fulfilled.
      * Also check if the inventory has enough to fulfill the existing requirements.
      *
      * @param qty         the quantity to craft.
@@ -96,44 +96,44 @@ public interface IRecipeStorage
      * Check for space, remove items, and insert crafted items.
      *
      * @param handlers the handlers to use.
-     * @return true if succesful.
+     * @return true if successful.
      */
     default boolean fullfillRecipe(final LootContext context, final List<IItemHandler> handlers)
     {
-        return fullfillRecipeAndCopy(context, handlers) != null;
+        return fullfillRecipeAndCopy(context, handlers, true) != null;
     }
 
     /**
      * Check for space, remove items, and insert crafted items.
      *
      * @param handlers the handlers to use.
-     * @return true if succesful.
+     * @return true if successful.
      */
     default boolean fullfillRecipe(final World world, final List<IItemHandler> handlers)
     {
-        return fullfillRecipeAndCopy(world, handlers) != null;
+        return fullfillRecipeAndCopy(world, handlers, true) != null;
     }
 
     /**
-     * Check for space, remove items, and insert crafted items, returning a copy of the crafted items.
+     * Check for space, remove items, and possibly insert crafted items, returning a copy of the crafted items.
      *
      * @param context loot context
      * @param handlers the handlers to use
      * @return copy of the crafted items if successful, null on failure
      */
     @Nullable
-    List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers);
+    List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers, boolean doInsert);
 
     /**
      * Check for space, remove items, and insert crafted items.
      *
      * @param handlers the handlers to use.
-     * @return true if succesful.
+     * @return true if successful.
      */
     @Nullable
-    default List<ItemStack> fullfillRecipeAndCopy(final World world, final List<IItemHandler> handlers)
+    default List<ItemStack> fullfillRecipeAndCopy(final World world, final List<IItemHandler> handlers, boolean doInsert)
     {
-        return fullfillRecipeAndCopy((new LootContext.Builder((ServerWorld) world)).create(LootParameterSets.EMPTY), handlers);
+        return fullfillRecipeAndCopy((new LootContext.Builder((ServerWorld) world)).create(LootParameterSets.EMPTY), handlers, doInsert);
     }
 
     /**
@@ -150,14 +150,14 @@ public interface IRecipeStorage
     List<ItemStack> getAlternateOutputs();
 
     /**
-     * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
+     * Get the classic version of this recipe with GetPrimaryOutput targeted correctly from the chosen alternate
      * @param requiredOutput Which output wanted
      * @return the RecipeStorage that is "right" for that output
      */
     RecipeStorage getClassicForMultiOutput(ItemStack requiredOutput);
 
     /**
-     * Get the classic version of this recipe with GetPrimaryOutput targetted correctly from the chosen alternate
+     * Get the classic version of this recipe with GetPrimaryOutput targeted correctly from the chosen alternate
      * @param stackPredicate Predicate to select the right stack
      * @return the RecipeStorage that is "right" for that output
      */

@@ -52,6 +52,7 @@ public final class ModBuildings
     public static final String BEEKEEPER_ID      = "beekeeper";
     public static final String MYSTICAL_SITE_ID  = "mysticalsite";
     public static final String GRAVEYARD_ID      = "graveyard";
+    public static final String NETHERWORKER_ID   = "netherworker";
 
     public static BuildingEntry archery;
     public static BuildingEntry bakery;
@@ -100,6 +101,7 @@ public final class ModBuildings
     public static BuildingEntry beekeeper;
     public static BuildingEntry mysticalSite;
     public static BuildingEntry graveyard;
+    public static BuildingEntry netherWorker;
 
     private ModBuildings()
     {

@@ -1,0 +1,18 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/morescrolls",
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.technology.opennether.subtitle",
+  "icon": "minecolonies:blockhutnetherworker",
+  "requirements": [
+    {
+      "item": "minecraft:netherrack",
+      "quantity": 64
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutnetherworker": 1
+    }
+  ]
+}

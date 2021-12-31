@@ -32,6 +32,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SEntityEquipmentPacket;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -173,6 +174,19 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public boolean isControlledByLocalInstance()
     {
         return false;
+    }
+
+    /**
+     * Calculate adjusted damage. 
+     * This doesn't actually damage armor, for non-player entities.
+     * @param source
+     * @param damage
+     * @return
+     */
+    public float calculateDamageAfterAbsorbs(DamageSource source, float damage)
+    {
+        float newDamage = this.getDamageAfterArmorAbsorb(source, damage);
+        return this.getDamageAfterMagicAbsorb(source, newDamage);
     }
 
     @NotNull

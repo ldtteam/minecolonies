@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.item.ItemStack;
@@ -18,9 +17,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_COMPLAINS_DAYS;
+import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;;
+
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 {
-
     /**
      * The {@link JobEntry} for this job.
      *
@@ -234,6 +235,23 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     default int getInactivityLimit()
     {
         return -1;
+    }
+
+    /**
+     * Get the days before complaining or demanding solution for being idle
+     * @param isDemand true if looking for the demand time
+     * @return number of days
+     */
+    default int getIdleSeverity(boolean isDemand)
+    {
+        if(isDemand)
+        {
+            return IDLE_AT_JOB_DEMANDS_DAYS;
+        }
+        else
+        {
+            return IDLE_AT_JOB_COMPLAINS_DAYS;
+        }
     }
 
     /**
