@@ -146,7 +146,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.smeltery.getBuildingBlock()).setTranslatedName("Unlocks Smeltery"));
         effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
-        effects.add(new ResearchEffect(ModBuildings.netherWorker.getBuildingBlock()).setTranslatedName("Unlocks Nether Farm"));
+        effects.add(new ResearchEffect(ModBuildings.netherWorker.getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
 
         // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
         // Assigning them for now to handle text cleanly, and to allow researches with both recipe and non-recipe effects.
