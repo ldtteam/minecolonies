@@ -9,9 +9,10 @@ import journeymap.client.api.IClientAPI;
 import journeymap.client.api.display.Context;
 import journeymap.client.api.display.DisplayType;
 import journeymap.client.api.display.PolygonOverlay;
-import journeymap.client.api.model.MapPolygon;
+import journeymap.client.api.model.MapPolygonWithHoles;
 import journeymap.client.api.model.ShapeProperties;
 import journeymap.client.api.model.TextProperties;
+import journeymap.client.api.util.PolygonHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
@@ -148,12 +149,12 @@ public class ColonyBorderMapping
             this.name = String.format("colony_%s_%d", dimension.location(), id);
             this.chunks = new HashSet<>();
 
+            this.fill = new ShapeProperties()
+                    .setStrokeWidth(4).setStrokeColor(0x00ff00).setStrokeOpacity(.7f)
+                    .setFillColor(0x00ff00).setFillOpacity(.2f);
             this.stroke = new ShapeProperties()
                     .setStrokeWidth(4).setStrokeColor(0x00ff00).setStrokeOpacity(.7f)
-                    .setFillColor(0xff00ff).setFillOpacity(0);
-            this.fill = new ShapeProperties()
-                    .setStrokeWidth(2).setStrokeColor(0xff00ff).setStrokeOpacity(0)
-                    .setFillColor(0x00ff00).setFillOpacity(.2f);
+                    .setFillColor(0x00ff00).setFillOpacity(0);
 
             this.text = new TextProperties()
                     .setBackgroundColor(0x000022)
@@ -180,7 +181,7 @@ public class ColonyBorderMapping
             {
                 //noinspection ConstantConditions
                 final int colour = colony.getTeamColonyColor().getColor();
-                this.fill.setFillColor(colour);
+                this.fill.setFillColor(colour).setStrokeColor(colour);
                 this.stroke.setStrokeColor(colour);
                 this.text.setColor(colour);
                 //noinspection ConstantConditions
@@ -214,39 +215,26 @@ public class ColonyBorderMapping
 
                 if (!this.chunks.isEmpty() && enabled && jmap.playerAccepts(MOD_ID, DisplayType.Polygon))
                 {
-                    final List<PolygonUtils.PolygonWithHoles> polygons = PolygonUtils.createPolygonFromArea(PolygonUtils.createChunksArea(this.chunks), 256);
+                    final List<MapPolygonWithHoles> polygons = PolygonHelper.createChunksPolygon(this.chunks, 256);
 
                     int index = 0;
-                    for (final PolygonUtils.PolygonWithHoles polygon : polygons)
+                    for (final MapPolygonWithHoles polygon : polygons)
                     {
-                        // unfortunately JourneyMap can't actually handle concave polygons with holes at present,
-                        // so we need to break them up for it...
-                        final List<MapPolygon> triangles = PolygonUtils.triangulate(polygon);
-                        for (final MapPolygon triangle : triangles)
-                        {
-                            final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, this.fill, triangle);
-                            overlay.setOverlayGroupName(this.name)
-                                    .setActiveUIs(EnumSet.of(Context.UI.Fullscreen, Context.UI.Webmap));
-                            this.overlays.add(overlay);
-                            showOverlay(jmap, overlay);
-                        }
-
-                        // also add a stroked border, since we can't do that with the triangles
-                        final PolygonOverlay border = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, this.stroke, polygon.hull);
-                        border.setOverlayGroupName(this.name)
+                        // filled shape for the fullscreen map
+                        final PolygonOverlay overlay = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, this.fill, polygon.hull, polygon.holes);
+                        overlay.setOverlayGroupName(this.name)
+                                .setActiveUIs(EnumSet.of(Context.UI.Fullscreen, Context.UI.Webmap))
                                 .setTextProperties(this.text)
                                 .setLabel(this.colonyName);
-                        this.borders.add(border);
-                        showOverlay(jmap, border);
+                        this.borders.add(overlay);
+                        showOverlay(jmap, overlay);
 
-                        // also add borders around the holes
-                        for (final MapPolygon hole : polygon.holes)
-                        {
-                            final PolygonOverlay border2 = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, this.stroke, hole);
-                            border2.setOverlayGroupName(this.name);
-                            this.overlays.add(border2);     // not "borders", because we don't want text
-                            showOverlay(jmap, border2);
-                        }
+                        // just the hollow border for the minimap
+                        final PolygonOverlay mini = new PolygonOverlay(MOD_ID, String.format("%s_%s", this.name, ++index), this.dimension, this.stroke, polygon.hull, polygon.holes);
+                        mini.setOverlayGroupName(this.name)
+                                .setActiveUIs(EnumSet.of(Context.UI.Minimap));
+                        this.overlays.add(mini);
+                        showOverlay(jmap, mini);
                     }
                 }
             }

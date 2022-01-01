@@ -29,7 +29,7 @@ dependencies {
     implementation fg.deobf("mezz.jei:jei-${project.jei_mcversion}:${project.jei_version}")
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
-    //runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}")
-    // Journeymap doesn't have a maven (other than cursemaven); so if you want to use it in dev
-    // then drop the regular jar into the "libs" dir and uncomment the above (editing version if needed)
+    if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
+        runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}")
+    }
 }
