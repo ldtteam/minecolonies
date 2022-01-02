@@ -1330,7 +1330,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
 
-        if (!level.isClientSide)
+        //If we are in simulation, don't cap damage
+        if(citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.msgId == "nether")
+        {
+            damageInc = damage;
+        }
+
+        if (!level.isClientSide && !this.isInvisible())
         {
             performMoveAway(sourceEntity);
         }
