@@ -137,12 +137,6 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
         }
     }
 
-    @Override
-    public boolean canAIBeInterrupted()
-    {
-        return super.canAIBeInterrupted() && !citizenInNether;
-    }
-
     /**
      * Mark the worker as in the nether or not.
      * @param away true if in the nether
