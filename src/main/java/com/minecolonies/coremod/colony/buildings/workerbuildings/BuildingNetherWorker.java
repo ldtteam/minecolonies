@@ -189,15 +189,20 @@ public class BuildingNetherWorker extends AbstractBuilding
 
         // Check for materials needed to go to the Nether: 
         IRecipeStorage rs = getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
-        if(rs != null && rs.getInput().contains(new ItemStorage(stack)) && (localAlreadyKept.stream().filter(storage -> storage.equals(new ItemStorage(stack)))).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory)
+        if(rs != null)
         {
             final ItemStorage kept = new ItemStorage(stack);
-            if (localAlreadyKept.contains(kept))
+            boolean containsItem = rs.getInput().contains(kept);
+            int keptCount = localAlreadyKept.stream().filter(storage -> storage.equals(kept)).mapToInt(ItemStorage::getAmount).sum();
+            if(containsItem  && (keptCount < STACKSIZE || !inventory))
             {
-                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
+                if (localAlreadyKept.contains(kept))
+                {
+                    kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
+                }
+                localAlreadyKept.add(kept);
+                return 0;
             }
-            localAlreadyKept.add(kept);
-            return 0;
         }
 
         return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
@@ -212,7 +217,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     public boolean isAllowedFood(ItemStack stack)
     {
         ItemListModule listModule = this.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
-        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack));
+        return ISFOOD.test(stack) && !listModule.isItemInList(new ItemStorage(stack)) && !ItemStackUtils.ISCOOKABLE.test(stack);
     }
 
     /**
