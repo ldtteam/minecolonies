@@ -2,13 +2,13 @@ package com.minecolonies.coremod.entity.ai.citizen.netherworker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker;
 import com.minecolonies.coremod.colony.jobs.JobNetherWorker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -20,11 +20,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PortalSize;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.AirItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.FlintAndSteelItem;
+import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.nbt.CompoundNBT;
@@ -39,20 +42,32 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.items.IItemHandler;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+import com.ldtteam.blockout.Log;
+import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
+import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
+import com.minecolonies.api.colony.requestsystem.requestable.StackList;
+import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker.*;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
 {
@@ -92,7 +107,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private static final float SECONDARY_DAMAGE_REDUCTION = .005f; 
 
+    /**
+     * Virtual slots for equipment, so we can track what is "equipped" without having it visible when
+     * the citizen is invisible.
+     */
     private final Map<EquipmentSlotType, ItemStack> virtualEquipmentSlots = new HashMap<>();
+
+    /**
+     * Edibles that the worker will attempt to eat while in the nether (unfiltered)
+     */
+    final List<ItemStack> netherEdible = IColonyManager.getInstance().getCompatibilityManager().getEdibles().stream().map(item -> item.getItemStack()).collect(Collectors.toList());
 
 
     /**
@@ -133,6 +157,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     }
 
     @Override
+    public boolean canBeInterrupted()
+    {
+        return !worker.isInvisible();
+    }
+
+    @Override
     protected IAIState decide()
     {
         if(job.isInNether())
@@ -142,6 +172,10 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 worker.setInvisible(true);
             }
             return NETHER_AWAY;
+        }
+        if (worker.isInvisible())
+        {
+            worker.setInvisible(false);
         }
 
         IAIState crafterState = super.decide();
@@ -165,6 +199,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             }
         }
 
+        // Make sure we have a stash of some food 
+        checkAndRequestFood(16);
+
         // Get other adventuring supplies. These are required. 
         // Done this way to get all the requests in parallel
         boolean haveAxe = checkForToolOrWeapon(ToolType.AXE);
@@ -185,6 +222,21 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             if(getOwnBuilding().canDoTrip())
             {
                 worker.getCitizenData().setIdleAtJob(true);
+            }
+
+            final BlockPos portal = getOwnBuilding().getPortalLocation();
+            if(portal != null && currentRecipeStorage != null)
+            {
+                final BlockState block = world.getBlockState(portal);
+                if (block.is(Blocks.NETHER_PORTAL))
+                {
+                    return NETHER_CLOSEPORTAL;
+                }
+            }
+
+            if (worker.getCitizenData().getSaturation() < AVERAGE_SATURATION)
+            {
+                Log.getLogger().info("Worker needs food....");
             }
             return getState();
         }
@@ -304,50 +356,115 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     CompoundNBT tag = currStack.getTag();
                     if(tag.contains(TAG_DAMAGE))
                     {
-                        
+                        int slotOfSwordStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), 
+                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof SwordItem );
+                        DamageSource source = new DamageSource("nether");
+
+                        //Set up the mob to do battle with
                         EntityType<?> mobType = EntityType.ZOMBIE;
                         if(tag.contains(TAG_ENTITY_TYPE))
                         {
                             mobType = EntityType.byString(tag.getString(TAG_ENTITY_TYPE)).orElse(EntityType.ZOMBIE);
                         }
                         LivingEntity mob = (LivingEntity) mobType.create(world);
+                        float mobHealth = mob.getHealth();
                         
-                        float damage = tag.getFloat(TAG_DAMAGE);
-                        
-                        damage -= damage * (getSecondarySkillLevel() * SECONDARY_DAMAGE_REDUCTION);
+                        // Calculate how much damage the mob will do if it lands a hit (Before armor)
+                        float incomingDamage = tag.getFloat(TAG_DAMAGE);
+                        incomingDamage -= incomingDamage * (getSecondarySkillLevel() * SECONDARY_DAMAGE_REDUCTION);
 
-                        int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), 
-                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof SwordItem );
-                        
-                        if(slotOfStack != -1)
-                        {
-                            int swordDamage = (int) Math.floor(mob.getHealth() / 3f);
-                            worker.getInventoryCitizen().damageInventoryItem(slotOfStack, swordDamage, worker, entity -> {});
-                        } else {
-                            //Double the damage, we broke our sword earlier so are punching
-                            damage *= 2;
-                        }
-
-                        DamageSource source = new DamageSource("nether");
-
+                        Log.getLogger().info("Starting battle with: " + mob.getName().getString() + "(" + mob.getHealth() + ") with a health of: " + worker.getHealth());
                         setEquipSlot(EquipmentSlotType.HEAD, true);
                         setEquipSlot(EquipmentSlotType.CHEST, true);
                         setEquipSlot(EquipmentSlotType.LEGS, true);
                         setEquipSlot(EquipmentSlotType.FEET, true);
                         
-                        // Clear anti-hurt timers.
-                        worker.hurtTime = 0;
-                        worker.invulnerableTime = 0;
-                        if(!worker.hurt(source, damage))
+                        for(int hit = 0; mobHealth > 0 && ! worker.isDeadOrDying(); hit++)
                         {
-                            //Shouldn't get here, but if we do we can force the damage. 
-                            damage = worker.calculateDamageAfterAbsorbs(source, damage);
-                            worker.setHealth(worker.getHealth() - damage);
+                            // Clear anti-hurt timers.
+                            worker.hurtTime = 0;
+                            worker.invulnerableTime = 0;
+                            float damageToDo = BASE_PHYSICAL_DAMAGE;
+
+                            // Figure out who gets to hit who this round
+                            boolean doDamage = worker.getRandom().nextBoolean();
+                            boolean takeDamage = worker.getRandom().nextBoolean();
+
+                            // Calculate if the sword still exists, how much damage will be done to the mob
+                            if(slotOfSwordStack != -1)
+                            {
+                                final ItemStack sword = worker.getInventoryCitizen().getStackInSlot(slotOfSwordStack);
+                                if(!sword.isEmpty())
+                                {
+                                    if(sword.getItem() instanceof SwordItem)
+                                    {
+                                        damageToDo += ((SwordItem) sword.getItem()).getDamage();
+                                    }
+                                    else
+                                    {
+                                        damageToDo += TinkersToolHelper.getDamage(sword);
+                                    }
+                                    damageToDo += EnchantmentHelper.getDamageBonus(sword, mob.getMobType()) / 2.5;
+                                    if(doDamage)
+                                    {
+                                    sword.hurtAndBreak((int) damageToDo, mob, entity -> {});
+                                    }
+                                }
+                            }
+
+                            // Hit the mob
+                            if(doDamage)
+                            {
+                                mobHealth -= damageToDo;
+                                Log.getLogger().info("Round #" + (hit + 1) + " hit for " + damageToDo + " damage");
+                            }
+                            else
+                            {
+                                Log.getLogger().info("Round #" + (hit + 1) + " was a swing and miss");
+                            }
+
+                            // Get hit by the mob
+                            if (takeDamage)
+                            {
+                                if(!worker.hurt(source, incomingDamage))
+                                {
+                                    //Shouldn't get here, but if we do we can force the damage. 
+                                    Log.getLogger().info("Forcing damage");
+                                    incomingDamage = worker.calculateDamageAfterAbsorbs(source, incomingDamage);
+                                    worker.setHealth(worker.getHealth() - incomingDamage);
+                                }
+                                Log.getLogger().info(mob.getName().getString() + " hit for " + incomingDamage + " damage before armor, current health: " + worker.getHealth());
+                            }
+                            else
+                            {
+                                Log.getLogger().info(mob.getName().getString() + "'s attack was dodged");
+                            }
+                            // Every other round, heal up if possible, to compensate for all of this happening in a single tick. 
+                            if(hit % 2 == 0)
+                            {
+                                float healAmount = checkHeal(worker);
+                                final float saturationFactor = 0.25f;
+                                if(healAmount > 0)
+                                {
+                                    worker.heal(healAmount);
+                                    worker.getCitizenData().decreaseSaturation(healAmount * saturationFactor);
+                                    Log.getLogger().info("Healed for: " + healAmount + " current health: " + worker.getHealth());
+                                }
+                            }
+                            else
+                            {
+                                if(worker.getCitizenData().getSaturation() < AVERAGE_SATURATION)
+                                {
+                                    attemptToEat();
+                                }
+                            }
                         }
                         setEquipSlot(EquipmentSlotType.HEAD, false);
                         setEquipSlot(EquipmentSlotType.CHEST, false);
                         setEquipSlot(EquipmentSlotType.LEGS, false);
                         setEquipSlot(EquipmentSlotType.FEET, false);
+
+                        Log.getLogger().info("Battle complete! final health: " + worker.getHealth());
 
                         if (worker.isDeadOrDying())
                         {
@@ -443,6 +560,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if(worker.isInvisible())
         {
             worker.setInvisible(false);
+            return getState();
         }
 
         if(walkToBuilding())
@@ -553,25 +671,117 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     /**
      * Check to see if we have the item being requested, and generate request if not. 
-     * @param item
-     * @param count
-     * @return
+     * @param item to check
+     * @param count count needed
+     * @return true if the item is in the inventory or building
      */
     protected boolean checkAndRequestMaterials(ItemStack item, int count)
     {
         final Predicate<ItemStack> isItem = checkItem -> !checkItem.isEmpty() && checkItem.getItem() == item.getItem();
         final int itemsInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), isItem);
-        if (itemsInInv <= 0)
+        if (itemsInInv < count)
         {
-            final int numberOfBooksInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), isItem);
-            if (numberOfBooksInBuilding > 0)
+            final int itemsInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), isItem);
+            if (itemsInInv + itemsInBuilding >= count)
             {
                 return true;
             }
-            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(item.getItem(), count));
+            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(item.getItem(), count - (itemsInInv + itemsInBuilding)), count, count - (itemsInInv + itemsInBuilding));
             return false;
         }
         return true;
+    }
+
+    /**
+     * Put together the valid list of things to request for food
+     */
+    private List<ItemStack> getEdiblesList()
+    {
+        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+        netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
+        return netherEdible;
+    }
+
+    /**
+     * Check if we need to request food, and do so if necessary.
+     */
+    protected void checkAndRequestFood(int itemCount)
+    {
+        List<ItemStack> edibleList = getEdiblesList();
+        final IDeliverable edible = new StackList(edibleList, "Edible Food", itemCount);
+
+        List<ItemStack> foodInInv = InventoryUtils.getContainedFromItemHandler(edibleList, worker.getItemHandlerCitizen());
+
+        double availSaturation = 0;
+        for(ItemStack item : foodInInv)
+        {
+            // Figure out what the total saturation value of the stack is
+            final Food itemFood = item.getItem().getFoodProperties();
+            final double satIncrease = itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION)) * item.getCount();
+
+            // update the running total
+            availSaturation +=  satIncrease / 2.0;
+        }
+
+        if(availSaturation >= AVERAGE_SATURATION)
+        {
+            return;
+        }
+
+        if(InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> edible.matches(item)) < itemCount)
+        {
+            if (edible != null
+                    && !getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
+                    && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
+            {
+                Log.getLogger().info("Requesting food, with available saturation: " + availSaturation);
+                getOwnBuilding().createRequest(edible, true);
+            }
+        }
+        else
+        {
+            InventoryUtils.transferFoodUpToSaturation((IBuilding) getOwnBuilding(), worker.getInventoryCitizen(), AVERAGE_SATURATION - (int) availSaturation, stack -> edible.matches(stack));
+        }
+    }
+
+    /**
+     * Attempt to eat to restore some saturation
+     */
+    protected void attemptToEat()
+    {
+        final IDeliverable edible = new StackList(getEdiblesList(), "Edible Food", 1);
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, stack -> edible.matches(stack));
+        final ICitizenData citizenData = worker.getCitizenData();
+        if (slot > -1)
+        {
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+            final Food itemFood = stack.getItem().getFoodProperties();
+            final double satIncrease =
+            itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
+  
+            citizenData.increaseSaturation(satIncrease / 2.0);
+            citizenData.getInventory().extractItem(slot, 1, false);
+    
+            final ItemStack containerItem = stack.getContainerItem();
+
+            if (containerItem != null && !(containerItem.getItem() instanceof AirItem))
+            {
+                if (citizenData.getInventory().isFull())
+                {
+                    InventoryUtils.spawnItemStack(
+                        worker.level,
+                        worker.getX(),
+                        worker.getY(),
+                        worker.getZ(),
+                        containerItem
+                    );
+                }
+                else
+                {
+                    InventoryUtils.addItemStackToItemHandler(worker.getItemHandlerCitizen(), containerItem);
+                }
+            }
+          }
     }
 
     /**
@@ -671,5 +881,39 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 }
             }
         }
+    }
+
+    /**
+     * Checks the citizens health status and heals the citizen if necessary.
+     */
+    private float checkHeal(AbstractEntityCitizen citizen)
+    {
+        ICitizenData citizenData = citizen.getCitizenData();
+        double healAmount = 0D;
+        if (citizen.getHealth() < citizen.getMaxHealth())
+        {
+            final double limitDecrease = citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATLIMIT);
+
+            if (citizenData.getSaturation() >= FULL_SATURATION + limitDecrease)
+            {
+                healAmount = 2 * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
+            }
+            else if (citizenData.getSaturation() < LOW_SATURATION)
+            {
+                return (float) healAmount;
+            }
+            else
+            {
+                healAmount = 1 * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(REGENERATION));
+            }
+
+            citizen.heal((float) healAmount);
+            if (healAmount > 0.1D)
+            {
+                citizenData.markDirty();
+            }
+        }
+
+        return (float) healAmount;
     }
 }
