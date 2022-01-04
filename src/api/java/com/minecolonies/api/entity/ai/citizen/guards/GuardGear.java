@@ -6,6 +6,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
+import net.minecraft.item.SwordItem;
 import net.minecraft.util.Tuple;
 
 import java.util.function.Predicate;
@@ -151,6 +152,7 @@ public class GuardGear implements Predicate<ItemStack>
         return
           (ItemStackUtils.hasToolLevel(stack, itemNeeded, minArmorLevel, maxArmorLevel) && stack.getItem() instanceof ArmorItem
              && ((ArmorItem) stack.getItem()).getSlot() == getType())
+            || (stack.getItem() instanceof SwordItem && getType() == EquipmentSlotType.MAINHAND)
             || (stack.getItem() instanceof ShieldItem && getType() == EquipmentSlotType.OFFHAND);
     }
 }
