@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:magenta_banner"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:copy_name",
+          "source": "block_entity"
+        },
+        {
+          "function": "minecraft:copy_nbt",
+          "source": "block_entity",
+          "ops": [
+            {
+              "source": "Patterns",
+              "target": "BlockEntityTag.Patterns",
+              "op": "replace"
+            },
+            {
+              "source": "id",
+              "target": "BlockEntityTag.id",
+              "op": "replace"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
