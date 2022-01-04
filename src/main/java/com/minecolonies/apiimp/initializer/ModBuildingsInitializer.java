@@ -615,7 +615,9 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.netherworker, Skill.Adaptability, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingNetherWorker.CraftingModule(ModJobs.netherworker), () -> CraftingModuleView::new)
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                    .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
+                                                                        .with(BuildingNetherWorker.CLOSE_PORTAL, new BoolSetting(true))
+                                                                        , () -> SettingsModuleView::new)
                                     .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingNetherWorker::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
                                         (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)

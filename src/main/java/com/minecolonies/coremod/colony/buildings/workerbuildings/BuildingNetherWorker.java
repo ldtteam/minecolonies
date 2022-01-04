@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -11,6 +12,8 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
@@ -18,6 +21,7 @@ import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +38,13 @@ import java.util.Map;
 
 public class BuildingNetherWorker extends AbstractBuilding
 {
+
+    /**
+     * Settings
+     */
+    public static final ISettingKey<BoolSetting>       CLOSE_PORTAL      =
+    new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
+
     /**
      * 
      * Constant name for the Netherworker building
@@ -119,6 +130,14 @@ public class BuildingNetherWorker extends AbstractBuilding
     public int getMaxBuildingLevel()
     {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
+    }
+
+    /**
+     * Should the portal be closed on return? 
+     */
+    public boolean shallClosePortalOnReturn()
+    {
+        return getSetting(CLOSE_PORTAL).getValue();
     }
 
     @Override

@@ -175,13 +175,13 @@
                     ],
                     "type": "item",
                     "weight": 5,
-                    "name": "minecraft:glowstone_dust",
+                    "name": "minecraft:glowstone",
                     "functions": [
                         {
                             "function": "set_count",
                             "count":{
-                                "min": 4,
-                                "max": 8
+                                "min": 2,
+                                "max": 4
                             }
                         }
                     ]
@@ -229,13 +229,13 @@
                     ],
                     "type": "item",
                     "weight": 15,
-                    "name": "minecraft:quartz",
+                    "name": "minecraft:nether_quartz_ore",
                     "functions": [
                         {
                             "function": "set_count",
                             "count":{
                                 "min": 1,
-                                "max": 12
+                                "max": 4
                             }
                         }
                     ]
@@ -524,10 +524,6 @@
                     "quality": -0.1,
                     "children" : [
                         {
-                            "type": "loot_table",
-                            "name": "minecraft:entities/zombified_piglin"
-                        },
-                        {
                             "type": "item",
                             "name": "minecolonies:adventure_token",
                             "functions" :
@@ -545,10 +541,6 @@
                     "weight": 3,
                     "quality": 0.1,
                     "children": [
-                        {
-                            "type": "loot_table",
-                            "name": "minecraft:entities/magma_cube"
-                        },
                         {
                             "type": "item",
                             "name": "minecolonies:adventure_token",
@@ -568,10 +560,6 @@
                     "quality": -0.015,
                     "children" : [
                         {
-                            "type": "loot_table",
-                            "name": "minecraft:entities/hoglin"
-                        },
-                        {
                             "type": "item",
                             "name": "minecolonies:adventure_token",
                             "functions" :
@@ -589,10 +577,6 @@
                     "weight": 3,
                     "quality": -0.03,
                     "children":[
-                        {
-                            "type": "loot_table",
-                            "name": "minecraft:entities/ghast"
-                        },
                         {
                             "type": "item",
                             "name": "minecolonies:adventure_token",
@@ -612,10 +596,6 @@
                     "quality": -0.03,
                     "children":[
                         {
-                            "type": "loot_table",
-                            "name": "minecraft:entities/enderman"
-                        },
-                        {
                             "type": "item",
                             "name": "minecolonies:adventure_token",
                             "functions" :
@@ -633,10 +613,6 @@
                     "weight": 1,
                     "quality": 0.1,
                     "children": [
-                        {
-                            "type": "loot_table",
-                            "name": "minecraft:entities/blaze"
-                        },
                         {
                             "type": "item",
                             "name": "minecolonies:adventure_token",
