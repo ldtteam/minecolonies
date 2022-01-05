@@ -46,8 +46,8 @@ public class JourneymapPlugin implements IClientPlugin
     {
         if (event.type.equals(ClientEvent.Type.MAPPING_STOPPED))
         {
-            ColonyBorderMapping.unload(this.jmap, event.level);
-            ColonyDeathpoints.unload(this.jmap, event.level);
+            ColonyBorderMapping.unload(this.jmap, event.dimension);
+            ColonyDeathpoints.unload(this.jmap, event.dimension);
         }
     }
 }
