@@ -323,7 +323,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 worker.setInvisible(true);
                 getOwnBuilding().recordTrip();
 
-                job.getCraftedResults().addAll(currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), false));
+                List<ItemStack> result = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), false);
+                if (result != null)
+                {
+                    job.getCraftedResults().addAll(result);
+                }
 
                 worker.getCitizenData().setIdleAtJob(false);
                 return NETHER_AWAY;
