@@ -125,7 +125,7 @@ public final class ModBuildingsInitializer
                                                                     .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
                                                                     .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
                                                                     .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
-                                                                    .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE)), () -> SettingsModuleView::new)
+                                                                    .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.DIRT)), () -> SettingsModuleView::new)
                                  .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.builder), () -> CraftingModuleView::new)
                                  .addBuildingModuleViewProducer(() -> WorkOrderListModuleView::new)
                                  .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
