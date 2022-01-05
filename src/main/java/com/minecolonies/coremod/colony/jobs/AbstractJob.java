@@ -260,12 +260,6 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     }
 
     @Override
-    public void onLevelUp()
-    {
-
-    }
-
-    @Override
     public ICitizenData getCitizen()
     {
         return citizen;

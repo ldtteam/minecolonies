@@ -18,13 +18,17 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.modules.*;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
+import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkAtHomeBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenSpawnedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -165,6 +169,7 @@ public class CitizenManager implements ICitizenManager
     @Override
     public void read(@NotNull final CompoundNBT compound)
     {
+        citizens.forEach((id, citizen) -> citizen.getEntity().ifPresent(Entity::remove));
         citizens.clear();
         //  Citizens before Buildings, because Buildings track the Citizens
         citizens.putAll(NBTUtils.streamCompound(compound.getList(TAG_CITIZENS, Constants.NBT.TAG_COMPOUND))

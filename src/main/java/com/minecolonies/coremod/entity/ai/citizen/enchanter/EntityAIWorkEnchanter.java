@@ -242,7 +242,6 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
 
                 //Decrement mana.
                 data.getCitizenSkillHandler().incrementLevel(Skill.Mana, -enchantmentLevel);
-                worker.getCitizenExperienceHandler().updateLevel();
                 incrementActionsDoneAndDecSaturation();
             }
         }
