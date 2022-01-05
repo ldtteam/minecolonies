@@ -308,6 +308,7 @@ public final class ModBuildingsInitializer
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
                                .addBuildingModuleProducer(() -> new SettingsModule()
+                                                                  .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
                                                                   .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE))
                                                                   .with(BuildingMiner.MAX_DEPTH, new IntSetting(-100)), () -> SettingsModuleView::new)
                                .addBuildingModuleViewProducer(() -> MinerGuardAssignModuleView::new)
