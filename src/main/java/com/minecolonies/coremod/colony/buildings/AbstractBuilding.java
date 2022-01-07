@@ -815,8 +815,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         stack.setTag(compoundNBT);
         if (InventoryUtils.addItemStackToProvider(player, stack))
         {
-            colony.getWorld().destroyBlock(this.getPosition(), false);
             this.destroy();
+            colony.getWorld().destroyBlock(this.getPosition(), false);
         }
         else
         {
