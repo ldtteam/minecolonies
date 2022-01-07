@@ -3,10 +3,25 @@ package com.minecolonies.coremod.compatibility.journeymap;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.event.ClientChunkUpdatedEvent;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
-import journeymap.client.api.IClientAPI;
+import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
+import journeymap.client.api.display.Context;
+import journeymap.client.api.event.forge.EntityRadarUpdateEvent;
+import journeymap.client.api.model.WrappedEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,16 +31,21 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Set;
 
+import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_JOB;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
 
 public class EventListener
 {
-    @NotNull
-    private final IClientAPI jmap;
+    private static final Style JOB_TOOLTIP = Style.EMPTY.withColor(ChatFormatting.YELLOW).withItalic(true);
 
-    public EventListener(@NotNull final IClientAPI jmap)
+    @NotNull
+    private final Journeymap jmap;
+
+    public EventListener(@NotNull final Journeymap jmap)
     {
         this.jmap = jmap;
 
@@ -37,7 +57,7 @@ public class EventListener
     {
         ColonyBorderMapping.clear();
         ColonyDeathpoints.clear();
-        this.jmap.removeAll(MOD_ID);
+        this.jmap.getApi().removeAll(MOD_ID);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
@@ -70,9 +90,87 @@ public class EventListener
         ColonyDeathpoints.updateGraves(this.jmap, colony, graves);
     }
 
+    @SubscribeEvent
+    public void onUpdateEntityRadar(@NotNull final EntityRadarUpdateEvent event)
+    {
+        final WrappedEntity wrapper = event.getWrappedEntity();
+        final LivingEntity entity = wrapper.getEntityLivingRef().get();
+
+        if (entity instanceof AbstractEntityCitizen)
+        {
+            final boolean isVisitor = entity instanceof VisitorCitizen;
+            BaseComponent jobName;
+
+            if (isVisitor)
+            {
+                if (!JourneymapOptions.getShowVisitors(this.jmap.getOptions()))
+                {
+                    wrapper.setDisable(true);
+                    return;
+                }
+
+                jobName = new TranslatableComponent(COM_MINECOLONIES_JMAP_PREFIX + "visitor");
+            }
+            else
+            {
+                final String jobId = entity.getEntityData().get(DATA_JOB);
+                final JobEntry jobEntry = IJobRegistry.getInstance().getValue(new ResourceLocation(jobId));
+                final IJob<?> job = jobEntry == null ? null : jobEntry.produceJob(null);
+
+                if (job instanceof AbstractJobGuard
+                        ? !JourneymapOptions.getShowGuards(this.jmap.getOptions())
+                        : !JourneymapOptions.getShowCitizens(this.jmap.getOptions()))
+                {
+                    wrapper.setDisable(true);
+                    return;
+                }
+
+                jobName = new TranslatableComponent(jobEntry == null
+                        ? COM_MINECOLONIES_JMAP_PREFIX + "unemployed"
+                        : jobEntry.getTranslationKey());
+            }
+
+            if (JourneymapOptions.getShowColonistTooltip(this.jmap.getOptions()))
+            {
+                Component name = entity.getCustomName();
+                if (name != null)
+                {
+                    wrapper.setEntityToolTips(Arrays.asList(name, jobName.setStyle(JOB_TOOLTIP)));
+                }
+            }
+
+            final boolean showName = event.getActiveUiState().ui.equals(Context.UI.Minimap)
+                    ? JourneymapOptions.getShowColonistNameMinimap(this.jmap.getOptions())
+                    : JourneymapOptions.getShowColonistNameFullscreen(this.jmap.getOptions());
+
+//            if (showName && wrapper.getCustomName() != null)
+//            {
+//                final TextComponent name = (TextComponent) wrapper.getCustomName().plainCopy();
+//                if (!isVisitor)
+//                {
+//                    name.setStyle(Style.EMPTY.withColor(entity.getTeamColor()));
+//                }
+//
+//                wrapper.setCustomName(name);
+//            }
+//            else
+            if (!showName)
+            {
+                wrapper.setCustomName("");
+            }
+
+            if (!isVisitor)
+            {
+                wrapper.setColor(entity.getTeamColor());
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
+        if (event.phase != TickEvent.Phase.END) return;
+
         final Level world = Minecraft.getInstance().level;
         if (world != null)
         {

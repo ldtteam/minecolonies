@@ -49,8 +49,12 @@ dependencies {
 
     implementation fg.deobf("mezz.jei:jei-${project.jei_mcversion}:${project.jei_version}")
 
-    compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
+    compileOnly fg.deobf(group: "info.journeymap", name: "journeymap-api", version: project.jmapApiVersion, changing: true)
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {
         runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}")
     }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
