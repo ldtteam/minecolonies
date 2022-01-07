@@ -1,51 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.netherworker;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker;
-import com.minecolonies.coremod.colony.jobs.JobNetherWorker;
-import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import com.minecolonies.coremod.items.ItemAdventureToken;
-
-import org.jetbrains.annotations.NotNull;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.PortalSize;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AirItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.FlintAndSteelItem;
-import net.minecraft.item.Food;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootTable;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.scoreboard.Score;
-import net.minecraft.scoreboard.ScoreCriteria;
-import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.ScoreCriteria.RenderType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.items.IItemHandler;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.blockout.Log;
@@ -66,13 +20,46 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker;
+import com.minecolonies.coremod.colony.jobs.JobNetherWorker;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
+import com.minecolonies.coremod.items.ItemAdventureToken;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.PortalSize;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.*;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootTable;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreCriteria;
+import net.minecraft.scoreboard.ScoreCriteria.RenderType;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
-import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker.*;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker.FOOD_EXCLUSION_LIST;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
 {
@@ -81,21 +68,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      * Delay for each of the crafting operations.
      */
     private static final int TICK_DELAY = 40;
-
-    /**
-     * NetherToken tag name for damage amount
-     */
-    private static final String TAG_DAMAGE = "damage-done";
-
-    /**
-     * NetherToken tag name for entity type doing the damage
-     */
-    private static final String TAG_ENTITY_TYPE = "entity-type";
-
-    /**
-     * NetherToken tag name for xp dropped by entity
-     */
-    private static final String TAG_XP_DROPPED = "xp-dropped";
 
     /**
      * Objective to use to pass the hut level to the loottable

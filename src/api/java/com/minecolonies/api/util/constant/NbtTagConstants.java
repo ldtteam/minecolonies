@@ -510,6 +510,21 @@ public final class NbtTagConstants
      */
     public static final String TAG_RALLIED_GUARDTOWERS = "guardtowerpositions";
 
+    /**
+     * NetherToken tag name for damage amount
+     */
+    public static final String TAG_DAMAGE = "damage-done";
+
+    /**
+     * NetherToken tag name for entity type doing the damage
+     */
+    public static final String TAG_ENTITY_TYPE = "entity-type";
+
+    /**
+     * NetherToken tag name for xp dropped by entity
+     */
+    public static final String TAG_XP_DROPPED = "xp-dropped";
+
     // --------------------- Chat handling tags --------------------- //
 
     /**

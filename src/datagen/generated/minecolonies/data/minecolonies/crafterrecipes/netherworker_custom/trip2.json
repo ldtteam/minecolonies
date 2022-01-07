@@ -1,0 +1,60 @@
+{
+  "type": "recipe",
+  "crafter": "netherworker_custom",
+  "min-building-level": 2,
+  "max-building-level": 2,
+  "inputs": [
+    {
+      "item": "minecraft:cobblestone",
+      "count": 64
+    },
+    {
+      "item": "minecraft:torch",
+      "count": 32
+    },
+    {
+      "item": "minecraft:ladder",
+      "count": 16
+    }
+  ],
+  "additional-output": [
+    {
+      "item": "minecraft:netherrack"
+    },
+    {
+      "item": "minecraft:nether_quartz_ore"
+    },
+    {
+      "item": "minecraft:soul_sand"
+    },
+    {
+      "item": "minecraft:gravel"
+    },
+    {
+      "item": "minecraft:brown_mushroom"
+    },
+    {
+      "item": "minecraft:red_mushroom"
+    },
+    {
+      "item": "minecraft:soul_soil"
+    },
+    {
+      "item": "minecraft:glowstone"
+    },
+    {
+      "item": "minecraft:crimson_nylium"
+    },
+    {
+      "item": "minecraft:crimson_fungus"
+    },
+    {
+      "item": "minecraft:crimson_stem"
+    },
+    {
+      "item": "minecraft:nether_wart"
+    }
+  ],
+  "loot-table": "minecolonies:recipes/netherworker/trip2",
+  "intermediate": "minecraft:air"
+}
