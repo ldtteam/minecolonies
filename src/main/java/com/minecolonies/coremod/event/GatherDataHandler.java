@@ -22,5 +22,6 @@ public class GatherDataHandler
         generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
         generator.addProvider(new DefaultFishermanLootProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
+        generator.addProvider(new DefaultNetherWorkerLootProvider(generator));
     }
 }
