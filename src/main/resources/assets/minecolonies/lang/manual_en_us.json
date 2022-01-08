@@ -321,6 +321,10 @@
   "item.minecolonies.golden_bread": "Golden Bread",
   "item.minecolonies.chorus_bread": "Chorus Fruit Bread",
 
+  "item.minecolonies.adventure_token": "Monster Encounter token",
+  "com.minecolonies.coremod.item.adventure.token.gui": "This token represents an encounter with a monster, and is not useful outside of a Minecolonies adventure simulation",
+  "com.minecolonies.coremod.item.adventure.token.name.gui": "Encounter with: ",
+
   "item.minecolonies.scroll_tp": "Ultrasafe Colony Teleport Scroll",
   "item.minecolonies.scroll_tp.tip": "Safely teleports you to the set colony",
   "item.minecolonies.scroll.colony.tip": "Colony: %s",
