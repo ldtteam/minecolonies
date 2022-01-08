@@ -19,10 +19,22 @@
   ],
   "additional-output": [
     {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    },
+    {
       "item": "minecraft:netherrack"
     },
     {
       "item": "minecraft:nether_quartz_ore"
+    },
+    {
+      "item": "minecraft:porkchop"
     },
     {
       "item": "minecraft:soul_sand"
@@ -38,6 +50,9 @@
     },
     {
       "item": "minecraft:soul_soil"
+    },
+    {
+      "item": "minecraft:leather"
     },
     {
       "item": "minecraft:glowstone"
@@ -70,7 +85,22 @@
       "item": "minecraft:blackstone"
     },
     {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "minecraft:magma_cream"
+    },
+    {
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:ender_pearl"
+    },
+    {
       "item": "minecraft:nether_wart"
+    },
+    {
+      "item": "minecraft:blaze_rod"
     }
   ],
   "loot-table": "minecolonies:recipes/netherworker/trip4",

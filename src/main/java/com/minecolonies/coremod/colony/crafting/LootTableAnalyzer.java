@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.crafting;
 
 import com.google.gson.*;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootSerializers;
@@ -24,6 +26,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE;
 
 /**
  * Utility helper that analyzes a loot table to determine a likely list of drops, along with
@@ -47,7 +51,7 @@ public final class LootTableAnalyzer
         return toDrops(lootTableManager, lootTableManager.get(lootTableId));
     }
 
-    public static List<LootDrop> toDrops(@Nullable final LootTableManager lootTableManager,
+    public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
                                          @NotNull final LootTable lootTable)
     {
         try
@@ -63,7 +67,7 @@ public final class LootTableAnalyzer
         }
     }
 
-    public static List<LootDrop> toDrops(@Nullable final LootTableManager lootTableManager,
+    public static List<LootDrop> toDrops(@NotNull final LootTableManager lootTableManager,
                                          @NotNull final JsonObject lootTableJson)
     {
         final List<LootDrop> drops = new ArrayList<>();
@@ -105,9 +109,20 @@ public final class LootTableAnalyzer
                         modifier = result.getB();
                     }
 
-                    drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight * modifier, quality, conditional));
+                    if (stack.getItem().equals(ModItems.adventureToken))
+                    {
+                        final List<LootDrop> mobDrops = expandAdventureToken(lootTableManager, stack);
+                        for (final LootTableAnalyzer.LootDrop drop : mobDrops)
+                        {
+                            drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality() + quality, drop.getConditional() || conditional));
+                        }
+                    }
+                    else
+                    {
+                        drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight * modifier, quality, conditional));
+                    }
                 }
-                else if (type.equals("minecraft:loot_table") && lootTableManager != null)
+                else if (type.equals("minecraft:loot_table"))
                 {
                     final ResourceLocation table = new ResourceLocation(JSONUtils.getAsString(entryJson, "name"));
                     final List<LootTableAnalyzer.LootDrop> tableDrops = toDrops(lootTableManager, table);
@@ -124,6 +139,26 @@ public final class LootTableAnalyzer
 
         drops.sort(Comparator.comparing(LootDrop::getProbability).reversed());
         return drops;
+    }
+
+    @NotNull
+    private static List<LootDrop> expandAdventureToken(@NotNull final LootTableManager lootTableManager,
+                                                       @NotNull final ItemStack token)
+    {
+        if (token.hasTag())
+        {
+            assert token.getTag() != null;
+            final String entityType = token.getTag().getString(TAG_ENTITY_TYPE);
+            if (!entityType.isEmpty())
+            {
+                final EntityType<?> mob = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityType));
+                if (mob != null)
+                {
+                    return toDrops(lootTableManager, mob.getDefaultLootTable());
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 
     @NotNull
