@@ -243,7 +243,7 @@ public class BuildingNetherWorker extends AbstractBuilding
      * Check to see if it's valid to do a trip by checking how many done in this current period
      * @return true if the worker can go to the nether
      */
-    public boolean canDoTrip()
+    public boolean isReadyForTrip()
     {
         if(snapTime == 0)
         {

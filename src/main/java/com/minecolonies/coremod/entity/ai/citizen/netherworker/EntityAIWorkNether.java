@@ -196,7 +196,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class);
             currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
-            if(getOwnBuilding().canDoTrip())
+            if(getOwnBuilding().isReadyForTrip())
             {
                 worker.getCitizenData().setIdleAtJob(true);
             }
@@ -215,7 +215,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
         else 
         {
-            if (!getOwnBuilding().canDoTrip())
+            if (!getOwnBuilding().isReadyForTrip())
             {
                 worker.getCitizenData().setIdleAtJob(false);
                 return IDLE;
