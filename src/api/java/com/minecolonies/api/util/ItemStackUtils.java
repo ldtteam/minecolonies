@@ -1016,7 +1016,7 @@ public final class ItemStackUtils
             if (stack.isDamageableItem() && stack.isDamaged())
             {
                 pristine = stack.copy();
-                stack.setDamageValue(0);
+                pristine.setDamageValue(0);
                 // in case the item wasn't already in the set, we want to only store a pristine one!
             }
             allItems.add(new ItemStorage(pristine, true));
