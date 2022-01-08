@@ -265,7 +265,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         // Set up Objectives and scores. 
         if(!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
         {
-            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ScoreCriteria.DUMMY, new StringTextComponent("Nether Mine Building Level"), RenderType.INTEGER);
+            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ScoreCriteria.DUMMY, new StringTextComponent("Worker Building Level"), RenderType.INTEGER);
         }
         if(!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
         {
