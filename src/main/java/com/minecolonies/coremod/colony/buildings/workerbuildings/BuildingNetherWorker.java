@@ -69,7 +69,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     /**
      * How many days are in a period by default
      */
-    private static final int PERIOD_DAYS = 1;
+    private static final int PERIOD_DAYS = 3;
 
     /**
      * Exclusion list id.
