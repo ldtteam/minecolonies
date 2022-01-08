@@ -40,7 +40,8 @@ public class DefaultNetherWorkerLootProvider implements IDataProvider
     private final NetherWorkerLootTableProvider lootTableProvider;
     private final List<LootTable.Builder> levels;
 
-    public DefaultNetherWorkerLootProvider(@NotNull final DataGenerator generatorIn)
+    public DefaultNetherWorkerLootProvider(@NotNull final DataGenerator generatorIn,
+                                           @NotNull final LootTableManager lootTableManager)
     {
         levels = new ArrayList<>();
 
@@ -49,7 +50,7 @@ public class DefaultNetherWorkerLootProvider implements IDataProvider
             levels.add(createTripLoot(buildingLevel));
         }
 
-        recipeProvider = new NetherWorkerRecipeProvider(generatorIn);
+        recipeProvider = new NetherWorkerRecipeProvider(generatorIn, lootTableManager);
         lootTableProvider = new NetherWorkerLootTableProvider(generatorIn);
     }
 
@@ -219,9 +220,14 @@ public class DefaultNetherWorkerLootProvider implements IDataProvider
 
     private class NetherWorkerRecipeProvider extends CustomRecipeProvider
     {
-        public NetherWorkerRecipeProvider(@NotNull final DataGenerator generatorIn)
+        private final LootTableManager lootTableManager;
+
+        public NetherWorkerRecipeProvider(@NotNull final DataGenerator generatorIn,
+                                          @NotNull LootTableManager lootTableManager)
         {
             super(generatorIn);
+            
+            this.lootTableManager = lootTableManager;
         }
 
         @NotNull
@@ -244,9 +250,8 @@ public class DefaultNetherWorkerLootProvider implements IDataProvider
             {
                 final int buildingLevel = i + 1;
 
-                final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(null, levels.get(i).build());
-                final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem))
-                        .filter(item -> !item.equals(ModItems.adventureToken));
+                final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, levels.get(i).build());
+                final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
 
                 CustomRecipeBuilder.create(ModJobs.NETHERWORKER_ID.getPath() + "_custom", "trip" + buildingLevel)
                         .minBuildingLevel(buildingLevel)
