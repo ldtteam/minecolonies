@@ -484,7 +484,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     if(block.getHarvestTool(block.defaultBlockState()) == null)
                     {
                         toolType = net.minecraftforge.common.ToolType.PICKAXE;
-                    } else {
+                    }
+                    else 
+                    {
                         toolType = block.getHarvestTool(block.defaultBlockState());
                     }
 
@@ -556,17 +558,28 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private int xpOnDrop(Block block)
     {
         Random rnd = worker.getRandom();
-        if (block == Blocks.COAL_ORE) {
+        if (block == Blocks.COAL_ORE)
+        {
             return MathHelper.nextInt(rnd, 0, 2);
-        } else if (block == Blocks.DIAMOND_ORE) {
+        }
+        else if (block == Blocks.DIAMOND_ORE)
+        {
             return MathHelper.nextInt(rnd, 3, 7);
-        } else if (block == Blocks.EMERALD_ORE) {
+        }
+        else if (block == Blocks.EMERALD_ORE) 
+        {
             return MathHelper.nextInt(rnd, 3, 7);
-        } else if (block == Blocks.LAPIS_ORE) {
+        }
+        else if (block == Blocks.LAPIS_ORE)
+        {
             return MathHelper.nextInt(rnd, 2, 5);
-        } else if (block == Blocks.NETHER_QUARTZ_ORE) {
+        }
+        else if (block == Blocks.NETHER_QUARTZ_ORE)
+        {
             return MathHelper.nextInt(rnd, 2, 5);
-        } else {
+        }
+        else
+        {
             return block == Blocks.NETHER_GOLD_ORE ? MathHelper.nextInt(rnd, 0, 1) : 0;
         }
     }
