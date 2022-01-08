@@ -298,7 +298,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 List<ItemStack> result = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), false);
                 if (result != null)
                 {
-                    job.getCraftedResults().addAll(result);
+                    job.addCraftedResultsList(result);
                 }
 
                 worker.getCitizenData().setIdleAtJob(false);
@@ -455,7 +455,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             LootContext context = this.getLootContext();
                             LootTable loot = world.getServer().getLootTables().get(mob.getLootTable());
                             List<ItemStack> mobLoot = loot.getRandomItems(context);
-                            job.getProcessedResults().addAll(mobLoot);
+                            job.addProcessedResultsList(mobLoot);
                             Log.getLogger().info("Battle complete! final health: " + worker.getHealth());
                         }
                     }
@@ -504,7 +504,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 LootTable loot = world.getServer().getLootTables().get(block.getLootTable());
                                 List<ItemStack> mobLoot = loot.getRandomItems(context);
         
-                                job.getProcessedResults().addAll(mobLoot);
+                                job.addProcessedResultsList(mobLoot);
                                 tool.hurtAndBreak(1, worker, entity -> {});
                                 worker.getCitizenExperienceHandler().addExperience(worker.getCitizenItemHandler().applyMending(xpOnDrop(block)));  
                                 
@@ -521,7 +521,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 } 
                 else
                 {
-                    job.getProcessedResults().add(currStack);
+                    job.addProcessedResultsList(ImmutableList.of(currStack));
                     itemDelay = TICK_DELAY * currStack.getCount();
                 }
                 setDelay(itemDelay);

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -156,6 +157,7 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
 
     /**
      * Get the queue of CraftedResults
+     * This queue is not immutable and OK to modify
      */
     public Queue<ItemStack> getCraftedResults()
     {
@@ -163,11 +165,31 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
     }
 
     /**
+     * Add a list of items to the crafted results list
+     * @param newResults items to add
+     * @return true if success
+     */
+    public boolean addCraftedResultsList(Collection<ItemStack> newResults)
+    {
+        return craftedResults.addAll(newResults);
+    }
+
+    /**
      * Get the queue of ProcessedResults
+     * This queue is not immutable and OK to modify
      */
     public Queue<ItemStack> getProcessedResults()
     {
         return processedResults;
     }
 
+    /**
+     * Add a list of items to the processed results list
+     * @param newResults items to add
+     * @return true if success
+     */
+    public boolean addProcessedResultsList(Collection<ItemStack> newResults)
+    {
+        return processedResults.addAll(newResults);
+    }
 }
