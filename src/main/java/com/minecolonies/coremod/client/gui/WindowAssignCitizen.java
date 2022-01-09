@@ -151,7 +151,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                         if (work != null)
                         {
                             final double oldDistance = BlockPosUtil.getDistance2D(work, home);
-                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homehut.currently", oldDistance);
+                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.home.currently", oldDistance);
                             better = newDistance < oldDistance;
                             if (oldDistance >= FAR_DISTANCE_THRESHOLD)
                             {
@@ -160,7 +160,7 @@ public class WindowAssignCitizen extends Window implements ButtonHandler
                         }
                         else
                         {
-                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.homehut.current", home.getX(), home.getY(), home.getZ());
+                            homeString = LanguageHandler.format("com.minecolonies.coremod.gui.home.current", home.getX(), home.getY(), home.getZ());
                         }
                     }
 
