@@ -998,14 +998,8 @@ public final class ItemStackUtils
      */
     public static Set<ItemStack> allItemsPlusInventory(@NotNull final PlayerEntity player)
     {
-        // using ItemStorage for better hashing
-        final Set<ItemStorage> allItems = new HashSet<>();
-
-        // all known items
-        for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
-        {
-            allItems.add(new ItemStorage(stack, true));
-        }
+        // get all known items first
+        final Set<ItemStorage> allItems = new HashSet<>(IColonyManager.getInstance().getCompatibilityManager().getSetOfAllItems());
 
         // plus all items from the player's inventory not already listed (adds items with extra NBT)
         for (final ItemStack stack : player.inventory.items)
