@@ -75,17 +75,22 @@ public final class BuildingConstants
     /**
      * Max depth the miner reaches at level 1.
      */
-    public static final int MAX_DEPTH_LEVEL_1 = 50;
+    public static final int MAX_DEPTH_LEVEL_1 = 40;
 
     /**
      * Max depth the miner reaches at level 2.
      */
-    public static final int MAX_DEPTH_LEVEL_2 = 30;
+    public static final int MAX_DEPTH_LEVEL_2 = 20;
 
     /**
      * Max depth the miner reaches at level 3.
      */
-    public static final int MAX_DEPTH_LEVEL_3 = 5;
+    public static final int MAX_DEPTH_LEVEL_3 = 0;
+
+    /**
+     * Max depth the miner reaches ever.
+     */
+    public static final int MAX_DEPTH_MAX = -100;
 
     /**
      * Florist and Beekeeper flower list filter.

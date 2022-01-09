@@ -318,12 +318,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public BlockState getSolidSubstitution(@NotNull final BlockPos location)
-    {
-        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
-    }
-
-    @Override
     public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
         final int initialDelay = super.getBlockMiningDelay(state, pos);
