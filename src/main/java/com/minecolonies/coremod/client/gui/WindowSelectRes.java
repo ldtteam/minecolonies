@@ -8,19 +8,24 @@ import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
+import static com.minecolonies.api.util.constant.WindowConstants.NAME_LABEL;
 
 public class WindowSelectRes extends AbstractWindowSkeleton
 {
@@ -151,7 +156,7 @@ public class WindowSelectRes extends AbstractWindowSkeleton
     {
         this.allItems.clear();
 
-        for (final ItemStack stack : IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems())
+        for (final ItemStack stack : ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player))
         {
             if (test.test(stack) && (this.filter.isEmpty()
                                        || stack.getDescriptionId().toLowerCase(Locale.US).contains(this.filter.toLowerCase(Locale.US))

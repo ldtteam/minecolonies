@@ -135,7 +135,12 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * List of all blocks.
      */
-    private static ImmutableList<ItemStack> allItems = ImmutableList.<ItemStack>builder().build();
+    private static ImmutableList<ItemStack> allItems = ImmutableList.of();
+
+    /**
+     * Set of all items.  Uses ItemStorage mostly for better equals/hash.
+     */
+    private static ImmutableSet<ItemStorage> allItemsSet = ImmutableSet.of();
 
     /**
      * Free block positions everyone can interact with.
@@ -208,6 +213,12 @@ public class CompatibilityManager implements ICompatibilityManager
     public List<ItemStack> getListOfAllItems()
     {
         return allItems;
+    }
+
+    @Override
+    public Set<ItemStorage> getSetOfAllItems()
+    {
+        return allItemsSet;
     }
 
     @Override
@@ -424,15 +435,23 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
-        final ImmutableList.Builder<ItemStack> builder = new ImmutableList.Builder<>();
-        for(Item item : ForgeRegistries.ITEMS.getValues())
+        final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
+        final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();
+
+        for (final Item item : ForgeRegistries.ITEMS.getValues())
         {
             final NonNullList<ItemStack> list = NonNullList.create();
             item.fillItemCategory(ItemGroup.TAB_SEARCH, list);
-            builder.addAll(list);
+            listBuilder.addAll(list);
+
+            for (final ItemStack stack : list)
+            {
+                setBuilder.add(new ItemStorage(stack, true));
+            }
         }
 
-        allItems = builder.build();
+        allItems = listBuilder.build();
+        allItemsSet = setBuilder.build();
     }
 
     /**
