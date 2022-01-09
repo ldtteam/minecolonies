@@ -6,12 +6,13 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
@@ -183,11 +184,13 @@ public class WindowPostBox extends AbstractWindowRequestTree
      */
     private Collection<? extends ItemStack> getBlockList(final Predicate<ItemStack> filterPredicate)
     {
+        final Set<ItemStack> allItems = ItemStackUtils.allItemsPlusInventory(Minecraft.getInstance().player);
+
         if (filter.isEmpty())
         {
-            return IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems();
+            return allItems;
         }
-        return IColonyManager.getInstance().getCompatibilityManager().getListOfAllItems().stream().filter(filterPredicate).collect(Collectors.toList());
+        return allItems.stream().filter(filterPredicate).collect(Collectors.toList());
     }
 
     /**
