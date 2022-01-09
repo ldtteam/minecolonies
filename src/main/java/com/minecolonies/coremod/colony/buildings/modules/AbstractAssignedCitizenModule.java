@@ -8,6 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -66,7 +67,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     @Override
     public List<ICitizenData> getAssignedCitizen()
     {
-        return assignedCitizen;
+        return new ArrayList<>(assignedCitizen);
     }
 
     /**
