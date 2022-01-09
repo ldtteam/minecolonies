@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -109,9 +110,10 @@ public class PathJobRandomPos extends AbstractPathJob
       final int range,
       final LivingEntity entity,
       final BlockPos startRestriction,
-      final BlockPos endRestriction)
+      final BlockPos endRestriction,
+      final AbstractAdvancedPathNavigate.RestrictionType restrictionType)
     {
-        super(world, start, startRestriction, endRestriction, range, false, new PathResult<PathJobRandomPos>(), entity);
+        super(world, start, startRestriction, endRestriction, range, false, new PathResult<PathJobRandomPos>(), entity, restrictionType);
         this.minDistFromStart = minDistFromStart;
         this.maxDistToDest = range;
 
