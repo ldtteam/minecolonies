@@ -165,7 +165,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private void pickUpBuilding()
     {
         Network.getNetwork().sendToServer(new BuildPickUpMessage(building));
-        cancelClicked();
+        close();
     }
 
     /**
