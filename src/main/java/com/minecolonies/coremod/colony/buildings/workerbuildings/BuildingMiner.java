@@ -165,8 +165,8 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * Returns the depth limit. Limitted by building level.
      * <pre>
      * - Level 1: 50
-     * - Level 2: 30
-     * - Level 3: 5
+     * - Level 2: 20
+     * - Level 3: 0
      * </pre>
      *
      * @return Depth limit.
@@ -191,6 +191,13 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
     }
 
+    /**
+     * Normalize the maximum depth.
+     * Make sure that the returned depth respects the world limits and follows the building setting..
+     * @param max the max depth of the given building level.
+     * @param level the world.
+     * @return the max.
+     */
     public int normalizeMaxDepth(final int max, final Level level)
     {
         final int worldMaxDepth = level.getMinBuildHeight() + 5;
