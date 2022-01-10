@@ -81,6 +81,8 @@ public class DOCraftingWindow extends AbstractModuleWindow
     {
         final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER, inputInventory, Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
+
+
         for (final ArchitectsCutterRecipe recipe : list)
         {
             final ItemStack result = recipe.assemble(inputInventory).copy();
@@ -97,34 +99,46 @@ public class DOCraftingWindow extends AbstractModuleWindow
             }
         }
 
-        for (final Map.Entry<Integer, List<Integer>> entry : map.entrySet())
+        int inputCount = 0;
+        for (int i = 0; i < inputInventory.getContainerSize(); i++)
         {
-            final List<ItemStorage> input = new ArrayList<>();
-            for (int i = 0; i < entry.getKey(); i++)
+            if (!inputInventory.getItem(i).isEmpty())
             {
-                final ItemStack atPos = inputInventory.getItem(i).copy();
-                if (!ItemStackUtils.isEmpty(atPos))
-                {
-                    atPos.setCount(1);
-                    input.add(new ItemStorage(atPos));
-                }
+                inputCount++;
             }
-
-            final List<ItemStack> additionalOutput = new ArrayList<>();
-            for (int i = 1; i < entry.getValue().size(); i++)
-            {
-                additionalOutput.add(list.get(entry.getValue().get(i)).assemble(inputInventory).copy());
-            }
-
-            final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
-              TypeConstants.RECIPE,
-              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
-              input,
-              3,
-              list.get(entry.getValue().get(0)).assemble(inputInventory).copy(), Blocks.AIR, null, com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID, additionalOutput, new ArrayList<>());
-
-            Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getId()));
         }
+
+        final List<Integer> inputIndizes = map.get(inputCount);
+        final List<ItemStorage> input = new ArrayList<>();
+        for (int i = 0; i < inputCount; i++)
+        {
+            final ItemStack atPos = inputInventory.getItem(i).copy();
+            if (!ItemStackUtils.isEmpty(atPos))
+            {
+                atPos.setCount(1);
+                input.add(new ItemStorage(atPos));
+            }
+        }
+
+        final List<ItemStack> additionalOutput = new ArrayList<>();
+        for (int i = 1; i < inputIndizes.size(); i++)
+        {
+            additionalOutput.add(list.get(inputIndizes.get(i)).assemble(inputInventory).copy());
+        }
+
+        final IRecipeStorage storage = StandardFactoryController.getInstance().getNewInstance(
+          TypeConstants.RECIPE,
+          StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+          input,
+          3,
+          list.get(inputIndizes.get(0)).assemble(inputInventory).copy(),
+          Blocks.AIR,
+          null,
+          com.minecolonies.api.crafting.ModRecipeTypes.MULTI_OUTPUT_ID,
+          additionalOutput,
+          new ArrayList<>());
+
+        Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(buildingView, false, storage, craftingModuleView.getId()));
     }
 
     /**
@@ -179,6 +193,31 @@ public class DOCraftingWindow extends AbstractModuleWindow
         resourceList.show();
 
         final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER, inputInventory, Minecraft.getInstance().level);
+        int inputCount = 0;
+        for (int i = 0; i < inputInventory.getContainerSize(); i++)
+        {
+            if (!inputInventory.getItem(i).isEmpty())
+            {
+                inputCount++;
+            }
+        }
+
+        final List<ArchitectsCutterRecipe> filteredList = new ArrayList<>();
+        for (final ArchitectsCutterRecipe recipe : list)
+        {
+            final ItemStack result = recipe.assemble(inputInventory).copy();
+            if (result.getItem() instanceof BlockItem)
+            {
+                final Block block = ((BlockItem) result.getItem()).getBlock();
+                if (block instanceof IMateriallyTexturedBlock)
+                {
+                    if (((IMateriallyTexturedBlock) block).getComponents().size() == inputCount)
+                    {
+                        filteredList.add(recipe);
+                    }
+                }
+            }
+        }
 
         //Creates a dataProvider for the unemployed resourceList.
         resourceList.setDataProvider(new ScrollingList.DataProvider()
@@ -190,7 +229,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                return list.size();
+                return filteredList.size();
             }
 
             /**
@@ -201,7 +240,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final ItemStack resource = list.get(index).assemble(inputInventory).copy();
+                final ItemStack resource = filteredList.get(index).assemble(inputInventory).copy();
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());
                 rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(new TextComponent(String.valueOf(resource.getCount())));

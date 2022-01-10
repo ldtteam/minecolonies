@@ -32,7 +32,9 @@ public class TagProvider extends BlockTagsProvider
             ModBlocks.blockScarecrow,
             ModBlocks.blockDecorationPlaceholder,
             ModBlocks.blockColonyBanner,
-            ModBlocks.blockColonyWallBanner)
+            ModBlocks.blockColonyWallBanner,
+            ModBlocks.blockPostBox,
+            ModBlocks.blockStash)
           .add(ModBlocks.getHuts());
 
         this.tag(BlockTags.MINEABLE_WITH_SHOVEL)
