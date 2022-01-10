@@ -25,6 +25,7 @@ public class VisitorData extends CitizenData implements IVisitorData
      * Recruit nbt tag
      */
     private static final String TAG_RECRUIT_COST = "rcost";
+    private static final String TAG_RECRUIT_COST_QTY = "rcostqty";
 
     /**
      * The position the citizen is sitting at
@@ -59,6 +60,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         CompoundTag item = new CompoundTag();
         recruitCost.save(item);
         compoundNBT.put(TAG_RECRUIT_COST, item);
+        compoundNBT.putInt(TAG_RECRUIT_COST_QTY, recruitCost.getCount());
         BlockPosUtil.write(compoundNBT, TAG_SITTING, sittingPosition);
         if (textureUUID != null)
         {
@@ -73,6 +75,7 @@ public class VisitorData extends CitizenData implements IVisitorData
         super.deserializeNBT(nbtTagCompound);
         sittingPosition = BlockPosUtil.read(nbtTagCompound, TAG_SITTING);
         recruitCost = ItemStack.of(nbtTagCompound.getCompound(TAG_RECRUIT_COST));
+        recruitCost.setCount(nbtTagCompound.getInt(TAG_RECRUIT_COST_QTY));
         if (nbtTagCompound.contains(TAG_TEXTURE_UUID))
         {
             this.textureUUID = nbtTagCompound.getUUID(TAG_TEXTURE_UUID);
@@ -110,6 +113,7 @@ public class VisitorData extends CitizenData implements IVisitorData
     {
         super.serializeViewNetworkData(buf);
         buf.writeItem(recruitCost);
+        buf.writeInt(recruitCost.getCount());
         if (textureUUID == null)
         {
             buf.writeBoolean(false);

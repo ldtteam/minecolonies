@@ -20,22 +20,22 @@ public class ModModelTypeInitializer
     {
         final IModelTypeRegistry reg = IModelTypeRegistry.getInstance();
 
-        ModModelTypes.SETTLER = new SimpleModelType(ModModelTypes.SETTLER_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleCitizen(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZEN)));
+        ModModelTypes.SETTLER = new SimpleModelType(ModModelTypes.SETTLER_ID, 3, new ModelEntityMaleCitizen(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleCitizen(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZEN)));
         reg.register(ModModelTypes.SETTLER);
 
         ModModelTypes.CUSTOM = new SimpleModelType(ModModelTypes.CUSTOM_ID, 1, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), null);
         reg.register(ModModelTypes.CUSTOM);
 
-        ModModelTypes.CITIZEN = new SimpleModelType(ModModelTypes.CITIZEN_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleCitizen(context.bakeLayer(ClientRegistryHandler.FEMALE_SETTLER)));
+        ModModelTypes.CITIZEN = new SimpleModelType(ModModelTypes.CITIZEN_ID, 3, new ModelEntityMaleCitizen(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleCitizen(context.bakeLayer(ClientRegistryHandler.FEMALE_SETTLER)));
         reg.register(ModModelTypes.CITIZEN);
 
-        ModModelTypes.NOBLE = new SimpleModelType(ModModelTypes.NOBLE_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleNoble(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZENNOBLE)));
+        ModModelTypes.NOBLE = new SimpleModelType(ModModelTypes.NOBLE_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleNoble(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZENNOBLE)));
         reg.register(ModModelTypes.NOBLE);
 
-        ModModelTypes.ARISTOCRAT = new SimpleModelType(ModModelTypes.ARISTOCRAT_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleAristocrat(context.bakeLayer(ClientRegistryHandler.FEMALE_ARISTOCRAT)));
+        ModModelTypes.ARISTOCRAT = new SimpleModelType(ModModelTypes.ARISTOCRAT_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleAristocrat(context.bakeLayer(ClientRegistryHandler.FEMALE_ARISTOCRAT)));
         reg.register(ModModelTypes.ARISTOCRAT);
 
-        ModModelTypes.BUILDER = new SimpleModelType(ModModelTypes.BUILDER_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityBuilderFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BUILDER)));
+        ModModelTypes.BUILDER = new SimpleModelType(ModModelTypes.BUILDER_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityBuilderFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BUILDER)));
         reg.register(ModModelTypes.BUILDER);
 
         ModModelTypes.DELIVERYMAN = new SimpleModelType(ModModelTypes.DELIVERYMAN_ID, 1, new ModelEntityCourierMale(context.bakeLayer(ClientRegistryHandler.MALE_COURIER)), new ModelEntityCourierFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_COURIER)));
@@ -57,10 +57,10 @@ public class ModModelTypeInitializer
         ModModelTypes.UNDERTAKER = new SimpleModelType(ModModelTypes.UNDERTAKER_ID, 1, new ModelEntityUndertakerMale(context.bakeLayer(ClientRegistryHandler.MALE_UNDERTAKER)), new ModelEntityUndertakerFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_UNDERTAKER)));
         reg.register(ModModelTypes.UNDERTAKER);
 
-        ModModelTypes.ARCHER_GUARD = new SimpleModelType(ModModelTypes.ARCHER_GUARD_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)));
+        ModModelTypes.ARCHER_GUARD = new SimpleModelType(ModModelTypes.ARCHER_GUARD_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)));
         reg.register(ModModelTypes.ARCHER_GUARD);
 
-        ModModelTypes.KNIGHT_GUARD = new SimpleModelType(ModModelTypes.KNIGHT_GUARD_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)));
+        ModModelTypes.KNIGHT_GUARD = new SimpleModelType(ModModelTypes.KNIGHT_GUARD_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)));
         reg.register(ModModelTypes.KNIGHT_GUARD);
 
         ModModelTypes.BAKER = new SimpleModelType(ModModelTypes.BAKER_ID, 1, new ModelEntityBakerMale(context.bakeLayer(ClientRegistryHandler.MALE_BAKER)), new ModelEntityBakerFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BAKER)));

@@ -1,11 +1,11 @@
 package com.minecolonies.api.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
      *
      * @return Model of the citizen.
      */
-    IModelType getModel();
+    ResourceLocation getModel();
 
     /**
      * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColonyByPosFromWorld()).
