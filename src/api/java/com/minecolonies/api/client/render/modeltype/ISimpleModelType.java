@@ -1,7 +1,6 @@
 package com.minecolonies.api.client.render.modeltype;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ public interface ISimpleModelType extends IModelType
      *
      * @return The base file name.
      */
-    String getTextureBase();
+    ResourceLocation getTextureBase();
 
     /**
      * The available amount of textures in this model type.
@@ -44,6 +43,8 @@ public interface ISimpleModelType extends IModelType
      */
     default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
+        final String namespace = getTextureBase().getNamespace();
+        final String path = getTextureBase().getPath();
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
           getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
@@ -54,7 +55,7 @@ public interface ISimpleModelType extends IModelType
             return modified;
         }
 
-        return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
+        return new ResourceLocation(namespace, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
     }
 
     default ResourceLocation getTextureIcon(@NotNull final AbstractEntityCitizen entityCitizen)

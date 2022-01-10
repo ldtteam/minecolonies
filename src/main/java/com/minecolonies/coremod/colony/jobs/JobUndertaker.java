@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -24,9 +25,9 @@ public class JobUndertaker extends AbstractJobCrafter<EntityAIWorkUndertaker, Jo
 
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public IModelType getModel()
     {
-        return BipedModelType.UNDERTAKER;
+        return ModModelTypes.UNDERTAKER;
     }
 
     /**
