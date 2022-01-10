@@ -5,6 +5,7 @@ import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
 import com.minecolonies.coremod.client.model.*;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
 import com.minecolonies.coremod.client.model.raiders.*;

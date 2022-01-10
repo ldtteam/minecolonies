@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
 import com.minecolonies.coremod.client.render.worldevent.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -43,7 +45,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
         super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
         super.addLayer(new ItemInHandLayer<>(this));
-        MinecoloniesAPIProxy.getInstance().getModelTypeRegistry().setup(context);
+        ModModelTypeInitializer.init(context);
     }
 
     @Override
@@ -86,20 +88,16 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        model = (citizen.isFemale()
-                         ? IModelTypeRegistry.getInstance().getFemaleMap().get(citizen.getModelType())
-                         : IModelTypeRegistry.getInstance().getMaleMap().get(citizen.getModelType()));
+        model = citizen.isFemale() ? citizen.getModelType().getFemaleModel() : citizen.getModelType().getMaleModel();
         if (model == null)
         {
             //no if base, or the next condition, get player model!
-            model = (citizen.isFemale()
-                       ? IModelTypeRegistry.getInstance().getFemaleMap().get(BipedModelType.BASE)
-                       : IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.BASE));
+            model = citizen.isFemale() ? citizen.getModelType().getFemaleModel() : citizen.getModelType().getMaleModel();
         }
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
         {
-            model = IModelTypeRegistry.getInstance().getMaleMap().get(BipedModelType.CUSTOM);
+            model = IModelTypeRegistry.getInstance().getModelType(ModModelTypes.CUSTOM_ID).getMaleModel();
         }
 
         model.young = citizen.isBaby();

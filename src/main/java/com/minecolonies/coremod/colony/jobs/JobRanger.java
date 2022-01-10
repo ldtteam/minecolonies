@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -41,13 +42,13 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     }
 
     /**
-     * Gets the {@link BipedModelType} to use for our ranger.
+     * Gets the {@link IModelType} to use for our ranger.
      *
      * @return The model to use.
      */
     @Override
-    public BipedModelType getModel()
+    public IModelType getModel()
     {
-        return BipedModelType.ARCHER_GUARD;
+        return ModModelTypes.ARCHER_GUARD;
     }
 }

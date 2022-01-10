@@ -4,7 +4,7 @@
 package com.minecolonies.coremod.client.model;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
