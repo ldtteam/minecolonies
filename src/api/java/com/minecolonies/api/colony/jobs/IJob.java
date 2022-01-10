@@ -111,7 +111,16 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
     /**
      * Levelup actions on citizen levelup, allows custom actions based on Jobs
      */
-    void onLevelUp();
+    default void onLevelUp()
+    {}
+
+    /**
+     * Initizalizes values for an entity when the entity is spawned/assigned to the job
+     *
+     * @param citizen
+     */
+    default void initEntityValues(AbstractEntityCitizen citizen)
+    {}
 
     /**
      * Get the CitizenData that this Job belongs to.

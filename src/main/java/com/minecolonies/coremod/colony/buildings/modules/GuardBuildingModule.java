@@ -5,26 +5,25 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingWorkerModule;
-import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.ICreatesResolversModule;
+import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobArcherTraining;
 import com.minecolonies.coremod.colony.jobs.JobCombatTraining;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Function;
 
-import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
-import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_CONFIG_NAME;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HIRE_TRAINEE;
 
 /**
@@ -115,17 +114,8 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
     void onAssignment(final ICitizenData citizen)
     {
         super.onAssignment(citizen);
-        final Optional<AbstractEntityCitizen> optCitizen = citizen.getEntity();
-        if (optCitizen.isPresent() && building instanceof AbstractBuildingGuards)
+        if (building instanceof AbstractBuildingGuards)
         {
-            final AbstractEntityCitizen citizenEntity = optCitizen.get();
-            AttributeModifierUtils.addHealthModifier(citizenEntity,
-              new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, ((AbstractBuildingGuards) building).getBonusHealth(), AttributeModifier.Operation.ADDITION));
-            AttributeModifierUtils.addHealthModifier(citizenEntity,
-              new AttributeModifier(GUARD_HEALTH_MOD_CONFIG_NAME,
-                MineColonies.getConfig().getServer().guardHealthMult.get() - 1.0,
-                AttributeModifier.Operation.MULTIPLY_TOTAL));
-
             // Start timeout to not be stuck with an old patrol target
             ((AbstractBuildingGuards) building).setPatrolTimer(5);
         }
