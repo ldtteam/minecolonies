@@ -1,23 +1,38 @@
 package com.minecolonies.api.client.render.modeltype.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
+/**
+ * The registry interface for model types.
+ */
 public interface IModelTypeRegistry
 {
-
+    /**
+     * Gets the current instance of the model type registry.
+     *
+     * @return The model type registry instance.
+     */
     static IModelTypeRegistry getInstance()
     {
         return IMinecoloniesAPI.getInstance().getModelTypeRegistry();
     }
 
-    IModelTypeRegistry register(IModelType type, CitizenModel<AbstractEntityCitizen> maleModel, CitizenModel<AbstractEntityCitizen> femaleModel);
+    /**
+     * Registry the given model type into the registry.
+     *
+     * @param modelType The model type to register.
+     */
+    void register(IModelType modelType);
 
-    Map<IModelType, CitizenModel<AbstractEntityCitizen>> getMaleMap();
-
-    Map<IModelType, CitizenModel<AbstractEntityCitizen>> getFemaleMap();
+    /**
+     * Get the model type from the registry or null if it doesn't exist.
+     *
+     * @param name The name of the model in ResourceLocation format.
+     * @return The model type or null if it doesn't exist.
+     */
+    @Nullable
+    IModelType getModelType(ResourceLocation name);
 }
