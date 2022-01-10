@@ -15,6 +15,16 @@ import java.util.List;
 
 public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
 {
+    /**
+     * Type of restriction.
+     */
+    public enum RestrictionType
+    {
+        NONE,
+        XZ,
+        XYZ
+    }
+
     //  Parent class private members
     protected final MobEntity    ourEntity;
     @Nullable
@@ -124,7 +134,7 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigator
      * @param corners the corners they can't leave.
      * @return the result of the pathing.
      */
-    public abstract PathResult moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners);
+    public abstract PathResult moveToRandomPos(final int range, final double speed, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType);
 
     /**
      * Used to find a tree.

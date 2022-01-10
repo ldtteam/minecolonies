@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.TreePathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
@@ -116,7 +117,8 @@ public class PathJobFindTree extends AbstractPathJob
             AREA_SHRINK,
             false,
             new TreePathResult(),
-            entity);
+            entity,
+            AbstractAdvancedPathNavigate.RestrictionType.XZ);
         this.excludedTrees = excludedTrees;
         this.hutLocation = home;
         this.colony = colony;
