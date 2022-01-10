@@ -206,7 +206,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
 
         final ItemStack stack = new ItemStack(state.getBlock(), 1);
-        final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
+        final Block block = state.getBlock();
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null

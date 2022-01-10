@@ -62,6 +62,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     {
         super.deserialize(buf);
         recruitmentCosts = buf.readItem();
+        recruitmentCosts.setCount(buf.readInt());
         if (buf.readBoolean())
         {
             textureUUID = buf.readUUID();
