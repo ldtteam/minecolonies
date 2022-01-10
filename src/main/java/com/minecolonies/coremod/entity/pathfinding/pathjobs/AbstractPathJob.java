@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 import com.ldtteam.structurize.blocks.decorative.BlockFloatingCarpet;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
@@ -108,9 +109,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     public static final Map<PlayerEntity, UUID> trackingMap = new HashMap<>();
 
     /**
-     * Are there xz restrictions.
+     * Type of restriction.
      */
-    private final boolean xzRestricted;
+    private final AbstractAdvancedPathNavigate.RestrictionType restrictionType;
 
     /**
      * Are xz restrictions hard or soft.
@@ -129,6 +130,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     private int minX;
     private int maxZ;
     private int minZ;
+    private int maxY;
+    private int minY;
 
     /**
      * The entity this job belongs to.
@@ -167,7 +170,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final int maxX = Math.max(start.getX(), end.getX()) + (range / 2);
         final int maxZ = Math.max(start.getZ(), end.getZ()) + (range / 2);
 
-        this.xzRestricted = false;
+        this.restrictionType = AbstractAdvancedPathNavigate.RestrictionType.NONE;
         this.hardXzRestriction = false;
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
@@ -212,9 +215,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         final int range,
         final boolean hardRestriction,
         final PathResult result,
-        final LivingEntity entity)
+        final LivingEntity entity,
+        final AbstractAdvancedPathNavigate.RestrictionType restrictionType)
     {
-        this(world, start, startRestriction, endRestriction, range, Vector3i.ZERO, hardRestriction, result, entity);
+        this(world, start, startRestriction, endRestriction, range, Vector3i.ZERO, hardRestriction, result, entity, restrictionType);
     }
 
     /**
@@ -241,14 +245,17 @@ public abstract class AbstractPathJob implements Callable<Path>
         final Vector3i grow,
         final boolean hardRestriction,
         final PathResult result,
-        final LivingEntity entity)
+        final LivingEntity entity,
+        final AbstractAdvancedPathNavigate.RestrictionType restrictionType)
     {
         this.minX = Math.min(startRestriction.getX(), endRestriction.getX()) - grow.getX();
         this.minZ = Math.min(startRestriction.getZ(), endRestriction.getZ()) - grow.getZ();
         this.maxX = Math.max(startRestriction.getX(), endRestriction.getX()) + grow.getX();
         this.maxZ = Math.max(startRestriction.getZ(), endRestriction.getZ()) + grow.getZ();
+        this.minY = Math.min(startRestriction.getY(), endRestriction.getY()) - grow.getY();
+        this.maxY = Math.max(startRestriction.getY(), endRestriction.getY()) + grow.getY();
 
-        this.xzRestricted = true;
+        this.restrictionType = restrictionType;
         this.hardXzRestriction = hardRestriction;
 
         this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
@@ -1409,10 +1416,21 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public boolean isInRestrictedArea(final BlockPos pos)
     {
-        if (!xzRestricted)
+        if (restrictionType == AbstractAdvancedPathNavigate.RestrictionType.NONE)
         {
             return true;
         }
-        return pos.getX() <= maxX && pos.getZ() <= maxZ && pos.getZ() >= minZ && pos.getX() >= minX;
+
+        final boolean isInXZ = pos.getX() <= maxX && pos.getZ() <= maxZ && pos.getZ() >= minZ && pos.getX() >= minX;
+        if (!isInXZ)
+        {
+            return false;
+        }
+
+        if (restrictionType == AbstractAdvancedPathNavigate.RestrictionType.XZ)
+        {
+            return true;
+        }
+        return pos.getY() <= maxY && pos.getY() >= minY;
     }
 }

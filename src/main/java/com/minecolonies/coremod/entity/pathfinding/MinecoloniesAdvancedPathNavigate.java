@@ -166,7 +166,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public PathResult moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners)
+    public PathResult moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final RestrictionType restrictionType)
     {
         if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {
@@ -183,7 +183,8 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
           (int) ourEntity.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
           ourEntity,
           corners.getA(),
-          corners.getB()), null, speedFactor, true);
+          corners.getB(),
+          restrictionType), null, speedFactor, true);
     }
 
     @Nullable
