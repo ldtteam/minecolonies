@@ -3,6 +3,8 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -42,6 +44,10 @@ public class MarkBuildingDirtyMessage extends AbstractBuildingServerMessage<IBui
     @Override
     protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getTileEntity().setChanged();
+        final AbstractTileEntityColonyBuilding te = building.getTileEntity();
+        if (te != null)
+        {
+            te.setChanged();
+        }
     }
 }
