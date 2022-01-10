@@ -83,8 +83,15 @@ public class IntSetting implements ISetting
 
             try
             {
-                this.value = Integer.parseInt(input.getText());
-                settingsModuleView.trigger(key);
+                if (input.getText().isEmpty())
+                {
+                    this.value = 0;
+                }
+                else
+                {
+                    this.value = Integer.parseInt(input.getText());
+                    settingsModuleView.trigger(key);
+                }
             }
             catch (final NumberFormatException ex)
             {
