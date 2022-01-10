@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +29,9 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
 
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.MINER;
+        return ModModelTypes.MINER_ID;
     }
 
     /**

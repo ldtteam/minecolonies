@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -26,6 +27,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Renderer for the citizens.
@@ -88,11 +90,12 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        model = citizen.isFemale() ? citizen.getModelType().getFemaleModel() : citizen.getModelType().getMaleModel();
+        final @Nullable IModelType modelType = IModelTypeRegistry.getInstance().getModelType(citizen.getModelType());
+        model = citizen.isFemale() ? modelType.getFemaleModel() : modelType.getMaleModel();
         if (model == null)
         {
             //no if base, or the next condition, get player model!
-            model = citizen.isFemale() ? citizen.getModelType().getFemaleModel() : citizen.getModelType().getMaleModel();
+            model = citizen.isFemale() ? modelType.getFemaleModel() : modelType.getMaleModel();
         }
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)

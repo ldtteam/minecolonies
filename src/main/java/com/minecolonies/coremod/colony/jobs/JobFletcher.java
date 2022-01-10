@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.fletcher.EntityAIWorkFletcher;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,8 +35,8 @@ public class JobFletcher extends AbstractJobCrafter<EntityAIWorkFletcher, JobFle
 
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.FLETCHER;
+        return ModModelTypes.FLETCHER_ID;
     }
 }

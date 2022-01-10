@@ -49,8 +49,8 @@ public class CitizenJobHandler implements ICitizenJobHandler
     {
         if (citizen.isBaby())
         {
-            citizen.setModelId(ModModelTypes.CHILD);
-            citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName().toString());
+            citizen.setModelId(ModModelTypes.CHILD_ID);
+            citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().toString());
             citizen.setRenderMetadata("");
             return;
         }
@@ -62,22 +62,22 @@ public class CitizenJobHandler implements ICitizenJobHandler
                 switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
                 {
                     case 3:
-                        citizen.setModelId(ModModelTypes.CITIZEN);
+                        citizen.setModelId(ModModelTypes.CITIZEN_ID);
                         break;
                     case 4:
-                        citizen.setModelId(ModModelTypes.NOBLE);
+                        citizen.setModelId(ModModelTypes.NOBLE_ID);
                         break;
                     case 5:
-                        citizen.setModelId(ModModelTypes.ARISTOCRAT);
+                        citizen.setModelId(ModModelTypes.ARISTOCRAT_ID);
                         break;
                     default:
-                        citizen.setModelId(ModModelTypes.SETTLER);
+                        citizen.setModelId(ModModelTypes.SETTLER_ID);
                         break;
                 }
             }
             else
             {
-                citizen.setModelId(ModModelTypes.SETTLER);
+                citizen.setModelId(ModModelTypes.SETTLER_ID);
             }
         }
         else
@@ -85,7 +85,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
             citizen.setModelId(job.getModel());
         }
 
-        citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName().toString());
+        citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().toString());
         citizen.setRenderMetadata("");
     }
 
