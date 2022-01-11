@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.trainingcamps.EntityAIArcherTraining;
@@ -21,9 +21,9 @@ public class JobArcherTraining extends AbstractJob<EntityAIArcherTraining, JobAr
     }
 
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.ARCHER_GUARD;
+        return ModModelTypes.ARCHER_GUARD_ID;
     }
 
     @Override

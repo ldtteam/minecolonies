@@ -17,7 +17,7 @@ public class ModModelTypeInitializer
     {
         final IModelTypeRegistry reg = IModelTypeRegistry.getInstance();
 
-        ModModelTypes.SETTLER = new SimpleModelType(ModModelTypes.SETTLER_ID, 3, new CitizenModel<>(), new ModelEntityFemaleCitizen());
+        ModModelTypes.SETTLER = new SimpleModelType(ModModelTypes.SETTLER_ID, 3, new CitizenModel(), new ModelEntityFemaleCitizen());
         reg.register(ModModelTypes.SETTLER);
 
         ModModelTypes.CITIZEN = new SimpleModelType(ModModelTypes.CITIZEN_ID, 3, new CitizenModel<>(), new ModelEntityFemaleCitizen());

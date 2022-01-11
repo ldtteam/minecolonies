@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -24,9 +24,9 @@ public class JobCombatTraining extends AbstractJob<EntityAICombatTraining, JobCo
 
 
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.KNIGHT_GUARD;
+        return ModModelTypes.KNIGHT_GUARD_ID;
     }
 
     @Override

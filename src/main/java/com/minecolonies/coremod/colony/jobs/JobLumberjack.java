@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -13,6 +13,7 @@ import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,9 +63,9 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
 
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.LUMBERJACK;
+        return ModModelTypes.LUMBERJACK_ID;
     }
 
     @Override

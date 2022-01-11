@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.render.modeltype.registry;
 
 import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;

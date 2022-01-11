@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * The Ranger's Job class
@@ -47,8 +48,8 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
      * @return The model to use.
      */
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.ARCHER_GUARD;
+        return ModModelTypes.ARCHER_GUARD_ID;
     }
 }
