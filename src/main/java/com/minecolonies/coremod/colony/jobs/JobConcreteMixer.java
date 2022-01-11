@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -37,8 +37,8 @@ public class JobConcreteMixer extends AbstractJobCrafter<EntityAIConcreteMixer, 
 
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.CONCRETE_MIXER;
+        return ModModelTypes.CONCRETE_MIXER_ID;
     }
 }

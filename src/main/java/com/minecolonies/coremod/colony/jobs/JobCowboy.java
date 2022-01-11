@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
@@ -43,8 +43,8 @@ public class JobCowboy extends AbstractJob<EntityAIWorkCowboy, JobCowboy>
      */
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.COW_FARMER;
+        return ModModelTypes.COW_FARMER_ID;
     }
 }

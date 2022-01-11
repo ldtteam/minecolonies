@@ -1,8 +1,8 @@
 package com.minecolonies.api.entity.citizen;
 
 import com.google.common.collect.Lists;
-import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
+import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -74,7 +74,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     /**
      * The default model.
      */
-    private IModelType modelId = ModModelTypes.SETTLER;
+    private ResourceLocation modelId = ModModelTypes.SETTLER_ID;
 
     /**
      * The texture id.
@@ -206,7 +206,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             return;
         }
 
-        texture = getModelType().getTexture(this);
+        texture = IModelTypeRegistry.getInstance().getModelType(getModelType()).getTexture(this);
         textureDirty = false;
     }
 
@@ -250,7 +250,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @return the model.
      */
-    public IModelType getModelType()
+    public ResourceLocation getModelType()
     {
         return modelId;
     }
@@ -367,7 +367,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
      *
      * @param model the model.
      */
-    public void setModelId(final IModelType model)
+    public void setModelId(final ResourceLocation model)
     {
         this.modelId = model;
     }
