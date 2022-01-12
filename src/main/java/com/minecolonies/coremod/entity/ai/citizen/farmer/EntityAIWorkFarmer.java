@@ -30,6 +30,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CompostParticleMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -404,7 +405,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropBlock)
                  && !(world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
-                 && (world.getBlockState(position).is(Tags.Blocks.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
+                 && (world.getBlockState(position).is(BlockTags.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
     }
 
     /**

@@ -1,7 +1,7 @@
 <window size="524 243" pause="false" lightbox="false">
 
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <switch id="pages" size="100% 100%" pos="75 0">
+    <switch id="pages" size="374 100%" pos="75 0">
         <view id="pageAddPlayer">
             <list id="users" size="148 171" pos="201 36">
                 <box size="100% 35" linewidth="1">
