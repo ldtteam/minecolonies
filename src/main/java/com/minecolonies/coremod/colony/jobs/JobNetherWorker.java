@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.IModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.netherworker.EntityAIWorkNether;
 
@@ -109,9 +110,9 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
 
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public IModelType getModel()
     {
-        return BipedModelType.NETHER_WORKER;
+        return ModModelTypes.NETHERWORKER;
     }
 
     @Override

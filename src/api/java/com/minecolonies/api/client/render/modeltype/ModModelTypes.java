@@ -40,6 +40,7 @@ public final class ModModelTypes
     public static final ResourceLocation RABBIT_HERDER_ID  = new ResourceLocation(Constants.MOD_ID, "rabbitherder");
     public static final ResourceLocation PLANTER_ID        = new ResourceLocation(Constants.MOD_ID, "planter");
     public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
+    public static final ResourceLocation NETHERWORKER_ID   = new ResourceLocation(Constants.MOD_ID, "netherworker");
 
     public static IModelType SETTLER;
     public static IModelType CITIZEN;
@@ -76,6 +77,7 @@ public final class ModModelTypes
     public static IModelType RABBIT_HERDER;
     public static IModelType PLANTER;
     public static IModelType BEEKEEPER;
+    public static IModelType NETHERWORKER;
 
     private ModModelTypes()
     {
