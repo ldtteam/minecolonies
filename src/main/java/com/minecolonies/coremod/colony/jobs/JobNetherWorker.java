@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 
 public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobNetherWorker>
@@ -110,9 +111,9 @@ public class JobNetherWorker extends AbstractJobCrafter<EntityAIWorkNether, JobN
 
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return ModModelTypes.NETHERWORKER;
+        return ModModelTypes.NETHERWORKER_ID;
     }
 
     @Override
