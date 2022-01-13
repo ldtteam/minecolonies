@@ -205,9 +205,15 @@ public class BuildToolPlaceMessage implements IMessage
             return;
         }
 
-        final String hut = sn.getSection();
-        final ItemStack stack = BuildingUtils.getItemStackForHutFromInventory(player.inventory, hut);
-        final Block block = stack.getItem() instanceof BlockItem ? ((BlockItem) stack.getItem()).getBlock() : null;
+        final Block block = state.getBlock();
+        final ItemStack tempStack = new ItemStack(block, 1);
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
+        if (slot < 0)
+        {
+            return;
+        }
+
+        final ItemStack stack = player.inventory.getItem(slot);
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null

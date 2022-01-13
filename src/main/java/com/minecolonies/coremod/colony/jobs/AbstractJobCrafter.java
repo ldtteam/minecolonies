@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
-import com.minecolonies.api.client.render.modeltype.IModelType;
+import net.minecraft.util.ResourceLocation;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemCrafterJobDataStore;
@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -79,9 +80,9 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     @NotNull
     @Override
-    public IModelType getModel()
+    public ResourceLocation getModel()
     {
-        return BipedModelType.CRAFTER;
+        return ModModelTypes.CRAFTER_ID;
     }
 
     @Override

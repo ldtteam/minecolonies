@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import net.minecraft.util.ResourceLocation;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -25,9 +26,9 @@ public class JobPlanter extends AbstractJobCrafter<EntityAIWorkPlanter, JobPlant
 
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public ResourceLocation getModel()
     {
-        return BipedModelType.PLANTER;
+        return ModModelTypes.PLANTER_ID;
     }
 
     /**

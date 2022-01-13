@@ -2,6 +2,7 @@ package com.minecolonies.api.util;
 
 import com.google.common.collect.Lists;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -9,12 +10,12 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,20 +27,16 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
 import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
-import static com.minecolonies.api.items.ModTags.fungi;
 
 /**
  * Utility methods for the inventories.
@@ -990,6 +987,36 @@ public final class ItemStackUtils
             Log.getLogger().warn("Parsed item definition returned empty: " + itemData);
         }
         return stack;
+    }
+
+    /**
+     * Obtains a list of all basic items in the game, plus any extra items present in the player's
+     * inventory (allowing for items with custom NBT, e.g. DO blocks or dyed armour).
+     *
+     * @param player The player whose inventory to check.
+     * @return The set of items.
+     */
+    public static Set<ItemStack> allItemsPlusInventory(@NotNull final PlayerEntity player)
+    {
+        // get all known items first
+        final Set<ItemStorage> allItems = new HashSet<>(IColonyManager.getInstance().getCompatibilityManager().getSetOfAllItems());
+
+        // plus all items from the player's inventory not already listed (adds items with extra NBT)
+        for (final ItemStack stack : player.inventory.items)
+        {
+            if (stack.isEmpty()) continue;
+
+            ItemStack pristine = stack;
+            if (stack.isDamageableItem() && stack.isDamaged())
+            {
+                pristine = stack.copy();
+                pristine.setDamageValue(0);
+                // in case the item wasn't already in the set, we want to only store a pristine one!
+            }
+            allItems.add(new ItemStorage(pristine, true));
+        }
+
+        return allItems.stream().map(ItemStorage::getItemStack).collect(Collectors.toSet());
     }
 }
 

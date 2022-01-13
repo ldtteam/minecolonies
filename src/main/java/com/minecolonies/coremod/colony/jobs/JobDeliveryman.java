@@ -1,11 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import net.minecraft.util.ResourceLocation;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemDeliveryManJobDataStore;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -33,6 +32,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -103,9 +103,9 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
 
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public ResourceLocation getModel()
     {
-        return BipedModelType.DELIVERYMAN;
+        return ModModelTypes.DELIVERYMAN_ID;
     }
 
     @Override

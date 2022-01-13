@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import net.minecraft.util.ResourceLocation;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -16,6 +17,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.SHIELD_USAGE;
@@ -77,14 +79,14 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
     }
 
     /**
-     * Gets the {@link BipedModelType} to use for our ranger.
+     * Gets the {@link IModelType} to use for our knight.
      *
      * @return The model to use.
      */
     @Override
-    public BipedModelType getModel()
+    public ResourceLocation getModel()
     {
-        return BipedModelType.KNIGHT_GUARD;
+        return ModModelTypes.KNIGHT_GUARD_ID;
     }
 
     /**

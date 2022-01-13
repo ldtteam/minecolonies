@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -12,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
      *
      * @return Model of the citizen.
      */
-    IModelType getModel();
+    ResourceLocation getModel();
 
     /**
      * Get the Colony that this Job is associated with (shortcut for getAssignedCitizen().getColonyByPosFromWorld()).

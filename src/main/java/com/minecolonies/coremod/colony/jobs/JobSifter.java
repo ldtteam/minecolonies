@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.sifter.EntityAIWorkSifter;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,9 +28,9 @@ public class JobSifter extends AbstractJobCrafter<EntityAIWorkSifter, JobSifter>
      */
     @NotNull
     @Override
-    public BipedModelType getModel()
+    public ResourceLocation getModel()
     {
-        return BipedModelType.SMELTER;
+        return ModModelTypes.SMELTER_ID;
     }
 
     /**

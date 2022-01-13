@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.client.render.modeltype.BipedModelType;
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -49,8 +49,8 @@ public class CitizenJobHandler implements ICitizenJobHandler
     {
         if (citizen.isBaby())
         {
-            citizen.setModelId(BipedModelType.CHILD);
-            citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName());
+            citizen.setModelId(ModModelTypes.CHILD_ID);
+            citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().toString());
             citizen.setRenderMetadata("");
             return;
         }
@@ -62,22 +62,22 @@ public class CitizenJobHandler implements ICitizenJobHandler
                 switch (citizen.getCitizenColonyHandler().getHomeBuilding().getBuildingLevel())
                 {
                     case 3:
-                        citizen.setModelId(BipedModelType.CITIZEN);
+                        citizen.setModelId(ModModelTypes.CITIZEN_ID);
                         break;
                     case 4:
-                        citizen.setModelId(BipedModelType.NOBLE);
+                        citizen.setModelId(ModModelTypes.NOBLE_ID);
                         break;
                     case 5:
-                        citizen.setModelId(BipedModelType.ARISTOCRAT);
+                        citizen.setModelId(ModModelTypes.ARISTOCRAT_ID);
                         break;
                     default:
-                        citizen.setModelId(BipedModelType.SETTLER);
+                        citizen.setModelId(ModModelTypes.SETTLER_ID);
                         break;
                 }
             }
             else
             {
-                citizen.setModelId(BipedModelType.SETTLER);
+                citizen.setModelId(ModModelTypes.SETTLER_ID);
             }
         }
         else
@@ -85,7 +85,7 @@ public class CitizenJobHandler implements ICitizenJobHandler
             citizen.setModelId(job.getModel());
         }
 
-        citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().getName());
+        citizen.getEntityData().set(DATA_MODEL, citizen.getModelType().toString());
         citizen.setRenderMetadata("");
     }
 
