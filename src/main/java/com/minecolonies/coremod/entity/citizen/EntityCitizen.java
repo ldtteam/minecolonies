@@ -1511,13 +1511,16 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
 
-            if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
+            if(!isInvisible())
             {
-                getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
-            }
-            else
-            {
-                InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
+                if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
+                {
+                    getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
+                }
+                else
+                {
+                    InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
+                }
             }
 
             if (citizenData.getJob() != null)
