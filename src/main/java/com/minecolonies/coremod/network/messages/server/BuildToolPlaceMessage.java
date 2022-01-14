@@ -206,7 +206,14 @@ public class BuildToolPlaceMessage implements IMessage
         }
 
         final Block block = state.getBlock();
-        final ItemStack stack = new ItemStack(block, 1);
+        final ItemStack tempStack = new ItemStack(block, 1);
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
+        if (slot < 0)
+        {
+            return;
+        }
+
+        final ItemStack stack = player.getInventory().getItem(slot);
 
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (tempColony != null
