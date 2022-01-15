@@ -984,6 +984,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
+     * Get the building to dump the inventory into.
+     * @return its own building by default.
+     */
+    protected IBuilding getBuildingToDump()
+    {
+        return getOwnBuilding();
+    }
+
+    /**
      * Walk to building and dump inventory. If inventory is dumped, continue execution so that the state can be resolved.
      *
      * @return INVENTORY_FULL | IDLE
@@ -991,7 +1000,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @NotNull
     private IAIState dumpInventory()
     {
-        final IBuilding building = getOwnBuilding();
+        final IBuilding building = getBuildingToDump();
         if (building == null)
         {
             // Uh oh, that shouldn't happen. Restart AI.

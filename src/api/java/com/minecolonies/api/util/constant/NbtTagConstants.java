@@ -314,6 +314,11 @@ public final class NbtTagConstants
     public static final String TAG_COURIERS = "couriers";
 
     /**
+     * The tag used to store the residents.
+     */
+    public static final String TAG_MINERS = "miners";
+
+    /**
      * List storing all beds which have been registered to the building.
      */
     public static final String TAG_BEDS = "beds";

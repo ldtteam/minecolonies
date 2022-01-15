@@ -1,5 +1,6 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -124,6 +125,10 @@ public class MineColonies
 
         InteractionValidatorInitializer.init();
         proxy.setupApi();
+
+        StructureName.HUTS.add("simplequarry");
+        StructureName.HUTS.add("mediumquarry");
+        StructureName.HUTS.add("largequarry");
     }
 
     /**

@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ldtteam.structurize.management.StructureName.HUTS;
+
 /**
  * BuildTool window.
  */
@@ -176,9 +178,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public boolean hasMatchingBlock(@NotNull final PlayerInventory inventory, final String hut)
     {
         return InventoryUtils.hasItemInProvider(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
+          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && (((BlockItem) item.getItem()).getBlock()
                                                                                                                                   .getRegistryName()
                                                                                                                                   .getPath()
-                                                                                                                                  .equalsIgnoreCase("blockhut" + hut));
+                                                                                                                                  .equalsIgnoreCase("blockhut" + hut) || HUTS.contains(hut)));
     }
 }

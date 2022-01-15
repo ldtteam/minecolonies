@@ -301,8 +301,9 @@ public final class ModBuildingsInitializer
                                .setBuildingProducer(BuildingMiner::new)
                                .setBuildingViewProducer(() -> EmptyView::new)
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
-                               .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                               .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
+                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.quarryMiner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
@@ -606,7 +607,28 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> EmptyView::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
                                     .addBuildingModuleProducer(GraveyardManagementModule::new, () -> GraveyardManagementModuleView::new)
-                                   .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                    .createBuildingEntry();
+
+        ModBuildings.simpleQuarry = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockSimpleQuarry)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "simplequarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
+                                   .createBuildingEntry();
+
+        ModBuildings.mediumQuarry = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockMediumQuarry)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "mediumquarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))
+                                   .createBuildingEntry();
+
+        ModBuildings.largeQuarry = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockLargeQuarry)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "largequarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LARGE_QUARRY_ID))
                                    .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
@@ -656,5 +678,8 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
         reg.register(ModBuildings.graveyard);
+        reg.register(ModBuildings.simpleQuarry);
+        reg.register(ModBuildings.mediumQuarry);
+        reg.register(ModBuildings.largeQuarry);
     }
 }

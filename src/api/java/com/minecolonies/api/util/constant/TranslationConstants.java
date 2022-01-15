@@ -320,6 +320,10 @@ public final class TranslationConstants
     @NonNls
     public static final String FURNACE_USER_NO_FUEL                                                 = "com.minecolonies.coremod.furnaceuser.nofuel";
     @NonNls
+    public static final String QUARRY_MINER_NO_QUARRY                                               = "com.minecolonies.coremod.quarryminer.noquarry";
+    @NonNls
+    public static final String QUARRY_MINER_FINISHED_QUARRY                                               = "com.minecolonies.coremod.quarryminer.finishedquarry";
+    @NonNls
     public static final String WORKER_AI_EXCEPTION                                                  = "com.minecolonies.coremod.worker.ai.exception";
     @NonNls
     public static final String PATIENT_FULL_INVENTORY                                               = "com.minecolonies.coremod.healer.fullinv";

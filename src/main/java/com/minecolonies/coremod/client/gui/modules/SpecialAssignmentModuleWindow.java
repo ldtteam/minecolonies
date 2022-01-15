@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Assignment module for couriers to warehouse.
  */
-public class CourierAssignmentModuleWindow extends AbstractModuleWindow
+public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -45,7 +45,7 @@ public class CourierAssignmentModuleWindow extends AbstractModuleWindow
      * @param building class extending {@link AbstractBuildingView}.
      * @param resource Resource of the window.
      */
-    public CourierAssignmentModuleWindow(final IBuildingView building, final String resource)
+    public SpecialAssignmentModuleWindow(final IBuildingView building, final String resource)
     {
         super(building, resource);
         super.registerButton(BUTTON_HIRE, this::hireClicked);
