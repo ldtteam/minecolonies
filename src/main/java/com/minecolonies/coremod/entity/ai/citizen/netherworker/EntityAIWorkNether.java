@@ -2,10 +2,8 @@ package com.minecolonies.coremod.entity.ai.citizen.netherworker;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
@@ -350,7 +348,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         float incomingDamage = tag.getFloat(TAG_DAMAGE);
                         incomingDamage -= incomingDamage * (getSecondarySkillLevel() * SECONDARY_DAMAGE_REDUCTION);
 
-                        Log.getLogger().info("Starting battle with: " + mob.getName().getString() + "(" + mob.getHealth() + ") with a health of: " + worker.getHealth());
                         setEquipSlot(EquipmentSlotType.MAINHAND, true);
                         setEquipSlot(EquipmentSlotType.HEAD, true);
                         setEquipSlot(EquipmentSlotType.CHEST, true);
@@ -394,29 +391,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             if(doDamage)
                             {
                                 mobHealth -= damageToDo;
-                                Log.getLogger().info("Round #" + (hit + 1) + " hit for " + damageToDo + " damage");
-                            }
-                            else
-                            {
-                                Log.getLogger().info("Round #" + (hit + 1) + " was a swing and miss");
                             }
 
                             // Get hit by the mob
-                            if (takeDamage)
+                            if (takeDamage && !worker.hurt(source, incomingDamage))
                             {
-                                if(!worker.hurt(source, incomingDamage))
-                                {
-                                    //Shouldn't get here, but if we do we can force the damage. 
-                                    Log.getLogger().info("Forcing damage");
-                                    incomingDamage = worker.calculateDamageAfterAbsorbs(source, incomingDamage);
-                                    worker.setHealth(worker.getHealth() - incomingDamage);
-                                }
-                                Log.getLogger().info(mob.getName().getString() + " hit for " + incomingDamage + " damage before armor, current health: " + worker.getHealth());
+                                //Shouldn't get here, but if we do we can force the damage. 
+                                incomingDamage = worker.calculateDamageAfterAbsorbs(source, incomingDamage);
+                                worker.setHealth(worker.getHealth() - incomingDamage);
                             }
-                            else
-                            {
-                                Log.getLogger().info(mob.getName().getString() + "'s attack was dodged");
-                            }
+
                             // Every other round, heal up if possible, to compensate for all of this happening in a single tick. 
                             if(hit % 2 == 0)
                             {
@@ -426,7 +410,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                 {
                                     worker.heal(healAmount);
                                     worker.getCitizenData().decreaseSaturation(healAmount * saturationFactor);
-                                    Log.getLogger().info("Healed for: " + healAmount + " current health: " + worker.getHealth());
                                 }
                             }
                             else
@@ -446,7 +429,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             InventoryUtils.clearItemHandler(worker.getItemHandlerCitizen());
                             job.getCraftedResults().clear();
                             job.getProcessedResults().clear();
-                            Log.getLogger().info("Battle complete, unfortunately the worker died.");
                             return IDLE;
                         }
                         else
@@ -456,7 +438,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             LootTable loot = world.getServer().getLootTables().get(mob.getLootTable());
                             List<ItemStack> mobLoot = loot.getRandomItems(context);
                             job.addProcessedResultsList(mobLoot);
-                            Log.getLogger().info("Battle complete! final health: " + worker.getHealth());
                         }
                     }
 
@@ -763,8 +744,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         double availSaturation = 0;
         for(ItemStack item : foodInInv)
         {
-            //int amount = (int) Math.round(Math.ceil((requiredSaturation - foundSaturation) / (float) itemFood.getNutrition()));
-
             // Figure out what the total saturation value of the stack is
             final Food itemFood = item.getItem().getFoodProperties();
             final double satIncrease = itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION)) * item.getCount();
@@ -780,19 +759,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         if(InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> edible.matches(item)) < itemCount)
         {
-            if (edible != null
-                    && !getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
-                    && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
+            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
+             && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
             {
-                Log.getLogger().info("Requesting food, with available saturation: " + availSaturation);
                 getOwnBuilding().createRequest(edible, true);
             }
         }
         else
         {
             int amountToTransfer = (int) (AVERAGE_SATURATION - availSaturation);
-            Log.getLogger().info("Picking up food for " + amountToTransfer + " saturation");
-            InventoryUtils.transferFoodUpToSaturation((IBuilding) getOwnBuilding(), worker.getInventoryCitizen(), amountToTransfer, stack -> edible.matches(stack));
+            InventoryUtils.transferFoodUpToSaturation(getOwnBuilding(), worker.getInventoryCitizen(), amountToTransfer, edible::matches);
         }
     }
 
@@ -802,7 +778,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     protected void attemptToEat()
     {
         final IDeliverable edible = new StackList(getEdiblesList(), "Edible Food", 1);
-        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, stack -> edible.matches(stack));
+        final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker, edible::matches);
         final ICitizenData citizenData = worker.getCitizenData();
         if (slot > -1)
         {
