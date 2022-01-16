@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
 import net.minecraft.network.PacketBuffer;
@@ -81,7 +80,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     {
         for (final WorkerBuildingModuleView workerBuildingModuleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarryMiner && workerBuildingModuleView.isFull())
+            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarrier && workerBuildingModuleView.isFull())
             {
                 return false;
             }

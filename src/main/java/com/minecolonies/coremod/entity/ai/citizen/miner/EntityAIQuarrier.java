@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -11,11 +10,10 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.gui.WindowMinecoloniesBuildTool;
 import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
-import com.minecolonies.coremod.colony.jobs.JobQuarryMiner;
+import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import net.minecraft.block.*;
@@ -28,7 +26,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
@@ -39,7 +36,7 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
 /**
  * Class which handles the miner behaviour.
  */
-public class EntityAIQuarryMiner extends AbstractEntityAIStructureWithWorkOrder<JobQuarryMiner, BuildingMiner>
+public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<JobQuarrier, BuildingMiner>
 {
     private static final String RENDER_META_TORCH = "torch";
     private static final String RENDER_META_STONE = "stone";
@@ -60,7 +57,7 @@ public class EntityAIQuarryMiner extends AbstractEntityAIStructureWithWorkOrder<
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIQuarryMiner(@NotNull final JobQuarryMiner job)
+    public EntityAIQuarrier(@NotNull final JobQuarrier job)
     {
         super(job);
         super.registerTargets(
@@ -134,6 +131,7 @@ public class EntityAIQuarryMiner extends AbstractEntityAIStructureWithWorkOrder<
         return quarry == null ? super.getBuildingToDump() : quarry;
     }
 
+    //todo call it Quarrier
     //todo iterator mode?
     //todo request to quarry and not to hut, can we do that? this should be possible!
     //todo adjust mining order (last - after building already works)

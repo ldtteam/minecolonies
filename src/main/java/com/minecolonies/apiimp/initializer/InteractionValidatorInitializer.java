@@ -4,9 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.workerbuildings.IBuildingDeliveryman;
-import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -309,9 +306,9 @@ public class InteractionValidatorInitializer
           citizen -> citizen.getHomeBuilding() != null && !citizen.getHomeBuilding().isGuardBuildingNear());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(QUARRY_MINER_NO_QUARRY),
-          citizen -> citizen.getJob() instanceof JobQuarryMiner &&  ((JobQuarryMiner) citizen.getJob()).findQuarry() == null);
+          citizen -> citizen.getJob() instanceof JobQuarrier &&  ((JobQuarrier) citizen.getJob()).findQuarry() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(QUARRY_MINER_FINISHED_QUARRY),
-          citizen -> citizen.getJob() instanceof JobQuarryMiner &&  ((JobQuarryMiner) citizen.getJob()).findQuarry() != null && ((JobQuarryMiner) citizen.getJob()).findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished());
+          citizen -> citizen.getJob() instanceof JobQuarrier &&  ((JobQuarrier) citizen.getJob()).findQuarry() != null && ((JobQuarrier) citizen.getJob()).findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished());
     }
 }

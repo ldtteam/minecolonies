@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.modules.ITickingModule;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.coremod.colony.jobs.JobQuarryMiner;
+import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
-                if (data.getJob() instanceof JobQuarryMiner && !hasAssignedCitizen(data) && ((JobQuarryMiner) data.getJob()).findQuarry() == null)
+                if (data.getJob() instanceof JobQuarrier && !hasAssignedCitizen(data) && ((JobQuarrier) data.getJob()).findQuarry() == null)
                 {
                     assignCitizen(data);
                 }
@@ -51,7 +51,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
 
         for (final ICitizenData citizenData : new ArrayList<>(getAssignedCitizen()))
         {
-            if (!(citizenData.getJob() instanceof JobQuarryMiner))
+            if (!(citizenData.getJob() instanceof JobQuarrier))
             {
                 removeCitizen(citizenData);
             }
@@ -121,7 +121,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     @Override
     public JobEntry getJobEntry()
     {
-        return ModJobs.quarryMiner;
+        return ModJobs.quarrier;
     }
 
     public void setHiringMode(final HiringMode hiringMode)

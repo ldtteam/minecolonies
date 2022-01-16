@@ -112,7 +112,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
             }
         }
         
-        return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.quarryMiner;
+        return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.quarrier;
     }
 
     @Override
@@ -137,6 +137,6 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     @Override
     public JobEntry getJobEntry()
     {
-        return ModJobs.quarryMiner;
+        return ModJobs.quarrier;
     }
 }

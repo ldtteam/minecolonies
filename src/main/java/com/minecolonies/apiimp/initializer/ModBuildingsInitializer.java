@@ -302,7 +302,7 @@ public final class ModBuildingsInitializer
                                .setBuildingViewProducer(() -> EmptyView::new)
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
                                .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.quarryMiner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.quarrier, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)

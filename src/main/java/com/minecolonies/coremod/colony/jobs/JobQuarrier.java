@@ -4,7 +4,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
-import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIQuarryMiner;
+import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIQuarrier;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +14,14 @@ import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 /**
  * Class used for variables regarding his job.
  */
-public class JobQuarryMiner extends AbstractJobStructure<EntityAIQuarryMiner, JobQuarryMiner>
+public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier>
 {
     /**
      * Creates a new instance of the miner job.
      *
      * @param entity the entity to add the job to.
      */
-    public JobQuarryMiner(final ICitizenData entity)
+    public JobQuarrier(final ICitizenData entity)
     {
         super(entity);
     }
@@ -40,9 +40,9 @@ public class JobQuarryMiner extends AbstractJobStructure<EntityAIQuarryMiner, Jo
      */
     @NotNull
     @Override
-    public EntityAIQuarryMiner generateAI()
+    public EntityAIQuarrier generateAI()
     {
-        return new EntityAIQuarryMiner(this);
+        return new EntityAIQuarrier(this);
     }
 
     @Override

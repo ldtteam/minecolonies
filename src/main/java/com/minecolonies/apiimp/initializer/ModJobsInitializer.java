@@ -275,8 +275,8 @@ public final class ModJobsInitializer
                               .createJobEntry();
 
 
-        ModJobs.quarryMiner= new JobEntry.Builder()
-                             .setJobProducer(JobQuarryMiner::new)
+        ModJobs.quarrier = new JobEntry.Builder()
+                             .setJobProducer(JobQuarrier::new)
                              .setJobViewProducer(() -> DefaultJobView::new)
                              .setRegistryName(ModJobs.QUARRY_MINER_ID)
                              .createJobEntry();
@@ -324,6 +324,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.rabbitHerder);
         reg.register(ModJobs.beekeeper);
         reg.register(ModJobs.cookassistant);
-        reg.register(ModJobs.quarryMiner);
+        reg.register(ModJobs.quarrier);
     }
 }
