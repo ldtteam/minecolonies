@@ -222,7 +222,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean canFeedChildren()
     {
-        return false;
+        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     /**
