@@ -270,7 +270,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
-     * Butcher some animals (Preferably Adults) that the herder looks after.
+     * Butcher some animals (Preferably Adults & not recently fed) that the herder looks after.
      *
      * @return The next {@link IAIState}.
      */
@@ -290,7 +290,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final Animal animal = animals
                                       .stream()
-                                      .filter(animalToButcher -> !animalToButcher.isBaby())
+                                      .filter(animalToButcher -> !animalToButcher.isBaby() && !animalToButcher.isInLove())
                                       .findFirst()
                                       .orElse(null);
 
