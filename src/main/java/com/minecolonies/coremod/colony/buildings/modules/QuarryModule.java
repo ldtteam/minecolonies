@@ -90,7 +90,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
             quarrycompound.putIntArray(TAG_MINERS, residentIds);
         }
         compound.put("quarryassignment", quarrycompound);
-        compound.putBoolean("isfinished", isFinished);
+        quarrycompound.putBoolean("isfinished", isFinished);
     }
 
     @Override

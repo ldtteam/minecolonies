@@ -103,12 +103,14 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         final IBuilding quarry = job.findQuarry();
         if (quarry == null)
         {
+            walkToBuilding();
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
         if (quarry.getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
+            walkToBuilding();
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
@@ -320,7 +322,14 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
-            blockToMine = result.getBlockResult().getWorldPos();
+            final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
+            if (currentWorldPos.getY() < 60) //todo revert debug
+            {
+                getOwnBuilding().setProgressPos(null, null);
+                return COMPLETE_BUILD;
+            }
+
+            blockToMine = currentWorldPos;
             return MINE_BLOCK;
         }
 
@@ -341,6 +350,16 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (job.findQuarry() == null)
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            return true;
+        }
+        else if (job.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished())
+        {
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            return true;
+        }
+        else if(job.getWorkOrder() != null && !job.getWorkOrder().getSchematicLocation().equals(job.findQuarry().getPosition().below(2)))
+        {
+            job.complete();
             return true;
         }
         return super.checkIfCanceled();
@@ -535,18 +554,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata)
     {
         return IColonyManager.getInstance().getCompatibilityManager().isOre(worldMetadata);
-    }
-
-    @Override
-    protected void triggerMinedBlock(@NotNull final BlockState blockToMine)
-    {
-        super.triggerMinedBlock(blockToMine);
-        final double chance = 1 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_ORES);
-        if (IColonyManager.getInstance().getCompatibilityManager().isLuckyBlock(blockToMine.getBlock()))
-        {
-            InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance),
-              worker.getInventoryCitizen());
-        }
     }
 
     @Override

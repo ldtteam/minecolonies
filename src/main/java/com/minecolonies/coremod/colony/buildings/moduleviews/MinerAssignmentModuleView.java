@@ -125,7 +125,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     @Override
     public Window getWindow()
     {
-        return new SpecialAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutcourierassignment.xml");
+        return new SpecialAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutminerassignment.xml");
     }
 
     @Override
