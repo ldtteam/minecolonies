@@ -291,7 +291,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                     getOwnBuilding().setProgressPos(null, null);
                     return COMPLETE_BUILD;
                 }
-                else if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
+                else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
                 {
                     structurePlacer.getB().setStage(BUILD_SOLID);
                     this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
