@@ -166,7 +166,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation(world);
         final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
 
-        super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }

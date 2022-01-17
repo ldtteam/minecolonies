@@ -1,37 +1,54 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.placement.BlockPlacementResult;
+import com.ldtteam.structurize.placement.StructureIterators;
+import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
+import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.*;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_PLACE_SPEED;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
+import static com.minecolonies.api.util.constant.CitizenConstants.PROGRESS_MULTIPLIER;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.RECALC;
+import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
 
 /**
  * Class which handles the miner behaviour.
@@ -65,7 +82,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING, 1),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND)
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding, TICKS_SECOND),
+          new AITarget(BUILDING_STEP, this::structureStep, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -125,16 +143,214 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     }
 
     @Override
+    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    {
+        final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
+
+        structure = new BuildingStructureHandler<>(world,
+          position,
+              name,
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
+            getOwnBuilding().setTotalStages(3);
+
+
+        if (!structure.hasBluePrint())
+        {
+            handleSpecificCancelActions();
+            Log.getLogger().warn("Couldn't find structure with name: " + name + " aborting loading procedure");
+            return;
+        }
+
+        job.setBlueprint(structure.getBluePrint());
+        job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        setStructurePlacer(structure);
+
+        if (getProgressPos() != null)
+        {
+            structure.setStage(getProgressPos().getB());
+        }
+    }
+
+    @Override
     protected IBuilding getBuildingToDump()
     {
         final IBuilding quarry = job.findQuarry();
         return quarry == null ? super.getBuildingToDump() : quarry;
     }
 
-    //todo call it Quarrier
-    //todo iterator mode?
-    //todo request to quarry and not to hut, can we do that? this should be possible!
-    //todo adjust mining order (last - after building already works)
+    @Override
+    protected IAIState structureStep()
+    {
+        if (structurePlacer.getB().getStage() == null)
+        {
+            return PICK_UP_RESIDUALS;
+        }
+
+        if (InventoryUtils.isItemHandlerFull(worker.getInventoryCitizen()))
+        {
+            return INVENTORY_FULL;
+        }
+
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.building"));
+
+        checkForExtraBuildingActions();
+
+        // some things to do first! then we go to the actual phase!
+
+        //Fill workFrom with the position from where the builder should build.
+        //also ensure we are at that position.
+        final BlockPos progress = getProgressPos() == null ? NULL_POS : getProgressPos().getA();
+        final BlockPos worldPos = structurePlacer.getB().getProgressPosInWorld(progress);
+        if (getProgressPos() != null)
+        {
+            structurePlacer.getB().setStage(getProgressPos().getB());
+        }
+
+        if (!progress.equals(NULL_POS) && !limitReached && (blockToMine == null ? !walkToConstructionSite(worldPos) : !walkToConstructionSite(blockToMine)))
+        {
+            return getState();
+        }
+
+        limitReached = false;
+
+        final StructurePhasePlacementResult result;
+        final StructurePlacer placer = structurePlacer.getA();
+        switch (structurePlacer.getB().getStage())
+        {
+            case BUILD_SOLID:
+                result = placer.executeStructureStep(world,
+                  null,
+                  progress,
+                  StructurePlacer.Operation.BLOCK_PLACEMENT,
+                  () -> placer.getIterator()
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock()))),
+                  false);
+
+                if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
+                {
+                    structurePlacer.getB().nextStage();
+                    this.storeProgressPos(new BlockPos(0, progress.getY() + 1, 0), structurePlacer.getB().getStage());
+                }
+                else
+                {
+                    this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+                }
+
+                break;
+            case DECORATE:
+
+                if (progress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
+                {
+                    structurePlacer.getB().nextStage();
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                    return getState();
+                }
+
+                // not solid
+                result = placer.executeStructureStep(world,
+                  null,
+                  progress,
+                  StructurePlacer.Operation.BLOCK_PLACEMENT,
+                  () -> placer.getIterator()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock()))),
+                  false);
+
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    structurePlacer.getB().nextStage();
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                }
+                else if (progress.getY() != -1 && result.getIteratorPos().getY() > progress.getY())
+                {
+                    structurePlacer.getB().nextStage();
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                }
+                else
+                {
+                    this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+                }
+                break;
+            case CLEAR:
+            default:
+                result = placer.executeStructureStep(world, null, progress, StructurePlacer.Operation.BLOCK_REMOVAL,
+                  () -> placer.getIterator().decrement((info, pos, handler) -> handler.getWorld().getBlockState(pos).getBlock() instanceof IBuilderUndestroyable
+                                                                                 || handler.getWorld().getBlockState(pos).getBlock() == Blocks.BEDROCK
+                                                                                 || handler.getWorld().getBlockState(pos).getBlock() instanceof AirBlock
+                                                                                 || info.getBlockInfo().getState().getBlock()
+                                                                                      == com.ldtteam.structurize.blocks.ModBlocks.blockFluidSubstitution.get()
+                                                                                 || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
+                    getOwnBuilding().nextStage();
+                    getOwnBuilding().setProgressPos(null, null);
+                    return COMPLETE_BUILD;
+                }
+                else if (progress.getY() != -1 && result.getIteratorPos().getY() < progress.getY())
+                {
+                    structurePlacer.getB().setStage(BUILD_SOLID);
+                    this.storeProgressPos(new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), progress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1), structurePlacer.getB().getStage());
+                }
+                else
+                {
+                    this.storeProgressPos(result.getIteratorPos(), structurePlacer.getB().getStage());
+                }
+                break;
+        }
+
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.LIMIT_REACHED)
+        {
+            this.limitReached = true;
+        }
+
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
+        {
+            if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
+            {
+                job.getWorkOrder().setRequested(false);
+                return LOAD_STRUCTURE;
+            }
+            return NEEDS_ITEM;
+        }
+
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
+        {
+            blockToMine = result.getBlockResult().getWorldPos();
+            return MINE_BLOCK;
+        }
+
+        if (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() > 0)
+        {
+            final double decrease = 1 - worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(BLOCK_PLACE_SPEED);
+
+            setDelay((int) (
+              (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() * PROGRESS_MULTIPLIER / (getPlaceSpeedLevel() / 2 + PROGRESS_MULTIPLIER))
+                * decrease));
+        }
+        return getState();
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (job.findQuarry() == null)
+        {
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslationTextComponent(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            return true;
+        }
+        return super.checkIfCanceled();
+    }
+
+    @Override
+    public void setStructurePlacer(final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure)
+    {
+        structurePlacer = new Tuple<>(new StructurePlacer(structure, "default"), structure);
+    }
 
     @Override
     public int getBreakSpeedLevel()
@@ -331,6 +547,38 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance),
               worker.getInventoryCitizen());
         }
+    }
+
+    @Override
+    public boolean walkToConstructionSite(final BlockPos currentBlock)
+    {
+        if (workFrom == null)
+        {
+            workFrom = findRandomPositionToWalkTo(5, currentBlock);
+            if (workFrom == null && pathBackupFactor > 10)
+            {
+                workFrom = worker.blockPosition();
+            }
+            return false;
+        }
+
+        if (walkToBlock(workFrom))
+        {
+            return false;
+        }
+
+        if (BlockPosUtil.getDistance(worker.blockPosition(), currentBlock) > 5 + 5 * pathBackupFactor)
+        {
+            workFrom = null;
+            return false;
+        }
+
+        if (pathBackupFactor > 1)
+        {
+            pathBackupFactor--;
+        }
+
+        return true;
     }
 
     @Override

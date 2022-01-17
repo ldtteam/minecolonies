@@ -77,7 +77,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * If the structure state is currently reached limit rather than block placement.
      */
-    private boolean limitReached = false;
+    protected boolean limitReached = false;
 
     /**
      * Different item check result possibilities.
@@ -289,7 +289,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structurePlacer.getB().setStage(getProgressPos().getB());
         }
 
-        if (!limitReached && !walkToConstructionSite(worldPos))
+        if (!progress.equals(NULL_POS) && !limitReached && (blockToMine == null ? !walkToConstructionSite(worldPos) : !walkToConstructionSite(blockToMine)))
         {
             return getState();
         }

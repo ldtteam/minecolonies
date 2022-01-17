@@ -1078,7 +1078,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @SuppressWarnings("PMD.PrematureDeclaration")
     private boolean dumpOneMoreSlot()
     {
-        if (walkToBuilding())
+        if (walkToBlock(getBuildingToDump().getPosition()))
         {
             return true;
         }
@@ -1121,7 +1121,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (amount > 0)
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
                 hasDumpedItems = true;
             }
         }
