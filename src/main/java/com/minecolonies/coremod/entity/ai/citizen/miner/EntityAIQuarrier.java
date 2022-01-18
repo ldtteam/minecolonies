@@ -310,6 +310,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             this.limitReached = true;
         }
 
+        //todo move bucket handling to both types of miners too.
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
         {
             if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
@@ -323,7 +324,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {
             final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
-            if (currentWorldPos.getY() < 60) //todo revert debug
+
+            //todo adjust in 1.18 to actual world height.
+            if (currentWorldPos.getY() < 5)
             {
                 getOwnBuilding().setProgressPos(null, null);
                 return COMPLETE_BUILD;
@@ -359,7 +362,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         }
         else if(job.getWorkOrder() != null && !job.getWorkOrder().getSchematicLocation().equals(job.findQuarry().getPosition().below(2)))
         {
+            blockToMine = null;
             job.complete();
+            getOwnBuilding().setProgressPos(null, null);
             return true;
         }
         return super.checkIfCanceled();
@@ -453,6 +458,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
         if (world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
         {
+            blockToMine = null;
             return BUILDING_STEP;
         }
 
@@ -469,6 +475,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         }
 
         worker.decreaseSaturationForContinuousAction();
+        blockToMine  = null;
         return BUILDING_STEP;
     }
 
