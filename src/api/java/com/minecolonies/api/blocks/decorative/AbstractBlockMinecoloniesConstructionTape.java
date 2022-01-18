@@ -34,8 +34,6 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
     protected VoxelShape[] shapes = new VoxelShape[] {};
 
-    private final Object2IntMap<BlockState> stateShapeMap = new Object2IntOpenHashMap<>();
-
     /**
      * The default face for when there are no connections.
      */
@@ -65,30 +63,28 @@ public abstract class AbstractBlockMinecoloniesConstructionTape<B extends Abstra
 
     protected int getIndex(BlockState state)
     {
-        return this.stateShapeMap.computeIntIfAbsent(state, (computeState) -> {
-            int i = 0;
-            if (computeState.getValue(NORTH))
-            {
-                i |= getMask(Direction.NORTH);
-            }
+        int i = 0;
+        if (state.getValue(NORTH))
+        {
+            i |= getMask(Direction.NORTH);
+        }
 
-            if (computeState.getValue(EAST))
-            {
-                i |= getMask(Direction.EAST);
-            }
+        if (state.getValue(EAST))
+        {
+            i |= getMask(Direction.EAST);
+        }
 
-            if (computeState.getValue(SOUTH))
-            {
-                i |= getMask(Direction.SOUTH);
-            }
+        if (state.getValue(SOUTH))
+        {
+            i |= getMask(Direction.SOUTH);
+        }
 
-            if (computeState.getValue(WEST))
-            {
-                i |= getMask(Direction.WEST);
-            }
+        if (state.getValue(WEST))
+        {
+            i |= getMask(Direction.WEST);
+        }
 
-            return i;
-        });
+        return i;
     }
 
     @Override
