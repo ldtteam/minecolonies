@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.*;
@@ -954,10 +955,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     @Override
     protected boolean checkIfCanceled()
     {
-        if (super.checkIfCanceled())
+        if ((job.getWorkOrder() == null && job.getBlueprint() != null)
+              || (structurePlacer != null && !structurePlacer.getB().hasBluePrint())
+              || (job.getWorkOrder() != null && job.getWorkOrder().getStructureName().contains("quarry")))
         {
+            job.setBlueprint(null);
+            if (job.hasWorkOrder())
+            {
+                job.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+            }
+            job.setWorkOrder(null);
+            resetCurrentStructure();
+            getOwnBuilding().cancelAllRequestsOfCitizen(worker.getCitizenData());
+            getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
+
         if (!isThereAStructureToBuild())
         {
             switch ((AIWorkerState) getState())
@@ -968,7 +981,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     return false;
             }
         }
-        return false;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getSchematicLocation())) && getState() != PICK_UP_RESIDUALS;
     }
 
     private boolean ladderDamaged()
