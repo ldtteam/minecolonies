@@ -9,6 +9,7 @@ public class ClientConfiguration extends AbstractConfiguration
 {
     public final ForgeConfigSpec.BooleanValue citizenVoices;
     public final ForgeConfigSpec.BooleanValue neighborbuildingrendering;
+    public final ForgeConfigSpec.BooleanValue colonyteamborders;
 
     /**
      * Builds client configuration.
@@ -20,6 +21,7 @@ public class ClientConfiguration extends AbstractConfiguration
         createCategory(builder, "gameplay");
         citizenVoices = defineBoolean(builder, "enablecitizenvoices", true);
         neighborbuildingrendering = defineBoolean(builder, "neighborbuildingrendering", true);
+        colonyteamborders = defineBoolean(builder, "colonyteamborders", true);
 
         swapToCategory(builder, "pathfinding");
 

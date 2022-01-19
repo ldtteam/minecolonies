@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.ldtteam.blockui.MatrixUtils;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.util.WorldRenderMacros;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
@@ -12,12 +13,17 @@ import com.mojang.blaze3d.vertex.BufferBuilder.DrawState;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
+
+import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class ColonyBorderRenderer
@@ -94,6 +100,8 @@ public class ColonyBorderRenderer
         final int playerRenderDist)
     {
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
+        final Map<Integer, Color> colonyColours = new HashMap<>();
+        final boolean useColonyColour = IMinecoloniesAPI.getInstance().getConfig().getClient().colonyteamborders.get();
 
         bufferbuilder.begin(WorldRenderMacros.LINES.mode(), WorldRenderMacros.LINES.format());
         mapToDraw.forEach((chunkPos, colonyId) -> {
@@ -109,17 +117,27 @@ public class ColonyBorderRenderer
             final float maxX = chunkPos.getMaxBlockX() + 1.0f;
             final float minZ = chunkPos.getMinBlockZ();
             final float maxZ = chunkPos.getMaxBlockZ() + 1.0f;
-            final int testedColonyId;
+            final int testedColonyId = colonyId;
 
-            if (colonyId == playerColonyId)
+            if (useColonyColour)
+            {
+                final Color colour = colonyColours.computeIfAbsent(colonyId, id ->
+                {
+                    final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, Minecraft.getInstance().level.dimension());
+                    final ChatFormatting team = colony != null ? colony.getTeamColonyColor()
+                            : id == playerColonyId ? ChatFormatting.WHITE : ChatFormatting.RED;
+                    return new Color(team.getColor());
+                });
+
+                bufferbuilder.defaultColor(colour.getRed(), colour.getGreen(), colour.getBlue(), colour.getAlpha());
+            }
+            else if (colonyId == playerColonyId)
             {
                 bufferbuilder.defaultColor(255, 255, 255, 255);
-                testedColonyId = playerColonyId;
             }
             else
             {
                 bufferbuilder.defaultColor(255, 70, 70, 255);
-                testedColonyId = colonyId;
             }
 
             mutableChunkPos.setX(chunkPos.x);
