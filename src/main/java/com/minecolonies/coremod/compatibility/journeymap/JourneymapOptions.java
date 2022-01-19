@@ -18,6 +18,7 @@ public class JourneymapOptions
     private final Option<Boolean> colonistNameMinimap;
     private final Option<Boolean> colonistNameFullscreen;
     private final Option<Boolean> colonistTooltips;
+    private final Option<Boolean> colonistTeam;
     private final Option<Boolean> guards;
     private final Option<Boolean> citizens;
     private final Option<Boolean> visitors;
@@ -34,6 +35,7 @@ public class JourneymapOptions
         this.colonistNameMinimap = new BooleanOption(category, "colonistNameMinimap", prefix + "colonistnameminimap", true).setSortOrder(201);
         this.colonistNameFullscreen = new BooleanOption(category, "colonistNameFullscreen", prefix + "colonistnamefullscreen", true).setSortOrder(200);
         this.colonistTooltips = new BooleanOption(category, "colonistTooltips", prefix + "colonisttooltips", true).setSortOrder(202);
+        this.colonistTeam = new BooleanOption(category, "colonistTeam", prefix + "colonistteam", true).setSortOrder(203);
         this.guards = new BooleanOption(category, "guards", prefix + "guards", true).setSortOrder(300);
         this.citizens = new BooleanOption(category, "citizens", prefix + "citizens", true).setSortOrder(301);
         this.visitors = new BooleanOption(category, "visitors", prefix + "visitors", true).setSortOrder(302);
@@ -72,6 +74,11 @@ public class JourneymapOptions
     public static boolean getShowColonistTooltip(@NotNull final Optional<JourneymapOptions> options)
     {
         return options.map(o -> o.colonistTooltips.get()).orElse(true);
+    }
+
+    public static boolean getShowColonistTeamColour(@NotNull final Optional<JourneymapOptions> options)
+    {
+        return options.map(o -> o.colonistTeam.get()).orElse(true);
     }
 
     public static boolean getShowGuards(@NotNull final Optional<JourneymapOptions> options)

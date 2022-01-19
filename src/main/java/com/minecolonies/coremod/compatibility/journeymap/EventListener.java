@@ -143,23 +143,12 @@ public class EventListener
                     ? JourneymapOptions.getShowColonistNameMinimap(this.jmap.getOptions())
                     : JourneymapOptions.getShowColonistNameFullscreen(this.jmap.getOptions());
 
-//            if (showName && wrapper.getCustomName() != null)
-//            {
-//                final TextComponent name = (TextComponent) wrapper.getCustomName().plainCopy();
-//                if (!isVisitor)
-//                {
-//                    name.setStyle(Style.EMPTY.withColor(entity.getTeamColor()));
-//                }
-//
-//                wrapper.setCustomName(name);
-//            }
-//            else
             if (!showName)
             {
                 wrapper.setCustomName("");
             }
 
-            if (!isVisitor)
+            if (!isVisitor && JourneymapOptions.getShowColonistTeamColour(this.jmap.getOptions()))
             {
                 wrapper.setColor(entity.getTeamColor());
             }
