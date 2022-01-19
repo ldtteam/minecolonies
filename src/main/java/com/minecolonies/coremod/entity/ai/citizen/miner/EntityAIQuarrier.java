@@ -8,6 +8,7 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -17,13 +18,16 @@ import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
+import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.*;
 import net.minecraft.fluid.FluidState;
@@ -288,7 +292,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                                                                                  || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
                     getOwnBuilding().nextStage();
                     getOwnBuilding().setProgressPos(null, null);
                     return COMPLETE_BUILD;
@@ -310,7 +313,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             this.limitReached = true;
         }
 
-        //todo move bucket handling to both types of miners too.
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.MISSING_ITEMS)
         {
             if (hasListOfResInInvOrRequest(this, result.getBlockResult().getRequiredItems(), result.getBlockResult().getRequiredItems().size() > 1) == RECALC)
@@ -345,6 +347,126 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 * decrease));
         }
         return getState();
+    }
+
+    @Override
+    public boolean requestMaterials()
+    {
+        StructurePhasePlacementResult result;
+        final WorkerLoadOnlyStructureHandler structure = new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+        job.getWorkOrder().setIteratorType("default");
+
+        final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());
+
+        if (requestProgress == null)
+        {
+            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+            buildingWorker.resetNeededResources();
+            requestProgress = NULL_POS;
+            requestState = RequestStage.SOLID;
+        }
+
+        final BlockPos worldPos = structure.getProgressPosInWorld(requestProgress);
+
+
+        //todo double check this here
+        final RequestStage currState = requestState;
+        switch (currState)
+        {
+            case SOLID:
+                result = placer.executeStructureStep(world,
+                  null,
+                  requestProgress,
+                  StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator()
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock())  || pos.getY()  < worldPos.getY())),
+                  false);
+
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                }
+
+                if (requestProgress.getY() != -1 && result.getIteratorPos().getY() < requestProgress.getY())
+                {
+                    requestProgress = new BlockPos(0, requestProgress.getY() + 1, 0);
+                    requestState = RequestStage.DECO;
+                }
+                else
+                {
+                    requestProgress = result.getIteratorPos();
+                }
+
+                return false;
+            case DECO:
+                if (requestProgress.getY() >= structurePlacer.getB().getBluePrint().getSizeY())
+                {
+                    requestState = RequestStage.ENTITIES;
+                    requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
+                      requestProgress.getY() - 1,
+                      structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                    return false;
+                }
+
+                result = placer.executeStructureStep(world,
+                  null,
+                  requestProgress,
+                  StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator()
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock())  || pos.getY() > worldPos.getY())),
+                  false);
+
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                }
+
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestState = RequestStage.ENTITIES;
+                    requestProgress =
+                      new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), requestProgress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                }
+                else if (requestProgress.getY() != -1 && result.getIteratorPos().getY() > requestProgress.getY())
+                {
+                    requestState = RequestStage.ENTITIES;
+                    requestProgress =
+                      new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(), requestProgress.getY() - 1, structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                }
+                else
+                {
+                    requestProgress = result.getIteratorPos();
+                }
+                return false;
+            case ENTITIES:
+                result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator().decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0  || pos.getY()  < worldPos.getY())), true);
+
+                if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestState = RequestStage.SOLID;
+                    requestProgress = null;
+                    return true;
+                }
+                else if (requestProgress.getY() != -1 && (result.getIteratorPos().getY() < requestProgress.getY()))
+                {
+                    requestState = RequestStage.SOLID;
+                    requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
+                      requestProgress.getY() - 1,
+                      structurePlacer.getB().getBluePrint().getSizeZ() - 1);
+                }
+                else
+                {
+                    requestProgress = result.getIteratorPos();
+                }
+                return false;
+        }
+
+        return true;
     }
 
     @Override
