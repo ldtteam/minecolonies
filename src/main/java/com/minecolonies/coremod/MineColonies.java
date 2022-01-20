@@ -125,10 +125,6 @@ public class MineColonies
 
         InteractionValidatorInitializer.init();
         proxy.setupApi();
-
-        StructureName.HUTS.add("simplequarry");
-        StructureName.HUTS.add("mediumquarry");
-        StructureName.HUTS.add("largequarry");
     }
 
     /**

@@ -20,7 +20,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HIRING_MODE
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MINERS;
 
 /**
- * The Courier module for the warehouse.
+ * The main data module for the quarry.
  */
 public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule
 {

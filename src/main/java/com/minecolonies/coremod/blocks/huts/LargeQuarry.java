@@ -26,6 +26,6 @@ public class LargeQuarry extends AbstractBlockHut<LargeQuarry>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.largeQuarry;
+        return null;//ModBuildings.largeQuarry;
     }
 }

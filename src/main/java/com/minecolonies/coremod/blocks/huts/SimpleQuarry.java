@@ -20,7 +20,7 @@ public class SimpleQuarry extends AbstractBlockHut<SimpleQuarry>
     @Override
     public String getHutName()
     {
-        return "simplequarry";
+        return ModBuildings.SIMPLE_QUARRY_ID;
     }
 
     @Override

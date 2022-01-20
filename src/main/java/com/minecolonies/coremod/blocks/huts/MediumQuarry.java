@@ -20,7 +20,7 @@ public class MediumQuarry extends AbstractBlockHut<MediumQuarry>
     @Override
     public String getHutName()
     {
-        return "mediumquarry";
+        return ModBuildings.MEDIUM_QUARRY_ID;
     }
 
     @Override

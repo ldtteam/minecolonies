@@ -612,24 +612,24 @@ public final class ModBuildingsInitializer
 
         ModBuildings.simpleQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockSimpleQuarry)
-                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "simplequarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
                                    .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
                                    .createBuildingEntry();
 
         ModBuildings.mediumQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockMediumQuarry)
-                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "mediumquarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
                                    .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))
                                    .createBuildingEntry();
 
-        ModBuildings.largeQuarry = new BuildingEntry.Builder()
+        /*ModBuildings.largeQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockLargeQuarry)
                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "largequarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
                                    .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LARGE_QUARRY_ID))
-                                   .createBuildingEntry();
+                                   .createBuildingEntry();*/
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -680,6 +680,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.graveyard);
         reg.register(ModBuildings.simpleQuarry);
         reg.register(ModBuildings.mediumQuarry);
-        reg.register(ModBuildings.largeQuarry);
+        //reg.register(ModBuildings.largeQuarry);
     }
 }

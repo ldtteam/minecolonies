@@ -105,7 +105,7 @@ public final class ModBuildings
     public static BuildingEntry graveyard;
     public static BuildingEntry simpleQuarry;
     public static BuildingEntry mediumQuarry;
-    public static BuildingEntry largeQuarry;
+    //public static BuildingEntry largeQuarry;
 
     private ModBuildings()
     {

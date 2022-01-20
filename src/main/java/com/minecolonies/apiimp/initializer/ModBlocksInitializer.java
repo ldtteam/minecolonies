@@ -110,7 +110,7 @@ public final class ModBlocksInitializer
 
         ModBlocks.blockSimpleQuarry = new SimpleQuarry().registerBlock(registry);
         ModBlocks.blockMediumQuarry = new MediumQuarry().registerBlock(registry);
-        ModBlocks.blockLargeQuarry = new LargeQuarry().registerBlock(registry);
+        //ModBlocks.blockLargeQuarry = new LargeQuarry().registerBlock(registry);
     }
 
     @SubscribeEvent
@@ -188,6 +188,6 @@ public final class ModBlocksInitializer
 
         ModBlocks.blockSimpleQuarry.registerBlockItem(registry, properties);
         ModBlocks.blockMediumQuarry.registerBlockItem(registry, properties);
-        ModBlocks.blockLargeQuarry.registerBlockItem(registry, properties);
+        //ModBlocks.blockLargeQuarry.registerBlockItem(registry, properties);
     }
 }

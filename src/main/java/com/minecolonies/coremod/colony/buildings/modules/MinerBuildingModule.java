@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.function.Function;
 
 /**
- * Assignment module for jobs that have to live at the work place mandatorily.
+ * Assignment module for miners.
  */
 public class MinerBuildingModule extends WorkerBuildingModule implements ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
