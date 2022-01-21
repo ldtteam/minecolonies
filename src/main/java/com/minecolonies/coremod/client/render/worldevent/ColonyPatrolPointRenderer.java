@@ -44,6 +44,10 @@ public class ColonyPatrolPointRenderer
         }
 
         final IBuildingView guardTowerView = colony.getBuilding(BlockPosUtil.read(itemStackNbt, TAG_POS));
+        if (guardTowerView == null)
+        {
+            return;
+        }
 
         if (partolPointTemplate == null)
         {
