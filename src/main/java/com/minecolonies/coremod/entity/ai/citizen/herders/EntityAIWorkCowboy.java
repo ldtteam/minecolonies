@@ -148,12 +148,6 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     }
 
     @Override
-    protected boolean canFeedChildren()
-    {
-        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
-    }
-
-    @Override
     public double getButcheringAttackDamage()
     {
         return Math.max(1.0, getPrimarySkillLevel() / 10.0);
