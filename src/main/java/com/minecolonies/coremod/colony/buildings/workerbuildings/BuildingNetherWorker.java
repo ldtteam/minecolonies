@@ -42,8 +42,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     /**
      * Settings
      */
-    public static final ISettingKey<BoolSetting>       CLOSE_PORTAL      =
-    new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
+    public static final ISettingKey<BoolSetting>  CLOSE_PORTAL = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "closeportal"));
 
     /**
      * 
@@ -193,17 +192,6 @@ public class BuildingNetherWorker extends AbstractBuilding
         if (inventory && getFirstModuleOccurance(MinimumStockModule.class).isStocked(stack))
         {
             return stack.getCount();
-        }
-
-        if (isAllowedFood(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
-        {
-            final ItemStorage kept = new ItemStorage(stack);
-            if (localAlreadyKept.contains(kept))
-            {
-                kept.setAmount(localAlreadyKept.remove(localAlreadyKept.indexOf(kept)).getAmount());
-            }
-            localAlreadyKept.add(kept);
-            return 0;
         }
 
         // Check for materials needed to go to the Nether: 
