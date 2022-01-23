@@ -27,11 +27,11 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeVersion}"
 
-    library fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
+    library fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     library "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
     library fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
 
-    apiLibrary fg.deobf("com.ldtteam:structurize:${project.structurize_version}")
+    apiLibrary fg.deobf("com.ldtteam:structurize:${project.minecraftVersion}-${project.structurize_version}")
     apiLibrary "com.ldtteam:datagenerators:${project.dataGeneratorsVersion}"
     apiLibrary fg.deobf("mezz.jei:jei-${project.minecraftVersion}:${project.jei_version}")
 
