@@ -161,6 +161,13 @@ public interface ICompatibilityManager
     List<ItemStack> getListOfAllItems();
 
     /**
+     * Get a set of all items (marked to ignore damage but not NBT).
+     *
+     * @return the immutable set.
+     */
+    Set<ItemStorage> getSetOfAllItems();
+
+    /**
      * Write colonies to NBT data for saving.
      *
      * @param compound NBT-Tag.
