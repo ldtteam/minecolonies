@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.herders;
 
-import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -119,7 +118,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue())
+        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue() ||
+                getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue())
         {
             list.add(getRequestBreedingItems());
         }
@@ -194,11 +194,11 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         {
             return HERDER_BUTCHER;
         }
-        else if (getOwnBuilding().getFirstOptionalModuleOccurance(ISettingsModule.class).map(m-> m.getSetting(AbstractBuilding.BREEDING).getValue()).orElse(true) && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
+        else if (canBreedChildren() && numOfBreedableAnimals >= NUM_OF_ANIMALS_TO_BREED && hasBreedingItem)
         {
             return HERDER_BREED;
         }
-        else if (canFeedChildren() && numOfFeedableAnimals > 0)
+        else if (canFeedChildren() && numOfFeedableAnimals > 0 && hasBreedingItem)
         {
             return HERDER_FEED;
         }
@@ -217,12 +217,22 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
+     * Whether or not this one can feed adults to breed children.
+     * @return true if so.
+     */
+    protected boolean canBreedChildren()
+    {
+        return getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue();
+    }
+
+    /**
      * Whether or not this one can feed children to speed up growth.
      * @return true if so.
      */
     protected boolean canFeedChildren()
     {
-        return false;
+        return getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue() &&
+                getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
     /**
@@ -255,7 +265,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             }
         }
 
-        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue())
+        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue() ||
+                getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue())
         {
             final ItemStack breedingItem = getBreedingItem();
             checkIfRequestForItemExistOrCreateAsynch(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
@@ -270,7 +281,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
-     * Butcher some animals (Preferably Adults) that the herder looks after.
+     * Butcher some animals (Preferably Adults & not recently fed) that the herder looks after.
      *
      * @return The next {@link IAIState}.
      */
@@ -290,7 +301,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final AnimalEntity animal = animals
                                       .stream()
-                                      .filter(animalToButcher -> !animalToButcher.isBaby())
+                                      .filter(animalToButcher -> !animalToButcher.isBaby() && !animalToButcher.isInLove())
                                       .findFirst()
                                       .orElse(null);
 
