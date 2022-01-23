@@ -300,7 +300,7 @@ public class Permissions implements IPermissions
         if (compound.contains(TAG_RANKS))
         {
             ranks.clear();
-            final ListTag permissionsTagList = compound.getList(TAG_PERMISSIONS, Tag.TAG_COMPOUND);
+
             final ListTag rankTagList = compound.getList(TAG_RANKS, Tag.TAG_COMPOUND);
             for (int i = 0; i < rankTagList.size(); ++i)
             {
@@ -312,33 +312,36 @@ public class Permissions implements IPermissions
                 final boolean isColonyManager = rankCompound.getBoolean(TAG_COLONY_MANAGER);
                 final boolean isHostile = rankCompound.getBoolean(TAG_HOSTILE);
 
-                long permissionData = 0L;
-                if (i < permissionsTagList.size())
+                final Rank rank = new Rank(id, 0L, name, isSubscriber, isInitial, isColonyManager, isHostile);
+                ranks.put(id, rank);
+                upgradePermissions(version, rank);
+            }
+
+            final ListTag permissionsTagList = compound.getList(TAG_PERMISSIONS, Tag.TAG_COMPOUND);
+            for (int i = 0; i < permissionsTagList.size(); ++i)
+            {
+                final CompoundTag permissionsCompound = permissionsTagList.getCompound(i);
+
+                final Rank rank = ranks.get(permissionsCompound.getInt(TAG_RANK));
+                if (rank == null)
                 {
-                    final CompoundTag permissionsCompound = permissionsTagList.getCompound(i);
-                    final ListTag flagsTagList = permissionsCompound.getList(TAG_FLAGS, Tag.TAG_STRING);
-
-                    long flags = 0;
-
-                    for (int j = 0; j < flagsTagList.size(); ++j)
-                    {
-                        final String flag = flagsTagList.getString(j);
-                        try
-                        {
-                            flags = Utils.setFlag(flags, Action.valueOf(flag).getFlag());
-                        }
-                        catch (IllegalArgumentException ex)
-                        {
-                            // noop, this can happen with backwards compat.
-                        }
-                    }
-                    permissionData = flags;
+                    continue;
                 }
 
-                final Rank rank = new Rank(id, permissionData, name, isSubscriber, isInitial, isColonyManager, isHostile);
-                ranks.put(id, rank);
+                final ListTag flagsTagList = permissionsCompound.getList(TAG_FLAGS, Tag.TAG_STRING);
 
-                upgradePermissions(version, rank);
+                for (int j = 0; j < flagsTagList.size(); ++j)
+                {
+                    final String flag = flagsTagList.getString(j);
+                    try
+                    {
+                        rank.addPermission(Action.valueOf(flag));
+                    }
+                    catch (IllegalArgumentException ex)
+                    {
+                        // noop, this can happen with backwards compat.
+                    }
+                }
             }
         }
         else
