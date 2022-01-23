@@ -1,5 +1,7 @@
 package com.minecolonies.api.colony.permissions;
 
+import com.minecolonies.api.util.Utils;
+
 import java.util.Objects;
 
 public class Rank
@@ -33,15 +35,22 @@ public class Rank
     private boolean isHostile;
 
     /**
-     * Rank constructor
-     * @param id the id of the rank
-     * @param name the name of the rank
-     * @param isSubscriber whether the rank is a subscriber
-     * @param isInitial whether the rank is an initial rank
+     * Holds all bits indicating given permissions
      */
-    public Rank(int id, String name, boolean isSubscriber, boolean isInitial, boolean isColonyManager, boolean isHostile)
+    private long permissionData = 0;
+
+    /**
+     * Rank constructor
+     *
+     * @param id           the id of the rank
+     * @param name         the name of the rank
+     * @param isSubscriber whether the rank is a subscriber
+     * @param isInitial    whether the rank is an initial rank
+     */
+    public Rank(int id, long permissionData, String name, boolean isSubscriber, boolean isInitial, boolean isColonyManager, boolean isHostile)
     {
         this.id = id;
+        this.permissionData = permissionData;
         this.name = name;
         this.isSubscriber = isSubscriber;
         this.isInitial = isInitial;
@@ -51,7 +60,7 @@ public class Rank
 
     public Rank(int id, String name, boolean isSubscriber, boolean isInitial)
     {
-        this(id, name, isSubscriber, isInitial, false, false);
+        this(id, 0L, name, isSubscriber, isInitial, false, false);
     }
 
     /**
@@ -147,5 +156,44 @@ public class Rank
     public int compareTo(Rank rank)
     {
         return this.getId() - rank.getId();
+    }
+
+    /**
+     * Adds the given action permission if it is not set yet
+     *
+     * @param action
+     * @return
+     */
+    public boolean addPermission(final Action action)
+    {
+        if (!Utils.testFlag(permissionData, action.getFlag()))
+        {
+            permissionData = Utils.setFlag(permissionData, action.getFlag());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Adds the given action permission if it is not set yet
+     *
+     * @param action
+     * @return
+     */
+    public boolean removePermission(final Action action)
+    {
+        if (Utils.testFlag(permissionData, action.getFlag()))
+        {
+            permissionData = Utils.unsetFlag(permissionData, action.getFlag());
+            return true;
+        }
+
+        return false;
+    }
+
+    public long getPermissions()
+    {
+        return permissionData;
     }
 }
