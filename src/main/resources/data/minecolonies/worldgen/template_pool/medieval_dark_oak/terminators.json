@@ -1,0 +1,42 @@
+{
+  "name": "minecolonies:medieval_dark_oak/terminators",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_dark_oak/terminator_01",
+        "processors": "minecolonies:medieval_dark_oak/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_dark_oak/terminator_02",
+        "processors": "minecolonies:medieval_dark_oak/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_dark_oak/terminator_03",
+        "processors": "minecolonies:medieval_dark_oak/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_dark_oak/terminator_04",
+        "processors": "minecolonies:medieval_dark_oak/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    }
+  ]
+}

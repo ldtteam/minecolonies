@@ -1,0 +1,156 @@
+{
+  "name": "minecolonies:medieval_spruce/buildings",
+  "fallback": "minecolonies:medieval_spruce/terminators",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_spruce/builder1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+		    "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_spruce/builder2",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_spruce/cook1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:medieval_spruce/courier1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_spruce/farm1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_spruce/forester1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_spruce/forester2",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 12,
+      "element": {
+        "location": "minecolonies:medieval_spruce/guardtower1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_spruce/guardtower2",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_spruce/house1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_spruce/house2",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_spruce/housex1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_spruce/housex2",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 8,
+      "element": {
+        "location": "minecolonies:medieval_spruce/mine1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 7,
+      "element": {
+        "location": "minecolonies:medieval_spruce/tavern1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:medieval_spruce/warehouse1",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+ ]
+}
