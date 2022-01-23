@@ -105,7 +105,15 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
 
-            StructureName.HUTS.add(registryName.getPath());
+            //todo 1.19: Change citizen to home consistently over all schematics.
+            if (registryName.getPath().equals("home"))
+            {
+                StructureName.HUTS.add("citizen");
+            }
+            else
+            {
+                StructureName.HUTS.add(registryName.getPath());
+            }
             return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers, buildingModuleViewProducers).setRegistryName(registryName);
         }
 
