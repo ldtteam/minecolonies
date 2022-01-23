@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony.permissions;
 
-import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.permissions.IPermissions;
+import com.minecolonies.api.colony.permissions.Player;
+import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Utils;
 import com.mojang.authlib.GameProfile;
@@ -20,9 +23,9 @@ import java.util.stream.Collectors;
 public class PermissionsView implements IPermissions
 {
     @NotNull
-    private final Map<UUID, Player>  players     = new HashMap<>();
+    private final Map<UUID, Player> players     = new HashMap<>();
     @NotNull
-    private final Map<Rank, Long>    permissions = new HashMap<>();
+    private final Map<Rank, Long>   permissions = new HashMap<>();
     private       Rank               userRank;
     private final Map<Integer, Rank> ranks = new LinkedHashMap<>();
 
@@ -98,12 +101,6 @@ public class PermissionsView implements IPermissions
           .collect(Collectors.toSet()));
     }
 
-    @NotNull
-    public Map<Rank, Long> getPermissions()
-    {
-        return permissions;
-    }
-
     /**
      * Checks if the player has the permission to do an action.
      *
@@ -125,7 +122,7 @@ public class PermissionsView implements IPermissions
      */
     public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
-        return permissions != null && action != null && permissions.containsKey(rank) && Utils.testFlag(permissions.get(rank), action.getFlag());
+        return Utils.testFlag(rank.getPermissions(), action.getFlag());
     }
 
     /**
@@ -135,35 +132,19 @@ public class PermissionsView implements IPermissions
      * @param action the action he is trying to execute.
      * @return true if so.
      */
-    public boolean setPermission(final Rank rank, @NotNull final Action action)
+    public boolean setPermission(final Rank rank, @NotNull final Action action, final boolean enable)
     {
-        final long flags = permissions.get(rank);
-
-        //check that flag isn't set
-        if (!Utils.testFlag(flags, action.getFlag()))
+        boolean changed;
+        if (enable)
         {
-            permissions.put(rank, Utils.setFlag(flags, action.getFlag()));
-            return true;
+            changed = rank.addPermission(action);
         }
-        return false;
-    }
-
-    /**
-     * Remove if the rank has the permission to do an action.
-     *
-     * @param rank   the rank to set.
-     * @param action the action he is trying to execute.
-     * @return true if so.
-     */
-    public boolean removePermission(final Rank rank, @NotNull final Action action)
-    {
-        final long flags = permissions.get(rank);
-        if (Utils.testFlag(flags, action.getFlag()))
+        else
         {
-            permissions.put(rank, Utils.unsetFlag(flags, action.getFlag()));
-            return true;
+            changed = rank.removePermission(action);
         }
-        return false;
+
+        return changed;
     }
 
     @Override
@@ -173,13 +154,14 @@ public class PermissionsView implements IPermissions
     }
 
     @Override
-    public void togglePermission(final Rank actor, final Rank rank, @NotNull final Action action)
+    public boolean alterPermission(final Rank actor, final Rank rank, @NotNull final Action action, final boolean enable)
     {
         if (!canAlterPermission(actor, rank, action))
         {
-            return;
+            return false;
         }
-        permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.getFlag()));
+
+        return setPermission(rank, action, enable);
     }
 
     @Override
@@ -190,7 +172,8 @@ public class PermissionsView implements IPermissions
             return false;
         }
 
-        return rank != getRankOwner() || (action != Action.EDIT_PERMISSIONS && action != Action.MANAGE_HUTS && action != Action.GUARDS_ATTACK && action != Action.ACCESS_HUTS);
+        return hasPermission(actor, Action.EDIT_PERMISSIONS) && (actor != rank
+                                                                   || action != Action.EDIT_PERMISSIONS && action != Action.MANAGE_HUTS && action != Action.ACCESS_HUTS);
     }
 
     @Nullable
@@ -248,7 +231,7 @@ public class PermissionsView implements IPermissions
         for (int i = 0; i < ranksSize; ++i)
         {
             final int id = buf.readVarInt();
-            final Rank rank = new Rank(id, buf.readUtf(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
+            final Rank rank = new Rank(id, buf.readLong(), buf.readUtf(32767), buf.readBoolean(), buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
             ranks.put(id, rank);
         }
         userRank = ranks.get(buf.readVarInt());
@@ -267,16 +250,6 @@ public class PermissionsView implements IPermissions
             }
 
             players.put(id, new Player(id, name, rank));
-        }
-
-        //Permissions
-        permissions.clear();
-        final int numPermissions = buf.readVarInt();
-        for (int i = 0; i < numPermissions; ++i)
-        {
-            final Rank rank = ranks.get(buf.readVarInt());
-            final long flags = buf.readVarLong();
-            permissions.put(rank, flags);
         }
     }
 
@@ -395,7 +368,6 @@ public class PermissionsView implements IPermissions
         if (!rank.isInitial())
         {
             ranks.remove(rank.getId());
-            permissions.remove(rank);
         }
     }
 }

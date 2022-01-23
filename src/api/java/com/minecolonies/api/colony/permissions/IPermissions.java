@@ -107,12 +107,15 @@ public interface IPermissions
     boolean isColonyMember(PlayerEntity player);
 
     /**
-     * Toggle permission for a specific rank.
-     * @param actor the acting rank.
-     * @param rank   Rank to toggle permission.
-     * @param action Action to toggle permission.
+     * Alters the permission through an actor, checks for allowance before altering.
+     *
+     * @param actor  to check
+     * @param rank   rank to edit
+     * @param action action to set
+     * @param enable add/remove permission
+     * @return success/failure
      */
-    void togglePermission(final Rank actor, Rank rank, @NotNull Action action);
+    boolean alterPermission(final Rank actor, Rank rank, @NotNull Action action, final boolean enable);
 
     @Nullable
     Map.Entry<UUID, Player> getOwnerEntry();
@@ -167,14 +170,21 @@ public interface IPermissions
 
     void restoreOwnerIfNull();
 
-    boolean setPermission(Rank rank, Action action);
-
-    boolean removePermission(Rank rank, Action action);
+    /**
+     * Sets a permission to a rank, does not include allowance checks
+     *
+     * @param rank   Rank to modify
+     * @param action permission to set
+     * @param enable or disable permission
+     * @return
+     */
+    boolean setPermission(Rank rank, Action action, boolean enable);
 
     boolean removePlayer(UUID playerID);
 
     /**
      * Adds a rink with the given name to the colony
+     *
      * @param name the chosen name
      */
     void addRank(String name);
