@@ -351,6 +351,24 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         }
     }
 
+    @Override
+    protected void tryAddSoulSpeed()
+    {
+
+    }
+
+    @Override
+    protected void removeSoulSpeed()
+    {
+
+    }
+
+    @Override
+    public boolean canSpawnSoulSpeedParticle()
+    {
+        return false;
+    }
+
     /**
      * Set the rotation of the citizen.
      *
