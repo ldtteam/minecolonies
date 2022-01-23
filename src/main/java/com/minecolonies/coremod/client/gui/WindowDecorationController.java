@@ -95,17 +95,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     if (controller.getTier() == 0)
                     {
-                        buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
+                        buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelbuild"));
                     }
                     else
                     {
-                        buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
+                        buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelupgrade"));
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
                 else if (wo.get().getType() == WorkOrderType.BUILD)
                 {
-                    buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
+                    buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelrepair"));
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
             }
