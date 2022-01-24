@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
  */
 public class PermissionsView implements IPermissions
 {
+    /** this rank is used if something asks for permissions before they have been synched from server */
+    private static final Rank MISSINGNO_RANK = new Rank(-1, "missingno", false, true);
+
     @NotNull
     private final Map<UUID, ColonyPlayer>  players     = new HashMap<>();
     private       Rank               userRank;
@@ -274,7 +277,7 @@ public class PermissionsView implements IPermissions
     public Rank getRank(final UUID id)
     {
         final ColonyPlayer player = players.get(id);
-        return player == null ? ranks.get(NEUTRAL_RANK_ID) : player.getRank();
+        return player == null ? ranks.getOrDefault(NEUTRAL_RANK_ID, MISSINGNO_RANK) : player.getRank();
     }
 
     @Override
