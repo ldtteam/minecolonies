@@ -69,6 +69,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public static final EntityDataAccessor<BlockPos> DATA_BED_POS         = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.BLOCK_POS);
     public static final EntityDataAccessor<String>   DATA_STYLE           = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String>   DATA_TEXTURE_SUFFIX  = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<String>   DATA_JOB             = SynchedEntityData.defineId(AbstractEntityCitizen.class, EntityDataSerializers.STRING);
 
     /**
      * The default model.
@@ -280,6 +281,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         entityData.define(DATA_IS_ASLEEP, false);
         entityData.define(DATA_IS_CHILD, false);
         entityData.define(DATA_BED_POS, new BlockPos(0, 0, 0));
+        entityData.define(DATA_JOB, "");
     }
 
     /**
