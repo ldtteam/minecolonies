@@ -303,7 +303,7 @@ public class ClientEventHandler
                 }
 
                 event.getLeft()
-                    .add(new TranslatableComponent("com.minecolonies.coremod.gui.debugScreen.nextcolony",
+                    .add(new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.nextcolony",
                         (int) Math.sqrt(colony.getDistanceSquared(pos)),
                         IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
@@ -311,7 +311,7 @@ public class ClientEventHandler
 
             event.getLeft()
                 .add(colony.getName() + " : " + new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.blocksfromcenter",
-                    (int) Math.sqrt(colony.getDistanceSquared(pos))));
+                    (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
         }
     }
 }
