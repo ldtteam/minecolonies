@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IGraveData;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityGrave;
-import journeymap.client.api.IClientAPI;
 import journeymap.client.api.display.DisplayType;
 import journeymap.client.api.display.Waypoint;
 import journeymap.client.api.model.MapImage;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
 
 /**
  * Utility class to manage colony deathpoint mapping.
@@ -56,7 +56,7 @@ public class ColonyDeathpoints
      *
      * @param dimension The dimension to unload.
      */
-    public static void unload(@NotNull final IClientAPI jmap,
+    public static void unload(@NotNull final Journeymap jmap,
                               @NotNull final RegistryKey<World> dimension)
     {
         for (final Map<BlockPos, Waypoint> waypoints : overlays.getOrDefault(dimension, Collections.emptyMap()).values())
@@ -65,7 +65,7 @@ public class ColonyDeathpoints
             {
                 if (waypointEntry.getValue() != null)
                 {
-                    jmap.remove(waypointEntry.getValue());
+                    jmap.getApi().remove(waypointEntry.getValue());
                     waypointEntry.setValue(null);
                 }
             }
@@ -80,7 +80,7 @@ public class ColonyDeathpoints
      * @param colony The colony.
      * @param graves The list of grave positions.
      */
-    public static void updateGraves(@NotNull final IClientAPI jmap,
+    public static void updateGraves(@NotNull final Journeymap jmap,
                                     @NotNull final IColonyView colony,
                                     @NotNull final Set<BlockPos> graves)
     {
@@ -88,7 +88,7 @@ public class ColonyDeathpoints
                 .computeIfAbsent(colony.getDimension(), k -> new HashMap<>())
                 .computeIfAbsent(colony.getID(), k -> new HashMap<>());
         final boolean permitted = colony.getPermissions().hasPermission(Minecraft.getInstance().player, Action.MAP_DEATHS)
-                && MinecoloniesAPIProxy.getInstance().getConfig().getClient().mapDeathpoints.get();
+                && JourneymapOptions.getDeathpoints(jmap.getOptions());
 
         final Iterator<Map.Entry<BlockPos, Waypoint>> iterator = waypoints.entrySet().iterator();
         while (iterator.hasNext())
@@ -98,7 +98,7 @@ public class ColonyDeathpoints
             {
                 if (waypointEntry.getValue() != null)
                 {
-                    jmap.remove(waypointEntry.getValue());
+                    jmap.getApi().remove(waypointEntry.getValue());
                 }
                 iterator.remove();
             }
@@ -120,7 +120,7 @@ public class ColonyDeathpoints
      * @param dimension The dimension of the world.  Nothing happens unless this is the client world.
      * @param chunk The chunk that was just loaded.
      */
-    public static void updateChunk(@NotNull final IClientAPI jmap,
+    public static void updateChunk(@NotNull final Journeymap jmap,
                                    @NotNull final RegistryKey<World> dimension,
                                    @NotNull final IChunk chunk)
     {
@@ -136,7 +136,7 @@ public class ColonyDeathpoints
                 {
                     if (waypoint != null)
                     {
-                        jmap.remove(waypoint);
+                        jmap.getApi().remove(waypoint);
                     }
                 }
                 colonyEntry.getValue().clear();
@@ -154,7 +154,7 @@ public class ColonyDeathpoints
     }
 
     @Nullable
-    private static Waypoint tryCreatingWaypoint(@NotNull final IClientAPI jmap,
+    private static Waypoint tryCreatingWaypoint(@NotNull final Journeymap jmap,
                                                 @NotNull final IColonyView colony,
                                                 @NotNull final BlockPos pos)
     {
@@ -165,12 +165,12 @@ public class ColonyDeathpoints
     }
 
     @Nullable
-    private static Waypoint tryCreatingWaypoint(@NotNull final IClientAPI jmap,
+    private static Waypoint tryCreatingWaypoint(@NotNull final Journeymap jmap,
                                                 @NotNull final IColonyView colony,
                                                 @NotNull final IChunk chunk,
                                                 @NotNull final BlockPos pos)
     {
-        if (!jmap.playerAccepts(MOD_ID, DisplayType.Waypoint)) return null;
+        if (!jmap.getApi().playerAccepts(MOD_ID, DisplayType.Waypoint)) return null;
 
         final TileEntity blockEntity = chunk.getBlockEntity(pos);
         if (blockEntity instanceof AbstractTileEntityGrave)
@@ -179,21 +179,14 @@ public class ColonyDeathpoints
             if (grave != null)
             {
                 final String text = grave.getCitizenJobName() == null
-                    ? LanguageHandler.format("com.minecolonies.coremod.journeymap.deathpoint_name", grave.getCitizenName())
-                    : LanguageHandler.format("com.minecolonies.coremod.journeymap.deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
+                    ? LanguageHandler.format(COM_MINECOLONIES_JMAP_PREFIX + "deathpoint_name", grave.getCitizenName())
+                    : LanguageHandler.format(COM_MINECOLONIES_JMAP_PREFIX + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
                 final Waypoint waypoint = new Waypoint(MOD_ID, text, colony.getDimension(), pos);
                 waypoint.setEditable(true)
                         .setPersistent(false)
                         .setIcon(deathIcon.get())
                         .setColor(0x888888);
-                try
-                {
-                    jmap.show(waypoint);
-                }
-                catch (final Throwable t)
-                {
-                    // this is already logged by JourneyMap but the API still wants us to catch
-                }
+                jmap.show(waypoint);
                 return waypoint;
             }
         }
@@ -204,6 +197,6 @@ public class ColonyDeathpoints
     @NotNull
     private static MapImage loadIcon()
     {
-        return new MapImage(new ResourceLocation(MOD_ID, "icons/grave_icon"), 16, 16);
+        return new MapImage(new ResourceLocation(MOD_ID, "textures/icons/grave_icon.png"), 16, 16);
     }
 }
