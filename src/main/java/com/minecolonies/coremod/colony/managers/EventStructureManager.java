@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.managers;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
@@ -142,6 +143,7 @@ public class EventStructureManager implements IEventStructureManager
                     entry.getKey(),
                     Rotation.NONE,
                     Mirror.NONE,
+                    new WallExtents(),
                     true, null) == null)
                 {
                     fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
@@ -150,6 +152,7 @@ public class EventStructureManager implements IEventStructureManager
                             entry.getKey(),
                             Rotation.NONE,
                             Mirror.NONE,
+                            new WallExtents(),
                             true, null);
                 }
 

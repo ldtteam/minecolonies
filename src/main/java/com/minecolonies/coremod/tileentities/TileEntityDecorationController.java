@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,6 +54,11 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
      */
     private BlockPos corner1 = BlockPos.ZERO;
     private BlockPos corner2 = BlockPos.ZERO;
+
+    /**
+     * Wall extents
+     */
+    private WallExtents wall = new WallExtents();
 
     /**
      * Map of block positions relative to TE pos and string tags
@@ -187,6 +193,18 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     {
         corner1 = pos1;
         corner2 = pos2;
+    }
+
+    @Override
+    public WallExtents getWallExtents()
+    {
+        return wall;
+    }
+
+    @Override
+    public void setWallExtents(final WallExtents extents)
+    {
+        wall = extents;
     }
 
     @Override

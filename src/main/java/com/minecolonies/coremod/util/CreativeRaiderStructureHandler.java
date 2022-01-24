@@ -3,6 +3,7 @@ package com.minecolonies.coremod.util;
 import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -146,7 +147,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
         try
         {
             @NotNull final IStructureHandler structure =
-              new CreativeRaiderStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement, event, colonyId);
+              new CreativeRaiderStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation, new WallExtents()), fancyPlacement, event, colonyId);
             if (structure.hasBluePrint())
             {
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);

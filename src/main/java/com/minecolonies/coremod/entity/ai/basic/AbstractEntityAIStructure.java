@@ -3,6 +3,8 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
+import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -548,9 +550,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
      * @param isMirrored  is the structure mirroed?
+     * @param wall        the wall extents.
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final WallExtents wall, final boolean removal)
     {
         final BuildingStructureHandler<J, B> structure;
         IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
@@ -561,7 +564,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structure = new BuildingStructureHandler<>(world,
               position,
               name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes), wall),
               this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
             getOwnBuilding().setTotalStages(2);
         }
@@ -571,7 +574,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structure = new BuildingStructureHandler<>(world,
               position,
               name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes), wall),
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
             getOwnBuilding().setTotalStages(5);
         }
@@ -580,7 +583,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structure = new BuildingStructureHandler<>(world,
               position,
               name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes), wall),
               this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
             getOwnBuilding().setTotalStages(6);
         }
@@ -592,8 +595,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             return;
         }
 
-        job.setBlueprint(structure.getBluePrint());
-        job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        Blueprint blueprint = structure.getBluePrint();
+        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+        blueprint = BlueprintUtil.createWall(blueprint, wall);
+        structure.setBlueprint(blueprint);
+        job.setBlueprint(blueprint);
         setStructurePlacer(structure);
 
         if (getProgressPos() != null)

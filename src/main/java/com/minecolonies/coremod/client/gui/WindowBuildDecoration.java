@@ -7,6 +7,8 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -88,14 +90,20 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final BlockPos structurePos;
 
     /**
+     * The wall extents.
+     */
+    private final WallExtents wall;
+
+    /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(BuildToolPlaceMessage msg, BlockPos pos, StructureName structure)
+    public WindowBuildDecoration(BuildToolPlaceMessage msg, BlockPos pos, StructureName structure, WallExtents extents)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         placementMessage = msg;
         structureName = structure;
         structurePos = pos;
+        wall = extents;
 
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
@@ -220,6 +228,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             }
         }
 
+        structure.setBlueprint(BlueprintUtil.createWall(structure.getBluePrint(), wall));
         StructurePlacer placer = new StructurePlacer(structure);
         StructurePhasePlacementResult result;
         BlockPos progressPos = NULL_POS;

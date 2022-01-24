@@ -15,14 +15,13 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,6 +77,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
           Settings.instance.getRotation(),
           structureName.isHut(),
           Settings.instance.getMirror(),
+          Settings.instance.getWallExtents(),
           state);
 
         if (structureName.isHut())
@@ -86,8 +86,18 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         }
         else
         {
-            Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
+            Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName, Settings.instance.getWallExtents())::open);
         }
+    }
+
+    @Override
+    public boolean isWallModeAvailable()
+    {
+        if (!super.isWallModeAvailable()) return false;
+        if (mc.player.isCreative()) return true;
+
+        // todo: check colony research
+        return true;
     }
 
     @Override
@@ -116,6 +126,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
           Settings.instance.getRotation(),
           name.isHut(),
           Settings.instance.getMirror(),
+          Settings.instance.getWallExtents(),
           complete,
           state));
     }

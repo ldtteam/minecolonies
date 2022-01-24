@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
@@ -59,6 +60,7 @@ public class BuildToolPasteMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
+    private WallExtents wall;
 
     /**
      * Empty constructor used when registering the
@@ -81,10 +83,11 @@ public class BuildToolPasteMessage implements IMessage
      * @param state         the state.
      */
     public BuildToolPasteMessage(
-      final String structureName,
-      final String workOrderName, final BlockPos pos,
-      final int rotation, final boolean isHut,
-      final Mirror mirror, final boolean complete, final BlockState state)
+            final String structureName,
+            final String workOrderName, final BlockPos pos,
+            final int rotation, final boolean isHut,
+            final Mirror mirror, final WallExtents wall,
+            final boolean complete, final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -93,6 +96,7 @@ public class BuildToolPasteMessage implements IMessage
         this.rotation = rotation;
         this.isHut = isHut;
         this.mirror = mirror == Mirror.FRONT_BACK;
+        this.wall = wall;
         this.complete = complete;
         this.state = state;
     }
@@ -115,6 +119,8 @@ public class BuildToolPasteMessage implements IMessage
         isHut = buf.readBoolean();
 
         mirror = buf.readBoolean();
+
+        wall = WallExtents.deserialize(buf);
 
         complete = buf.readBoolean();
 
@@ -141,6 +147,8 @@ public class BuildToolPasteMessage implements IMessage
         buf.writeBoolean(isHut);
 
         buf.writeBoolean(mirror);
+
+        wall.serialize(buf);
 
         buf.writeBoolean(complete);
 
@@ -171,7 +179,7 @@ public class BuildToolPasteMessage implements IMessage
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, new WallExtents(), !complete, player);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
@@ -183,7 +191,7 @@ public class BuildToolPasteMessage implements IMessage
             else
             {
                 StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, ctxIn.getSender());
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, wall, !complete, ctxIn.getSender());
             }
         }
         else if (structureName.contains("supply"))
@@ -223,7 +231,7 @@ public class BuildToolPasteMessage implements IMessage
                 }
 
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
+                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, new WallExtents(), !complete, player);
             }
             else
             {

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
@@ -31,7 +32,7 @@ public class ColonyWaypointRenderer
             if (wayPointTemplate == null)
             {
                 final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(),
-                    BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
+                    BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()), new WallExtents());
 
                 wayPointTemplate = new LoadOnlyStructureHandler(ctx.clientLevel,
                     BlockPos.ZERO,

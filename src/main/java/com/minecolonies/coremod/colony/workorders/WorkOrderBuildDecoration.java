@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -38,6 +39,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
     protected boolean isBuildingMirrored;
     protected int     buildingRotation;
+    protected WallExtents wall;
     protected String  structureName;
     protected boolean cleared;
     protected String  workOrderName;
@@ -62,8 +64,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param rotation      The number of times the decoration was rotated.
      * @param location      The location where the decoration should be built.
      * @param mirror        Is the decoration mirrored?
+     * @param wall          The wall extents
      */
-    public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
+    public WorkOrderBuildDecoration(final String structureName, final String workOrderName,
+                                    final int rotation, final BlockPos location, final boolean mirror,
+                                    final WallExtents wall)
     {
         super();
         //normalise structure name
@@ -74,6 +79,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         this.buildingLocation = location;
         this.cleared = false;
         this.isBuildingMirrored = mirror;
+        this.wall = wall;
         this.requested = false;
     }
 
@@ -111,6 +117,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         buildingRotation = compound.getInt(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
         isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        wall.load(compound);
         amountOfRes = compound.getInt(TAG_AMOUNT_OF_RES);
         levelUp = compound.getBoolean(TAG_LEVEL);
     }
@@ -140,6 +147,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         compound.putInt(TAG_BUILDING_ROTATION, buildingRotation);
         compound.putBoolean(TAG_IS_REQUESTED, requested);
         compound.putBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
+        wall.save(compound);
         compound.putInt(TAG_AMOUNT_OF_RES, amountOfRes);
         compound.putBoolean(TAG_LEVEL, levelUp);
     }
@@ -321,6 +329,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         return isBuildingMirrored;
     }
+
+    /**
+     * Gets the wall extents (if any).
+     *
+     * @return the wall extents
+     */
+    public WallExtents getWallExtents() { return wall; }
 
     /**
      * Amount of resources this building requires.

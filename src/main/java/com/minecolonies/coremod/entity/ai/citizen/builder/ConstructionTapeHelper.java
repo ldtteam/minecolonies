@@ -45,7 +45,8 @@ public final class ConstructionTapeHelper
           world,
           new LoadOnlyStructureHandler(world, workOrder.getSchematicLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
           workOrder.getRotation(world),
-          workOrder.isMirrored());
+          workOrder.isMirrored(),
+          workOrder.getWallExtents());
         placeConstructionTape(corners, world);
     }
 
@@ -155,7 +156,7 @@ public final class ConstructionTapeHelper
         if (structure.hasBluePrint())
         {
             final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getSchematicLocation(), world,
-              structure.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
+              structure.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored(), workOrder.getWallExtents());
             removeConstructionTape(corners, world);
         }
     }

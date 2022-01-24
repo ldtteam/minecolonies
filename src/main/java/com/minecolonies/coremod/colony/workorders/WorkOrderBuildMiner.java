@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -46,7 +47,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
       final boolean mirror,
       final BlockPos minerBuilding)
     {
-        super(structureName, workOrderName, rotation, location, mirror);
+        super(structureName, workOrderName, rotation, location, mirror, new WallExtents());
         this.minerBuilding = minerBuilding;
     }
 

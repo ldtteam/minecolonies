@@ -310,7 +310,8 @@ public class WorkManager implements IWorkManager
           world,
           new LoadOnlyStructureHandler(world, order.getSchematicLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
           order.getRotation(world),
-          order.isMirrored());
+          order.isMirrored(),
+          order.getWallExtents());
 
         Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(corners.getA().getX(), corners.getB().getX()) + 1;

@@ -169,7 +169,8 @@ public class DecorationBuildRequestMessage implements IMessage
               name + level,
               difference,
               pos,
-              state.getValue(BlockDecorationController.MIRROR));
+              state.getValue(BlockDecorationController.MIRROR),
+              ((TileEntityDecorationController) entity).getWallExtents());
 
             if (level != ((TileEntityDecorationController) entity).getTier())
             {

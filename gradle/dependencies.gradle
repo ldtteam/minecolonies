@@ -1,4 +1,5 @@
 repositories {
+    mavenLocal()
     maven {
         name "JEI"
         url 'https://dvs1.progwml6.com/files/maven/'

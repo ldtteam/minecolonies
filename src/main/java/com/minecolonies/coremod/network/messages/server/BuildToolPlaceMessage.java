@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -20,22 +21,20 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import com.minecolonies.coremod.util.BuildingUtils;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,6 +59,7 @@ public class BuildToolPlaceMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
+    private WallExtents wall;
     public BlockPos builder = BlockPos.ZERO;
 
     /**
@@ -79,16 +79,18 @@ public class BuildToolPlaceMessage implements IMessage
      * @param rotation      int representation of the rotation
      * @param isHut         true if hut, false if decoration
      * @param mirror        the mirror of the building or decoration.
+     * @param wall          the wall extents.
      * @param state         the state.
      */
     public BuildToolPlaceMessage(
-      final String structureName,
-      final String workOrderName,
-      final BlockPos pos,
-      final int rotation,
-      final boolean isHut,
-      final Mirror mirror,
-      final BlockState state)
+            final String structureName,
+            final String workOrderName,
+            final BlockPos pos,
+            final int rotation,
+            final boolean isHut,
+            final Mirror mirror,
+            final WallExtents wall,
+            final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -97,6 +99,7 @@ public class BuildToolPlaceMessage implements IMessage
         this.rotation = rotation;
         this.isHut = isHut;
         this.mirror = mirror == Mirror.FRONT_BACK;
+        this.wall = wall;
         this.state = state;
     }
 
@@ -118,6 +121,8 @@ public class BuildToolPlaceMessage implements IMessage
         isHut = buf.readBoolean();
 
         mirror = buf.readBoolean();
+
+        wall = WallExtents.deserialize(buf);
 
         state = Block.stateById(buf.readInt());
 
@@ -144,6 +149,8 @@ public class BuildToolPlaceMessage implements IMessage
         buf.writeBoolean(isHut);
 
         buf.writeBoolean(mirror);
+
+        wall.serialize(buf);
 
         buf.writeInt(Block.getId(state));
 
@@ -173,7 +180,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, workOrderName, rotation, pos, mirror, builder);
+            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, workOrderName, rotation, pos, mirror, wall, builder);
         }
     }
 
@@ -263,7 +270,8 @@ public class BuildToolPlaceMessage implements IMessage
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
                         CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, schematic,
-                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, true, (ServerPlayer) player);
+                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE,
+                          new WallExtents(), true, (ServerPlayer) player);
                         complete = true;
                     }
                 }
@@ -288,12 +296,13 @@ public class BuildToolPlaceMessage implements IMessage
      * @param rotation      The number of times the decoration is rotated.
      * @param buildPos      The location the decoration will be built.
      * @param mirror        Whether or not the strcture is mirrored.
+     * @param wall          The wall extents.
      */
     private static void handleDecoration(
       @NotNull final Level world, @NotNull final Player player,
       final StructureName sn, final String workOrderName,
       final int rotation, @NotNull final BlockPos buildPos, final boolean mirror,
-      BlockPos builder)
+      final WallExtents wall, BlockPos builder)
     {
         @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
@@ -317,7 +326,7 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror);
+            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror, wall);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);

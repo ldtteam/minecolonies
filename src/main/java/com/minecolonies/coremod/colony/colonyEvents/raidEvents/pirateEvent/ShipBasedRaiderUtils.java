@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
@@ -76,7 +77,7 @@ public final class ShipBasedRaiderUtils
           structure = new CreativeRaiderStructureHandler(world,
           targetSpawnPoint,
           Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize,
-          new PlacementSettings(Mirror.NONE, BlockPosUtil.getRotationFromRotations(shipRotation)),
+          new PlacementSettings(Mirror.NONE, BlockPosUtil.getRotationFromRotations(shipRotation), new WallExtents()),
           true,
           event,
           colony.getID());

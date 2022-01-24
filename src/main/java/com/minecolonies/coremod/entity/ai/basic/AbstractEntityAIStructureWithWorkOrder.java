@@ -166,7 +166,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation(world);
         final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), workOrder.getWallExtents(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }
@@ -199,6 +199,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         StructurePhasePlacementResult result;
         final WorkerLoadOnlyStructureHandler structure =
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+        //structure.setBlueprint(BlueprintUtil.createWall(structure.getBluePrint(), job.getWorkOrder().getWallExtents()));
 
         if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
         {

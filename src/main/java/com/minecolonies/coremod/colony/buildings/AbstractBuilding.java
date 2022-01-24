@@ -958,7 +958,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
           colony.getWorld(),
           wrapper.getBluePrint(),
           workOrder.getRotation(colony.getWorld()),
-          workOrder.isMirrored());
+          workOrder.isMirrored(),
+          workOrder.getWallExtents());
         this.setCorners(corners.getA(), corners.getB());
     }
 
