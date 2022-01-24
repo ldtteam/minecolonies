@@ -390,20 +390,7 @@ public class EventHandler
                     colony.getPackageManager().addImportantColonyPlayer(player);
                 }
             }
-
-            // Add visiting/subscriber to colony we're logging into
-            final LevelChunk chunk = (LevelChunk) player.level.getChunk(new BlockPos(player.position()));
-            final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
-            if (cap != null && cap.getOwningColony() != 0)
-            {
-                IColony colony = IColonyManager.getInstance().getColonyByDimension(cap.getOwningColony(), player.level.dimension());
-                if (colony != null)
-                {
-                    colony.addVisitingPlayer(player);
-                    colony.getPackageManager().addCloseSubscriber(player);
-                }
-            }
-
+            
             final int size = player.getInventory().getContainerSize();
             for (int i = 0; i < size; i++)
             {
