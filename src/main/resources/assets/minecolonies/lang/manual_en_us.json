@@ -2076,7 +2076,7 @@
   "com.minecolonies.coremod.gui.workerhuts.warehouse.couriers": "Couriers",
 
   "com.minecolonies.coremod.building.missingcolony": "No colony was founded in this land yet, seek out the townhall to start a new colony here!",
-  "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here.",
+  "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state.",
   "com.minecolonies.coremod.gui.reactivate.button": "Reactivate",
   "com.minecolonies.coremod.setting.minecolonies:fillblock": "Fill block:",
   "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:"

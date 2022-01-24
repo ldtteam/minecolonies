@@ -129,7 +129,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
+    protected boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
         return mineBlock(blockToMine, safeStand, true, true, null);
     }
