@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import net.minecraft.block.Block;
@@ -75,10 +76,6 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FIRST_CITIZEN_SPAWNED);
         }
-        else if (total == 4)
-        {
-            trigger(FOUR_CITIZENS_SPAWNED);
-        }
         else if (total == 6)
         {
             trigger(SIX_CITIZENS_SPAWNED);
@@ -99,7 +96,7 @@ public class ProgressManager implements IProgressManager
         {
             trigger(TEN_CITIZENS_SPAWNED);
         }
-        else if (total == colony.getCitizenManager().getMaxCitizens())
+        else if (total == colony.getCitizenManager().maxCitizensFromResearch())
         {
             trigger(CITIZEN_CAP_MET);
         }
@@ -133,15 +130,21 @@ public class ProgressManager implements IProgressManager
         {
             trigger(FOOD_PROD_BUILT);
         }
-        else if (totalHousing == 4 && building.hasModule(LivingBuildingModule.class))
-        {
-            trigger(ALL_CITIZENS_HOMED);
-        }
         else if (building instanceof BuildingWareHouse)
         {
             trigger(WAREHOUSE_BUILT);
         }
-        else if (totalLevels == 20)
+        else if (building.hasModule(TavernBuildingModule.class))
+        {
+            trigger(TAVERN_BUILT);
+        }
+
+        if (totalHousing == 4 && building.hasModule(LivingBuildingModule.class))
+        {
+            trigger(ALL_CITIZENS_HOMED);
+        }
+
+        if (totalLevels == 20)
         {
             trigger(TWENTY_BUILDING_LEVELS);
         }
