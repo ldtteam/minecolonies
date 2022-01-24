@@ -1373,6 +1373,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                         return true;
                     }
                 }
+                return false;
             }
         }
 
