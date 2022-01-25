@@ -10,8 +10,10 @@
     "description": {
       "translate": "advancements.minecolonies.build.delivery_person.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "delivery_person": {
@@ -21,5 +23,10 @@
         "level": 1
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "delivery_person"
+    ]
+  ]
 }

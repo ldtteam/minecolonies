@@ -10,8 +10,10 @@
     "description": {
       "translate": "advancements.minecolonies.building_add_recipe_torch.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "add_recipe_torch": {
@@ -19,11 +21,18 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:torch"
+            "items": [
+              "minecraft:torch"
+            ]
           }
         ],
         "crafting_size": 2
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "add_recipe_torch"
+    ]
+  ]
 }

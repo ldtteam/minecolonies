@@ -10,8 +10,10 @@
     "description": {
       "translate": "advancements.minecolonies.building_add_recipe_door.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "add_recipe_oak_door": {
@@ -19,7 +21,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:oak_door"
+            "items": [
+              "minecraft:oak_door"
+            ]
           }
         ],
         "crafting_size": 3
@@ -30,7 +34,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:birch_door"
+            "items": [
+              "minecraft:birch_door"
+            ]
           }
         ],
         "crafting_size": 3
@@ -41,7 +47,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:dark_oak_door"
+            "items": [
+              "minecraft:dark_oak_door"
+            ]
           }
         ],
         "crafting_size": 3
@@ -52,7 +60,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:spruce_door"
+            "items": [
+              "minecraft:spruce_door"
+            ]
           }
         ],
         "crafting_size": 3
@@ -63,7 +73,9 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:jungle_door"
+            "items": [
+              "minecraft:jungle_door"
+            ]
           }
         ],
         "crafting_size": 3
@@ -74,11 +86,33 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:acacia_door"
+            "items": [
+              "minecraft:acacia_door"
+            ]
           }
         ],
         "crafting_size": 3
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "add_recipe_oak_door"
+    ],
+    [
+      "add_recipe_birch_door"
+    ],
+    [
+      "add_recipe_dark_oak_door"
+    ],
+    [
+      "add_recipe_spruce_door"
+    ],
+    [
+      "add_recipe_jungle_door"
+    ],
+    [
+      "add_recipe_acacia_door"
+    ]
+  ]
 }

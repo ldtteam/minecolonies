@@ -10,17 +10,23 @@
     "description": {
       "translate": "advancements.minecolonies.complete_build_request_5_town_hall.description"
     },
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "challenge"
+    "hidden": false
   },
   "criteria": {
     "town_hall": {
       "trigger": "minecolonies:complete_build_request",
       "conditions": {
-        "hut_name": "TownHall",
+        "hut_name": "townhall",
         "level": 5
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "town_hall"
+    ]
+  ]
 }

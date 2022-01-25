@@ -9,13 +9,21 @@
     "description": {
       "translate": "advancements.minecolonies.root.description"
     },
-    "background": "minecraft:textures/block/light_gray_wool.png",
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/light_gray_wool.png"
   },
   "criteria": {
     "supply_ship_placed": {
-      "trigger": "minecolonies:supply_placed"
+      "trigger": "minecolonies:supply_placed",
+      "conditions": {}
     }
-  }
+  },
+  "requirements": [
+    [
+      "supply_ship_placed"
+    ]
+  ]
 }

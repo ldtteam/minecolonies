@@ -10,8 +10,10 @@
     "description": {
       "translate": "advancements.minecolonies.place_townhall.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "build_tool_place_town_hall": {
@@ -20,5 +22,10 @@
         "hut_name": "townhall"
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "build_tool_place_town_hall"
+    ]
+  ]
 }

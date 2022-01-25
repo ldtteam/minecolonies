@@ -10,12 +10,20 @@
     "description": {
       "translate": "advancements.minecolonies.deep_mine.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "mineshaft": {
-      "trigger": "minecolonies:deep_mine"
+      "trigger": "minecolonies:deep_mine",
+      "conditions": {}
     }
-  }
+  },
+  "requirements": [
+    [
+      "mineshaft"
+    ]
+  ]
 }

@@ -10,12 +10,20 @@
     "description": {
       "translate": "advancements.minecolonies.root.description"
     },
+    "frame": "task",
     "show_toast": false,
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": false
   },
   "criteria": {
     "supply_ship": {
-      "trigger": "minecolonies:supply_placed"
+      "trigger": "minecolonies:supply_placed",
+      "conditions": {}
     }
-  }
+  },
+  "requirements": [
+    [
+      "supply_ship"
+    ]
+  ]
 }
