@@ -62,6 +62,18 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         // todo: the achievement ids are a bit weird, in particular the folder organisation;
         //       at some major MC version update we should probably reorganise them.
 
+        // this is mostly redundant with the standard root, but it lets people see a Minecolonies
+        // advancement before that tab is visible...
+        Advancement.Builder.advancement()
+                .parent(new ResourceLocation("story/root"))
+                .display(ModItems.supplyChest,
+                        new TranslationTextComponent("advancements.minecolonies.root.title"),
+                        new TranslationTextComponent("advancements.minecolonies.root.description"),
+                        null,
+                        FrameType.TASK, false, false, false)
+                .addCriterion("supply_ship", new PlaceSupplyCriterionInstance())
+                .save(consumer, new ResourceLocation(MOD_ID, "minecraft/craft_supply"), fileHelper);
+
         addStandardAdvancements(consumer, fileHelper);
         addProductionAdvancements(consumer, fileHelper);
         addMilitaryAdvancements(consumer, fileHelper);
@@ -187,7 +199,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final Advancement citizenEatFoodRottenFlesh = Advancement.Builder.advancement()
                 .parent(citizenEatFood)
-                .display(make(FrameType.TASK, Items.ROTTEN_FLESH, "citizen_eat_food_rotten_flesh"))
+                .display(makeHidden(FrameType.TASK, Items.ROTTEN_FLESH, "citizen_eat_food_rotten_flesh"))
                 .addCriterion("citizen_eat_rotten_flesh",
                         new CitizenEatFoodCriterionInstance(item(Items.ROTTEN_FLESH)))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "citizen_eat_food_rotten_flesh"), fileHelper);
@@ -541,6 +553,16 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 new TranslationTextComponent("advancements.minecolonies." + name + ".title"),
                 new TranslationTextComponent("advancements.minecolonies." + name + ".description"),
                 null, frame, true, true, false);
+    }
+
+    private static DisplayInfo makeHidden(@NotNull final FrameType frame,
+                                          @NotNull final IItemProvider icon,
+                                          @NotNull final String name)
+    {
+        return new DisplayInfo(new ItemStack(icon),
+                new TranslationTextComponent("advancements.minecolonies." + name + ".title"),
+                new TranslationTextComponent("advancements.minecolonies." + name + ".description"),
+                null, frame, true, true, true);
     }
 
     private static ItemPredicate[] item(@NotNull final IItemProvider item)
