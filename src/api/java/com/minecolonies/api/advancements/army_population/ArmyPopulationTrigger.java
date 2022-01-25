@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,9 +34,8 @@ public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulati
 
     @NotNull
     @Override
-    public ArmyPopulationCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final DeserializationContext conditions)
+    public ArmyPopulationCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final DeserializationContext context)
     {
-        final int populationCount = GsonHelper.getAsInt(object, "population_count");
-        return new ArmyPopulationCriterionInstance(populationCount);
+        return ArmyPopulationCriterionInstance.deserializeFromJson(object, context);
     }
 }

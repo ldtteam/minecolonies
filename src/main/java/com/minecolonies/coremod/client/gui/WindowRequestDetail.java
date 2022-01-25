@@ -12,7 +12,9 @@ import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
+import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Suppression.EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_CANCEL;
-import static com.minecolonies.api.util.constant.WindowConstants.REQUEST_FULLFIL;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
 
 /**
@@ -33,11 +34,6 @@ import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractReq
  */
 public class WindowRequestDetail extends BOWindow implements ButtonHandler
 {
-    /**
-     * Link to the xml file of the window.
-     */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowrequestdetail.xml";
-
     /**
      * Id of the request detail box.
      */
@@ -100,7 +96,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
      */
     public WindowRequestDetail(@Nullable final BOWindow prevWindow, final IRequest<?> request, final int colonyId)
     {
-        super(new ResourceLocation(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX));
+        super(new ResourceLocation(Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
         this.prevWindow = prevWindow;
         this.request = request;
         this.colonyId = colonyId;
@@ -219,6 +215,8 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
             if (this.prevWindow instanceof RequestWindowCitizen)
             {
                 ((RequestWindowCitizen) this.prevWindow).fulfill(request);
+                // because this isn't an AbstractWindowSkeleton, and we want to trigger an advancement...
+                Network.getNetwork().sendToServer(new ClickGuiButtonTriggerMessage(button.getID(), Constants.MOD_ID + CITIZEN_REQ_DETAIL_SUFFIX));
             }
             this.window.close();
         }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:production/build_sawmill",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutstonesmeltery"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.stone_smeltery.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.stone_smeltery.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "stone_smeltery": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "stonesmeltery",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "stone_smeltery"
+    ]
+  ]
+}

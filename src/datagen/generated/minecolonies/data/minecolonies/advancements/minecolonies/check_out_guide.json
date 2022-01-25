@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:minecolonies/place_townhall",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutbuilder"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.check_out_guide.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.check_out_guide.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "click_gui_button_close": {
+      "trigger": "minecolonies:click_gui_button",
+      "conditions": {
+        "button_id": "confirm",
+        "window_resource_location": "minecolonies:gui/windowhutguide.xml"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "click_gui_button_close"
+    ]
+  ]
+}

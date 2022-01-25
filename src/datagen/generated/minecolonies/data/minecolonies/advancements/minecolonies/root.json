@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecolonies:supplychestdeployer"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.root.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.root.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/light_gray_wool.png"
+  },
+  "criteria": {
+    "supply_ship_placed": {
+      "trigger": "minecolonies:supply_placed",
+      "conditions": {}
+    }
+  },
+  "requirements": [
+    [
+      "supply_ship_placed"
+    ]
+  ]
+}

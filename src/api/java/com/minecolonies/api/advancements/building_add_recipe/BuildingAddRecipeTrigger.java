@@ -4,11 +4,9 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,16 +37,6 @@ public class BuildingAddRecipeTrigger extends AbstractCriterionTrigger<BuildingA
     @Override
     public BuildingAddRecipeCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext jsonDeserializationContext)
     {
-        if (jsonObject.has("items"))
-        {
-            final ItemPredicate[] outputItemPredicates = ItemPredicate.fromJsonArray(jsonObject.get("items"));
-            if (jsonObject.has("crafting_size"))
-            {
-                final int craftingSize = GsonHelper.getAsInt(jsonObject, "crafting_size");
-                return new BuildingAddRecipeCriterionInstance(outputItemPredicates, craftingSize);
-            }
-            return new BuildingAddRecipeCriterionInstance(outputItemPredicates);
-        }
-        return new BuildingAddRecipeCriterionInstance();
+        return BuildingAddRecipeCriterionInstance.deserializeFromJson(jsonObject, jsonDeserializationContext);
     }
 }

@@ -1,0 +1,29 @@
+{
+  "parent": "minecolonies:production/build_miner",
+  "display": {
+    "icon": {
+      "item": "minecraft:bedrock"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.deep_mine.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.deep_mine.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "mineshaft": {
+      "trigger": "minecolonies:deep_mine",
+      "conditions": {}
+    }
+  },
+  "requirements": [
+    [
+      "mineshaft"
+    ]
+  ]
+}

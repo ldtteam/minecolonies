@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:military/root",
+  "display": {
+    "icon": {
+      "item": "minecraft:stone_sword",
+      "nbt": "{Damage:0}"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.army_8.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.army_8.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "population_5": {
+      "trigger": "minecolonies:army_population",
+      "conditions": {
+        "population_count": 8
+      }
+    }
+  },
+  "requirements": [
+    [
+      "population_5"
+    ]
+  ]
+}

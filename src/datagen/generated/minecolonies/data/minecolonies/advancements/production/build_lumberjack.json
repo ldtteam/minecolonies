@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:production/root",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutlumberjack"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.lumberjack.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.lumberjack.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "lumberjack": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "lumberjack",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lumberjack"
+    ]
+  ]
+}
