@@ -22,6 +22,7 @@ import com.minecolonies.api.util.constant.WindowConstants;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.advancements.FrameType;
+import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.PlacedBlockTrigger;
 import net.minecraft.data.DataGenerator;
@@ -112,6 +113,9 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .display(make(FrameType.TASK, ModItems.resourceScroll,"click_gui_button_fulfill"))
                 .addCriterion("click_gui_button_fulfill",
                         new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, MOD_ID + WindowConstants.CITIZEN_REQ_RESOURCE_SUFFIX))
+                .addCriterion("click_request_button_fulfill",
+                        new ClickGuiButtonCriterionInstance(WindowConstants.REQUEST_FULLFIL, MOD_ID + WindowConstants.CITIZEN_REQ_DETAIL_SUFFIX))
+                .requirements(RequirementsStrategy.OR)
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "fulfill_request"), fileHelper);
 
         final Advancement buildBuilder = Advancement.Builder.advancement()
