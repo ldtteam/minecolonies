@@ -18,13 +18,15 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +42,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETT
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.initStructure;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
-
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Class which handles the miner behaviour.
@@ -388,7 +383,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         final BuildingMiner buildingMiner = getOwnBuilding();
         // Check if we reached the bottom of the shaft
-        if (getLastLadder(buildingMiner.getLadderLocation(), world) < SHAFT_BASE_DEPTH)
+        if (getLastLadder(buildingMiner.getLadderLocation(), world) < world.getMinBuildHeight() + SHAFT_BASE_DEPTH)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(job.getColony(), AdvancementTriggers.DEEP_MINE::trigger);
         }
