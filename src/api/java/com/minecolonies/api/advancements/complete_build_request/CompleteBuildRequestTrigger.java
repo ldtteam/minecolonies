@@ -6,7 +6,6 @@ import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.advancements.critereon.DeserializationContext;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,28 +35,6 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
     @Override
     public CompleteBuildRequestCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final DeserializationContext jsonDeserializationContext)
     {
-        if (jsonObject.has("hut_name"))
-        {
-            final String hutName = GsonHelper.getAsString(jsonObject, "hut_name");
-            if (jsonObject.has("level"))
-            {
-                final int level = GsonHelper.getAsInt(jsonObject, "level");
-                return new CompleteBuildRequestCriterionInstance(hutName, level);
-            }
-            return new CompleteBuildRequestCriterionInstance(hutName);
-        }
-
-        if (jsonObject.has("structure_name"))
-        {
-            final StructureName structureName = new StructureName(GsonHelper.getAsString(jsonObject, "structure_name"));
-            if (jsonObject.has("structure_name"))
-            {
-                final int level = GsonHelper.getAsInt(jsonObject, "level");
-                return new CompleteBuildRequestCriterionInstance(structureName, level);
-            }
-            return new CompleteBuildRequestCriterionInstance(structureName);
-        }
-
-        return new CompleteBuildRequestCriterionInstance();
+        return CompleteBuildRequestCriterionInstance.deserializeFromJson(jsonObject, jsonDeserializationContext);
     }
 }

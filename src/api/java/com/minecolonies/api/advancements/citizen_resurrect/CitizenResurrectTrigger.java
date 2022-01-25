@@ -1,4 +1,4 @@
-package com.minecolonies.api.advancements.citizen_resurrect.citizen_bury;
+package com.minecolonies.api.advancements.citizen_resurrect;
 
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;

@@ -1,11 +1,12 @@
 package com.minecolonies.api.advancements.citizen_eat_food;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.advancements.critereon.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The test instance to check the "items" condition for the "citizen_eat_food" trigger
@@ -50,5 +51,34 @@ public class CitizenEatFoodCriterionInstance extends AbstractCriterionTriggerIns
         }
 
         return true;
+    }
+
+    @NotNull
+    public static CitizenEatFoodCriterionInstance deserializeFromJson(@NotNull final JsonObject jsonObject,
+                                                                      @NotNull final DeserializationContext context)
+    {
+        if (jsonObject.has("items"))
+        {
+            final ItemPredicate[] itemPredicates = ItemPredicate.fromJsonArray(jsonObject.get("items"));
+            return new CitizenEatFoodCriterionInstance(itemPredicates);
+        }
+        return new CitizenEatFoodCriterionInstance();
+    }
+
+    @NotNull
+    @Override
+    public JsonObject serializeToJson(@NotNull final SerializationContext context)
+    {
+        final JsonObject json = super.serializeToJson(context);
+        if (this.itemPredicates != null && this.itemPredicates.length > 0)
+        {
+            final JsonArray outputItemPredicates = new JsonArray();
+            for (ItemPredicate predicate : this.itemPredicates)
+            {
+                outputItemPredicates.add(predicate.serializeToJson());
+            }
+            json.add("items", outputItemPredicates);
+        }
+        return json;
     }
 }

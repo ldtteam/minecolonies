@@ -1,9 +1,14 @@
 package com.minecolonies.api.advancements.army_population;
 
+import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.SerializationContext;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The test instance to check the "population_count" for the "army_population" trigger
@@ -32,5 +37,22 @@ public class ArmyPopulationCriterionInstance extends AbstractCriterionTriggerIns
     {
         // Less than sign used just in case a previous population increase was missed.
         return this.populationCount <= populationCount;
+    }
+
+    @NotNull
+    public static ArmyPopulationCriterionInstance deserializeFromJson(@NotNull final JsonObject object,
+                                                                      @NotNull final DeserializationContext context)
+    {
+        final int populationCount = GsonHelper.getAsInt(object, "population_count");
+        return new ArmyPopulationCriterionInstance(populationCount);
+    }
+
+    @NotNull
+    @Override
+    public JsonObject serializeToJson(@NotNull final SerializationContext context)
+    {
+        final JsonObject json = super.serializeToJson(context);
+        json.addProperty("population_count", this.populationCount);
+        return json;
     }
 }
