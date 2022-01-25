@@ -26,6 +26,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.Half;
@@ -1353,17 +1354,26 @@ public abstract class AbstractPathJob implements Callable<Path>
                              || block.getBlock() instanceof AbstractBannerBlock;
                 }
             }
-            else if (block.getBlock() instanceof FireBlock)
+            else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock)
             {
                 return false;
             }
             else
             {
-                return isLadder(block.getBlock(), pos) ||
-                         ((shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)
-                         && !isLiquid((block))
-                         && (block.getBlock() != Blocks.SNOW || block.getValue(SnowBlock.LAYERS) == 1)
-                         && block.getBlock() != Blocks.SWEET_BERRY_BUSH);
+                if (isLadder(block.getBlock(), pos))
+                {
+                    return true;
+                }
+
+                if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1  && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowBlock.LAYERS) == 1))
+                {
+                    final PathNodeType pathType = block.getAiPathNodeType(world, pos);
+                    if (pathType == null || pathType.getDanger() == null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
