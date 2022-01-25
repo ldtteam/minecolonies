@@ -6,7 +6,6 @@ import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,16 +37,6 @@ public class PlaceStructureTrigger extends AbstractCriterionTrigger<PlaceStructu
     @Override
     public PlaceStructureCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
-        if (jsonObject.has("hut_name"))
-        {
-            final String hutName = JSONUtils.getAsString(jsonObject, "hut_name");
-            return new PlaceStructureCriterionInstance(hutName);
-        }
-        else if (jsonObject.has("structure_name"))
-        {
-            final StructureName structureName = new StructureName(JSONUtils.getAsString(jsonObject, "structure_name"));
-            return new PlaceStructureCriterionInstance(structureName);
-        }
-        return new PlaceStructureCriterionInstance();
+        return PlaceStructureCriterionInstance.deserializeFromJson(jsonObject, conditionArrayParser);
     }
 }

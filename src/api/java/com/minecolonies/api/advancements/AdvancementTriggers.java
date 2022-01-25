@@ -5,7 +5,7 @@ import com.minecolonies.api.advancements.army_population.ArmyPopulationTrigger;
 import com.minecolonies.api.advancements.building_add_recipe.BuildingAddRecipeTrigger;
 import com.minecolonies.api.advancements.citizen_bury.CitizenBuryTrigger;
 import com.minecolonies.api.advancements.citizen_eat_food.CitizenEatFoodTrigger;
-import com.minecolonies.api.advancements.citizen_resurrect.citizen_bury.CitizenResurrectTrigger;
+import com.minecolonies.api.advancements.citizen_resurrect.CitizenResurrectTrigger;
 import com.minecolonies.api.advancements.click_gui_button.ClickGuiButtonTrigger;
 import com.minecolonies.api.advancements.colony_population.ColonyPopulationTrigger;
 import com.minecolonies.api.advancements.complete_build_request.CompleteBuildRequestTrigger;

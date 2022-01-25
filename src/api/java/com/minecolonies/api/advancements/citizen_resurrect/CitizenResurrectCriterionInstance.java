@@ -1,4 +1,4 @@
-package com.minecolonies.api.advancements.citizen_resurrect.citizen_bury;
+package com.minecolonies.api.advancements.citizen_resurrect;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
