@@ -1,0 +1,48 @@
+{
+  "name": "minecolonies:asian/roads",
+  "fallback": "minecolonies:asian/terminators",
+  "elements": [
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:asian/roads_crossroads_01",
+        "processors": "minecolonies:asian/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 6,
+      "element": {
+        "location": "minecolonies:asian/roads_straight_01",
+        "processors": "minecolonies:asian/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 4,
+      "element": {
+        "location": "minecolonies:asian/roads_turn_01",
+        "processors": "minecolonies:asian/street",
+        "projection": "terrain_matching",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:asian/square",
+        "processors": "minecolonies:asian/decoration",
+        "projection": "rigid",
+        "element_type": "minecraft:legacy_single_pool_element"
+      }
+    },
+    {
+      "weight": 3,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+  ]
+}

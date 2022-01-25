@@ -3,39 +3,63 @@
   "fallback": "minecraft:empty",
   "elements": [
     {
-      "weight": 100,
+      "weight": 20,
       "element": {
-        "location": "minecolonies:oak_medieval_townhall",
-        "processors": "minecraft:empty",
-		"projection": "rigid",
-        "element_type": "minecraft:single_pool_element"
-      }
-    },
-    {
-      "weight": 100,
-      "element": {
-        "location": "minecolonies:asian_townhall",
-        "processors": "minecraft:empty",
+        "location": "minecolonies:medieval_spruce/townhall",
+        "processors": "minecolonies:medieval_spruce/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     },
     {
-      "weight": 100,
+      "weight": 20,
       "element": {
-        "location": "minecolonies:caledonia_townhall",
-        "processors": "minecraft:empty",
+        "location": "minecolonies:medieval_oak/townhall",
+        "processors": "minecolonies:medieval_oak/placeholder_replacement",
+    "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "location": "minecolonies:asian/townhall",
+        "processors": "minecolonies:asian/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     },
     {
-      "weight": 100,
+      "weight": 20,
       "element": {
-        "location": "minecolonies:medieval_dark_oak_townhall",
-        "processors": "minecraft:empty",
+        "location": "minecolonies:caledonia/townhall",
+        "processors": "minecolonies:caledonia/placeholder_replacement",
         "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "location": "minecolonies:medieval_dark_oak/townhall",
+        "processors": "minecolonies:medieval_dark_oak/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "location": "minecolonies:medieval_birch/townhall",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
       }
     }
   ]

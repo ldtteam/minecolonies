@@ -1,0 +1,156 @@
+{
+  "name": "minecolonies:medieval_birch/buildings",
+  "fallback": "minecolonies:medieval_birch/terminators",
+  "elements": [
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_birch/builder1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+		    "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_birch/builder2",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_birch/cook1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:medieval_birch/courier1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_birch/farm1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_birch/forester1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_birch/forester2",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 12,
+      "element": {
+        "location": "minecolonies:medieval_birch/guardtower1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_birch/guardtower2",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_birch/house1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_birch/house2",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 10,
+      "element": {
+        "location": "minecolonies:medieval_birch/housex1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "minecolonies:medieval_birch/housex2",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 8,
+      "element": {
+        "location": "minecolonies:medieval_birch/mine1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 7,
+      "element": {
+        "location": "minecolonies:medieval_birch/tavern1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 5,
+      "element": {
+        "location": "minecolonies:medieval_birch/warehouse1",
+        "processors": "minecolonies:medieval_birch/placeholder_replacement",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+    {
+      "weight": 20,
+      "element": {
+        "element_type": "minecraft:empty_pool_element"
+      }
+    }
+ ]
+}
