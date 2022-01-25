@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -43,34 +44,9 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder, BuildingBuilder>
 {
     /**
-     * over this y level the builder will be faster.
-     */
-    private static final int DEPTH_LEVEL_0 = 60;
-
-    /**
-     * At this y level the builder will be slower.
-     */
-    private static final int DEPTH_LEVEL_1 = 30;
-
-    /**
-     * At this y level the builder will be way slower..
-     */
-    private static final int DEPTH_LEVEL_2 = 15;
-
-    /**
      * Speed buff at 0 depth level.
      */
     private static final double SPEED_BUFF_0 = 0.5;
-
-    /**
-     * Speed buff at first depth level.
-     */
-    private static final int SPEED_BUFF_1 = 2;
-
-    /**
-     * Speed buff at second depth level.
-     */
-    private static final int SPEED_BUFF_2 = 4;
 
     /**
      * After how many actions should the builder dump his inventory.
@@ -268,6 +244,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
+    protected boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
+    {
+        return mineBlock(blockToMine, safeStand, true, !IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(blockToMine)), null);
+    }
+
+    @Override
     public IAIState afterRequestPickUp()
     {
         return INVENTORY_FULL;
@@ -320,23 +302,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
     {
-        final int initialDelay = super.getBlockMiningDelay(state, pos);
-
-        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getServer().restrictBuilderUnderground.get())
-        {
-            return (int) (initialDelay * SPEED_BUFF_0);
-        }
-
-        if (pos.getY() > DEPTH_LEVEL_1)
-        {
-            return initialDelay;
-        }
-
-        if (pos.getY() < DEPTH_LEVEL_2)
-        {
-            return initialDelay * SPEED_BUFF_2;
-        }
-        return initialDelay * SPEED_BUFF_1;
+        return (int) (super.getBlockMiningDelay(state, pos) * SPEED_BUFF_0);
     }
 
     /**
