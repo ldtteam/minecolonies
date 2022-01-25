@@ -22,8 +22,10 @@ import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -45,23 +47,6 @@ import java.util.concurrent.Callable;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
 
-import net.minecraft.world.level.block.AbstractBannerBlock;
-import net.minecraft.world.level.block.BaseRailBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.SignBlock;
-import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
-import net.minecraft.world.level.block.VineBlock;
-import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.WoolCarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -1368,17 +1353,26 @@ public abstract class AbstractPathJob implements Callable<Path>
                              || block.getBlock() instanceof AbstractBannerBlock;
                 }
             }
-            else if (block.getBlock() instanceof FireBlock)
+            else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock)
             {
                 return false;
             }
             else
             {
-                return isLadder(block.getBlock(), pos) ||
-                         ((shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)
-                         && !isLiquid((block))
-                         && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1)
-                         && block.getBlock() != Blocks.SWEET_BERRY_BUSH);
+                if (isLadder(block.getBlock(), pos))
+                {
+                    return true;
+                }
+
+                if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1  && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
+                {
+                    final BlockPathTypes pathType = block.getBlockPathType(world, pos);
+                    if (pathType == null || pathType.getDanger() == null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
