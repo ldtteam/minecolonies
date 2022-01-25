@@ -488,12 +488,8 @@ public class CitizenManager implements ICitizenManager
         return (int) Math.max(1, Math.min(potentialMaxCitizens, Math.min(maxCitizensFromResearch(), MineColonies.getConfig().getServer().maxCitizenPerColony.get())));
     }
 
-    /**
-     * Get the max citizens based on the research.
-     *
-     * @return the max.
-     */
-    private double maxCitizensFromResearch()
+    @Override
+    public double maxCitizensFromResearch()
     {
         if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {

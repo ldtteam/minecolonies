@@ -94,6 +94,13 @@ public interface ICitizenManager extends IEntityManager
     int getPotentialMaxCitizens();
 
     /**
+     * Get the max citizens based on the research.
+     *
+     * @return the max.
+     */
+    double maxCitizensFromResearch();
+
+    /**
      * Get the current amount of citizens, might be bigger then {@link #getMaxCitizens()}
      *
      * @return The current amount of citizens in the colony.
