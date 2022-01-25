@@ -518,6 +518,11 @@ public final class WindowConstants
     /**
      * The label to find the gui of the citizen.
      */
+    public static final String CITIZEN_REQ_DETAIL_SUFFIX = ":gui/windowrequestdetail.xml";
+
+    /**
+     * The label to find the gui of the citizen.
+     */
     public static final String CITIZEN_HAP_RESOURCE_SUFFIX = ":gui/citizen/happiness.xml";
 
     /**

@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:military/build_barracks",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutbarrackstower"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.barracks_tower.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.barracks_tower.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "barracks_tower": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "barrackstower",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "barracks_tower"
+    ]
+  ]
+}
