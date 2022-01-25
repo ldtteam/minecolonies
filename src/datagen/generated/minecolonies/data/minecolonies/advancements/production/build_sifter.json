@@ -10,16 +10,23 @@
     "description": {
       "translate": "advancements.minecolonies.build.sifter.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
-    "smeltery": {
+    "sifter": {
       "trigger": "minecolonies:complete_build_request",
       "conditions": {
         "hut_name": "sifter",
         "level": 1
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "sifter"
+    ]
+  ]
 }

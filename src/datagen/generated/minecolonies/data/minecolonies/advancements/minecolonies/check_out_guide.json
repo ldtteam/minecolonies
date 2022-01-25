@@ -10,16 +10,23 @@
     "description": {
       "translate": "advancements.minecolonies.check_out_guide.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "click_gui_button_close": {
       "trigger": "minecolonies:click_gui_button",
       "conditions": {
-        "window_resource_location": "minecolonies:gui/windowhutguide.xml",
-        "button_id": "confirm"
+        "button_id": "confirm",
+        "window_resource_location": "minecolonies:gui/windowhutguide.xml"
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "click_gui_button_close"
+    ]
+  ]
 }

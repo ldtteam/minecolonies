@@ -10,16 +10,22 @@
     "description": {
       "translate": "advancements.minecolonies.colony_population_75.description"
     },
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "challenge"
+    "hidden": false
   },
   "criteria": {
-    "population_5": {
+    "population_75": {
       "trigger": "minecolonies:colony_population",
       "conditions": {
         "population_count": 75
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "population_75"
+    ]
+  ]
 }

@@ -9,9 +9,11 @@
     "description": {
       "translate": "advancements.minecolonies.root.production.description"
     },
-    "background": "structurize:textures/blocks/cactus/cactus_planks.png",
+    "frame": "task",
     "show_toast": false,
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "structurize:textures/blocks/cactus/cactus_planks.png"
   },
   "criteria": {
     "builders_hut": {
@@ -21,5 +23,10 @@
         "level": 1
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "builders_hut"
+    ]
+  ]
 }

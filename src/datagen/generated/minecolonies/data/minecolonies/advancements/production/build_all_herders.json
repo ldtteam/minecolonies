@@ -10,9 +10,10 @@
     "description": {
       "translate": "advancements.minecolonies.build.herders.description"
     },
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal"
+    "hidden": false
   },
   "criteria": {
     "sheep": {
@@ -50,5 +51,22 @@
         "level": 1
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "sheep"
+    ],
+    [
+      "cows"
+    ],
+    [
+      "chickens"
+    ],
+    [
+      "pigs"
+    ],
+    [
+      "rabbits"
+    ]
+  ]
 }

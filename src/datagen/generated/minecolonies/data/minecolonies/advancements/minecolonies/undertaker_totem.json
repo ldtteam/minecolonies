@@ -10,12 +10,20 @@
     "description": {
       "translate": "advancements.minecolonies.undertaker.totem.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
-    "citizens_hut": {
-      "trigger": "minecolonies:undertaker_totem"
+    "totem": {
+      "trigger": "minecolonies:undertaker_totem",
+      "conditions": {}
     }
-  }
+  },
+  "requirements": [
+    [
+      "totem"
+    ]
+  ]
 }

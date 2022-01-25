@@ -10,6 +10,7 @@
     "description": {
       "translate": "advancements.minecolonies.citizen_eat_food_rotten_flesh.description"
     },
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": true
@@ -25,5 +26,10 @@
         ]
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "citizen_eat_rotten_flesh"
+    ]
+  ]
 }

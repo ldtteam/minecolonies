@@ -2,7 +2,8 @@
   "parent": "minecolonies:military/army_8",
   "display": {
     "icon": {
-      "item": "minecraft:iron_sword"
+      "item": "minecraft:iron_sword",
+      "nbt": "{Damage:0}"
     },
     "title": {
       "translate": "advancements.minecolonies.army_30.title"
@@ -10,8 +11,10 @@
     "description": {
       "translate": "advancements.minecolonies.army_30.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "population_5": {
@@ -20,5 +23,10 @@
         "population_count": 30
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "population_5"
+    ]
+  ]
 }

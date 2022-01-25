@@ -10,12 +10,20 @@
     "description": {
       "translate": "advancements.minecolonies.citizen.resurrect.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
-    "citizens_hut": {
-      "trigger": "minecolonies:citizen_resurrect"
+    "resurrected": {
+      "trigger": "minecolonies:citizen_resurrect",
+      "conditions": {}
     }
-  }
+  },
+  "requirements": [
+    [
+      "resurrected"
+    ]
+  ]
 }

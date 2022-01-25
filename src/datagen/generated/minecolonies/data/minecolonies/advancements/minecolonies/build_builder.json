@@ -10,9 +10,10 @@
     "description": {
       "translate": "advancements.minecolonies.build.builder.description"
     },
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal"
+    "hidden": false
   },
   "criteria": {
     "builders_hut": {
@@ -22,5 +23,10 @@
         "level": 1
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "builders_hut"
+    ]
+  ]
 }

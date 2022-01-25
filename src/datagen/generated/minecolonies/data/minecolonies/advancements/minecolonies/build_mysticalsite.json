@@ -10,16 +10,23 @@
     "description": {
       "translate": "advancements.minecolonies.build.mysticalsite.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
-    "warehouse": {
+    "mysticalsite": {
       "trigger": "minecolonies:complete_build_request",
       "conditions": {
         "hut_name": "mysticalsite",
         "level": 1
       }
     }
-  }
+  },
+  "requirements": [
+    [
+      "mysticalsite"
+    ]
+  ]
 }

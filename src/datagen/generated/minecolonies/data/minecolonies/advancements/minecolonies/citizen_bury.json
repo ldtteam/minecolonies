@@ -10,12 +10,20 @@
     "description": {
       "translate": "advancements.minecolonies.citizen.bury.description"
     },
+    "frame": "task",
     "show_toast": true,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
-    "citizens_hut": {
-      "trigger": "minecolonies:citizen_bury"
+    "buried": {
+      "trigger": "minecolonies:citizen_bury",
+      "conditions": {}
     }
-  }
+  },
+  "requirements": [
+    [
+      "buried"
+    ]
+  ]
 }
