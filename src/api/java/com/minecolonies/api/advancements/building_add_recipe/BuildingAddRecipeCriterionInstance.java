@@ -1,11 +1,17 @@
 package com.minecolonies.api.advancements.building_add_recipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.loot.ConditionArrayParser;
+import net.minecraft.loot.ConditionArraySerializer;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The test instance to check the various conditions for "building_add_recipe"
@@ -75,5 +81,43 @@ public class BuildingAddRecipeCriterionInstance extends CriterionInstance
         }
 
         return true;
+    }
+
+    @NotNull
+    public static BuildingAddRecipeCriterionInstance deserializeFromJson(@NotNull final JsonObject jsonObject,
+                                                                         @NotNull final ConditionArrayParser conditions)
+    {
+        if (jsonObject.has("items"))
+        {
+            final ItemPredicate[] outputItemPredicates = ItemPredicate.fromJsonArray(jsonObject.get("items"));
+            if (jsonObject.has("crafting_size"))
+            {
+                final int craftingSize = JSONUtils.getAsInt(jsonObject, "crafting_size");
+                return new BuildingAddRecipeCriterionInstance(outputItemPredicates, craftingSize);
+            }
+            return new BuildingAddRecipeCriterionInstance(outputItemPredicates);
+        }
+        return new BuildingAddRecipeCriterionInstance();
+    }
+
+    @NotNull
+    @Override
+    public JsonObject serializeToJson(@NotNull final ConditionArraySerializer serializer)
+    {
+        final JsonObject json = super.serializeToJson(serializer);
+        if (this.outputItemPredicates != null && this.outputItemPredicates.length > 0)
+        {
+            final JsonArray outputItemPredicates = new JsonArray();
+            for (ItemPredicate predicate : this.outputItemPredicates)
+            {
+                outputItemPredicates.add(predicate.serializeToJson());
+            }
+            json.add("items", outputItemPredicates);
+        }
+        if (this.craftingSize >= 0)
+        {
+            json.addProperty("crafting_size", this.craftingSize);
+        }
+        return json;
     }
 }

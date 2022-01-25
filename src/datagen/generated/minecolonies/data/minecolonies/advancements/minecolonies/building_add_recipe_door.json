@@ -1,0 +1,106 @@
+{
+  "parent": "minecolonies:production/build_sawmill",
+  "display": {
+    "icon": {
+      "item": "minecraft:oak_door"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.building_add_recipe_door.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.building_add_recipe_door.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "add_recipe_oak_door": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:oak_door"
+          }
+        ],
+        "crafting_size": 3
+      }
+    },
+    "add_recipe_birch_door": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:birch_door"
+          }
+        ],
+        "crafting_size": 3
+      }
+    },
+    "add_recipe_dark_oak_door": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:dark_oak_door"
+          }
+        ],
+        "crafting_size": 3
+      }
+    },
+    "add_recipe_spruce_door": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:spruce_door"
+          }
+        ],
+        "crafting_size": 3
+      }
+    },
+    "add_recipe_jungle_door": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:jungle_door"
+          }
+        ],
+        "crafting_size": 3
+      }
+    },
+    "add_recipe_acacia_door": {
+      "trigger": "minecolonies:building_add_recipe",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:acacia_door"
+          }
+        ],
+        "crafting_size": 3
+      }
+    }
+  },
+  "requirements": [
+    [
+      "add_recipe_oak_door"
+    ],
+    [
+      "add_recipe_birch_door"
+    ],
+    [
+      "add_recipe_dark_oak_door"
+    ],
+    [
+      "add_recipe_spruce_door"
+    ],
+    [
+      "add_recipe_jungle_door"
+    ],
+    [
+      "add_recipe_acacia_door"
+    ]
+  ]
+}

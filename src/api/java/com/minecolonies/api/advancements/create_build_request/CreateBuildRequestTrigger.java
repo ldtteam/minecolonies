@@ -6,7 +6,6 @@ import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -40,28 +39,6 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
     @Override
     public CreateBuildRequestCriterionInstance createInstance(final JsonObject jsonObject, final ConditionArrayParser conditionArrayParser)
     {
-        if (jsonObject.has("hut_name"))
-        {
-            final String hutName = JSONUtils.getAsString(jsonObject, "hut_name");
-            if (jsonObject.has("level"))
-            {
-                final int level = JSONUtils.getAsInt(jsonObject, "level");
-                return new CreateBuildRequestCriterionInstance(hutName, level);
-            }
-            return new CreateBuildRequestCriterionInstance(hutName);
-        }
-
-        if (jsonObject.has("structure_name"))
-        {
-            final StructureName structureName = new StructureName(JSONUtils.getAsString(jsonObject, "structure_name"));
-            if (jsonObject.has("structure_name"))
-            {
-                final int level = JSONUtils.getAsInt(jsonObject, "level");
-                return new CreateBuildRequestCriterionInstance(structureName, level);
-            }
-            return new CreateBuildRequestCriterionInstance(structureName);
-        }
-
-        return new CreateBuildRequestCriterionInstance();
+        return CreateBuildRequestCriterionInstance.deserializeFromJson(jsonObject, conditionArrayParser);
     }
 }

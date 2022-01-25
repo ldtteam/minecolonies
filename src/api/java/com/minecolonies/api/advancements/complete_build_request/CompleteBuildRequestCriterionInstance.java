@@ -1,10 +1,15 @@
 package com.minecolonies.api.advancements.complete_build_request;
 
+import com.google.gson.JsonObject;
 import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.loot.ConditionArrayParser;
+import net.minecraft.loot.ConditionArraySerializer;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The test instance to check "hut_name" or "structure_name" for the "complete_build_request" trigger
@@ -95,5 +100,54 @@ public class CompleteBuildRequestCriterionInstance extends CriterionInstance
         }
 
         return true;
+    }
+
+    @NotNull
+    public static CompleteBuildRequestCriterionInstance deserializeFromJson(@NotNull final JsonObject jsonObject,
+                                                                            @NotNull final ConditionArrayParser conditions)
+    {
+        if (jsonObject.has("hut_name"))
+        {
+            final String hutName = JSONUtils.getAsString(jsonObject, "hut_name");
+            if (jsonObject.has("level"))
+            {
+                final int level = JSONUtils.getAsInt(jsonObject, "level");
+                return new CompleteBuildRequestCriterionInstance(hutName, level);
+            }
+            return new CompleteBuildRequestCriterionInstance(hutName);
+        }
+
+        if (jsonObject.has("structure_name"))
+        {
+            final StructureName structureName = new StructureName(JSONUtils.getAsString(jsonObject, "structure_name"));
+            if (jsonObject.has("structure_name"))
+            {
+                final int level = JSONUtils.getAsInt(jsonObject, "level");
+                return new CompleteBuildRequestCriterionInstance(structureName, level);
+            }
+            return new CompleteBuildRequestCriterionInstance(structureName);
+        }
+
+        return new CompleteBuildRequestCriterionInstance();
+    }
+
+    @NotNull
+    @Override
+    public JsonObject serializeToJson(@NotNull final ConditionArraySerializer serializer)
+    {
+        final JsonObject json = super.serializeToJson(serializer);
+        if (this.hutName != null)
+        {
+            json.addProperty("hut_name", this.hutName);
+        }
+        else if (this.structureName != null)
+        {
+            json.addProperty("structure_name", this.structureName.toString());
+        }
+        if (this.level >= 0)
+        {
+            json.addProperty("level", this.level);
+        }
+        return json;
     }
 }

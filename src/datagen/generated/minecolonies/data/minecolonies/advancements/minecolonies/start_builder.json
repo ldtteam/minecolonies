@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:minecolonies/place_townhall",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockconstructiontape"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.create_build_request_1_builder.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.create_build_request_1_builder.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "builder_request": {
+      "trigger": "minecolonies:create_build_request",
+      "conditions": {
+        "hut_name": "builder",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "builder_request"
+    ]
+  ]
+}

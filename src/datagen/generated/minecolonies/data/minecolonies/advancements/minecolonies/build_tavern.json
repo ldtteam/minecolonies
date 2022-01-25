@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:minecolonies/build_builder",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhuttavern"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.tavern.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.tavern.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "tavern": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "tavern",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "tavern"
+    ]
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:military/root",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutbarracks"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.barracks.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.barracks.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "barracks": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "barracks",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "barracks"
+    ]
+  ]
+}
