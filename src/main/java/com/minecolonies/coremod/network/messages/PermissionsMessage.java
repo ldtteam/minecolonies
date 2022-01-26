@@ -34,18 +34,6 @@ public class PermissionsMessage
     private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
     /**
-     * Enums for Message Type for the permission
-     * <p>
-     * SET_PERMISSION       Setting a permission. REMOVE_PERMISSION    Removing a permission. TOGGLE_PERMISSION    Toggeling a permission.
-     */
-    public enum MessageType
-    {
-        SET_PERMISSION,
-        REMOVE_PERMISSION,
-        TOGGLE_PERMISSION
-    }
-
-    /**
      * Client side presentation of the
      */
     public static class View implements IMessage
@@ -118,10 +106,10 @@ public class PermissionsMessage
      */
     public static class Permission implements IMessage
     {
-        private int         colonyID;
-        private MessageType type;
-        private Rank        rank;
-        private Action      action;
+        private int     colonyID;
+        private boolean enable;
+        private Rank    rank;
+        private Action  action;
 
         /**
          * The dimension of the
@@ -140,15 +128,15 @@ public class PermissionsMessage
          * {@link Permission}.
          *
          * @param colony Colony the permission is set in
-         * @param type   Type of permission {@link MessageType}
+         * @param enable Whether the permission gets enabled or disabled
          * @param rank   Rank of the permission {@link Rank}
          * @param action Action of the permission {@link Action}
          */
-        public Permission(@NotNull final IColonyView colony, final MessageType type, final Rank rank, final Action action)
+        public Permission(@NotNull final IColonyView colony, final boolean enable, final Rank rank, final Action action)
         {
             super();
             this.colonyID = colony.getID();
-            this.type = type;
+            this.enable = enable;
             this.rank = rank;
             this.action = action;
             this.dimension = colony.getDimension();
@@ -171,33 +159,14 @@ public class PermissionsMessage
                 return;
             }
 
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS))
-            {
-                return;
-            }
-
-            switch (type)
-            {
-                case SET_PERMISSION:
-                    colony.getPermissions().setPermission(rank, action);
-                    break;
-                case REMOVE_PERMISSION:
-                    colony.getPermissions().removePermission(rank, action);
-                    break;
-                case TOGGLE_PERMISSION:
-                    colony.getPermissions().togglePermission(colony.getPermissions().getRank(ctxIn.getSender()), rank, action);
-                    break;
-                default:
-                    Log.getLogger().error(String.format("Invalid MessageType %s", type.toString()), new Exception());
-            }
+            colony.getPermissions().alterPermission(colony.getPermissions().getRank(ctxIn.getSender()), rank, action, enable);
         }
 
         @Override
         public void toBytes(@NotNull final PacketBuffer buf)
         {
             buf.writeInt(colonyID);
-            buf.writeUtf(type.name());
+            buf.writeBoolean(enable);
             buf.writeInt(rank.getId());
             buf.writeUtf(action.name());
             buf.writeUtf(dimension.location().toString());
@@ -207,7 +176,7 @@ public class PermissionsMessage
         public void fromBytes(@NotNull final PacketBuffer buf)
         {
             colonyID = buf.readInt();
-            type = MessageType.valueOf(buf.readUtf(32767));
+            enable = buf.readBoolean();
             final int rankId = buf.readInt();
             action = Action.valueOf(buf.readUtf(32767));
             dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));

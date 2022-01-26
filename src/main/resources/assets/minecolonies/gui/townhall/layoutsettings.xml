@@ -25,7 +25,6 @@
               scrollbarOffset="9 0"
               dropfixx="75">
         <view size="100% 15">
-            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
             <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </view>
     </dropdown>
@@ -45,7 +44,6 @@
               dropfixx="75"
               enabled="false">
         <view size="100% 15">
-            <label id="id" size="100% 100%" label="" pos="0 0" textalign="MIDDLE"/>
             <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
         </view>
     </dropdown>

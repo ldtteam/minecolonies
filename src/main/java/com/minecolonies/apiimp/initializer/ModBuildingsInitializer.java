@@ -137,7 +137,8 @@ public final class ModBuildingsInitializer
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CHICKENHERDER_ID))
                                        .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.chickenHerder, Skill.Adaptability, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                        .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                       .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                       .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
+                                                                                            .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
                                        .addBuildingModuleProducer(BuildingChickenHerder.HerdingModule::new)
                                        .createBuildingEntry();
 
@@ -189,6 +190,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.cowboy, Skill.Athletics, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
+                                                                                     .with(AbstractBuilding.FEEDING, new BoolSetting(true))
                                                                                      .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
                                 .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy, EntityType.COW, new ItemStack(Items.WHEAT, 2)))
                                 .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
@@ -333,6 +335,7 @@ public final class ModBuildingsInitializer
                                   .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.shepherd, Skill.Focus, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                   .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
+                                                                                       .with(AbstractBuilding.FEEDING, new BoolSetting(true))
                                                                                        .with(BuildingShepherd.DYEING, new BoolSetting(true))
                                                                                        .with(BuildingShepherd.SHEARING, new BoolSetting(true)), () -> SettingsModuleView::new)
                                   .addBuildingModuleProducer(BuildingShepherd.HerdingModule::new)
@@ -395,7 +398,8 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SWINE_HERDER_ID))
                                      .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.swineHerder, Skill.Strength, Skill.Athletics, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
+                                                                                          .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
                                      .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder, EntityType.PIG, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry();
 
@@ -561,7 +565,8 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
                                      .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.rabbitHerder, Skill.Agility, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
+                                                                                          .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
                                      .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder, EntityType.RABBIT, new ItemStack(Items.CARROT, 2)))
                                      .createBuildingEntry();
 

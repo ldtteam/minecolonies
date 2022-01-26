@@ -24,6 +24,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +67,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     /**
      * A list of ranks (excluding owner)
      */
-    private final List<Rank> rankList = new LinkedList<>();
+    private final List<Rank> rankList    = new LinkedList<>();
     private final List<Rank> allRankList = new LinkedList<>();
 
     /**
@@ -129,17 +130,21 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     /**
      * Toggle the subscriber flag on client
      * Send message to change it on server
+     *
      * @param button the button clicked
      */
     private void setSubscriber(Button button)
     {
         Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(building.getColony(), actionsRank, !actionsRank.isSubscriber()));
         actionsRank.setSubscriber(!actionsRank.isSubscriber());
-        button.setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+        button.setText(new TranslationTextComponent(actionsRank.isSubscriber()
+                                                   ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
+                                                   : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
 
     /**
      * Send message to the server to change the rank type
+     *
      * @param dropdown the index of the type
      */
     private void changeRankMode(DropDownList dropdown)
@@ -149,6 +154,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
     /**
      * Switch the view on the rank view (between permissions and settings)
+     *
      * @param button the button clicked
      */
     private void togglePermMode(Button button)
@@ -158,7 +164,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         if (permSwitch.getCurrentView().getID().equals(TOWNHALL_PERM_SETTINGS))
         {
             DropDownList dropdown = findPaneOfTypeByID(TOWNHALL_RANK_TYPE_PICKER, DropDownList.class);
-            dropdown.setDataProvider(new DropDownList.DataProvider() {
+            dropdown.setDataProvider(new DropDownList.DataProvider()
+            {
                 @Override
                 public int getElementCount()
                 {
@@ -173,7 +180,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             });
             dropdown.setHandler(this::changeRankMode);
             dropdown.setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(LanguageHandler.format(actionsRank.isSubscriber() ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(new TranslationTextComponent(actionsRank.isSubscriber()
+                                                                                                             ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
+                                                                                                             : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
     }
 
@@ -201,6 +210,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     /**
      * Validates whether the given name is a valid rank name
      * If name is empty or already in use for a rank within this colony, it is invalid
+     *
      * @param name the name
      * @return true if name is valid
      */
@@ -224,6 +234,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      * Send message to server to remove the currently selected rank
      * Remove rank from view
      * Set currently selected rank to officer and disable button
+     *
      * @param button the clicked button
      */
     private void onRemoveRankButtonClicked(Button button)
@@ -297,7 +308,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      */
     private void fillRanks()
     {
-        rankButtonList.setDataProvider(new ScrollingList.DataProvider() {
+        rankButtonList.setDataProvider(new ScrollingList.DataProvider()
+        {
             @Override
             public int getElementCount()
             {
@@ -318,6 +330,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
     /**
      * Change to currently selected rank to the one belonging to the clicked button
+     *
      * @param button the clicked button
      */
     private void onRankButtonClicked(@NotNull final Button button)
@@ -438,16 +451,15 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         final IPermissions permissions = building.getColony().getPermissions();
         final PlayerEntity playerEntity = Minecraft.getInstance().player;
-        if (!permissions.hasPermission(playerEntity, Action.EDIT_PERMISSIONS) || !permissions.canAlterPermission(permissions.getRank(playerEntity), actionsRank, action))
+        final boolean enable = !LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
+        button.disable();
+        if (!permissions.alterPermission(permissions.getRank(playerEntity), actionsRank, action, enable))
         {
             return;
         }
+        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(building.getColony(), enable, actionsRank, action));
 
-        final boolean trigger = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
-        Network.getNetwork().sendToServer(new PermissionsMessage.Permission(building.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, actionsRank, action));
-        building.getColony().getPermissions().togglePermission(permissions.getRank(playerEntity), actionsRank, action);
-
-        if (trigger)
+        if (!enable)
         {
             button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
@@ -484,10 +496,19 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
                 final boolean isTriggered = building.getColony().getPermissions().hasPermission(actionsRank, action);
-                rowPane.findPaneOfTypeByID("trigger", Button.class)
-                  .setText(isTriggered ? LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
-                              : LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
+                onOffButton.setText(isTriggered ? new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                                      : new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(index));
+
+                if (!building.getColony().getPermissions().canAlterPermission(building.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))
+                {
+                    onOffButton.disable();
+                }
+                else
+                {
+                    onOffButton.enable();
+                }
             }
         });
     }
@@ -521,7 +542,8 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 }
                 else
                 {
-                    dropdown.setDataProvider(new DropDownList.DataProvider() {
+                    dropdown.setDataProvider(new DropDownList.DataProvider()
+                    {
                         @Override
                         public int getElementCount()
                         {
@@ -546,6 +568,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
      * When the selected index in the rank dropdown is updated,
      * check if the rank is different to the current one
      * if so, change the rank client side and send a message to the server
+     *
      * @param dropdown the rank dropdown
      */
     private void onRankSelected(final DropDownList dropdown)
@@ -559,8 +582,6 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             Network.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(building.getColony(), player.getID(), rank));
         }
     }
-
-
 
     @Override
     public void onUpdate()

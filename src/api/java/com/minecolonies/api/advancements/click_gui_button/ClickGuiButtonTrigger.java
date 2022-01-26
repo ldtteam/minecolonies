@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,16 +34,6 @@ public class ClickGuiButtonTrigger extends AbstractCriterionTrigger<ClickGuiButt
     @Override
     public ClickGuiButtonCriterionInstance createInstance(@NotNull final JsonObject jsonObject, @NotNull final ConditionArrayParser conditionArrayParser)
     {
-        if (jsonObject.has("button_id"))
-        {
-            final String buttonId = JSONUtils.getAsString(jsonObject, "button_id");
-            if (jsonObject.has("window_resource_location"))
-            {
-                final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
-                return new ClickGuiButtonCriterionInstance(buttonId, windowResource);
-            }
-            return new ClickGuiButtonCriterionInstance(buttonId);
-        }
-        return new ClickGuiButtonCriterionInstance();
+        return ClickGuiButtonCriterionInstance.deserializeFromJson(jsonObject, conditionArrayParser);
     }
 }

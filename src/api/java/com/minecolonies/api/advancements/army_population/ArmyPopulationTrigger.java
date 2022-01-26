@@ -5,7 +5,6 @@ import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.loot.ConditionArrayParser;
-import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +36,6 @@ public class ArmyPopulationTrigger extends AbstractCriterionTrigger<ArmyPopulati
     @Override
     public ArmyPopulationCriterionInstance createInstance(@NotNull final JsonObject object, @NotNull final ConditionArrayParser conditions)
     {
-        final int populationCount = JSONUtils.getAsInt(object, "population_count");
-        return new ArmyPopulationCriterionInstance(populationCount);
+        return ArmyPopulationCriterionInstance.deserializeFromJson(object, conditions);
     }
 }

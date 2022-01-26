@@ -26,6 +26,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.pathfinding.Path;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.state.properties.Half;
@@ -338,10 +339,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         @NotNull BlockPos.Mutable pos = new BlockPos.Mutable(MathHelper.floor(entity.getX()),
           MathHelper.floor(entity.getY()),
           MathHelper.floor(entity.getZ()));
-        BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+        final World world = CompatibilityUtils.getWorldFromEntity(entity);
 
+        BlockState bs = world.getBlockState(pos);
         // 1 Up when we're standing within this collision shape
-        final VoxelShape collisionShape = bs.getCollisionShape(entity.level, pos);
+        final VoxelShape collisionShape = bs.getCollisionShape(world, pos);
         if (bs.getMaterial().blocksMotion() && collisionShape.max(Direction.Axis.Y) > 0)
         {
             final double relPosX = Math.abs(entity.getX() % 1);
@@ -354,18 +356,18 @@ public abstract class AbstractPathJob implements Callable<Path>
                       && box.maxY > 0)
                 {
                     pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                    bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                    bs = world.getBlockState(pos);
                     break;
                 }
             }
         }
 
-        BlockState down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.below());
-        while (!bs.getMaterial().blocksMotion() && !down.getMaterial().blocksMotion() && !down.getBlock().isLadder(down, entity.getCommandSenderWorld(), pos.below(), entity) && bs.getFluidState().isEmpty())
+        BlockState down = world.getBlockState(pos.below());
+        while (!bs.getMaterial().blocksMotion() && !down.getMaterial().blocksMotion() && !down.getBlock().isLadder(down, world, pos.below(), entity) && bs.getFluidState().isEmpty())
         {
             pos.move(Direction.DOWN, 1);
             bs = down;
-            down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.below());
+            down = world.getBlockState(pos.below());
 
             if (pos.getY() < 0)
             {
@@ -380,7 +382,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (!bs.getFluidState().isEmpty())
             {
                 pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                bs =world.getBlockState(pos);
             }
         }
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
@@ -1352,17 +1354,26 @@ public abstract class AbstractPathJob implements Callable<Path>
                              || block.getBlock() instanceof AbstractBannerBlock;
                 }
             }
-            else if (block.getBlock() instanceof FireBlock)
+            else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock)
             {
                 return false;
             }
             else
             {
-                return isLadder(block.getBlock(), pos) ||
-                         ((shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1)
-                         && !isLiquid((block))
-                         && (block.getBlock() != Blocks.SNOW || block.getValue(SnowBlock.LAYERS) == 1)
-                         && block.getBlock() != Blocks.SWEET_BERRY_BUSH);
+                if (isLadder(block.getBlock(), pos))
+                {
+                    return true;
+                }
+
+                if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1  && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowBlock.LAYERS) == 1))
+                {
+                    final PathNodeType pathType = block.getAiPathNodeType(world, pos);
+                    if (pathType == null || pathType.getDanger() == null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 

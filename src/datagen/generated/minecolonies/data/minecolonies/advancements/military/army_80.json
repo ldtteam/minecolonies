@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:military/army_30",
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond_sword",
+      "nbt": "{Damage:0}"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.army_80.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.army_80.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "population_5": {
+      "trigger": "minecolonies:army_population",
+      "conditions": {
+        "population_count": 80
+      }
+    }
+  },
+  "requirements": [
+    [
+      "population_5"
+    ]
+  ]
+}

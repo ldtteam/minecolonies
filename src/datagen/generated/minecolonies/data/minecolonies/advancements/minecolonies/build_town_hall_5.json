@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:minecolonies/build_town_hall",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhuttownhall"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.complete_build_request_5_town_hall.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.complete_build_request_5_town_hall.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "town_hall": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "townhall",
+        "level": 5
+      }
+    }
+  },
+  "requirements": [
+    [
+      "town_hall"
+    ]
+  ]
+}

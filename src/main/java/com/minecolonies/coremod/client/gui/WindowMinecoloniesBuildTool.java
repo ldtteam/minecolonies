@@ -6,7 +6,9 @@ import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.event.HighlightManager;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
@@ -18,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -177,10 +180,11 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public boolean hasMatchingBlock(@NotNull final PlayerInventory inventory, final String hut)
     {
+        //todo 1.19 remove this
+        final String name = hut.equals("citizen") ? "home" : hut;
         return InventoryUtils.hasItemInProvider(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && (((BlockItem) item.getItem()).getBlock()
-                                                                                                                                  .getRegistryName()
-                                                                                                                                  .getPath()
-                                                                                                                                  .equalsIgnoreCase("blockhut" + hut) || HUTS.contains(hut)));
+          item -> item.getItem() instanceof BlockItem
+                    && StructureName.HUTS.contains(hut)
+                    && ((BlockItem) item.getItem()).getBlock() == IBuildingRegistry.getInstance().getValue(new ResourceLocation(Constants.MOD_ID, name)).getBuildingBlock());
     }
 }

@@ -54,12 +54,6 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     }
 
     @Override
-    protected boolean canFeedChildren()
-    {
-        return getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
-    }
-
-    @Override
     public Class<PigEntity> getAnimalClass()
     {
         return PigEntity.class;

@@ -1,9 +1,14 @@
 package com.minecolonies.api.advancements.open_gui_window;
 
+import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.loot.ConditionArrayParser;
+import net.minecraft.loot.ConditionArraySerializer;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The test instance to check the "window_resource_location" for the "open_gui_window" trigger
@@ -40,5 +45,29 @@ public class OpenGuiWindowCriterionInstance extends CriterionInstance
             return this.windowResource.equalsIgnoreCase(windowResource);
         }
         return true;
+    }
+
+    @NotNull
+    public static OpenGuiWindowCriterionInstance deserializeFromJson(@NotNull final JsonObject jsonObject,
+                                                                     @NotNull final ConditionArrayParser conditions)
+    {
+        if (jsonObject.has("window_resource_location"))
+        {
+            final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
+            return new OpenGuiWindowCriterionInstance(windowResource);
+        }
+        return new OpenGuiWindowCriterionInstance();
+    }
+
+    @NotNull
+    @Override
+    public JsonObject serializeToJson(@NotNull final ConditionArraySerializer serializer)
+    {
+        final JsonObject json = super.serializeToJson(serializer);
+        if (this.windowResource != null)
+        {
+            json.addProperty("window_resource_location", this.windowResource);
+        }
+        return json;
     }
 }
