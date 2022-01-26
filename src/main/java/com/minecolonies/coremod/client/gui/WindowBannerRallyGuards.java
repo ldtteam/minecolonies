@@ -6,7 +6,6 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
@@ -21,7 +20,6 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.*;
@@ -122,10 +120,9 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
             if (guardTowerView != null)
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(LanguageHandler.format(ModGuardTypes.knight.getJobTranslationKey())
-                                                                                  + "|"
-                                                                                  + LanguageHandler.format(ModGuardTypes.ranger.getJobTranslationKey())
-                                                                                  + ": " + guardTowerView.getGuards().size());
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(new TranslatableComponent(ModGuardTypes.knight.getJobTranslationKey())
+                        .append("|").append(new TranslatableComponent(ModGuardTypes.ranger.getJobTranslationKey()))
+                        .append(": " + guardTowerView.getGuards().size()));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }
             else

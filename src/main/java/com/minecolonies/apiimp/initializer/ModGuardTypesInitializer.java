@@ -23,7 +23,7 @@ public final class ModGuardTypesInitializer
         final IForgeRegistry<GuardType> reg = event.getRegistry();
 
         ModGuardTypes.knight = new GuardType.Builder()
-                                 .setJobTranslationKey("com.minecolonies.coremod.job.knight")
+                                 .setJobTranslationKey("com.minecolonies.job.knight")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.knight")
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
@@ -34,7 +34,7 @@ public final class ModGuardTypesInitializer
                                  .createGuardType();
 
         ModGuardTypes.ranger = new GuardType.Builder()
-                                 .setJobTranslationKey("com.minecolonies.coremod.job.ranger")
+                                 .setJobTranslationKey("com.minecolonies.job.ranger")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.ranger")
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
