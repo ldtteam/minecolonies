@@ -1,16 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
@@ -27,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a new building for the Shepherd.
  */
-public class BuildingShepherd extends AbstractBuilding
+public class BuildingShepherd extends AbstractHerderBuilding
 {
     /**
      * Automatic dyeing.

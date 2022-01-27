@@ -1,11 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Tuple;
@@ -17,7 +12,7 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 /**
  * Creates a new building for the rabbit hutch.
  */
-public class BuildingRabbitHutch extends AbstractBuilding
+public class BuildingRabbitHutch extends AbstractHerderBuilding
 {
     /**
      * Description of the job executed in the hut.

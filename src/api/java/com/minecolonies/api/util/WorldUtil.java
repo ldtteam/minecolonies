@@ -346,4 +346,49 @@ public class WorldUtil
 
         return list;
     }
+
+    public static <T extends Entity> List<T> getEntitiesWithinAABB(
+            final @NotNull World world,
+            final @NotNull Class<? extends T> clazz,
+            final @NotNull AxisAlignedBB AABB,
+            @Nullable final Predicate<? super T> predicate)
+    {
+        final Tuple<BlockPos, BlockPos> corners = new Tuple<>(new BlockPos(AABB.minX, AABB.minY, AABB.minZ), new BlockPos(AABB.maxX, AABB.maxY, AABB.maxZ));
+
+        int minX = corners.getA().getX() >> 4;
+        int maxX = corners.getB().getX() >> 4;
+        int minZ = corners.getA().getZ() >> 4;
+        int maxZ = corners.getB().getZ() >> 4;
+        int minY = Math.max(0, corners.getA().getY()) >> 4;
+        int maxY = Math.min(corners.getB().getY(), world.getHeight()) >> 4;
+
+        List<T> list = Lists.newArrayList();
+        AbstractChunkProvider abstractchunkprovider = world.getChunkSource();
+
+        for (int x = minX; x <= maxX; ++x)
+        {
+            for (int z = minZ; z <= maxZ; ++z)
+            {
+                if (isEntityChunkLoaded(world, x, z))
+                {
+                    Chunk chunk = abstractchunkprovider.getChunkNow(x, z);
+                    if (chunk != null)
+                    {
+                        for (int y = minY; y <= maxY; y++)
+                        {
+                            for (final T entity : chunk.getEntitySections()[y].find(clazz))
+                            {
+                                if (predicate == null || predicate.test(entity))
+                                {
+                                    list.add(entity);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
 }

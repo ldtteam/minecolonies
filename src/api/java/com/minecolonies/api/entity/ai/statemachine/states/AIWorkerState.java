@@ -356,6 +356,10 @@ public enum AIWorkerState implements IAIState
      */
     HERDER_FEED(false),
 
+    HERDER_FIND(true),
+
+    HERDER_GET(true),
+
     /*
 ### Cowboy ###
      */
