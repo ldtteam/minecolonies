@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Creates a new building for the Chicken Herder.
  */
-public class BuildingChickenHerder extends AbstractBuilding
+public class BuildingChickenHerder extends AbstractHerderBuilding
 {
     /**
      * Description of the job executed in the hut.

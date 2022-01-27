@@ -9,15 +9,20 @@ import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.AbstractHerderBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import net.minecraft.entity.EntityPredicate;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -37,7 +42,7 @@ import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_W
 /**
  * Abstract class for all Citizen Herder AIs
  */
-public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B extends AbstractBuilding, T extends AnimalEntity> extends AbstractEntityAIInteract<J, B>
+public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B extends AbstractHerderBuilding, T extends AnimalEntity> extends AbstractEntityAIInteract<J, B>
 {
     /**
      * How many animals per hut level the worker should max have.
@@ -76,6 +81,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     private static final int ACTIONS_FOR_DUMP   = 10;
 
+    private BlockPos home;
+
     /**
      * New born age.
      */
@@ -85,6 +92,10 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      * Xp per action, like breed feed butcher
      */
     protected static final double XP_PER_ACTION = 0.5;
+
+    private List<AnimalEntity> targetAnimals = new ArrayList<>();
+    private List<AnimalEntity> toGet;
+    private AnimalEntity targetAnimal;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -102,7 +113,9 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
           new AITarget(HERDER_BREED, this::breedAnimals, BREEDING_DELAY),
           new AITarget(HERDER_BUTCHER, this::butcherAnimals, BUTCHER_DELAY),
           new AITarget(HERDER_PICKUP, this::pickupItems, TICKS_SECOND),
-          new AITarget(HERDER_FEED, this::feedAnimals, TICKS_SECOND)
+          new AITarget(HERDER_FEED, this::feedAnimals, TICKS_SECOND),
+          new AITarget(HERDER_FIND, this::findAnimal, TICKS_SECOND),
+          new AITarget(HERDER_GET, this::getAnimal, 5)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -161,9 +174,13 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         final List<T> animals = new ArrayList<>(searchForAnimals());
 
-        if (animals.isEmpty())
-        {
-            return DECIDE;
+        List<AnimalEntity> animalsOut = isAnimalOut();
+        if (getOwnBuilding().getAnimalsPen() != null && !animalsOut.isEmpty() && toGet == null && getOwnBuilding().getSetting(AbstractHerderBuilding.BRING_ANIMALS).getValue()) {
+            toGet = animalsOut;
+            return HERDER_FIND;
+        }
+        if (getOwnBuilding().getAnimalsPen() != null && targetAnimals.size() > 0 && worker.isLeashed()) {
+            return HERDER_GET;
         }
 
         worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_DECIDING));
@@ -203,6 +220,71 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             return HERDER_FEED;
         }
         return START_WORKING;
+    }
+
+    private List<AnimalEntity> isAnimalOut() {
+        List<AnimalEntity> entities = WorldUtil.getEntitiesWithinAABB(world, getAnimalClass(), getSearchArea(), null);
+        List<T> inBuilding = searchForAnimals();
+        List<AnimalEntity> list = new ArrayList<>();
+        for (LivingEntity entity : entities) {
+            if (entity.getClass() == getAnimalClass() && !inBuilding.contains(entity)) {
+                list.add((AnimalEntity) entity);
+            }
+        }
+        return list;
+    }
+
+    private AxisAlignedBB getSearchArea() {
+        BlockPos pos = worker.blockPosition();
+        return new AxisAlignedBB(pos.offset(-30, -2, -30), pos.offset(30, 3, 30));
+    }
+
+    private IAIState findAnimal() {
+        if (targetAnimal == null) {
+            for (AnimalEntity animalEntity : toGet) {
+                if (!targetAnimals.contains(animalEntity)) {
+                    targetAnimal = animalEntity;
+                    targetAnimals.add(animalEntity);
+                    break;
+                }
+            }
+        }
+        if (targetAnimal == null || world.isClientSide() || getOwnBuilding().getAnimalsPen() == null) {
+            return DECIDE;
+        }
+        if (!targetAnimal.isAlive()) {
+            return DECIDE;
+        }
+        worker.setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.LEAD));
+        if (walkingToAnimal(targetAnimal)) {
+            return getState();
+        }
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(targetAnimal.blockPosition());
+        targetAnimal.setLeashedTo(worker, true);
+        targetAnimal = null;
+        return targetAnimals.size() == toGet.size() ? HERDER_GET : getState();
+    }
+
+    private IAIState getAnimal() {
+        if (world.isClientSide())
+        {
+            return DECIDE;
+        }
+        if (home == null) home = getOwnBuilding().getAnimalsPen();
+        if (walkToBlock(home))
+        {
+            return getState();
+        }
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(targetAnimals.get(0).blockPosition());
+        for (AnimalEntity animal : targetAnimals) {
+            animal.dropLeash(true, false);
+            animal.teleportTo(home.getX(), home.getY(), home.getZ());
+        }
+        worker.setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.AIR));
+        home = null;
+        targetAnimals = new ArrayList<>();
+        toGet = null;
+        return DECIDE;
     }
 
     /**
