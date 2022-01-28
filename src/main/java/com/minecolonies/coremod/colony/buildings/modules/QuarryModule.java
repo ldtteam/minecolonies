@@ -24,11 +24,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule
 {
     /**
-     * The hiring mode of this particular building, by default overriden by colony mode.
-     */
-    private HiringMode hiringMode = HiringMode.DEFAULT;
-
-    /**
      * If the quarry was finished.
      */
     private boolean isFinished = false;
@@ -37,7 +32,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     public void onColonyTick(@NotNull final IColony colony)
     {
         // If we have no active worker, grab one from the Colony
-        if (!isFull() && (this.hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
+        if (!isFull() && (this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
         {
             for (final ICitizenData data : colony.getCitizenManager().getCitizens())
             {
@@ -63,7 +58,6 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         super.deserializeNBT(compound);
 
         final CompoundNBT quarryCompound = compound.getCompound(TAG_QUARRY_ASSIGNMENT);
-        this.hiringMode = HiringMode.values()[quarryCompound.getInt(TAG_HIRING_MODE)];
         final int[] residentIds = quarryCompound.getIntArray(TAG_MINERS);
         for (final int citizenId : residentIds)
         {
@@ -82,7 +76,6 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         super.serializeNBT(compound);
 
         final CompoundNBT quarrycompound = new CompoundNBT();
-        quarrycompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -94,13 +87,6 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         }
         compound.put(TAG_QUARRY_ASSIGNMENT, quarrycompound);
         quarrycompound.putBoolean(TAG_IS_FINISHED, isFinished);
-    }
-
-    @Override
-    public void serializeToView(final @NotNull PacketBuffer buf)
-    {
-        super.serializeToView(buf);
-        buf.writeInt(hiringMode.ordinal());
     }
 
     @Override
@@ -125,17 +111,6 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     public JobEntry getJobEntry()
     {
         return ModJobs.quarrier;
-    }
-
-    public void setHiringMode(final HiringMode hiringMode)
-    {
-        this.hiringMode = hiringMode;
-        this.markDirty();
-    }
-
-    public HiringMode getHiringMode()
-    {
-        return hiringMode;
     }
 
     /**

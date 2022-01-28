@@ -88,9 +88,9 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         {
             workerIDs.add(buf.readInt());
         }
+        this.hiringMode = HiringMode.values()[buf.readInt()];
 
         this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);;
-        this.hiringMode = HiringMode.values()[buf.readInt()];
         this.maxInhabitants = buf.readInt();
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
