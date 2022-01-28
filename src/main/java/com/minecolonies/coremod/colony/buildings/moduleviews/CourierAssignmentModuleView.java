@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * AbstractBuilding View for clients.
+ * Module view for courier assignment.
  */
 public class CourierAssignmentModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
 {

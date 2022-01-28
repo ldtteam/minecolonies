@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
 /**
- * Class used for variables regarding his job.
+ * Special quarrier job. Defines miner model and specialized job behaviour.
  */
 public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier>
 {

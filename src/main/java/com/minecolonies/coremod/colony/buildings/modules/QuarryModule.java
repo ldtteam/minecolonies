@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HIRING_MODE;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_MINERS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The main data module for the quarry.
@@ -61,7 +60,9 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        final CompoundNBT quarryCompound = compound.getCompound("quarryassignment");
+        super.deserializeNBT(compound);
+
+        final CompoundNBT quarryCompound = compound.getCompound(TAG_QUARRY_ASSIGNMENT);
         this.hiringMode = HiringMode.values()[quarryCompound.getInt(TAG_HIRING_MODE)];
         final int[] residentIds = quarryCompound.getIntArray(TAG_MINERS);
         for (final int citizenId : residentIds)
@@ -72,12 +73,14 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
                 assignCitizen(citizen);
             }
         }
-        this.isFinished = quarryCompound.getBoolean("isfinished");
+        this.isFinished = quarryCompound.getBoolean(TAG_IS_FINISHED);
     }
 
     @Override
     public void serializeNBT(final CompoundNBT compound)
     {
+        super.serializeNBT(compound);
+
         final CompoundNBT quarrycompound = new CompoundNBT();
         quarrycompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
         if (!assignedCitizen.isEmpty())
@@ -89,8 +92,8 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
             }
             quarrycompound.putIntArray(TAG_MINERS, residentIds);
         }
-        compound.put("quarryassignment", quarrycompound);
-        quarrycompound.putBoolean("isfinished", isFinished);
+        compound.put(TAG_QUARRY_ASSIGNMENT, quarrycompound);
+        quarrycompound.putBoolean(TAG_IS_FINISHED, isFinished);
     }
 
     @Override

@@ -55,7 +55,8 @@ import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure
 import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
 
 /**
- * Class which handles the miner behaviour.
+ * Class which handles the quarrier behaviour.
+ * The quarrier digs out a large hole and builds infrastructure around it.
  */
 public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<JobQuarrier, BuildingMiner>
 {
@@ -63,20 +64,14 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     private static final String RENDER_META_STONE = "stone";
 
     /**
-     * Return to chest after 3 stacks.
+     * Return to chest after 2x building level stacks.
      */
-    private static final int MAX_BLOCKS_MINED = 64;
+    private static final int MAX_BLOCKS_MINED = 128;
 
     /**
-     * Mining icon
-     */
-    private final static VisibleCitizenStatus MINING =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/miner.png"), "com.minecolonies.gui.visiblestatus.miner");
-
-    /**
-     * Constructor for the Miner. Defines the tasks the miner executes.
+     * Constructor for the Quarrier. Defines the tasks the miner executes.
      *
-     * @param job a fisherman job to use.
+     * @param job a quarrier job to use.
      */
     public EntityAIQuarrier(@NotNull final JobQuarrier job)
     {
@@ -572,12 +567,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             }
         }
 
-        final BlockState blockState = world.getBlockState(blockToMine);
-        if (!IColonyManager.getInstance().getCompatibilityManager().isOre(blockState))
-        {
-            blockToMine = getSurroundingOreOrDefault(blockToMine);
-        }
-
         if (world.getBlockState(blockToMine).getBlock() instanceof AirBlock)
         {
             blockToMine = null;
@@ -590,28 +579,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             return getState();
         }
 
-        blockToMine = getSurroundingOreOrDefault(blockToMine);
-        if (IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(blockToMine)))
-        {
-            return getState();
-        }
-
         worker.decreaseSaturationForContinuousAction();
         blockToMine  = null;
         return BUILDING_STEP;
-    }
-
-    private BlockPos getSurroundingOreOrDefault(final BlockPos pos)
-    {
-        for (Direction direction : Direction.values())
-        {
-            final BlockPos offset = pos.relative(direction);
-            if (IColonyManager.getInstance().getCompatibilityManager().isOre(world.getBlockState(offset)))
-            {
-                return offset;
-            }
-        }
-        return pos;
     }
 
     /**
@@ -643,28 +613,21 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         return BUILDING_STEP;
     }
 
-    private void setBlockFromInventory(@NotNull final BlockPos location, @NotNull final Block block)
+    /**
+     * Handles the placement and reduction of a block from the inventory.
+     * @param location the place to place the block at.
+     * @param block the block.
+     */
+    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block)
     {
         worker.swing(worker.getUsedItemHand());
-        setBlockFromInventory(location, block, block.defaultBlockState());
-    }
 
-    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final BlockState metadata)
-    {
-        final int slot;
-        if (block instanceof LadderBlock)
-        {
-            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
-        }
-        else
-        {
-            slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
-        }
+        final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(block);
         if (slot != -1)
         {
             getInventory().extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
-            WorldUtil.setBlockState(world, location, metadata);
+            WorldUtil.setBlockState(world, location, block.defaultBlockState());
         }
     }
 

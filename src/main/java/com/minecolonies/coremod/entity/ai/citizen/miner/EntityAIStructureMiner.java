@@ -68,7 +68,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
     private static final int NODE_DISTANCE       = 7;
     /**
-     * Return to chest after 3 stacks.
+     * Return to chest after building level stacks.
      */
     private static final int MAX_BLOCKS_MINED = 64;
     public static final  int SHAFT_RADIUS     = 3;

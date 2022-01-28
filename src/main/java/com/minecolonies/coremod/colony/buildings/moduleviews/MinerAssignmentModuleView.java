@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * AbstractBuilding View for clients.
+ * Module view for miner assignment.
  */
 public class MinerAssignmentModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
 {
@@ -118,7 +118,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
     @Override
     public int getMaxInhabitants()
     {
-        return this.buildingView.getBuildingLevel() * 2;
+        return 1;
     }
 
     @NotNull

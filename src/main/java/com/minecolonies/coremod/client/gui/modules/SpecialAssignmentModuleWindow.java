@@ -25,7 +25,8 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 
 /**
- * Assignment module for couriers to warehouse or quarriers to the quarry.
+ * Assignment module for workers to a building.
+ * This is specifically for the assignment of workers that got their own hut and are assigned additionally to this building (e.g., warehouse, quarry).
  */
 public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
 {
