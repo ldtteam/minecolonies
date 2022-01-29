@@ -6,6 +6,7 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
+import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
@@ -16,6 +17,7 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -338,7 +340,22 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
             return;
         }
+
+        if (this.vehicle instanceof MinecoloniesMinecart)
+        {
+            return;
+        }
         super.push(entityIn);
+    }
+
+    @Override
+    public boolean isPushable()
+    {
+        if (this.vehicle instanceof MinecoloniesMinecart)
+        {
+            return false;
+        }
+        return super.isPushable();
     }
 
     @Override
