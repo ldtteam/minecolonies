@@ -32,7 +32,7 @@ public class ModModelTypeInitializer
         ModModelTypes.NOBLE = new SimpleModelType(ModModelTypes.NOBLE_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleNoble(context.bakeLayer(ClientRegistryHandler.FEMALE_CITIZENNOBLE)));
         reg.register(ModModelTypes.NOBLE);
 
-        ModModelTypes.ARISTOCRAT = new SimpleModelType(ModModelTypes.ARISTOCRAT_ID, 3, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityFemaleAristocrat(context.bakeLayer(ClientRegistryHandler.FEMALE_ARISTOCRAT)));
+        ModModelTypes.ARISTOCRAT = new SimpleModelType(ModModelTypes.ARISTOCRAT_ID, 3, new ModelEntityMaleCitizen(context.bakeLayer(ClientRegistryHandler.MALE_CITIZEN)), new ModelEntityFemaleAristocrat(context.bakeLayer(ClientRegistryHandler.FEMALE_ARISTOCRAT)));
         reg.register(ModModelTypes.ARISTOCRAT);
 
         ModModelTypes.BUILDER = new SimpleModelType(ModModelTypes.BUILDER_ID, 1, new CitizenModel<>(context.bakeLayer(ClientRegistryHandler.CITIZEN)), new ModelEntityBuilderFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BUILDER)));
