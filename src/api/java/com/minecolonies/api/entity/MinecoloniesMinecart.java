@@ -2,6 +2,9 @@ package com.minecolonies.api.entity;
 
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.PoweredRailBlock;
@@ -22,6 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -290,9 +294,107 @@ public class MinecoloniesMinecart extends AbstractMinecart
     }
 
     @Override
+    public boolean canCollideWith(final Entity p_38168_)
+    {
+        return false;
+    }
+
+    @Override
     public void tick()
     {
-        super.tick();
+        if (this.getHurtTime() > 0)
+        {
+            this.setHurtTime(this.getHurtTime() - 1);
+        }
+
+        if (this.getDamage() > 0.0F)
+        {
+            this.setDamage(this.getDamage() - 1.0F);
+        }
+
+        this.checkOutOfWorld();
+        this.handleNetherPortal();
+        if (this.level.isClientSide)
+        {
+            if (this.lSteps > 0)
+            {
+                double d5 = this.getX() + (this.lx - this.getX()) / (double) this.lSteps;
+                double d6 = this.getY() + (this.ly - this.getY()) / (double) this.lSteps;
+                double d7 = this.getZ() + (this.lz - this.getZ()) / (double) this.lSteps;
+                double d2 = Mth.wrapDegrees(this.lyr - (double) this.getYRot());
+                this.setYRot(this.getYRot() + (float) d2 / (float) this.lSteps);
+                this.setXRot(this.getXRot() + (float) (this.lxr - (double) this.getXRot()) / (float) this.lSteps);
+                --this.lSteps;
+                this.setPos(d5, d6, d7);
+                this.setRot(this.getYRot(), this.getXRot());
+            }
+            else
+            {
+                this.reapplyPosition();
+                this.setRot(this.getYRot(), this.getXRot());
+            }
+        }
+        else
+        {
+            if (!this.isNoGravity())
+            {
+                double d0 = this.isInWater() ? -0.005D : -0.04D;
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, d0, 0.0D));
+            }
+
+            int k = Mth.floor(this.getX());
+            int i = Mth.floor(this.getY());
+            int j = Mth.floor(this.getZ());
+            if (this.level.getBlockState(new BlockPos(k, i - 1, j)).is(BlockTags.RAILS))
+            {
+                --i;
+            }
+
+            BlockPos blockpos = new BlockPos(k, i, j);
+            BlockState blockstate = this.level.getBlockState(blockpos);
+            if (canUseRail() && BaseRailBlock.isRail(blockstate))
+            {
+                this.moveAlongTrack(blockpos, blockstate);
+                if (blockstate.getBlock() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.getBlock()).isActivatorRail())
+                {
+                    this.activateMinecart(k, i, j, blockstate.getValue(PoweredRailBlock.POWERED));
+                }
+            }
+            else
+            {
+                this.comeOffTrack();
+            }
+
+            this.checkInsideBlocks();
+            this.setXRot(0.0F);
+            double d1 = this.xo - this.getX();
+            double d3 = this.zo - this.getZ();
+            if (d1 * d1 + d3 * d3 > 0.001D)
+            {
+                this.setYRot((float) (Mth.atan2(d3, d1) * 180.0D / Math.PI));
+                if (this.flipped)
+                {
+                    this.setYRot(this.getYRot() + 180.0F);
+                }
+            }
+
+            double d4 = (double) Mth.wrapDegrees(this.getYRot() - this.yRotO);
+            if (d4 < -170.0D || d4 >= 170.0D)
+            {
+                this.setYRot(this.getYRot() + 180.0F);
+                this.flipped = !this.flipped;
+            }
+
+            this.setRot(this.getYRot(), this.getXRot());
+            this.updateInWaterStateAndDoFluidPushing();
+            if (this.isInLava())
+            {
+                this.lavaHurt();
+                this.fallDistance *= 0.5F;
+            }
+
+            this.firstTick = false;
+        }
 
         if (this.tickCount % 20 == 19 && getPassengers().isEmpty())
         {
