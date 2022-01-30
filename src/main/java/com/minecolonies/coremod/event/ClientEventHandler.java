@@ -19,6 +19,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -392,7 +393,7 @@ public class ClientEventHandler
         {
             if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
             {
-                if (buildingView instanceof PostBox.View || buildingView instanceof EmptyView)
+                if (buildingView.getBuildingType() == ModBuildings.postBox || buildingView.getBuildingType() == ModBuildings.stash)
                 {
                     continue;
                 }
