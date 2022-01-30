@@ -912,11 +912,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return tileEntity;
     }
 
-    /**
-     * Called upon completion of an upgrade process. We suppress this warning since this parameter will be used in child classes which override this method.
-     *
-     * @param newLevel The new level.
-     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
@@ -933,11 +928,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         );
         calculateCorners();
         this.isBuilt = true;
-
-        if (newLevel > getBuildingLevel())
-        {
-            FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), newLevel);
-        }
 
         getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
