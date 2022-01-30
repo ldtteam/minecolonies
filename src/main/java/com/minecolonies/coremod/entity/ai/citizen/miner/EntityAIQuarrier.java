@@ -357,7 +357,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         {
             final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
             buildingWorker.resetNeededResources();
-            requestProgress = NULL_POS;
+            requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
+              structurePlacer.getB().getBluePrint().getSizeY() - 1,
+              structurePlacer.getB().getBluePrint().getSizeZ() - 1);
             requestState = RequestStage.SOLID;
         }
 
@@ -374,9 +376,9 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
-                      .getState()
-                      .getBlock())  || pos.getY()  < worldPos.getY())),
+                    .decrement(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid()
+                                                                                 || isDecoItem(info.getBlockInfo().getState().getBlock())
+                                                                                 || pos.getY()  < worldPos.getY())),
                   false);
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
@@ -384,9 +386,15 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                     getOwnBuilding().addNeededResource(stack, stack.getCount());
                 }
 
+
                 if (requestProgress.getY() != -1 && result.getIteratorPos().getY() < requestProgress.getY())
                 {
                     requestProgress = new BlockPos(0, requestProgress.getY() + 1, 0);
+                    requestState = RequestStage.DECO;
+                }
+                else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
+                {
+                    requestProgress = new BlockPos(0, structurePlacer.getB().getBluePrint().getSizeY() - 2, 0);
                     requestState = RequestStage.DECO;
                 }
                 else
