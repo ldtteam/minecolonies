@@ -984,6 +984,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
+     * Get the building to dump the inventory into.
+     * @return its own building by default.
+     */
+    protected IBuilding getBuildingToDump()
+    {
+        return getOwnBuilding();
+    }
+
+    /**
      * Walk to building and dump inventory. If inventory is dumped, continue execution so that the state can be resolved.
      *
      * @return INVENTORY_FULL | IDLE
@@ -991,7 +1000,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @NotNull
     private IAIState dumpInventory()
     {
-        final IBuilding building = getOwnBuilding();
+        final IBuilding building = getBuildingToDump();
         if (building == null)
         {
             // Uh oh, that shouldn't happen. Restart AI.
@@ -1069,7 +1078,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @SuppressWarnings("PMD.PrematureDeclaration")
     private boolean dumpOneMoreSlot()
     {
-        if (walkToBuilding())
+        if (walkToBlock(getBuildingToDump().getPosition()))
         {
             return true;
         }
@@ -1112,7 +1121,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (amount > 0)
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, buildingWorker.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
                 hasDumpedItems = true;
             }
         }

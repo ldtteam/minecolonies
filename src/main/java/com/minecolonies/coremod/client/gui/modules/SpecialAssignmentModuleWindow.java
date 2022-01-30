@@ -9,9 +9,12 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowHireWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
+
 /**
- * Assignment module for couriers to warehouse.
+ * Assignment module for workers to a building.
+ * This is specifically for the assignment of workers that got their own hut and are assigned additionally to this building (e.g., warehouse, quarry).
  */
-public class CourierAssignmentModuleWindow extends AbstractModuleWindow
+public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -45,10 +51,19 @@ public class CourierAssignmentModuleWindow extends AbstractModuleWindow
      * @param building class extending {@link AbstractBuildingView}.
      * @param resource Resource of the window.
      */
-    public CourierAssignmentModuleWindow(final IBuildingView building, final String resource)
+    public SpecialAssignmentModuleWindow(final IBuildingView building, final String resource)
     {
         super(building, resource);
         super.registerButton(BUTTON_HIRE, this::hireClicked);
+        super.registerButton(BUTTON_RECALL, this::recallClicked);
+    }
+
+    /**
+     * On recall clicked.
+     */
+    private void recallClicked()
+    {
+        Network.getNetwork().sendToServer(new RecallCitizenMessage(buildingView));
     }
 
     /**

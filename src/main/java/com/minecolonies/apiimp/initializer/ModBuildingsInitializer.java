@@ -91,8 +91,8 @@ public final class ModBuildingsInitializer
                                        .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BARRACKS_TOWER_ID))
                                        .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                        .addBuildingModuleProducer(BedHandlingModule::new)
-                                       .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, ISchematicProvider::getBuildingLevel), () -> GuardBuildingModuleView::new)
-                                       .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, ISchematicProvider::getBuildingLevel), () -> GuardBuildingModuleView::new)
+                                       .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
+                                       .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
                                        .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))
                                        .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                        .addBuildingModuleProducer(() -> new SettingsModule()
@@ -246,8 +246,8 @@ public final class ModBuildingsInitializer
                                     .setBuildingProducer(BuildingGuardTower::new)
                                     .setBuildingViewProducer(() -> BuildingGuardTower.View::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
-                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, (b) -> 1), () -> GuardBuildingModuleView::new)
-                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, (b) -> 1), () -> GuardBuildingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .addBuildingModuleProducer(BedHandlingModule::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))
@@ -303,8 +303,9 @@ public final class ModBuildingsInitializer
                                .setBuildingProducer(BuildingMiner::new)
                                .setBuildingViewProducer(() -> EmptyView::new)
                                .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
-                               .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                               .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
+                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.quarrier, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+          .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
                                .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
@@ -611,8 +612,29 @@ public final class ModBuildingsInitializer
                                     .setBuildingViewProducer(() -> EmptyView::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
                                     .addBuildingModuleProducer(GraveyardManagementModule::new, () -> GraveyardManagementModuleView::new)
-                                   .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                    .createBuildingEntry();
+
+        ModBuildings.simpleQuarry = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockSimpleQuarry)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
                                    .createBuildingEntry();
+
+        ModBuildings.mediumQuarry = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockMediumQuarry)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))
+                                   .createBuildingEntry();
+
+        /*ModBuildings.largeQuarry = new BuildingEntry.Builder()
+                                   .setBuildingBlock(ModBlocks.blockLargeQuarry)
+                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "largequarry", 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LARGE_QUARRY_ID))
+                                   .createBuildingEntry();*/
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -661,5 +683,8 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
         reg.register(ModBuildings.graveyard);
+        reg.register(ModBuildings.simpleQuarry);
+        reg.register(ModBuildings.mediumQuarry);
+        //reg.register(ModBuildings.largeQuarry);
     }
 }

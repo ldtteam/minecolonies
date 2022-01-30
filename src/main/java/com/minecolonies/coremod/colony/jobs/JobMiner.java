@@ -3,17 +3,14 @@ package com.minecolonies.coremod.colony.jobs;
 import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
 /**
- * Class used for variables regarding his job.
+ * Special miner job. Defines miner model and specialized job behaviour.
  */
 public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMiner>
 {

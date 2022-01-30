@@ -2,8 +2,10 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HIRING_MODE;
+
 /**
  * Abstract assignment module.
  */
@@ -23,6 +27,11 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
      * List of worker assosiated to the building.
      */
     protected final List<ICitizenData> assignedCitizen = Lists.newArrayList();
+
+    /**
+     * The hiring mode of this particular building, by default overriden by colony mode.
+     */
+    private HiringMode hiringMode = HiringMode.DEFAULT;
 
     @Override
     public boolean removeCitizen(@NotNull final ICitizenData citizen)
@@ -106,6 +115,18 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     }
 
     @Override
+    public void serializeNBT(final CompoundNBT compound)
+    {
+        compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
+    }
+
+    @Override
+    public void deserializeNBT(final CompoundNBT compound)
+    {
+        this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
+    }
+
+    @Override
     public void serializeToView(@NotNull final PacketBuffer buf)
     {
         buf.writeInt(assignedCitizen.size());
@@ -113,5 +134,19 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
         {
             buf.writeInt(citizen.getId());
         }
+        buf.writeInt(hiringMode.ordinal());
+    }
+
+    @Override
+    public void setHiringMode(final HiringMode hiringMode)
+    {
+        this.hiringMode = hiringMode;
+        this.markDirty();
+    }
+
+    @Override
+    public HiringMode getHiringMode()
+    {
+        return hiringMode;
     }
 }

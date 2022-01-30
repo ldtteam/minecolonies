@@ -47,7 +47,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     /**
      * Possible request stages
      */
-    private enum RequestStage
+    protected enum RequestStage
     {
         SOLID,
         DECO,
@@ -57,12 +57,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     /**
      * The current request state (0 is solid
      */
-    private RequestStage requestState = RequestStage.SOLID;
+    protected RequestStage requestState = RequestStage.SOLID;
 
     /**
      * Request progress pos.
      */
-    private BlockPos requestProgress = null;
+    protected BlockPos requestProgress = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -166,7 +166,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation(world);
         final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
 
-        super.loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }
