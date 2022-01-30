@@ -28,6 +28,9 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
+import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
@@ -49,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -77,7 +81,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * If the structure state is currently reached limit rather than block placement.
      */
-    private boolean limitReached = false;
+    protected boolean limitReached = false;
 
     /**
      * Different item check result possibilities.
@@ -111,6 +115,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * Block to mine.
      */
     protected BlockPos blockToMine;
+
+    /**
+     * The id in the list of the last picked up item.
+     */
+    private int pickUpCount = 0;
 
     /**
      * Creates this ai base class and set's up important things.
@@ -155,9 +164,64 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
           /*
            * Finalize the building and give back control to the ai.
            */
-          new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY)
+          new AITarget(COMPLETE_BUILD, this::completeBuild, STANDARD_DELAY),
+          new AITarget(PICK_UP, this::pickUpMaterial, 5)
         );
 
+    }
+
+    /**
+     * State to pick up material before going back to work.
+     *
+     * @return the next state to go to.
+     */
+    public IAIState pickUpMaterial()
+    {
+        if (structurePlacer == null || !structurePlacer.getB().hasBluePrint())
+        {
+            return IDLE;
+        }
+
+        if (structurePlacer.getB().getStage() == null || structurePlacer.getB().getStage() == BuildingStructureHandler.Stage.CLEAR)
+        {
+            pickUpCount = 0;
+            return START_WORKING;
+        }
+
+        final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
+
+        final BuilderBucket neededRessourcesMap = getOwnBuilding().getRequiredResources();
+        final BuildingResourcesModule module = getOwnBuilding().getFirstModuleOccurance(BuildingResourcesModule.class);
+        if (neededRessourcesMap != null)
+        {
+            for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
+            {
+                final BuildingBuilderResource res = module.getResourceFromIdentifier(entry.getKey());
+                if (res != null)
+                {
+                    int amount = entry.getValue();
+                    neededItemsList.add(new Tuple<>(itemstack -> ItemStackUtils.compareItemStacksIgnoreStackSize(res.getItemStack(), itemstack, true, true), amount));
+                }
+            }
+        }
+
+        if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
+        {
+            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
+            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getNextBucket(), worker.getCitizenData(), false);
+            pickUpCount = 0;
+            return START_WORKING;
+        }
+
+        needsCurrently = neededItemsList.get(pickUpCount);
+        pickUpCount++;
+
+        if (InventoryUtils.hasItemInProvider(getOwnBuilding().getTileEntity(), needsCurrently.getA()))
+        {
+            return GATHERING_REQUIRED_MATERIALS;
+        }
+
+        return pickUpMaterial();
     }
 
     /**
@@ -289,7 +353,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structurePlacer.getB().setStage(getProgressPos().getB());
         }
 
-        if (!limitReached && !walkToConstructionSite(worldPos))
+        if (!progress.equals(NULL_POS) && !limitReached && (blockToMine == null ? !walkToConstructionSite(worldPos) : !walkToConstructionSite(blockToMine)))
         {
             return getState();
         }
@@ -433,6 +497,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * @return the level.
      */
     public abstract int getPlaceSpeedLevel();
+
+    @Override
+    public IAIState getStateAfterPickUp()
+    {
+        return PICK_UP;
+    }
+
+    @Override
+    public IAIState afterRequestPickUp()
+    {
+        return INVENTORY_FULL;
+    }
+
+    @Override
+    public IAIState afterDump()
+    {
+        return PICK_UP;
+    }
 
     /**
      * Separate step for mining.

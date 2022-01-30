@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 /**
- * AbstractBuilding View for clients.
+ * AbstractBuilding View for clients where the max is per building not per module.
  */
-public class GuardBuildingModuleView extends WorkerBuildingModuleView
+public class CombinedHiringLimitModuleView extends WorkerBuildingModuleView
 {
     /**
      * Check if the module is full.

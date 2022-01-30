@@ -10,7 +10,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.modules.CourierAssignmentModuleWindow;
+import com.minecolonies.coremod.client.gui.modules.SpecialAssignmentModuleWindow;
 import com.minecolonies.coremod.network.messages.server.colony.building.CourierHiringModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import net.minecraft.network.PacketBuffer;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * AbstractBuilding View for clients.
+ * Module view for courier assignment.
  */
 public class CourierAssignmentModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
 {
@@ -125,7 +125,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public Window getWindow()
     {
-        return new CourierAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutcourierassignment.xml");
+        return new SpecialAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutcourierassignment.xml");
     }
 
     @Override

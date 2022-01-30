@@ -14,4 +14,7 @@
     <buttonimage id="hire" size="129 17" pos="30 74" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.manage)"/>
+    <buttonimage id="recall" size="129 17" pos="30 92" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.workerhuts.recall)"/>
 </window>
