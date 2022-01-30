@@ -153,12 +153,6 @@ public class BuildingLumberjack extends AbstractBuilding
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-    }
-
-    @Override
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);

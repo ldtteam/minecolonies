@@ -12,10 +12,12 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
+import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.FireworkUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
@@ -531,8 +533,13 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
             if (level > 0 && level >= getBuildingLevel() && level <= getMaxBuildingLevel())
             {
-                onUpgradeComplete(level);
+                if (level > getBuildingLevel())
+                {
+                    FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), level);
+                }
+                
                 setBuildingLevel(level);
+                onUpgradeComplete(level);
             }
         }
     }

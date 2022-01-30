@@ -116,12 +116,6 @@ public class BuildingFarmer extends AbstractBuilding
         return MAX_BUILDING_LEVEL;
     }
 
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-    }
-
     /**
      * Getter for request fertilizer
      */
