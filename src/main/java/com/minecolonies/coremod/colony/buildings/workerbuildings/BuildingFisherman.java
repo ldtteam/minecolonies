@@ -62,13 +62,4 @@ public class BuildingFisherman extends AbstractBuilding
     {
         return MAX_BUILDING_LEVEL;
     }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-    }
 }

@@ -90,15 +90,6 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         return BUILDER;
     }
 
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-    }
-
     @Override
     public void onWakeUp()
     {

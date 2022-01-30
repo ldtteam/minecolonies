@@ -70,12 +70,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-    }
-
-    @Override
     public void addPermissionEvent(final PermissionEvent event)
     {
         if (getBuildingLevel() >= 1 && !permissionEvents.contains(event))

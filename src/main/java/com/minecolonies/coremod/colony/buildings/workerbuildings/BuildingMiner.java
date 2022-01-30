@@ -132,15 +132,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         return 10;
     }
 
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-    }
-
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
