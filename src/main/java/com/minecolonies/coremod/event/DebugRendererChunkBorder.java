@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.event;
 
 import com.ldtteam.structurize.items.ModItems;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -139,6 +142,8 @@ public class DebugRendererChunkBorder
         bufferbuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
         final MutableChunkPos mutableChunkPos = new MutableChunkPos(0, 0);
+        final Map<Integer, Color> colonyColours = new HashMap<>();
+        final boolean useColonyColour = IMinecoloniesAPI.getInstance().getConfig().getClient().colonyteamborders.get();
 
         mapToDraw.forEach((chunkPos, colonyId) -> {
             if (colonyId == 0 || chunkPos.x <= playerChunkPos.x - playerRenderDist || chunkPos.x >= playerChunkPos.x + playerRenderDist
@@ -157,21 +162,33 @@ public class DebugRendererChunkBorder
             final int green;
             final int blue;
             final int alpha = 255;
-            final int testedColonyId;
+            final int testedColonyId = colonyId;
 
-            if (colonyId == playerColonyId)
+            if (useColonyColour)
+            {
+                final Color colour = colonyColours.computeIfAbsent(colonyId, id ->
+                {
+                    final IColonyView colony = IMinecoloniesAPI.getInstance().getColonyManager().getColonyView(id, Minecraft.getInstance().level.dimension());
+                    final TextFormatting team = colony != null ? colony.getTeamColonyColor()
+                            : id == playerColonyId ? TextFormatting.WHITE : TextFormatting.RED;
+                    return new Color(team.getColor());
+                });
+
+                red = colour.getRed();
+                green = colour.getGreen();
+                blue = colour.getBlue();
+            }
+            else if (colonyId == playerColonyId)
             {
                 red = 255;
                 green = 255;
                 blue = 255;
-                testedColonyId = playerColonyId;
             }
             else
             {
                 red = 255;
                 green = 70;
                 blue = 70;
-                testedColonyId = colonyId;
             }
 
             mutableChunkPos.setX(chunkPos.x);

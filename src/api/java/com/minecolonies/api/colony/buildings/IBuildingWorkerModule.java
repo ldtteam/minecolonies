@@ -18,20 +18,6 @@ public interface IBuildingWorkerModule
     IJob<?> createJob(ICitizenData citizen);
 
     /**
-     * Set a new hiring mode in the building.
-     *
-     * @param hiringMode the mode to set.
-     */
-    void setHiringMode(HiringMode hiringMode);
-
-    /**
-     * Get the current hiring mode of this building.
-     *
-     * @return the current mode.
-     */
-    HiringMode getHiringMode();
-
-    /**
      * Method which defines if a worker should be allowed to work during the rain.
      *
      * @return true if so.

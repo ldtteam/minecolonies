@@ -66,6 +66,9 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutMysticalSite;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGraveyard;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutNetherWorker;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockSimpleQuarry;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockMediumQuarry;
+    //public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockLargeQuarry;
 
     /**
      * Utility blocks.
@@ -141,6 +144,10 @@ public final class ModBlocks
           blockHutFlorist,
           blockPostBox,
           blockHutGraveyard,
-          blockHutNetherWorker};
+          blockHutNetherWorker,
+          blockSimpleQuarry,
+          blockMediumQuarry,
+          //blockLargeQuarry
+          };
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import org.jetbrains.annotations.NotNull;
@@ -64,4 +65,16 @@ public interface IAssignsCitizen extends IBuildingModule
      * @return true if so.
      */
     boolean hasAssignedCitizen();
+
+    /**
+     * Set the hiring mode (automatic or manual or colony default).
+     * @param hiringMode the mode to set.
+     */
+    void setHiringMode(final HiringMode hiringMode);
+
+    /**
+     * Get the hiring mode of the module.
+     * @return the mode.
+     */
+    HiringMode getHiringMode();
 }

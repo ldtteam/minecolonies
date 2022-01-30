@@ -284,6 +284,16 @@ public final class NbtTagConstants
     public static final String TAG_HIRING_MODE = "buildingHiringMode";
 
     /**
+     * Tag to store the quarry assignment module.
+     */
+    public static final String TAG_QUARRY_ASSIGNMENT = "quarryassignment";
+
+    /**
+     * Tag to store if quarry was finished.
+     */
+    public static final String TAG_IS_FINISHED = "isfinished";
+
+    /**
      * NBTTag to store the recipes list.
      */
     public static final String TAG_RECIPES = "recipes";
@@ -312,6 +322,11 @@ public final class NbtTagConstants
      * The tag used to store the residents.
      */
     public static final String TAG_COURIERS = "couriers";
+
+    /**
+     * The tag used to store the residents.
+     */
+    public static final String TAG_MINERS = "miners";
 
     /**
      * List storing all beds which have been registered to the building.

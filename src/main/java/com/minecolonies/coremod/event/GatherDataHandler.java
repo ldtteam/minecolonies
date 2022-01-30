@@ -19,6 +19,7 @@ public class GatherDataHandler
         final LootTableManager lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
 
         generator.addProvider(new DefaultBlockLootTableProvider(generator));
+        generator.addProvider(new DefaultAdvancementsProvider(generator, event.getExistingFileHelper()));
         generator.addProvider(new DefaultSoundProvider(generator));
         generator.addProvider(new DefaultResearchProvider(generator));
         generator.addProvider(new SawmillTimberFrameRecipeProvider(generator));

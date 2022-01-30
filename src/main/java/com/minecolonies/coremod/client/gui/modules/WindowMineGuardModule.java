@@ -12,7 +12,6 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.network.messages.server.colony.building.guard.GuardSetMinePosMessage;
 import net.minecraft.util.text.TranslationTextComponent;
 

@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:minecolonies/build_tavern",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutcitizen"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.citizen.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.citizen.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "citizens_hut": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "citizen",
+        "level": 1
+      }
+    }
+  },
+  "requirements": [
+    [
+      "citizens_hut"
+    ]
+  ]
+}

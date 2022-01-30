@@ -1,9 +1,14 @@
 package com.minecolonies.api.advancements.click_gui_button;
 
+import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.loot.ConditionArrayParser;
+import net.minecraft.loot.ConditionArraySerializer;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The test instance to check the various conditions for the "click_gui_button" trigger
@@ -60,5 +65,38 @@ public class ClickGuiButtonCriterionInstance extends CriterionInstance
         }
 
         return true;
+    }
+
+    @NotNull
+    public static ClickGuiButtonCriterionInstance deserializeFromJson(@NotNull final JsonObject jsonObject,
+                                                                      @NotNull final ConditionArrayParser conditions)
+    {
+        if (jsonObject.has("button_id"))
+        {
+            final String buttonId = JSONUtils.getAsString(jsonObject, "button_id");
+            if (jsonObject.has("window_resource_location"))
+            {
+                final String windowResource = JSONUtils.getAsString(jsonObject, "window_resource_location");
+                return new ClickGuiButtonCriterionInstance(buttonId, windowResource);
+            }
+            return new ClickGuiButtonCriterionInstance(buttonId);
+        }
+        return new ClickGuiButtonCriterionInstance();
+    }
+
+    @NotNull
+    @Override
+    public JsonObject serializeToJson(@NotNull final ConditionArraySerializer serializer)
+    {
+        final JsonObject json = super.serializeToJson(serializer);
+        if (this.buttonId != null)
+        {
+            json.addProperty("button_id", this.buttonId);
+            if (this.windowResource != null)
+            {
+                json.addProperty("window_resource_location", this.windowResource);
+            }
+        }
+        return json;
     }
 }

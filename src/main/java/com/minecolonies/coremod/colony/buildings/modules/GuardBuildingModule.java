@@ -27,7 +27,7 @@ import java.util.function.Function;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HIRE_TRAINEE;
 
 /**
- * Assignment module for jobs that have to live at the work place mandatorily.
+ * Assignment module for guards.
  */
 public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {

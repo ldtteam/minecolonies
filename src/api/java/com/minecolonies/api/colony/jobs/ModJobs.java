@@ -50,6 +50,7 @@ public final class ModJobs
     public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
     public static final ResourceLocation COOKASSISTANT_ID  = new ResourceLocation(Constants.MOD_ID, "cookassistant");
     public static final ResourceLocation NETHERWORKER_ID   = new ResourceLocation(Constants.MOD_ID, "netherworker");
+    public static final ResourceLocation QUARRY_MINER_ID  = new ResourceLocation(Constants.MOD_ID, "quarrier");
 
     public static JobEntry placeHolder;
     public static JobEntry builder;
@@ -94,6 +95,7 @@ public final class ModJobs
     public static JobEntry beekeeper;
     public static JobEntry cookassistant;
     public static JobEntry netherworker;
+    public static JobEntry quarrier;
 
     private ModJobs()
     {

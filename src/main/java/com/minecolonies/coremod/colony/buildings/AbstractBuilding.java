@@ -84,6 +84,7 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getPlayerActionPriority;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.BuildingConstants.NO_WORK_ORDER;
+import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
@@ -103,7 +104,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     /**
      * Breeding setting.
      */
-    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "breeding"));
+    public static final ISettingKey<BoolSetting> BREEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "breeding"));
+
+    /**
+     * Feeding setting.
+     */
+    public static final ISettingKey<BoolSetting> FEEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "feeding"));
 
     public static final int MAX_BUILD_HEIGHT = 256;
     public static final int MIN_BUILD_HEIGHT = 1;
@@ -906,11 +912,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return tileEntity;
     }
 
-    /**
-     * Called upon completion of an upgrade process. We suppress this warning since this parameter will be used in child classes which override this method.
-     *
-     * @param newLevel The new level.
-     */
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
@@ -927,11 +928,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         );
         calculateCorners();
         this.isBuilt = true;
-
-        if (newLevel > getBuildingLevel())
-        {
-            FireworkUtils.spawnFireworksAtAABBCorners(getCorners(), colony.getWorld(), newLevel);
-        }
 
         getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();

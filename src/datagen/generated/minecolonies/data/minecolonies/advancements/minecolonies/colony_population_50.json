@@ -1,0 +1,31 @@
+{
+  "parent": "minecolonies:minecolonies/colony_population_25",
+  "display": {
+    "icon": {
+      "item": "minecraft:diamond"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.colony_population_50.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.colony_population_50.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "population_50": {
+      "trigger": "minecolonies:colony_population",
+      "conditions": {
+        "population_count": 50
+      }
+    }
+  },
+  "requirements": [
+    [
+      "population_50"
+    ]
+  ]
+}

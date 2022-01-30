@@ -1,0 +1,32 @@
+{
+  "parent": "minecolonies:minecolonies/build_mysticalsite",
+  "display": {
+    "icon": {
+      "item": "minecolonies:blockhutmysticalsite"
+    },
+    "title": {
+      "translate": "advancements.minecolonies.build.mysticalsite_5.title"
+    },
+    "description": {
+      "translate": "advancements.minecolonies.build.mysticalsite_5.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "mysticalsite": {
+      "trigger": "minecolonies:complete_build_request",
+      "conditions": {
+        "hut_name": "mysticalsite",
+        "level": 5
+      }
+    }
+  },
+  "requirements": [
+    [
+      "mysticalsite"
+    ]
+  ]
+}

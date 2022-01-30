@@ -71,6 +71,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public static final DataParameter<BlockPos> DATA_BED_POS         = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.BLOCK_POS);
     public static final DataParameter<String>   DATA_STYLE           = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
     public static final DataParameter<String>   DATA_TEXTURE_SUFFIX  = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
+    public static final DataParameter<String>   DATA_JOB             = EntityDataManager.defineId(AbstractEntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The default model.
@@ -295,6 +296,7 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
         entityData.define(DATA_IS_ASLEEP, false);
         entityData.define(DATA_IS_CHILD, false);
         entityData.define(DATA_BED_POS, new BlockPos(0, 0, 0));
+        entityData.define(DATA_JOB, "");
     }
 
     /**
