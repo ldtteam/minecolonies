@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.jobs.IHasExternalWorkStation;
+import com.minecolonies.api.colony.jobs.IJobWithExternalWorkStations;
 import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIQuarrier;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +18,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 /**
  * Special quarrier job. Defines miner model and specialized job behaviour.
  */
-public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier> implements IHasExternalWorkStation
+public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier> implements IJobWithExternalWorkStations
 {
     /**
      * Creates a new instance of the miner job.

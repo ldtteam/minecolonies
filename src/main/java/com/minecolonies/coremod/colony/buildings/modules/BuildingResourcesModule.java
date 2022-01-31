@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.jobs.IHasExternalWorkStation;
+import com.minecolonies.api.colony.jobs.IJobWithExternalWorkStations;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -148,9 +148,9 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
-                if (data.getJob() instanceof IHasExternalWorkStation)
+                if (data.getJob() instanceof IJobWithExternalWorkStations)
                 {
-                    for (final IBuilding station : ((IHasExternalWorkStation) data.getJob()).getWorkStations())
+                    for (final IBuilding station : ((IJobWithExternalWorkStations) data.getJob()).getWorkStations())
                     {
                         resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));

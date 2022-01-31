@@ -5,9 +5,10 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import java.util.List;
 
 /**
- * Interface for workers that have an additional workstations besides their hut.
+ * Interface for workers that have an additional workstations besides their hut (e.g., the Quarrier)
+ * This allows to treat the workstation as an expanded inventory for example.
  */
-public interface IHasExternalWorkStation
+public interface IJobWithExternalWorkStations
 {
     /**
      * Get a list of potential external workstations.
