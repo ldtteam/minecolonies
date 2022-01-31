@@ -29,9 +29,9 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
@@ -54,6 +54,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraftforge.api.distmarker.Dist;
@@ -66,7 +67,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.antlr.v4.runtime.misc.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +90,7 @@ public class ClientEventHandler
     /**
      * The distance in which previews of nearby buildings are rendered
      */
-    private static final double PREVIEW_RANGE = 25.0f;
+    private static final double PREVIEW_RANGE = 10f;
 
     /**
      * Cached wayPointBlueprint.
@@ -103,9 +103,34 @@ public class ClientEventHandler
     private static Blueprint partolPointTemplate;
 
     /**
-     * The cached map of blueprints of nearby buildings that are rendered.
+     * Cached blueprint of the active building
      */
-    private static Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> blueprintCache = new HashMap<>();
+    private static Blueprint activeBuildingBlueprint = null;
+
+    /**
+     * Position of the build preview in the previous frame
+     */
+    private static BlockPos buildPreviewPos = null;
+
+    /**
+     * Rotation of the build preview in the previous frame
+     */
+    private static int buildPreviewRotation = 0;
+
+    /**
+     * Mirror of the build preview in the previous frame
+     */
+    private static Mirror buildPreviewMirror = null;
+
+    /**
+     * Cached map of blueprints of nearby buildings that are rendered.
+     */
+    private static Map<BlockPos, Tuple<Blueprint, AxisAlignedBB>> blueprintCache = new HashMap<>();
+
+    /**
+     * Cached map of IStructureHandlers that the client has loaded.
+     */
+    private static final Map<BlockPos, IStructureHandler> structureHandlerCache = new HashMap<>();
 
     /**
      * Render buffers.
@@ -367,7 +392,151 @@ public class ClientEventHandler
     }
 
     /**
-     * Renders building bounding boxes into the client
+     * Updates the blueprint cache by adding/removing buildings depending on their distance from the active building
+     * @param colony The colony which contains the buildings in the blueprint cache
+     * @param world The world in which to render
+     */
+    private static void updateBlueprintCache(final IColonyView colony, final ClientWorld world)
+    {
+        final Map<BlockPos, Tuple<Blueprint, AxisAlignedBB>> newCache = new HashMap<>();
+
+        AxisAlignedBB activeBuildingBB = getBlueprintBoundingBoxes(activeBuildingBlueprint, Settings.instance.getPosition());
+        activeBuildingBB = activeBuildingBB.inflate(1);
+        // todo: optimise: This causes a big lag spike for the client when they open the build tool for the first time
+        //  after joining a world because it's loading something (pretty sure it's from loading all the colony's
+        //  building's blueprints at once). If we could distribute the work load over several frames, it should fix the spike.
+        // Update the building cache by adding buildings that are near the active building and removing buildings that are no longer near
+        for (final IBuildingView buildingView : colony.getBuildings())
+        {
+            if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
+            {
+                if (buildingView.getBuildingType() == ModBuildings.postBox || buildingView.getBuildingType() == ModBuildings.stash)
+                {
+                    continue;
+                }
+                final BlockPos currentPosition = buildingView.getPosition();
+
+                // Keep already cached buildings in the cache if they are still near the active building
+                if (blueprintCache.containsKey(currentPosition))
+                {
+                    Tuple<Blueprint, AxisAlignedBB> cachedBuildingData = blueprintCache.get(currentPosition);
+                    assert cachedBuildingData.getB() != null;
+                    if (activeBuildingBB.inflate(PREVIEW_RANGE).intersects(cachedBuildingData.getB()))
+                    {
+                        newCache.put(currentPosition, cachedBuildingData);
+                        continue;
+                    }
+                }
+
+                // Get the structure name and MD5 hash of the building
+                final TileEntity tile = world.getBlockEntity(buildingView.getID());
+                String schematicName = buildingView.getSchematicName();
+                if (tile instanceof IBlueprintDataProvider)
+                {
+                    if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
+                    {
+                        schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
+                    }
+                }
+                final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX,
+                        buildingView.getStyle(),
+                        schematicName + buildingView.getBuildingMaxLevel());
+                final String structureName = sn.toString();
+                final String md5 = Structures.getMD5(structureName);
+
+                // Attempt to retrieve the current building's structure handler from the cache, otherwise create a new
+                // one and add it to the cache
+                final IStructureHandler wrapper;
+                boolean wrapperIsNotFromCache;
+                if (structureHandlerCache.containsKey(buildingView.getID()))
+                {
+                    wrapper = structureHandlerCache.get(buildingView.getID());
+                    wrapperIsNotFromCache = false;
+                }
+                else
+                {
+                    wrapper = new LoadOnlyStructureHandler(world, buildingView.getID(), structureName, new PlacementSettings(), true);
+                    structureHandlerCache.put(buildingView.getID(), wrapper);
+                    wrapperIsNotFromCache = true;
+                }
+
+                // Validate the structure handler's blueprint. If the data is invalid, request the correct data from the
+                // server and skip rendering for this building for this frame.
+                if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
+                {
+                    structureHandlerCache.remove(buildingView.getID());
+                    if (alreadyRequestedStructures.contains(structureName))
+                    {
+                        continue;
+                    }
+                    alreadyRequestedStructures.add(structureName);
+
+                    Log.getLogger().error("Couldn't find schematic: " + structureName + " requesting to server if possible.");
+                    if (ServerLifecycleHooks.getCurrentServer() == null)
+                    {
+                        Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
+                    }
+                    continue;
+                }
+
+                final Blueprint blueprint = wrapper.getBluePrint();
+                // Only apply mirroring and rotation when the blueprint is loaded for the first time
+                if (wrapperIsNotFromCache)
+                {
+                    final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
+                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()), mirror, world);
+                }
+                final AxisAlignedBB currentBuildingBB = getBlueprintBoundingBoxes(blueprint, currentPosition);
+
+                blueprint.setRenderSource(buildingView.getID());
+
+                // If the current building is near the active building, add it to the cache to render it during this frame
+                if (activeBuildingBB.inflate(PREVIEW_RANGE).intersects(currentBuildingBB))
+                {
+                    if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
+                    {
+                        newCache.put(currentPosition, new Tuple<>(blueprint, currentBuildingBB));
+                    }
+                    else
+                    {
+                        newCache.put(currentPosition, new Tuple<>(null, currentBuildingBB));
+                    }
+                }
+            }
+        }
+        blueprintCache = newCache;
+    }
+
+    /**
+     * Creates an axis-aligned bounding box that encompasses the blueprint
+     * @param blueprint The blueprint to create an AABB for
+     * @param structurePos The position of the structure in the world
+     * @return AABB encompassing the blueprint
+     */
+    private static AxisAlignedBB getBlueprintBoundingBoxes(final Blueprint blueprint, BlockPos structurePos)
+    {
+        BlockPos boxStartPos = structurePos.subtract(blueprint.getPrimaryBlockOffset());
+        final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
+        final BlockPos boxEndPos = boxStartPos.offset(size).subtract(new BlockPos(1, 1, 1));
+
+        return new AxisAlignedBB(boxStartPos, boxEndPos);
+    }
+
+    /**
+     * @return True if the build tool's preview has been moved, mirrored, rotated, or its blueprint has changed
+     */
+    private static boolean buildToolPreviewHasChanged()
+    {
+        boolean previewBlueprintIsNullOrHasChanged = Settings.instance.getActiveStructure() != null &&
+                !Settings.instance.getActiveStructure().equals(activeBuildingBlueprint);
+        boolean previewHasMoved = !Settings.instance.getPosition().equals(buildPreviewPos);
+        boolean previewHasBeenRotated = Settings.instance.getRotation() != buildPreviewRotation;
+        boolean previewHasBeenMirrored = !Settings.instance.getMirror().equals(buildPreviewMirror);
+        return previewBlueprintIsNullOrHasChanged || previewHasMoved || previewHasBeenRotated || previewHasBeenMirrored;
+    }
+
+    /**
+     * Renders building previews and bounding boxes into the client
      *
      * @param event  The caught event
      * @param world  The world in which to render
@@ -386,102 +555,33 @@ public class ClientEventHandler
             return;
         }
 
-        final BlockPos activePosition = Settings.instance.getPosition();
-        final Map<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> newCache = new HashMap<>();
-        for (final IBuildingView buildingView : colony.getBuildings())
-
+        if (buildToolPreviewHasChanged())
         {
-            if (MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrendering.get())
-            {
-                if (buildingView.getBuildingType() == ModBuildings.postBox || buildingView.getBuildingType() == ModBuildings.stash)
-                {
-                    continue;
-                }
-                final BlockPos currentPosition = buildingView.getPosition();
-
-                if (activePosition.closerThan(currentPosition, PREVIEW_RANGE))
-                {
-                    if (blueprintCache.containsKey(currentPosition))
-                    {
-                        newCache.put(currentPosition, blueprintCache.get(currentPosition));
-                        continue;
-                    }
-
-                    final TileEntity tile = world.getBlockEntity(buildingView.getID());
-                    String schematicName = buildingView.getSchematicName();
-                    if (tile instanceof IBlueprintDataProvider)
-                    {
-                        if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
-                        {
-                            schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
-                        }
-                    }
-
-                    final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX,
-                      buildingView.getStyle(),
-                      schematicName + buildingView.getBuildingMaxLevel());
-
-                    final String structureName = sn.toString();
-                    final String md5 = Structures.getMD5(structureName);
-
-                    final IStructureHandler wrapper = new LoadOnlyStructureHandler(world,
-                      buildingView.getID(),
-                      structureName,
-                      new PlacementSettings(),
-                      true);
-                    if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
-                    {
-                        if (alreadyRequestedStructures.contains(structureName))
-                        {
-                            continue;
-                        }
-                        alreadyRequestedStructures.add(structureName);
-
-                        Log.getLogger().error("Couldn't find schematic: " + structureName + " requesting to server if possible.");
-                        if (ServerLifecycleHooks.getCurrentServer() == null)
-                        {
-                            Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                        }
-                        continue;
-                    }
-
-                    final Blueprint blueprint = wrapper.getBluePrint();
-                    final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()), mirror, world);
-
-                    final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
-                    final BlockPos boxStartPos = currentPosition.subtract(primaryOffset);
-                    final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-                    final BlockPos boxEndPos = boxStartPos.offset(size).subtract(new BlockPos(1, 1, 1));
-                    blueprint.setRenderSource(buildingView.getID());
-
-                    if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
-                    {
-                        newCache.put(currentPosition, new Triple(blueprint, boxStartPos, boxEndPos));
-                    }
-                    else
-                    {
-                        newCache.put(currentPosition, new Triple<>(null, boxStartPos, boxEndPos));
-                    }
-                }
-            }
+            activeBuildingBlueprint = Settings.instance.getActiveStructure();
+            buildPreviewPos = Settings.instance.getPosition();
+            buildPreviewRotation = Settings.instance.getRotation();
+            buildPreviewMirror = Settings.instance.getMirror();
+            updateBlueprintCache(colony, world);
         }
 
-        blueprintCache = newCache;
-
-        for (final Map.Entry<BlockPos, Triple<Blueprint, BlockPos, BlockPos>> nearbyBuilding : blueprintCache.entrySet())
+        // Renders all structures and bounding boxes in the blueprint cache
+        for (final Map.Entry<BlockPos, Tuple<Blueprint, AxisAlignedBB>> nearbyBuilding : blueprintCache.entrySet())
         {
-            final Triple<Blueprint, BlockPos, BlockPos> buildingData = nearbyBuilding.getValue();
+            final Tuple<Blueprint, AxisAlignedBB> buildingData = nearbyBuilding.getValue();
             final BlockPos position = nearbyBuilding.getKey();
-            if (buildingData.a != null)
+            if (buildingData.getA() != null)
             {
-                StructureClientHandler.renderStructureAtPos(buildingData.a,
+                StructureClientHandler.renderStructureAtPos(buildingData.getA(),
                   event.getPartialTicks(),
                   position,
                   event.getMatrixStack());
             }
 
-            RenderUtils.renderBox(buildingData.b, buildingData.c, 0, 0, 1, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
+            final AxisAlignedBB buildingBB = buildingData.getB();
+            assert buildingBB != null;
+            final BlockPos boxStartPos = new BlockPos(buildingBB.minX, buildingBB.minY, buildingBB.minZ);
+            final BlockPos boxEndPos = new BlockPos(buildingBB.maxX, buildingBB.maxY, buildingBB.maxZ);
+            RenderUtils.renderBox(boxStartPos, boxEndPos, 0, 0, 1, 1.0F, 0.002D, event.getMatrixStack(), linesWithCullAndDepth.get());
         }
     }
 
