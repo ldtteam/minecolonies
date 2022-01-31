@@ -59,11 +59,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
      */
     private final Function<IBuilding, Integer> sizeLimit;
 
-    /**
-     * The hiring mode of this particular building, by default overriden by colony mode.
-     */
-    private HiringMode hiringMode = HiringMode.DEFAULT;
-
     public WorkerBuildingModule(
       final JobEntry entry,
       final Skill primary,
@@ -114,7 +109,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
                     assignCitizen(data);
                 }
             }
-            this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
         }
         else if (compound.contains(jobEntry.getKey().toString()))
         {
@@ -128,7 +122,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
                     assignCitizen(citizen);
                 }
             }
-            this.hiringMode = HiringMode.values()[jobCompound.getInt(TAG_HIRING_MODE)];
         }
     }
 
@@ -137,7 +130,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         // If we have no active worker, grab one from the Colony
         if (!isFull() && ((building.getBuildingLevel() > 0 && building.isBuilt()) || building instanceof BuildingBuilder)
-              && (this.hiringMode == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.hiringMode == HiringMode.AUTO))
+              && (this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
         {
             final ICitizenData joblessCitizen = colony.getCitizenManager().getJoblessCitizen();
             if (joblessCitizen != null)
@@ -153,14 +146,13 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
         final CompoundTag jobCompound = new CompoundTag();
         if (!assignedCitizen.isEmpty())
         {
-            @NotNull final int[] residentIds = new int[assignedCitizen.size()];
+            final int[] residentIds = new int[assignedCitizen.size()];
             for (int i = 0; i < assignedCitizen.size(); ++i)
             {
                 residentIds[i] = assignedCitizen.get(i).getId();
             }
             jobCompound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
         }
-        jobCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
         compound.put(jobEntry.getKey().toString(), jobCompound);
     }
 
@@ -169,7 +161,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         super.serializeToView(buf);
         buf.writeRegistryId(jobEntry);
-        buf.writeInt(hiringMode.ordinal());
         buf.writeInt(getModuleMax());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
@@ -229,19 +220,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     public IJob<?> createJob(final ICitizenData citizen)
     {
         return jobEntry.produceJob(citizen);
-    }
-
-    @Override
-    public void setHiringMode(final HiringMode hiringMode)
-    {
-        this.hiringMode = hiringMode;
-        this.markDirty();
-    }
-
-    @Override
-    public HiringMode getHiringMode()
-    {
-        return hiringMode;
     }
 
     @Override

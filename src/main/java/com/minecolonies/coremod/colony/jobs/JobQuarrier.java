@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
+import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIQuarrier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import org.jetbrains.annotations.NotNull;
@@ -11,16 +12,16 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
 
 /**
- * Special miner job. Defines miner model and specialized job behaviour.
+ * Special quarrier job. Defines miner model and specialized job behaviour.
  */
-public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMiner>
+public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarrier>
 {
     /**
      * Creates a new instance of the miner job.
      *
      * @param entity the entity to add the job to.
      */
-    public JobMiner(final ICitizenData entity)
+    public JobQuarrier(final ICitizenData entity)
     {
         super(entity);
     }
@@ -39,15 +40,33 @@ public class JobMiner extends AbstractJobStructure<EntityAIStructureMiner, JobMi
      */
     @NotNull
     @Override
-    public EntityAIStructureMiner generateAI()
+    public EntityAIQuarrier generateAI()
     {
-        return new EntityAIStructureMiner(this);
+        return new EntityAIQuarrier(this);
     }
 
     @Override
     public int getDiseaseModifier()
     {
         return 2;
+    }
+
+    /**
+     * Finds the quarry our miner is assigned to
+     *
+     * @return quarry building or null
+     */
+    public IBuilding findQuarry()
+    {
+        for (final IBuilding building : getColony().getBuildingManager().getBuildings().values())
+        {
+            if (building.getBuildingType().getRegistryName().getPath().contains("quarry") && building.getFirstModuleOccurance(QuarryModule.class).hasAssignedCitizen(getCitizen()))
+            {
+                return building;
+            }
+        }
+
+        return null;
     }
 
     @Override

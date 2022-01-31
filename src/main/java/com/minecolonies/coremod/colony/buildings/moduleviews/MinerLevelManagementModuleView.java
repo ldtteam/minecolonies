@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
 import net.minecraft.network.FriendlyByteBuf;
@@ -72,6 +73,19 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     public String getDesc()
     {
         return "com.minecolonies.coremod.gui.miner.levels";
+    }
+
+    @Override
+    public boolean isPageVisible()
+    {
+        for (final WorkerBuildingModuleView workerBuildingModuleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
+        {
+            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarrier && workerBuildingModuleView.isFull())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

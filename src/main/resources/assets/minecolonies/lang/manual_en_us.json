@@ -2015,6 +2015,7 @@
   "com.minecolonies.job.builder": "Builder",
   "com.minecolonies.job.deliveryman": "Courier",
   "com.minecolonies.job.miner": "Miner",
+  "com.minecolonies.job.quarrier": "Quarrier",
   "com.minecolonies.job.lumberjack": "Forester",
   "com.minecolonies.job.farmer": "Farmer",
   "com.minecolonies.job.undertaker": "Undertaker",
@@ -2107,7 +2108,19 @@
   "com.minecolonies.coremod.building.missingcolony": "No colony was founded in this land yet, seek out the townhall to start a new colony here!",
   "com.minecolonies.coremod.gui.reactivate.message": "This building was abandoned together with this colony a long time ago. You can reactivate this building to allow citizens to live or work here. Let a builder repair it to restore it to its initial state.",
   "com.minecolonies.coremod.gui.reactivate.button": "Reactivate",
+  "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:",
   "com.minecolonies.coremod.setting.minecolonies:fillblock": "Fill block:",
-  "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:"
-
+  "block.minecolonies.simplequarry": "Simple Quarry",
+  "block.minecolonies.simplequarry.name": "Simple Quarry",
+  "block.minecolonies.mediumquarry": "Medium Quarry",
+  "block.minecolonies.mediumquarry.name": "Medium Quarry",
+  "block.minecolonies.largequarry": "Large Quarry",
+  "block.minecolonies.largequarry.name": "Large Quarry",
+  "com.minecolonies.coremod.gui.workerhuts.quarry.miners": "Miners",
+  "com.minecolonies.coremod.quarrier.noquarry": "Please assign me to a quarry so that I can start working!",
+  "com.minecolonies.coremod.quarrier.finishedquarry": "I finished the current quarry I'm assigned to, I need more!",
+  "com.minecolonies.building.simplequarry": "Simple Quarry",
+  "com.minecolonies.building.mediumquarry": "Medium Quarry",
+  "com.minecolonies.building.largequarry": "Large Quarry",
+  "com.minecolonies.coremod.gui.quarry.desc": "To start the Quarry construct a Mine, hire a Quarrier and assign the Quarrier to the Quarry"
 }

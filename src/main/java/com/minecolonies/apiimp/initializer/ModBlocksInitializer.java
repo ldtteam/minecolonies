@@ -107,6 +107,10 @@ public final class ModBlocksInitializer
         ModBlocks.blockColonyWallBanner = new BlockColonyFlagWallBanner().registerBlock(registry);
         ModBlocks.blockIronGate = new BlockGate(IRON_GATE, 5f, 6, 8).registerBlock(registry);
         ModBlocks.blockWoodenGate = new BlockGate(WOODEN_GATE, 4f, 6, 5).registerBlock(registry);
+
+        ModBlocks.blockSimpleQuarry = new SimpleQuarry().registerBlock(registry);
+        ModBlocks.blockMediumQuarry = new MediumQuarry().registerBlock(registry);
+        //ModBlocks.blockLargeQuarry = new LargeQuarry().registerBlock(registry);
     }
 
     @SubscribeEvent
@@ -181,5 +185,9 @@ public final class ModBlocksInitializer
         ModBlocks.blockStash.registerBlockItem(registry, properties);
         ModBlocks.blockDecorationPlaceholder.registerBlockItem(registry, properties);
         ModBlocks.blockCompostedDirt.registerBlockItem(registry, properties);
+
+        ModBlocks.blockSimpleQuarry.registerBlockItem(registry, properties);
+        ModBlocks.blockMediumQuarry.registerBlockItem(registry, properties);
+        //ModBlocks.blockLargeQuarry.registerBlockItem(registry, properties);
     }
 }

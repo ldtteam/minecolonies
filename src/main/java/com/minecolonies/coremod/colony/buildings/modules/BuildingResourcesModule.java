@@ -210,7 +210,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         BuilderBucket last = buckets.isEmpty() ? null : buckets.removeLast();
 
         final int stacks = (int) Math.ceil((double) amount / res.getMaxStackSize());
-        final int max = building.getFirstModuleOccurance(WorkerBuildingModule.class).getFirstCitizen().getInventory().getSlots() - 9;
+        final int max = building.getAllAssignedCitizen().iterator().next().getInventory().getSlots() - 9;
 
         if (last == null || last.getTotalStacks() >= max || last.getTotalStacks() + stacks >= max)
         {

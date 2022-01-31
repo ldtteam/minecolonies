@@ -7,8 +7,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowWorkerModuleBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 

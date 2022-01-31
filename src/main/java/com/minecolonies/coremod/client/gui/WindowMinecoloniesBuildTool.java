@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ldtteam.structurize.management.StructureName.HUTS;
+
 /**
  * BuildTool window.
  */

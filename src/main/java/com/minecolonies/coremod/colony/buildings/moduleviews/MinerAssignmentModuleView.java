@@ -11,8 +11,8 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.SpecialAssignmentModuleWindow;
-import com.minecolonies.coremod.network.messages.server.colony.building.CourierHiringModeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.QuarryHiringModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Module view for courier assignment.
+ * Module view for miner assignment.
  */
-public class CourierAssignmentModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
+public class MinerAssignmentModuleView extends AbstractBuildingModuleView implements IAssignmentModuleView
 {
     /**
      * List of the worker ids.
@@ -71,7 +71,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public String getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.warehouse.couriers";
+        return "com.minecolonies.coremod.gui.workerhuts.quarry.miners";
     }
 
     @Override
@@ -97,7 +97,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     public void setHiringMode(final HiringMode hiringMode)
     {
         this.hiringMode = hiringMode;
-        Network.getNetwork().sendToServer(new CourierHiringModeMessage(buildingView, hiringMode));
+        Network.getNetwork().sendToServer(new QuarryHiringModeMessage(buildingView, hiringMode));
     }
 
     @Override
@@ -105,27 +105,26 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     {
         for (final IBuildingView bView : buildingView.getColony().getBuildings())
         {
-            final CourierAssignmentModuleView view = bView.getModuleViewMatching(CourierAssignmentModuleView.class, m-> !m.buildingView.getId().equals(buildingView.getId()));
+            final MinerAssignmentModuleView view = bView.getModuleViewMatching(MinerAssignmentModuleView.class, m-> !m.buildingView.getId().equals(buildingView.getId()));
             if (view != null && view.getAssignedCitizens().contains(data.getId()))
             {
                 return false;
             }
         }
         
-        return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.delivery;
+        return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.quarrier;
     }
 
     @Override
     public int getMaxInhabitants()
     {
-        return this.buildingView.getBuildingLevel() * 2;
+        return 1;
     }
 
-    @NotNull
     @Override
     public BOWindow getWindow()
     {
-        return new SpecialAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutcourierassignment.xml");
+        return new SpecialAssignmentModuleWindow(buildingView, Constants.MOD_ID + ":gui/layouthuts/layoutminerassignment.xml");
     }
 
     @Override
@@ -137,6 +136,6 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public JobEntry getJobEntry()
     {
-        return ModJobs.delivery;
+        return ModJobs.quarrier;
     }
 }
