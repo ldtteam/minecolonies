@@ -110,7 +110,7 @@ public class NearColonyBuildingsRenderer
 
         for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
         {
-            if (buildingView instanceof PostBox.View)
+            if (buildingView.getBuildingType() == ModBuildings.postBox || buildingView.getBuildingType() == ModBuildings.stash)
             {
                 continue;
             }
