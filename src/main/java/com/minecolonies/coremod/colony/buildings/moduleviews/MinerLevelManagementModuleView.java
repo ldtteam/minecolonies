@@ -80,7 +80,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     {
         for (final WorkerBuildingModuleView workerBuildingModuleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarrier && workerBuildingModuleView.isFull())
+            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarrier && !workerBuildingModuleView.getAssignedCitizens().isEmpty())
             {
                 return false;
             }
