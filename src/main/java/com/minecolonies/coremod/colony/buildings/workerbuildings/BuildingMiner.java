@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -17,6 +18,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.modules.BuildingResourcesModule;
+import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BlockSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
@@ -122,8 +124,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Override
     public int getResourceBatchMultiplier() 
     {
-        //Ask for 10x the resources if possible
-        return 10;
+        if (getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.quarrier).getAssignedCitizen().isEmpty())
+        {
+            //Ask for 10x the resources if possible
+            return 10;
+        }
+        return 1;
     }
 
     @Override

@@ -322,7 +322,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         {
             final BlockPos currentWorldPos = result.getBlockResult().getWorldPos();
 
-            //todo adjust in 1.18 to actual world height.
             if (currentWorldPos.getY() < 5)
             {
                 getOwnBuilding().setProgressPos(null, null);
@@ -364,9 +363,6 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         }
 
         final BlockPos worldPos = structure.getProgressPosInWorld(requestProgress);
-
-
-        //todo double check this here
         final RequestStage currState = requestState;
         switch (currState)
         {
