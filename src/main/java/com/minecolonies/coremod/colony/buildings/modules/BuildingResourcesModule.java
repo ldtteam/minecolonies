@@ -3,8 +3,10 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.jobs.IHasExternalWorkStation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -144,6 +146,15 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 {
                     resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                }
+
+                if (data.getJob() instanceof IHasExternalWorkStation)
+                {
+                    for (final IBuilding station : ((IHasExternalWorkStation) data.getJob()).getWorkStations())
+                    {
+                        resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                          stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
+                    }
                 }
             }
         });
