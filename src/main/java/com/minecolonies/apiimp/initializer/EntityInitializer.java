@@ -3,10 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.entity.CustomArrowEntity;
-import com.minecolonies.coremod.entity.FireArrowEntity;
-import com.minecolonies.coremod.entity.NewBobberEntity;
-import com.minecolonies.coremod.entity.SittingEntity;
+import com.minecolonies.coremod.entity.*;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
@@ -159,6 +156,13 @@ public class EntityInitializer
             .setTrackingRange(ENTITY_TRACKING_RANGE)
             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
             .sized(0.5F, 0.5F)
+            .setShouldReceiveVelocityUpdates(true));
+
+        ModEntities.WITCH_POTION = build("witchpotion",
+          EntityType.Builder.of(WitchPotionEntity::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+            .sized(0.25F, 0.25F)
             .setShouldReceiveVelocityUpdates(true));
 
         ModEntities.SHIELDMAIDEN = build("shieldmaiden",
