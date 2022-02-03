@@ -7,6 +7,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
@@ -560,15 +562,37 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return afterRequestPickUp();
         }
-        if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             final Collection<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
-
-            completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getId()));
-            final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
-
-            if (firstDeliverableRequest != null)
+            final List<IRequest<?>> deliverableRequests = new ArrayList<>();
+            for (final IRequest<?> req : completedRequests)
             {
+                if (!req.canBeDelivered())
+                {
+                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), req.getId());
+                }
+                else
+                {
+                    deliverableRequests.add(req);
+                }
+            }
+
+            if (!deliverableRequests.isEmpty())
+            {
+                final IRequest<?> firstDeliverableRequest = deliverableRequests.get(0);
+                final ILocation resolver = getOwnBuilding().getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId()).getLocation();
+
+                if (walkToBlock(resolver.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, resolver.getInDimensionLocation()))
+                {
+                    return NEEDS_ITEM;
+                }
+                final TileEntity blockEntity = world.getBlockEntity(resolver.getInDimensionLocation());
+                if (blockEntity == null)
+                {
+                    return NEEDS_ITEM;
+                }
+
                 boolean async = false;
                 if (worker.getCitizenData().isRequestAsync(firstDeliverableRequest.getId()))
                 {
@@ -577,9 +601,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
 
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
+
                 final List<IItemHandler> validHandlers = Lists.newArrayList();
                 validHandlers.add(worker.getItemHandlerCitizen());
-                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()));
+                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(blockEntity));
 
                 //Check if we either have the requested Items in our inventory or if they are in the building.
                 if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
@@ -589,7 +614,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
-                      InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()),
+                      InventoryUtils.getItemHandlersFromProvider(blockEntity),
                       firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
