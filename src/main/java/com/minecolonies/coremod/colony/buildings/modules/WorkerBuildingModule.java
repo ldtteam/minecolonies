@@ -97,6 +97,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
+        super.deserializeNBT(compound);
         if (compound.getAllKeys().contains(TAG_WORKER))
         {
             final ListNBT workersTagList = compound.getList(TAG_WORKER, Constants.NBT.TAG_COMPOUND);
@@ -142,6 +143,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void serializeNBT(final CompoundNBT compound)
     {
+        super.serializeNBT(compound);
         final CompoundNBT jobCompound = new CompoundNBT();
         if (!assignedCitizen.isEmpty())
         {
