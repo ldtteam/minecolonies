@@ -21,6 +21,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
+        super.deserializeNBT(compound);
         if (compound.contains(TAG_RESIDENTS))
         {
             final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
@@ -50,6 +51,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
+        super.serializeNBT(compound);
         if (!assignedCitizen.isEmpty())
         {
             @NotNull final int[] residentIds = new int[assignedCitizen.size()];

@@ -47,6 +47,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
+        super.deserializeNBT(compound);
         final CompoundTag jobCompound = compound.getCompound("warehouse");
         final int[] residentIds = jobCompound.getIntArray(TAG_COURIERS);
         for (final int citizenId : residentIds)
@@ -62,6 +63,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
+        super.serializeNBT(compound);
         final CompoundTag jobCompound = new CompoundTag();
         if (!assignedCitizen.isEmpty())
         {
