@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ASSIGNED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_HIRING_MODE;
 
 /**
@@ -117,13 +118,18 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     @Override
     public void serializeNBT(final CompoundNBT compound)
     {
-        compound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
+        final CompoundNBT assignedCompound = new CompoundNBT();
+        assignedCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
+        compound.put(TAG_ASSIGNED, assignedCompound);
     }
 
     @Override
     public void deserializeNBT(final CompoundNBT compound)
     {
-        this.hiringMode = HiringMode.values()[compound.getInt(TAG_HIRING_MODE)];
+        if (compound.contains(TAG_ASSIGNED))
+        {
+            this.hiringMode = HiringMode.values()[compound.getCompound(TAG_ASSIGNED).getInt(TAG_HIRING_MODE)];
+        }
     }
 
     @Override
