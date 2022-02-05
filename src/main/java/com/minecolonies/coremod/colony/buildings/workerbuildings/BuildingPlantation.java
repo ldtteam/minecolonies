@@ -1,25 +1,17 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-
-import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
@@ -34,7 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -216,6 +207,14 @@ public class BuildingPlantation extends AbstractBuilding
         public CraftingModule(final JobEntry jobEntry)
         {
             super(jobEntry);
+        }
+
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(PLANTATION)
+                    .combine(super.getIngredientValidator());
         }
 
         @Override

@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -16,13 +14,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.item.Item;
@@ -293,6 +290,14 @@ public class BuildingCook extends AbstractBuilding
             super(jobEntry);
         }
 
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(COOK_DESC)
+                    .combine(super.getIngredientValidator());
+        }
+
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
@@ -342,6 +347,14 @@ public class BuildingCook extends AbstractBuilding
         public SmeltingModule(final JobEntry jobEntry)
         {
             super(jobEntry);
+        }
+
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(COOK_DESC)
+                    .combine(super.getIngredientValidator());
         }
 
         @Override
