@@ -639,6 +639,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
             }
         }
+        else
+        {
+            walkToBuilding();
+        }
 
         return NEEDS_ITEM;
     }
