@@ -51,7 +51,7 @@ public class StationRequestResolver extends BuildingRequestResolver
                     {
                         if (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getCitizenForRequest(request.getId()).isPresent())
                         {
-                            return true;
+                            return canResolveForBuilding(manager, request, theBuilding);
                         }
                     }
                 }
