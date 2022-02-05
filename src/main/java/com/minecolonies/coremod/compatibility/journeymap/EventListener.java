@@ -51,7 +51,6 @@ public class EventListener
     @SubscribeEvent
     public void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggedOutEvent event)
     {
-        ColonyBorderMapping.clear();
         ColonyDeathpoints.clear();
         this.jmap.getApi().removeAll(MOD_ID);
     }
