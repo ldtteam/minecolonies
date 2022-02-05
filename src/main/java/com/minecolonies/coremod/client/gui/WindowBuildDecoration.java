@@ -126,7 +126,18 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.OUT_OF_COLONY);
+            if (structureName.getStyle().equals("supplycamp") || structureName.getStyle().equals("supplyship"))
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.NO_COLONY_YET);
+            }
+            else
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.OUT_OF_COLONY,
+                        structureName.getSchematic(),
+                        structurePos.getX(),
+                        structurePos.getZ());
+            }
+
             close();
             return;
         }
