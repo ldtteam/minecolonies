@@ -27,12 +27,12 @@ import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.structures.EmptyColonyStructure;
-import com.minecolonies.coremod.structures.MineColoniesConfiguredStructures;
 import com.minecolonies.coremod.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -144,6 +144,9 @@ public class MineColonies
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
         StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
+        StructureName.registerSectionName("roads", new TranslatableComponent("com.minecolonies.schematics.roads"));
+        StructureName.registerSectionName("rail", new TranslatableComponent("com.minecolonies.schematics.rails"));
+        StructureName.registerSectionName("fields", new TranslatableComponent("com.minecolonies.schematics.fields"));
 
         Network.getNetwork().registerCommonMessages();
 

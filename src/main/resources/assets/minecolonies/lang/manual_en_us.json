@@ -2125,5 +2125,9 @@
   "com.minecolonies.building.simplequarry": "Simple Quarry",
   "com.minecolonies.building.mediumquarry": "Medium Quarry",
   "com.minecolonies.building.largequarry": "Large Quarry",
-  "com.minecolonies.coremod.gui.quarry.desc": "To start the Quarry construct a Mine, hire a Quarrier and assign the Quarrier to the Quarry"
+  "com.minecolonies.coremod.gui.quarry.desc": "To start the Quarry construct a Mine, hire a Quarrier and assign the Quarrier to the Quarry",
+
+  "com.minecolonies.schematics.roads": "Roads",
+  "com.minecolonies.schematics.rails": "Rails",
+  "com.minecolonies.schematics.fields": "Fields"
 }

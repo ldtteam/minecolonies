@@ -27,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.management.StructureName.HUTS;
-
 /**
  * BuildTool window.
  */
@@ -180,7 +178,6 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         final String name = hut.equals("citizen") ? "home" : hut;
         return InventoryUtils.hasItemInProvider(inventory.player,
           item -> item.getItem() instanceof BlockItem
-                    && StructureName.HUTS.contains(hut)
                     && ((BlockItem) item.getItem()).getBlock() == IBuildingRegistry.getInstance().getValue(new ResourceLocation(Constants.MOD_ID, name)).getBuildingBlock());
     }
 }
