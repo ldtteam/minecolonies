@@ -1629,6 +1629,7 @@
   "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
   "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %3$s to make it.",
 
+  "com.minecolonies.coremod.workorder.nocolonyyet": "There's no colony here yet! To get started, click the supply camp or ship directly on the ground without using the build tool.",
   "com.minecolonies.coremod.workorder.outofcolony": "The build order for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
 
   "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
