@@ -29,10 +29,10 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +126,18 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.OUT_OF_COLONY);
+            if (structureName.getStyle().equals("supplycamp") || structureName.getStyle().equals("supplyship"))
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.NO_COLONY_YET);
+            }
+            else
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.OUT_OF_COLONY,
+                        structureName.getSchematic(),
+                        structurePos.getX(),
+                        structurePos.getZ());
+            }
+
             close();
             return;
         }
