@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -102,6 +103,14 @@ public class BuildingBaker extends AbstractBuilding
             super(jobEntry);
         }
 
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(BAKER)
+                    .combine(super.getIngredientValidator());
+        }
+
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
@@ -133,7 +142,6 @@ public class BuildingBaker extends AbstractBuilding
 
             return map;
         }
-       
     }
 
     public static class SmeltingModule extends AbstractCraftingBuildingModule.Smelting

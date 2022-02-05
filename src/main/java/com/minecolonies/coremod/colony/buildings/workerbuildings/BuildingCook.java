@@ -14,6 +14,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
@@ -289,6 +290,14 @@ public class BuildingCook extends AbstractBuilding
             super(jobEntry);
         }
 
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(COOK_DESC)
+                    .combine(super.getIngredientValidator());
+        }
+
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
@@ -338,6 +347,14 @@ public class BuildingCook extends AbstractBuilding
         public SmeltingModule(final JobEntry jobEntry)
         {
             super(jobEntry);
+        }
+
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(COOK_DESC)
+                    .combine(super.getIngredientValidator());
         }
 
         @Override

@@ -1,5 +1,6 @@
 package com.minecolonies.api.crafting;
 
+import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 /**
  * This is a generic recipe wrapper, used to abstract both potential
@@ -75,18 +76,19 @@ public interface IGenericRecipe
      *
      * @param predicate The predicate to test.
      * @return True if the output of this recipe matches the predicate;
-     *         false otherwise.
+     *         false if the output fails the predicate; empty otherwise.
      */
-    boolean matchesOutput(@NotNull Predicate<ItemStack> predicate);
+    Optional<Boolean> matchesOutput(@NotNull OptionalPredicate<ItemStack> predicate);
 
     /**
      * Checks whether the given predicate matches any input item of this recipe.
      *
      * @param predicate The predicate to test.
      * @return True if any input (including alternates) matches the predicate;
-     *         false otherwise.
+     *         false if any input (including alternates) fails the predicate;
+     *         empty otherwise.
      */
-    boolean matchesInput(@NotNull Predicate<ItemStack> predicate);
+    Optional<Boolean> matchesInput(@NotNull OptionalPredicate<ItemStack> predicate);
 
     /**
      * Gets the 'intermediate' block required for crafting, in the same sense

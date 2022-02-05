@@ -18,10 +18,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.settings.CrafterRecipeSetting;
@@ -810,6 +807,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             return "";
         }
         return jobEntry.getRegistryName().getPath() + "_" + getId();
+    }
+
+    @NotNull
+    @Override
+    public OptionalPredicate<ItemStack> getIngredientValidator()
+    {
+        return stack -> Optional.empty();
     }
 
     /** This module is for standard crafters (3x3 by default) */

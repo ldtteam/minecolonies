@@ -17,14 +17,14 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -295,9 +295,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             for (final IGenericRecipe recipe : vanilla.get(RecipeType.CRAFTING))
             {
                 if (!this.crafting.canLearnLargeRecipes() && recipe.getGridSize() > 2) continue;
-                if (!this.crafting.isRecipeCompatible(recipe)) continue;
 
-                recipes.add(recipe);
+                final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, this.crafting.getIngredientValidator());
+                if (safeRecipe == null || !this.crafting.isRecipeCompatible(safeRecipe)) continue;
+
+                recipes.add(safeRecipe);
             }
         }
 
@@ -306,9 +308,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             for (final IGenericRecipe recipe : vanilla.get(RecipeType.SMELTING))
             {
-                if (!this.crafting.isRecipeCompatible(recipe)) continue;
+                final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, this.crafting.getIngredientValidator());
+                if (safeRecipe == null || !this.crafting.isRecipeCompatible(safeRecipe)) continue;
 
-                recipes.add(recipe);
+                recipes.add(safeRecipe);
             }
         }
 
