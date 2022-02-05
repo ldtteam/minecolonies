@@ -3,6 +3,7 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -295,9 +296,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             for (final IGenericRecipe recipe : vanilla.get(IRecipeType.CRAFTING))
             {
                 if (!this.crafting.canLearnLargeRecipes() && recipe.getGridSize() > 2) continue;
-                if (!this.crafting.isRecipeCompatible(recipe)) continue;
 
-                recipes.add(recipe);
+                final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, this.crafting.getIngredientValidator());
+                if (safeRecipe == null || !this.crafting.isRecipeCompatible(safeRecipe)) continue;
+
+                recipes.add(safeRecipe);
             }
         }
 
@@ -306,9 +309,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             for (final IGenericRecipe recipe : vanilla.get(IRecipeType.SMELTING))
             {
-                if (!this.crafting.isRecipeCompatible(recipe)) continue;
+                final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, this.crafting.getIngredientValidator());
+                if (safeRecipe == null || !this.crafting.isRecipeCompatible(safeRecipe)) continue;
 
-                recipes.add(recipe);
+                recipes.add(safeRecipe);
             }
         }
 

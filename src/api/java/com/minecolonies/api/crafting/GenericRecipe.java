@@ -3,6 +3,7 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,11 +20,7 @@ import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -175,25 +172,26 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @Override
-    public boolean matchesOutput(@NotNull final Predicate<ItemStack> predicate)
+    public Optional<Boolean> matchesOutput(@NotNull OptionalPredicate<ItemStack> predicate)
     {
         return predicate.test(this.output);
     }
 
     @Override
-    public boolean matchesInput(@NotNull final Predicate<ItemStack> predicate)
+    public Optional<Boolean> matchesInput(@NotNull OptionalPredicate<ItemStack> predicate)
     {
         for (final List<ItemStack> slot : this.inputs)
         {
             for (final ItemStack stack : slot)
             {
-                if (predicate.test(stack))
+                final Optional<Boolean> result = predicate.test(stack);
+                if (result.isPresent())
                 {
-                    return true;
+                    return result;
                 }
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     @NotNull

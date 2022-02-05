@@ -1,18 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.HopperBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.MinecartItem;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +66,14 @@ public class BuildingMechanic extends AbstractBuilding
         public CraftingModule(final JobEntry jobEntry)
         {
             super(jobEntry);
+        }
+
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(MECHANIC)
+                    .combine(super.getIngredientValidator());
         }
 
         @Override
