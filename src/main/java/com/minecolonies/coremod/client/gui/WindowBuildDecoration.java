@@ -7,8 +7,8 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -29,7 +29,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
+import com.minecolonies.coremod.network.messages.server.AbstractBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -77,7 +78,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Stores the message to be transmitted upon completion
      */
-    private final BuildToolPlaceMessage placementMessage;
+    private final AbstractBuildRequestMessage placementMessage;
 
     /**
      * The name of the structure
@@ -90,20 +91,20 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final BlockPos structurePos;
 
     /**
-     * The wall extents.
+     * Helper method to determine the correct placement of the schematic
      */
-    private final WallExtents wall;
+    private final Function<@Nullable Blueprint, PlacementSettings> placementCalculator;
 
     /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(BuildToolPlaceMessage msg, BlockPos pos, StructureName structure, WallExtents extents)
+    public WindowBuildDecoration(AbstractBuildRequestMessage msg, BlockPos pos, StructureName structure, Function<@Nullable Blueprint, PlacementSettings> placement)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         placementMessage = msg;
         structureName = structure;
         structurePos = pos;
-        wall = extents;
+        placementCalculator = placement;
 
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
@@ -228,7 +229,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             }
         }
 
-        structure.setBlueprint(BlueprintUtil.createWall(structure.getBluePrint(), wall));
+        final PlacementSettings settings = placementCalculator.apply(structure.getBluePrint());
+
+        structure.getBluePrint().rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
+        structure.setBlueprint(BlueprintUtil.createWall(structure.getBluePrint(), settings.getWallExtents()));
+
         StructurePlacer placer = new StructurePlacer(structure);
         StructurePhasePlacementResult result;
         BlockPos progressPos = NULL_POS;
@@ -236,7 +241,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         do
         {
             result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                    () -> placer.getIterator().increment(), true);
+                    () -> placer.getIterator().increment((info, pos, handler) -> false), true);
 
             progressPos = result.getIteratorPos();
             for (final ItemStack stack : result.getBlockResult().getRequiredItems())

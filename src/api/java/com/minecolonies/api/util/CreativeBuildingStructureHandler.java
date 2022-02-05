@@ -1,10 +1,9 @@
 package com.minecolonies.api.util;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -15,19 +14,17 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,28 +128,24 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @param worldObj       the world to load it in
      * @param name           the structures name
      * @param pos            coordinates
-     * @param rotation       the rotation.
-     * @param mirror         the mirror used.
-     * @param wall           the wall extents.
+     * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      * @param player         the placing player.
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
             final Level worldObj, @NotNull final String name,
-            @NotNull final BlockPos pos, final Rotation rotation,
-            @NotNull final Mirror mirror,
-            @NotNull final WallExtents wall,
+            @NotNull final BlockPos pos, final PlacementSettings settings,
             final boolean fancyPlacement,
             @Nullable final ServerPlayer player)
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation, wall), fancyPlacement);
+            @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, name, settings, fancyPlacement);
             if (structure.hasBluePrint())
             {
-                structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
-                structure.setBlueprint(BlueprintUtil.createWall(structure.getBluePrint(), wall));
+                structure.getBluePrint().rotateWithMirror(settings.getRotation(), settings.getMirror(), worldObj);
+                structure.setBlueprint(BlueprintUtil.createWall(structure.getBluePrint(), settings.getWallExtents()));
 
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
                 Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));

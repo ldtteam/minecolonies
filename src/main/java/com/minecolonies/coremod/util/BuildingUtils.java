@@ -1,10 +1,18 @@
 package com.minecolonies.coremod.util;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public final class BuildingUtils
 {
@@ -39,4 +47,5 @@ public final class BuildingUtils
         }
         return ItemStack.EMPTY;
     }
+
 }

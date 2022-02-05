@@ -1078,8 +1078,9 @@
   "block.minecolonies.decorationcontroller": "Decoration Controller",
   "com.minecolonies.coremod.gui.deco.namescan": "Final file path and filename, no level:",
   "com.minecolonies.coremod.gui.deco.name": "The name of the decoration:",
-  "com.minecolonies.coremod.gui.deco.level": "The level of the decoration:",
+  "com.minecolonies.coremod.gui.deco.level": "Level:",
   "com.minecolonies.coremod.gui.deco.level.none": "This schematic is already at the highest level or not upgradeable!",
+  "com.minecolonies.coremod.gui.deco.wallmode": "Wall: x%d (%d -- %d)",
 
   "com.minecolonies.coremod.gui.placement.warning": "We suggest using the build tool to place this schematic. This will allow you to adjust the position.",
   "com.minecolonies.coremod.gui.placement.buildtool": "Use build tool",

@@ -957,9 +957,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
           wrapper.getBluePrint(),
-          workOrder.getRotation(colony.getWorld()),
-          workOrder.isMirrored(),
-          workOrder.getWallExtents());
+          workOrder.getSettings());
         this.setCorners(corners.getA(), corners.getB());
     }
 

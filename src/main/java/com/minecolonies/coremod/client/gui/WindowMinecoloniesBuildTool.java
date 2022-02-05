@@ -5,7 +5,6 @@ import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -15,10 +14,10 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,10 +73,8 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
           structureName.toString(),
           structureName.getLocalizedName(),
           Settings.instance.getPosition(),
-          Settings.instance.getRotation(),
+          Settings.instance.getPlacement(),
           structureName.isHut(),
-          Settings.instance.getMirror(),
-          Settings.instance.getWallExtents(),
           state);
 
         if (structureName.isHut())
@@ -86,18 +83,8 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         }
         else
         {
-            Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName, Settings.instance.getWallExtents())::open);
+            Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName, blueprint -> Settings.instance.getPlacement())::open);
         }
-    }
-
-    @Override
-    public boolean isWallModeAvailable()
-    {
-        if (!super.isWallModeAvailable()) return false;
-        if (mc.player.isCreative()) return true;
-
-        // todo: check colony research
-        return true;
     }
 
     @Override
@@ -116,17 +103,14 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     public void paste(final StructureName name, final boolean complete)
     {
         final BlockPos offset = Settings.instance.getActiveStructure().getPrimaryBlockOffset();
-        ;
         final BlockState state = Settings.instance.getActiveStructure().getBlockState(offset);
 
         Network.getNetwork().sendToServer(new BuildToolPasteMessage(
           name.toString(),
           name.toString(),
           Settings.instance.getPosition(),
-          Settings.instance.getRotation(),
+          Settings.instance.getPlacement(),
           name.isHut(),
-          Settings.instance.getMirror(),
-          Settings.instance.getWallExtents(),
           complete,
           state));
     }

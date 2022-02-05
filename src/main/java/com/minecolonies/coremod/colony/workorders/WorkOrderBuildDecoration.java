@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.workorders;
 import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,9 +13,9 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Mirror;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
@@ -37,9 +38,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
     private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
 
-    protected boolean isBuildingMirrored;
-    protected int     buildingRotation;
-    protected WallExtents wall;
+    protected PlacementSettings settings = new PlacementSettings();
     protected String  structureName;
     protected boolean cleared;
     protected String  workOrderName;
@@ -61,25 +60,20 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      *
      * @param structureName The name of the decoration.
      * @param workOrderName The user friendly name of the decoration.
-     * @param rotation      The number of times the decoration was rotated.
      * @param location      The location where the decoration should be built.
-     * @param mirror        Is the decoration mirrored?
-     * @param wall          The wall extents
+     * @param settings      The placement settings.
      */
     public WorkOrderBuildDecoration(final String structureName, final String workOrderName,
-                                    final int rotation, final BlockPos location, final boolean mirror,
-                                    final WallExtents wall)
+                                    final BlockPos location, final PlacementSettings settings)
     {
         super();
         //normalise structure name
         final StructureName sn = new StructureName(structureName);
         this.structureName = sn.toString();
         this.workOrderName = workOrderName;
-        this.buildingRotation = rotation;
+        this.settings = settings;
         this.buildingLocation = location;
         this.cleared = false;
-        this.isBuildingMirrored = mirror;
-        this.wall = wall;
         this.requested = false;
     }
 
@@ -114,12 +108,14 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         structureName = sn.toString();
         workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
-        buildingRotation = compound.getInt(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
-        isBuildingMirrored = compound.getBoolean(TAG_IS_MIRRORED);
-        wall.load(compound);
         amountOfRes = compound.getInt(TAG_AMOUNT_OF_RES);
         levelUp = compound.getBoolean(TAG_LEVEL);
+
+        final boolean mirror = compound.getBoolean(TAG_IS_MIRRORED);
+        final int rotation = compound.getInt(TAG_BUILDING_ROTATION);
+        final WallExtents wall = WallExtents.read(compound);
+        settings = new PlacementSettings(mirror, rotation, wall);
     }
 
     /**
@@ -144,10 +140,10 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         {
             compound.putString(TAG_SCHEMATIC_NAME, structureName);
         }
-        compound.putInt(TAG_BUILDING_ROTATION, buildingRotation);
+        compound.putInt(TAG_BUILDING_ROTATION, settings.getRotation().ordinal());
         compound.putBoolean(TAG_IS_REQUESTED, requested);
-        compound.putBoolean(TAG_IS_MIRRORED, isBuildingMirrored);
-        wall.save(compound);
+        compound.putBoolean(TAG_IS_MIRRORED, settings.getMirror() != Mirror.NONE);
+        settings.getWallExtents().write(compound);
         compound.putInt(TAG_AMOUNT_OF_RES, amountOfRes);
         compound.putBoolean(TAG_LEVEL, levelUp);
     }
@@ -267,17 +263,13 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     /**
-     * Gets how many times this structure should be rotated.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the world parameter
+     * Gets the placement settings for this work order.
      *
-     * @param world where the decoration is
-     * @return building rotation.
+     * @return the settings
      */
-    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public int getRotation(final Level world)
+    public PlacementSettings getSettings()
     {
-        return buildingRotation;
+        return settings;
     }
 
     /**
@@ -319,23 +311,6 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         this.requested = requested;
     }
-
-    /**
-     * Check if the workOrder should be built isMirrored.
-     *
-     * @return true if so.
-     */
-    public boolean isMirrored()
-    {
-        return isBuildingMirrored;
-    }
-
-    /**
-     * Gets the wall extents (if any).
-     *
-     * @return the wall extents
-     */
-    public WallExtents getWallExtents() { return wall; }
 
     /**
      * Amount of resources this building requires.

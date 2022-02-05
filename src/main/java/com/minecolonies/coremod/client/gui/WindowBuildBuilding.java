@@ -9,6 +9,7 @@ import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -25,7 +26,6 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
@@ -42,7 +42,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.TriPredicate;
@@ -349,8 +348,10 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             return;
         }
 
-        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
         // buildings should never use "wall" mode
+        final PlacementSettings settings = new PlacementSettings(building.isMirrored(), building.getRotation(), new WallExtents());
+        structure.getBluePrint().rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
+
         StructurePlacer placer = new StructurePlacer(structure);
         StructurePhasePlacementResult result;
         BlockPos progressPos = NULL_POS;

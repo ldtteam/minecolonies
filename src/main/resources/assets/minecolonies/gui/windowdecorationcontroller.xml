@@ -1,13 +1,13 @@
 <window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
         lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
-    <label id="nameLabel" size="50% 11" pos="50 40" color="white"
+    <label id="nameLabel" size="250 11" pos="50 40" color="white"
            label="$(com.minecolonies.coremod.gui.deco.name)"/>
-    <input id="name" size="150 18" pos="50 50" maxlength="100"/>
+    <input id="name" size="250 18" pos="50 50" maxlength="100"/>
 
-    <label id="levelLabel" size="50% 11" pos="250 40" color="white"
+    <label id="levelLabel" size="50 11" pos="350 40" color="white"
            label="$(com.minecolonies.coremod.gui.deco.level)"/>
-    <input id="level" size="150 18" pos="250 50" maxlength="5"/>
+    <input id="level" size="50 18" pos="350 50" maxlength="5"/>
 
     <buttonimage id="done" align="TOP_MIDDLE" size="129 17" pos="0 80"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
@@ -24,4 +24,6 @@
     <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="60 120"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" textcolor="black"/>
+
+    <label id="infotextwallmode" size="50% 11" pos="0 150" color="white" align="TOP_MIDDLE" textalign="TOP_MIDDLE"/>
 </window>

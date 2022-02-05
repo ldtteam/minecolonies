@@ -6,6 +6,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
@@ -16,13 +17,9 @@ import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.coremod.colony.buildings.views.EmptyView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.PostBox;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.Stash;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -165,8 +162,8 @@ public class NearColonyBuildingsRenderer
                 }
 
                 final Blueprint blueprint = wrapper.getBluePrint();
-                final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-                blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()), mirror, ctx.clientLevel);
+                final PlacementSettings settings = new PlacementSettings(buildingView.isMirrored(), buildingView.getRotation(), new WallExtents());
+                blueprint.rotateWithMirror(settings.getRotation(), settings.getMirror(), ctx.clientLevel);
 
                 final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
                 final BlockPos boxStartPos = currentPosition.subtract(primaryOffset);

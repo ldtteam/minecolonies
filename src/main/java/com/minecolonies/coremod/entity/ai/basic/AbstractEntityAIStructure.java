@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.schematic.BlockFluidSubstitution;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -36,19 +35,18 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -547,13 +545,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * Loads the structure given the name, rotation and position.
      *
      * @param name        the name to retrieve  it.
-     * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
-     * @param isMirrored  is the structure mirroed?
-     * @param wall        the wall extents.
+     * @param settings    the placement settings.
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final WallExtents wall, final boolean removal)
+    public void loadStructure(@NotNull final String name, final BlockPos position, final PlacementSettings settings, final boolean removal)
     {
         final BuildingStructureHandler<J, B> structure;
         IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
@@ -564,7 +560,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structure = new BuildingStructureHandler<>(world,
               position,
               name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes), wall),
+              settings,
               this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
             getOwnBuilding().setTotalStages(2);
         }
@@ -574,7 +570,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structure = new BuildingStructureHandler<>(world,
               position,
               name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes), wall),
+              settings,
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
             getOwnBuilding().setTotalStages(5);
         }
@@ -583,7 +579,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             structure = new BuildingStructureHandler<>(world,
               position,
               name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes), wall),
+              settings,
               this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
             getOwnBuilding().setTotalStages(6);
         }
@@ -596,8 +592,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         }
 
         Blueprint blueprint = structure.getBluePrint();
-        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
-        blueprint = BlueprintUtil.createWall(blueprint, wall);
+        blueprint.rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
+        blueprint = BlueprintUtil.createWall(blueprint, settings.getWallExtents());
         structure.setBlueprint(blueprint);
         job.setBlueprint(blueprint);
         setStructurePlacer(structure);

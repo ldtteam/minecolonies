@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -756,6 +758,49 @@ public final class BlockPosUtil
             default:
                 return Rotation.NONE;
         }
+    }
+
+    /**
+     * Calculates the rotation of an existing in-world block by comparing it to the blueprint state.
+     * Note: this returns the wrong answer if the block is mirrored.
+     *
+     * @param blueprint the blueprint
+     * @param worldState the existing anchor block in the world
+     * @param blockClazz the expected block type
+     * @param property the FACING property for that block
+     * @return the calculated number of clockwise rotations from the base schematic.
+     */
+    public static int calculateExistingRotation(@Nullable final Blueprint blueprint,
+                                                @NotNull final BlockState worldState,
+                                                @NotNull final Class<? extends Block> blockClazz,
+                                                @NotNull final DirectionProperty property)
+    {
+        if (blueprint != null)
+        {
+            final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
+            if (structureState != null)
+            {
+                if (!blockClazz.isInstance(structureState.getBlock()))
+                {
+                    Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", blueprint.getName()));
+                    return 0;
+                }
+
+                final int structureRotation = structureState.getValue(property).get2DDataValue();
+                final int worldRotation = worldState.getValue(property).get2DDataValue();
+
+                if (structureRotation <= worldRotation)
+                {
+                    return worldRotation - structureRotation;
+                }
+                else
+                {
+                    return 4 + worldRotation - structureRotation;
+                }
+            }
+        }
+
+        return 0;
     }
 
     /**

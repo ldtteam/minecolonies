@@ -3,6 +3,8 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
+import com.ldtteam.structurize.helpers.WallExtents;
+import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
@@ -145,6 +147,12 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         {
             findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.deco.namescan"));
         }
+
+        final WallExtents wall = controller.getWallExtents();
+        if (wall.isEnabled() && findPaneByID(BUTTON_REPAIR).isVisible())
+        {
+            findPaneOfTypeByID("infotextwallmode", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.deco.wallmode", wall.getTotalCopies(), wall.getNegative(), wall.getPositive()));
+        }
     }
 
     /**
@@ -191,12 +199,12 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-            controller.getSchematicPath().replaceAll("\\d$", ""),
-            controller.getTier() + 1,
-            world.dimension()));
-        close();
+        final String name = controller.getSchematicPath().replaceAll("\\d$", "");
+        final StructureName structureName = new StructureName(name + (controller.getTier() + 1));
+        final DecorationBuildRequestMessage msg = new DecorationBuildRequestMessage(controller.getBlockPos(),
+                name, controller.getTier() + 1);
+
+        Minecraft.getInstance().tell(new WindowBuildDecoration(msg, controller.getBlockPos(), structureName, controller::calculatePlacementSettings)::open);
     }
 
     /**
@@ -204,11 +212,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-            controller.getSchematicPath().replaceAll("\\d$", ""),
-            controller.getTier(),
-            world.dimension()));
-        close();
+        final String name = controller.getSchematicPath().replaceAll("\\d$", "");
+        final StructureName structureName = new StructureName(name + controller.getTier());
+        final DecorationBuildRequestMessage msg = new DecorationBuildRequestMessage(controller.getBlockPos(),
+                name, controller.getTier());
+
+        Minecraft.getInstance().tell(new WindowBuildDecoration(msg, controller.getBlockPos(), structureName, controller::calculatePlacementSettings)::open);
+
+//        Network.getNetwork()
+//          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
+//            controller.getSchematicPath().replaceAll("\\d$", ""),
+//            controller.getTier()));
+//        close();
     }
 }

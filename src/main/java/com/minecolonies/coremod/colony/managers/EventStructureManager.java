@@ -7,6 +7,7 @@ import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.items.ItemScanTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
@@ -14,14 +15,12 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
-
+import net.minecraft.world.level.block.Mirror;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -112,11 +111,11 @@ public class EventStructureManager implements IEventStructureManager
         }
         backupSchematics.put(anchor, eventID);
 
+        final PlacementSettings settings = new PlacementSettings(mirror, BlockPosUtil.getRotationFromRotations(rotations), new WallExtents());
         CreativeRaiderStructureHandler.loadAndPlaceStructureWithRotation(world,
           schematicPath,
           spawnPos,
-          BlockPosUtil.getRotationFromRotations(rotations),
-          mirror,
+          settings,
           true, colony.getID(), (IColonyRaidEvent) eventManager.getEventByID(eventID), null);
 
         return true;
@@ -141,18 +140,14 @@ public class EventStructureManager implements IEventStructureManager
                 if(CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
                     fileName,
                     entry.getKey(),
-                    Rotation.NONE,
-                    Mirror.NONE,
-                    new WallExtents(),
+                    new PlacementSettings(),
                     true, null) == null)
                 {
                     fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
                     CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
                             fileName,
                             entry.getKey(),
-                            Rotation.NONE,
-                            Mirror.NONE,
-                            new WallExtents(),
+                            new PlacementSettings(),
                             true, null);
                 }
 

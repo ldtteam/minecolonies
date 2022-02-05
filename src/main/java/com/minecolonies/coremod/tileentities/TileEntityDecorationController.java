@@ -1,17 +1,21 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.helpers.WallExtents;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.level.block.state.BlockState;
+import com.minecolonies.coremod.blocks.BlockDecorationController;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -272,5 +276,23 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public BlockPos getTilePos()
     {
         return worldPosition;
+    }
+
+    /**
+     * Recalculate the original placement settings for this structure.
+     *
+     * @param blueprint the structure
+     * @return the settings
+     */
+    @NotNull
+    public PlacementSettings calculatePlacementSettings(@Nullable final Blueprint blueprint)
+    {
+        final int difference = BlockPosUtil.calculateExistingRotation(blueprint,
+                getBlockState(), BlockDecorationController.class, BlockDecorationController.FACING);
+
+        return new PlacementSettings(
+                getBlockState().getValue(BlockDecorationController.MIRROR),
+                difference,
+                getWallExtents());
     }
 }

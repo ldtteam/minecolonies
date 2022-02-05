@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -20,18 +20,18 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.BuildingUtils;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.network.NetworkEvent;
@@ -56,11 +56,9 @@ public class BuildToolPasteMessage implements IMessage
     private boolean  complete;
     private String   structureName;
     private String   workOrderName;
-    private int      rotation;
     private BlockPos pos;
     private boolean  isHut;
-    private boolean  mirror;
-    private WallExtents wall;
+    private PlacementSettings settings;
 
     /**
      * Empty constructor used when registering the
@@ -76,27 +74,24 @@ public class BuildToolPasteMessage implements IMessage
      * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
-     * @param rotation      int representation of the rotation
+     * @param settings      the placement settings
      * @param isHut         true if hut, false if decoration
-     * @param mirror        the mirror of the building or decoration.
      * @param complete      paste it complete (with structure blocks) or without.
      * @param state         the state.
      */
     public BuildToolPasteMessage(
             final String structureName,
             final String workOrderName, final BlockPos pos,
-            final int rotation, final boolean isHut,
-            final Mirror mirror, final WallExtents wall,
+            final PlacementSettings settings,
+            final boolean isHut,
             final boolean complete, final BlockState state)
     {
         super();
         this.structureName = structureName;
         this.workOrderName = workOrderName;
         this.pos = pos;
-        this.rotation = rotation;
         this.isHut = isHut;
-        this.mirror = mirror == Mirror.FRONT_BACK;
-        this.wall = wall;
+        this.settings = settings;
         this.complete = complete;
         this.state = state;
     }
@@ -112,15 +107,11 @@ public class BuildToolPasteMessage implements IMessage
         structureName = buf.readUtf(32767);
         workOrderName = buf.readUtf(32767);
 
-        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-
-        rotation = buf.readInt();
+        pos = buf.readBlockPos();
 
         isHut = buf.readBoolean();
 
-        mirror = buf.readBoolean();
-
-        wall = WallExtents.deserialize(buf);
+        settings = PlacementSettings.read(buf);
 
         complete = buf.readBoolean();
 
@@ -138,17 +129,11 @@ public class BuildToolPasteMessage implements IMessage
         buf.writeUtf(structureName);
         buf.writeUtf(workOrderName);
 
-        buf.writeInt(pos.getX());
-        buf.writeInt(pos.getY());
-        buf.writeInt(pos.getZ());
-
-        buf.writeInt(rotation);
+        buf.writeBlockPos(pos);
 
         buf.writeBoolean(isHut);
 
-        buf.writeBoolean(mirror);
-
-        wall.serialize(buf);
+        settings.write(buf);
 
         buf.writeBoolean(complete);
 
@@ -177,9 +162,9 @@ public class BuildToolPasteMessage implements IMessage
         {
             if (isHut)
             {
-                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
+                handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, pos, settings, state, complete);
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, new WallExtents(), !complete, player);
+                  pos, settings, !complete, player);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
@@ -191,7 +176,7 @@ public class BuildToolPasteMessage implements IMessage
             else
             {
                 StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, wall, !complete, ctxIn.getSender());
+                  pos, settings, !complete, ctxIn.getSender());
             }
         }
         else if (structureName.contains("supply"))
@@ -231,7 +216,7 @@ public class BuildToolPasteMessage implements IMessage
                 }
 
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, new WallExtents(), !complete, player);
+                  pos, settings, !complete, player);
             }
             else
             {
@@ -258,16 +243,15 @@ public class BuildToolPasteMessage implements IMessage
      * @param world    World the hut is being placed into.
      * @param player   Who placed the hut.
      * @param sn       The name of the structure.
-     * @param rotation The number of times the structure should be rotated.
      * @param buildPos The location the hut is being placed.
-     * @param mirror   Whether or not the strcture is mirrored.
+     * @param settings The placement settings.
      * @param state    The state of the hut.
      * @param complete If complete or not.
      */
     private static void handleHut(
       @NotNull final Level world, @NotNull final Player player,
       final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
+      @NotNull final BlockPos buildPos, final PlacementSettings settings, final BlockState state, final boolean complete)
     {
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (!complete && tempColony != null
@@ -287,8 +271,8 @@ public class BuildToolPasteMessage implements IMessage
             world.setBlockAndUpdate(buildPos, state);
             if (!complete)
             {
-                ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
-                setupBuilding(world, player, sn, rotation, buildPos, mirror);
+                ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, settings.getMirror() != Mirror.NONE, sn.getStyle());
+                setupBuilding(world, player, sn, buildPos, settings);
             }
         }
     }
@@ -299,17 +283,15 @@ public class BuildToolPasteMessage implements IMessage
      * @param world    World the hut is being placed into.
      * @param player   Who placed the hut.
      * @param sn       The name of the structure.
-     * @param rotation The number of times the structure should be rotated.
      * @param buildPos The location the hut is being placed.
-     * @param mirror   Whether or not the strcture is mirrored.
+     * @param settings The placement settings.
      */
     private static void setupBuilding(
       @NotNull final Level world,
       @NotNull final Player player,
       final StructureName sn,
-      final int rotation,
       @NotNull final BlockPos buildPos,
-      final boolean mirror)
+      final PlacementSettings settings)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
@@ -344,7 +326,7 @@ public class BuildToolPasteMessage implements IMessage
                 ConstructionTapeHelper.removeConstructionTape(building.getCorners(), world);
             }
 
-            building.setIsMirrored(mirror);
+            building.setIsMirrored(settings.getMirror() != Mirror.NONE);
         }
     }
 }

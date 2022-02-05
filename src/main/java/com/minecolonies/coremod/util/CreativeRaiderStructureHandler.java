@@ -3,7 +3,6 @@ package com.minecolonies.coremod.util;
 import com.ldtteam.structurize.api.util.Log;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -13,15 +12,13 @@ import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,8 +126,7 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @param worldObj       the world to load it in
      * @param name           the structures name
      * @param pos            coordinates
-     * @param rotation       the rotation.
-     * @param mirror         the mirror used.
+     * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      * @param colonyId       the colony id.
      * @param event          the raid event.
@@ -139,15 +135,14 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
       final Level worldObj, @NotNull final String name,
-      @NotNull final BlockPos pos, final Rotation rotation,
-      @NotNull final Mirror mirror,
+      @NotNull final BlockPos pos, final PlacementSettings settings,
       final boolean fancyPlacement, final int colonyId, final IColonyRaidEvent event,
       @Nullable final ServerPlayer player)
     {
         try
         {
             @NotNull final IStructureHandler structure =
-              new CreativeRaiderStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation, new WallExtents()), fancyPlacement, event, colonyId);
+              new CreativeRaiderStructureHandler(worldObj, pos, name, settings, fancyPlacement, event, colonyId);
             if (structure.hasBluePrint())
             {
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);

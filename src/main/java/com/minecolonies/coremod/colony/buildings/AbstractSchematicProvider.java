@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings;
 import com.google.common.collect.ImmutableSet;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.BlockInfo;
@@ -23,7 +24,6 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -347,41 +347,23 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName.toString(), new PlacementSettings(), true);
 
             final Blueprint blueprint = structure.getBluePrint();
-
-            if (blueprint != null)
+            final BlockState worldBlock = colony.getWorld().getBlockState(this.location);
+            if (!(worldBlock.getBlock() instanceof AbstractBlockHut))
             {
-                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
-                if (structureState != null)
-                {
-                    if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
-                    {
-                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
-                        return 0;
-                    }
-
-                    final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
-                    final int worldRotation = colony.getWorld().getBlockState(this.location).getValue(AbstractBlockHut.FACING).get2DDataValue();
-
-                    if (structureRotation <= worldRotation)
-                    {
-                        cachedRotation = worldRotation - structureRotation;
-                    }
-                    else
-                    {
-                        cachedRotation = 4 + worldRotation - structureRotation;
-                    }
-                    return cachedRotation;
-                }
+                Log.getLogger().error(String.format("Failed to get rotation for %s: unexpected world block", structureName));
+                return 0;
             }
+
+            cachedRotation = BlockPosUtil.calculateExistingRotation(blueprint,
+                    worldBlock, AbstractBlockHut.class, AbstractBlockHut.FACING);
+            return cachedRotation;
         }
         catch (Exception e)
         {
-            Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName.toString()), e);
+            Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName), e);
 
             return 0;
         }
-
-        return 0;
     }
 
     /**
@@ -435,7 +417,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
         final Blueprint blueprint = structure.getBluePrint();
-        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
+        final PlacementSettings settings = new PlacementSettings(isMirrored(), getRotation(), new WallExtents());
+        blueprint.rotateWithMirror(settings.getRotation(), settings.getMirror(), colony.getWorld());
         final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
         if (info.getTileEntityData() != null)
         {

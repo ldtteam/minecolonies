@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.helpers.WallExtents;
+import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -14,7 +15,6 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
@@ -46,7 +46,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
  *
  * @author Colton
  */
-public class BuildToolPlaceMessage implements IMessage
+public class BuildToolPlaceMessage extends AbstractBuildRequestMessage
 {
     /**
      * The state at the offset position.
@@ -55,12 +55,8 @@ public class BuildToolPlaceMessage implements IMessage
 
     private String   structureName;
     private String   workOrderName;
-    private int      rotation;
-    private BlockPos pos;
+    private PlacementSettings settings;
     private boolean  isHut;
-    private boolean  mirror;
-    private WallExtents wall;
-    public BlockPos builder = BlockPos.ZERO;
 
     /**
      * Empty constructor used when registering the
@@ -76,30 +72,24 @@ public class BuildToolPlaceMessage implements IMessage
      * @param structureName String representation of a structure
      * @param workOrderName String name of the work order
      * @param pos           BlockPos
-     * @param rotation      int representation of the rotation
+     * @param settings      the placement settings.
      * @param isHut         true if hut, false if decoration
-     * @param mirror        the mirror of the building or decoration.
-     * @param wall          the wall extents.
      * @param state         the state.
      */
     public BuildToolPlaceMessage(
             final String structureName,
             final String workOrderName,
             final BlockPos pos,
-            final int rotation,
+            final PlacementSettings settings,
             final boolean isHut,
-            final Mirror mirror,
-            final WallExtents wall,
             final BlockState state)
     {
         super();
         this.structureName = structureName;
         this.workOrderName = workOrderName;
         this.pos = pos;
-        this.rotation = rotation;
+        this.settings = settings;
         this.isHut = isHut;
-        this.mirror = mirror == Mirror.FRONT_BACK;
-        this.wall = wall;
         this.state = state;
     }
 
@@ -111,22 +101,16 @@ public class BuildToolPlaceMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.fromBytes(buf);
+
         structureName = buf.readUtf(32767);
         workOrderName = buf.readUtf(32767);
 
-        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-
-        rotation = buf.readInt();
+        settings = PlacementSettings.read(buf);
 
         isHut = buf.readBoolean();
 
-        mirror = buf.readBoolean();
-
-        wall = WallExtents.deserialize(buf);
-
         state = Block.stateById(buf.readInt());
-
-        builder = buf.readBlockPos();
     }
 
     /**
@@ -137,24 +121,16 @@ public class BuildToolPlaceMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        super.toBytes(buf);
+
         buf.writeUtf(structureName);
         buf.writeUtf(workOrderName);
 
-        buf.writeInt(pos.getX());
-        buf.writeInt(pos.getY());
-        buf.writeInt(pos.getZ());
-
-        buf.writeInt(rotation);
+        settings.write(buf);
 
         buf.writeBoolean(isHut);
 
-        buf.writeBoolean(mirror);
-
-        wall.serialize(buf);
-
         buf.writeInt(Block.getId(state));
-
-        buf.writeBlockPos(builder);
     }
 
     @Nullable
@@ -176,11 +152,11 @@ public class BuildToolPlaceMessage implements IMessage
         }
         if (isHut)
         {
-            handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state);
+            handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, pos, settings, state);
         }
         else
         {
-            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, workOrderName, rotation, pos, mirror, wall, builder);
+            handleDecoration(CompatibilityUtils.getWorldFromEntity(player), player, sn, pos, settings, builder);
         }
     }
 
@@ -190,18 +166,16 @@ public class BuildToolPlaceMessage implements IMessage
      * @param world    World the hut is being placed into.
      * @param player   Who placed the hut.
      * @param sn       The name of the structure.
-     * @param rotation The number of times the structure should be rotated.
      * @param buildPos The location the hut is being placed.
-     * @param mirror   Whether or not the strcture is mirrored.
+     * @param settings The placement settings.
      * @param state    the state.
      */
     private static void handleHut(
       @NotNull final Level world,
       @NotNull final Player player,
       final StructureName sn,
-      final int rotation,
       @NotNull final BlockPos buildPos,
-      final boolean mirror,
+      final PlacementSettings settings,
       final BlockState state)
     {
         final Block blockAtPos = world.getBlockState(buildPos).getBlock();
@@ -253,6 +227,7 @@ public class BuildToolPlaceMessage implements IMessage
 
                 world.destroyBlock(buildPos, true);
                 world.setBlockAndUpdate(buildPos, state);
+                final boolean mirror = settings.getMirror() != Mirror.NONE;
                 ((AbstractBlockHut<?>) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror, sn.getStyle());
 
                 boolean complete = false;
@@ -270,14 +245,13 @@ public class BuildToolPlaceMessage implements IMessage
                         schematic = schematic.substring(0, schematic.length() - 1);
                         schematic += level;
                         CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, schematic,
-                          buildPos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE,
-                          new WallExtents(), true, (ServerPlayer) player);
+                          buildPos, settings, true, (ServerPlayer) player);
                         complete = true;
                     }
                 }
 
                 InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack, 1);
-                setupBuilding(world, player, sn, rotation, buildPos, mirror, level, complete);
+                setupBuilding(world, player, sn, buildPos, settings, level, complete);
             }
         }
         else
@@ -292,41 +266,32 @@ public class BuildToolPlaceMessage implements IMessage
      * @param world         The world the decoration is being built in.
      * @param player        The player who placed the decoration.
      * @param sn            The name of the structure.
-     * @param workOrderName The style of the decoration.
-     * @param rotation      The number of times the decoration is rotated.
      * @param buildPos      The location the decoration will be built.
-     * @param mirror        Whether or not the strcture is mirrored.
-     * @param wall          The wall extents.
+     * @param settings      The placement settings.
      */
     private static void handleDecoration(
-      @NotNull final Level world, @NotNull final Player player,
-      final StructureName sn, final String workOrderName,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror,
-      final WallExtents wall, BlockPos builder)
+            @NotNull final Level world, @NotNull final Player player,
+            final StructureName sn,
+            @NotNull final BlockPos buildPos, @NotNull PlacementSettings settings,
+            BlockPos builder)
     {
         @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             String schem = sn.toString();
-            String woName = workOrderName;
 
             if (!schem.contains("cache"))
             {
                 if (schem.matches("^.*[a-zA-Z_-]\\d$"))
                 {
-
                     schem = schem.replaceAll("\\d$", "");
                     schem += '1';
                 }
-
-                if (woName.matches("^.*[a-zA-Z_-]\\d$"))
-                {
-                    woName = woName.replaceAll("\\d$", "");
-                    woName += '1';
-                }
             }
 
-            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror, wall);
+            final String woName = BlueprintUtil.getDescriptiveName(new StructureName(schem), settings.getWallExtents());
+
+            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, buildPos, settings);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);
@@ -347,16 +312,15 @@ public class BuildToolPlaceMessage implements IMessage
      * @param world    World the hut is being placed into.
      * @param player   Who placed the hut.
      * @param sn       The name of the structure.
-     * @param rotation The number of times the structure should be rotated.
      * @param buildPos The location the hut is being placed.
-     * @param mirror   Whether or not the structure is mirrored.
+     * @param settings The placement settings.
      * @param level    the future initial building level.
      * @param complete if pasted.
      */
     private static void setupBuilding(
       @NotNull final Level world, @NotNull final Player player,
       final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final int level, final boolean complete)
+      @NotNull final BlockPos buildPos, final PlacementSettings settings, final int level, final boolean complete)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 
@@ -397,7 +361,7 @@ public class BuildToolPlaceMessage implements IMessage
                 ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
             }
 
-            building.setIsMirrored(mirror);
+            building.setIsMirrored(settings.getMirror() != Mirror.NONE);
 
             if (complete)
             {

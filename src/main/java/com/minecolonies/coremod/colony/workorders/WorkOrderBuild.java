@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.util.LanguageHandler;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,11 +13,10 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -76,8 +77,10 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         {
             this.upgradeName = building.getSchematicName() + level;
         }
-        this.buildingRotation = building.getRotation();
-        this.isBuildingMirrored = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
+        this.settings = new PlacementSettings(
+                building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored(),
+                building.getRotation(),
+                new WallExtents());
         this.cleared = level > 1;
 
         //normalize the structureName
@@ -234,12 +237,6 @@ public class WorkOrderBuild extends WorkOrderBuildDecoration
         }
 
         return displayName;
-    }
-
-    @Override
-    public int getRotation(final Level world)
-    {
-        return buildingRotation;
     }
 
     @Override

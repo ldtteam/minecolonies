@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.helpers.WallExtents;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
@@ -34,20 +34,18 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      *
      * @param structureName The name of the mine.
      * @param workOrderName The user friendly name of the mine.
-     * @param rotation      The number of times the mine was rotated.
      * @param location      The location where the mine should be built.
-     * @param mirror        Is the mine mirrored?
+     * @param settings      The placement settings.
      * @param minerBuilding The id of the building of the miner.
      */
     public WorkOrderBuildMiner(
       final String structureName,
       final String workOrderName,
-      final int rotation,
       final BlockPos location,
-      final boolean mirror,
+      final PlacementSettings settings,
       final BlockPos minerBuilding)
     {
-        super(structureName, workOrderName, rotation, location, mirror, new WallExtents());
+        super(structureName, workOrderName, location, settings);
         this.minerBuilding = minerBuilding;
     }
 

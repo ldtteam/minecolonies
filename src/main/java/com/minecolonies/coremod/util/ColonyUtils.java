@@ -2,11 +2,9 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.helpers.WallExtents;
-import com.minecolonies.api.util.BlockPosUtil;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.util.Tuple;
+import com.ldtteam.structurize.util.PlacementSettings;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 
 /**
@@ -30,26 +28,22 @@ public final class ColonyUtils
      * @param pos        the central position.
      * @param world      the world.
      * @param blueprint  the structureWrapper.
-     * @param rotation   the rotation.
-     * @param isMirrored if its mirrored.
-     * @param wall       the wall extents.
+     * @param settings   the placement settings.
      * @return a tuple with the required corners.
      */
     public static Tuple<BlockPos, BlockPos> calculateCorners(
             final BlockPos pos,
             final Level world,
             Blueprint blueprint,
-            final int rotation,
-            final boolean isMirrored,
-            final WallExtents wall)
+            final PlacementSettings settings)
     {
         if (blueprint == null)
         {
             return new Tuple<>(pos, pos);
         }
 
-        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
-        blueprint = BlueprintUtil.createWall(blueprint, wall);
+        blueprint.rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
+        blueprint = BlueprintUtil.createWall(blueprint, settings.getWallExtents());
 
         final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
 

@@ -16,7 +16,10 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +33,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -544,26 +546,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
         if (structureState != null)
         {
-            if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
-            {
-                Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
-                return;
-            }
-            final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();
-            final int worldRotation = level.getBlockState(this.getPosition()).getValue(AbstractBlockHut.FACING).get2DDataValue();
+            final int rotation = BlockPosUtil.calculateExistingRotation(structure.getBluePrint(),
+                    level.getBlockState(this.getPosition()), AbstractBlockHut.class, AbstractBlockHut.FACING);
+            final PlacementSettings settings = new PlacementSettings(this.isMirrored(), rotation, structure.getSettings().getWallExtents());
 
-            final int rotation;
-            if (structureRotation <= worldRotation)
-            {
-                rotation = worldRotation - structureRotation;
-            }
-            else
-            {
-                rotation = 4 + worldRotation - structureRotation;
-            }
-
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), this.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, level);
-            blueprint = BlueprintUtil.createWall(blueprint, structure.getSettings().getWallExtents());
+            blueprint.rotateWithMirror(settings.getRotation(), settings.getMirror(), level);
+            blueprint = BlueprintUtil.createWall(blueprint, settings.getWallExtents());
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
             if (info.getTileEntityData() != null)
             {

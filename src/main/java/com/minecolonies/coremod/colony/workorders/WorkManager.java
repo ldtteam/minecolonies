@@ -309,9 +309,7 @@ public class WorkManager implements IWorkManager
           = ColonyUtils.calculateCorners(order.getSchematicLocation(),
           world,
           new LoadOnlyStructureHandler(world, order.getSchematicLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
-          order.getRotation(world),
-          order.isMirrored(),
-          order.getWallExtents());
+          order.getSettings());
 
         Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(corners.getA().getX(), corners.getB().getX()) + 1;

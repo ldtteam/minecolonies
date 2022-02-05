@@ -2,13 +2,12 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structurize.client.gui.WindowShapeTool;
 import com.ldtteam.structurize.helpers.Settings;
-import com.ldtteam.structurize.helpers.WallExtents;
 import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
 import org.jetbrains.annotations.Nullable;
 
 public class WindowMinecoloniesShapeTool extends WindowShapeTool
@@ -34,12 +33,10 @@ public class WindowMinecoloniesShapeTool extends WindowShapeTool
                 sn.toString(),
                 Settings.instance.getShape().toString(),
                 Settings.instance.getPosition(),
-                0,
+                new PlacementSettings(),
                 false,
-                Mirror.NONE,
-                new WallExtents(),
                 Blocks.AIR.defaultBlockState());
 
-        Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), sn, new WallExtents())::open);
+        Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), sn, bp -> new PlacementSettings())::open);
     }
 }
