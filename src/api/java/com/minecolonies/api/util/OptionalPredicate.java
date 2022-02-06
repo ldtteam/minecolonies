@@ -65,7 +65,7 @@ public interface OptionalPredicate<T>
      * @param a   the first optional value
      * @param b   a supplier to calculate the second optional value
      * @param <X> the value type
-     * @return    the first value, if present; otherwise calculates & returns the second value
+     * @return    the first value, if present; otherwise calculates and returns the second value
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     static<X> Optional<X> combine(@NotNull Optional<X> a, @NotNull Supplier<Optional<X>> b)
