@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.client.render;
+package com.minecolonies.coremod.client.render.projectile;
 
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
