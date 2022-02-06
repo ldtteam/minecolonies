@@ -14,6 +14,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -32,6 +33,7 @@ import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.BlockState;
@@ -581,13 +583,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (!deliverableRequests.isEmpty())
             {
                 final IRequest<?> firstDeliverableRequest = deliverableRequests.get(0);
-                final ILocation resolver = getOwnBuilding().getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId()).getLocation();
+                final IRequestResolver<?> resolver = getOwnBuilding().getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : getOwnBuilding().getLocation();
 
-                if (walkToBlock(resolver.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, resolver.getInDimensionLocation()))
+                if (walkToBlock(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
                 {
                     return NEEDS_ITEM;
                 }
-                final TileEntity blockEntity = world.getBlockEntity(resolver.getInDimensionLocation());
+                final TileEntity blockEntity = world.getBlockEntity(pickupLocation.getInDimensionLocation());
                 if (blockEntity == null)
                 {
                     return NEEDS_ITEM;
