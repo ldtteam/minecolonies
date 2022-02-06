@@ -71,6 +71,9 @@ public class ModEntities
     @ObjectHolder("amazon")
     public static EntityType<? extends AbstractEntityAmazon> AMAZON;
 
+    @ObjectHolder("amazonspearman")
+    public static EntityType<? extends AbstractEntityAmazon> AMAZONSPEARMAN;
+
     @ObjectHolder("amazonchief")
     public static EntityType<? extends AbstractEntityAmazon> AMAZONCHIEF;
 
@@ -79,6 +82,9 @@ public class ModEntities
 
     @ObjectHolder("firearrow")
     public static EntityType<? extends AbstractArrowEntity> FIREARROW;
+
+    @ObjectHolder("spear")
+    public static EntityType<SpearEntity> SPEAR;
 
     public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
 }

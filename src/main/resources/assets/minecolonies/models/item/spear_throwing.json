@@ -1,0 +1,19 @@
+{
+    "parent": "minecolonies:item/spear_in_hand",
+    "display": {
+        "thirdperson_righthand": {
+          "translation": [ 8, -4.5, 9.5 ]
+        },
+        "thirdperson_lefthand": {
+          "translation": [ -8, -4.5, 9.5 ]
+        },
+        "firstperson_righthand": {
+          "rotation": [ -20, 60, 180 ],
+          "translation": [ 13, 6, 2 ]
+        },
+        "firstperson_lefthand": {
+          "rotation": [ -20, 0, 180 ],
+          "translation": [ 13, 6, -2 ]
+        }
+    }
+}
