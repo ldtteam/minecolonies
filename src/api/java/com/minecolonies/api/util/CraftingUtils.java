@@ -66,6 +66,66 @@ public final class CraftingUtils
     }
 
     /**
+     * Generates an {@link OptionalPredicate} that reports whether a particular
+     * stack is allowed, banned, or undecided when used as a crafting product
+     * by the specified job, based on the associated tags.
+     *
+     * @param crafterJobName The name of the crafting job (defines which tags to check).
+     * @return a validator that checks the crafting product tags.
+     */
+    public static OptionalPredicate<ItemStack> getProductValidatorBasedOnTags(@NotNull final String crafterJobName)
+    {
+        return stack ->
+        {
+            // Check against excluded products
+            final Tag<Item> excludedProducts = ModTags.crafterProductExclusions.get(crafterJobName);
+            if (excludedProducts != null && excludedProducts.contains(stack.getItem()))
+            {
+                return Optional.of(false);
+            }
+
+            // Check against allowed products
+            final Tag<Item> allowedProducts = ModTags.crafterProduct.get(crafterJobName);
+            if (allowedProducts != null && allowedProducts.contains(stack.getItem()))
+            {
+                return Optional.of(true);
+            }
+
+            return Optional.empty();
+        };
+    }
+
+    /**
+     * Generates an {@link OptionalPredicate} that reports whether a particular
+     * stack is allowed, banned, or undecided when used as a crafting ingredient
+     * by the specified job, based on the associated tags.
+     *
+     * @param crafterJobName The name of the crafting job (defines which tags to check).
+     * @return a validator that checks the crafting ingredient tags.
+     */
+    public static OptionalPredicate<ItemStack> getIngredientValidatorBasedOnTags(@NotNull final String crafterJobName)
+    {
+        return stack ->
+        {
+            // Check against excluded ingredients
+            final Tag<Item> excludedIngredients = ModTags.crafterIngredientExclusions.get(crafterJobName);
+            if (excludedIngredients != null && excludedIngredients.contains(stack.getItem()))
+            {
+                return Optional.of(false);
+            }
+
+            // Check against allowed ingredients
+            final Tag<Item> allowedIngredients = ModTags.crafterIngredient.get(crafterJobName);
+            if (allowedIngredients != null && allowedIngredients.contains(stack.getItem()))
+            {
+                return Optional.of(true);
+            }
+
+            return Optional.empty();
+        };
+    }
+
+    /**
      * Checks the tags associated with the specified job to see whether
      * the provided recipe includes products and/or ingredients that are
      * marked as compatible or incompatible with this job.
@@ -77,34 +137,8 @@ public final class CraftingUtils
      */
     public static Optional<Boolean> isRecipeCompatibleBasedOnTags(@NotNull final IGenericRecipe recipe, @NotNull final String crafterJobName)
     {
-        // Check against excluded products
-        final Tag<Item> excludedProducts = ModTags.crafterProductExclusions.get(crafterJobName);
-        if (excludedProducts != null && recipe.matchesOutput(stack -> excludedProducts.contains(stack.getItem())))
-        {
-            return Optional.of(false);
-        }
-
-        // Check against allowed products
-        final Tag<Item> allowedProducts = ModTags.crafterProduct.get(crafterJobName);
-        if (allowedProducts != null && recipe.matchesOutput(stack -> allowedProducts.contains(stack.getItem())))
-        {
-            return Optional.of(true);
-        }
-
-        // Check against excluded ingredients
-        final Tag<Item> excludedIngredients = ModTags.crafterIngredientExclusions.get(crafterJobName);
-        if (excludedIngredients != null && recipe.matchesInput(stack -> excludedIngredients.contains(stack.getItem())))
-        {
-            return Optional.of(false);
-        }
-
-        // Check against allowed ingredients
-        final Tag<Item> allowedIngredients = ModTags.crafterIngredient.get(crafterJobName);
-        if (allowedIngredients != null && recipe.matchesInput(stack -> allowedIngredients.contains(stack.getItem())))
-        {
-            return Optional.of(true);
-        }
-
-        return Optional.empty();
+        return OptionalPredicate.combine(recipe.matchesOutput(getProductValidatorBasedOnTags(crafterJobName)),
+                () -> recipe.matchesInput(getIngredientValidatorBasedOnTags(crafterJobName)));
     }
+
 }

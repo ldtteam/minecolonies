@@ -61,14 +61,6 @@ public class ColonyBorderMapping
     }
 
     /**
-     * Clear overlay cache.  Note this does *not* remove the overlays from jmap
-     */
-    public static void clear()
-    {
-        overlays.clear();
-    }
-
-    /**
      * Loads cached colony data, if any.  Also starts tracking data for a dimension.
      */
     public static void load(@NotNull final Journeymap jmap,
@@ -104,6 +96,10 @@ public class ColonyBorderMapping
             {
                 overlay.unload(jmap);
             }
+
+            final Path dataPath = jmap.getDataPath(dimension).resolve("border.json");
+            jmap.saveData(dataPath, "colony border data", DIM_BORDER_CODEC,
+                    new ArrayList<>(dimensionOverlays.values()));
         }
     }
 
@@ -145,13 +141,6 @@ public class ColonyBorderMapping
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
             changed |= overlay.updateChunks(Collections.singleton(chunk.getPos()), Collections.emptySet());
             changed |= overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()));
-        }
-
-        if (changed)
-        {
-            final Path dataPath = jmap.getDataPath(dimension).resolve("border.json");
-            jmap.saveData(dataPath, "colony border data", DIM_BORDER_CODEC,
-                    new ArrayList<>(dimensionOverlays.values()));
         }
     }
 

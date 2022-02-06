@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.OptionalPredicate;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -113,6 +114,19 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return True if this recipe could be produced/taught.
      */
     boolean isRecipeCompatible(@NotNull IGenericRecipe recipe);
+
+    /**
+     * Gets a predicate for recipe ingredients that are explicitly
+     * allowed or banned at this building.  Used to reduce false
+     * negatives from {@link #isRecipeCompatible} when
+     * alternatives are available.
+     *
+     * @return A predicate that returns true when the ingredient
+     *         is definitely allowed, false when definitely banned,
+     *         or empty when undecided.
+     */
+    @NotNull
+    OptionalPredicate<ItemStack> getIngredientValidator();
 
     /**
      * Check if the module on the client side should be displayed.

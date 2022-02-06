@@ -1,11 +1,11 @@
 project.ext.customChangelogHeader = "\n" +
         "### Required Dependencies: \n" +
-        "- Structurize: ${project.structurize_version}\n" +
-        "- Multi-Piston: ${project.multiPistonVersion}\n" +
-        "- BlockUI: ${project.blockUI_version}\n" +
-        "- Domum Ornamentum: ${project.domumOrnamentumVersion}\n" +
+        "- Structurize: ${project.structurize_version} (exactly)\n" +
+        "- Multi-Piston: ${project.multiPistonVersion} (or above)\n" +
+        "- BlockUI: ${project.blockUI_version} (or above)\n" +
+        "- Domum Ornamentum: ${project.domumOrnamentumVersion} (or above)\n" +
         "\n" +
         "### Optional Dependencies\n" +
-        "- JEI: ${project.jei_version}\n" +
-        "- Journeymap: ${project.jmapVersion}\n" +
+        "- JEI: ${project.jei_version} (or above)\n" +
+        "- Journeymap: ${project.jmapVersion} (or above)\n" +
         "\n"
