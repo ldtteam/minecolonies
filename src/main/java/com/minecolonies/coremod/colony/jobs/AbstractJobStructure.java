@@ -126,23 +126,26 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     {
         getWorkOrder().onCompleted(getCitizen().getColony(), this.getCitizen());
 
-        final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
-        for (short x = 0; x < blueprint.getSizeX(); x++)
+        if (blueprint != null)
         {
-            for (short y = 0; y < blueprint.getSizeY(); y++)
+            final CompoundTag[][][] tileEntityData = blueprint.getTileEntities();
+            for (short x = 0; x < blueprint.getSizeX(); x++)
             {
-                for (short z = 0; z < blueprint.getSizeZ(); z++)
+                for (short y = 0; y < blueprint.getSizeY(); y++)
                 {
-                    final CompoundTag compoundNBT = tileEntityData[y][z][x];
-                    if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
+                    for (short z = 0; z < blueprint.getSizeZ(); z++)
                     {
-                        final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
-                        final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                        if (te instanceof IBlueprintDataProvider)
+                        final CompoundTag compoundNBT = tileEntityData[y][z][x];
+                        if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                         {
-                            ((IBlueprintDataProvider) te).readSchematicDataFromNBT(compoundNBT);
-                            ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
-                            te.setChanged();
+                            final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
+                            final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
+                            if (te instanceof IBlueprintDataProvider)
+                            {
+                                ((IBlueprintDataProvider) te).readSchematicDataFromNBT(compoundNBT);
+                                ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
+                                te.setChanged();
+                            }
                         }
                     }
                 }
