@@ -717,6 +717,8 @@
   "item.minecolonies.scepterbeekeeper.addhive": "Hive added successfully",
   "item.minecolonies.scepterbeekeeper.maxhives": "You have reached the maximum number of hives. Upgrade the Apiary to increase the max number.",
 
+  "item.minecolonies.spear": "Spear",
+
   "com.minecolonies.coremod.item.permissionscepter.setmode": "Set to mode %s.",
   "com.minecolonies.coremod.item.permissionscepter.permission.deny": "You do not have permission to edit blocks with this tool!",
   "com.minecolonies.coremod.item.permissionscepter.addblock.success": "Added block type %s.",
@@ -1634,6 +1636,7 @@
   "com.minecolonies.coremod.crafters.recipeimproved.1": "%4$s just successfully reduced the need for %3$s when they make %2$s.",
   "com.minecolonies.coremod.crafters.recipeimproved.2": "%4$s the %1$s just successfully improved their recipe for %2$s and no longer needs as much %3$s to make it.",
 
+  "com.minecolonies.coremod.workorder.nocolonyyet": "There's no colony here yet! To get started, click the supply camp or ship directly on the ground without using the build tool.",
   "com.minecolonies.coremod.workorder.outofcolony": "The build order for %s at x: %d, z: %d is outside of the colony and thus cannot be built!",
 
   "com.minecolonies.coremod.entity.citizen.no.unemployment": "Having a job would really be great.",
@@ -1698,12 +1701,17 @@
   "death.attack.entity.minecolonies.pharao": "%s was put to sleep by a Pharaoh!",
   "death.attack.entity.minecolonies.archermummy": "%s was pierced by a Mummy's deadly glare!",
   "com.minecolonies.coremod.job.fletcher": "Fletcher",
+
   "entity.amazon": "Amazon",
-  "entity.minecolonies.amazonchief": "Amazon Leader",
   "entity.minecolonies.amazon": "Amazon",
-  "entity.amazonchief": "Amazon Leader",
-  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader!",
   "death.attack.entity.minecolonies.amazon": "%s was pierced by an Amazon's arrow!",
+  "entity.amazonspearman": "Amazon Spearman",
+  "entity.minecolonies.amazonspearman": "Amazon Spearman",
+  "death.attack.entity.minecolonies.amazonspearman": "%s was pierced by an Amazon's spear!",
+  "entity.amazonchief": "Amazon Leader",
+  "entity.minecolonies.amazonchief": "Amazon Leader",
+  "death.attack.entity.minecolonies.amazonchief": "%s was expelled by the great Amazon Leader!",
+
   "com.minecolonies.coremod.job.mechanic": "Mechanic",
   "com.minecolonies.coremod.gui.workerhuts.plantation.to_plant": "Planting:",
   "com.minecolonies.coremod.job.planter": "Planter",
@@ -1727,6 +1735,7 @@
   "item.minecolonies.norsemenchiefegg": "Chief Norseman Spawn Egg",
 
   "item.minecolonies.amazonegg": "Amazon Spawn Egg",
+  "item.minecolonies.amazonspearmanegg": "Amazon Spearman Spawn Egg",
   "item.minecolonies.amazonchiefegg": "Amazon Leader Spawn Egg",
   "com.minecolonies.coremod.playerinvfull": "You can't pick up this item, as your inventory is full!",
   "com.minecolonies.coremod.playerinvfull.hotbarinsert": " was dropped in front of you, as your inventory is full!",
@@ -1909,6 +1918,7 @@
   "block.minecolonies.blockhutsawmill": "Sawmill",
   "block.minecolonies.blockhutsawmill.name": "Sawmill",
   "block.minecolonies.blockhutschool": "School",
+  "block.minecolonies.blockhutschool.name": "School",
   "block.minecolonies.blockhutshepherd": "Shepherd's Hut",
   "block.minecolonies.blockhutshepherd.name": "Shepherd's Hut",
   "block.minecolonies.blockhutsifter": "Sifter",

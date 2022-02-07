@@ -1,15 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,6 +57,14 @@ public class BuildingStoneSmeltery extends AbstractBuilding
         public SmeltingModule(final JobEntry jobEntry)
         {
             super(jobEntry);
+        }
+
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(STONE_SMELTERY)
+                    .combine(super.getIngredientValidator());
         }
 
         @Override

@@ -70,6 +70,7 @@ public final class ModItemsInitializer
         ModItems.pharaoscepter = new ItemPharaoScepter(new Item.Properties());
         ModItems.firearrow = new ItemFireArrow(new Item.Properties());
         ModItems.scepterBeekeeper = new ItemScepterBeekeeper(new Item.Properties());
+        ModItems.spear = new ItemSpear(new Item.Properties());
 
         ModItems.breadDough = new ItemBreadDough(new Item.Properties());
         ModItems.cookieDough = new ItemCookieDough(new Item.Properties());
@@ -79,7 +80,7 @@ public final class ModItemsInitializer
         ModItems.milkyBread = new ItemMilkyBread(new Item.Properties());
         ModItems.sugaryBread = new ItemSugaryBread(new Item.Properties());
         ModItems.goldenBread = new ItemGoldenBread(new Item.Properties());
-        ModItems.chorusBread= new ItemChorusBread(new Item.Properties());
+        ModItems.chorusBread = new ItemChorusBread(new Item.Properties());
 
         ModItems.adventureToken = new ItemAdventureToken(new Item.Properties());
 
@@ -139,6 +140,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.pharaoscepter);
         registry.register(ModItems.firearrow);
         registry.register(ModItems.scepterBeekeeper);
+        registry.register(ModItems.spear);
 
         registry.register(ModItems.breadDough);
         registry.register(ModItems.cookieDough);
@@ -227,6 +229,12 @@ public final class ModItemsInitializer
 
         registry.register(new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
           "amazonegg"));
+        registry.register(new SpawnEggItem(ModEntities.AMAZONSPEARMAN,
+          PRIMARY_COLOR_EG,
+          SECONDARY_COLOR_EG,
+          new Item.Properties().tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
+          "amazonspearmanegg"
+        ));
         registry.register(new SpawnEggItem(ModEntities.AMAZONCHIEF,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
