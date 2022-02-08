@@ -121,7 +121,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             if (worker.getNavigation().isDone())
             {
-                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                if (getOwnBuilding().isInBuilding(worker.blockPosition()))
+                {
+                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                }
+                else
+                {
+                    walkToBuilding();
+                }
             }
             return IDLE;
         }
