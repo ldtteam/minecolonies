@@ -481,6 +481,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             blockToMine = result.getBlockResult().getWorldPos();
             return MINE_BLOCK;
         }
+        else
+        {
+            blockToMine = null;
+        }
 
         if (MineColonies.getConfig().getServer().builderBuildBlockDelay.get() > 0)
         {
