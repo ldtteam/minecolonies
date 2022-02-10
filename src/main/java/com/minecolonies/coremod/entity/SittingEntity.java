@@ -2,17 +2,17 @@ package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.EntityUtils;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -147,7 +147,7 @@ public class SittingEntity extends Entity
         {
             return super.getDismountLocationForPassenger(passenger);
         }
-        return new Vec3(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5);
+        return new Vec3(spawn.getX() + 0.5, spawn.getY() + 0.2, spawn.getZ() + 0.5);
     }
 
 
