@@ -291,7 +291,8 @@ public class RaidManager implements IRaiderManager
         for (int i = 0; i < raidCount; i++)
         {
             final BlockPos targetSpawnPoint = calculateSpawnLocation();
-            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getServer().maxYForBarbarians.get())
+            if (targetSpawnPoint == null || targetSpawnPoint.equals(colony.getCenter()) || targetSpawnPoint.getY() > MineColonies.getConfig().getServer().maxYForBarbarians.get()
+                  || !colony.getWorld().getWorldBorder().isWithinBounds(targetSpawnPoint))
             {
                 continue;
             }
