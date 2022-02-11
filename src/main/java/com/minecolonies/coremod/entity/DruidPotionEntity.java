@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity;
 
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.coremod.colony.jobs.JobWitch;
+import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.BiPredicate;
 
-public class WitchPotionEntity extends PotionEntity
+public class DruidPotionEntity extends PotionEntity
 {
     /**
      * The X and Z size of the splash area
@@ -46,7 +46,7 @@ public class WitchPotionEntity extends PotionEntity
     @Nullable
     private BiPredicate<LivingEntity, Effect> predicate;
 
-    public WitchPotionEntity(final EntityType<? extends PotionEntity> type, final World world)
+    public DruidPotionEntity(final EntityType<? extends PotionEntity> type, final World world)
     {
         super(type, world);
         this.predicate = null;
@@ -65,7 +65,7 @@ public class WitchPotionEntity extends PotionEntity
     public void applySplash(@NotNull List<EffectInstance> effects, @Nullable Entity entity)
     {
         final AbstractEntityCitizen citizen = this.getOwner();
-        if (citizen != null && citizen.getCitizenData().getJob() instanceof JobWitch)
+        if (citizen != null && citizen.getCitizenData().getJob() instanceof JobDruid)
         {
             final AxisAlignedBB axisalignedbb = this.getBoundingBox().expandTowards(SPLASH_SIZE, SPLASH_HEIGTH, SPLASH_SIZE);
             final List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
@@ -134,7 +134,7 @@ public class WitchPotionEntity extends PotionEntity
      */
     public static void throwPotionAt(final ItemStack potionStack, final LivingEntity target, final AbstractEntityCitizen thrower, final World world, final float velocity, final float inaccuracy, final BiPredicate<LivingEntity,Effect> predicate)
     {
-        final WitchPotionEntity potionentity = new WitchPotionEntity(ModEntities.WITCH_POTION, world);
+        final DruidPotionEntity potionentity = new DruidPotionEntity(ModEntities.DRUID_POTION, world);
         potionentity.setOwner(thrower);
         potionentity.setPredicate(predicate);
         potionentity.setItem(potionStack);

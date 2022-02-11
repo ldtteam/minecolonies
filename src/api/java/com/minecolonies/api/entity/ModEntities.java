@@ -65,5 +65,5 @@ public class ModEntities
 
     public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
 
-    public static EntityType<? extends PotionEntity> WITCH_POTION;
+    public static EntityType<? extends PotionEntity> DRUID_POTION;
 }

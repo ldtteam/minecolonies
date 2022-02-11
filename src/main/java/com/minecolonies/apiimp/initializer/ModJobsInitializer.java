@@ -281,10 +281,10 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.QUARRY_MINER_ID)
           .createJobEntry();
 
-        ModJobs.witch = new JobEntry.Builder()
-          .setJobProducer(JobWitch::new)
+        ModJobs.druid = new JobEntry.Builder()
+          .setJobProducer(JobDruid::new)
           .setJobViewProducer(() -> DefaultJobView::new)
-          .setRegistryName(ModJobs.WITCH_ID)
+          .setRegistryName(ModJobs.DRUID_ID)
           .createJobEntry();
 
         reg.register(ModJobs.placeHolder);
@@ -330,6 +330,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.beekeeper);
         reg.register(ModJobs.cookassistant);
         reg.register(ModJobs.quarrier);
-        reg.register(ModJobs.witch);
+        reg.register(ModJobs.druid);
     }
 }

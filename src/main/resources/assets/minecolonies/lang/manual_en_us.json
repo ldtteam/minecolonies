@@ -2056,7 +2056,7 @@
   "com.minecolonies.job.beekeeper": "Beekeeper",
   "com.minecolonies.job.cookassistant": "Assistant Cook",
   "com.minecolonies.job.smelter": "Smelter",
-  "com.minecolonies.job.witch": "Witch",
+  "com.minecolonies.job.druid": "Druid",
 
   "com.minecolonies.building.miner": "Mine",
   "com.minecolonies.building.farmer": "Farm",
@@ -2121,5 +2121,5 @@
   "com.minecolonies.building.mediumquarry": "Medium Quarry",
   "com.minecolonies.building.largequarry": "Large Quarry",
   "com.minecolonies.coremod.gui.quarry.desc": "To start the Quarry construct a Mine, hire a Quarrier and assign the Quarrier to the Quarry",
-  "com.minecolonies.coremod.gui.workerhuts.witch": "Witch"
+  "com.minecolonies.coremod.gui.workerhuts.druid": "Druid"
 }

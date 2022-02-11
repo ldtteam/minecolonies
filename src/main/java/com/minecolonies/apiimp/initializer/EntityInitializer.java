@@ -166,8 +166,8 @@ public class EntityInitializer
             .sized(0.5F, 0.5F)
             .setShouldReceiveVelocityUpdates(true));
 
-        ModEntities.WITCH_POTION = build("witchpotion",
-          EntityType.Builder.of(WitchPotionEntity::new, EntityClassification.MISC)
+        ModEntities.DRUID_POTION = build("druidpotion",
+          EntityType.Builder.of(DruidPotionEntity::new, EntityClassification.MISC)
             .setTrackingRange(ENTITY_TRACKING_RANGE)
             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
             .sized(0.25F, 0.25F)

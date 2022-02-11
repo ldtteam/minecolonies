@@ -4,7 +4,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIWitch;
+import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIDruid;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.util.ResourceLocation;
@@ -12,25 +12,25 @@ import net.minecraft.util.ResourceLocation;
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
 
 /**
- * The Witch's Job class
+ * The Druid's Job class
  *
  */
-public class JobWitch extends AbstractJobGuard<JobWitch>
+public class JobDruid extends AbstractJobGuard<JobDruid>
 {
     /**
      * Initialize citizen data.
      *
      * @param entity the citizen data.
      */
-    public JobWitch(final ICitizenData entity)
+    public JobDruid(final ICitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public EntityAIWitch generateGuardAI()
+    public EntityAIDruid generateGuardAI()
     {
-        return new EntityAIWitch(this);
+        return new EntityAIDruid(this);
     }
 
     @Override
@@ -53,6 +53,6 @@ public class JobWitch extends AbstractJobGuard<JobWitch>
     @Override
     public ResourceLocation getModel()
     {
-        return ModModelTypes.WITCH_ID;
+        return ModModelTypes.DRUID_ID;
     }
 }

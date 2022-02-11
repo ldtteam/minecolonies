@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
-import com.minecolonies.coremod.colony.jobs.JobWitch;
+import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -45,18 +45,19 @@ public final class ModGuardTypesInitializer
                                  .setClazz(JobRanger.class)
                                  .createGuardType();
 
-        ModGuardTypes.witch = new GuardType.Builder()
-          .setJobTranslationKey("com.minecolonies.job.witch")
-          .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.witch")
+        ModGuardTypes.druid = new GuardType.Builder()
+          .setJobTranslationKey("com.minecolonies.job.druid")
+          .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.druid")
           .setPrimarySkill(Skill.Mana)
           .setSecondarySkill(Skill.Focus)
-          .setWorkerSoundName("witch")
-          .setJobEntry(() -> ModJobs.witch)
-          .setRegistryName(ModGuardTypes.WITCH_ID)
-          .setClazz(JobWitch.class)
+          .setWorkerSoundName("druid")
+          .setJobEntry(() -> ModJobs.druid)
+          .setRegistryName(ModGuardTypes.DRUID_ID)
+          .setClazz(JobDruid.class)
           .createGuardType();
 
         reg.register(ModGuardTypes.knight);
         reg.register(ModGuardTypes.ranger);
+        reg.register(ModGuardTypes.druid);
     }
 }
