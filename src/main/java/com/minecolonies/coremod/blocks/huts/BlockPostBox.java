@@ -44,8 +44,7 @@ public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSC
 
     @NotNull
     @Override
-    public VoxelShape getShape(
-      final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
+    public VoxelShape getShape(final BlockState state, final IBlockReader worldIn, final BlockPos pos, final ISelectionContext context)
     {
         switch (state.getValue(FACING))
         {
