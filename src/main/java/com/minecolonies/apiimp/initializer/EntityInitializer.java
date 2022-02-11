@@ -2,12 +2,14 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.entity.SpearEntity;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.entity.*;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
+import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonSpearman;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityArcherBarbarian;
 import com.minecolonies.coremod.entity.mobs.barbarians.EntityBarbarian;
@@ -138,6 +140,12 @@ public class EntityInitializer
             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
             .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
 
+        ModEntities.AMAZONSPEARMAN = build("amazonspearman",
+          EntityType.Builder.of(EntityAmazonSpearman::new, EntityClassification.MONSTER)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
+            .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
         ModEntities.AMAZONCHIEF = build("amazonchief",
           EntityType.Builder.of(EntityAmazonChief::new, EntityClassification.MONSTER)
             .setTrackingRange(ENTITY_TRACKING_RANGE)
@@ -182,6 +190,13 @@ public class EntityInitializer
             .setTrackingRange(ENTITY_TRACKING_RANGE)
             .setUpdateInterval(ENTITY_UPDATE_FREQUENCY)
             .sized((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT));
+
+        ModEntities.SPEAR = build("spear",
+          EntityType.Builder.<SpearEntity>of(SpearEntity::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+            .sized(0.5F, 0.5F)
+            .setShouldReceiveVelocityUpdates(true));
     }
 
     private static <T extends Entity> EntityType<T> build(final String key, final EntityType.Builder<T> builder)
@@ -212,11 +227,13 @@ public class EntityInitializer
             ModEntities.ARCHERMUMMY,
             ModEntities.PHARAO,
             ModEntities.AMAZON,
+            ModEntities.AMAZONSPEARMAN,
             ModEntities.AMAZONCHIEF,
             ModEntities.FIREARROW,
             ModEntities.MC_NORMAL_ARROW,
             ModEntities.SHIELDMAIDEN,
             ModEntities.NORSEMEN_ARCHER,
-            ModEntities.NORSEMEN_CHIEF);
+            ModEntities.NORSEMEN_CHIEF,
+            ModEntities.SPEAR);
     }
 }

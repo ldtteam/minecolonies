@@ -1,27 +1,29 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
-import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
-import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.buildings.modules.ITickingModule;
+import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * The main data module for the quarry.
  */
-public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule
+public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, ICreatesResolversModule
 {
     /**
      * If the quarry was finished.
@@ -129,5 +131,14 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     {
         isFinished = true;
         markDirty();
+    }
+
+    @Override
+    public List<IRequestResolver<?>> createResolvers()
+    {
+        final ImmutableList.Builder<IRequestResolver<?>> builder = ImmutableList.builder();
+        builder.add(new StationRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
+            .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
+        return builder.build();
     }
 }

@@ -52,11 +52,16 @@ public class ModEntities
 
     public static EntityType<? extends AbstractEntityAmazon> AMAZON;
 
+    public static EntityType<? extends AbstractEntityAmazon> AMAZONSPEARMAN;
+
     public static EntityType<? extends AbstractEntityAmazon> AMAZONCHIEF;
 
     public static EntityType<MinecoloniesMinecart> MINECART;
 
     public static EntityType<? extends AbstractArrowEntity> FIREARROW;
+
+    @ObjectHolder("spear")
+    public static EntityType<SpearEntity> SPEAR;
 
     public static EntityType<? extends ArrowEntity> MC_NORMAL_ARROW;
 

@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.item.Item;
@@ -17,6 +18,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,6 +76,52 @@ public final class GenericRecipeUtils
         final List<List<ItemStack>> inputs = compact(recipe.getIngredients());
         return new GenericRecipe(original.getPrimaryOutput(), original.getAdditionalOutputs(), inputs,
                 original.getGridSize(), original.getIntermediate(), original.getLootTable(), new ArrayList<>(), -1);
+    }
+
+    /**
+     * Exclude input ingredients that fail the supplied predicate.
+     *
+     * @param recipe the original recipe
+     * @param predicate an ingredient predicate that returns false to reject an ingredient
+     * @return the original recipe, if there were no problems.
+     *         or a modified recipe, if some ingredients were banned but alternates were acceptable.
+     *         or null, if no acceptable alternatives were available for some slot.
+     */
+    @Nullable
+    public static IGenericRecipe filterInputs(@NotNull IGenericRecipe recipe,
+                                              @NotNull OptionalPredicate<ItemStack> predicate)
+    {
+        final List<List<ItemStack>> newInputs = new ArrayList<>();
+        boolean modified = false;
+
+        for (final List<ItemStack> slot : recipe.getInputs())
+        {
+            final List<ItemStack> newSlot = slot.stream()
+                    .filter(stack -> predicate.test(stack).orElse(true))
+                    .collect(Collectors.toList());
+
+            if (newSlot.isEmpty() && !slot.isEmpty())
+            {
+                return null;
+            }
+            modified |= newSlot.size() != slot.size();
+
+            newInputs.add(newSlot);
+        }
+
+        if (!modified)
+        {
+            return recipe;
+        }
+
+        return new GenericRecipe(recipe.getPrimaryOutput(),
+                recipe.getAdditionalOutputs(),
+                newInputs,
+                recipe.getGridSize(),
+                recipe.getIntermediate(),
+                recipe.getLootTable(),
+                recipe.getRestrictions(),
+                recipe.getLevelSort());
     }
 
     @NotNull

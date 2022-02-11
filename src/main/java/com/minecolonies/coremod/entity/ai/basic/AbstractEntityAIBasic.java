@@ -7,11 +7,14 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.Tool;
+import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.pathfinding.IWalkToProxy;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
@@ -30,6 +33,7 @@ import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.block.BlockState;
@@ -560,15 +564,38 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             return afterRequestPickUp();
         }
-        if (!walkToBuilding() && getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             final Collection<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
-
-            completedRequests.stream().filter(r -> !(r.canBeDelivered())).forEach(r -> getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), r.getId()));
-            final IRequest<?> firstDeliverableRequest = completedRequests.stream().filter(IRequest::canBeDelivered).findFirst().orElse(null);
-
-            if (firstDeliverableRequest != null)
+            final List<IRequest<?>> deliverableRequests = new ArrayList<>();
+            for (final IRequest<?> req : completedRequests)
             {
+                if (!req.canBeDelivered())
+                {
+                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), req.getId());
+                }
+                else
+                {
+                    deliverableRequests.add(req);
+                }
+            }
+
+            if (!deliverableRequests.isEmpty())
+            {
+                final IRequest<?> firstDeliverableRequest = deliverableRequests.get(0);
+                final IRequestResolver<?> resolver = getOwnBuilding().getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : getOwnBuilding().getLocation();
+
+                if (walkToBlock(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
+                {
+                    return NEEDS_ITEM;
+                }
+                final TileEntity blockEntity = world.getBlockEntity(pickupLocation.getInDimensionLocation());
+                if (blockEntity == null)
+                {
+                    return NEEDS_ITEM;
+                }
+
                 boolean async = false;
                 if (worker.getCitizenData().isRequestAsync(firstDeliverableRequest.getId()))
                 {
@@ -577,9 +604,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
 
                 getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
+
                 final List<IItemHandler> validHandlers = Lists.newArrayList();
                 validHandlers.add(worker.getItemHandlerCitizen());
-                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()));
+                validHandlers.addAll(InventoryUtils.getItemHandlersFromProvider(blockEntity));
 
                 //Check if we either have the requested Items in our inventory or if they are in the building.
                 if (InventoryUtils.areAllItemsInItemHandlerList(firstDeliverableRequest.getDeliveries(), validHandlers))
@@ -589,7 +617,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     InventoryUtils.moveItemStacksWithPossibleSwap(
                       worker.getItemHandlerCitizen(),
-                      InventoryUtils.getItemHandlersFromProvider(getOwnBuilding()),
+                      InventoryUtils.getItemHandlersFromProvider(blockEntity),
                       firstDeliverableRequest.getDeliveries(),
                       itemStack ->
                         contained.stream().anyMatch(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack)) ||
@@ -611,6 +639,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                     }
                 }
             }
+        }
+        else
+        {
+            walkToBuilding();
         }
 
         return NEEDS_ITEM;
@@ -856,6 +888,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }
+            delay = 0;
             return true;
         }
 

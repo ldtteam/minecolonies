@@ -156,7 +156,7 @@ public class SittingEntity extends Entity
         {
             return super.getDismountLocationForPassenger(passenger);
         }
-        return new Vector3d(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5);
+        return new Vector3d(spawn.getX() + 0.5, spawn.getY() + 0.2, spawn.getZ() + 0.5);
     }
 
     /**
