@@ -1,7 +1,7 @@
 {
   "pools": [
     {
-      "name": "minecolonies:pirate",
+      "name": "minecolonies:shieldmaiden",
       "rolls": 1,
       "bonus_rolls": 1,
       "entries": [
@@ -11,12 +11,12 @@
         },
         {
           "type": "item",
-          "weight": 6,
-          "name": "minecolonies:iron_scimitar"
+          "weight": 10,
+          "name": "minecraft:shield"
         },
         {
           "type": "item",
-          "weight": 4,
+          "weight": 5,
           "name": "minecolonies:ancienttome"
         }
       ]
