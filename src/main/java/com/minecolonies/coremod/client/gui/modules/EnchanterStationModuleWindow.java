@@ -80,7 +80,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
         super.onOpened();
         selectedBuildings = module.getBuildingsToGatherFrom();
         allBuildings = buildingView.getColony().getBuildings().stream()
-                         .filter(b -> b instanceof AbstractBuildingView && b.getBuildingType() != ModBuildings.enchanter)
+                         .filter(b -> b instanceof AbstractBuildingView && b.getBuildingType() != ModBuildings.enchanter && b.getBuildingType() != ModBuildings.postBox && b.getBuildingType() != ModBuildings.stash)
                          .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
                            b2.getPosition())))
                          .collect(Collectors.toList());
