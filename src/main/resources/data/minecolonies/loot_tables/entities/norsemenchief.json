@@ -1,0 +1,32 @@
+{
+  "pools": [
+    {
+      "name": "minecolonies:norsemenchief",
+      "rolls": 2,
+      "bonus_rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 50
+        },
+        {
+          "type": "item",
+          "weight": 15,
+          "quality": 5,
+          "name": "minecraft:leather"
+        },
+        {
+          "type": "item",
+          "weight": 10,
+          "quality": 1,
+          "name": "minecraft:diamond_axe"
+        },
+        {
+          "type": "item",
+          "weight": 50,
+          "name": "minecolonies:ancienttome"
+        }
+      ]
+    }
+  ]
+}
