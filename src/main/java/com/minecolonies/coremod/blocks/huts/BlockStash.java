@@ -59,10 +59,15 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
         return ModBuildings.stash;
     }
 
+    @Deprecated
+    public float getDestroyProgress(final BlockState state, @NotNull final Player player, @NotNull final BlockGetter world, @NotNull final BlockPos pos)
+    {
+        return 1 / 30f;
+    }
+
     @NotNull
     @Override
-    public VoxelShape getShape(
-      final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
         switch (state.getValue(FACING))
         {
