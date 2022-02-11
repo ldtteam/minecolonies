@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -33,6 +34,12 @@ public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSC
     public BuildingEntry getBuildingEntry()
     {
         return ModBuildings.postBox;
+    }
+
+    @Deprecated
+    public float getDestroyProgress(final BlockState state, final @NotNull PlayerEntity player, final @NotNull IBlockReader world, final @NotNull BlockPos pos)
+    {
+        return 1 / 30f;
     }
 
     @NotNull
