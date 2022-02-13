@@ -249,7 +249,7 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
                                     .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
                                     .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
-                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
+                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .addBuildingModuleProducer(BedHandlingModule::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))

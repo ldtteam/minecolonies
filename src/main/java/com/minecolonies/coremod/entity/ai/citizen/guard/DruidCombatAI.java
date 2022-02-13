@@ -1,25 +1,33 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
+import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.entity.DruidPotionEntity;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
-import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.potion.*;
 import net.minecraft.util.Hand;
+
+import java.util.Collections;
+import java.util.List;
 
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
-import static com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard.PATROL_DEVIATION_RAID_POINT;
 
 /**
  * Druid combat AI
@@ -32,6 +40,8 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
      * The value of the speed which the guard will move.
      */
     private static final double COMBAT_SPEED = 1.0;
+
+    public static final  float  POTION_VELOCITY                           = 0.5f;
 
     /**
      * Flee chance
@@ -75,28 +85,65 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         user.swing(Hand.MAIN_HAND);
 
-        //max number of active potion targets in attack radius (can maintain max 2 x building level targets).
-        //slowness/Speed + strength/weakness randomly (all level 1)
+        final int level = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getSecondarySkill());
+        final int time = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getPrimarySkill());
+
+        final float inaccuracy = 99f / level;
+        final Effect effect;
+        final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
+        //todo if mistletoe and water, increase Effectinstance to 1
+        if (AbstractEntityAIGuard.isAttackableTarget(user, target))
+        {
+            switch (user.getRandom().nextInt(2))
+            {
+                case 0:
+                    effect = Effects.MOVEMENT_SLOWDOWN;
+                    break;
+                default:
+                    effect = Effects.WEAKNESS;
+                    break;
+            }
+
+            PotionUtils.setCustomEffects(stack, Collections.singleton(new EffectInstance(effect, time)));
+            DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, ((entity, eff) -> AbstractEntityAIGuard.isAttackableTarget(user, entity)));
+        }
+        else
+        {
+            //todo if we got a mistletoe + water bottle do 4.
+            switch (user.getRandom().nextInt(2))
+            {
+                case 0:
+                    effect = Effects.SATURATION;
+                    break;
+                case 1:
+                    effect = Effects.DAMAGE_BOOST;
+                    break;
+                case 2:
+                    effect = Effects.HEAL;
+                    break;
+                default:
+                    effect = Effects.DAMAGE_RESISTANCE;
+                    break;
+            }
+
+            PotionUtils.setCustomEffects(stack, Collections.singleton(new EffectInstance(effect, time)));
+            DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, ((entity, eff) -> !AbstractEntityAIGuard.isAttackableTarget(user, entity)));
+        }
+
+        user.setItemInHand(Hand.MAIN_HAND, stack);
+
+
+
+        //slowness/Saturation + strength/weakness randomly (all level 1)
+
         //if research unlocked and has bottles + mistletoes to consume then level 2 potion effect
         //potion effect duration = mana level (up to 99s at level 99)
         //research to unlock regeneration + resistance (those need bottles + mistletoes)
 
+        resetTarget();
 
-        //todo put bottle in hand?
-
-        //todo adjust target selection to include friendlies
-        //todo check here if friendly or not.
-        //todo if friendly throw one, else throw other.
-        //todo do we want them randomzied?
-
-        target.setLastHurtByMob(user);
-        user.decreaseSaturationForContinuousAction();
-    }
-
-    @Override
-    protected boolean searchNearbyTarget()
-    {
-        return super.searchNearbyTarget();
+        parentAI.incrementActionsDoneAndDecSaturation();
+        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
     }
 
     @Override
@@ -115,13 +162,6 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return attackDist;
-    }
-
-    @Override
-    protected int getAttackDelay()
-    {
-        final int attackDelay = RANGED_ATTACK_DELAY_BASE - (user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Focus));
-        return Math.max(attackDelay, PHYSICAL_ATTACK_DELAY_MIN * 2);
     }
 
     @Override
@@ -158,7 +198,63 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected boolean isAttackableTarget(final LivingEntity entity)
     {
-        return AbstractEntityAIGuard.isAttackableTarget(user, entity);
+        return wasAffectedByDruid(entity);
+    }
+
+    @Override
+    protected boolean searchNearbyTarget()
+    {
+        if (checkForTarget())
+        {
+            return true;
+        }
+
+        final List<LivingEntity> entities = user.level.getLoadedEntitiesOfClass(LivingEntity.class, getSearchArea());
+
+        if (entities.isEmpty())
+        {
+            return false;
+        }
+
+        int targetsUnderEffect = 0;
+        boolean foundTarget = false;
+        for (final LivingEntity entity : entities)
+        {
+            if (!entity.isAlive())
+            {
+                continue;
+            }
+
+            if (skipSearch(entity))
+            {
+                return false;
+            }
+
+            if (isEntityValidTarget(entity))
+            {
+                if (user.canSee(entity))
+                {
+                    user.getThreatTable().addThreat(entity, 0);
+                    foundTarget = true;
+                }
+            }
+            else if (wasAffectedByDruid(entity))
+            {
+                targetsUnderEffect++;
+            }
+        }
+
+        return foundTarget && targetsUnderEffect <= parentAI.getOwnBuilding().getBuildingLevel() * 2;
+    }
+
+    /**
+     * Check if an entity has one of the potion effects the druid hands out.
+     * @param entity the entity to check for.
+     * @return true if so.
+     */
+    private boolean wasAffectedByDruid(final LivingEntity entity)
+    {
+        return entity.hasEffect(Effects.MOVEMENT_SLOWDOWN) || entity.hasEffect(Effects.SATURATION) || entity.hasEffect(Effects.DAMAGE_BOOST) || entity.hasEffect(Effects.WEAKNESS) || entity.hasEffect(Effects.DAMAGE_RESISTANCE) || entity.hasEffect(Effects.HEAL);
     }
 
     @Override
@@ -186,12 +282,6 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     }
 
     @Override
-    protected void onTargetChange()
-    {
-        CombatUtils.notifyGuardsOfTarget(user, target, PATROL_DEVIATION_RAID_POINT);
-    }
-
-    @Override
     protected int getYSearchRange()
     {
         if (((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getTask().equals(GuardTaskSetting.GUARD))
@@ -200,12 +290,5 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return Y_VISION;
-    }
-
-    @Override
-    protected void onTargetDied(final LivingEntity entity)
-    {
-        parentAI.incrementActionsDoneAndDecSaturation();
-        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
     }
 }
