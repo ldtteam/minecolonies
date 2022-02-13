@@ -202,7 +202,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     }
 
     @Override
-    protected boolean searchNearbyTarget()
+    public boolean searchNearbyTarget()
     {
         if (checkForTarget())
         {
