@@ -130,7 +130,7 @@ public class TargetAI<T extends LivingEntity & IThreatTableEntity> implements IS
      *
      * @return The next IAIState to go to.
      */
-    public boolean searchNearbyTarget()
+    protected boolean searchNearbyTarget()
     {
         if (checkForTarget())
         {

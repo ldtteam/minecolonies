@@ -18,6 +18,7 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.*;
@@ -140,7 +141,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         //potion effect duration = mana level (up to 99s at level 99)
         //research to unlock regeneration + resistance (those need bottles + mistletoes)
 
-        resetTarget();
+        user.getThreatTable().removeCurrentTarget();
 
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
@@ -198,11 +199,11 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected boolean isAttackableTarget(final LivingEntity entity)
     {
-        return wasAffectedByDruid(entity);
+        return !wasAffectedByDruid(entity);
     }
 
     @Override
-    public boolean searchNearbyTarget()
+    protected boolean searchNearbyTarget()
     {
         if (checkForTarget())
         {

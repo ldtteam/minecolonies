@@ -16,7 +16,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
     public EntityAIDruid(@NotNull final JobDruid job)
     {
         super(job);
-        new RangerCombatAI((EntityCitizen) worker, getStateAI(), this);
+        new DruidCombatAI((EntityCitizen) worker, getStateAI(), this);
     }
     
     @Override

@@ -6,12 +6,18 @@ import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PotionEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.IPacket;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.FMLPlayMessages;
+import net.minecraftforge.fml.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,12 +50,16 @@ public class DruidPotionEntity extends PotionEntity
      * The bi-predicate to check if an effect should be applied to an entity
      */
     @Nullable
-    private BiPredicate<LivingEntity, Effect> predicate;
+    private BiPredicate<LivingEntity, Effect> predicate = null;
 
+    /**
+     * Create a new druid potion entity.
+     * @param type entity type.
+     * @param world world to spawn it in.
+     */
     public DruidPotionEntity(final EntityType<? extends PotionEntity> type, final World world)
     {
         super(type, world);
-        this.predicate = null;
     }
 
     /**
@@ -134,11 +144,26 @@ public class DruidPotionEntity extends PotionEntity
      */
     public static void throwPotionAt(final ItemStack potionStack, final LivingEntity target, final AbstractEntityCitizen thrower, final World world, final float velocity, final float inaccuracy, final BiPredicate<LivingEntity,Effect> predicate)
     {
-        final DruidPotionEntity potionentity = new DruidPotionEntity(ModEntities.DRUID_POTION, world);
+        final DruidPotionEntity potionentity = (DruidPotionEntity) ModEntities.DRUID_POTION.create(world);
         potionentity.setOwner(thrower);
         potionentity.setPredicate(predicate);
         potionentity.setItem(potionStack);
-        potionentity.shoot(target.blockPosition().getX(), target.blockPosition().getY(), target.blockPosition().getZ(), velocity, inaccuracy);
+        thrower.level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(), SoundEvents.WITCH_THROW, thrower.getSoundSource(), 1.0F, 0.8F + thrower.getRandom().nextFloat() * 0.4F);
+
+        Vector3d movement = target.getDeltaMovement();
+
+        double x = target.getX() + movement.x - thrower.getX();
+        double y = target.getEyeY() - (double)1.1F - thrower.getY();
+        double z = target.getZ() + movement.z - thrower.getZ();
+
+        potionentity.shoot(x, y, z, velocity, inaccuracy);
         world.addFreshEntity(potionentity);
+    }
+
+    @Override
+    @NotNull
+    public IPacket<?> getAddEntityPacket()
+    {
+        return NetworkHooks.getEntitySpawningPacket(this);
     }
 }
