@@ -26,10 +26,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.AirItem;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -284,7 +281,11 @@ public class EntityAIEatTask extends Goal
 
         final Food itemFood = stack.getItem().getFoodProperties();
 
-        final Item containerItem = stack.getItem().getCraftingRemainingItem();
+        Item containerItem = stack.getItem().getCraftingRemainingItem();
+        if (containerItem == null && stack.getItem() instanceof SoupItem)
+        {
+            containerItem = Items.BOWL;
+        }
 
         final double satIncrease =
           itemFood.getNutrition() * (1.0 + citizen.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
