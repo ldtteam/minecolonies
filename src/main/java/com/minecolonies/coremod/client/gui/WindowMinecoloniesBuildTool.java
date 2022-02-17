@@ -180,4 +180,18 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
           item -> item.getItem() instanceof BlockItem
                     && ((BlockItem) item.getItem()).getBlock() == IBuildingRegistry.getInstance().getValue(new ResourceLocation(Constants.MOD_ID, name)).getBuildingBlock());
     }
+
+    @Override
+    public boolean isWallModeAvailable()
+    {
+        if (super.isWallModeAvailable())
+        {
+            return true;
+        }
+
+        // for backwards compatibility, we enable this for any schematic in a /walls/ dir.
+        // this can eventually be removed once all schematics are tagged appropriately.
+        final String sname = Settings.instance.getStructureName();
+        return sname != null && sname.contains("/walls/");
+    }
 }

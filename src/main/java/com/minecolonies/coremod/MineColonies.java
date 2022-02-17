@@ -146,6 +146,7 @@ public class MineColonies
         StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
         StructureName.registerSectionName("roads", new TranslatableComponent("com.minecolonies.schematics.roads"));
         StructureName.registerSectionName("rail", new TranslatableComponent("com.minecolonies.schematics.rails"));
+        StructureName.registerSectionName("walls", new TranslatableComponent("com.minecolonies.schematics.walls"));
         StructureName.registerSectionName("fields", new TranslatableComponent("com.minecolonies.schematics.fields"));
 
         Network.getNetwork().registerCommonMessages();
