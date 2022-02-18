@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -93,7 +97,18 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }
-    
+
+    @Override
+    public boolean onStackPickUp(final @NotNull ItemStack pickedUpStack)
+    {
+        final boolean result = super.onStackPickUp(pickedUpStack);;
+        if (getCitizen().getRandom().nextInt(Constants.STACKSIZE) <= 1)
+        {
+            InventoryUtils.addItemStackToItemHandler(getCitizen().getInventory(), new ItemStack(ModItems.mistletoe, 1));
+        }
+        return result;
+    }
+
     /**
      * Get the current tree the lumberjack is cutting.
      *

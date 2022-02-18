@@ -69,6 +69,7 @@ public final class ModItemsInitializer
         ModItems.firearrow = new ItemFireArrow(new Item.Properties());
         ModItems.scepterBeekeeper = new ItemScepterBeekeeper(new Item.Properties());
         ModItems.spear = new ItemSpear(new Item.Properties());
+        ModItems.mistletoe = new ItemMistletoe(new Item.Properties());
 
         ModItems.breadDough = new ItemBreadDough(new Item.Properties());
         ModItems.cookieDough = new ItemCookieDough(new Item.Properties());
@@ -137,6 +138,7 @@ public final class ModItemsInitializer
         registry.register(ModItems.firearrow);
         registry.register(ModItems.scepterBeekeeper);
         registry.register(ModItems.spear);
+        registry.register(ModItems.mistletoe);
 
         registry.register(ModItems.breadDough);
         registry.register(ModItems.cookieDough);

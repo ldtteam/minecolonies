@@ -14,6 +14,7 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.FMLPlayMessages;
@@ -77,7 +78,7 @@ public class DruidPotionEntity extends PotionEntity
         final AbstractEntityCitizen citizen = this.getOwner();
         if (citizen != null && citizen.getCitizenData().getJob() instanceof JobDruid)
         {
-            final AxisAlignedBB axisalignedbb = this.getBoundingBox().expandTowards(SPLASH_SIZE, SPLASH_HEIGTH, SPLASH_SIZE);
+            final AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(SPLASH_SIZE, SPLASH_HEIGTH, SPLASH_SIZE);
             final List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
             if (!list.isEmpty())
             {
@@ -105,14 +106,11 @@ public class DruidPotionEntity extends PotionEntity
                                     else
                                     {
                                         final int duration = (int) (d1 * (double) effectinstance.getDuration() + 0.5D);
-                                        if (duration > MIN_DURATION)
-                                        {
-                                            livingentity.addEffect(new EffectInstance(effect,
-                                              duration,
-                                              effectinstance.getAmplifier(),
-                                              effectinstance.isAmbient(),
-                                              effectinstance.isVisible()));
-                                        }
+                                        livingentity.addEffect(new EffectInstance(effect,
+                                          duration,
+                                          effectinstance.getAmplifier(),
+                                          effectinstance.isAmbient(),
+                                          effectinstance.isVisible()));
                                     }
                                 }
                             }
@@ -148,15 +146,19 @@ public class DruidPotionEntity extends PotionEntity
         potionentity.setOwner(thrower);
         potionentity.setPredicate(predicate);
         potionentity.setItem(potionStack);
+        potionentity.setPos(thrower.getX(), thrower.getY() + 1, thrower.getZ());
+
         thrower.level.playSound(null, thrower.getX(), thrower.getY(), thrower.getZ(), SoundEvents.WITCH_THROW, thrower.getSoundSource(), 1.0F, 0.8F + thrower.getRandom().nextFloat() * 0.4F);
 
         Vector3d movement = target.getDeltaMovement();
 
+
         double x = target.getX() + movement.x - thrower.getX();
         double y = target.getEyeY() - (double)1.1F - thrower.getY();
         double z = target.getZ() + movement.z - thrower.getZ();
+        final double distance = MathHelper.sqrt(x * x + z * z);
 
-        potionentity.shoot(x, y, z, velocity, inaccuracy);
+        potionentity.shoot(x, y + distance * 0.2, z, velocity, inaccuracy);
         world.addFreshEntity(potionentity);
     }
 

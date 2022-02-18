@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
-import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.Skill;
-import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -18,15 +19,17 @@ import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
 import net.minecraft.potion.*;
 import net.minecraft.util.Hand;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiPredicate;
 
+import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 
@@ -35,21 +38,50 @@ import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight.SPE
  */
 public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 {
-    private final AbstractEntityAIGuard parentAI;
+    /**
+     * List of potential positive effects.
+     */
+    private static final ImmutableList<Effect> SUPPORT_EFFECTS = ImmutableList.of(Effects.DAMAGE_BOOST, Effects.SATURATION, Effects.HEAL, Effects.DAMAGE_RESISTANCE);
+
+    /**
+     * List of potential positive effects.
+     */
+    private static final ImmutableList<Effect> ADVERSE_EFFECTS = ImmutableList.of(Effects.MOVEMENT_SLOWDOWN, Effects.WEAKNESS);
+
+    /**
+     * The xp per thrown potion
+     */
+    private static final double PER_POTION_XP = 0.05D;
 
     /**
      * The value of the speed which the guard will move.
      */
     private static final double COMBAT_SPEED = 1.0;
 
-    public static final  float  POTION_VELOCITY                           = 0.5f;
+    /**
+     * Potion velocity.
+     */
+    public static final float POTION_VELOCITY = 0.5f;
 
     /**
      * Flee chance
      */
     private static final int FLEE_CHANCE = 3;
 
-    private final PathingOptions combatPathingOptions;
+    /**
+     * The parent combat AI.
+     */
+    private final AbstractEntityAIGuard parentAI;
+
+    /**
+     * The combat pathing options.
+     */
+    private final PathingOptions    combatPathingOptions;
+
+    /**
+     * If the last attack was an instant effect potion.
+     */
+    private boolean instantEffect;
 
     public DruidCombatAI(
       final EntityCitizen owner,
@@ -87,64 +119,60 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         user.swing(Hand.MAIN_HAND);
 
         final int level = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getSecondarySkill());
-        final int time = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getPrimarySkill());
+        final int time = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getPrimarySkill()) * 20;
 
         final float inaccuracy = 99f / level;
         final Effect effect;
         final ItemStack stack = new ItemStack(Items.SPLASH_POTION);
-        //todo if mistletoe and water, increase Effectinstance to 1
+        boolean gotMaterial = false;
+        BiPredicate<LivingEntity,Effect> predicate;
+        if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
+              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() instanceof PotionItem)
+              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.mistletoe))
+        {
+            gotMaterial = true;
+        }
         if (AbstractEntityAIGuard.isAttackableTarget(user, target))
         {
-            switch (user.getRandom().nextInt(2))
-            {
-                case 0:
-                    effect = Effects.MOVEMENT_SLOWDOWN;
-                    break;
-                default:
-                    effect = Effects.WEAKNESS;
-                    break;
-            }
-
-            PotionUtils.setCustomEffects(stack, Collections.singleton(new EffectInstance(effect, time)));
-            DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, ((entity, eff) -> AbstractEntityAIGuard.isAttackableTarget(user, entity)));
+            effect = ADVERSE_EFFECTS.get(user.getRandom().nextInt(gotMaterial ? 2 : 1));
+            predicate = (entity, eff) -> AbstractEntityAIGuard.isAttackableTarget(user, entity);
         }
         else
         {
-            //todo if we got a mistletoe + water bottle do 4.
-            switch (user.getRandom().nextInt(2))
-            {
-                case 0:
-                    effect = Effects.SATURATION;
-                    break;
-                case 1:
-                    effect = Effects.DAMAGE_BOOST;
-                    break;
-                case 2:
-                    effect = Effects.HEAL;
-                    break;
-                default:
-                    effect = Effects.DAMAGE_RESISTANCE;
-                    break;
-            }
+            effect = SUPPORT_EFFECTS.get(user.getRandom().nextInt(gotMaterial ? 4 : 1));
+            predicate = (entity, eff) -> !AbstractEntityAIGuard.isAttackableTarget(user, entity);
+        }
 
-            PotionUtils.setCustomEffects(stack, Collections.singleton(new EffectInstance(effect, time)));
-            DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, ((entity, eff) -> !AbstractEntityAIGuard.isAttackableTarget(user, entity)));
+        PotionUtils.setCustomEffects(stack, Collections.singleton(new EffectInstance(effect, time, gotMaterial ? 2 : 0)));
+        DruidPotionEntity.throwPotionAt(stack, target, user, user.getCommandSenderWorld(), POTION_VELOCITY, inaccuracy, predicate);
+
+        if (gotMaterial)
+        {
+            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(Items.POTION), 1);
+            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.mistletoe), 1);
+        }
+
+        if (effect.isInstantenous())
+        {
+           this.instantEffect = true;
+        }
+        else
+        {
+            this.instantEffect = true;
         }
 
         user.setItemInHand(Hand.MAIN_HAND, stack);
 
-
-
-        //slowness/Saturation + strength/weakness randomly (all level 1)
-
-        //if research unlocked and has bottles + mistletoes to consume then level 2 potion effect
-        //potion effect duration = mana level (up to 99s at level 99)
-        //research to unlock regeneration + resistance (those need bottles + mistletoes)
-
         user.getThreatTable().removeCurrentTarget();
 
-        parentAI.incrementActionsDoneAndDecSaturation();
-        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+        user.decreaseSaturationForContinuousAction();
+        user.getCitizenExperienceHandler().addExperience(PER_POTION_XP);
+    }
+
+    @Override
+    protected int getAttackDelay()
+    {
+        return this.instantEffect ? super.getAttackDelay() * 2 : super.getAttackDelay();
     }
 
     @Override
@@ -291,5 +319,12 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         }
 
         return Y_VISION;
+    }
+
+    @Override
+    protected void onTargetDied(final LivingEntity entity)
+    {
+        parentAI.incrementActionsDoneAndDecSaturation();
+        user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
     }
 }

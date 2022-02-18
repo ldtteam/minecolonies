@@ -1,11 +1,20 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.jobs.JobDruid;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
+import net.minecraft.item.ArrowItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
+import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 
 /**
  * Druid AI class, which deals with equipment and movement specifics
@@ -17,6 +26,35 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
     {
         super(job);
         new DruidCombatAI((EntityCitizen) worker, getStateAI(), this);
+    }
+
+    @Override
+    protected void atBuildingActions()
+    {
+        super.atBuildingActions();
+
+        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
+        {
+            // Pickup arrows and request arrows
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+              item -> item.getItem() instanceof PotionItem,
+              32,
+              worker.getInventoryCitizen());
+
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+              item -> item.getItem() == ModItems.mistletoe,
+              32,
+              worker.getInventoryCitizen());
+
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof PotionItem) < 8)
+            {
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.POTION), 32, 8);
+            }
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.mistletoe) < 8)
+            {
+                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.mistletoe), 32, 8);
+            }
+        }
     }
     
     @Override
