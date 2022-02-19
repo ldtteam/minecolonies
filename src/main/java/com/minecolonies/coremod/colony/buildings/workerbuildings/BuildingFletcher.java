@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FLETCHER;
 
 /**
  * Class of the fletcher building.
@@ -70,7 +71,7 @@ public class BuildingFletcher extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(FLETCHER)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER)
                     .combine(super.getIngredientValidator());
         }
 
@@ -79,7 +80,7 @@ public class BuildingFletcher extends AbstractBuilding
         {
             if (!super.isRecipeCompatible(recipe)) return false;
 
-            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, FLETCHER);
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_FLETCHER);
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 
             final Item output = recipe.getPrimaryOutput().getItem();

@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_STONEMASON;
 
 /**
  * Class of the stonemason building.
@@ -68,7 +69,7 @@ public class BuildingStonemason extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(STONEMASON)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON)
                     .combine(super.getIngredientValidator());
         }
 
@@ -76,7 +77,7 @@ public class BuildingStonemason extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, STONEMASON).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_STONEMASON).orElse(false);
         }
     }
 

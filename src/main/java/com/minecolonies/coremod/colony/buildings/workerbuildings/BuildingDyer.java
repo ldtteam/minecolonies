@@ -31,6 +31,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER_SMELTING;
 
 /**
  * Class of the dyer building.
@@ -41,7 +43,6 @@ public class BuildingDyer extends AbstractBuilding
      * Description string of the building.
      */
     private static final String DYER = "dyer";
-    private static final String DYER_SMELTING = "dyer_smelting";
 
     /**
      * Instantiates a new dyer building.
@@ -85,7 +86,7 @@ public class BuildingDyer extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(DYER)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_DYER)
                     .combine(super.getIngredientValidator());
         }
 
@@ -93,7 +94,7 @@ public class BuildingDyer extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_DYER).orElse(false);
         }
         
         @Override
@@ -216,7 +217,7 @@ public class BuildingDyer extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(DYER_SMELTING)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_DYER_SMELTING)
                     .combine(super.getIngredientValidator());
         }
 
@@ -227,7 +228,7 @@ public class BuildingDyer extends AbstractBuilding
             {
                 return false;
             }
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, DYER_SMELTING).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_DYER_SMELTING).orElse(false);
         }
     }
 }
