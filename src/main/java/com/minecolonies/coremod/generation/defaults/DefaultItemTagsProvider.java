@@ -84,6 +84,16 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RED_GLAZED_TERRACOTTA)
                 .add(Items.BLACK_GLAZED_TERRACOTTA);
 
+        final Tags.IOptionalNamedTag<Item> storageBlocks = ItemTags.createOptional(new ResourceLocation(MOD_ID, "storage_blocks"));
+        tag(storageBlocks)
+                .addTag(Tags.Items.STORAGE_BLOCKS)
+                .add(Items.BONE_BLOCK)
+                .add(Items.HAY_BLOCK)
+                .add(Items.DRIED_KELP_BLOCK)
+                .add(Items.HONEY_BLOCK)
+                .add(Items.HONEYCOMB_BLOCK)
+                .add(Items.SNOW_BLOCK);
+
         // Be careful adding tags to this, as some, especially #minecraft:small_flowers, have logical impacts that
         // has made them used heavily in mods, including many where high availability has severe balance ramifications.
         tag(ModTags.floristFlowers)
@@ -225,7 +235,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.DRIED_KELP_BLOCK);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_MECHANIC));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
-                .addTag(Tags.Items.STORAGE_BLOCKS)
+                .addTag(storageBlocks)
                 .addTag(ItemTags.RAILS)
                 .addTag(ItemTags.WOODEN_PRESSURE_PLATES)
                 .add(Items.HEAVY_WEIGHTED_PRESSURE_PLATE)
@@ -234,11 +244,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.STONE_PRESSURE_PLATE)
                 .add(Items.BLUE_ICE)
                 .add(Items.PACKED_ICE)
-                .add(Items.BONE_BLOCK)
-                .add(Items.DRIED_KELP_BLOCK)
-                .add(Items.HONEY_BLOCK)
-                .add(Items.HONEYCOMB_BLOCK)
-                .add(Items.SNOW_BLOCK)
                 .add(Items.DAYLIGHT_DETECTOR)
                 .add(Items.LEVER)
                 .add(Items.STICKY_PISTON)
@@ -253,7 +258,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.ENDER_CHEST)
                 .add(Items.TRAPPED_CHEST);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_MECHANIC))
-                .add(Items.SPECTRAL_ARROW);
+                .add(Items.SPECTRAL_ARROW)
+                .add(Items.HAY_BLOCK);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_PLANTATION))
                 .add(Items.BAMBOO);
@@ -360,13 +366,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_REDUCEABLE))
                 .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE)
                 .addTags(Tags.Items.GRAVEL, Tags.Items.SAND)
-                .addTags(Tags.Items.INGOTS, Tags.Items.STORAGE_BLOCKS)
+                .addTags(Tags.Items.INGOTS, storageBlocks)
                 .add(Items.GLOWSTONE)
-                .add(Items.DRIED_KELP_BLOCK)
-                .add(Items.HONEY_BLOCK)
-                .add(Items.HONEYCOMB_BLOCK)
-                .add(Items.BONE_BLOCK)
-                .add(Items.HAY_BLOCK)
                 .add(ModItems.breadDough)
                 .add(ModItems.cookieDough)
                 .add(ModItems.rawPumpkinPie)

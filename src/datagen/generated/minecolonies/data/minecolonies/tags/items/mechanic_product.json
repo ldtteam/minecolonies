@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#forge:storage_blocks",
+    "#minecolonies:storage_blocks",
     "#minecraft:rails",
     "#minecraft:wooden_pressure_plates",
     "minecraft:heavy_weighted_pressure_plate",
@@ -10,11 +10,6 @@
     "minecraft:stone_pressure_plate",
     "minecraft:blue_ice",
     "minecraft:packed_ice",
-    "minecraft:bone_block",
-    "minecraft:dried_kelp_block",
-    "minecraft:honey_block",
-    "minecraft:honeycomb_block",
-    "minecraft:snow_block",
     "minecraft:daylight_detector",
     "minecraft:lever",
     "minecraft:sticky_piston",
