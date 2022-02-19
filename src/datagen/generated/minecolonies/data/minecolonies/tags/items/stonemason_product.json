@@ -3,15 +3,14 @@
   "values": [
     "#forge:stone",
     "#forge:cobblestone",
+    "#forge:sandstone",
     "#minecraft:stone_bricks",
-    "#minecraft:slabs",
     "#minecraft:stairs",
     "#minecraft:walls",
     "minecraft:bricks",
-    "minecraft:furnace",
     "minecraft:nether_bricks",
+    "minecraft:furnace",
     "minecraft:flower_pot",
-    "#forge:sandstone",
     "minecraft:chiseled_quartz_block",
     "minecraft:quartz_pillar",
     "minecraft:quartz_bricks"
