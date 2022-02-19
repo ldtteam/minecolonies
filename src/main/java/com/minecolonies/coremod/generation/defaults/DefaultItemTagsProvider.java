@@ -314,7 +314,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
                 .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.SANDSTONE)
                 .addTags(ItemTags.STONE_BRICKS, ItemTags.SLABS, ItemTags.STAIRS, ItemTags.WALLS)
-                .add(Items.BRICKS, Items.NETHER_BRICKS)
+                .add(Items.BRICKS, Items.NETHER_BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
                 .add(Items.FURNACE)
                 .add(Items.FLOWER_POT)
                 .add(Items.CHISELED_QUARTZ_BLOCK)
@@ -325,7 +325,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ItemTags.WOODEN_SLABS)
                 .addTag(ItemTags.WOODEN_STAIRS);
 
-        tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY));
+        tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
+                .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONE_SMELTERY))
                 .add(Items.BRICK)
