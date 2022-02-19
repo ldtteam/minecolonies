@@ -2,24 +2,21 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "AFA",
+    "XBX",
     "XXX"
   ],
   "key": {
     "X": {
       "tag": "minecraft:planks"
     },
-    "A": {
-      "item": "minecraft:stone_bricks"
-    },
-    "F": {
-      "item": "minecraft:furnace"
+    "B": {
+      "item": "minecraft:leather_boots"
     },
     "T": {
       "item": "structurize:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:blockhutstonesmeltery"
+    "item": "minecolonies:blockhutdeliveryman"
   }
 }

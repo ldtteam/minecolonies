@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XRX",
+    "XBX",
     "XXX"
   ],
   "key": {
     "X": {
       "tag": "minecraft:planks"
     },
-    "R": {
+    "B": {
       "item": "minecraft:fishing_rod"
     },
     "T": {

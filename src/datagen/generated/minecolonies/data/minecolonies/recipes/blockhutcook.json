@@ -2,16 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XDX",
+    "XBX",
     "XXX"
   ],
   "key": {
     "X": {
       "tag": "minecraft:planks"
     },
-    "D": {
-      "item": "minecraft:apple",
-      "data": 0
+    "B": {
+      "item": "minecraft:apple"
     },
     "T": {
       "item": "structurize:sceptergold"

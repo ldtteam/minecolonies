@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XBX",
+    "XTX",
     "XBX",
     "XXX"
   ],
@@ -10,6 +10,9 @@
       "tag": "minecraft:planks"
     },
     "B": {
+      "item": "structurize:sceptergold"
+    },
+    "T": {
       "item": "structurize:sceptergold"
     }
   },

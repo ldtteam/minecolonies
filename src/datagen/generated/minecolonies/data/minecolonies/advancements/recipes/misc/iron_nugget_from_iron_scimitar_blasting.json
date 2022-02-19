@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecolonies:iron_nugget_from_iron_scimitar_blasting"
+    ]
+  },
+  "criteria": {
+    "has_scimitar": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecolonies:iron_scimitar"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecolonies:iron_nugget_from_iron_scimitar_blasting"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_scimitar",
+      "has_the_recipe"
+    ]
+  ]
+}

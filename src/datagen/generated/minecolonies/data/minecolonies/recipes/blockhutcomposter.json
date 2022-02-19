@@ -1,17 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "WTW",
-    "WGW",
-    "WWW"
+    "XTX",
+    "XBX",
+    "XXX"
   ],
   "key": {
-    "W": {
+    "X": {
       "tag": "minecraft:planks"
     },
-    "G": {
-      "item": "minecolonies:barrel_block",
-      "data": 0
+    "B": {
+      "item": "minecolonies:barrel_block"
     },
     "T": {
       "item": "structurize:sceptergold"
