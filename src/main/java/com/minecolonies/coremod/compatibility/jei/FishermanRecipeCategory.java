@@ -3,7 +3,6 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.loot.ModLootTables;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.constants.VanillaTypes;
@@ -11,6 +10,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JEI_PREFIX;
 
 /**
  * The JEI recipe category for the fisherman.
@@ -45,6 +47,15 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     public Class<? extends FishingRecipe> getRecipeClass()
     {
         return FishingRecipe.class;
+    }
+
+    @NotNull
+    @Override
+    protected List<Component> generateInfoBlocks(@NotNull FishingRecipe recipe)
+    {
+        return Collections.singletonList(
+                new TranslatableComponent(COM_MINECOLONIES_JEI_PREFIX + "onelevelrestriction",
+                        recipe.getLevel()));
     }
 
     @Override
@@ -95,11 +106,6 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
                 }
             }
         }
-
-        this.infoBlocks.clear();
-        this.infoBlocks.addAll(calculateInfoBlocks(Collections.singletonList(
-                new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "onelevelrestriction",
-                        recipe.getLevel()))));
     }
 
     @NotNull

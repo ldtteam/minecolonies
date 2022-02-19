@@ -13,6 +13,7 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -58,6 +59,13 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
     public Class<? extends HerdingRecipe> getRecipeClass()
     {
         return HerdingRecipe.class;
+    }
+
+    @NotNull
+    @Override
+    protected List<Component> generateInfoBlocks(@NotNull HerdingRecipe recipe)
+    {
+        return Collections.emptyList();
     }
 
     @Override
