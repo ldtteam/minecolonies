@@ -3,7 +3,6 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.matrix.MatrixStack;
