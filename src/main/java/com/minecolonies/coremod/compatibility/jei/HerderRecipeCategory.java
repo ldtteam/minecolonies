@@ -3,7 +3,6 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -18,6 +17,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +59,13 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
     public Class<? extends HerdingRecipe> getRecipeClass()
     {
         return HerdingRecipe.class;
+    }
+
+    @NotNull
+    @Override
+    protected List<ITextComponent> generateInfoBlocks(@NotNull HerdingRecipe recipe)
+    {
+        return Collections.emptyList();
     }
 
     @Override
