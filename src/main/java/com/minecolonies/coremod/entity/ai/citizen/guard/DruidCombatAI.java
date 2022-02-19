@@ -4,21 +4,27 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobDruid;
 import com.minecolonies.coremod.entity.DruidPotionEntity;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobCanSee;
+import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveAwayFromLocation;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToLocation;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
@@ -71,7 +77,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     /**
      * The parent combat AI.
      */
-    private final AbstractEntityAIGuard parentAI;
+    private final AbstractEntityAIGuard<JobDruid, AbstractBuildingGuards> parentAI;
 
     /**
      * The combat pathing options.
@@ -196,15 +202,26 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected PathResult moveInAttackPosition(final LivingEntity target)
     {
-        if (((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getTask().equals(GuardTaskSetting.GUARD))
+        if (BlockPosUtil.getDistanceSquared(target.blockPosition(), user.blockPosition()) <= 4.0)
         {
-            final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
+            final PathJobMoveAwayFromLocation job = new PathJobMoveAwayFromLocation(user.level,
+              AbstractPathJob.prepareStart(target),
+              target.blockPosition(),
+              12,
+              (int) user.getAttribute(Attributes.FOLLOW_RANGE).getValue(),
+              user);
             final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
             job.setPathingOptions(combatPathingOptions);
             return pathResult;
         }
-
-        final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level, AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
+        else if (BlockPosUtil.getDistance2D(target.blockPosition(), user.blockPosition()) >= 20)
+        {
+            final PathJobMoveToLocation job = new PathJobMoveToLocation(user.level, AbstractPathJob.prepareStart(user), target.blockPosition(), 200, user);
+            final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
+            job.setPathingOptions(combatPathingOptions);
+            return pathResult;
+        }
+        final PathJobCanSee job = new PathJobCanSee(user, target, user.level, ((AbstractBuildingGuards) user.getCitizenData().getWorkBuilding()).getGuardPos(), 40);
         final PathResult pathResult = ((MinecoloniesAdvancedPathNavigate) user.getNavigation()).setPathJob(job, null, getCombatMovementSpeed(), true);
         job.setPathingOptions(combatPathingOptions);
         return pathResult;
@@ -227,7 +244,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected boolean isAttackableTarget(final LivingEntity entity)
     {
-        return !wasAffectedByDruid(entity);
+        return (AbstractEntityAIGuard.isAttackableTarget(user, entity) || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null ) || entity instanceof PlayerEntity) && !wasAffectedByDruid(entity);
     }
 
     @Override
