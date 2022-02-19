@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.compatibility.jei;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -43,7 +46,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull protected final IDrawableStatic chanceSlot;
     @NotNull private final EntityCitizen citizen;
     @NotNull private final List<ITextProperties> description;
-    @NotNull protected final List<InfoBlock> infoBlocks;
+    @NotNull private final LoadingCache<T, List<InfoBlock>> infoBlocksCache;
 
     protected static final int WIDTH = 167;
     protected static final int HEIGHT = 120;
@@ -68,10 +71,21 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
         this.citizen = createCitizenWithJob(this.job);
 
-        this.infoBlocks = new ArrayList<>();
         this.description = wordWrap(breakLines(translateDescription(
                 TranslationConstants.COM_MINECOLONIES_JEI_PREFIX +
                         this.job.getJobRegistryEntry().getRegistryName().getPath())));
+
+        this.infoBlocksCache = CacheBuilder.newBuilder()
+                .maximumSize(6)
+                .build(new CacheLoader<T, List<InfoBlock>>()
+                {
+                    @NotNull
+                    @Override
+                    public List<InfoBlock> load(@NotNull final T key)
+                    {
+                        return calculateInfoBlocks(key);
+                    }
+                });
     }
 
     @NotNull
@@ -156,7 +170,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             y += mc.font.lineHeight + 2;
         }
 
-        for (final InfoBlock block : this.infoBlocks)
+        for (final InfoBlock block : this.infoBlocksCache.getUnchecked(recipe))
         {
             mc.font.drawShadow(matrixStack, block.text, block.bounds.getX(), block.bounds.getY(), TextFormatting.YELLOW.getColor());
         }
@@ -168,7 +182,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     {
         final List<ITextComponent> tooltips = new ArrayList<>();
 
-        for (final InfoBlock block : this.infoBlocks)
+        for (final InfoBlock block : this.infoBlocksCache.getUnchecked(recipe))
         {
             if (block.tip == null) continue;
             if (block.bounds.contains((int) mouseX, (int) mouseY))
@@ -181,8 +195,10 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     }
 
     @NotNull
-    protected static List<InfoBlock> calculateInfoBlocks(@NotNull final List<ITextComponent> lines)
+    private List<InfoBlock> calculateInfoBlocks(@NotNull T recipe)
     {
+        final List<ITextComponent> lines = generateInfoBlocks(recipe);
+
         final Minecraft mc = Minecraft.getInstance();
         final List<InfoBlock> result = new ArrayList<>();
         int y = CITIZEN_Y;
@@ -207,7 +223,10 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return result;
     }
 
-    protected static class InfoBlock
+    @NotNull
+    protected abstract List<ITextComponent> generateInfoBlocks(@NotNull T recipe);
+
+    private static class InfoBlock
     {
         public InfoBlock(final String text, final String tip, final Rectangle2d bounds)
         {
