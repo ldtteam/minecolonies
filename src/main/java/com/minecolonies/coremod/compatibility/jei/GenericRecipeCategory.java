@@ -3,7 +3,6 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -72,6 +71,13 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         return IGenericRecipe.class;
     }
 
+    @NotNull
+    @Override
+    protected List<ITextComponent> generateInfoBlocks(@NotNull IGenericRecipe recipe)
+    {
+        return recipe.getRestrictions();
+    }
+
     @Override
     public void setIngredients(@NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
     {
@@ -103,9 +109,6 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             setNormalRecipe(layout, recipe, ingredients);
         }
-
-        this.infoBlocks.clear();
-        this.infoBlocks.addAll(calculateInfoBlocks(recipe.getRestrictions()));
     }
 
     private void setNormalRecipe(@NotNull final IRecipeLayout layout, @NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
