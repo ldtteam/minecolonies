@@ -39,8 +39,8 @@ public final class ModModelTypes
     public static final ResourceLocation CONCRETE_MIXER_ID = new ResourceLocation(Constants.MOD_ID, "concretemixer");
     public static final ResourceLocation RABBIT_HERDER_ID  = new ResourceLocation(Constants.MOD_ID, "rabbitherder");
     public static final ResourceLocation PLANTER_ID        = new ResourceLocation(Constants.MOD_ID, "planter");
-    public static final ResourceLocation BEEKEEPER_ID = new ResourceLocation(Constants.MOD_ID, "beekeeper");
-    public static final ResourceLocation DRUID_ID     = new ResourceLocation(Constants.MOD_ID, "witch");
+    public static final ResourceLocation BEEKEEPER_ID      = new ResourceLocation(Constants.MOD_ID, "beekeeper");
+    public static final ResourceLocation DRUID_ID          = new ResourceLocation(Constants.MOD_ID, "druid");
 
     public static IModelType SETTLER;
     public static IModelType CITIZEN;
