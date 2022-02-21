@@ -123,7 +123,9 @@ public class ReproductionManager implements IReproductionManager
                         if (altPos != null)
                         {
                             final IBuilding building = colony.getBuildingManager().getBuilding(altPos);
-                            final List<ICitizenData> newAssignedCitizens = module.getAssignedCitizen();
+                            final LivingBuildingModule altModule = building.getFirstModuleOccurance(LivingBuildingModule.class);
+
+                            final List<ICitizenData> newAssignedCitizens = altModule.getAssignedCitizen();
                             newAssignedCitizens.removeIf(cit -> cit.isChild() || cit.getPartner() != null || cit.isRelatedTo(firstParent));
                             if (newAssignedCitizens.size() > 0)
                             {

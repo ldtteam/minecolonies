@@ -339,10 +339,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
           Mth.floor(entity.getY()),
           Mth.floor(entity.getZ()));
-        BlockState bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
-
+        final Level level = entity.level;
+        BlockState bs = level.getBlockState(pos);
         // 1 Up when we're standing within this collision shape
-        final VoxelShape collisionShape = bs.getCollisionShape(entity.level, pos);
+        final VoxelShape collisionShape = bs.getCollisionShape(level, pos);
         if (bs.getMaterial().blocksMotion() && collisionShape.max(Direction.Axis.Y) > 0)
         {
             final double relPosX = Math.abs(entity.getX() % 1);
@@ -355,18 +355,18 @@ public abstract class AbstractPathJob implements Callable<Path>
                       && box.maxY > 0)
                 {
                     pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                    bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                    bs = level.getBlockState(pos);
                     break;
                 }
             }
         }
 
-        BlockState down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.below());
-        while (!bs.getMaterial().blocksMotion() && !down.getMaterial().blocksMotion() && !down.getBlock().isLadder(down, entity.getCommandSenderWorld(), pos.below(), entity) && bs.getFluidState().isEmpty())
+        BlockState down = level.getBlockState(pos.below());
+        while (!bs.getMaterial().blocksMotion() && !down.getMaterial().blocksMotion() && !down.getBlock().isLadder(down, level, pos.below(), entity) && bs.getFluidState().isEmpty())
         {
             pos.move(Direction.DOWN, 1);
             bs = down;
-            down = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos.below());
+            down = level.getBlockState(pos.below());
 
             if (pos.getY() < entity.getCommandSenderWorld().getMinBuildHeight())
             {
@@ -381,7 +381,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (!bs.getFluidState().isEmpty())
             {
                 pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                bs = CompatibilityUtils.getWorldFromEntity(entity).getBlockState(pos);
+                bs = level.getBlockState(pos);
             }
         }
         else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())

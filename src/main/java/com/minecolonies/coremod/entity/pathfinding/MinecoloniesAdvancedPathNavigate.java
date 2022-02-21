@@ -6,10 +6,7 @@ import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.*;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.*;
 import com.minecolonies.coremod.util.WorkerUtil;
 import net.minecraft.core.BlockPos;
@@ -298,7 +295,14 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 Vec3 vector3d2 = this.path.getNextEntityPos(this.mob);
                 BlockPos blockpos = new BlockPos(vector3d2);
-                this.mob.getMoveControl().setWantedPosition(vector3d2.x, this.level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos), vector3d2.z, this.speedModifier);
+                if (WorldUtil.isEntityBlockLoaded(this.level, blockpos))
+                {
+                    this.mob.getMoveControl()
+                      .setWantedPosition(vector3d2.x,
+                        this.level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos),
+                        vector3d2.z,
+                        this.speedModifier);
+                }
             }
         }
         // End of super.tick.
