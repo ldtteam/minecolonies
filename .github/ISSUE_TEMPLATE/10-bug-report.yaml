@@ -24,19 +24,19 @@ body:
       options:
         - label: I checked the MineColonie Wiki and made sure my issue is not covered there.
           required: true
-  - type: textarea
+  - type: input
     attributes:
       label: MineColonies Version
       description: MineColonies Version
     validations:
       required: true
-  - type: textarea
+  - type: input
     attributes:
       label: Structurize Version
       description: Structurize Version
     validations:
       required: true
-  - type: textarea
+  - type: input
     attributes:
       label: Minecraft Version
       description: Minecraft Version
@@ -78,7 +78,7 @@ body:
         * Add a comment if you have any insights or background information that isn't already part of the conversation.
     validations:
       required: true
-  - type: textarea
+  - type: input
     attributes:
       label: Logs
       description: Please provide your latest.log related to the time during which you experienced the issue. Upload to gist or pastebin and paste the link here.
