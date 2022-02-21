@@ -78,7 +78,7 @@ body:
   - type: input
     attributes:
       label: Logs
-      description: Please provide your latest.log related to the time during which you experienced the issue. Upload to gist or pastebin and paste the link here.
+      description: Please provide your latest.log related to the time during which you experienced the issue. Upload to gist (https://gist.github.com/) or pastebin (https://pastebin.com/) and paste the link here.
     validations:
       required: true
   - type: textarea
