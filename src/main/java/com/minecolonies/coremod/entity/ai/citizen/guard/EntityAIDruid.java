@@ -11,6 +11,8 @@ import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
+import net.minecraft.potion.PotionUtils;
+import net.minecraft.potion.Potions;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
@@ -35,7 +37,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
 
         if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
         {
-            // Pickup arrows and request arrows
+            // Mistletoes and water bottles
             InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
               item -> item.getItem() instanceof PotionItem,
               32,
@@ -46,9 +48,9 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
               32,
               worker.getInventoryCitizen());
 
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof PotionItem) < 8)
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof PotionItem) < 5)
             {
-                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.POTION), 32, 8);
+                checkIfRequestForItemExistOrCreateAsynch(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER), 9, 1);
             }
             if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.mistletoe) < 8)
             {
