@@ -4,7 +4,6 @@ import net.minecraft.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
