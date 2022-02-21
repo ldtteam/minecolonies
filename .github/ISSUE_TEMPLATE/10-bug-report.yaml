@@ -24,22 +24,25 @@ body:
       options:
         - label: I checked the MineColonie Wiki and made sure my issue is not covered there.
           required: true
+  - type: dropdown
+    attributes:
+      label: Minecraft Version
+      description: Minecraft Version
+      options: [1.16, 1.18]
+    validations:
+      required: true
   - type: input
     attributes:
       label: MineColonies Version
       description: MineColonies Version
+      placeholder: 1.xx.xx-XXXX
     validations:
       required: true
   - type: input
     attributes:
       label: Structurize Version
       description: Structurize Version
-    validations:
-      required: true
-  - type: input
-    attributes:
-      label: Minecraft Version
-      description: Minecraft Version
+      placeholder: 1.xx.xx-XXXX
     validations:
       required: true
   - type: textarea
