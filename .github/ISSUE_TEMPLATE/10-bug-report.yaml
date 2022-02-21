@@ -1,0 +1,95 @@
+name: Bug Report
+description: If you have a reproducible in-game issue
+title: "[BUG] <title>"
+labels: [Bug]
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Are you using the latest MineColonies Verison?
+      description: Please check to see if any newer version fixes the issue you're experiencing.
+      options:
+        - label:  I am running the latest **alpha** version of MineColonies for my Minecraft version.
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Did you check on the Wiki?
+      description: Please check on our wiki (https://wiki.minecolonies.ldtteam.com/) if your issue is covered there.
+      options:
+        - label: I checked the MineColonie Wiki and made sure my issue is not covered there.
+          required: true
+  - type: textarea
+    attributes:
+      label: MineColonies Version
+      description: MineColonies Version
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Structurize Version
+      description: Structurize Version
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Minecraft Version
+      description: Minecraft Version
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Related Mods and their Versions
+      description: Potential mod versions that may interact.
+      placeholder: |
+        1. Forge Version:
+        2. BlockUI Version:
+        3. Domum Ornamentum Version:
+        4. ....
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: A concise description of what you're experiencing. Please provide screenshots and videos if possible.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction Steps
+      description: What should we do to make this issue show up in our own game? Try to give as much detail as possible here too so it's easier for us to reproduce this issue.
+      placeholder: |
+        1. Do this...
+        2. then this....
+        3. So that this happens
+        
+        * Add a thumbs-up to the bug report if you are also affected. This helps the bug report become more visible to the team and doesn't clutter the comments.
+        * Add a comment if you have any insights or background information that isn't already part of the conversation.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Logs
+      description: Please provide your latest.log related to the time during which you experienced the issue. Upload to gist or pastebin and paste the link here.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: |
+        Links? References? Anything that will give us more context about the issue you are encountering!
+        
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+    validations:
+      required: false
