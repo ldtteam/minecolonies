@@ -460,13 +460,14 @@ public class ServerConfiguration extends AbstractConfiguration
           s -> s instanceof String);
         luckyOres = defineList(builder, "luckyores",
           Arrays.asList
-                   ("minecraft:coal_ore!64",
-                     "minecraft:iron_ore!32",
-                     "minecraft:gold_ore!16",
-                     "minecraft:redstone_ore!8",
-                     "minecraft:lapis_ore!4",
-                     "minecraft:diamond_ore!2",
-                     "minecraft:emerald_ore!1"),
+                  ("minecraft:coal_ore!64",
+                    "minecraft:copper_ore!48",
+                    "minecraft:iron_ore!32",
+                    "minecraft:gold_ore!16",
+                    "minecraft:redstone_ore!8",
+                    "minecraft:lapis_ore!4",
+                    "minecraft:diamond_ore!2",
+                    "minecraft:emerald_ore!1"),
           s -> s instanceof String);
 
         enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
