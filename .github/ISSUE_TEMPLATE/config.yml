@@ -1,6 +1,6 @@
 blank_issues_enabled: false
 contact_links:
-  - name: MineColonies Feature Tracker
+  - name: MineColonies Feature Request
     about: Please follow the given templates
     url: https://github.com/ldtteam/minecolonies-features/issues/new/choose
   - name: Schematic Issue - If a schematic contains an error
