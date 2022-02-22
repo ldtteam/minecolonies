@@ -455,6 +455,7 @@ public class ServerConfiguration extends AbstractConfiguration
         luckyOres = defineList(builder, "luckyores",
           Arrays.asList
                   ("minecraft:coal_ore!64",
+                    "minecraft:copper_ore!48",
                     "minecraft:iron_ore!32",
                     "minecraft:gold_ore!16",
                     "minecraft:redstone_ore!8",
