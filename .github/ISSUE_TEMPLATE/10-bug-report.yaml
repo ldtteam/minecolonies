@@ -22,7 +22,7 @@ body:
       label: Did you check on the Wiki? or ask on Discord?
       description: Please check on our wiki (https://wiki.minecolonies.ldtteam.com/) or ask on discord (https://discord.minecolonies.com/) if your issue is covered there.
       options:
-        - label: I checked the MineColonie Wiki and made sure my issue is not covered there. Or I was sent from discord to open an issue here.
+        - label: I checked the MineColonies Wiki and made sure my issue is not covered there. Or I was sent from discord to open an issue here.
           required: true
   - type: dropdown
     attributes:
