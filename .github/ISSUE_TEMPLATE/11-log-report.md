@@ -1,43 +1,90 @@
----	
-name: Log Report - If a citizen AI has an issue
-about: Please follow the given template
-title: ''	
-labels: Bug, AI Log
-assignees: ''	
-
----	
-
-<!-- PLEASE DO NOT DELETE TOPICS AS YOUR ISSUE WILL GET CLOSED -->
-### Prerequisites <!-- Replace spaces with "x" to tick boxes. [ ] => [x] -->
-
-- [ ] I am running the latest **alpha** version of MineColonies for my Minecraft version.
-- [ ] I made sure that **this issue is not a duplicate of any existing issue.**
-
-### Context <!-- Exact MineColonies version (e.g. 0.9.126-ALPHA or 0.9.2-RELEASE) *and* the Minecraft version you're playing, please.-->
-
-- Minecraft Version:
-- MineColonies Version:
-
-### Logs
-
-<!-- Add your latest.log to https://gist.github.com/ and put the link below. This is often important in figuring out where issues are. -->
-
-- latest.log: <!-- USE GIST DON'T DIRECT UPLOAD PLEASE -->
-
-## Steps to reproduce the issue / details
-
-<!-- What should we do to make this issue show up in our own game?
-     Try to give as much detail as possible here so it's easier for us to reproduce this issue.
-     OR
-     Is there anything noticeable around this issue? -->
-
-Just reporting the AI issue. <!-- Delete this line if you want to say something else. -->
-
-### Notes
-<!-- Add any other context about the problem here. -->
-
----
-## Viewers
-
-* Add a thumbs-up to the bug report if you are also affected. This helps the bug report become more visible to the team and doesn't clutter the comments.
-* Add a comment if you have any insights or background information that isn't already part of the conversation.
+name: Log Report
+description: If the console log told you to report sth to the Developers.
+title: "[BUG] <title>"
+labels: [Bug, AI log]
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+        - label: I have searched the existing issues
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Are you using the latest MineColonies Verison?
+      description: Please check to see if any newer version fixes the issue you're experiencing.
+      options:
+        - label:  I am running the latest **alpha** version of MineColonies for my Minecraft version.
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Did you check on the Wiki? or ask on Discord?
+      description: Please check on our wiki (https://wiki.minecolonies.ldtteam.com/) or ask on discord (https://discord.minecolonies.com/) if your issue is covered there.
+      options:
+        - label: I checked the MineColonies Wiki and made sure my issue is not covered there. Or I was sent from discord to open an issue here.
+          required: true
+  - type: dropdown
+    attributes:
+      label: Minecraft Version
+      description: Minecraft Version
+      options: [1.16, 1.18]
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: MineColonies Version
+      description: MineColonies Version
+      placeholder: 1.xx.xx-XXXX
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Structurize Version
+      description: Structurize Version
+      placeholder: 1.xx.xx-XXXX
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Related Mods and their Versions
+      description: Potential mod versions that may interact.
+      placeholder: |
+        1. Forge Version:
+        2. BlockUI Version:
+        3. Domum Ornamentum Version:
+        4. ....
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Reproduction Steps
+      description: What should we do to make this issue show up in our own game? Try to give as much detail as possible here too so it's easier for us to reproduce this issue.
+      placeholder: |
+        1. Do this...
+        2. then this....
+        3. So that this happens
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Logs
+      description: Please provide your latest.log related to the time during which you experienced the issue. Upload to gist (https://gist.github.com/) or pastebin (https://pastebin.com/) and paste the link here.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: |
+        Links? References? Anything that will give us more context about the issue you are encountering!
+        
+        Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+      value: |
+        
+        
+        
+        
+        * Add a thumbs-up to the bug report if you are also affected. This helps the bug report become more visible to the team and doesn't clutter the comments.
+        * Add a comment if you have any insights or background information that isn't already part of the conversation.
+    validations:
+      required: false
