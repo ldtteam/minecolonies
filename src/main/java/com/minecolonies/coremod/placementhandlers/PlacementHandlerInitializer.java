@@ -31,5 +31,6 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.add(new WayPointBlockPlacementHandler());
         PlacementHandlers.add(new GatePlacementHandler());
         PlacementHandlers.add(new NetherrackPlacementHandler());
+        PlacementHandlers.add(new LecternPlacementHandler());
     }
 }
