@@ -258,14 +258,14 @@ public class Level
                 break;
             case CROSS_THREE_LEFT_RIGHT:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
             case CROSS_THREE_TOP_LEFT:
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
             case CROSS_THREE_TOP_RIGHT:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
                 nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
                 break;
             case CROSSROAD:
