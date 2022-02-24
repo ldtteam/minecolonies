@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Support Requests and Anything Else:
+    about: Visit our discord
+    url: https://discord.minecolonies.com
   - name: MineColonies Feature Request
     about: Please follow the given templates
     url: https://github.com/ldtteam/minecolonies-features/issues/new/choose
