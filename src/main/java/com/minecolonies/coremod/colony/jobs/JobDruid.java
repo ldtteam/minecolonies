@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.util.ResourceLocation;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
+import static com.minecolonies.api.util.constant.GuardConstants.DRUID_HP_BONUS;
 
 /**
  * The Druid's Job class
@@ -41,10 +42,10 @@ public class JobDruid extends AbstractJobGuard<JobDruid>
         {
             final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
 
-            // +1 Heart every 2 level
+            // +1 Heart every 4 level
             final AttributeModifier healthModLevel =
               new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                getCitizen().getCitizenSkillHandler().getLevel(Skill.Mana),
+                getCitizen().getCitizenSkillHandler().getLevel(Skill.Mana) / 2.0 + DRUID_HP_BONUS,
                 AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }

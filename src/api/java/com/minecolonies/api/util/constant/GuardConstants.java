@@ -123,6 +123,11 @@ public final class GuardConstants
     public static final int KNIGHT_HP_BONUS = 15;
 
     /**
+     * Basic bonus hp for druids
+     */
+    public static final int DRUID_HP_BONUS = 12;
+
+    /**
      * This knight's max distance for attacking.
      */
     public static final int MAX_DISTANCE_FOR_ATTACK = 2;
