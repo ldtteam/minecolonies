@@ -51,7 +51,7 @@ public class DruidPotionEntity extends PotionEntity
      * The bi-predicate to check if an effect should be applied to an entity
      */
     @Nullable
-    private BiPredicate<LivingEntity, Effect> predicate = null;
+    private BiPredicate<LivingEntity, Effect> entitySelectionPredicate = null;
 
     /**
      * Create a new druid potion entity.
@@ -65,11 +65,11 @@ public class DruidPotionEntity extends PotionEntity
 
     /**
      * Set the predicate of which entities to affect.
-     * @param predicate if true applies to entity.
+     * @param entitySelectionPredicate if true applies to entity.
      */
-    public void setPredicate(final @Nullable BiPredicate<LivingEntity, Effect> predicate)
+    public void setEntitySelectionPredicate(final @Nullable BiPredicate<LivingEntity, Effect> entitySelectionPredicate)
     {
-        this.predicate = predicate;
+        this.entitySelectionPredicate = entitySelectionPredicate;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class DruidPotionEntity extends PotionEntity
                             for (final EffectInstance effectinstance : effects)
                             {
                                 final Effect effect = effectinstance.getEffect();
-                                if (predicate == null || predicate.test(livingentity, effect))
+                                if (entitySelectionPredicate == null || entitySelectionPredicate.test(livingentity, effect))
                                 {
                                     if (effect.isInstantenous())
                                     {
@@ -105,7 +105,7 @@ public class DruidPotionEntity extends PotionEntity
                                     }
                                     else
                                     {
-                                        final int duration = (int) (d1 * (double) effectinstance.getDuration() + 0.5D);
+                                        final int duration = (int) (d1 * (double) effectinstance.getDuration());
                                         livingentity.addEffect(new EffectInstance(effect,
                                           duration,
                                           effectinstance.getAmplifier(),
@@ -138,13 +138,13 @@ public class DruidPotionEntity extends PotionEntity
      * @param world the {@link World} of the thrower
      * @param velocity the velocity to throw the potion with
      * @param inaccuracy the inaccuracy to throw the potion with
-     * @param predicate the bi-predicate to check if an effect should be applied to an entity
+     * @param entitySelectionPredicate the bi-predicate to check if an effect should be applied to an entity
      */
-    public static void throwPotionAt(final ItemStack potionStack, final LivingEntity target, final AbstractEntityCitizen thrower, final World world, final float velocity, final float inaccuracy, final BiPredicate<LivingEntity,Effect> predicate)
+    public static void throwPotionAt(final ItemStack potionStack, final LivingEntity target, final AbstractEntityCitizen thrower, final World world, final float velocity, final float inaccuracy, final BiPredicate<LivingEntity,Effect> entitySelectionPredicate)
     {
         final DruidPotionEntity potionentity = (DruidPotionEntity) ModEntities.DRUID_POTION.create(world);
         potionentity.setOwner(thrower);
-        potionentity.setPredicate(predicate);
+        potionentity.setEntitySelectionPredicate(entitySelectionPredicate);
         potionentity.setItem(potionStack);
         potionentity.setPos(thrower.getX(), thrower.getY() + 1, thrower.getZ());
 

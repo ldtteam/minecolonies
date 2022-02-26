@@ -103,7 +103,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         combatPathingOptions.setCanSwim(true);
         combatPathingOptions.withOnPathCost(0.8);
         combatPathingOptions.withJumpCost(0.01);
-        combatPathingOptions.withDropCost(0.9);
+        combatPathingOptions.withDropCost(1.5);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected double getCombatMovementSpeed()
     {
         double levelAdjustment = user.getCitizenData().getCitizenSkillHandler().getLevel(Skill.Mana) * SPEED_LEVEL_BONUS;
-        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() * 2 - 1) * SPEED_LEVEL_BONUS;
+        levelAdjustment += (user.getCitizenData().getWorkBuilding().getBuildingLevel() - 1) * SPEED_LEVEL_BONUS;
 
         levelAdjustment = Math.min(levelAdjustment, 0.3);
         return COMBAT_SPEED + levelAdjustment;
@@ -306,7 +306,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     protected boolean skipSearch(final LivingEntity entity)
     {
         // Found a sleeping guard nearby
-        if (entity instanceof EntityCitizen)
+        if (entity instanceof EntityCitizen && user.getRandom().nextInt(10) < 1)
         {
             final EntityCitizen citizen = (EntityCitizen) entity;
             if (citizen.getCitizenJobHandler().getColonyJob() instanceof AbstractJobGuard && ((AbstractJobGuard<?>) citizen.getCitizenJobHandler().getColonyJob()).isAsleep()

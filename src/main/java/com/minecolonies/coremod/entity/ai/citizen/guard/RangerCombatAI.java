@@ -93,7 +93,7 @@ public class RangerCombatAI extends AttackMoveAI<EntityCitizen>
         combatPathingOptions.setCanSwim(true);
         combatPathingOptions.withOnPathCost(0.8);
         combatPathingOptions.withJumpCost(0.01);
-        combatPathingOptions.withDropCost(0.9);
+        combatPathingOptions.withDropCost(1.5);
     }
 
     @Override

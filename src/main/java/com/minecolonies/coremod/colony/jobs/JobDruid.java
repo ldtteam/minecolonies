@@ -36,7 +36,7 @@ public class JobDruid extends AbstractJobGuard<JobDruid>
     @Override
     public void onLevelUp()
     {
-        // Bonus Health for archers(gets reset upon Firing)
+        // Bonus Health for druids(gets reset upon Firing)
         if (getCitizen().getEntity().isPresent())
         {
             final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
@@ -44,7 +44,7 @@ public class JobDruid extends AbstractJobGuard<JobDruid>
             // +1 Heart every 2 level
             final AttributeModifier healthModLevel =
               new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                getCitizen().getCitizenSkillHandler().getLevel(Skill.Focus),
+                getCitizen().getCitizenSkillHandler().getLevel(Skill.Mana),
                 AttributeModifier.Operation.ADDITION);
             AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
         }

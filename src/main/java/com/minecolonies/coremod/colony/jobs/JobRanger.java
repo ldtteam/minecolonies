@@ -46,23 +46,6 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
     }
 
     @Override
-    public void onLevelUp()
-    {
-        // Bonus Health for archers(gets reset upon Firing)
-        if (getCitizen().getEntity().isPresent())
-        {
-            final AbstractEntityCitizen citizen = getCitizen().getEntity().get();
-
-            // +1 Heart every 2 level
-            final AttributeModifier healthModLevel =
-              new AttributeModifier(GUARD_HEALTH_MOD_LEVEL_NAME,
-                getCitizen().getCitizenSkillHandler().getLevel(Skill.Adaptability),
-                AttributeModifier.Operation.ADDITION);
-            AttributeModifierUtils.addHealthModifier(citizen, healthModLevel);
-        }
-    }
-
-    @Override
     public ResourceLocation getModel()
     {
         return ModModelTypes.ARCHER_GUARD_ID;
