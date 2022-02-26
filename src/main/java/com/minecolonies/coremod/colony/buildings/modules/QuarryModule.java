@@ -4,16 +4,20 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
+import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,13 +98,22 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     @Override
     public void onRemoval(final ICitizenData citizen)
     {
-
+        resetProgress(citizen);
     }
 
     @Override
     public void onAssignment(final ICitizenData citizen)
     {
+        resetProgress(citizen);
+    }
 
+    private void resetProgress(final ICitizenData citizen)
+    {
+        final @Nullable IBuilding building = citizen.getWorkBuilding();
+        if (building instanceof BuildingMiner)
+        {
+            ((BuildingMiner) building).setProgressPos(null, null);
+        }
     }
 
     @Override
