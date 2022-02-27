@@ -27,40 +27,47 @@ public class Food implements IDeliverable
     /**
      * Set of type tokens belonging to this class.
      */
-    private final static Set<TypeToken<?>>
-      TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Food.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
+    private final static Set<TypeToken<?>> TYPE_TOKENS = ReflectionUtils.getSuperClasses(TypeToken.of(Food.class)).stream().filter(type -> !type.equals(TypeConstants.OBJECT)).collect(Collectors.toSet());
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_COUNT  = "Count";
     private static final String NBT_RESULT = "Result";
     private static final String NBT_EXCLUSION = "Exclusion";
+    private static final String NBT_MIN_NUTRITION  = "MinNutrition";
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     private final int count;
+    private final int minNutrition;
 
-    private List<ItemStorage> exclusionList = new ArrayList<>();
+    private final List<ItemStorage> exclusionList = new ArrayList<>();
 
     @NotNull
     private ItemStack result = ItemStackUtils.EMPTY;
 
-    public Food(final int count) {this.count = count;}
+    public Food(final int count, final int minNutrition)
+    {
+        this.count = count;
+        this.minNutrition = minNutrition;
+    }
 
-    public Food(final int count, @NotNull final ItemStack result)
+    public Food(final int count, @NotNull final ItemStack result, final int minNutrition)
     {
         this.count = count;
         this.result = result;
+        this.minNutrition = minNutrition;
     }
 
-    public Food(final int count, @NotNull final ItemStack result, List<ItemStorage> exclusionList)
+    public Food(final int count, @NotNull final ItemStack result, List<ItemStorage> exclusionList, final int minNutrition)
     {
         this.count = count;
         this.result = result;
-        this.exclusionList = exclusionList;
+        this.exclusionList.addAll(exclusionList);
+        this.minNutrition = minNutrition;
     }
 
-    public Food(final int count, List<ItemStorage> exclusionList)
+    public Food(final int count, final List<ItemStorage> exclusionList, final int minNutrition)
     {
-        this(count, ItemStackUtils.EMPTY, exclusionList);
+        this(count, ItemStackUtils.EMPTY, exclusionList, minNutrition);
     }
 
     /**
@@ -90,6 +97,7 @@ public class Food implements IDeliverable
             }
             compound.put(NBT_EXCLUSION, items);
         }
+        compound.putInt(NBT_MIN_NUTRITION, food.minNutrition);
         return compound;
     }
 
@@ -114,8 +122,8 @@ public class Food implements IDeliverable
                 items.add(new ItemStorage(ItemStack.of(filterableItems.getCompound(i))));
             }
         }
-
-        return new Food(count, result, items);
+        final int minNutrition = compound.getInt(NBT_MIN_NUTRITION);
+        return new Food(count, result, items, minNutrition);
     }
 
     /**
@@ -140,6 +148,7 @@ public class Food implements IDeliverable
         {
             buffer.writeItem(item.getItemStack());
         }
+        buffer.writeInt(input.minNutrition);
     }
 
     /**
@@ -149,7 +158,8 @@ public class Food implements IDeliverable
      * @param buffer     the buffer to read.
      * @return the deliverable.
      */
-    public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer) {
+    public static Food deserialize(final IFactoryController controller, final PacketBuffer buffer)
+    {
         final int count = buffer.readInt();
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
 
@@ -159,18 +169,21 @@ public class Food implements IDeliverable
         {
             items.add(new ItemStorage(buffer.readItem()));
         }
-
+        final int minNutrition = buffer.readInt();
         if (!items.isEmpty())
         {
-            return new Food(count, result, items);
+            return new Food(count, result, items, minNutrition);
         }
-        return new Food(count, result);
+        return new Food(count, result, minNutrition);
     }
 
     @Override
     public boolean matches(@NotNull final ItemStack stack)
     {
-        return ItemStackUtils.ISFOOD.test(stack) && !exclusionList.contains(new ItemStorage(stack)) && !(ItemStackUtils.ISCOOKABLE.test(stack) && exclusionList.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack))));
+        return ItemStackUtils.ISFOOD.test(stack)
+                 && !exclusionList.contains(new ItemStorage(stack))
+                 && !(ItemStackUtils.ISCOOKABLE.test(stack) && exclusionList.contains(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack))))
+                 && (ItemStackUtils.ISCOOKABLE.test(stack) || stack.getItem().getFoodProperties().getNutrition() >= minNutrition);
     }
 
     @Override
@@ -180,9 +193,9 @@ public class Food implements IDeliverable
     }
 
     @Override
-    public IDeliverable copyWithCount(@NotNull final int newCount)
+    public IDeliverable copyWithCount(final int newCount)
     {
-        return new Food(newCount);
+        return new Food(newCount, exclusionList, minNutrition);
     }
 
     @Override
