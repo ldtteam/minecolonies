@@ -35,6 +35,11 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public static final double BONUS_SPEED_PER_LEVEL = 0.003;
 
     /**
+     * Chance to get a mistletoe.
+     */
+    private static final int MISTLETOE_CHANCE        = 64;
+
+    /**
      * The tree this lumberjack is currently working on.
      */
     @Nullable
@@ -102,7 +107,7 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
     public boolean onStackPickUp(final @NotNull ItemStack pickedUpStack)
     {
         final boolean result = super.onStackPickUp(pickedUpStack);;
-        if (getCitizen().getRandom().nextInt(Constants.STACKSIZE) <= 1)
+        if (getCitizen().getRandom().nextInt(MISTLETOE_CHANCE) <= 1)
         {
             InventoryUtils.addItemStackToItemHandler(getCitizen().getInventory(), new ItemStack(ModItems.mistletoe, 1));
         }
