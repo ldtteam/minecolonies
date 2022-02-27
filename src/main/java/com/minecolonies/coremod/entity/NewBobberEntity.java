@@ -66,12 +66,22 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     private Vector3d onWaterPos;
 
+    /**
+     * Serverside constructor.
+     * @param type entity type.
+     * @param world world to spawn it in.
+     */
     public NewBobberEntity(final EntityType<?> type, final World world)
     {
         super(type, world);
         this.noCulling = true;
     }
 
+    /**
+     * Client side constructor.
+     * @param spawnEntity spawn message.
+     * @param world the client world.
+     */
     public NewBobberEntity(final FMLPlayMessages.SpawnEntity spawnEntity, final World world)
     {
         this(ModEntities.FISHHOOK, world);
