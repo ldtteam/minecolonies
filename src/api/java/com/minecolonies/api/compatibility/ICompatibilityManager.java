@@ -62,9 +62,10 @@ public interface ICompatibilityManager
 
     /**
      * Get a set of all edibles for citizens.
+     * @param minNutrition the min nutrition of the food.
      * @return list of edible food.
      */
-    Set<ItemStorage> getEdibles();
+    Set<ItemStorage> getEdibles(final int minNutrition);
 
     /**
      * Get a set of all smeltable ores.

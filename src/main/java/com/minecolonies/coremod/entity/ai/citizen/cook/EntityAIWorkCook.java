@@ -254,7 +254,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
      */
     private boolean canEat(final ItemStack stack)
     {
-        final ItemListModule module = ((BuildingCook) worker.getCitizenData().getWorkBuilding()).getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
+        final ItemListModule module = worker.getCitizenData().getWorkBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST));
         if (module.isItemInList(new ItemStorage(stack)))
         {
             return false;
@@ -355,10 +355,17 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
-        if (!allowedItems.isEmpty())
+        final List<ItemStorage> blockedItems = new ArrayList<>(getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList());
+        for (final Map.Entry<ItemStorage, Integer> content: getOwnBuilding().getTileEntity().getAllContent().entrySet())
         {
-            if (IColonyManager.getInstance().getCompatibilityManager().getEdibles().size() <= allowedItems.size())
+            if (content.getValue() > content.getKey().getItem().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
+            {
+                blockedItems.add(content.getKey());
+            }
+        }
+        if (!blockedItems.isEmpty())
+        {
+            if (IColonyManager.getInstance().getCompatibilityManager().getEdibles(getOwnBuilding().getBuildingLevel() - 1).size() <= blockedItems.size())
             {
                 if (worker.getCitizenData() != null)
                 {
@@ -367,9 +374,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                     return null;
                 }
             }
-            return new Food(STACKSIZE, allowedItems);
+            return new Food(STACKSIZE, blockedItems, getOwnBuilding().getBuildingLevel() - 1);
         }
-        return new Food(STACKSIZE);
+        return new Food(STACKSIZE, getOwnBuilding().getBuildingLevel() - 1);
     }
-
 }
