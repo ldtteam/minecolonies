@@ -11,6 +11,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.EnchanterStationsModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.util.math.BlockPos;
@@ -80,7 +81,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
         super.onOpened();
         selectedBuildings = module.getBuildingsToGatherFrom();
         allBuildings = buildingView.getColony().getBuildings().stream()
-                         .filter(b -> b instanceof AbstractBuildingView && b.getBuildingType() != ModBuildings.enchanter && b.getBuildingType() != ModBuildings.postBox && b.getBuildingType() != ModBuildings.stash)
+                         .filter(b -> b instanceof AbstractBuildingView && !b.getModuleViews(WorkerBuildingModuleView.class).isEmpty() && b.getBuildingType() != ModBuildings.enchanter)
                          .sorted((b1, b2) -> (int) (BlockPosUtil.getDistance2D(buildingView.getPosition(), b1.getPosition()) - BlockPosUtil.getDistance2D(buildingView.getPosition(),
                            b2.getPosition())))
                          .collect(Collectors.toList());
