@@ -26,6 +26,7 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.PotionEntity;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -166,6 +167,13 @@ public class EntityInitializer
             .sized(0.5F, 0.5F)
             .setShouldReceiveVelocityUpdates(true));
 
+        ModEntities.DRUID_POTION = build("druidpotion",
+          EntityType.Builder.<DruidPotionEntity>of(DruidPotionEntity::new, EntityClassification.MISC)
+            .setTrackingRange(ENTITY_TRACKING_RANGE)
+            .setUpdateInterval(ENTITY_UPDATE_FREQUENCY_FISHHOOK)
+            .sized(0.25F, 0.25F)
+            .setShouldReceiveVelocityUpdates(true));
+
         ModEntities.SHIELDMAIDEN = build("shieldmaiden",
           EntityType.Builder.of(EntityShieldmaiden::new, EntityClassification.MONSTER)
             .setTrackingRange(ENTITY_TRACKING_RANGE)
@@ -227,6 +235,7 @@ public class EntityInitializer
             ModEntities.SHIELDMAIDEN,
             ModEntities.NORSEMEN_ARCHER,
             ModEntities.NORSEMEN_CHIEF,
-            ModEntities.SPEAR);
+            ModEntities.SPEAR,
+            ModEntities.DRUID_POTION);
     }
 }

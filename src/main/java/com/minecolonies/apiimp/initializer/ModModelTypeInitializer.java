@@ -122,5 +122,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.BEEKEEPER = new SimpleModelType(ModModelTypes.BEEKEEPER_ID, 1, new ModelEntityBeekeeperMale(), new ModelEntityBeekeeperFemale());
         reg.register(ModModelTypes.BEEKEEPER);
+
+        ModModelTypes.DRUID = new SimpleModelType(ModModelTypes.DRUID_ID, 1, new ModelEntityDruidMale(), new ModelEntityDruidFemale());
+        reg.register(ModModelTypes.DRUID);
     }
 }
