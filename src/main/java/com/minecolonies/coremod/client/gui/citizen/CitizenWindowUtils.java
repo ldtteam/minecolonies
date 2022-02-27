@@ -17,7 +17,6 @@ import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
@@ -163,6 +162,7 @@ public class CitizenWindowUtils
     {
         @NotNull final Image heartImage = new Image();
         heartImage.setImage(heart.Image, heart.X, heart.Y, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+        heartImage.setMapDimensions(256, 256);
         heartImage.setSize(HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
         heartImage.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
         healthBarView.addChild(heartImage);
@@ -207,6 +207,7 @@ public class CitizenWindowUtils
             saturation.setImage(Screen.GUI_ICONS_LOCATION,
               EMPTY_SATURATION_ITEM_ROW_POS,
               SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setMapDimensions(256, 256);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
 
             saturation.setPosition(getXOffsetModifier(i) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(i));
@@ -219,6 +220,7 @@ public class CitizenWindowUtils
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setMapDimensions(256, 256);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -229,6 +231,7 @@ public class CitizenWindowUtils
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            saturation.setMapDimensions(256, 256);
             saturation.setSize(SATURATION_ICON_HEIGHT_WIDTH, SATURATION_ICON_HEIGHT_WIDTH);
             saturation.setPosition(getXOffsetModifier(saturationPos) * SATURATION_ICON_POS_X + SATURATION_ICON_OFFSET_X, SATURATION_ICON_POS_Y + getYOffset(saturationPos));
             view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).addChild(saturation);
@@ -250,11 +253,13 @@ public class CitizenWindowUtils
 
         @NotNull final Image xpBar = new Image();
         xpBar.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT);
+        xpBar.setMapDimensions(256, 256);
         xpBar.setSize(XP_BAR_WIDTH, XP_HEIGHT);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
         @NotNull final Image xpBar2 = new Image();
         xpBar2.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN_END, HAPPINESS_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
+        xpBar2.setMapDimensions(256, 256);
         xpBar2.setSize(XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
@@ -265,6 +270,7 @@ public class CitizenWindowUtils
         {
             @NotNull final Image xpBarFull = new Image();
             xpBarFull.setImage(Screen.GUI_ICONS_LOCATION, XP_BAR_ICON_COLUMN, HAPPINESS_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT);
+            xpBarFull.setMapDimensions(256, 256);
             xpBarFull.setSize((int) experienceRatio, XP_HEIGHT);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             window.findPaneOfTypeByID(WINDOW_ID_HAPPINESS_BAR, View.class).addChild(xpBarFull);

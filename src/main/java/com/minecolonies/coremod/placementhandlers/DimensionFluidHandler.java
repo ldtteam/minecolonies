@@ -43,6 +43,12 @@ public class DimensionFluidHandler implements IPlacementHandler
       @Nullable CompoundTag tileEntityData,
       boolean complete)
     {
+        final List<ItemStack> itemList = new ArrayList<>();
+        if (complete)
+        {
+            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
+            return itemList;
+        }
         if (WorldUtil.isNetherType(world) && blockState.getBlock() == Blocks.LAVA)
         {
             return Collections.emptyList();
@@ -52,12 +58,11 @@ public class DimensionFluidHandler implements IPlacementHandler
             return Collections.emptyList();
         }
 
-        //Todo 1.17 will need adjustments for "spreading fluids".
         if (!blockState.getFluidState().isSource())
         {
             return Collections.emptyList();
         }
-        final List<ItemStack> itemList = new ArrayList<>();
+
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         return itemList;
     }
