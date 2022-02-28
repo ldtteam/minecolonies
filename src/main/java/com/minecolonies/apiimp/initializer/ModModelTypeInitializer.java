@@ -128,5 +128,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.BEEKEEPER = new SimpleModelType(ModModelTypes.BEEKEEPER_ID, 1, new ModelEntityBeekeeperMale(context.bakeLayer(ClientRegistryHandler.MALE_BEEKEEPER)), new ModelEntityBeekeeperFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_BEEKEEPER)));
         reg.register(ModModelTypes.BEEKEEPER);
+
+        ModModelTypes.DRUID = new SimpleModelType(ModModelTypes.DRUID_ID, 1, new ModelEntityDruidMale(context.bakeLayer(ClientRegistryHandler.MALE_DRUID)), new ModelEntityDruidFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_DRUID)));
+        reg.register(ModModelTypes.DRUID);
     }
 }

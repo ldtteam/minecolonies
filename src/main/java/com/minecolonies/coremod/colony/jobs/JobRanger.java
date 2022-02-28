@@ -9,6 +9,9 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 import net.minecraft.resources.ResourceLocation;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
+import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
+
 /**
  * The Ranger's Job class
  *
@@ -16,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class JobRanger extends AbstractJobGuard<JobRanger>
 {
+
     /**
      * The name associated with the job.
      */
@@ -31,22 +35,12 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
         super(entity);
     }
 
-    /**
-     * Generates the {@link AbstractEntityAIGuard} job for our ranger.
-     *
-     * @return The AI.
-     */
     @Override
     public EntityAIRanger generateGuardAI()
     {
         return new EntityAIRanger(this);
     }
 
-    /**
-     * Gets the {@link IModelType} to use for our ranger.
-     *
-     * @return The model to use.
-     */
     @Override
     public ResourceLocation getModel()
     {

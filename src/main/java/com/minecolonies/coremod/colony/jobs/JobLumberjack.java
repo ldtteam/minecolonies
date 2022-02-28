@@ -1,19 +1,19 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.Tree;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +29,11 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
      * Walking speed bonus per level
      */
     public static final double BONUS_SPEED_PER_LEVEL = 0.003;
+
+    /**
+     * Chance to get a mistletoe.
+     */
+    private static final int MISTLETOE_CHANCE        = 64;
 
     /**
      * The tree this lumberjack is currently working on.
@@ -93,7 +98,18 @@ public class JobLumberjack extends AbstractJobCrafter<EntityAIWorkLumberjack, Jo
             AttributeModifierUtils.addModifier(worker, speedModifier, Attributes.MOVEMENT_SPEED);
         }
     }
-    
+
+    @Override
+    public boolean onStackPickUp(final @NotNull ItemStack pickedUpStack)
+    {
+        final boolean result = super.onStackPickUp(pickedUpStack);;
+        if (getCitizen().getRandom().nextInt(MISTLETOE_CHANCE) <= 1)
+        {
+            InventoryUtils.addItemStackToItemHandler(getCitizen().getInventory(), new ItemStack(ModItems.mistletoe, 1));
+        }
+        return result;
+    }
+
     /**
      * Get the current tree the lumberjack is cutting.
      *

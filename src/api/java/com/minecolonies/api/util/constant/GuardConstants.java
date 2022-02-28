@@ -59,9 +59,14 @@ public final class GuardConstants
     // -- Ranged Guard Stuff -- \\
 
     /**
-     * The base distance for an attack in Blocks
+     * The base distance for an attack in Blocks.
      */
     public static final int BASE_DISTANCE_FOR_RANGED_ATTACK = 10;
+
+    /**
+     * The base distance for a potion throwing attack in Blocks.
+     */
+    public static final int BASE_DISTANCE_FOR_POTION_ATTACK = 3;
 
     /**
      * Rangers maximum distance in blocks for an attack.(24 max arrow dist)
@@ -116,6 +121,11 @@ public final class GuardConstants
      * Basic bonus hp for knights
      */
     public static final int KNIGHT_HP_BONUS = 15;
+
+    /**
+     * Basic bonus hp for druids
+     */
+    public static final int DRUID_HP_BONUS = 12;
 
     /**
      * This knight's max distance for attacking.

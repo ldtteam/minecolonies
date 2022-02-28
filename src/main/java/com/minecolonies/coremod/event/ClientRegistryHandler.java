@@ -28,7 +28,9 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -102,6 +104,8 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_STUDENT = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_student"), "male_student");
     public static final ModelLayerLocation MALE_HEALER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_healer"), "male_healer");
     public static final ModelLayerLocation MALE_CRAFTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_crafter"), "male_crafter");
+    public static final ModelLayerLocation MALE_DRUID = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_druid"), "male_druid");
+    public static final ModelLayerLocation FEMALE_DRUID = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_druid"), "female_druid");
 
     public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
@@ -197,6 +201,8 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_STUDENT, ModelEntityStudentMale::createMesh);
         event.registerLayerDefinition(MALE_HEALER, ModelEntityHealerMale::createMesh);
         event.registerLayerDefinition(MALE_CRAFTER, ModelEntityCrafterMale::createMesh);
+        event.registerLayerDefinition(MALE_DRUID, ModelEntityDruidMale::createMesh);
+        event.registerLayerDefinition(FEMALE_DRUID, ModelEntityDruidFemale::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }
@@ -210,6 +216,7 @@ public class ClientRegistryHandler
         event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
         event.registerEntityRenderer(ModEntities.FIREARROW, FireArrowRenderer::new);
         event.registerEntityRenderer(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
+        event.registerEntityRenderer(ModEntities.DRUID_POTION, m -> new ThrownItemRenderer<>(m, 1.0F, true));
 
         event.registerEntityRenderer(ModEntities.BARBARIAN, RendererBarbarian::new);
         event.registerEntityRenderer(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);

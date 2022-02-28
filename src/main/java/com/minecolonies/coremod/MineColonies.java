@@ -1,6 +1,5 @@
 package com.minecolonies.coremod;
 
-import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -19,6 +18,7 @@ import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.coremod.entity.DruidPotionEntity;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;

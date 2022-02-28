@@ -66,12 +66,22 @@ public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnDat
      */
     private Vec3 onWaterPos;
 
+    /**
+     * Serverside constructor.
+     * @param type entity type.
+     * @param world world to spawn it in.
+     */
     public NewBobberEntity(final EntityType<?> type, final Level world)
     {
         super(type, world);
         this.noCulling = true;
     }
 
+    /**
+     * Client side constructor.
+     * @param spawnEntity spawn message.
+     * @param world the client world.
+     */
     public NewBobberEntity(final PlayMessages.SpawnEntity spawnEntity, final Level world)
     {
         this(ModEntities.FISHHOOK, world);

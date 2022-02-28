@@ -3,8 +3,6 @@ package com.minecolonies.coremod.colony.jobs;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.InventoryUtils;
@@ -47,20 +45,12 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
         super(entity);
     }
 
-    /**
-     * Generates the {@link AbstractEntityAIGuard} job for our knight.
-     *
-     * @return The AI.
-     */
     @Override
     public EntityAIKnight generateGuardAI()
     {
         return new EntityAIKnight(this);
     }
 
-    /**
-     * Custom Action on Levelup, increases Knight HP
-     */
     @Override
     public void onLevelUp()
     {
@@ -78,22 +68,12 @@ public class JobKnight extends AbstractJobGuard<JobKnight>
         }
     }
 
-    /**
-     * Gets the {@link IModelType} to use for our knight.
-     *
-     * @return The model to use.
-     */
     @Override
     public ResourceLocation getModel()
     {
         return ModModelTypes.KNIGHT_GUARD_ID;
     }
 
-    /**
-     * Reduces explosion damage when Knights have a shield and have unlocked the research to use it.
-     * @param damageSource   The source of damage.
-     * @return If true, ignores this damage.
-     */
     @Override
     public boolean ignoresDamage(@NotNull final DamageSource damageSource)
     {
