@@ -104,6 +104,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
+        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Watter Bottles and Mistletoes to unlock new Abilities"));
         effects.add(new ResearchEffect(CRUSHING_11).setTranslatedName("Crusher Recipes Cost -50%"));
         effects.add(new ResearchEffect(KNIGHT_TAUNT).setTranslatedName("Knights Force Mobs to Target Them"));
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
@@ -1117,6 +1118,13 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .addItemCost(Items.REDSTONE, 64)
                                        .addEffect(ARROW_PIERCE, 1)
                                        .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/druidpotion"), COMBAT).setParentResearch(arrowUse)
+          .setTranslatedName("Panoramix")
+          .setIcon(ModItems.mistletoe)
+          .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
+          .addItemCost(ModItems.mistletoe, 64)
+          .addEffect(DRUID_USE_POTIONS, 1)
+          .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/whirlwind"), COMBAT).setParentResearch(arrowPierce)
           .setTranslatedName("Whirlwind")
           .setIcon(ModItems.scimitar)

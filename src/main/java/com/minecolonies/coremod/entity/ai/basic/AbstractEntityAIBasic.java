@@ -383,7 +383,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      *
      * @param timeout the delay to wait after this tick.
      */
-    protected final void setDelay(final int timeout)
+    public final void setDelay(final int timeout)
     {
         this.delay = timeout;
     }

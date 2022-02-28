@@ -264,9 +264,17 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
-    public Set<ItemStorage> getEdibles()
+    public Set<ItemStorage> getEdibles(final int minNutrition)
     {
-        return edibles;
+        final Set<ItemStorage> filteredEdibles = new HashSet<>();
+        for (final ItemStorage storage : edibles)
+        {
+            if ((storage.getItem().getFoodProperties() != null && storage.getItem().getFoodProperties().getNutrition() >= minNutrition))
+            {
+                filteredEdibles.add(storage);
+            }
+        }
+        return filteredEdibles;
     }
 
     @Override

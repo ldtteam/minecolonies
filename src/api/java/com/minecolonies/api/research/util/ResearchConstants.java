@@ -151,6 +151,7 @@ public final class ResearchConstants
     public static final ResourceLocation USE_TOTEM         = new ResourceLocation(Constants.MOD_ID, "effects/usetotemunlock");
     public static final ResourceLocation RECIPE_MODE       = new ResourceLocation(Constants.MOD_ID, "effects/recipemodeunlock");
     public static final ResourceLocation BUILDER_MODE       = new ResourceLocation(Constants.MOD_ID, "effects/buildermodeunlock");
+    public static final ResourceLocation DRUID_USE_POTIONS = new ResourceLocation(Constants.MOD_ID, "effects/consumepotions");
 
     /**
      * Private constructor to hide implicit public one.

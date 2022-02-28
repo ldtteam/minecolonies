@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
+import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -23,7 +24,7 @@ public final class ModGuardTypesInitializer
         final IForgeRegistry<GuardType> reg = event.getRegistry();
 
         ModGuardTypes.knight = new GuardType.Builder()
-                                 .setJobTranslationKey("com.minecolonies.coremod.job.knight")
+                                 .setJobTranslationKey("com.minecolonies.job.knight")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.knight")
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
@@ -34,7 +35,7 @@ public final class ModGuardTypesInitializer
                                  .createGuardType();
 
         ModGuardTypes.ranger = new GuardType.Builder()
-                                 .setJobTranslationKey("com.minecolonies.coremod.job.ranger")
+                                 .setJobTranslationKey("com.minecolonies.job.ranger")
                                  .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.ranger")
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
@@ -44,7 +45,19 @@ public final class ModGuardTypesInitializer
                                  .setClazz(JobRanger.class)
                                  .createGuardType();
 
+        ModGuardTypes.druid = new GuardType.Builder()
+          .setJobTranslationKey("com.minecolonies.job.druid")
+          .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.druid")
+          .setPrimarySkill(Skill.Mana)
+          .setSecondarySkill(Skill.Focus)
+          .setWorkerSoundName("druid")
+          .setJobEntry(() -> ModJobs.druid)
+          .setRegistryName(ModGuardTypes.DRUID_ID)
+          .setClazz(JobDruid.class)
+          .createGuardType();
+
         reg.register(ModGuardTypes.knight);
         reg.register(ModGuardTypes.ranger);
+        reg.register(ModGuardTypes.druid);
     }
 }

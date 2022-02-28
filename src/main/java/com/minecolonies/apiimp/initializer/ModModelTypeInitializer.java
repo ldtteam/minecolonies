@@ -125,5 +125,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.NETHERWORKER = new SimpleModelType(ModModelTypes.NETHERWORKER_ID, 1, new ModelEntityNetherworkerMale(), new ModelEntityNetherworkerFemale());
         reg.register(ModModelTypes.NETHERWORKER);
+
+        ModModelTypes.DRUID = new SimpleModelType(ModModelTypes.DRUID_ID, 1, new ModelEntityDruidMale(), new ModelEntityDruidFemale());
+        reg.register(ModModelTypes.DRUID);
     }
 }

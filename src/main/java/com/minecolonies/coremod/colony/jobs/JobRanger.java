@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.util.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -9,6 +13,9 @@ import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIRanger;
 import net.minecraft.util.ResourceLocation;
 
+import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_LEVEL_NAME;
+import static com.minecolonies.api.util.constant.GuardConstants.KNIGHT_HP_BONUS;
+
 /**
  * The Ranger's Job class
  *
@@ -16,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class JobRanger extends AbstractJobGuard<JobRanger>
 {
+
     /**
      * The name associated with the job.
      */
@@ -31,22 +39,12 @@ public class JobRanger extends AbstractJobGuard<JobRanger>
         super(entity);
     }
 
-    /**
-     * Generates the {@link AbstractEntityAIGuard} job for our ranger.
-     *
-     * @return The AI.
-     */
     @Override
     public EntityAIRanger generateGuardAI()
     {
         return new EntityAIRanger(this);
     }
 
-    /**
-     * Gets the {@link IModelType} to use for our ranger.
-     *
-     * @return The model to use.
-     */
     @Override
     public ResourceLocation getModel()
     {
