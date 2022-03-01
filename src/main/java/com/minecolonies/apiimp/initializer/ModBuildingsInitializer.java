@@ -93,6 +93,7 @@ public final class ModBuildingsInitializer
                                        .addBuildingModuleProducer(BedHandlingModule::new)
                                        .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
                                        .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
+                                       .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
                                        .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))
                                        .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
                                        .addBuildingModuleProducer(() -> new SettingsModule()
@@ -178,7 +179,7 @@ public final class ModBuildingsInitializer
                               .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
                                 (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
                               .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingCook::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
-                                (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
+                                (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
                               .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                               .createBuildingEntry();
 
@@ -248,6 +249,7 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
                                     .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
                                     .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .addBuildingModuleProducer(BedHandlingModule::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))

@@ -41,6 +41,7 @@ import com.minecolonies.coremod.client.render.projectile.RendererSpear;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
+import com.minecolonies.coremod.entity.DruidPotionEntity;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
@@ -50,8 +51,7 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.entity.MinecartRenderer;
-import net.minecraft.client.renderer.entity.TippedArrowRenderer;
+import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.item.ItemModelsProperties;
@@ -247,6 +247,7 @@ public class MineColonies
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.FIREARROW, FireArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.MC_NORMAL_ARROW, TippedArrowRenderer::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.SPEAR, RendererSpear::new);
+        RenderingRegistry.registerEntityRenderingHandler(ModEntities.DRUID_POTION, m -> new SpriteRenderer(m, event.getMinecraftSupplier().get().getItemRenderer(), 1.0f, true));
 
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.BARBARIAN, RendererBarbarian::new);
         RenderingRegistry.registerEntityRenderingHandler(ModEntities.ARCHERBARBARIAN, RendererBarbarian::new);
