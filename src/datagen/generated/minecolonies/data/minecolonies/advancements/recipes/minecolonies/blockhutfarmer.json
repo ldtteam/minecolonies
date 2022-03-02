@@ -1,0 +1,39 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecolonies:blockhutfarmer"
+    ]
+  },
+  "criteria": {
+    "has_items": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "structurize:sceptergold"
+            ]
+          },
+          {
+            "items": [
+              "minecraft:wooden_hoe"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecolonies:blockhutfarmer"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_items",
+      "has_the_recipe"
+    ]
+  ]
+}

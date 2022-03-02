@@ -9,11 +9,11 @@
     "X": {
       "tag": "minecraft:planks"
     },
-    "B": {
-      "item": "minecraft:iron_ingot"
-    },
     "C": {
       "item": "minecraft:cobblestone"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
     },
     "T": {
       "item": "structurize:sceptergold"

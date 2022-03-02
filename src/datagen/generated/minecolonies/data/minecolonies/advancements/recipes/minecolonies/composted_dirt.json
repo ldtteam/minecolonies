@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecolonies:composted_dirt"
+    ]
+  },
+  "criteria": {
+    "has_compost": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecolonies:compost"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecolonies:composted_dirt"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_compost",
+      "has_the_recipe"
+    ]
+  ]
+}

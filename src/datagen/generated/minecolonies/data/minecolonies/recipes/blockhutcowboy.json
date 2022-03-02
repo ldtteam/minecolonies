@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XSX",
+    "XTX",
     "XBX",
     "XXX"
   ],
@@ -12,7 +12,7 @@
     "B": {
       "item": "minecraft:beef"
     },
-    "S": {
+    "T": {
       "item": "structurize:sceptergold"
     }
   },

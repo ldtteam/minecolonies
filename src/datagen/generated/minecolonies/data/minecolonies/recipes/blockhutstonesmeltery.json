@@ -1,22 +1,25 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XXX",
-    "ISI",
+    "XTX",
+    "AFA",
     "XXX"
   ],
   "key": {
     "X": {
       "tag": "minecraft:planks"
     },
-    "I": {
-      "item": "minecraft:iron_nugget"
+    "A": {
+      "item": "minecraft:stone_bricks"
     },
-    "S": {
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "T": {
       "item": "structurize:sceptergold"
     }
   },
   "result": {
-    "item": "minecolonies:blockminecoloniesrack"
+    "item": "minecolonies:blockhutstonesmeltery"
   }
 }

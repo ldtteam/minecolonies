@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "XSX",
     "XTX",
+    "XBX",
     "XXX"
   ],
   "key": {
     "X": {
       "tag": "minecraft:planks"
     },
-    "T": {
+    "B": {
       "item": "minecraft:red_dye"
     },
-    "S": {
+    "T": {
       "item": "structurize:sceptergold"
     }
   },

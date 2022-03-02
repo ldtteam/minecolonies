@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XHX",
+    "XBX",
     "XXX"
   ],
   "key": {
     "X": {
       "tag": "minecraft:planks"
     },
-    "H": {
+    "B": {
       "item": "minecraft:stone_hoe"
     },
     "T": {

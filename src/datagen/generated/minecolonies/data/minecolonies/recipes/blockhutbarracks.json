@@ -1,19 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "WTW",
-    "WBW",
-    "WWW"
+    "XTX",
+    "XBX",
+    "XXX"
   ],
   "key": {
-    "W": {
+    "X": {
       "tag": "minecraft:planks"
-    },
-    "T": {
-      "item": "structurize:sceptergold"
     },
     "B": {
       "item": "minecraft:iron_block"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
     }
   },
   "result": {

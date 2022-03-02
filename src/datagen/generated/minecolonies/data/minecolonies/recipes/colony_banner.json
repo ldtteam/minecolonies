@@ -6,11 +6,11 @@
     " B "
   ],
   "key": {
-    "B": {
-      "item": "structurize:sceptergold"
-    },
     "W": {
       "tag": "minecraft:wool"
+    },
+    "B": {
+      "item": "structurize:sceptergold"
     }
   },
   "result": {

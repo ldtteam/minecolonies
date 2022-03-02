@@ -2,14 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "XTX",
-    "XDX",
+    "XBX",
     "XXX"
   ],
   "key": {
     "X": {
       "item": "minecraft:stone"
     },
-    "D": {
+    "B": {
       "item": "minecraft:bone"
     },
     "T": {
