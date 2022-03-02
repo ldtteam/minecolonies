@@ -126,7 +126,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('C', Items.COBBLESTONE)
                 .define('B', Items.IRON_INGOT)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), Items.IRON_INGOT))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.IRON_INGOT))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockHutGraveyard)
@@ -136,7 +136,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', Items.STONE)
                 .define('B', Items.BONE)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), Items.BONE))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.BONE))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockHutSchool)
@@ -146,7 +146,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('B', Items.FEATHER)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), Items.FEATHER))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.FEATHER))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockHutUniversity)
@@ -156,7 +156,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('B', Items.BOOK)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), Items.BOOK))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.BOOK))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockHutStoneSmeltery)
@@ -167,7 +167,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('A', Items.STONE_BRICKS)
                 .define('F', Items.FURNACE)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), Items.STONE_BRICKS))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.STONE_BRICKS))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockScarecrow)
@@ -177,7 +177,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('L', Items.LEATHER)
                 .define('S', Items.STICK)
                 .define('H', Ingredient.of(Items.HAY_BLOCK, Items.PUMPKIN))
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), ModBlocks.blockHutFarmer))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutFarmer))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockSimpleQuarry)
@@ -188,7 +188,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('D', Items.IRON_PICKAXE)
                 .define('B', Items.BARREL)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), ModBlocks.blockHutMiner))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockMediumQuarry)
@@ -199,7 +199,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('D', Items.DIAMOND_PICKAXE)
                 .define('B', Items.BARREL)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), ModBlocks.blockHutMiner))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
                 .save(consumer);
 
 //        ShapedRecipeBuilder.shaped(ModBlocks.blockLargeQuarry)
@@ -210,10 +210,20 @@ public class DefaultRecipeProvider extends RecipeProvider
 //                .define('D', Items.NETHERITE_PICKAXE)
 //                .define('B', Items.BARREL)
 //                .define('T', buildTool.get())
-//                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), ModBlocks.blockHutMiner))
+//                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
 //                .save(consumer);
     }
 
+    private static InventoryChangeTrigger.Instance hasAllOf(IItemProvider... items)
+    {
+        return InventoryChangeTrigger.Instance.hasItems(items);
+    }
+    
+    private static InventoryChangeTrigger.Instance hasAllOf(ItemPredicate... predicates)
+    {
+        return InventoryChangeTrigger.Instance.hasItems(predicates);
+    }
+    
     private static ResourceLocation append(@NotNull final ResourceLocation base,
                                            @NotNull final String text1,
                                            @NotNull final String text2)
@@ -239,7 +249,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('B', input)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), input))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), input))
                 .save(consumer);
     }
 
@@ -254,7 +264,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('B', input)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(
+                .unlockedBy("has_items", hasAllOf(
                         ItemPredicate.Builder.item().of(buildTool.get()).build(),
                         ItemPredicate.Builder.item().of(input).build()))
                 .save(consumer);
@@ -272,7 +282,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('B', input)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), input))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), input))
                 .save(consumer, append(output, name));
     }
 
@@ -287,7 +297,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('B', input)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), input))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), input))
                 .save(consumer);
     }
 
@@ -301,7 +311,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('S', Items.IRON_INGOT)
                 .define('G', Items.DIRT)
                 .define('T', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), Items.IRON_INGOT))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.IRON_INGOT))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockCompostedDirt)
@@ -329,7 +339,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('I', Tags.Items.CHESTS)
                 .define('S', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(
+                .unlockedBy("has_items", hasAllOf(
                         ItemPredicate.Builder.item().of(buildTool.get()).build(),
                         ItemPredicate.Builder.item().of(Tags.Items.CHESTS).build()))
                 .save(consumer);
@@ -341,7 +351,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('X', ItemTags.PLANKS)
                 .define('I', Tags.Items.CHESTS)
                 .define('S', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(
+                .unlockedBy("has_items", hasAllOf(
                         ItemPredicate.Builder.item().of(buildTool.get()).build(),
                         ItemPredicate.Builder.item().of(Tags.Items.CHESTS).build()))
                 .save(consumer);
@@ -412,7 +422,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .pattern(" B ")
                 .define('W', ItemTags.WOOL)
                 .define('B', buildTool.get())
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(
+                .unlockedBy("has_items", hasAllOf(
                         ItemPredicate.Builder.item().of(buildTool.get()).build(),
                         ItemPredicate.Builder.item().of(ItemTags.WOOL).build()))
                 .save(consumer);
@@ -425,7 +435,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .define('B', ModBlocks.blockHutGuardTower)
                 .define('X', Items.YELLOW_BANNER)
                 .define('C', Items.BOW)
-                .unlockedBy("has_items", InventoryChangeTrigger.Instance.hasItems(buildTool.get(), ModBlocks.blockHutGuardTower))
+                .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutGuardTower))
                 .save(consumer);
 
         ShapedRecipeBuilder.shaped(Items.CHAINMAIL_HELMET)
