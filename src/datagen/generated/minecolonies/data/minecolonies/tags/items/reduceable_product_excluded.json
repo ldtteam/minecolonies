@@ -9,6 +9,8 @@
     "#forge:storage_blocks",
     "minecraft:glowstone",
     "minecraft:dried_kelp_block",
+    "minecraft:honey_block",
+    "minecraft:honeycomb_block",
     "minecraft:bone_block",
     "minecraft:hay_block",
     "minecolonies:bread_dough",

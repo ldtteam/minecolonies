@@ -1,5 +1,4 @@
 {
-  "comment": "Be careful adding tags to this file, as some, especially #minecraft:small_flowers, have logical impacts that has made them used heavily in mods, including many where high availability has severe balance ramifications.",
   "replace": false,
   "values": [
     "minecraft:sunflower",
