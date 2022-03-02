@@ -23,28 +23,28 @@ public class ModTags
      */
     public static boolean tagsLoaded = false;
 
-    public static Tags.IOptionalNamedTag<Block> decorationItems = BlockTags.createOptional(TagConstants.DECORATION_ITEMS);
-    public static Tags.IOptionalNamedTag<Item>  concretePowder = ItemTags.createOptional(TagConstants.CONCRETE_POWDER);
-    public static Tags.IOptionalNamedTag<Block> concreteBlock = BlockTags.createOptional(TagConstants.CONCRETE_BLOCK);
-    public static Tags.IOptionalNamedTag<Block> pathingBlocks = BlockTags.createOptional(TagConstants.PATHING_BLOCKS);
+    public static final Tags.IOptionalNamedTag<Block> decorationItems = BlockTags.createOptional(TagConstants.DECORATION_ITEMS);
+    public static final Tags.IOptionalNamedTag<Item>  concretePowder = ItemTags.createOptional(TagConstants.CONCRETE_POWDER);
+    public static final Tags.IOptionalNamedTag<Block> concreteBlock = BlockTags.createOptional(TagConstants.CONCRETE_BLOCK);
+    public static final Tags.IOptionalNamedTag<Block> pathingBlocks = BlockTags.createOptional(TagConstants.PATHING_BLOCKS);
 
-    public static Tags.IOptionalNamedTag<Block> colonyProtectionException = BlockTags.createOptional(TagConstants.COLONYPROTECTIONEXCEPTION);
-    public static Tags.IOptionalNamedTag<Block> indestructible = BlockTags.createOptional(TagConstants.INDESTRUCTIBLE);
+    public static final Tags.IOptionalNamedTag<Block> colonyProtectionException = BlockTags.createOptional(TagConstants.COLONYPROTECTIONEXCEPTION);
+    public static final Tags.IOptionalNamedTag<Block> indestructible = BlockTags.createOptional(TagConstants.INDESTRUCTIBLE);
 
-    public static Tags.IOptionalNamedTag<Block> oreChanceBlocks = BlockTags.createOptional(TagConstants.ORECHANCEBLOCKS);
+    public static final Tags.IOptionalNamedTag<Block> oreChanceBlocks = BlockTags.createOptional(TagConstants.ORECHANCEBLOCKS);
 
-    public static Tags.IOptionalNamedTag<Item> fungi = ItemTags.createOptional(TagConstants.FUNGI);
-    public static Tags.IOptionalNamedTag<Item> compostables = ItemTags.createOptional(TagConstants.COMPOSTABLES);
-    public static Tags.IOptionalNamedTag<Item> compostables_poor = ItemTags.createOptional(TagConstants.COMPOSTABLES_POOR);
-    public static Tags.IOptionalNamedTag<Item> compostables_rich = ItemTags.createOptional(TagConstants.COMPOSTABLES_RICH);
+    public static final Tags.IOptionalNamedTag<Item> fungi = ItemTags.createOptional(TagConstants.FUNGI);
+    public static final Tags.IOptionalNamedTag<Item> compostables = ItemTags.createOptional(TagConstants.COMPOSTABLES);
+    public static final Tags.IOptionalNamedTag<Item> compostables_poor = ItemTags.createOptional(TagConstants.COMPOSTABLES_POOR);
+    public static final Tags.IOptionalNamedTag<Item> compostables_rich = ItemTags.createOptional(TagConstants.COMPOSTABLES_RICH);
 
-    public static Tags.IOptionalNamedTag<Item> meshes = ItemTags.createOptional(TagConstants.MESHES);
+    public static final Tags.IOptionalNamedTag<Item> meshes = ItemTags.createOptional(TagConstants.MESHES);
 
-    public static Tags.IOptionalNamedTag<Item> floristFlowers = ItemTags.createOptional(TagConstants.FLORIST_FLOWERS);
-    public static Tags.IOptionalNamedTag<Item> excludedFood = ItemTags.createOptional(TagConstants.EXCLUDED_FOOD);
+    public static final Tags.IOptionalNamedTag<Item> floristFlowers = ItemTags.createOptional(TagConstants.FLORIST_FLOWERS);
+    public static final Tags.IOptionalNamedTag<Item> excludedFood = ItemTags.createOptional(TagConstants.EXCLUDED_FOOD);
 
-    public static Tags.IOptionalNamedTag<EntityType<?>> hostile = EntityTypeTags.createOptional(TagConstants.HOSTILE);
-    public static Tags.IOptionalNamedTag<EntityType<?>> mobAttackBlacklist = EntityTypeTags.createOptional(TagConstants.MOB_ATTACK_BLACKLIST);
+    public static final Tags.IOptionalNamedTag<EntityType<?>> hostile = EntityTypeTags.createOptional(TagConstants.HOSTILE);
+    public static final Tags.IOptionalNamedTag<EntityType<?>> mobAttackBlacklist = EntityTypeTags.createOptional(TagConstants.MOB_ATTACK_BLACKLIST);
 
     public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterProductExclusions    = new HashMap<>();

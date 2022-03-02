@@ -132,6 +132,8 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .addOptional(new ResourceLocation("waystones:mossy_waystone"));
 
         tag(ModTags.indestructible).add(Blocks.BEDROCK);
-        tag(ModTags.oreChanceBlocks).addTags(Tags.Blocks.STONE, Tags.Blocks.COBBLESTONE);
+        tag(ModTags.oreChanceBlocks)
+                .addTags(Tags.Blocks.STONE, Tags.Blocks.COBBLESTONE)
+                .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
     }
 }
