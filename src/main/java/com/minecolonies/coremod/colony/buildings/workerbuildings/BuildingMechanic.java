@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_MECHANIC;
 
 /**
  * Class of the mechanic building.
@@ -77,7 +78,7 @@ public class BuildingMechanic extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(MECHANIC)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_MECHANIC)
                     .combine(super.getIngredientValidator());
         }
 
@@ -86,7 +87,7 @@ public class BuildingMechanic extends AbstractBuilding
         {
             if (!super.isRecipeCompatible(recipe)) return false;
 
-            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, MECHANIC);
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_MECHANIC);
             if (isRecipeAllowed.isPresent()) { return isRecipeAllowed.get(); }
 
             final Item item = recipe.getPrimaryOutput().getItem();

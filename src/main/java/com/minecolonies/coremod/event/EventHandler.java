@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -47,8 +48,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
@@ -126,10 +125,9 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
-        Tag<EntityType<?>> mobBlacklist = EntityTypeTags.getAllTags().getTag(new ResourceLocation(Constants.MOD_ID,"mob_attack_blacklist" ));
         if (!event.getWorld().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy)  && !(mobBlacklist.contains(event.getEntity().getType())))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy)  && !(ModTags.mobAttackBlacklist.contains(event.getEntity().getType())))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));

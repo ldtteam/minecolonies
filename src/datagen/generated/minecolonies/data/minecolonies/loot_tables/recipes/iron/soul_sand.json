@@ -2,11 +2,7 @@
   "pools": [
     {
       "rolls": 1.0,
-      "bonus_rolls": {
-        "type": "minecraft:uniform",
-        "min": 0.025,
-        "max": 0.025
-      },
+      "bonus_rolls": 0.025,
       "entries": [
         {
           "type": "minecraft:empty",

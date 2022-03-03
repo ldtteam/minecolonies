@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -156,7 +157,7 @@ public class BuildingFarmer extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(FARMER)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FARMER)
                     .combine(super.getIngredientValidator());
         }
 
@@ -164,7 +165,7 @@ public class BuildingFarmer extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, FARMER).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_FARMER).orElse(false);
         }
     }
 }

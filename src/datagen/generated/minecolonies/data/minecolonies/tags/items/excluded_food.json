@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:enchanted_golden_apple",
+    "minecraft:poisonous_potato",
+    "minecraft:rotten_flesh",
+    "minecolonies:chorus_bread",
+    "minecolonies:golden_bread"
+  ]
+}

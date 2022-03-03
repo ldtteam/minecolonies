@@ -17,6 +17,8 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_GLASSBLOWER;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_GLASSBLOWER_SMELTING;
 
 /**
  * Class of the glassblower building.
@@ -69,7 +71,7 @@ public class BuildingGlassblower extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(GLASS_BLOWER)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER)
                     .combine(super.getIngredientValidator());
         }
 
@@ -80,7 +82,7 @@ public class BuildingGlassblower extends AbstractBuilding
             {
                 return false;
             }
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_GLASSBLOWER).orElse(false);
         }
     }
 
@@ -96,6 +98,14 @@ public class BuildingGlassblower extends AbstractBuilding
             super(jobEntry);
         }
 
+        @NotNull
+        @Override
+        public OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER_SMELTING)
+                    .combine(super.getIngredientValidator());
+        }
+
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
@@ -103,7 +113,7 @@ public class BuildingGlassblower extends AbstractBuilding
             {
                 return false;
             }
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, GLASS_BLOWER_SMELTING).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_GLASSBLOWER_SMELTING).orElse(false);
         }
     }
 

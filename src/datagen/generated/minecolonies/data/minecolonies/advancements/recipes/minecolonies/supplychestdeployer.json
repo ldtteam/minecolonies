@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecolonies:supplychestdeployer"
+    ]
+  },
+  "criteria": {
+    "has_boat": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "minecraft:boats"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecolonies:supplychestdeployer"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_boat",
+      "has_the_recipe"
+    ]
+  ]
+}

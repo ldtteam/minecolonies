@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_SAWMILL;
 
 /**
  * Class of the sawmill building.
@@ -77,7 +78,7 @@ public class BuildingSawmill extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(SAWMILL)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
                     .combine(super.getIngredientValidator());
         }
 
@@ -86,7 +87,7 @@ public class BuildingSawmill extends AbstractBuilding
         {
             if (!super.isRecipeCompatible(recipe)) return false;
 
-            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, SAWMILL);
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_SAWMILL);
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 
             double amountOfValidBlocks = 0;

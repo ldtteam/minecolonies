@@ -39,6 +39,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.TAG_SITTING;
 import static com.minecolonies.api.util.constant.Suppression.OVERRIDE_EQUALS;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_COOK;
 
 /**
  * Class of the cook building.
@@ -294,7 +295,7 @@ public class BuildingCook extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(COOK_DESC)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_COOK)
                     .combine(super.getIngredientValidator());
         }
 
@@ -303,7 +304,7 @@ public class BuildingCook extends AbstractBuilding
         {
             if (!super.isRecipeCompatible(recipe)) return false;
 
-            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, COOK_DESC);
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK);
             if (isRecipeAllowed.isPresent()) return isRecipeAllowed.get();
 
             final ItemStack output = recipe.getPrimaryOutput();
@@ -353,7 +354,7 @@ public class BuildingCook extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(COOK_DESC)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_COOK)
                     .combine(super.getIngredientValidator());
         }
 
@@ -361,7 +362,7 @@ public class BuildingCook extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, COOK_DESC).orElse(ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput()));
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_COOK).orElse(ItemStackUtils.CAN_EAT.test(recipe.getPrimaryOutput()));
         }
 
         @Override

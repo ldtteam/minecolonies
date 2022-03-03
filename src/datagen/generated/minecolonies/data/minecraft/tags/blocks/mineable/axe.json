@@ -54,6 +54,8 @@
     "minecolonies:blockhutmysticalsite",
     "minecolonies:blockhutflorist",
     "minecolonies:blockpostbox",
-    "minecolonies:blockhutgraveyard"
+    "minecolonies:blockhutgraveyard",
+    "minecolonies:simplequarry",
+    "minecolonies:mediumquarry"
   ]
 }

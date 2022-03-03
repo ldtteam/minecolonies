@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " W ",
+    " W ",
+    " B "
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "B": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:colony_banner"
+  }
+}

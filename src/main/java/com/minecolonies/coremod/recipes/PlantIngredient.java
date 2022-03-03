@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.recipes;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.level.block.CropBlock;
@@ -9,16 +10,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import net.minecraft.world.item.crafting.Ingredient.Value;
 import net.minecraft.world.item.crafting.Ingredient.ItemValue;
-
 /**
  * An ingredient that can be used in a vanilla recipe to match plantable items.
  *
@@ -51,6 +53,15 @@ public class PlantIngredient extends Ingredient
 
     @NotNull
     @Override
+    public JsonElement toJson()
+    {
+        JsonObject json = new JsonObject();
+        Serializer.getInstance().write(json, this);
+        return json;
+    }
+
+    @NotNull
+    @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
         return Serializer.getInstance();
@@ -69,6 +80,11 @@ public class PlantIngredient extends Ingredient
         public PlantIngredient parse(@NotNull final JsonObject json)
         {
             return PlantIngredient.getInstance();
+        }
+
+        public void write(@NotNull final JsonObject json, @NotNull final PlantIngredient ingredient)
+        {
+            json.addProperty("type", (Objects.requireNonNull(CraftingHelper.getID(this))).toString());
         }
 
         @NotNull

@@ -1,0 +1,24 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:stone",
+    "#forge:cobblestone",
+    "#forge:end_stones",
+    "#domum_ornamentum:brick_items",
+    "#domum_ornamentum:extra_block_items",
+    "minecraft:nether_brick",
+    "minecraft:popped_chorus_fruit",
+    "minecraft:purpur_block",
+    "minecraft:purpur_slab",
+    "minecraft:prismarine_shard",
+    "minecraft:prismarine_crystals",
+    "minecraft:blackstone",
+    "minecraft:polished_blackstone",
+    "minecraft:polished_blackstone_slab",
+    "minecraft:polished_blackstone_bricks",
+    "minecraft:basalt",
+    "minecraft:polished_basalt",
+    "minecraft:bricks",
+    "minecraft:stone_bricks"
+  ]
+}
