@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_BLACKSMITH;
 
 /**
  * Creates a new building for the blacksmith.
@@ -64,7 +65,7 @@ public class BuildingBlacksmith extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(BLACKSMITH)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_BLACKSMITH)
                     .combine(super.getIngredientValidator());
         }
 
@@ -84,7 +85,7 @@ public class BuildingBlacksmith extends AbstractBuilding
                     Compatibility.isTinkersWeapon(output);
             if (matchOverride) return true;
 
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, BLACKSMITH).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_BLACKSMITH).orElse(false);
         }
     }
 }

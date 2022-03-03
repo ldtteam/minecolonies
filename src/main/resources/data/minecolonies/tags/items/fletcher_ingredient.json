@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:string",
-    "#minecraft:wool",
-    "minecraft:rabbit_hide",
-    "minecraft:leather"
-  ]
-}

@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_STONE_SMELTERY;
 
 /**
  * Class of the stone smeltery building.
@@ -63,7 +64,7 @@ public class BuildingStoneSmeltery extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(STONE_SMELTERY)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONE_SMELTERY)
                     .combine(super.getIngredientValidator());
         }
 
@@ -71,7 +72,7 @@ public class BuildingStoneSmeltery extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, STONE_SMELTERY).orElse(false);
+            return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_STONE_SMELTERY).orElse(false);
         }
     }
 }

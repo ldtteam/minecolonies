@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RECIPES;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_REDUCEABLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
 
 /**
@@ -76,11 +77,6 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      * Extra amount of recipes the crafters can learn.
      */
     private static final int EXTRA_RECIPE_MULTIPLIER = 5;
-
-    /**
-     * The name of the tag for improving recipes
-     */
-    private static final String REDUCEABLE = "reduceable";
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -494,14 +490,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         ItemStorage reducedItem = null;
 
-        if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(REDUCEABLE) && !ModTags.crafterProductExclusions.get(REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
+        if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(CRAFTING_REDUCEABLE) && !ModTags.crafterProductExclusions.get(CRAFTING_REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
         {
             final ArrayList<ItemStorage> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             for(ItemStorage input : inputs)
             {
                 // Check against excluded products
-                if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(REDUCEABLE) && ModTags.crafterIngredient.get(REDUCEABLE).contains(input.getItem()))
+                if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(CRAFTING_REDUCEABLE) && ModTags.crafterIngredient.get(CRAFTING_REDUCEABLE).contains(input.getItem()))
                 {
                     reducedItem = input.copy();
                     reducedItem.setAmount(input.getAmount() - 1);

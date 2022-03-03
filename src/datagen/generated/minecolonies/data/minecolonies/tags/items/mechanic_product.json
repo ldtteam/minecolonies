@@ -1,0 +1,27 @@
+{
+  "replace": false,
+  "values": [
+    "#minecolonies:storage_blocks",
+    "#minecraft:rails",
+    "#minecraft:wooden_pressure_plates",
+    "minecraft:heavy_weighted_pressure_plate",
+    "minecraft:light_weighted_pressure_plate",
+    "minecraft:polished_blackstone_pressure_plate",
+    "minecraft:stone_pressure_plate",
+    "minecraft:blue_ice",
+    "minecraft:packed_ice",
+    "minecraft:daylight_detector",
+    "minecraft:lever",
+    "minecraft:sticky_piston",
+    "minecraft:tripwire_hook",
+    "minecraft:enchanting_table",
+    "minecraft:jack_o_lantern",
+    "minecraft:lantern",
+    "minecraft:sea_lantern",
+    "minecraft:soul_lantern",
+    "minecraft:soul_torch",
+    "minecraft:torch",
+    "minecraft:ender_chest",
+    "minecraft:trapped_chest"
+  ]
+}

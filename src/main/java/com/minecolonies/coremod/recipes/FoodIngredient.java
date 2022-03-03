@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.recipes;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -9,6 +10,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +19,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import net.minecraft.item.crafting.Ingredient.IItemList;
-import net.minecraft.item.crafting.Ingredient.SingleItemList;
 
 /**
  * An ingredient that can be used in a vanilla recipe to match food items.
@@ -87,6 +86,15 @@ public class FoodIngredient extends Ingredient
 
     @NotNull
     @Override
+    public JsonElement toJson()
+    {
+        JsonObject json = new JsonObject();
+        Serializer.getInstance().write(json, this);
+        return json;
+    }
+
+    @NotNull
+    @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
         return Serializer.getInstance();
@@ -139,6 +147,16 @@ public class FoodIngredient extends Ingredient
             if (json.has(MAX_SATURATION_PROP)) builder.maxSaturation(JSONUtils.getAsFloat(json, MAX_SATURATION_PROP));
 
             return builder.build();
+        }
+
+        public void write(@NotNull final JsonObject json, @NotNull final FoodIngredient ingredient)
+        {
+            json.addProperty("type", (Objects.requireNonNull(CraftingHelper.getID(this))).toString());
+
+            ingredient.minHealing.ifPresent(value -> json.addProperty(MIN_HEALING_PROP, value));
+            ingredient.maxHealing.ifPresent(value -> json.addProperty(MAX_HEALING_PROP, value));
+            ingredient.minSaturation.ifPresent(value -> json.addProperty(MIN_SATURATION_PROP, value));
+            ingredient.maxSaturation.ifPresent(value -> json.addProperty(MAX_SATURATION_PROP, value));
         }
 
         @NotNull
