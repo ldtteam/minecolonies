@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecolonies:clipboard"
+    ]
+  },
+  "criteria": {
+    "has_build_tool": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "structurize:sceptergold"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecolonies:clipboard"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_build_tool",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -12,7 +12,6 @@ import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRecipeManager;
@@ -655,9 +654,6 @@ public final class ColonyManager implements IColonyManager
     {
         if (!world.isClientSide)
         {
-            // Remote clients only guarantee consistent tag behavior if loaded from a TagsUpdatedEvent.
-            ModTagsInitializer.init(world.getTagManager());
-
             // Late-load restore if cap was not loaded
             if (!capLoaded)
             {

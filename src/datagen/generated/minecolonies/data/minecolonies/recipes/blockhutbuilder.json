@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XTX",
+    "XBX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:planks"
+    },
+    "B": {
+      "tag": "minecraft:wooden_doors"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutbuilder"
+  }
+}

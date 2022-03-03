@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "minecolonies:cookie_dough"
+  },
+  "result": "minecraft:cookie",
+  "experience": 0.0475,
+  "cookingtime": 25
+}
