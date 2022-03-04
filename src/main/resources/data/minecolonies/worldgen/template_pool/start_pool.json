@@ -16,7 +16,7 @@
       "element": {
         "location": "minecolonies:medieval_oak/townhall",
         "processors": "minecolonies:medieval_oak/placeholder_replacement",
-    "projection": "rigid",
+        "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     },

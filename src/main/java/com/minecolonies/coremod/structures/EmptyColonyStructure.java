@@ -1,13 +1,9 @@
 package com.minecolonies.coremod.structures;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.util.Log;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.NoiseColumn;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -18,9 +14,7 @@ import net.minecraft.world.level.levelgen.structure.PostPlacementProcessor;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGenerator;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplier;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
-import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -51,23 +45,6 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
         return GenerationStep.Decoration.SURFACE_STRUCTURES;
     }
 
-    /**
-     * Potential entities to spawn in the structure with quantities.
-     */
-    private static final List<MobSpawnSettings.SpawnerData> STRUCTURE_CREATURES = ImmutableList.of(
-      new MobSpawnSettings.SpawnerData(EntityType.SHEEP, 30, 2, 10),
-      new MobSpawnSettings.SpawnerData(EntityType.COW, 30, 2, 10),
-      new MobSpawnSettings.SpawnerData(EntityType.CAT, 100, 1, 2)
-    );
-
-    public static void setupStructureSpawns(final StructureSpawnListGatherEvent event)
-    {
-        if (event.getStructure() == MineColoniesStructures.EMPTY_COLONY.get())
-        {
-            event.addEntitySpawns(MobCategory.CREATURE, STRUCTURE_CREATURES);
-        }
-    }
-
     private static boolean isFeatureChunk(PieceGeneratorSupplier.Context<JigsawConfiguration> context)
     {
         BlockPos blockPos = context.chunkPos().getWorldPosition();
@@ -89,9 +66,6 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
 
         // Turns the chunk coordinates into actual coordinates we can use. (Gets center of that chunk)
         BlockPos blockpos = context.chunkPos().getMiddleBlockPosition(0);
-
-        context.config().maxDepth = 10;
-
         Optional<PieceGenerator<JigsawConfiguration>> structurePiecesGenerator =
           JigsawPlacement.addPieces(
             context,

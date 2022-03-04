@@ -102,9 +102,6 @@ public class MineColonies
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
-
-        IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.addListener(EventPriority.NORMAL, EmptyColonyStructure::setupStructureSpawns);
     }
 
     /**
