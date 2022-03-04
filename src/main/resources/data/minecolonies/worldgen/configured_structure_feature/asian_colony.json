@@ -3,7 +3,7 @@
 
   "config": {
     "start_pool": "minecolonies:asian_pool",
-    "size": 7
+    "size": 10
   },
 
   "biomes": "#minecolonies:has_structure/asian_colony",
