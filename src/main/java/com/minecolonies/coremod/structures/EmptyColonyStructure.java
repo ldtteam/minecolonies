@@ -66,6 +66,10 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
 
         // Turns the chunk coordinates into actual coordinates we can use. (Gets center of that chunk)
         BlockPos blockpos = context.chunkPos().getMiddleBlockPosition(0);
+
+        int topLandY = context.chunkGenerator().getFirstFreeHeight(blockpos.getX(), blockpos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor());
+        blockpos = blockpos.above(topLandY);
+
         Optional<PieceGenerator<JigsawConfiguration>> structurePiecesGenerator =
           JigsawPlacement.addPieces(
             context,

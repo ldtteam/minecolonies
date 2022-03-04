@@ -2,11 +2,11 @@
   "type": "minecolonies:empty_colony",
 
   "config": {
-    "start_pool": "minecolonies:start_pool",
-    "size": 10
+    "start_pool": "minecolonies:asian_pool",
+    "size": 7
   },
 
-  "biomes": "#minecolonies:has_structure/empty_colony",
+  "biomes": "#minecolonies:has_structure/asian_colony",
 
   "adapt_noise": true,
   "spawn_overrides": {

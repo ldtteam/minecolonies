@@ -1,0 +1,37 @@
+{
+  "type": "minecolonies:empty_colony",
+
+  "config": {
+    "start_pool": "minecolonies:medieval_spruce_pool",
+    "size": 7
+  },
+
+  "biomes": "#minecolonies:has_structure/medieval_spruce_colony",
+
+  "adapt_noise": true,
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "piece",
+      "spawns": [
+        {
+          "type": "minecraft:sheep",
+          "weight": 30,
+          "minCount": 2,
+          "maxCount": 10
+        },
+        {
+          "type": "minecraft:cow",
+          "weight": 30,
+          "minCount": 2,
+          "maxCount": 10
+        },
+        {
+          "type": "minecraft:cat",
+          "weight": 100,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ]
+    }
+  }
+}

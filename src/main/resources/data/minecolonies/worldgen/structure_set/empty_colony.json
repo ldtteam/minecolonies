@@ -1,15 +1,33 @@
 {
   "structures": [
     {
-      // this points to the configured feature, so here we want a list of all the different colonies
-      // then in configured feature we copy the file and put the colonies into different biomes.
-      "structure": "minecolonies:empty_colony",
+      "structure": "minecolonies:medieval_birch_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:medieval_oak_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:medieval_spruce_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:medieval_dark_oak_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:asian_colony",
+      "weight": 1
+    },
+    {
+      "structure": "minecolonies:caledonia_colony",
       "weight": 1
     }
   ],
   "placement": {
-    "salt": 3225566777,
-    "spacing": 60,
+    "salt": 1225566777,
+    "spacing": 50,
     "separation": 20,
     "type": "minecraft:random_spread"
   }
