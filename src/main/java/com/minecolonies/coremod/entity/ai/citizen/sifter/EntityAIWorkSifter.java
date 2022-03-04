@@ -118,9 +118,9 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (currentRecipeStorage == null)
         {
-            if(InventoryUtils.getCountFromBuilding(sifterBuilding, i -> ModTags.meshes.contains(i.getItem())) == 0)
+            if(InventoryUtils.getCountFromBuilding(sifterBuilding, i -> i.is(ModTags.meshes)) == 0)
             {
-                if(InventoryUtils.getItemCountInProvider(worker, i -> ModTags.meshes.contains(i.getItem())) > 0)
+                if(InventoryUtils.getItemCountInProvider(worker, i -> i.is(ModTags.meshes)) > 0)
                 {
                     // We don't want the mesh in our inventory, we 'craft' out of the building
                     incrementActionsDone();

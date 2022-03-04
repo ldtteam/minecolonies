@@ -38,6 +38,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -1587,7 +1588,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param tag the requested tag.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final Tag<Item> tag, final int count)
+    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final TagKey<Item> tag, final int count)
     {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.is(tag) && stack.getCount() >= count))
         {

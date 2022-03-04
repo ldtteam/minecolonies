@@ -326,7 +326,7 @@ public class RaidManager implements IRaiderManager
 
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
-            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).getBiomeCategory().getName();
+            final String homeBiomePath = colony.getWorld().getBiome(colony.getCenter()).value().getBiomeCategory().getName();
             final int rand = colony.getWorld().random.nextInt(100);
             if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
@@ -355,7 +355,7 @@ public class RaidManager implements IRaiderManager
             }
             else
             {
-                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).getBiomeCategory().getName().toLowerCase();
+                final String biomePath = colony.getWorld().getBiome(targetSpawnPoint).value().getBiomeCategory().getName().toLowerCase();
                 final HordeRaidEvent event;
                 if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
                        && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
@@ -701,7 +701,7 @@ public class RaidManager implements IRaiderManager
             &&
             (
               raidThisNight(colony.getWorld(), colony)
-                || colony.getWorld().getBiome(colony.getCenter()).getBiomeCategory().getName().contains("desert") && colony.getWorld().isRaining()
+                || colony.getWorld().getBiome(colony.getCenter()).value().getBiomeCategory().getName().contains("desert") && colony.getWorld().isRaining()
             );
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())

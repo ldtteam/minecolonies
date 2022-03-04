@@ -19,6 +19,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_DYER;
@@ -175,7 +177,7 @@ public class BuildingDyer extends AbstractBuilding
         {
             if (woolItems == null)
             {
-                woolItems = ItemTags.WOOL.getValues().stream()
+                woolItems = StreamSupport.stream(Registry.ITEM.getTagOrEmpty(ItemTags.WOOL).spliterator(), false)
                   .filter(item -> !item.equals(Items.WHITE_WOOL))
                   .map(i -> new ItemStorage(new ItemStack(i))).collect(Collectors.toList());
             }

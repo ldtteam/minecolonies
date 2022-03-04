@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
+import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.core.NonNullList;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -163,9 +165,9 @@ public final class StandardRequests
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestTag requested)
         {
             super(requester, token, requested);
-            stacks = requested.getTag().getValues().stream().flatMap(item -> {
+            stacks = StreamSupport.stream(Registry.ITEM.getTagOrEmpty(requested.getTag()).spliterator(), false).flatMap(item -> {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(item.getItemCategory(), list);
+                item.value().fillItemCategory(item.value().getItemCategory(), list);
                 return list.stream();
             }).collect(Collectors.toList());
         }
@@ -173,9 +175,9 @@ public final class StandardRequests
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final RequestTag requested)
         {
             super(requester, token, state, requested);
-            stacks = requested.getTag().getValues().stream().flatMap(item -> {
+            stacks = StreamSupport.stream(Registry.ITEM.getTagOrEmpty(requested.getTag()).spliterator(), false).flatMap(item -> {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(item.getItemCategory(), list);
+                item.value().fillItemCategory(item.value().getItemCategory(), list);
                 return list.stream();
             }).collect(Collectors.toList());
         }

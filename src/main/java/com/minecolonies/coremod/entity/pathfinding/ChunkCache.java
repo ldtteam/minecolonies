@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -149,7 +150,7 @@ public class ChunkCache implements LevelReader
     }
 
     @Override
-    public Biome getUncachedNoiseBiome(final int x, final int y, final int z)
+    public Holder<Biome> getUncachedNoiseBiome(final int x, final int y, final int z)
     {
         return null;
     }

@@ -319,7 +319,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     protected static boolean isDecoItem(Block block)
     {
-        return ModTags.decorationItems.contains(block) || block instanceof BlockFluidSubstitution;
+        return block.defaultBlockState().is(ModTags.decorationItems) || block instanceof BlockFluidSubstitution;
     }
 
     /**

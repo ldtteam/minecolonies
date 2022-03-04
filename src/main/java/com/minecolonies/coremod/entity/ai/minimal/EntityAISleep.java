@@ -18,6 +18,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.BedHandlingModule;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.SleepingParticleMessage;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -126,7 +127,7 @@ public class EntityAISleep extends Goal
         if (homeBuilding == null)
         {
             @Nullable final BlockPos homePosition = citizen.getRestrictCenter();
-            if (homePosition.distSqr(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()), false) <= RANGE_TO_BE_HOME)
+            if (homePosition.distSqr(new Vec3i(Math.floor(citizen.getX()), citizen.getY(), Math.floor(citizen.getZ()))) <= RANGE_TO_BE_HOME)
             {
                 return FIND_BED;
             }

@@ -259,7 +259,7 @@ public class Stack implements IConcreteDeliverable
     {
         if (matchOreDic)
         {
-            if (!Collections.disjoint(stack.getItem().getTags(), theStack.getItem().getTags()))
+            if (!Collections.disjoint(stack.getTags().toList(), theStack.getTags().toList()))
             {
                 return true;
             }

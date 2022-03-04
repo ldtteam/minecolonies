@@ -120,10 +120,10 @@ public class BuildingMechanic extends AbstractBuilding
                 {
                     final ItemStack ingredientStack = new ItemStack(block);
                     if (!ItemStackUtils.isEmpty(ingredientStack)
-                          && !ModTags.crafterIngredient.get(BuildingFletcher.FLETCHER).contains(ingredientStack.getItem())
-                          && !ModTags.crafterIngredient.get(BuildingSawmill.SAWMILL).contains(ingredientStack.getItem())
-                          && !ModTags.crafterIngredient.get(BuildingStonemason.STONEMASON).contains(ingredientStack.getItem())
-                          && !ModTags.crafterIngredient.get(BuildingGlassblower.GLASS_BLOWER).contains(ingredientStack.getItem()))
+                          && !ingredientStack.is(ModTags.crafterIngredient.get(BuildingFletcher.FLETCHER))
+                          && !ingredientStack.is(ModTags.crafterIngredient.get(BuildingSawmill.SAWMILL))
+                          && !ingredientStack.is(ModTags.crafterIngredient.get(BuildingStonemason.STONEMASON))
+                          && !ingredientStack.is(ModTags.crafterIngredient.get(BuildingGlassblower.GLASS_BLOWER)))
                     {
                         return true;
                     }

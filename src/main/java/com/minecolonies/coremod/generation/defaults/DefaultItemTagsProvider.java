@@ -9,6 +9,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.Tags;
@@ -64,7 +65,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RED_CONCRETE_POWDER)
                 .add(Items.BLACK_CONCRETE_POWDER);
 
-        final Tags.IOptionalNamedTag<Item> glazedTerracotta = ItemTags.createOptional(new ResourceLocation(MOD_ID, "glazed_terracotta"));
+        final TagKey<Item> glazedTerracotta = ItemTags.create(new ResourceLocation(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta)
                 .add(Items.WHITE_GLAZED_TERRACOTTA)
                 .add(Items.ORANGE_GLAZED_TERRACOTTA)
@@ -83,7 +84,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RED_GLAZED_TERRACOTTA)
                 .add(Items.BLACK_GLAZED_TERRACOTTA);
 
-        final Tags.IOptionalNamedTag<Item> storageBlocks = ItemTags.createOptional(new ResourceLocation(MOD_ID, "storage_blocks"));
+        final TagKey<Item> storageBlocks = ItemTags.create(new ResourceLocation(MOD_ID, "storage_blocks"));
         tag(storageBlocks)
                 .addTag(Tags.Items.STORAGE_BLOCKS)
                 .add(Items.BONE_BLOCK)

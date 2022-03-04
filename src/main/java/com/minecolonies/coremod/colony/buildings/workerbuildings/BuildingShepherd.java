@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Creates a new building for the Shepherd.
@@ -99,7 +101,8 @@ public class BuildingShepherd extends AbstractBuilding
         {
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(super.getExpectedLoot());
 
-            final List<ItemStack> wool = ItemTags.WOOL.getValues().stream()
+
+            final List<ItemStack> wool = StreamSupport.stream(Registry.ITEM.getTagOrEmpty(ItemTags.WOOL).spliterator(), false)
                     .map(ItemStack::new)
                     .collect(Collectors.toList());
             drops.add(new LootTableAnalyzer.LootDrop(wool, 1, 0, false));

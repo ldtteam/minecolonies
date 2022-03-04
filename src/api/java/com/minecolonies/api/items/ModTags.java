@@ -1,14 +1,14 @@
 package com.minecolonies.api.items;
 
 import com.minecolonies.api.util.constant.TagConstants;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -23,36 +23,36 @@ public class ModTags
      */
     public static boolean tagsLoaded = false;
 
-    public static final Tags.IOptionalNamedTag<Block> decorationItems = BlockTags.createOptional(TagConstants.DECORATION_ITEMS);
-    public static final Tags.IOptionalNamedTag<Item>  concretePowder = ItemTags.createOptional(TagConstants.CONCRETE_POWDER);
-    public static final Tags.IOptionalNamedTag<Block> concreteBlock = BlockTags.createOptional(TagConstants.CONCRETE_BLOCK);
-    public static final Tags.IOptionalNamedTag<Block> pathingBlocks = BlockTags.createOptional(TagConstants.PATHING_BLOCKS);
+    public static final TagKey<Block> decorationItems = BlockTags.create(TagConstants.DECORATION_ITEMS);
+    public static final TagKey<Item>  concretePowder  = ItemTags.create(TagConstants.CONCRETE_POWDER);
+    public static final TagKey<Block> concreteBlock = BlockTags.create(TagConstants.CONCRETE_BLOCK);
+    public static final TagKey<Block> pathingBlocks = BlockTags.create(TagConstants.PATHING_BLOCKS);
 
-    public static final Tags.IOptionalNamedTag<Block> colonyProtectionException = BlockTags.createOptional(TagConstants.COLONYPROTECTIONEXCEPTION);
-    public static final Tags.IOptionalNamedTag<Block> indestructible = BlockTags.createOptional(TagConstants.INDESTRUCTIBLE);
+    public static final TagKey<Block> colonyProtectionException = BlockTags.create(TagConstants.COLONYPROTECTIONEXCEPTION);
+    public static final TagKey<Block> indestructible = BlockTags.create(TagConstants.INDESTRUCTIBLE);
 
-    public static final Tags.IOptionalNamedTag<Block> oreChanceBlocks = BlockTags.createOptional(TagConstants.ORECHANCEBLOCKS);
+    public static final TagKey<Block> oreChanceBlocks = BlockTags.create(TagConstants.ORECHANCEBLOCKS);
 
-    public static final Tags.IOptionalNamedTag<Item> fungi = ItemTags.createOptional(TagConstants.FUNGI);
-    public static final Tags.IOptionalNamedTag<Item> compostables = ItemTags.createOptional(TagConstants.COMPOSTABLES);
-    public static final Tags.IOptionalNamedTag<Item> compostables_poor = ItemTags.createOptional(TagConstants.COMPOSTABLES_POOR);
-    public static final Tags.IOptionalNamedTag<Item> compostables_rich = ItemTags.createOptional(TagConstants.COMPOSTABLES_RICH);
+    public static final TagKey<Item> fungi = ItemTags.create(TagConstants.FUNGI);
+    public static final TagKey<Item> compostables = ItemTags.create(TagConstants.COMPOSTABLES);
+    public static final TagKey<Item> compostables_poor = ItemTags.create(TagConstants.COMPOSTABLES_POOR);
+    public static final TagKey<Item> compostables_rich = ItemTags.create(TagConstants.COMPOSTABLES_RICH);
 
-    public static final Tags.IOptionalNamedTag<Item> meshes = ItemTags.createOptional(TagConstants.MESHES);
+    public static final TagKey<Item> meshes = ItemTags.create(TagConstants.MESHES);
 
-    public static final Tags.IOptionalNamedTag<Item> floristFlowers = ItemTags.createOptional(TagConstants.FLORIST_FLOWERS);
-    public static final Tags.IOptionalNamedTag<Item> excludedFood = ItemTags.createOptional(TagConstants.EXCLUDED_FOOD);
+    public static final TagKey<Item> floristFlowers = ItemTags.create(TagConstants.FLORIST_FLOWERS);
+    public static final TagKey<Item> excludedFood = ItemTags.create(TagConstants.EXCLUDED_FOOD);
 
-    public static final Tags.IOptionalNamedTag<Item> breakable_ore = ItemTags.createOptional(TagConstants.BREAKABLE_ORE);
-    public static final Tags.IOptionalNamedTag<Item> raw_ore = ItemTags.createOptional(TagConstants.RAW_ORE);
+    public static final TagKey<Item> breakable_ore = ItemTags.create(TagConstants.BREAKABLE_ORE);
+    public static final TagKey<Item> raw_ore = ItemTags.create(TagConstants.RAW_ORE);
 
-    public static final Tags.IOptionalNamedTag<EntityType<?>> hostile = EntityTypeTags.createOptional(TagConstants.HOSTILE);
-    public static final Tags.IOptionalNamedTag<EntityType<?>> mobAttackBlacklist = EntityTypeTags.createOptional(TagConstants.MOB_ATTACK_BLACKLIST);
+    public static final TagKey<EntityType<?>> hostile = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.HOSTILE);
+    public static final TagKey<EntityType<?>> mobAttackBlacklist = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, TagConstants.MOB_ATTACK_BLACKLIST);
 
-    public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterProduct              = new HashMap<>();
-    public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterProductExclusions    = new HashMap<>();
-    public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterIngredient           = new HashMap<>();
-    public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterIngredientExclusions = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterProduct              = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterProductExclusions    = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterIngredient           = new HashMap<>();
+    public static final Map<String, TagKey<Item>> crafterIngredientExclusions = new HashMap<>();
 
     /**
      * Tag specifier for Products to Include
@@ -105,10 +105,10 @@ public class ModTags
         final ResourceLocation productsExcluded = new ResourceLocation(MOD_ID, crafterName.concat(PRODUCT_EXCLUDED));
         final ResourceLocation ingredientsExcluded = new ResourceLocation(MOD_ID, crafterName.concat(INGREDIENT_EXCLUDED));
 
-        crafterProduct.put(crafterName, ItemTags.createOptional(products));
-        crafterProductExclusions.put(crafterName, ItemTags.createOptional(productsExcluded));
-        crafterIngredient.put(crafterName, ItemTags.createOptional(ingredients));
-        crafterIngredientExclusions.put(crafterName, ItemTags.createOptional(ingredientsExcluded));
+        crafterProduct.put(crafterName, ItemTags.create(products));
+        crafterProductExclusions.put(crafterName, ItemTags.create(productsExcluded));
+        crafterIngredient.put(crafterName, ItemTags.create(ingredients));
+        crafterIngredientExclusions.put(crafterName, ItemTags.create(ingredientsExcluded));
     }
 
     private ModTags()

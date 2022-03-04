@@ -404,8 +404,9 @@ public class PathingStuckHandler implements IStuckHandler
      */
     private void setAirIfPossible(final Level world, final BlockPos pos)
     {
-        final Block blockAtPos = world.getBlockState(pos).getBlock();
-        if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
+        final BlockState state = world.getBlockState(pos);
+        final Block blockAtPos = state.getBlock();
+        if (blockAtPos instanceof IBuilderUndestroyable || state.is(blockAtPos))
         {
             return;
         }

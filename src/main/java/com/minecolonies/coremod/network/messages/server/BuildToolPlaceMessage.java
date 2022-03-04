@@ -197,8 +197,9 @@ public class BuildToolPlaceMessage implements IMessage
       final boolean mirror,
       final BlockState state)
     {
-        final Block blockAtPos = world.getBlockState(buildPos).getBlock();
-        if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
+        final BlockState stateAtPos =  world.getBlockState(buildPos);
+        final Block blockAtPos = stateAtPos.getBlock();
+        if (blockAtPos instanceof IBuilderUndestroyable || stateAtPos.is(ModTags.indestructible))
         {
             LanguageHandler.sendPlayerMessage(player, INDESTRUCTIBLE_BLOCK_AT_POS);
             SoundUtils.playErrorSound(player, buildPos);

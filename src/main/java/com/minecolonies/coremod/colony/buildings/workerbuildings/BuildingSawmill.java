@@ -11,8 +11,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -104,9 +105,9 @@ public class BuildingSawmill extends AbstractBuilding
                         amountOfValidBlocks += stack.getCount();
                         continue;
                     }
-                    for (final ResourceLocation tag : stack.getItem().getTags())
+                    for (final TagKey<Item> tag : stack.getTags().toList())
                     {
-                        if (tag.getPath().contains("wood"))
+                        if (tag.location().getPath().contains("wood"))
                         {
                             amountOfValidBlocks += stack.getCount();
                             break;
@@ -143,7 +144,7 @@ public class BuildingSawmill extends AbstractBuilding
                 for (final Block block : textureData.getTexturedComponents().values())
                 {
                     final ItemStack ingredientStack = new ItemStack(block);
-                    if (!ItemStackUtils.isEmpty(ingredientStack) && (ItemTags.PLANKS.contains(ingredientStack.getItem()) || ItemTags.LOGS.contains(ingredientStack.getItem())))
+                    if (!ItemStackUtils.isEmpty(ingredientStack) && (ingredientStack.is(ItemTags.PLANKS) || ingredientStack.is(ItemTags.LOGS)))
                     {
                         return true;
                     }

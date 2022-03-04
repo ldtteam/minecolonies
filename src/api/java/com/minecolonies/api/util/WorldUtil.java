@@ -139,7 +139,7 @@ public class WorldUtil
     {
         if (world instanceof ServerLevel)
         {
-            return ((ServerLevel) world).isPositionEntityTicking(pos);
+            return ((ServerLevel) world).isPositionEntityTicking(pos.getWorldPosition());
         }
         return isChunkLoaded(world, pos);
     }

@@ -491,14 +491,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
         ItemStorage reducedItem = null;
 
-        if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(CRAFTING_REDUCEABLE) && !ModTags.crafterProductExclusions.get(CRAFTING_REDUCEABLE).contains(recipe.getPrimaryOutput().getItem()))
+        if(roll <= actualChance && ModTags.crafterProductExclusions.containsKey(CRAFTING_REDUCEABLE) && !recipe.getPrimaryOutput().is(ModTags.crafterProductExclusions.get(CRAFTING_REDUCEABLE)))
         {
             final ArrayList<ItemStorage> newRecipe = new ArrayList<>();
             boolean didReduction = false;
             for(ItemStorage input : inputs)
             {
                 // Check against excluded products
-                if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(CRAFTING_REDUCEABLE) && ModTags.crafterIngredient.get(CRAFTING_REDUCEABLE).contains(input.getItem()))
+                if (input.getAmount() > 1 && ModTags.crafterIngredient.containsKey(CRAFTING_REDUCEABLE) && input.getItemStack().is(ModTags.crafterIngredient.get(CRAFTING_REDUCEABLE)))
                 {
                     reducedItem = input.copy();
                     reducedItem.setAmount(input.getAmount() - 1);

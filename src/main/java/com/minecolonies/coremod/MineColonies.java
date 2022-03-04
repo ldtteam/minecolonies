@@ -18,7 +18,6 @@ import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
-import com.minecolonies.coremod.entity.DruidPotionEntity;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
@@ -27,7 +26,6 @@ import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.structures.EmptyColonyStructure;
-import com.minecolonies.coremod.structures.MineColoniesConfiguredStructures;
 import com.minecolonies.coremod.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -104,10 +102,8 @@ public class MineColonies
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
-        modEventBus.addListener(MineColoniesStructures::setup);
 
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
-        forgeBus.addListener(EventPriority.NORMAL, MineColoniesStructures::addDimensionalSpacing);
         forgeBus.addListener(EventPriority.NORMAL, EmptyColonyStructure::setupStructureSpawns);
     }
 

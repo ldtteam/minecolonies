@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.ServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -22,18 +21,14 @@ import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 public class CrafterRecipeListener extends SimpleJsonResourceReloadListener
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private final ServerResources dataPackRegistries;
 
     /**
      * Set up the core loading, with the directory in the datapack that contains this data
      * Directory is: (namespace)/crafterrecipes/(path)
-     * @param dataPackRegistries
      */
-    public CrafterRecipeListener(@NotNull final ServerResources dataPackRegistries)
+    public CrafterRecipeListener()
     {
         super(GSON, "crafterrecipes");
-
-        this.dataPackRegistries = dataPackRegistries;
     }
 
     @Override

@@ -457,7 +457,7 @@ public class Tree
                 for (int dy = -3; dy <= 1 + dynamicBonusY; dy++)
                 {
                     final BlockPos leafPos = pos.offset(dx, dy, dz);
-                    if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || BlockTags.WART_BLOCKS.contains(world.getBlockState(leafPos).getBlock()))
+                    if (world.getBlockState(leafPos).getMaterial().equals(Material.LEAVES) || world.getBlockState(leafPos).is(BlockTags.WART_BLOCKS))
                     {
                         if (!checkedLeaves && !supposedToCut(world, treesToNotCut, leafPos))
                         {

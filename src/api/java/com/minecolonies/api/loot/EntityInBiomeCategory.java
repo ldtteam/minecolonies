@@ -52,7 +52,7 @@ public class EntityInBiomeCategory implements LootItemCondition
         final Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
         if (entity != null && entity.level != null)
         {
-            final Biome biome = entity.level.getBiome(entity.blockPosition());
+            final Biome biome = entity.level.getBiome(entity.blockPosition()).value();
             return biome.getBiomeCategory().equals(category);
         }
 

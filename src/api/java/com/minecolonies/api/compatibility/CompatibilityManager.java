@@ -1,8 +1,6 @@
 package com.minecolonies.api.compatibility;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.*;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -12,6 +10,8 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
@@ -229,13 +230,13 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isPlantable(final ItemStack itemStack)
     {
-        return !itemStack.isEmpty() && itemStack.getItem() instanceof BlockItem && ModTags.floristFlowers.contains(itemStack.getItem());
+        return !itemStack.isEmpty() && itemStack.getItem() instanceof BlockItem && itemStack.is(ModTags.floristFlowers);
     }
 
     @Override
     public boolean isLuckyBlock(final Block block)
     {
-        return ModTags.oreChanceBlocks.contains(block);
+        return block.defaultBlockState().is(ModTags.oreChanceBlocks);
     }
 
     @Override
@@ -349,7 +350,7 @@ public class CompatibilityManager implements ICompatibilityManager
         if (isMineableOre(stack) || stack.is(ModTags.raw_ore) || stack.is(ModTags.breakable_ore) )
         {
             ItemStack smeltingResult = MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack);
-            return ModTags.breakable_ore.contains(stack.getItem()) || !smeltingResult.isEmpty();
+            return stack.is(ModTags.breakable_ore) || !smeltingResult.isEmpty();
         }
 
         return false;
@@ -435,10 +436,11 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 monsterSet.add(entry.getKey().location());
             }
-            else if (ModTags.hostile.contains(entry.getValue()))
+            else if (Iterators.contains(Registry.ENTITY_TYPE.getTagOrEmpty(ModTags.hostile).iterator(), entry.getValue()))
             {
                 monsterSet.add(entry.getKey().location());
             }
+
         }
 
         monsters = ImmutableSet.copyOf(monsterSet);
@@ -476,9 +478,11 @@ public class CompatibilityManager implements ICompatibilityManager
         if (smeltableOres.isEmpty())
         {
             Set<Item> m = new HashSet<>();
-            m.addAll(Tags.Items.ORES.getValues());
-            m.addAll(ModTags.breakable_ore.getValues());
-            m.addAll(ModTags.raw_ore.getValues());
+
+
+            m.addAll(StreamSupport.stream(Registry.ITEM.getTagOrEmpty(Tags.Items.ORES).spliterator(), false).map(Holder::value).toList());
+            m.addAll(StreamSupport.stream(Registry.ITEM.getTagOrEmpty(ModTags.breakable_ore).spliterator(), false).map(Holder::value).toList());
+            m.addAll(StreamSupport.stream(Registry.ITEM.getTagOrEmpty(ModTags.raw_ore).spliterator(), false).map(Holder::value).toList());
 
             for(Item item : m)
             {
@@ -506,10 +510,10 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverSaplings()
     {
-        for (final Item item : ItemTags.SAPLINGS.getValues())
+        for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ItemTags.SAPLINGS))
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            itemHolder.value().fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
                 saplings.add(new ItemStorage(stack, false, true));
@@ -548,10 +552,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            for (final Item item : ModTags.floristFlowers.getValues())
+            for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ModTags.floristFlowers))
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+                itemHolder.value().fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
                 for (final ItemStack stack : list)
                 {
                     if (stack.getItem() instanceof BlockItem)
@@ -800,10 +804,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         Set<ItemStorage> flowers = new HashSet<>();
 
-        for (final Item item : ItemTags.FLOWERS.getValues())
+        for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ItemTags.FLOWERS))
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            itemHolder.value().fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
                 flowers.add(new ItemStorage(stack));

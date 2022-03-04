@@ -114,7 +114,7 @@ public class BuildingFletcher extends AbstractBuilding
                 for (final Block block : textureData.getTexturedComponents().values())
                 {
                     final ItemStack ingredientStack = new ItemStack(block);
-                    if (!ItemStackUtils.isEmpty(ingredientStack) && ModTags.crafterIngredient.get(FLETCHER).contains(ingredientStack.getItem()))
+                    if (!ItemStackUtils.isEmpty(ingredientStack) && ingredientStack.is(ModTags.crafterIngredient.get(FLETCHER)))
                     {
                         return true;
                     }

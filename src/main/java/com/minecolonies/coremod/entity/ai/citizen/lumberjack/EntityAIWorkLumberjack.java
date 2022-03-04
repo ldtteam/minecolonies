@@ -18,6 +18,7 @@ import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavig
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -694,7 +695,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      * @param blockPositions block positions
      * @param tag            tag to check
      */
-    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, Tag<Block> tag)
+    private boolean mineIfEqualsBlockTag(List<BlockPos> blockPositions, TagKey<Block> tag)
     {
         for (BlockPos currentPos : blockPositions)
         {

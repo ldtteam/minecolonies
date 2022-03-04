@@ -2,11 +2,8 @@ package com.minecolonies.coremod.structures;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.constant.Constants;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.NoiseColumn;
@@ -16,11 +13,11 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
-import net.minecraft.world.level.levelgen.feature.structures.JigsawPlacement;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.PostPlacementProcessor;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGenerator;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplier;
+import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
 import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 
 import java.util.List;
@@ -85,12 +82,13 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
 
     public static Optional<PieceGenerator<JigsawConfiguration>> createPiecesGenerator(PieceGeneratorSupplier.Context<JigsawConfiguration> context)
     {
+        if (!isFeatureChunk(context))
+        {
+            return Optional.empty();
+        }
+
         // Turns the chunk coordinates into actual coordinates we can use. (Gets center of that chunk)
         BlockPos blockpos = context.chunkPos().getMiddleBlockPosition(0);
-
-        context.config().startPool =
-          () -> context.registryAccess().ownedRegistryOrThrow(Registry.TEMPLATE_POOL_REGISTRY)
-                  .get(new ResourceLocation(Constants.MOD_ID, "start_pool"));
 
         context.config().maxDepth = 10;
 
@@ -100,7 +98,7 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
             PoolElementStructurePiece::new,
             blockpos,
             false,
-            true
+            false
           );
 
         if (structurePiecesGenerator.isPresent())

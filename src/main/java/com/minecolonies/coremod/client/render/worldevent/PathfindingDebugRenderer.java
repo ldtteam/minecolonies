@@ -76,7 +76,7 @@ public class PathfindingDebugRenderer
         ctx.poseStack.translate(n.pos.getX() + 0.375d, n.pos.getY() + 0.375d, n.pos.getZ() + 0.375d);
 
         final Entity entity = Minecraft.getInstance().getCameraEntity();
-        if (n.pos.closerThan(entity.position(), 5d))
+        if (n.pos.closerThan(entity.blockPosition(), 5d))
         {
             renderDebugText(n, ctx);
         }

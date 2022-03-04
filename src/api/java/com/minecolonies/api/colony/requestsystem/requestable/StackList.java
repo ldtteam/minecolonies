@@ -302,7 +302,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         {
             for (final ItemStack tempStack : theStacks)
             {
-                if (!Collections.disjoint(stack.getItem().getTags(), tempStack.getItem().getTags()))
+                if (!Collections.disjoint(stack.getTags().toList(), tempStack.getTags().toList()))
                 {
                     return true;
                 }

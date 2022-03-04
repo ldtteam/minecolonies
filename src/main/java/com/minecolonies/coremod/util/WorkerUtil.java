@@ -17,6 +17,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -97,7 +98,7 @@ public final class WorkerUtil
      */
     public static boolean isPathBlock(final Block block)
     {
-        return ModTags.pathingBlocks.contains(block);
+        return block.defaultBlockState().is(ModTags.pathingBlocks);
     }
 
     /**
@@ -202,7 +203,7 @@ public final class WorkerUtil
         int required = 0;
         final List<Tier> tiers = TierSortingRegistry.getSortedTiers();
         for (final Tier tier : tiers) {
-            Tag<Block> tag = tier.getTag();
+            TagKey<Block> tag = tier.getTag();
             if (tag != null && target.is(tag))
             {
                 required = tiers.indexOf(tier);

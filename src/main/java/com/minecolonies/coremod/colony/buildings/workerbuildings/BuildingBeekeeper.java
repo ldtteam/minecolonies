@@ -69,7 +69,7 @@ public class BuildingBeekeeper extends AbstractBuilding
         super(c, l);
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
-        keepX.put(stack -> ItemTags.FLOWERS.contains(stack.getItem()), new Tuple<>(STACKSIZE,true));
+        keepX.put(stack -> stack.is(ItemTags.FLOWERS), new Tuple<>(STACKSIZE,true));
     }
 
     /**

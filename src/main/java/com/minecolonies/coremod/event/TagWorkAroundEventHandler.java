@@ -4,9 +4,9 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagContainer;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
@@ -92,8 +92,8 @@ public class TagWorkAroundEventHandler
      */
     public static class TagClientEventHandler
     {
-        private static RecipeManager recipeManager;
-        private static TagContainer tagManager;
+        private static RecipeManager  recipeManager;
+        private static RegistryAccess tagManager;
 
         /**
          * The RecipesUpdatedEvent and TagsUpdatedEvent occur in unspecified order on the client side

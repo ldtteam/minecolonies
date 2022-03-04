@@ -127,7 +127,7 @@ public class EventHandler
     {
         if (!event.getWorld().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy)  && !(ModTags.mobAttackBlacklist.contains(event.getEntity().getType())))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy)  && !(event.getEntity().getType().is(ModTags.mobAttackBlacklist)))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));

@@ -1,16 +1,14 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -70,9 +68,9 @@ public class TextureReloadListener extends SimplePreparableReloadListener<Textur
     }
 
     @SubscribeEvent
-    public static void modInitClient(final FMLConstructModEvent event)
+    public static void modInitClient(final RegisterClientReloadListenersEvent event)
     {
-        event.enqueueWork(() -> ((SimpleReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(new TextureReloadListener()));
+        event.registerReloadListener(new TextureReloadListener());
     }
 }
 

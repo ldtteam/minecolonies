@@ -6,6 +6,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +39,7 @@ public class RequestTag implements IDeliverable
      * The tag.
      */
     @NotNull
-    private final Tag<Item> theTag;
+    private final TagKey<Item> theTag;
 
     /**
      * The result of the request.
@@ -62,7 +63,7 @@ public class RequestTag implements IDeliverable
      * @param tag   the required containing tag.
      * @param count the count.
      */
-    public RequestTag(@NotNull final Tag<Item> tag, final int count)
+    public RequestTag(@NotNull final TagKey<Item> tag, final int count)
     {
         this(tag, count, count);
     }
@@ -74,7 +75,7 @@ public class RequestTag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public RequestTag(@NotNull final Tag<Item> tag, final int count, final int minCount)
+    public RequestTag(@NotNull final TagKey<Item> tag, final int count, final int minCount)
     {
         this(tag, ItemStackUtils.EMPTY, count, minCount);
     }
@@ -87,7 +88,7 @@ public class RequestTag implements IDeliverable
      * @param count    the count.
      * @param minCount the min count.
      */
-    public RequestTag(@NotNull final Tag<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
+    public RequestTag(@NotNull final TagKey<Item> tag, @NotNull final ItemStack result, final int count, final int minCount)
     {
         this.theTag = tag;
         this.result = result;
@@ -142,7 +143,7 @@ public class RequestTag implements IDeliverable
     }
 
     @NotNull
-    public Tag<Item> getTag()
+    public TagKey<Item> getTag()
     {
         return theTag;
     }
@@ -191,7 +192,7 @@ public class RequestTag implements IDeliverable
     @Override
     public int hashCode()
     {
-        int result1 = ItemTags.getAllTags().getId(getTag()).toString().hashCode();
+        int result1 = theTag.location().toString().hashCode();
         result1 = 31 * result1 + getResult().hashCode();
         return result1;
     }
@@ -206,7 +207,7 @@ public class RequestTag implements IDeliverable
     public static CompoundTag serialize(final IFactoryController controller, final RequestTag input)
     {
         final CompoundTag compound = new CompoundTag();
-        compound.putString(NBT_TAG, ItemTags.getAllTags().getId(input.getTag()).toString());
+        compound.putString(NBT_TAG, input.getTag().location().toString());
         if (!ItemStackUtils.isEmpty(input.getResult()))
         {
             compound.put(NBT_RESULT, input.getResult().serializeNBT());
@@ -218,7 +219,7 @@ public class RequestTag implements IDeliverable
 
     public static void serialize(final IFactoryController controller, final FriendlyByteBuf buffer, final RequestTag input)
     {
-        buffer.writeUtf(ItemTags.getAllTags().getId(input.getTag()).toString());
+        buffer.writeResourceLocation(input.getTag().location());
         buffer.writeBoolean(!ItemStackUtils.isEmpty(input.getResult()));
 
         if (!ItemStackUtils.isEmpty(input.getResult()))
@@ -231,7 +232,7 @@ public class RequestTag implements IDeliverable
 
     public static RequestTag deserialize(final IFactoryController controller, final FriendlyByteBuf buffer)
     {
-        final Tag<Item> theTag = ItemTags.getAllTags().getTag(ResourceLocation.tryParse(buffer.readUtf(32767)));
+        final TagKey<Item> theTag = ItemTags.create(buffer.readResourceLocation());
         final ItemStack result = buffer.readBoolean() ? buffer.readItem() : ItemStack.EMPTY;
         final int count = buffer.readInt();
         final int minCount = buffer.readInt();
@@ -248,7 +249,7 @@ public class RequestTag implements IDeliverable
      */
     public static RequestTag deserialize(final IFactoryController controller, final CompoundTag compound)
     {
-        final Tag<Item> theTag = ItemTags.bind(compound.getString(NBT_TAG));
+        final TagKey<Item> theTag = ItemTags.create(new ResourceLocation(compound.getString(NBT_TAG)));
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
 
         int count = compound.getInt("size");

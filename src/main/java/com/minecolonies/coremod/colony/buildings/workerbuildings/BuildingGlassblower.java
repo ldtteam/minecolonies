@@ -140,7 +140,7 @@ public class BuildingGlassblower extends AbstractBuilding
                 for (final Block block : textureData.getTexturedComponents().values())
                 {
                     final ItemStack ingredientStack = new ItemStack(block);
-                    if (!ItemStackUtils.isEmpty(ingredientStack) && ModTags.crafterIngredient.get(GLASS_BLOWER).contains(ingredientStack.getItem()))
+                    if (!ItemStackUtils.isEmpty(ingredientStack) && ingredientStack.is(ModTags.crafterIngredient.get(GLASS_BLOWER)))
                     {
                         return true;
                     }

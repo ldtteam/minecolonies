@@ -165,7 +165,7 @@ public class BuildingConcreteMixer extends AbstractBuilding
         {
             for (final BlockPos pos : waterPos.getOrDefault(i, Collections.emptyList()))
             {
-                if (ModTags.concreteBlock.contains(colony.getWorld().getBlockState(pos).getBlock()))
+                if (colony.getWorld().getBlockState(pos).is(ModTags.concreteBlock))
                 {
                     return pos;
                 }

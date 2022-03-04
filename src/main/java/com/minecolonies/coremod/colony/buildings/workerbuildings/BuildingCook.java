@@ -23,6 +23,9 @@ import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -33,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
@@ -153,8 +157,9 @@ public class BuildingCook extends AbstractBuilding
     public static void onResetFoodExclusionList(final ItemListModule listModule)
     {
         listModule.clearItems();
-        for (final Item item : ModTags.excludedFood.getValues())
+        for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ModTags.excludedFood))
         {
+            final Item item = itemHolder.value();
             listModule.addItem(new ItemStorage(new ItemStack(item)));
         }
     }
