@@ -73,7 +73,7 @@ public class DruidPotionEntity extends ThrownPotion
     public void applySplash(List<MobEffectInstance> effects, @Nullable Entity entity)
     {
         final AbstractEntityCitizen citizen = this.getOwner();
-        if (citizen != null && citizen.getCitizenData().getJob() instanceof JobDruid)
+        if (citizen != null && citizen.getCitizenData() != null && citizen.getCitizenData().getJob() instanceof JobDruid)
         {
             final AABB axisalignedbb = this.getBoundingBox().inflate(SPLASH_SIZE, SPLASH_HEIGTH, SPLASH_SIZE);
             final List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, axisalignedbb);
