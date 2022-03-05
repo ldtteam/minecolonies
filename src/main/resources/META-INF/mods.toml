@@ -70,7 +70,7 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="tconstruct"
     mandatory=false
-    versionRange="[${project.minecraftVersion}-${project.tinkersConstructVersion},)"
+    versionRange="[${project.tinkersConstructVersion},)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.minecolonies]]
@@ -88,6 +88,6 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
 [[dependencies.minecolonies]]
     modId="journeymap"
     mandatory=false
-    versionRange="[${project.minecraftVersion}-${project.jmapVersion},)"
+    versionRange="[${project.jmapVersion},)"
     ordering="NONE"
     side="BOTH"
