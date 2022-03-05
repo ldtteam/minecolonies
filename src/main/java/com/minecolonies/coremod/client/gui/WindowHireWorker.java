@@ -337,7 +337,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
                   .setText((citizen.getJob().isEmpty() ? "" : new TranslatableComponent(citizen.getJob().toLowerCase(Locale.ROOT)).getString() + ": ") + citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
-                final JobEntry entry = moduleViews.get(index).getJobEntry();
+                final JobEntry entry = selectedModule.getJobEntry();
                 PaneBuilders.tooltipBuilder().hoverPane(rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class)).build().setText(new TranslatableComponent(entry.getKey().toString() + ".skills.desc"));
             }
         });
