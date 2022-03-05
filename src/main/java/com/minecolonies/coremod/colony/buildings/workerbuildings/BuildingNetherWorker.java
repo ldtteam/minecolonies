@@ -7,6 +7,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -15,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.FlintAndSteelItem;
@@ -24,6 +26,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -260,18 +264,21 @@ public class BuildingNetherWorker extends AbstractBuilding
      */
     public BlockPos getPortalLocation()
     {
-        if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
-        {
-            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
-            {
-                if(entry.getValue().contains("portal"))
-                {
-                    //Tagged block for a portal location should be one of the obsidian block at the bottom of the opening
-                    return getPosition().offset(entry.getKey().above());
-                }
-            }
+        BlockPos portalLocation = getLocationFromTag("portal");
+        if(portalLocation != null) {
+            return portalLocation.above();
         }
         return null;
+    }
+
+    /**
+     * Get the tagged location where the worker can hide while "away" in the nether
+     * 
+     * @return the tagged location, null if not available.
+     */
+    public BlockPos getVaultLocation()
+    {
+        return getLocationFromTag("vault");
     }
 
     /**
@@ -306,6 +313,17 @@ public class BuildingNetherWorker extends AbstractBuilding
         }
     }
 
+    @Override
+    public void onPlacement()
+    {
+        super.onPlacement();
+        final World world = colony.getWorld();
+        if(WorldUtil.isNetherType(world))
+        {
+            final Block block = world.getBlockState(this.getPosition()).getBlock();
+            block.destroy(world, getPosition(), world.getBlockState(getPosition()));
+        }
+    }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom
     {

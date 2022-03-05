@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -91,7 +92,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     /**
      * Edibles that the worker will attempt to eat while in the nether (unfiltered)
      */
-    final List<ItemStack> netherEdible = IColonyManager.getInstance().getCompatibilityManager().getEdibles().stream().map(item -> item.getItemStack()).collect(Collectors.toList());
+    final List<ItemStack> netherEdible = IColonyManager.getInstance().getCompatibilityManager().getEdibles(getOwnBuilding().getBuildingLevel() - 1).stream().map(item -> item.getItemStack()).collect(Collectors.toList());
 
 
     /**
@@ -137,6 +138,29 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         return !worker.isInvisible();
     }
 
+    private void goToVault()
+    {
+        worker.setInvisible(true);
+        BlockPos vaultPos = getOwnBuilding().getVaultLocation();
+        if(vaultPos != null)
+        {
+            worker.moveTo(vaultPos.getX() + 0.5, vaultPos.getY(), vaultPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
+            worker.getNavigation().stop();
+        }
+    }
+
+    private void returnFromVault()
+    {
+        BlockPos vaultPos = getOwnBuilding().getVaultLocation();
+        BlockPos portalPos = getOwnBuilding().getPortalLocation();
+        if(portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
+        {
+            worker.moveTo(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
+            worker.getNavigation().stop();
+        }
+        worker.setInvisible(false);
+    }
+
     @Override
     protected IAIState decide()
     {
@@ -144,13 +168,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             if (!worker.isInvisible())
             {
-                worker.setInvisible(true);
+                goToVault();
             }
             return NETHER_AWAY;
         }
         if (worker.isInvisible())
         {
-            worker.setInvisible(false);
+            returnFromVault();
         }
 
         IAIState crafterState = super.decide();
@@ -290,7 +314,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     return getState();
                 }
-                worker.setInvisible(true);
+                goToVault();
                 getOwnBuilding().recordTrip();
 
                 List<ItemStack> result = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), false);
@@ -313,11 +337,18 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState stayInNether()
     {
-        //Ensure we stay put in the portal
-        final BlockPos portal = getOwnBuilding().getPortalLocation();
-        if(portal !=null && walkToBlock(portal, 1))
+        if(getOwnBuilding().getVaultLocation() == null)
         {
-            return getState();
+            //Ensure we stay put in the portal
+            final BlockPos portal = getOwnBuilding().getPortalLocation();
+            if(portal !=null && walkToBlock(portal, 1))
+            {
+                return getState();
+            }
+            if (!worker.isInvisible())
+            {
+                worker.setInvisible(true);
+            }
         }
 
         //This is the adventure loop. 
@@ -575,14 +606,14 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {  
             if(worker.isInvisible())
             {
-                worker.setInvisible(false);
+                returnFromVault();
             }
             return IDLE;
         }
 
         if(worker.isInvisible())
         {
-            worker.setInvisible(false);
+            returnFromVault();
             return getState();
         }
 

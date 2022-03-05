@@ -190,6 +190,27 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         }
     }
 
+    /**
+     * Gets the list of tags, and finds the first location registered there. 
+     * @param tagName the name of the tag to query
+     * @return the BlockPos, or null if not found
+     */
+    protected BlockPos getLocationFromTag(String tagName)
+    {
+        if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
+        {
+            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
+            {
+                if(entry.getValue().contains(tagName))
+                {
+                    //Tagged block for a portal location should be one of the obsidian block at the bottom of the opening
+                    return getPosition().offset(entry.getKey());
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void setTileEntity(final AbstractTileEntityColonyBuilding te)
     {

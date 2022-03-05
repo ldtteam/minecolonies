@@ -468,8 +468,8 @@ public class RecipeStorage implements IRecipeStorage
     private boolean checkForFreeSpace(final List<IItemHandler> handlers)
     {
         final List<ItemStack> resultStacks = new ArrayList<>();
-        //Calculate space needed by the secondary outputs
-        if(!secondaryOutputs.isEmpty())
+        //Calculate space needed by the secondary outputs, but only if there is a primary output.
+        if(!secondaryOutputs.isEmpty() && !ItemStackUtils.isEmpty(getPrimaryOutput()))
         {
             resultStacks.addAll(secondaryOutputs);
         }
