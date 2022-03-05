@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:storage_blocks",
+    "minecraft:bone_block",
+    "minecraft:hay_block",
+    "minecraft:dried_kelp_block",
+    "minecraft:honey_block",
+    "minecraft:honeycomb_block",
+    "minecraft:snow_block"
+  ]
+}

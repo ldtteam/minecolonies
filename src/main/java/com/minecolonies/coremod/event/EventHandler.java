@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -50,10 +51,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.monster.ZombieVillagerEntity;
-import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -61,9 +60,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BedPart;
-import net.minecraft.tags.EntityTypeTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -138,10 +134,9 @@ public class EventHandler
     @SubscribeEvent
     public static void onEntityAdded(@NotNull final EntityJoinWorldEvent event)
     {
-        ITag<EntityType<?>> mobBlacklist = EntityTypeTags.getAllTags().getTag(new ResourceLocation(Constants.MOD_ID,"mob_attack_blacklist" ));
         if (!event.getWorld().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob)  && !(mobBlacklist.contains(event.getEntity().getType())))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof IMob)  && !(ModTags.mobAttackBlacklist.contains(event.getEntity().getType())))
             {
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityCitizen.class, true));
                 ((MobEntity) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((MobEntity) event.getEntity(), EntityMercenary.class, true));

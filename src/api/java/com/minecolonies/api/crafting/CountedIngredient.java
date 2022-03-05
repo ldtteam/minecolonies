@@ -1,5 +1,6 @@
 package com.minecolonies.api.crafting;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.item.ItemStack;
@@ -13,9 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import net.minecraft.item.crafting.Ingredient.SingleItemList;
 
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
@@ -68,6 +68,15 @@ public class CountedIngredient extends Ingredient
 
     @NotNull
     @Override
+    public JsonElement toJson()
+    {
+        JsonObject json = new JsonObject();
+        Serializer.getInstance().write(json, this);
+        return json;
+    }
+
+    @NotNull
+    @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer()
     {
         return Serializer.getInstance();
@@ -88,6 +97,17 @@ public class CountedIngredient extends Ingredient
             final Ingredient child = Ingredient.fromJson(json.get("item"));
             final int count = JSONUtils.getAsInt(json, "count", 1);
             return new CountedIngredient(child, count);
+        }
+
+        public void write(@NotNull final JsonObject json, @NotNull final CountedIngredient ingredient)
+        {
+            json.addProperty("type", (Objects.requireNonNull(CraftingHelper.getID(this))).toString());
+
+            json.add("item", ingredient.child.toJson());
+            if (ingredient.getCount() > 1)
+            {
+                json.addProperty("count", ingredient.getCount());
+            }
         }
 
         @NotNull

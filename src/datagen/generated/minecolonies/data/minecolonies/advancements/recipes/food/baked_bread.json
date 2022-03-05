@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "minecolonies:baked_bread"
+    ]
+  },
+  "criteria": {
+    "has_dough": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecolonies:bread_dough"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "minecolonies:baked_bread"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_dough",
+      "has_the_recipe"
+    ]
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XTX",
+    "BBB",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:planks"
+    },
+    "B": {
+      "item": "minecraft:wooden_axe"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutsawmill"
+  }
+}

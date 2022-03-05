@@ -32,6 +32,7 @@ import java.util.*;
 import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 /**
@@ -213,7 +214,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(PLANTATION)
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION)
                     .combine(super.getIngredientValidator());
         }
 
@@ -221,7 +222,7 @@ public class BuildingPlantation extends AbstractBuilding
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe)) return false;
-            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, PLANTATION);
+            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_PLANTATION);
             return isRecipeAllowed.orElse(false);
         }
     }

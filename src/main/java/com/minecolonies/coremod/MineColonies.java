@@ -175,6 +175,7 @@ public class MineColonies
         StandardFactoryControllerInitializer.onPreInit();
 
         event.enqueueWork(ModLootConditions::init);
+        event.enqueueWork(ModTags::init);
     }
 
     @SubscribeEvent
