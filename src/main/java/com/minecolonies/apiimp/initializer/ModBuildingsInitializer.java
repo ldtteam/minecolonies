@@ -636,7 +636,7 @@ public final class ModBuildingsInitializer
                                                                         .with(BuildingNetherWorker.CLOSE_PORTAL, new BoolSetting(true))
                                                                         , () -> SettingsModuleView::new)
                                     .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingNetherWorker::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
-                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles()))
+                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .createBuildingEntry();
       
