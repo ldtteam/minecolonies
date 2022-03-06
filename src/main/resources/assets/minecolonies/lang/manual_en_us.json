@@ -62,8 +62,8 @@
   "minecolonies.config.listofplantables.comment": "The items and item-tags that the Florist can plant.",
 
   "item.minecolonies.scepterlumberjack": "Forest Tool",
-  "item.minecolonies.scepterlumberjack.usedstart": "First position set. Click the same position to finish.",
-  "item.minecolonies.scepterlumberjack.usedend": "Second position set. Click the same position to finish.",
+  "item.minecolonies.scepterlumberjack.usedstart": "Position A set. Select Position B with a right-click or left-click the same position to finish.",
+  "item.minecolonies.scepterlumberjack.usedend": "Position B set. Select Position A with a left-click or right-click the same position to finish.",
   "item.minecolonies.scepterlumberjack.restrictiontoobig": "An area of %d blocks is too large. The maximum restricted area for the Forester is %d blocks.",
   "item.minecolonies.scepterlumberjack.restrictionset": "Forester restricted area set (x: %d to %d, z: %d to %d, area: %d blocks). The max size is %d blocks.",
 
@@ -2151,7 +2151,7 @@
   "minecolonies:combattraining.job.desc": "Knight Trainee. Practices close-quarter fighting.",
   "minecolonies:sawmill.job.desc": "Provides the colony with most wood based items.",
   "minecolonies:blacksmith.job.desc": "Provides the colony with most tools, armor, and weapons.",
-  "minecolonies:stonemason.job.desc": "Handles most stone based recipes..",
+  "minecolonies:stonemason.job.desc": "Handles most stone based recipes.",
   "minecolonies:stonesmeltery.job.desc": "Provides the stone variants that require smelting and charcoal",
   "minecolonies:crusher.job.desc": "Crushes cobble to gravel, gravel to sand, and sand to clay.",
   "minecolonies:sifter.job.desc": "Sifts through a variety of materials to find goodies.",
