@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.TagParser;
@@ -11,6 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -25,6 +27,8 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE;
 
 /**
  * Utility helper that analyzes a loot table to determine a likely list of drops, along with
@@ -104,9 +108,20 @@ public final class LootTableAnalyzer
                         modifier = result.getB();
                     }
 
-                    drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight * modifier, quality, conditional));
+                    if (stack.getItem().equals(ModItems.adventureToken))
+                    {
+                        final List<LootDrop> mobDrops = expandAdventureToken(lootTableManager, stack);
+                        for (final LootTableAnalyzer.LootDrop drop : mobDrops)
+                        {
+                            drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality() + quality, drop.getConditional() || conditional));
+                        }
+                    }
+                    else
+                    {
+                        drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight * modifier, quality, conditional));
+                    }
                 }
-                else if (type.equals("minecraft:loot_table") && lootTableManager != null)
+                else if (type.equals("minecraft:loot_table"))
                 {
                     final ResourceLocation table = new ResourceLocation(GsonHelper.getAsString(entryJson, "name"));
                     final List<LootTableAnalyzer.LootDrop> tableDrops = toDrops(lootTableManager, table);
@@ -123,6 +138,26 @@ public final class LootTableAnalyzer
 
         drops.sort(Comparator.comparing(LootDrop::getProbability).reversed());
         return drops;
+    }
+
+    @NotNull
+    private static List<LootDrop> expandAdventureToken(@NotNull final LootTables lootTableManager,
+                                                       @NotNull final ItemStack token)
+    {
+        if (token.hasTag())
+        {
+            assert token.getTag() != null;
+            final String entityType = token.getTag().getString(TAG_ENTITY_TYPE);
+            if (!entityType.isEmpty())
+            {
+                final EntityType<?> mob = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityType));
+                if (mob != null)
+                {
+                    return toDrops(lootTableManager, mob.getDefaultLootTable());
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 
     @NotNull

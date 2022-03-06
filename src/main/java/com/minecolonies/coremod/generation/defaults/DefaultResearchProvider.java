@@ -147,6 +147,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.smeltery.getBuildingBlock()).setTranslatedName("Unlocks Smeltery"));
         effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
+        effects.add(new ResearchEffect(ModBuildings.netherWorker.getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
 
         // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
         // Assigning them for now to handle text cleanly, and to allow researches with both recipe and non-recipe effects.
@@ -1249,7 +1250,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addToList(r);
 
         // Primary Research #2
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/morescrolls"), TECH).setTranslatedName("More Scrolls")
+        final Research moreScrolls = new Research(new ResourceLocation(Constants.MOD_ID, "technology/morescrolls"), TECH).setTranslatedName("More Scrolls")
           .setSortOrder(2)
           .setIcon(ModItems.scrollHighLight)
           .addBuildingRequirement("enchanter", 3)
@@ -1258,6 +1259,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addItemCost(Items.LAPIS_LAZULI, 64)
           .addEffect(new ResourceLocation("minecolonies:effects/morescrollsunlock"), 1)
           .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
+                                    .setTranslatedName("Open the Nether")
+                                    .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
+                                    .setIcon(ModBlocks.blockHutNetherWorker.asItem())
+                                    .addItemCost(Items.GILDED_BLACKSTONE, 3)
+                                    .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
+                                    .addToList(r);
 
         // Primary Research #3
         final Research stoneCake = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stonecake"), TECH).setTranslatedName("Stone Cake")
