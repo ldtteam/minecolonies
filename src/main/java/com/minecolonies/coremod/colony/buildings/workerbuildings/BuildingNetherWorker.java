@@ -37,8 +37,6 @@ import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 
 import java.util.List;
-import java.util.Map;
-
 
 public class BuildingNetherWorker extends AbstractBuilding
 {
@@ -264,7 +262,7 @@ public class BuildingNetherWorker extends AbstractBuilding
      */
     public BlockPos getPortalLocation()
     {
-        BlockPos portalLocation = getLocationFromTag("portal");
+        BlockPos portalLocation = getFirstLocationFromTag("portal");
         if(portalLocation != null) {
             return portalLocation.above();
         }
@@ -278,7 +276,7 @@ public class BuildingNetherWorker extends AbstractBuilding
      */
     public BlockPos getVaultLocation()
     {
-        return getLocationFromTag("vault");
+        return getFirstLocationFromTag("vault");
     }
 
     /**

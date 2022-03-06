@@ -1264,7 +1264,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setTranslatedName("Open the Nether")
                                     .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
                                     .setIcon(ModBlocks.blockHutNetherWorker.asItem())
-                                    .addItemCost(Items.NETHERRACK, 64)
+                                    .addItemCost(Items.GILDED_BLACKSTONE, 3)
                                     .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
                                     .addToList(r);
 

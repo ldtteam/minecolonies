@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
@@ -195,7 +194,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
      * @param tagName the name of the tag to query
      * @return the BlockPos, or null if not found
      */
-    protected BlockPos getLocationFromTag(String tagName)
+    protected BlockPos getFirstLocationFromTag(String tagName)
     {
         if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
