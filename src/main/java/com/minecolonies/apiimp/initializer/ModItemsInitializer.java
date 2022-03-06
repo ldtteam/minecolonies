@@ -81,6 +81,8 @@ public final class ModItemsInitializer
         ModItems.goldenBread = new ItemGoldenBread(new Item.Properties());
         ModItems.chorusBread = new ItemChorusBread(new Item.Properties());
 
+        ModItems.adventureToken = new ItemAdventureToken(new Item.Properties());
+
         ModItems.scrollColonyTP = new ItemScrollColonyTP(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
         registry.register(ModItems.scrollColonyTP);
 
@@ -149,6 +151,8 @@ public final class ModItemsInitializer
         registry.register(ModItems.sugaryBread);
         registry.register(ModItems.goldenBread);
         registry.register(ModItems.chorusBread);
+
+        registry.register(ModItems.adventureToken);
 
         registry.register(ModItems.pirateHelmet_1);
         registry.register(ModItems.pirateChest_1);

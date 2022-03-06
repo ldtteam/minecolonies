@@ -507,6 +507,36 @@ public enum AIWorkerState implements IAIState
     SIFT(true),
 
             /*
+### Nether Worker ###
+     */
+
+    /**
+     * Let the nether worker start out on the trip.
+     */
+    NETHER_LEAVE(true),
+
+    /**
+     * Let the nether worker return from the trip.
+     */
+    NETHER_AWAY(true),
+
+    /**
+     * Let the nether worker return from the trip.
+     */
+    NETHER_RETURN(true),
+
+    /**
+     * Let the nether worker open the portal to the nether
+     */
+    NETHER_OPENPORTAL(true),
+
+    /**
+     * Let the nether worker close the portal to the nether
+     */
+    NETHER_CLOSEPORTAL(true),
+
+
+            /*
 ### Florist ###
      */
 

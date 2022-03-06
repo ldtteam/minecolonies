@@ -320,6 +320,10 @@
   "item.minecolonies.golden_bread": "Golden Bread",
   "item.minecolonies.chorus_bread": "Chorus Fruit Bread",
 
+  "item.minecolonies.adventure_token": "Monster Encounter token",
+  "com.minecolonies.coremod.item.adventure.token.gui": "This token represents an encounter with a monster, and is not useful outside of a Minecolonies adventure simulation",
+  "com.minecolonies.coremod.item.adventure.token.name.gui": "Encounter with: ",
+
   "item.minecolonies.scroll_tp": "Ultrasafe Colony Teleport Scroll",
   "item.minecolonies.scroll_tp.tip": "Safely teleports you to the set colony",
   "item.minecolonies.scroll.colony.tip": "Colony: %s",
@@ -1553,6 +1557,7 @@
   "com.minecolonies.coremod.jei.stonemason": "Crafts things made from various kinds of stone.",
   "com.minecolonies.coremod.jei.stonesmeltery": "Smelts various kinds of stone and terracotta.",
   "com.minecolonies.coremod.jei.swineherder": "Just happy with pigs in mud.",
+  "com.minecolonies.coremod.jei.netherworker": "Makes periodic trips to the nether to retrieve materials, but it's a very dangerous job, and requires significant supplies.",
 
   "com.minecolonies.coremod.journeymap.deathpoint_name": "Death: %s",
   "com.minecolonies.coremod.journeymap.deathpoint_namejob": "Death: %s - %s",
@@ -1942,6 +1947,8 @@
   "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
   "block.minecolonies.blockhutgraveyard": "Graveyard",
   "block.minecolonies.blockhutgraveyard.name": "Graveyard",
+  "block.minecolonies.blockhutnetherworker": "Nether Mine",
+  "block.minecolonies.blockhutnetherworker.name": "Nether Mine",
   "item.minecolonies.sifter_mesh_string": "String Mesh",
   "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
   "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
@@ -1965,6 +1972,8 @@
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
   "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
+
+  "com.minecolonies.coremod.setting.minecolonies:closeportal": "Close portal on return:",
 
   "com.minecolonies.coremod.gui.givetool": "Obtain Tool",
   "com.minecolonies.coremod.gui.blocks.distance": "%d blocks",
@@ -2021,6 +2030,7 @@
   "com.minecolonies.job.lumberjack": "Forester",
   "com.minecolonies.job.farmer": "Farmer",
   "com.minecolonies.job.undertaker": "Undertaker",
+  "com.minecolonies.job.netherworker": "Nether Miner",
   "com.minecolonies.job.fisherman": "Fisher",
   "com.minecolonies.job.baker": "Baker",
   "com.minecolonies.job.cook": "Cook",
@@ -2089,6 +2099,7 @@
   "com.minecolonies.building.plantation": "Plantation",
   "com.minecolonies.building.concretemixer": "Concrete Mixer's Hut",
   "com.minecolonies.building.graveyard": "Graveyard",
+  "com.minecolonies.building.netherworker": "Nether Mine",
   "com.minecolonies.building.guardtower": "Guard Tower",
   "com.minecolonies.building.barrackstower": "Barracks Tower",
   "com.minecolonies.building.warehouse": "Warehouse",

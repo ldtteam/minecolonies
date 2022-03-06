@@ -60,6 +60,8 @@ public final class ModItems
     public static Item goldenBread;
     public static Item chorusBread;
 
+    public static Item adventureToken;
+
     public static Item scrollColonyTP;
     public static Item scrollColonyAreaTP;
     public static Item scrollBuff;

@@ -17,9 +17,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_COMPLAINS_DAYS;
+import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;;
+
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 {
-
     /**
      * The {@link JobEntry} for this job.
      *
@@ -242,6 +244,23 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
     default int getInactivityLimit()
     {
         return -1;
+    }
+
+    /**
+     * Get the days before complaining or demanding solution for being idle
+     * @param isDemand true if looking for the demand time
+     * @return number of days
+     */
+    default int getIdleSeverity(boolean isDemand)
+    {
+        if(isDemand)
+        {
+            return IDLE_AT_JOB_DEMANDS_DAYS;
+        }
+        else
+        {
+            return IDLE_AT_JOB_COMPLAINS_DAYS;
+        }
     }
 
     /**

@@ -34,7 +34,8 @@ public class DefaultSifterCraftingProvider implements IDataProvider
     private final SifterLootTableProvider lootTableProvider;
     private final Map<Item, List<SifterMeshDetails>> inputs = new HashMap<>();
 
-    public DefaultSifterCraftingProvider(@NotNull final DataGenerator generatorIn)
+    public DefaultSifterCraftingProvider(@NotNull final DataGenerator generatorIn,
+                                         @NotNull final LootTableManager lootTableManager)
     {
         inputs.put(Items.DIRT, Arrays.asList(
                 new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
@@ -224,7 +225,7 @@ public class DefaultSifterCraftingProvider implements IDataProvider
 
                 ));
 
-        recipeProvider = new SifterRecipeProvider(generatorIn);
+        recipeProvider = new SifterRecipeProvider(generatorIn, lootTableManager);
         lootTableProvider = new SifterLootTableProvider(generatorIn);
     }
 
@@ -271,9 +272,14 @@ public class DefaultSifterCraftingProvider implements IDataProvider
 
     private class SifterRecipeProvider extends CustomRecipeProvider
     {
-        public SifterRecipeProvider(@NotNull final DataGenerator generatorIn)
+        private final LootTableManager lootTableManager;
+
+        public SifterRecipeProvider(@NotNull final DataGenerator generatorIn,
+                                    @NotNull final LootTableManager lootTableManager)
         {
             super(generatorIn);
+
+            this.lootTableManager = lootTableManager;
         }
 
         @NotNull
@@ -292,7 +298,7 @@ public class DefaultSifterCraftingProvider implements IDataProvider
                 {
                     final String name = mesh.getName() + "/" + inputEntry.getKey().getRegistryName().getPath();
 
-                    final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(null, mesh.getLootTable().build());
+                    final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
                     final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
 
                     CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath() + "_custom", name)

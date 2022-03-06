@@ -272,10 +272,10 @@ public class InteractionValidatorInitializer
                        && (citizen.getCitizenHappinessHandler()).getModifier(UNEMPLOYMENT).getDays() <= DEMANDS_DAYS_WITHOUT_JOB && citizen.getJob() == null);
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(DEMANDS + IDLEATJOB),
-          citizen -> (citizen.getCitizenHappinessHandler()).getModifier(IDLEATJOB).getDays() > IDLE_AT_JOB_DEMANDS_DAYS);
+          citizen -> citizen.getJob() != null && (citizen.getCitizenHappinessHandler()).getModifier(IDLEATJOB).getDays() > citizen.getJob().getIdleSeverity(true));
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + IDLEATJOB),
-          citizen -> citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() > IDLE_AT_JOB_COMPLAINS_DAYS
-                       && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() <= IDLE_AT_JOB_DEMANDS_DAYS);
+          citizen -> citizen.getJob() != null && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() > citizen.getJob().getIdleSeverity(false)
+                       && citizen.getCitizenHappinessHandler().getModifier(IDLEATJOB).getDays() <= citizen.getJob().getIdleSeverity(true));
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(NO + SLEPTTONIGHT),
           citizen -> !(citizen.getJob() instanceof AbstractJobGuard) && citizen.getCitizenHappinessHandler().getModifier(SLEPTTONIGHT).getDays() <= 0);

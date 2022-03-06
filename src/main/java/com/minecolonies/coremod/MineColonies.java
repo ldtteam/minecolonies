@@ -281,7 +281,7 @@ public class MineColonies
         ModModelTypeInitializer.init();
 
         Arrays.stream(ModBlocks.getHuts())
-          .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid())));
+          .forEach(hut -> RenderTypeLookup.setRenderLayer(hut, renderType -> renderType.equals(RenderType.cutout()) || renderType.equals(RenderType.solid()) || renderType.equals(RenderType.translucent())));
         RenderTypeLookup.setRenderLayer(ModBlocks.blockScarecrow, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockRack, RenderType.cutout());
         RenderTypeLookup.setRenderLayer(ModBlocks.blockDecorationPlaceholder, RenderType.cutout());

@@ -372,14 +372,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide && iColonyView != null)
         {
-            if (player.isShiftKeyDown())
+            if (player.isShiftKeyDown() && !isInvisible())
             {
                 Network.getNetwork().sendToServer(new OpenInventoryMessage(iColonyView, this.getName().getString(), this.getId()));
             }
             else
             {
                 final ICitizenDataView citizenDataView = getCitizenDataView();
-                if (citizenDataView != null)
+                if (citizenDataView != null && !isInvisible())
                 {
                     MineColonies.proxy.showCitizenWindow(citizenDataView);
                 }
@@ -512,7 +512,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         final ItemStack hat = getItemBySlot(EquipmentSlotType.HEAD);
         if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
               && MineColonies.getConfig().getServer().holidayFeatures.get()
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent))
+              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent)
+              && !(getCitizenJobHandler().getColonyJob() instanceof JobNetherWorker))
         {
             if (hat.isEmpty())
             {
@@ -1329,7 +1330,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
 
-        if (!level.isClientSide)
+        //If we are in simulation, don't cap damage
+        if(citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.msgId == "nether")
+        {
+            damageInc = damage;
+        }
+
+        if (!level.isClientSide && !this.isInvisible())
         {
             performMoveAway(sourceEntity);
         }
@@ -1504,13 +1511,16 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
 
-            if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
+            if(!isInvisible())
             {
-                getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
-            }
-            else
-            {
-                InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
+                if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
+                {
+                    getCitizenColonyHandler().getColony().getGraveManager().createCitizenGrave(level, blockPosition(), citizenData);
+                }
+                else
+                {
+                    InventoryUtils.dropItemHandler(citizenData.getInventory(), level, (int) getX(), (int) getY(), (int) getZ());
+                }
             }
 
             if (citizenData.getJob() != null)
