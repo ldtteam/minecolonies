@@ -48,7 +48,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     public void deserializeNBT(final CompoundTag compound)
     {
         super.deserializeNBT(compound);
-        final CompoundTag jobCompound = compound.getCompound("warehouse");
+        final CompoundTag jobCompound = compound.getCompound(getModuleSerializationIdentifier());
         final int[] residentIds = jobCompound.getIntArray(TAG_COURIERS);
         for (final int citizenId : residentIds)
         {
@@ -64,7 +64,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     public void serializeNBT(final CompoundTag compound)
     {
         super.serializeNBT(compound);
-        final CompoundTag jobCompound = new CompoundTag();
+        final CompoundTag jobCompound = compound.contains(getModuleSerializationIdentifier()) ? compound.getCompound(getModuleSerializationIdentifier()) : new CompoundTag();
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -74,7 +74,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
             }
             jobCompound.putIntArray(TAG_COURIERS, residentIds);
         }
-        compound.put("warehouse", jobCompound);
+        compound.put(getModuleSerializationIdentifier(), jobCompound);
     }
 
     @Override
@@ -99,5 +99,11 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     public JobEntry getJobEntry()
     {
         return ModJobs.delivery;
+    }
+
+    @Override
+    protected String getModuleSerializationIdentifier()
+    {
+        return "warehouse";
     }
 }

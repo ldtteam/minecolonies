@@ -235,11 +235,12 @@ public class EntityAISleep extends Goal
                     {
                         final Level world = citizen.level;
                         final BlockState state = world.getBlockState(pos);
+                        final BlockState above = world.getBlockState(pos.above());
                         if (state.is(BlockTags.BEDS)
                               && !state.getValue(BedBlock.OCCUPIED)
                               && state.getValue(BedBlock.PART).equals(BedPart.HEAD)
                               && !isBedOccupied(hut, pos)
-                              && !world.getBlockState(pos.above()).getMaterial().isSolid())
+                              && (above.is(BlockTags.BEDS) || !above.getMaterial().isSolid()))
                         {
                             usedBed = pos;
                             setBedOccupied(true);
