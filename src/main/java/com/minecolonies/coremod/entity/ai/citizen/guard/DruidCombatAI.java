@@ -241,7 +241,10 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     @Override
     protected boolean isAttackableTarget(final LivingEntity entity)
     {
-        return (AbstractEntityAIGuard.isAttackableTarget(user, entity) || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null ) || entity instanceof Player) && !wasAffectedByDruid(entity);
+        return (AbstractEntityAIGuard.isAttackableTarget(user, entity)
+                  || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null )
+                  || (entity instanceof Player && entity.getLastHurtByMobTimestamp() != 0 && entity.tickCount - entity.getLastHurtByMobTimestamp() < 20 * 30))
+                 && !wasAffectedByDruid(entity);
     }
 
     @Override
