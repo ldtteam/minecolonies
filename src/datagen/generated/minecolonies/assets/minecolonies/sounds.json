@@ -22303,6 +22303,550 @@
       }
     ]
   },
+  "mob.netherworker.male.general": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.general": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.off_to_bed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.off_to_bed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.bad_weather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.bad_weather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.saturation_low": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.saturation_low": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.saturation_high": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.saturation_high": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.bad_housing": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.bad_housing": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.greeting": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.greeting": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.farewell": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.farewell": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.missing_equipment": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.missing_equipment": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.happy": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.happy": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.unhappy": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.unhappy": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.sickness": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.sickness": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.interaction": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.interaction": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.success": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.success": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.male.danger": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.netherworker.female.danger": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
   "mob.quarrier.male.general": {
     "category": "neutral",
     "sounds": [

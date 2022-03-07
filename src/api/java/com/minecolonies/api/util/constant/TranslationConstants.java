@@ -156,6 +156,10 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS                     = "com.minecolonies.coremod.item.bannerrallyguards.gui.dismiss";
     @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_TOOLTIP_GUI                 = "com.minecolonies.coremod.item.adventure.token.gui";
+    @NonNls
+    public static final String COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_NAME_GUI                    = "com.minecolonies.coremod.item.adventure.token.name.gui";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_SUGARY_BREAD_TOOLTIP_GUI                    = "com.minecolonies.coremod.item.sugary.bread.gui";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_MILKY_BREAD_TOOLTIP_GUI                     = "com.minecolonies.coremod.item.milky.bread.gui";

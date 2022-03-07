@@ -468,8 +468,8 @@ public class RecipeStorage implements IRecipeStorage
     private boolean checkForFreeSpace(final List<IItemHandler> handlers)
     {
         final List<ItemStack> resultStacks = new ArrayList<>();
-        //Calculate space needed by the secondary outputs
-        if(!secondaryOutputs.isEmpty())
+        //Calculate space needed by the secondary outputs, but only if there is a primary output.
+        if(!secondaryOutputs.isEmpty() && !ItemStackUtils.isEmpty(getPrimaryOutput()))
         {
             resultStacks.addAll(secondaryOutputs);
         }
@@ -508,7 +508,7 @@ public class RecipeStorage implements IRecipeStorage
      * @return copy of the crafted items if successful, null on failure
      */
     @Override
-    public List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers)
+    public List<ItemStack> fullfillRecipeAndCopy(final LootContext context, final List<IItemHandler> handlers, boolean doInsert)
     {
         if (!checkForFreeSpace(handlers) || !canFullFillRecipe(1, Collections.emptyMap(), handlers.toArray(new IItemHandler[0])))
         {
@@ -584,7 +584,7 @@ public class RecipeStorage implements IRecipeStorage
             }
         }
 
-        return insertCraftedItems(handlers, getPrimaryOutput(), context);
+        return insertCraftedItems(handlers, getPrimaryOutput(), context, doInsert);
     }
 
     @Override
@@ -598,7 +598,7 @@ public class RecipeStorage implements IRecipeStorage
      *
      * @param handlers the handlers.
      */
-    private List<ItemStack> insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context)
+    private List<ItemStack> insertCraftedItems(final List<IItemHandler> handlers, ItemStack outputStack, LootContext context, boolean doInsert)
     {
         final List<ItemStack> resultStacks = new ArrayList<>();
         final List<ItemStack> secondaryStacks = new ArrayList<>();
@@ -606,11 +606,14 @@ public class RecipeStorage implements IRecipeStorage
         if(!ItemStackUtils.isEmpty(outputStack))
         {
             resultStacks.add(outputStack.copy());
-            for (final IItemHandler handler : handlers)
+            if(doInsert)
             {
-                if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+                for (final IItemHandler handler : handlers)
                 {
-                    break;
+                    if (InventoryUtils.addItemStackToItemHandler(handler, outputStack.copy()))
+                    {
+                        break;
+                    }
                 }
             }
             secondaryStacks.addAll(secondaryOutputs);
@@ -627,13 +630,16 @@ public class RecipeStorage implements IRecipeStorage
         }
 
         resultStacks.addAll(secondaryStacks.stream().map(ItemStack::copy).collect(Collectors.toList()));
-        for (final ItemStack stack : secondaryStacks)
+        if(doInsert)
         {
-            for (final IItemHandler handler : handlers)
+            for (final ItemStack stack : secondaryStacks)
             {
-                if (InventoryUtils.addItemStackToItemHandler(handler, stack.copy()))
+                for (final IItemHandler handler : handlers)
                 {
-                    break;
+                    if (InventoryUtils.addItemStackToItemHandler(handler, stack.copy()))
+                    {
+                        break;
+                    }
                 }
             }
         }

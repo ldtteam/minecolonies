@@ -632,6 +632,22 @@ public final class ModBuildingsInitializer
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
                                    .createBuildingEntry();
 
+        ModBuildings.netherWorker = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutNetherWorker)
+                                    .setBuildingProducer(BuildingNetherWorker::new)
+                                    .setBuildingViewProducer(() -> EmptyView::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.NETHERWORKER_ID))
+                                    .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.netherworker, Skill.Adaptability, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new BuildingNetherWorker.CraftingModule(ModJobs.netherworker), () -> CraftingModuleView::new)
+                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+                                    .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
+                                                                        .with(BuildingNetherWorker.CLOSE_PORTAL, new BoolSetting(true))
+                                                                        , () -> SettingsModuleView::new)
+                                    .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingNetherWorker::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
+                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
+                                    .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                    .createBuildingEntry();
+      
         ModBuildings.mediumQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockMediumQuarry)
                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
@@ -693,6 +709,7 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.beekeeper);
         reg.register(ModBuildings.mysticalSite);
         reg.register(ModBuildings.graveyard);
+        reg.register(ModBuildings.netherWorker);
         reg.register(ModBuildings.simpleQuarry);
         reg.register(ModBuildings.mediumQuarry);
         //reg.register(ModBuildings.largeQuarry);

@@ -233,7 +233,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         final ICitizenData data = worker.getCitizenData();
         if (data != null)
         {
-            final List<ItemStack> loot = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), getOwnBuilding().getHandlers());
+            final List<ItemStack> loot = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), getOwnBuilding().getHandlers(), true);
             if (loot != null)
             {
                 final int enchantmentLevel = loot.stream()
