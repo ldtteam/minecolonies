@@ -41,7 +41,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.providers.number.ScoreboardValue;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
@@ -491,24 +490,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     final BlockItem bi = (BlockItem) currStack.getItem();
                     final Block block = bi.getBlock();
-                    final net.minecraftforge.common.ToolType toolType;
 
-                    if(block.getHarvestTool(block.defaultBlockState()) == null)
-                    {
-                        toolType = net.minecraftforge.common.ToolType.PICKAXE;
-                    }
-                    else 
-                    {
-                        toolType = block.getHarvestTool(block.defaultBlockState());
-                    }
-
-                    int slotOfStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), 
-                        itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem().getToolTypes(itemStack).contains(toolType));
-
+                    int slotOfStack = getMostEfficientTool(block.defaultBlockState(), worker.blockPosition());
                     if(slotOfStack != -1)
                     {
                         ItemStack tool = worker.getInventoryCitizen().getStackInSlot(slotOfStack);
-                        if (tool.getItem() instanceof ToolItem)
+                        if (tool.getItem() instanceof TieredItem)
                         {
                             worker.setItemSlot(EquipmentSlot.MAINHAND, tool);
                             
