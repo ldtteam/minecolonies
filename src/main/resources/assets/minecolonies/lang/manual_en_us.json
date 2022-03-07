@@ -2183,6 +2183,7 @@
   "minecolonies:cookassistant.job.desc": "Handles food-based recipes the main cook can't handle.",
   "minecolonies:smelter.job.desc": "Breaks ore blocks into raw ore and smelts raw ores into ingots.",
   "minecolonies:druid.job.desc": "Support type unit. Buffs friendlies and nerfs enemies.",
+  "minecolonies:netherworker.job.desc": "Wanders into the Nether to gather a wide range of materials. A very dangerous job!.",
 
   "minecolonies:builder.skills.desc": "Affects placement and breaking speed.",
   "minecolonies:deliveryman.skills.desc": "Affects walking speed and concurrent request fulfillment capacity.",
@@ -2226,6 +2227,7 @@
   "minecolonies:beekeeper.skills.desc": "Affects working speed and bee retaliation chance.",
   "minecolonies:cookassistant.skills.desc": "Affects recipe improvement chance and working speed.",
   "minecolonies:smelter.skills.desc": "Affects smelting/working speed and chance of multiplying ore.",
-  "minecolonies:druid.skills.desc": "Affects accuracy and potion quality."
+  "minecolonies:druid.skills.desc": "Affects accuracy and potion quality.",
+  "minecolonies:netherworker.skills.desc": "Affects the survival chances and loot."
 
 }
