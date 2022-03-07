@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.amazon;
 
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
 import com.minecolonies.coremod.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -30,7 +29,7 @@ public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon,
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(final AbstractEntityAmazon entity)
+    public ResourceLocation getTextureLocation(@NotNull final AbstractEntityAmazon entity)
     {
         return TEXTURE;
     }

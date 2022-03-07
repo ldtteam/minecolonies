@@ -27,8 +27,10 @@ public class SpearItemTileEntityRenderer extends BlockEntityWithoutLevelRenderer
     {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
         this.set = Minecraft.getInstance().getEntityModels();
+        this.model = new ModelSpear(this.set.bakeLayer(ModelLayers.TRIDENT));
     }
 
+    @Override
     public void onResourceManagerReload(ResourceManager manager)
     {
         this.model = new ModelSpear(this.set.bakeLayer(ModelLayers.TRIDENT));

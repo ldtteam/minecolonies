@@ -97,13 +97,12 @@ public class ModelAmazonSpearman extends AmazonModel<AbstractEntityAmazon>
 
         partdefinition.addOrReplaceChild("left_arm",
           CubeListBuilder.create()
-            .texOffs(40, 40).addBox(-1.0F, -3.0F, -2.0F, 3.0F, 13.0F, 4.0F, false)
-            .texOffs(61, 33).addBox(-1.5F, 6.0F, -2.5F, 4.0F, 1.0F, 5.0F, false),
-        PartPose.offset(5.0F, 0.0F, 0.0F));
+            .texOffs(40, 40).addBox(-1.0F, -3.0F, -2.0F, 3.0F, 13.0F, 4.0F, false),
+          PartPose.offset(5.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("right_arm",
           CubeListBuilder.create()
-            .texOffs(43, 33).addBox(-7.5F, -18.0F, -2.5F, 4.0F, 1.0F, 5.0F, false)
+            .texOffs(43, 33).addBox(-2.5F, 6.0F, -2.5F, 4.0F, 1.0F, 5.0F, false)
             .texOffs(0, 43).addBox(-2.0F, -3.0F, -2.0F, 3.0F, 13.0F, 4.0F, false),
           PartPose.offset(-5.0F, 0.0F, 0.0F));
 

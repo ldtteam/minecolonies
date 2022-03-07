@@ -135,6 +135,7 @@ public class ClientRegistryHandler
     {
         event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
         event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
+        event.registerLayerDefinition(AMAZON_SPEARMAN, ModelAmazonSpearman::createMesh);
 
         event.registerLayerDefinition(ARCHER_MUMMY, ModelArcherMummy::createMesh);
         event.registerLayerDefinition(MUMMY, ModelMummy::createMesh);
