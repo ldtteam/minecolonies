@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.coremod.generation.DatagenLootTableManager;
 import com.minecolonies.coremod.generation.defaults.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 public class GatherDataHandler
@@ -15,6 +17,7 @@ public class GatherDataHandler
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
         final DataGenerator generator = event.getGenerator();
+        final LootTables lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator, event.getExistingFileHelper());
         generator.addProvider(new DefaultBlockLootTableProvider(generator));
         generator.addProvider(new DefaultAdvancementsProvider(generator, event.getExistingFileHelper()));
@@ -24,9 +27,10 @@ public class GatherDataHandler
         generator.addProvider(new DefaultEntityTypeTagsProvider(generator, event.getExistingFileHelper()));
         generator.addProvider(new DefaultResearchProvider(generator));
         generator.addProvider(new DefaultRecipeProvider(generator));
-        generator.addProvider(new DefaultSifterCraftingProvider(generator));
+        generator.addProvider(new DefaultSifterCraftingProvider(generator, lootTableManager));
         generator.addProvider(new DefaultEnchanterCraftingProvider(generator));
         generator.addProvider(new DefaultFishermanLootProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
+        generator.addProvider(new DefaultNetherWorkerLootProvider(generator, lootTableManager));
     }
 }

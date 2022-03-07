@@ -106,6 +106,8 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_CRAFTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_crafter"), "male_crafter");
     public static final ModelLayerLocation MALE_DRUID = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_druid"), "male_druid");
     public static final ModelLayerLocation FEMALE_DRUID = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_druid"), "female_druid");
+    public static final ModelLayerLocation MALE_NETHERWORKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_netherworker"), "male_netherworker");
+    public static final ModelLayerLocation FEMALE_NETHERWORKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_netherworker"), "female_netherworker");
 
     public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
@@ -203,6 +205,8 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_CRAFTER, ModelEntityCrafterMale::createMesh);
         event.registerLayerDefinition(MALE_DRUID, ModelEntityDruidMale::createMesh);
         event.registerLayerDefinition(FEMALE_DRUID, ModelEntityDruidFemale::createMesh);
+        event.registerLayerDefinition(MALE_NETHERWORKER, ModelEntityNetherWorkerMale::createMesh);
+        event.registerLayerDefinition(FEMALE_NETHERWORKER, ModelEntityNetherWorkerFemale::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }
