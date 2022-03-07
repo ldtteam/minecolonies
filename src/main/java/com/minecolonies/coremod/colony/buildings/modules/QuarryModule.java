@@ -13,9 +13,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
-import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +61,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     {
         super.deserializeNBT(compound);
 
-        final CompoundNBT quarryCompound = compound.getCompound(TAG_QUARRY_ASSIGNMENT);
+        final CompoundNBT quarryCompound = compound.getCompound(getModuleSerializationIdentifier());
         final int[] residentIds = quarryCompound.getIntArray(TAG_MINERS);
         for (final int citizenId : residentIds)
         {
@@ -81,7 +79,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     {
         super.serializeNBT(compound);
 
-        final CompoundNBT quarrycompound = new CompoundNBT();
+        final CompoundNBT quarrycompound = compound.contains(getModuleSerializationIdentifier()) ? compound.getCompound(getModuleSerializationIdentifier()) : new CompoundNBT();
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -91,7 +89,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
             }
             quarrycompound.putIntArray(TAG_MINERS, residentIds);
         }
-        compound.put(TAG_QUARRY_ASSIGNMENT, quarrycompound);
+        compound.put(getModuleSerializationIdentifier(), quarrycompound);
         quarrycompound.putBoolean(TAG_IS_FINISHED, isFinished);
     }
 
@@ -153,5 +151,11 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
         builder.add(new StationRequestResolver(building.getRequester().getLocation(), building.getColony().getRequestManager()
             .getFactoryController().getNewInstance(TypeConstants.ITOKEN)));
         return builder.build();
+    }
+
+    @Override
+    protected String getModuleSerializationIdentifier()
+    {
+        return TAG_QUARRY_ASSIGNMENT;
     }
 }

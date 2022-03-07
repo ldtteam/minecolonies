@@ -366,6 +366,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                 blockedItems.add(content.getKey());
             }
         }
+
+        blockedItems.removeIf(item -> item.getItem().getFoodProperties() == null || item.getItem().getFoodProperties().getNutrition() < getOwnBuilding().getBuildingLevel() - 1);
         if (!blockedItems.isEmpty())
         {
             if (IColonyManager.getInstance().getCompatibilityManager().getEdibles(getOwnBuilding().getBuildingLevel() - 1).size() <= blockedItems.size())

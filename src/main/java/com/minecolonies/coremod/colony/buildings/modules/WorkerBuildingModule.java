@@ -122,6 +122,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
                     assignCitizen(citizen);
                 }
             }
+
         }
     }
 
@@ -144,7 +145,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     public void serializeNBT(final CompoundNBT compound)
     {
         super.serializeNBT(compound);
-        final CompoundNBT jobCompound = new CompoundNBT();
+        final CompoundNBT jobCompound = compound.contains(getModuleSerializationIdentifier()) ? compound.getCompound(getModuleSerializationIdentifier()) : new CompoundNBT();
         if (!assignedCitizen.isEmpty())
         {
             final int[] residentIds = new int[assignedCitizen.size()];
@@ -154,7 +155,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
             }
             jobCompound.putIntArray(TAG_WORKING_RESIDENTS, residentIds);
         }
-        compound.put(jobEntry.getKey().toString(), jobCompound);
+        compound.put(getModuleSerializationIdentifier(), jobCompound);
     }
 
     @Override
@@ -260,5 +261,11 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     public JobEntry getJobEntry()
     {
         return jobEntry;
+    }
+
+    @Override
+    protected String getModuleSerializationIdentifier()
+    {
+        return jobEntry.getKey().toString();
     }
 }

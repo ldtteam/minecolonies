@@ -54,7 +54,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
         super.serializeNBT(compound);
         if (!assignedCitizen.isEmpty())
         {
-            @NotNull final int[] residentIds = new int[assignedCitizen.size()];
+            final int[] residentIds = new int[assignedCitizen.size()];
             for (int i = 0; i < assignedCitizen.size(); ++i)
             {
                 residentIds[i] = assignedCitizen.get(i).getId();
@@ -115,5 +115,11 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
             }
         }
         building.getColony().getCitizenManager().calculateMaxCitizens();
+    }
+
+    @Override
+    protected String getModuleSerializationIdentifier()
+    {
+        return "living";
     }
 }

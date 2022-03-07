@@ -11,6 +11,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.FIRE_RES;
@@ -76,7 +78,8 @@ public class JobQuarrier extends AbstractJobStructure<EntityAIQuarrier, JobQuarr
     @Override
     public List<IBuilding> getWorkStations()
     {
-        return ImmutableList.of(findQuarry());
+        final IBuilding building = findQuarry();
+        return building == null ? Collections.emptyList() : ImmutableList.of(building);
     }
 
     @Override

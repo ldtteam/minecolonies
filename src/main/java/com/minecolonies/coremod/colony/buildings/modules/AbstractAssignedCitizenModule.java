@@ -120,7 +120,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     {
         final CompoundNBT assignedCompound = new CompoundNBT();
         assignedCompound.putInt(TAG_HIRING_MODE, this.hiringMode.ordinal());
-        compound.put(TAG_ASSIGNED, assignedCompound);
+        compound.put(getModuleSerializationIdentifier(), assignedCompound);
     }
 
     @Override
@@ -129,6 +129,10 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
         if (compound.contains(TAG_ASSIGNED))
         {
             this.hiringMode = HiringMode.values()[compound.getCompound(TAG_ASSIGNED).getInt(TAG_HIRING_MODE)];
+        }
+        else if (compound.contains(getModuleSerializationIdentifier()))
+        {
+            this.hiringMode = HiringMode.values()[compound.getCompound(getModuleSerializationIdentifier()).getInt(TAG_HIRING_MODE)];
         }
     }
 
@@ -155,4 +159,11 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
     {
         return hiringMode;
     }
+
+    /**
+     * Get the identifier for unique serialization.
+     * Use for deserialize/serialize only!
+     * @return a string identifier.
+     */
+    protected abstract String getModuleSerializationIdentifier();
 }
