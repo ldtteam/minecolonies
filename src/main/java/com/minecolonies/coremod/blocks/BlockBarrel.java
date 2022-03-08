@@ -82,7 +82,7 @@ public class BlockBarrel extends AbstractBlockBarrel<BlockBarrel> implements Ent
         final BlockEntity te = worldIn.getBlockEntity(pos);
         if (te instanceof TileEntityBarrel && !worldIn.isClientSide)
         {
-            ((TileEntityBarrel) te).useBarrel(player, itemstack);
+            ((TileEntityBarrel) te).useBarrel(player, itemstack, ray.getDirection());
             ((TileEntityBarrel) te).updateBlock(worldIn);
         }
 
