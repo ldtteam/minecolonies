@@ -113,20 +113,6 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
     /**
      * Method called when a player uses the block. Takes the needed items from the player.
      *
-     * @deprecated Use side-sensitive version
-     * @param playerIn  the player
-     * @param itemstack the itemStack on the hand of the player
-     * @return if the barrel took any item
-     */
-    @Deprecated
-    public boolean useBarrel(final Player playerIn, final ItemStack itemstack)
-    {
-        return useBarrel(playerIn, itemstack, null);
-    }
-
-    /**
-     * Method called when a player uses the block. Takes the needed items from the player.
-     *
      * @param playerIn  the player
      * @param itemstack the itemStack on the hand of the player
      * @param hitFace   the side of the barrel the player hit.
