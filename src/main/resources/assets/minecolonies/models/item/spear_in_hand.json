@@ -1,0 +1,39 @@
+{
+    "parent": "builtin/entity",
+    "gui_light": "front",
+    "textures": {
+        "particle": "#spear"
+    },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [180, 0, 0],
+      "translation": [8, 0.5, -8]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [180, 0, 0],
+      "translation": [-8, 0.5, -8]
+    },
+    "firstperson_righthand": {
+      "rotation": [160, 0, 0],
+      "translation": [6, -5, -5],
+      "scale": [ 0.75, 0.75, 0.75 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [160, 0, 0],
+      "translation": [-6, -5, -5],
+      "scale": [ 0.75, 0.75, 0.75 ]
+    },
+    "ground": {
+      "translation": [8.5, 2, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    "head": {
+      "rotation": [0, 180, 0],
+      "translation": [0, 13, 7]
+    },
+    "fixed": {
+      "rotation": [0, 180, 0],
+      "translation": [-7.75, -6.5, -8.5]
+    }
+  }
+}

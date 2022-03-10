@@ -4,12 +4,11 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
-import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonChief;
+import com.minecolonies.coremod.entity.mobs.amazons.EntityAmazonSpearman;
 import com.minecolonies.coremod.entity.mobs.amazons.EntityArcherAmazon;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -22,8 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 
-import static com.minecolonies.api.entity.ModEntities.AMAZON;
-import static com.minecolonies.api.entity.ModEntities.AMAZONCHIEF;
+import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_AMAZON;
 
 /**
@@ -73,6 +71,12 @@ public class AmazonRaidEvent extends HordeRaidEvent
             return;
         }
 
+        if (entity instanceof EntityAmazonSpearman && normal.keySet().size() < horde.numberOfRaiders)
+        {
+            normal.put(entity, entity.getUUID());
+            return;
+        }
+
         entity.remove(Entity.RemovalReason.DISCARDED);
     }
 
@@ -101,14 +105,6 @@ public class AmazonRaidEvent extends HordeRaidEvent
     }
 
     @Override
-    public void setHorde(final Horde horde)
-    {
-        super.setHorde(horde);
-        this.horde.numberOfArchers = this.horde.numberOfArchers + this.horde.numberOfRaiders;
-        this.horde.numberOfRaiders = 0;
-    }
-
-    @Override
     public void onEntityDeath(final LivingEntity entity)
     {
         if (!(entity instanceof AbstractEntityMinecoloniesMob))
@@ -128,6 +124,12 @@ public class AmazonRaidEvent extends HordeRaidEvent
             horde.numberOfArchers--;
         }
 
+        if (entity instanceof EntityAmazonSpearman)
+        {
+            normal.remove(entity);
+            horde.numberOfRaiders--;
+        }
+
         horde.hordeSize--;
 
         if (horde.hordeSize == 0)
@@ -136,13 +138,6 @@ public class AmazonRaidEvent extends HordeRaidEvent
         }
 
         sendHordeMessage();
-    }
-
-    @Override
-    protected void spawnHorde(final BlockPos spawnPos, final IColony colony, final int id, final int numberOfBosses, final int numberOfArchers, final int numberOfRaiders)
-    {
-        RaiderMobUtils.spawn(AMAZONCHIEF, numberOfBosses, spawnPos, colony.getWorld(), colony, id);
-        RaiderMobUtils.spawn(AMAZON, numberOfArchers + numberOfRaiders, spawnPos, colony.getWorld(), colony, id);
     }
 
     /**
@@ -162,7 +157,7 @@ public class AmazonRaidEvent extends HordeRaidEvent
     @Override
     public EntityType<?> getNormalRaiderType()
     {
-        return AMAZON;
+        return AMAZONSPEARMAN;
     }
 
     @Override

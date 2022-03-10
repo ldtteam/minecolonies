@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.mobs.aitasks;
 
+import com.minecolonies.api.entity.ICustomAttackSound;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.entity.CustomArrowEntity;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.ai.combat.CombatUtils;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -20,7 +22,7 @@ import net.minecraft.sounds.SoundEvents;
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
 /**
- * Raider AI for melee attacking a target
+ * Raider AI for shooting arrows at a target
  */
 public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
 {
@@ -115,7 +117,12 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
 
         // Visuals
         user.swing(InteractionHand.MAIN_HAND);
-        user.playSound(SoundEvents.SKELETON_SHOOT, (float) 1.0D, (float) getRandomPitch());
+        SoundEvent attackSound = SoundEvents.SKELETON_SHOOT;
+        if (arrowEntity instanceof ICustomAttackSound)
+        {
+            attackSound = ((ICustomAttackSound) arrowEntity).getAttackSound();
+        }
+        user.playSound(attackSound, (float) 1.0D, (float) getRandomPitch());
     }
 
     /**

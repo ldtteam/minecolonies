@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 
 public class ModEntities
 {
@@ -51,6 +52,8 @@ public class ModEntities
 
     public static EntityType<? extends AbstractEntityAmazon> AMAZON;
 
+    public static EntityType<? extends AbstractEntityAmazon> AMAZONSPEARMAN;
+
     public static EntityType<? extends AbstractEntityAmazon> AMAZONCHIEF;
 
     public static EntityType<MinecoloniesMinecart> MINECART;
@@ -60,4 +63,6 @@ public class ModEntities
     public static EntityType<? extends Arrow> MC_NORMAL_ARROW;
 
     public static EntityType<? extends ThrownPotion> DRUID_POTION;
+
+    public static EntityType<SpearEntity> SPEAR;
 }

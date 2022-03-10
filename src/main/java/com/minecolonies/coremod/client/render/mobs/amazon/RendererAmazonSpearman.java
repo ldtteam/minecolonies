@@ -1,30 +1,30 @@
 package com.minecolonies.coremod.client.render.mobs.amazon;
 
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
-import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
+import com.minecolonies.coremod.client.model.raiders.ModelAmazonSpearman;
 import com.minecolonies.coremod.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Renderer used for archer amazons.
+ * Renderer used for spearman amazons.
  */
-public class RendererAmazon extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazon>
+public class RendererAmazonSpearman extends AbstractRendererAmazon<AbstractEntityAmazon, ModelAmazonSpearman>
 {
     /**
      * Texture of the entity.
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/amazon.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("minecolonies:textures/entity/raiders/amazon_spearman.png");
 
     /**
      * Constructor method for renderer
      *
      * @param context the renderManager
      */
-    public RendererAmazon(final EntityRendererProvider.Context context)
+    public RendererAmazonSpearman(final EntityRendererProvider.Context context)
     {
-        super(context, new ModelAmazon(context.bakeLayer(ClientRegistryHandler.AMAZON)), 0.5F);
+        super(context, new ModelAmazonSpearman(context.bakeLayer(ClientRegistryHandler.AMAZON_SPEARMAN)), 0.5F);
     }
 
     @NotNull

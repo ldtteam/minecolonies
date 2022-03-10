@@ -22,7 +22,7 @@ public abstract class AbstractEntityAmazon extends AbstractEntityMinecoloniesMob
     private static final double AMAZON_SWIM_BONUS = 1.9;
 
     /**
-     * Constructor method for Abstract egyptian..
+     * Constructor method for Abstract egyptian.
      *
      * @param type  the type.
      * @param world the world.
