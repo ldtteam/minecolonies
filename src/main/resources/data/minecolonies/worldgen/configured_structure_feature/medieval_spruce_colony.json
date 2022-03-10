@@ -14,18 +14,6 @@
       "bounding_box": "piece",
       "spawns": [
         {
-          "type": "minecraft:sheep",
-          "weight": 30,
-          "minCount": 2,
-          "maxCount": 10
-        },
-        {
-          "type": "minecraft:cow",
-          "weight": 30,
-          "minCount": 2,
-          "maxCount": 10
-        },
-        {
           "type": "minecraft:cat",
           "weight": 100,
           "minCount": 1,
