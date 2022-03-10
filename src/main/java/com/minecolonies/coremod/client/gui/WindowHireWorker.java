@@ -19,6 +19,7 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.PupilBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
@@ -113,7 +114,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         selectedModule = moduleViews.get(0);
 
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
-        setupShowEmployed(findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class));
+        setupShowEmployed();
     }
 
     /**
@@ -260,6 +261,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         final int row = jobList.getListElementIndexByPane(button);
         selectedModule = moduleViews.get(row);
+        setupShowEmployed();
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
         updateCitizens();
         citizenList.refreshElementPanes();
@@ -275,9 +277,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         onOpened();
     }
 
-    private void setupShowEmployed(@NotNull final Button button)
+    private void setupShowEmployed()
     {
-        button.setEnabled(selectedModule instanceof WorkerBuildingModuleView);
+        Button button = findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class);
+        button.setEnabled(selectedModule instanceof WorkerBuildingModuleView
+                && !(selectedModule instanceof PupilBuildingModuleView));
         button.setText("N");
         showEmployed = false;
     }
