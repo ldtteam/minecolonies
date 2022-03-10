@@ -226,6 +226,14 @@ public class EntityAIMournCitizen extends Goal
             return citizen.getRestrictCenter();
         }
 
+        //todo: go through all buildings, find graveyard, check for graveyard with the right citizen they're mourning for. Go to graveyard, wander around in graveyard. Else go townhall.
+        //todo if found graveyard, make mourning shorter (divide by two, while on graveyard).
+        //todo make sure we cache this here, to not recompute this constantly.
+        //todo from building of undertaker tick graves rarely. make them decay slowly and randomly (e.g number of graves x some rand value)
+        //todo add to list of citizens, also a "upkeep" button. By default upkeeping is on/off?
+        //todo if upkeep not done, on decay zombie spawns.
+        //todo request items for upkeep (1 stone block + 1 iron nugget). Upkeep is activated as soon as grave hits "half life" (to give enough time).
+
         return colony.getBuildingManager().getTownHall().getPosition();
     }
 }
