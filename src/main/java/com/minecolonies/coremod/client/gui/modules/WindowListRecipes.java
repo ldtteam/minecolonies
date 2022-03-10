@@ -1,10 +1,7 @@
 package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -16,11 +13,15 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.ToggleRecipeMessage;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -95,6 +96,19 @@ public class WindowListRecipes extends AbstractModuleWindow
         super.registerButton(BUTTON_REMOVE, this::removeClicked);
         super.registerButton(BUTTON_FORWARD, this::forwardClicked);
         super.registerButton(BUTTON_BACKWARD, this::backwardClicked);
+        super.registerButton(BUTTON_TOGGLE, this::toggleRecipe);
+
+    }
+
+    /**
+     * Recipe toggle.
+     * @param button the clicked button.
+     */
+    private void toggleRecipe(final Button button)
+    {
+        final int row = recipeList.getListElementIndexByPane(button);
+        module.toggle(row);
+        Network.getNetwork().sendToServer(new ToggleRecipeMessage(buildingView, row, module.getId()));
     }
 
     /**
@@ -103,9 +117,10 @@ public class WindowListRecipes extends AbstractModuleWindow
      */
     private void backwardClicked(final Button button)
     {
+        final boolean shift = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         final int row = recipeList.getListElementIndexByPane(button);
-        module.switchOrder(row, row + 1);
-        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getId()));
+        module.switchOrder(row, row + 1, shift);
+        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, false, module.getId(), shift));
         recipeList.refreshElementPanes();
     }
 
@@ -115,9 +130,10 @@ public class WindowListRecipes extends AbstractModuleWindow
      */
     private void forwardClicked(final Button button)
     {
+        final boolean shift = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_SHIFT);
         final int row = recipeList.getListElementIndexByPane(button);
-        module.switchOrder(row, row - 1);
-        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getId()));
+        module.switchOrder(row, row - 1, shift);
+        Network.getNetwork().sendToServer(new ChangeRecipePriorityMessage(buildingView, row, true, module.getId(), shift));
         recipeList.refreshElementPanes();
     }
 
@@ -186,6 +202,17 @@ public class WindowListRecipes extends AbstractModuleWindow
                     intermediate.setText(recipe.getIntermediate().getName());
                 }
                 intermediate.setVisible(false);
+
+                if (module.isDisabled(recipe))
+                {
+                    rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(true);
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.recipe.enable"));
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(false);
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.recipe.disable"));
+                }
 
                 // Some special recipes might not include all necessary air blocks.
                 if (recipe.getInput().size() < 4)

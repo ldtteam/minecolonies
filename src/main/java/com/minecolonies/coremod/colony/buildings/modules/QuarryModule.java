@@ -13,7 +13,9 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StationRequestResolver;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,12 +27,26 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 /**
  * The main data module for the quarry.
  */
-public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, ICreatesResolversModule
+public class QuarryModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, ICreatesResolversModule, IAltersBuildingFootprint
 {
     /**
      * If the quarry was finished.
      */
     private boolean isFinished = false;
+
+    /**
+     * The height of the quarry.
+     */
+    private final int height;
+
+    /**
+     * Create a new quarry module.
+     * @param height the height of the quarry.
+     */
+    public QuarryModule(final int height)
+    {
+        this.height = height;
+    }
 
     @Override
     public void onColonyTick(@NotNull final IColony colony)
@@ -157,5 +173,11 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     protected String getModuleSerializationIdentifier()
     {
         return TAG_QUARRY_ASSIGNMENT;
+    }
+
+    @Override
+    public net.minecraft.util.Tuple<BlockPos, BlockPos> getAdditionalCorners()
+    {
+        return new Tuple<>(new BlockPos(0, this.height, 0), new BlockPos(0, 0, 0));
     }
 }

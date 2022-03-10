@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,12 +20,17 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
     /**
      * The Hiring mode to set.
      */
-    private HiringMode mode;
+    private HiringMode    mode;
 
     /**
      * The job id.
      */
     private JobEntry jobId;
+
+    /**
+     * Check if living building module.
+     */
+    private boolean isLivingBuildingModule;
 
     /**
      * Empty constructor used when registering the
@@ -45,25 +51,44 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
         super(building);
         this.mode = mode;
         this.jobId = jobId;
+        if (jobId == null)
+        {
+            this.isLivingBuildingModule = true;
+        }
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         mode = HiringMode.values()[buf.readInt()];
-        this.jobId = buf.readRegistryIdSafe(JobEntry.class);;
+        isLivingBuildingModule = buf.readBoolean();
+        if (!isLivingBuildingModule)
+        {
+            this.jobId = buf.readRegistryIdSafe(JobEntry.class);
+        }
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeInt(mode.ordinal());
-        buf.writeRegistryId(jobId);
+        buf.writeBoolean(isLivingBuildingModule);
+        if (jobId != null)
+        {
+            buf.writeRegistryId(jobId);
+        }
     }
 
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
-        building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobId).setHiringMode(mode);
+        if (isLivingBuildingModule)
+        {
+            building.getFirstModuleOccurance(LivingBuildingModule.class).setHiringMode(mode);
+        }
+        else
+        {
+            building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobId).setHiringMode(mode);
+        }
     }
 }

@@ -223,9 +223,12 @@ public class CitizenDataView implements ICitizenDataView
         return workBuilding;
     }
 
-    /**
-     * DEPRECATED
-     */
+    @Override
+    public void setHomeBuilding(final BlockPos homeBuilding)
+    {
+        this.homeBuilding = homeBuilding;
+    }
+
     @Override
     public void setWorkBuilding(@Nullable final BlockPos bp)
     {

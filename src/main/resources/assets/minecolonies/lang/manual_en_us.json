@@ -728,7 +728,7 @@
   "com.minecolonies.coremod.item.permissionscepter.removeblock.success": "Removed block %s.",
   "com.minecolonies.coremod.item.permissionscepter.removelocation.success": "Removed location %d %d %d.",
   "tile.blockhut.warehouse.limit": "The amount of Warehouses is limited to 1 per colony. You cannot place any more in this colony without adjusting the config.",
-  "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place any more in this colony.",
+  "tile.blockhut.tavern.limit": "The amount of Taverns is limited to 1 per colony. You cannot place or activate any more in this colony.",
 
   "com.minecolonies.coremod.bakery.nofurnace": "My work hut doesn't have any furnaces! Please repair it so I have some I can use!",
 
@@ -738,6 +738,7 @@
   "com.minecolonies.coremod.gui.townhall.housing": "Housing Assignment Mode:",
   "com.minecolonies.coremod.gui.townhall.movein": "Kids will be born:",
   "com.minecolonies.coremod.gui.home.assign": "Assign %d citizens",
+  "com.minecolonies.coremod.gui.workerhuts.managehousing": "Manage Housing",
   "com.minecolonies.coremod.gui.workerhuts.unassign": "Remove Citizen",
   "block.minecolonies.blockminecoloniesrack": "Rack",
   "block.minecolonies.blockminecoloniesgrave": "Grave",
@@ -888,6 +889,8 @@
 
   "com.minecolonies.coremod.gui.workerhuts.recipe": "Crafting",
   "com.minecolonies.coremod.gui.recipe.remove": "Remove",
+  "com.minecolonies.coremod.gui.recipe.enable": "Enable",
+  "com.minecolonies.coremod.gui.recipe.disable": "Disable",
   "com.minecolonies.coremod.gui.workerhuts.crafting": "Teach Recipe",
   "com.minecolonies.coremod.gui.recipe.done": "Successfully saved recipe!",
   "com.minecolonies.coremod.gui.workerhuts.listrecipes": "List of Recipes",
@@ -1049,7 +1052,7 @@
   "com.minecolonies.coremod.ai.betterfood.children": "Ew! I don't want to eat that!",
 
   "com.minecolonies.coremod.gui.home.current": "Current home: %d %d %d",
-  "com.minecolonies.coremod.gui.home.currently": "Currently: %d blocks",
+  "com.minecolonies.coremod.gui.home.currently": "Current work distance: %d blocks",
   "com.minecolonies.coremod.gui.workerhuts.crushersettings": "Settings",
   "com.minecolonies.coremod.gui.workerhuts.save": "Save",
   "com.minecolonies.coremod.crusher.toomuch": "Set to the current daily max of %d blocks.",
@@ -2228,6 +2231,16 @@
   "minecolonies:cookassistant.skills.desc": "Affects recipe improvement chance and working speed.",
   "minecolonies:smelter.skills.desc": "Affects smelting/working speed and chance of multiplying ore.",
   "minecolonies:druid.skills.desc": "Affects accuracy and potion quality.",
-  "minecolonies:netherworker.skills.desc": "Affects the survival chances and loot."
+  "minecolonies:netherworker.skills.desc": "Affects the survival chances and loot.",
 
+  "com.minecolonies.coremod.grave.lava": "Could not spawn a grave because all remains already burned.",
+  "com.minecolonies.coremod.grave.water": "The citizen drowned too deep or too far away from the shore to recover their remains.",
+
+  "com.minecolonies.coremod.gui.home.assigned": "Assigned Citizens: %d/%d",
+  "com.minecolonies.coremod.gui.home.manage": "Manage Housing",
+  "com.minecolonies.coremod.gui.home.hire.warning": "Turn the hiring mode of this hut (or colony) to manual to remove this citizen or assign another one.",
+  "com.minecolonies.coremod.gui.buildingassignmentmode": "Building Assignment Mode:",
+  "com.minecolonies.coremod.gui.home.homeless": "Homeless",
+  "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
+  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here"
 }

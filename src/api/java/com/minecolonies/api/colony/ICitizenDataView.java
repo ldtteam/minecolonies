@@ -200,4 +200,10 @@ public interface ICitizenDataView extends ICitizen
      * @param view the job view to set.
      */
     void setJobView(IJobView view);
+
+    /**
+     * Set the home building on the client side.
+     * @param position the pos of the home building.
+     */
+    void setHomeBuilding(BlockPos position);
 }

@@ -304,6 +304,11 @@ public final class NbtTagConstants
     public static final String TAG_RECIPES = "recipes";
 
     /**
+     * NBTTag to store the disabled recipes list.
+     */
+    public static final String TAG_DISABLED_RECIPES = "disabledrecipes";
+
+    /**
      * Tag to store the id to NBT.
      */
     public static final String TAG_WORKER_ID = "workerId";
