@@ -5,6 +5,7 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.ToggleButton;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -29,6 +30,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.RedstoneTorchBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -79,6 +81,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     protected IAssignmentModuleView selectedModule;
 
     /**
+     * Whether or not to show citizens who are employed
+     */
+    protected boolean showEmployed;
+
+    /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
@@ -100,10 +107,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(BUTTON_RESTART, this::restartClicked);
         super.registerButton(BUTTON_MODE, this::modeClicked);
         super.registerButton(BUTTON_JOB, this::jobClicked);
+        super.registerButton(TOGGLE_SHOW_EMPLOYED, this::showEmployedToggled);
+
         moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class));
         selectedModule = moduleViews.get(0);
 
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
+        setupShowEmployed(findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class));
     }
 
     /**
@@ -256,6 +266,27 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         jobList.refreshElementPanes();
     }
 
+    protected void showEmployedToggled(@NotNull final Button button)
+    {
+
+        button.setText(showEmployed ? "N" : "Y");
+        showEmployed = !showEmployed;
+
+        onOpened();
+    }
+
+    private void setupShowEmployed(@NotNull final Button button)
+    {
+        button.setEnabled(selectedModule instanceof WorkerBuildingModuleView);
+        button.setText("N");
+        showEmployed = false;
+    }
+
+    private boolean canAssign(ICitizenDataView citizen)
+    {
+        return (showEmployed && !citizen.isChild()) || selectedModule.canAssign(citizen);
+    }
+
     /**
      * Clears and resets/updates all citizens.
      */
@@ -263,22 +294,12 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         citizens.clear();
 
-        //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                      // don't want everybody showing for things like the Warehouse Courier view or the Quarry view
-                     .filter(citizen -> selectedModule.canAssign(citizen) || selectedModule instanceof WorkerBuildingModuleView)
-                     .filter(citizen -> !citizen.isChild())
-                     .sorted(Comparator.comparing(this::getCitizenPriority)
-                             .thenComparing(ICitizenDataView::getName))
-                     .collect(Collectors.toList());
+                .filter(this::canAssign)
+                .sorted(Comparator.comparing(this::getCitizenPriority)
+                        .thenComparing(ICitizenDataView::getName))
+                .collect(Collectors.toList());
 
-//        citizens.sort(
-//                (c1, c2) -> {
-//                    int i1 = building.getPosition().equals(c1.getWorkBuilding()) ? -1 : 0;
-//                    int i2 = building.getPosition().equals(c2.getWorkBuilding()) ? -1 : 0;
-//                    return Integer.compare(i1, i2);
-//            }
-//        );
     }
 
     /**
@@ -304,7 +325,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if (!citizen.isChild()
+                if (canAssign(citizen)
                       && !selectedModule.isFull()
                       && !selectedModule.getAssignedCitizens().contains(citizen.getId()))
                 {
