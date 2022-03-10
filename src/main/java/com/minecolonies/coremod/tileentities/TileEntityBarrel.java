@@ -10,6 +10,13 @@ import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -108,13 +115,28 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
      *
      * @param playerIn  the player
      * @param itemstack the itemStack on the hand of the player
+     * @param hitFace   the side of the barrel the player hit.
+     *                  Passing null when composting is complete will insert resulting compost directly into inventory, spawning overflow as an ItemEntity
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final Player playerIn, final ItemStack itemstack)
+    public boolean useBarrel(final Player playerIn, final ItemStack itemstack, @Nullable Direction hitFace)
     {
         if (done)
         {
-            playerIn.getInventory().add(new ItemStack(ModItems.compost, 6));
+            ItemStack compostStack = new ItemStack(ModItems.compost, 6);
+            if (hitFace != null) // Spawn all as ItemEntity
+            {
+                playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
+                this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
+            }
+            else // Insert directly into inventory, spawning overflow as ItemEntity
+            {
+                if(!playerIn.getInventory().add(compostStack))
+                {
+                    playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, 0, 0.2f, 0));
+                }
+                this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
+            }
             done = false;
             return true;
         }
