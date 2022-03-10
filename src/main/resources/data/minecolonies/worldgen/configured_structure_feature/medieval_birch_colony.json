@@ -10,7 +10,7 @@
 
   "adapt_noise": true,
   "spawn_overrides": {
-    "monster": {
+    "creature": {
       "bounding_box": "piece",
       "spawns": [
         {
