@@ -1,0 +1,35 @@
+{
+  "parent":"forge:item/default",
+  "loader":"forge:separate-perspective",
+  "base": {
+    "parent": "minecolonies:item/spear_in_hand",
+    "textures": {
+      "spear": "minecolonies:items/spear"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "minecolonies:items/spear"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "minecolonies:items/spear"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "minecraft:throwing": 1
+      },
+      "model": "minecolonies:item/spear_throwing",
+      "textures": {
+        "spear": "minecolonies:items/spear"
+      }
+    }
+  ]
+}

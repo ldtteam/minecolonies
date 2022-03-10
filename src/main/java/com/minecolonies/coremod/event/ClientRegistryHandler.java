@@ -3,15 +3,16 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
 import com.minecolonies.coremod.client.model.*;
 import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
 import com.minecolonies.coremod.client.model.raiders.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazon;
+import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazonSpearman;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererChiefAmazon;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -24,6 +25,8 @@ import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaiden
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
+import com.minecolonies.coremod.client.render.projectile.FireArrowRenderer;
+import com.minecolonies.coremod.client.render.projectile.RendererSpear;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -32,6 +35,7 @@ import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -119,6 +123,7 @@ public class ClientRegistryHandler
 
     public static final ModelLayerLocation AMAZON       = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon"), "amazon");
     public static final ModelLayerLocation AMAZON_CHIEF = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_chief"), "amazon_chief");
+    public static final ModelLayerLocation AMAZON_SPEARMAN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_spearman"), "amazon_spearman");
 
     public static final ModelLayerLocation SCARECROW = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "scarecrow"), "scarecrow");
 
@@ -130,6 +135,7 @@ public class ClientRegistryHandler
     {
         event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
         event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
+        event.registerLayerDefinition(AMAZON_SPEARMAN, ModelAmazonSpearman::createMesh);
 
         event.registerLayerDefinition(ARCHER_MUMMY, ModelArcherMummy::createMesh);
         event.registerLayerDefinition(MUMMY, ModelMummy::createMesh);
@@ -219,6 +225,8 @@ public class ClientRegistryHandler
         event.registerEntityRenderer(ModEntities.VISITOR, RenderBipedCitizen::new);
         event.registerEntityRenderer(ModEntities.FISHHOOK, RenderFishHook::new);
         event.registerEntityRenderer(ModEntities.FIREARROW, FireArrowRenderer::new);
+        event.registerEntityRenderer(ModEntities.SPEAR, RendererSpear::new);
+
         event.registerEntityRenderer(ModEntities.MC_NORMAL_ARROW, TippableArrowRenderer::new);
         event.registerEntityRenderer(ModEntities.DRUID_POTION, m -> new ThrownItemRenderer<>(m, 1.0F, true));
 
@@ -239,6 +247,7 @@ public class ClientRegistryHandler
 
         event.registerEntityRenderer(ModEntities.AMAZON, RendererAmazon::new);
         event.registerEntityRenderer(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
+        event.registerEntityRenderer(ModEntities.AMAZONSPEARMAN, RendererAmazonSpearman::new);
 
         event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
         event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);
@@ -258,5 +267,9 @@ public class ClientRegistryHandler
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockCompostedDirt, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockBarrel, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(ModBlocks.blockWayPoint, RenderType.cutout());
+
+        ItemProperties.register(ModItems.spear, new ResourceLocation("throwing"), (item, world, entity, light) ->
+                                                                           (entity != null && entity.isUsingItem() && entity.getUseItem() == item) ? 1.0F : 0.0F);
+
     }
 }
