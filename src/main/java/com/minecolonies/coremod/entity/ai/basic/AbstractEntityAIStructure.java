@@ -449,6 +449,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 break;
         }
 
+        if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FAIL)
+        {
+            Log.getLogger().error("Failed placement at: " + result.getBlockResult().getWorldPos().toShortString());
+        }
+
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
             getOwnBuilding().nextStage();
@@ -457,7 +462,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 getOwnBuilding().setProgressPos(null, null);
                 return COMPLETE_BUILD;
             }
-
         }
         else if (result.getBlockResult().getResult() == BlockPlacementResult.Result.LIMIT_REACHED)
         {
@@ -623,54 +627,74 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
       final List<ItemStack> itemList,
       final boolean force)
     {
+        final Map<ItemStorage, Integer> requestedMap = new HashMap<>();
         for (final ItemStack stack : itemList)
         {
-            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 ->  ItemStackUtils.compareItemStacksIgnoreStackSize(stack, stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack))
+            if (stack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) stack.getItem()).getBlock()))
+            {
+                continue;
+            }
+
+            ItemStorage tempStorage = new ItemStorage(stack.copy());
+            if (requestedMap.containsKey(tempStorage))
+            {
+                final int oldSize = requestedMap.get(tempStorage);
+                tempStorage.setAmount(tempStorage.getAmount() + oldSize);
+            }
+            requestedMap.put(tempStorage, tempStorage.getAmount());
+        }
+
+        for (final ItemStorage stack : requestedMap.keySet())
+        {
+            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 ->  ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack.getItemStack()))
             {
                 return RECALC;
             }
         }
 
         final List<ItemStack> foundStacks = InventoryUtils.filterItemHandler(placer.getWorker().getInventoryCitizen(),
-          itemStack -> itemList.stream().anyMatch(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(targetStack, itemStack)));
+          itemStack -> requestedMap.keySet().stream().anyMatch(storage -> ItemStackUtils.compareItemStacksIgnoreStackSize(storage.getItemStack(), itemStack)));
+
+        final Map<ItemStorage, Integer> localMap = new HashMap<>();
+        for (final ItemStack stack : foundStacks)
+        {
+            ItemStorage tempStorage = new ItemStorage(stack.copy());
+            if (localMap.containsKey(tempStorage))
+            {
+                final int oldSize = localMap.get(tempStorage);
+                tempStorage.setAmount(tempStorage.getAmount() + oldSize);
+            }
+            localMap.put(tempStorage, tempStorage.getAmount());
+        }
+
         if (force)
         {
-            for (final ItemStack foundStack : new ArrayList<>(foundStacks))
+            for (final Map.Entry<ItemStorage, Integer> local : localMap.entrySet())
             {
-                final Optional<ItemStack> opt = itemList.stream().filter(targetStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(targetStack, foundStack)).findFirst();
-                if (opt.isPresent())
+                int req = requestedMap.getOrDefault(local.getKey(), 0);
+                if (req != 0)
                 {
-                    final ItemStack stack = opt.get();
-                    itemList.remove(stack);
-                    if (stack.getCount() > foundStack.getCount())
+                    if (local.getValue() >= req)
                     {
-                        stack.setCount(stack.getCount() - foundStack.getCount());
-                        itemList.add(stack);
+                        requestedMap.remove(local.getKey());
+                    }
+                    else
+                    {
+                        requestedMap.put(local.getKey(), req - local.getValue());
+
                     }
                 }
             }
         }
         else
         {
-            itemList.removeIf(itemStack -> ItemStackUtils.isEmpty(itemStack) || foundStacks.stream().anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target, itemStack)));
-        }
-        itemList.removeIf(itemstack -> itemstack.getItem() instanceof BlockItem && isBlockFree(((BlockItem) itemstack.getItem()).getBlock()));
-
-        final Map<ItemStorage, Integer> list = new HashMap<>();
-        for (final ItemStack stack : itemList)
-        {
-            ItemStorage tempStorage = new ItemStorage(stack.copy());
-            if (list.containsKey(tempStorage))
-            {
-                final int oldSize = list.get(tempStorage);
-                tempStorage.setAmount(tempStorage.getAmount() + oldSize);
-            }
-            list.put(tempStorage, placer.getTotalAmount(tempStorage.getItemStack()).getCount());
+            requestedMap.entrySet().removeIf(entry -> ItemStackUtils.isEmpty(entry.getKey().getItemStack()) || foundStacks.stream().anyMatch(target -> ItemStackUtils.compareItemStacksIgnoreStackSize(target, entry.getKey().getItemStack())));
         }
 
-        for (final Map.Entry<ItemStorage, Integer> placedStack : list.entrySet())
+        for (final Map.Entry<ItemStorage, Integer> placedStack : requestedMap.entrySet())
         {
-            if (ItemStackUtils.isEmpty(placedStack.getKey().getItemStack()))
+            final ItemStack stack = placedStack.getKey().getItemStack();
+            if (ItemStackUtils.isEmpty(stack))
             {
                 return FAIL;
             }
@@ -679,21 +703,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                .getOpenRequestsOfTypeFiltered(
                                                                                  placer.getWorker().getCitizenData(),
                                                                                  TypeConstants.DELIVERABLE,
-                                                                                 (IRequest<? extends IDeliverable> r) -> r.getRequest()
-                                                                                                                           .matches(placedStack.getKey().getItemStack()));
+                                                                                 (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
             final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.getOwnBuilding()
                                                                                         .getCompletedRequestsOfTypeFiltered(
                                                                                           placer.getWorker().getCitizenData(),
                                                                                           TypeConstants.DELIVERABLE,
-                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest()
-                                                                                                                                    .matches(placedStack.getKey().getItemStack()));
+                                                                                          (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
             if (requests.isEmpty() && completedRequests.isEmpty())
             {
-                final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(placedStack.getKey().getItemStack(), placedStack.getValue(), 1);
+                final com.minecolonies.api.colony.requestsystem.requestable.Stack stackRequest = new Stack(stack, placer.getTotalAmount(stack).getCount(), 1);
                 placer.getWorker().getCitizenData().createRequest(stackRequest);
-                placer.registerBlockAsNeeded(placedStack.getKey().getItemStack());
+                placer.registerBlockAsNeeded(stack);
                 return FAIL;
             }
             else
