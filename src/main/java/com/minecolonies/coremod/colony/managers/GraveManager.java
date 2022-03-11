@@ -12,6 +12,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.Colony;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
@@ -20,8 +21,11 @@ import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 
 import org.jetbrains.annotations.NotNull;
@@ -250,10 +254,39 @@ public class GraveManager implements IGraveManager
     @Override
     public void createCitizenGrave(final Level world, final BlockPos pos, final ICitizenData citizenData)
     {
-        final BlockPos firstValidPosition = BlockPosUtil.findAround(world, pos, 15, 10,
-          (blockAccess, current) ->
-            blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
-              blockAccess.getBlockState(current.below()).getMaterial().isSolid());
+        final BlockState here = world.getBlockState(pos);
+        if (here.getBlock() == Blocks.LAVA)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.lava");
+            return;
+        }
+
+        BlockPos firstValidPosition = null;
+        if (here.getBlock() == Blocks.WATER)
+        {
+            for (int i = 1; i <= 10; i++)
+            {
+                if (world.getBlockState(pos.above(i)).getBlock() instanceof AirBlock)
+                {
+                    firstValidPosition = searchShore(world, pos.above(i));
+                    break;
+                }
+            }
+
+            if (firstValidPosition == null)
+            {
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.water");
+            }
+        }
+        else
+        {
+            firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
+              (blockAccess, current) ->
+                blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
+                  blockAccess.getBlockState(current.below()).getMaterial().isSolid());
+        }
+
+
         if (firstValidPosition != null)
         {
             world.setBlockAndUpdate(firstValidPosition,
@@ -283,5 +316,27 @@ public class GraveManager implements IGraveManager
         {
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
         }
+    }
+
+    /**
+     * Search a nearby shore into each direction, up to 10 blocks.
+     * @param world the world to search in.
+     * @param pos the starting position.
+     * @return shore.
+     */
+    private BlockPos searchShore(final Level world, final BlockPos pos)
+    {
+        for (int xz = 1; xz <= 10; xz++)
+        {
+            for (final Direction direction : Direction.Plane.HORIZONTAL)
+            {
+                final BlockPos relativePos = pos.relative(direction, xz);
+                if (!world.isWaterAt(relativePos))
+                {
+                    return relativePos;
+                }
+            }
+        }
+        return null;
     }
 }

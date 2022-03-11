@@ -10,7 +10,7 @@ import com.minecolonies.api.sounds.TavernSounds;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.client.gui.huts.WindowHutTavern;
+import com.minecolonies.coremod.client.gui.huts.WindowHutLiving;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
@@ -431,7 +431,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
         @Override
         public BOWindow getWindow()
         {
-            return new WindowHutTavern(this);
+            return new WindowHutLiving(this);
         }
     }
 }

@@ -26,10 +26,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.postbox.
 import com.minecolonies.coremod.network.messages.server.colony.building.university.TryResearchMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.SortWarehouseMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.warehouse.UpgradeWarehouseMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.*;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.*;
 import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
 import com.minecolonies.coremod.research.GlobalResearchTreeMessage;
@@ -205,6 +202,7 @@ public class NetworkChannel
         registerMessage(++idx, ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
+        registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
