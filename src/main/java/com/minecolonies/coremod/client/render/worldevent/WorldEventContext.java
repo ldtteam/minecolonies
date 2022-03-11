@@ -58,7 +58,7 @@ public class WorldEventContext
         ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
 
         NearColonyBuildingsRenderer.render(this);
-        ColonyWaypointRenderer.render(this);
+        ColonyMarkerBlockRenderer.render(this);
         ColonyPatrolPointRenderer.render(this);
         GuardTowerRallyBannerRenderer.render(this);
         HighlightManager.render(this);

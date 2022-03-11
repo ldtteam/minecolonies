@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -262,6 +263,18 @@ public final class ItemStackUtils
      */
     @NotNull
     public static Boolean isEmpty(@Nullable final ItemStack stack)
+    {
+        return stack == null || stack.isEmpty();
+    }
+
+    /**
+     * Wrapper method to check if a stack is empty. Used for easy updating to 1.11.
+     *
+     * @param stack The stack to check.
+     * @return True when the stack is empty, false when not.
+     */
+    @NotNull
+    public static Boolean isEmpty(@Nullable final ItemStorage stack)
     {
         return stack == null || stack.isEmpty();
     }
@@ -714,6 +727,19 @@ public final class ItemStackUtils
     }
 
     /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param storage The left stack to compare.
+     * @param stack The right stack to compare.
+     * @return True when they are equal except the stacksize, false when not.
+     */
+    @NotNull
+    public static Boolean compareStorageToStackIgnoringStackSize(final ItemStorage storage, final ItemStack stack)
+    {
+        return compareStorageToStackIgnoringStackSize(storage, stack, true, true);
+    }
+
+    /**
      * get the size of the stack. This is for compatibility between 1.10 and 1.11
      *
      * @param stack to get the size from
@@ -757,6 +783,20 @@ public final class ItemStackUtils
     public static boolean compareItemStacksIgnoreStackSize(final ItemStack itemStack1, final ItemStack itemStack2, final boolean matchDamage, final boolean matchNBT)
     {
         return compareItemStacksIgnoreStackSize(itemStack1, itemStack2, matchDamage, matchNBT, false);
+    }
+
+    /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param storage  The left stack to compare.
+     * @param stack  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
+     * @return True when they are equal except the stacksize, false when not.
+     */
+    public static boolean compareStorageToStackIgnoringStackSize(final ItemStorage storage, final ItemStack stack, final boolean matchDamage, final boolean matchNBT)
+    {
+        return compareItemStorageToItemStackIgnoreStackSize(storage, stack, matchDamage, matchNBT, false);
     }
 
     /**
@@ -829,6 +869,75 @@ public final class ItemStackUtils
     }
 
     /**
+     * Method to compare to stacks, ignoring their stacksize.
+     *
+     * @param storage  The left stack to compare.
+     * @param stack  The right stack to compare.
+     * @param matchDamage Set to true to match damage data.
+     * @param matchNBT    Set to true to match nbt
+     * @param min         if the count of stack2 has to be at least the same as stack1.
+     * @return True when they are equal except the stacksize, false when not.
+     */
+    public static boolean compareItemStorageToItemStackIgnoreStackSize(
+      final ItemStorage storage,
+      final ItemStack stack,
+      final boolean matchDamage,
+      final boolean matchNBT,
+      final boolean min)
+    {
+        if (isEmpty(storage) && isEmpty(stack))
+        {
+            return true;
+        }
+
+        if (isEmpty(storage) != isEmpty(stack))
+        {
+            return false;
+        }
+
+        if (storage.getItem() == stack.getItem() && (!matchDamage || storage.getDamageValue() == stack.getDamageValue()))
+        {
+            if (!matchNBT)
+            {
+                // Not comparing nbt
+                return true;
+            }
+
+            if (min && storage.getAmount() > stack.getCount())
+            {
+                return false;
+            }
+
+            // Then sort on NBT
+            if (storage.hasTag() && stack.hasTag())
+            {
+                CompoundTag nbt1 = storage.getTag();
+                CompoundTag nbt2 = stack.getTag();
+
+                for(String key :nbt1.getAllKeys())
+                {
+                    if(!matchDamage && key.equals("Damage"))
+                    {
+                        continue;
+                    }
+                    if(!nbt2.contains(key) || !nbt1.get(key).equals(nbt2.get(key)))
+                    {
+                        return false;
+                    }
+                }
+
+                return nbt1.getAllKeys().size() == nbt2.getAllKeys().size();
+            }
+            else
+            {
+                return (!storage.hasTag() || storage.getTag().isEmpty())
+                         && (!stack.hasTag() || stack.getTag().isEmpty());
+            }
+        }
+        return false;
+    }
+
+    /**
      * Method to check if a stack is in a list of stacks.
      *
      * @param stacks the list of stacks.
@@ -881,6 +990,17 @@ public final class ItemStackUtils
     public static void changeSize(@NotNull final ItemStack stack, final int amount)
     {
         stack.setCount(stack.getCount() + amount);
+    }
+
+    /**
+     * Increase or decrease the stack size.
+     *
+     * @param storage  to set the size to
+     * @param amount to increase the stack's size of (negative value to decrease)
+     */
+    public static void changeSize(@NotNull final ItemStorage storage, final int amount)
+    {
+        storage.setAmount(storage.getAmount() + amount);
     }
 
     /**

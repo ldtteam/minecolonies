@@ -519,6 +519,7 @@
 
   "com.minecolonies.coremod.gui.townhall.recall": "Recall Citizens",
   "com.minecolonies.coremod.gui.townhall.recallone": "Recall Citizen",
+  "com.minecolonies.coremod.gui.townhall.recalltravellers": "Recall Travellers",
 
   "com.minecolonies.coremod.gui.townhall.defaultname": "%s's Colony",
   "com.minecolonies.coremod.gui.townhall.currtownhallname": "Colony Name:",
@@ -1879,6 +1880,8 @@
   "block.minecolonies.blockconstructiontape.name": "Construction Tape",
   "block.minecolonies.blockhutarchery": "Archery",
   "block.minecolonies.blockhutarchery.name": "Archery",
+  "block.minecolonies.blockhutarcheologist": "Archeologist",
+  "block.minecolonies.blockhutarcheologist.name": "Archeologist",
   "block.minecolonies.blockhutbaker": "Bakery",
   "block.minecolonies.blockhutbaker.name": "Bakery",
   "block.minecolonies.blockhutbarracks": "Barracks",
@@ -1970,6 +1973,7 @@
   "block.minecolonies.blockstash": "Stash",
   "block.minecolonies.blockstash.name": "Stash",
   "block.minecolonies.blockwaypoint": "Waypoint Placeholder",
+  "block.minecolonies.blockgatemarker": "Gatemarker Placeholder",
   "block.minecolonies.blockhutgraveyard": "Graveyard",
   "block.minecolonies.blockhutgraveyard.name": "Graveyard",
   "block.minecolonies.blockhutnetherworker": "Nether Mine",
@@ -2158,6 +2162,9 @@
   "com.minecolonies.coremod.gui.reactivate.button": "Reactivate",
   "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:",
   "com.minecolonies.coremod.setting.minecolonies:fillblock": "Fill block:",
+  "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:",
+  "com.minecolonies.coremod.gui.no-target": "No target set",
+  "com.minecolonies.coremod.gui.workerhuts.archeologist.target": "Current target:"
   "block.minecolonies.simplequarry": "Simple Quarry",
   "block.minecolonies.simplequarry.name": "Simple Quarry",
   "block.minecolonies.mediumquarry": "Medium Quarry",

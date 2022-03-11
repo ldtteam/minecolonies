@@ -15,6 +15,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -103,7 +104,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     /**
      * Base Vision range per building level.
      */
-    private static final int BASE_VISION_RANGE = 15;
+    private static final int BASE_VISION_RANGE  = 15;
 
     /**
      * The position at which the guard should guard at.
@@ -116,9 +117,19 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     protected List<BlockPos> patrolTargets = new ArrayList<>();
 
     /**
+     * Indicates what type of following the guard should do.
+     */
+    private FollowTargetType followingType = FollowTargetType.NONE;
+
+    /**
      * The UUID of the player the guard has been set to follow.
      */
     private UUID followPlayerUUID;
+
+    /**
+     * The id of the citizen the has been set to follow.
+     */
+    private int followCitizenId;
 
     /**
      * The location the guard has been set to rally to.
@@ -228,6 +239,24 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             minePos = NbtUtils.readBlockPos(compound.getCompound(NBT_MINE_POS));
         }
+        if (compound.contains(NbtTagConstants.FOLLOW_MODE)) {
+            followingType = FollowTargetType.valueOf(compound.getString(NbtTagConstants.FOLLOW_MODE));
+            switch (followingType)
+            {
+                case NONE -> {
+                    followPlayerUUID = null;
+                    followCitizenId = -1;
+                }
+                case PLAYER -> {
+                    followPlayerUUID = UUID.fromString(compound.getString(NbtTagConstants.FOLLOW_PLAYER));
+                    followCitizenId = -1;
+                }
+                case CITIZEN -> {
+                    followPlayerUUID = null;
+                    followCitizenId = compound.getInt(NbtTagConstants.FOLLOW_CITIZEN);
+                }
+            }
+        }
     }
 
     @Override
@@ -249,6 +278,17 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             compound.put(NBT_MINE_POS, NbtUtils.writeBlockPos(minePos));
         }
+
+        compound.putString(NbtTagConstants.FOLLOW_MODE, followingType.name());
+        if (followingType == FollowTargetType.PLAYER)
+        {
+            compound.putString(NbtTagConstants.FOLLOW_PLAYER, followPlayerUUID.toString());
+        }
+        if (followingType == FollowTargetType.CITIZEN)
+        {
+            compound.putInt(NbtTagConstants.FOLLOW_CITIZEN, followCitizenId);
+        }
+
 
         return compound;
     }
@@ -530,13 +570,20 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     @Override
     public BlockPos getPositionToFollow()
     {
-        Player followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
-        if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level.dimension() == this.colony.getDimension())
-        {
-            return new BlockPos(followPlayer.position());
-        }
+        return switch (followingType) {
+            case PLAYER -> {
+                Player followPlayer = getPlayerFromUUID(followPlayerUUID, this.colony.getWorld());
+                if (getSetting(GUARD_TASK).getValue().equals(GuardTaskSetting.FOLLOW) && followPlayer != null && followPlayer.level.dimension() == this.colony.getDimension())
+                {
+                    yield new BlockPos(followPlayer.position());
+                }
+                yield this.getPosition();
+            }
+            case CITIZEN -> getColony().getCitizenManager().getCivilian(this.followCitizenId).getLastPosition();
+            default -> this.getPosition();
+        };
 
-        return this.getPosition();
+
     }
 
     @Override

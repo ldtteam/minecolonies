@@ -802,6 +802,20 @@ public class CitizenData implements ICitizenData
             }
         }
 
+        //Check if we are traveling, we don't spawn an entity if we are traveling.
+        if (getColony().getTravelingManager().isTravelling(this)) {
+            return;
+        }
+
+        //Okey we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
+        final Optional<BlockPos> travelingTargetCandidate = getColony().getTravelingManager().getTravellingTargetFor(this);
+        if (travelingTargetCandidate.isPresent()) {
+            //We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
+            getColony().getTravelingManager().finishTravellingFor(this);
+            nextRespawnPos = travelingTargetCandidate.get();
+            lastPosition = nextRespawnPos;
+        }
+
         if (nextRespawnPos != null)
         {
             colony.getCitizenManager().spawnOrCreateCivilian(this, colony.getWorld(), nextRespawnPos, true);

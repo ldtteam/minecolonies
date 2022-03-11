@@ -3,6 +3,7 @@ package com.minecolonies.api.crafting;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.util.ItemStackUtils;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -347,5 +348,25 @@ public class ItemStorage
     public ImmutableItemStorage toImmutable()
     {
         return new ImmutableItemStorage(this);
+    }
+
+    /**
+     * Indicates if the storage has a tag attached to the underlying itemstack.
+     *
+     * @return True when a tag exists, false otherwise.
+     */
+    public boolean hasTag()
+    {
+        return stack.hasTag();
+    }
+
+    /**
+     * Returns the tag attached to the underlying itemstack.
+     *
+     * @return The tag.
+     */
+    public CompoundTag getTag()
+    {
+        return stack.getTag();
     }
 }

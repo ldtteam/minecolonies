@@ -164,6 +164,12 @@ public interface ICitizenManager extends IEntityManager
      */
     void onCitizenSleep();
 
+    /**
+     * Get civilian by ID.
+     *
+     * @param citizenId ID of the civilian.
+     * @return ICivilianData associated with the ID, or null if it was not found.
+     */
     @Override
     ICitizenData getCivilian(final int citizenId);
 

@@ -648,9 +648,35 @@ public final class NbtTagConstants
     public static final String MATCH_NBTIGNORE = "ignore";
 
     /**
+     * Tag names related to the following code for guards
+     */
+    public static final String FOLLOW_MODE   = "followMode";
+    public static final String FOLLOW_PLAYER  = "followingPlayer";
+    public static final String FOLLOW_CITIZEN = "followingCitizen";
+
+    /**
      * Version tag.
      */
-    public static final String TAG_VERSION = "version";
+    public static final String TAG_VERSION   = "version";
+
+    /**
+     * Handles the gate marker data in colonies.
+     */
+    public static final String TAG_GATE_MARKERS = "gateMarkers";
+    public static final String TAG_GATE_MARKER  = "gateMarker";
+
+    /**
+     * The gate position data for citizens which leave the colony.
+     */
+    public static final String TAG_GATE_POS     = "gatePosition";
+    public static final String TAG_GATE_PARENT_POS  = "gateParentPosition";
+
+    /**
+     * Traveling nbt tags.
+     */
+    public static final String TAG_INITIAL_TRAVEL_TIME   = "initialTravelTime";
+    public static final String TAG_REMAINING_TRAVEL_TIME = "remainingTravelTime";
+    public static final String TRAVELER_DATA             = "travelerData";
 
     /**
      * Private constructor to hide the implicit one.

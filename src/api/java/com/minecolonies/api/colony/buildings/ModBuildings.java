@@ -56,6 +56,7 @@ public final class ModBuildings
     public static final String SIMPLE_QUARRY_ID  = "simplequarry";
     public static final String MEDIUM_QUARRY_ID  = "mediumquarry";
     public static final String LARGE_QUARRY_ID   = "largequarry";
+    public static final String ARCHEOLOGIST_ID      = "archeologist";
 
     public static BuildingEntry archery;
     public static BuildingEntry bakery;
@@ -104,6 +105,7 @@ public final class ModBuildings
     public static BuildingEntry beekeeper;
     public static BuildingEntry mysticalSite;
     public static BuildingEntry graveyard;
+    public static BuildingEntry archeologist;
     public static BuildingEntry netherWorker;
     public static BuildingEntry simpleQuarry;
     public static BuildingEntry mediumQuarry;

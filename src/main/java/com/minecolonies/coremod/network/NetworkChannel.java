@@ -201,6 +201,7 @@ public class NetworkChannel
         registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
         registerMessage(++idx, ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
+        registerMessage(++idx, RecallTravellingCitizenMessage.class, RecallTravellingCitizenMessage::new);
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
         registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
 

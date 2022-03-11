@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED;
 
@@ -213,7 +214,12 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
 
         if (state.getBlock() == ModBlocks.blockWayPoint)
         {
-            structureAI.getWorker().getCitizenColonyHandler().getColony().addWayPoint(worldPos, state);
+            Objects.requireNonNull(structureAI.getWorker().getCitizenColonyHandler().getColony()).addWayPoint(worldPos, state);
+        }
+
+        if (state.getBlock() == ModBlocks.blockGateMarker)
+        {
+            Objects.requireNonNull(structureAI.getWorker().getCitizenColonyHandler().getColony()).addGateMarker(worldPos, state);
         }
     }
 

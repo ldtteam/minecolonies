@@ -8,14 +8,21 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
-import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
+import java.util.Objects;
 
-public class ColonyWaypointRenderer
+import static com.minecolonies.api.util.constant.CitizenConstants.INFRASTRUCTURE_DIRECTORY;
+
+public class ColonyMarkerBlockRenderer
 {
     /**
      * Cached wayPointBlueprint.
      */
     private static Blueprint wayPointTemplate;
+
+    /**
+     * Cached gatewayMarkerBlueprint.
+     */
+    private static Blueprint gatewayMarkerTemplate;
 
     /**
      * Renders waypoints of current colony.
@@ -26,7 +33,7 @@ public class ColonyWaypointRenderer
     {
         final Blueprint structure = Settings.instance.getActiveStructure();
         if (structure != null && ctx.hasNearestColony() && Settings.instance.getStructureName() != null
-            && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
+            && Settings.instance.getStructureName().contains(INFRASTRUCTURE_DIRECTORY))
         {
             if (wayPointTemplate == null)
             {
@@ -40,12 +47,32 @@ public class ColonyWaypointRenderer
                     true).getBluePrint();
             }
 
+            if (gatewayMarkerTemplate == null)
+            {
+                final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(),
+                  BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
+
+                gatewayMarkerTemplate = new LoadOnlyStructureHandler(ctx.clientLevel,
+                  BlockPos.ZERO,
+                  "schematics/infrastructure/gatewayMarker",
+                  settings,
+                  true).getBluePrint();
+            }
+
             StructureClientHandler.renderStructureAtPosList(
                 Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure()
                     : wayPointTemplate,
                 ctx.partialTicks,
-                new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),
+                new ArrayList<>(Objects.requireNonNull(ctx.nearestColony).getWayPoints().keySet()),
                 ctx.poseStack);
+
+            StructureClientHandler.renderStructureAtPosList(
+              Settings.instance.getActiveStructure().hashCode() == gatewayMarkerTemplate.hashCode() ? Settings.instance.getActiveStructure()
+                : gatewayMarkerTemplate,
+              ctx.partialTicks,
+              new ArrayList<>(ctx.nearestColony.getGateMarkers().keySet()),
+              ctx.poseStack);
         }
     }
+
 }

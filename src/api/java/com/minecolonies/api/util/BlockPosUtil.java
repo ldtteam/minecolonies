@@ -898,4 +898,13 @@ public final class BlockPosUtil
 
         return new BlockPos(cornerX, cornerY, cornerZ);
     }
+
+    public static BlockPos expandAwayFromZero(final BlockPos fromZero, final int amount)
+    {
+        return new BlockPos(
+          fromZero.getX() + (fromZero.getX() < 0 ? -amount : amount),
+          fromZero.getY() + (fromZero.getY() < 0 ? -amount : amount),
+          fromZero.getZ() + (fromZero.getZ() < 0 ? -amount : amount)
+        )
+    }
 }

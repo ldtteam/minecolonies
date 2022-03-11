@@ -8,7 +8,9 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
+import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.network.messages.server.colony.building.RecallTravellingCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +50,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
 
         registerButton(NAME_LABEL, this::fillCitizenInfo);
         registerButton(RECALL_ONE, this::recallOneClicked);
+        registerButton(RECALL_TRAVELLERS, this::recallTravellers);
     }
 
     /**
@@ -93,6 +96,17 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         final int citizenid = Integer.parseInt(button.getParent().findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).getTextAsString());
         Network.getNetwork().sendToServer(new RecallSingleCitizenMessage(building, citizenid));
     }
+
+    /**
+     * Executed when the recall one button has been clicked. Recalls one specific citizen.
+     *
+     * @param button the clicked button.
+     */
+    private void recallTravellers(final Button button)
+    {
+        Network.getNetwork().sendToServer(new RecallTravellingCitizenMessage(building));
+    }
+
 
     /**
      * Fills the citizens list in the GUI.

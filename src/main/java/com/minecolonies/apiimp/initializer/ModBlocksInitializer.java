@@ -9,6 +9,7 @@ import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagWallBanner;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.blocks.decorative.BlockGate;
 import com.minecolonies.coremod.blocks.huts.*;
+import com.minecolonies.coremod.blocks.schematic.BlockGateMarker;
 import com.minecolonies.coremod.blocks.schematic.BlockWaypoint;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
@@ -93,12 +94,14 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutMysticalSite = new BlockHutMysticalSite().registerBlock(registry);
         ModBlocks.blockHutGraveyard = new BlockHutGraveyard().registerBlock(registry);
         ModBlocks.blockHutNetherWorker = new BlockHutNetherWorker().registerBlock(registry);
+        ModBlocks.blockHutArcheologist = new BlockHutArcheologist().registerBlock(registry);
 
         ModBlocks.blockConstructionTape = new BlockConstructionTape().registerBlock(registry);
         ModBlocks.blockRack = new BlockMinecoloniesRack().registerBlock(registry);
         ModBlocks.blockGrave = new BlockMinecoloniesGrave().registerBlock(registry);
         ModBlocks.blockNamedGrave = new BlockMinecoloniesNamedGrave().registerBlock(registry);
         ModBlocks.blockWayPoint = new BlockWaypoint().registerBlock(registry);
+        ModBlocks.blockGateMarker = new BlockGateMarker().registerBlock(registry);
         ModBlocks.blockPostBox = new BlockPostBox().registerBlock(registry);
         ModBlocks.blockStash = new BlockStash().registerBlock(registry);
         ModBlocks.blockDecorationPlaceholder = new BlockDecorationController().registerBlock(registry);
@@ -176,12 +179,14 @@ public final class ModBlocksInitializer
         ModBlocks.blockHutMysticalSite.registerBlockItem(registry, properties);
         ModBlocks.blockHutGraveyard.registerBlockItem(registry, properties);
         ModBlocks.blockHutNetherWorker.registerBlockItem(registry, properties);
+        ModBlocks.blockHutArcheologist.registerBlockItem(registry, properties);
 
         ModBlocks.blockConstructionTape.registerBlockItem(registry, properties);
         ModBlocks.blockRack.registerBlockItem(registry, properties);
         ModBlocks.blockGrave.registerBlockItem(registry, properties);
         ModBlocks.blockNamedGrave.registerBlockItem(registry, properties);
         ModBlocks.blockWayPoint.registerBlockItem(registry, properties);
+        ModBlocks.blockGateMarker.registerBlockItem(registry, properties);
         ModBlocks.blockBarrel.registerBlockItem(registry, properties);
         ModBlocks.blockPostBox.registerBlockItem(registry, properties);
         ModBlocks.blockStash.registerBlockItem(registry, properties);

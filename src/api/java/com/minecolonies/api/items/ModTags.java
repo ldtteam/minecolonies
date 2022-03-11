@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,4 +118,10 @@ public class ModTags
     {
         throw new IllegalStateException("Can not instantiate an instance of: ModTags. This is a utility class");
     }
+    public static Tag.Named<StructureFeature<?>> archeologist_visitable;
+
+    public static final Map<String, Tag<Item>> crafterProduct              = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterProductExclusions    = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterIngredient           = new HashMap<>();
+    public static final Map<String, Tag<Item>> crafterIngredientExclusions = new HashMap<>();
 }
