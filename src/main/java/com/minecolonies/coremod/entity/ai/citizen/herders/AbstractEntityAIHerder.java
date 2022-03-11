@@ -281,7 +281,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     }
 
     /**
-     * Butcher some animals (Preferably Adults & not recently fed) that the herder looks after.
+     * Butcher some animals (Preferably Adults and not recently fed) that the herder looks after.
      *
      * @return The next {@link IAIState}.
      */
