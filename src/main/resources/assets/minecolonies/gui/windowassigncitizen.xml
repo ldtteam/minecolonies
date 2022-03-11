@@ -2,14 +2,18 @@
         lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
 
-    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
-    <list id="unassigned" size="200 120" pos="100 70">
-        <view size="100% 40">
-            <label id="citizen" size="100% 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
-            <label id="job" size="100% 12" pos="5 14" textalign="MIDDLE_LEFT" color="yellow"/>
-            <label id="living" size="100% 12" pos="5 24" textalign="MIDDLE_LEFT" color="yellow"/>
-            <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.coremod.gui.hiring.buttonassign)"/>
+    <label size="100% 11" pos="0 20" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.assigning.description)"/>
+    <list id="unassigned" size="300 120" pos="90 40">
+        <view size="100% 34">
+            <label id="citizen" size="100% 12" pos="5 4" color="yellow"/>
+            <label id="job" size="100% 12" pos="5 14" color="yellow" textscale="0.94"/>
+            <label id="living" size="100% 12" pos="5 24" color="yellow" textscale="0.94"/>
+            <button id="done" size="50 15" pos="240 6" label="$(com.minecolonies.coremod.gui.hiring.buttonassign)"/>
         </view>
     </list>
-    <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
+    <label id="buildingassignmentmode" size="200 11" pos="110 165" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildingassignmentmode)"/>
+    <button id="mode" size="200 20" pos="110 175"/>
+
+    <label  id="autoHireWarn" textscale="0.75" size="100% 11" pos="0 200" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.home.hire.warning)"/>
+    <button id="cancel" size="200 20" pos="110 215" label="$(gui.cancel)"/>
 </window>

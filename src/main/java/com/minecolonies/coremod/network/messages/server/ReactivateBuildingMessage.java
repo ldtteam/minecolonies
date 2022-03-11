@@ -102,6 +102,11 @@ public class ReactivateBuildingMessage implements IMessage
                 final BlockEntity tileEntity = world.getBlockEntity(pos);
                 if (tileEntity instanceof @NotNull final TileEntityColonyBuilding hut)
                 {
+                    if (!colony.getBuildingManager().canPlaceAt(tileEntity.getBlockState().getBlock(), pos, player))
+                    {
+                        return;
+                    }
+
                     hut.reactivate();
                     colony.getBuildingManager().addNewBuilding(hut, world);
                     colony.getProgressManager().progressBuildingPlacement(tileEntity.getBlockState().getBlock());

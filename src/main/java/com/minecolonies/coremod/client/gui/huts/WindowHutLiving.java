@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui.huts;
 
 import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
@@ -10,22 +9,19 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowAssignCitizen;
-import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
-import com.minecolonies.coremod.network.messages.server.colony.building.home.AssignUnassignMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 
 /**
  * BOWindow for the tavern
  */
-public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuildingModule.View>
+public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuildingView>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -33,9 +29,9 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
     private static final String BUTTON_ASSIGN = "assign";
 
     /**
-     * Id of the hire/fire button in the GUI.
+     * Label showing the assigned.
      */
-    private static final String BUTTON_REMOVE = "remove";
+    private static final String ASSIGNED_LABEL = "assignedlabel";
 
     /**
      * Suffix describing the window xml.
@@ -62,12 +58,11 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
      *
      * @param building View of the home building.
      */
-    public WindowHutTavern(final TavernBuildingModule.View building)
+    public WindowHutLiving(final LivingBuildingView building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
 
         super.registerButton(BUTTON_ASSIGN, this::assignClicked);
-        super.registerButton(BUTTON_REMOVE, this::removeClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
 
         this.home = building;
@@ -100,8 +95,7 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen(home.getResidents().get(index));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID("name", Text.class).setText(citizenDataView.getName());
-                    rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class).setEnabled(building.getColony().isManualHousing());
+                    rowPane.findPaneOfTypeByID("name", Text.class).setText((citizenDataView.getJob().isEmpty() ? "" : (new TranslatableComponent(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName());
                 }
             }
         });
@@ -114,12 +108,7 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
      */
     private void refreshView()
     {
-        final Button buttonAssign = findPaneOfTypeByID(BUTTON_ASSIGN, Button.class);
-
-        final int sparePlaces = 4 - building.getResidents().size();
-        buttonAssign.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HOME_ASSIGN, sparePlaces));
-        buttonAssign.setEnabled(sparePlaces > 0 && building.getColony().isManualHousing());
-
+        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.home.assigned", building.getResidents().size(), building.getMax()));
         citizen.refreshElementPanes();
     }
 
@@ -128,36 +117,13 @@ public class WindowHutTavern extends AbstractWindowModuleBuilding<TavernBuilding
      */
     private void assignClicked()
     {
-        if (building.getColony().isManualHousing())
+        if (building.getBuildingLevel() == 0)
         {
-            if (building.getBuildingLevel() == 0)
-            {
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
-                return;
-            }
-
-            if (building.getResidents().size() < 4)
-            {
-                @NotNull final WindowAssignCitizen window = new WindowAssignCitizen(building.getColony(), building.getPosition());
-                window.open();
-            }
+            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
+            return;
         }
-    }
 
-    /**
-     * Action when the remove button is clicked.
-     *
-     * @param button the clicked button.
-     */
-    private void removeClicked(@NotNull final Button button)
-    {
-        if (building.getColony().isManualHousing())
-        {
-            final int row = citizen.getListElementIndexByPane(button);
-            final int citizenid = home.getResidents().get(row);
-            home.removeResident(row);
-            Network.getNetwork().sendToServer(new AssignUnassignMessage(building, false, citizenid, null));
-            refreshView();
-        }
+        @NotNull final WindowAssignCitizen window = new WindowAssignCitizen(building.getColony(), building);
+        window.open();
     }
 }

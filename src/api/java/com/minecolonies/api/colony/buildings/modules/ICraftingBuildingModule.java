@@ -220,8 +220,9 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * Switch the order of two recipes.
      * @param i the first recipe.
      * @param j the second recipe.
+     * @param fullMove move it fully up/down.
      */
-    void switchOrder(int i, int j);
+    void switchOrder(int i, int j, final boolean fullMove);
 
     /**
      * Generates any additional special recipes supported by this
@@ -303,4 +304,10 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @return true if so.
      */
     boolean holdsRecipe(IToken<?> token);
+
+    /**
+     * Enable or disable a recipe at a location.
+     * @param recipeLocation the location of the recipe.
+     */
+    void toggle(int recipeLocation);
 }

@@ -6,7 +6,7 @@
     <buttonimage id="cancel" size="14 15" pos="165 5"
                  source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
-    <text id="text" size="150 75" pos="15 15" color="black" text="$(com.minecolonies.coremod.gui.reactivate.message)"/>
+    <text id="text" size="150 75" pos="15 15" color="black" text="$(com.minecolonies.coremod.gui.reactivate.message)" textscale="0.75"/>
 
     <buttonimage id="reactivate" size="86 17" pos="50 100" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
