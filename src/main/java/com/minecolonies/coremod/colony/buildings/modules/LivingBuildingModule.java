@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -66,7 +67,7 @@ public class LivingBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public void onColonyTick(@NotNull final IColony colony)
     {
-        if (!isFull() && !building.getColony().isManualHousing())
+        if (!isFull() && (!building.getColony().isManualHousing() || getHiringMode() == HiringMode.AUTO))
         {
             // 'Capture' as many citizens into this house as possible
             for (@NotNull final ICitizenData citizen : building.getColony().getCitizenManager().getCitizens())

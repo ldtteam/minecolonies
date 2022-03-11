@@ -1,16 +1,20 @@
-<window size="190 244" pause="false" lightbox="false">
+<window>
     <layout source="minecolonies:gui/layouthuts/layouthutpageactionsmin.xml"/>
-    <button id="assign" size="116 15" pos="37 32"
-            label="$(com.minecolonies.coremod.gui.workerhuts.assign)"/>
 
-    <list id="assignedCitizen" size="164 60" pos="13 49">
-        <box size="100% 30" linewidth="2">
-            <label id="name" size="150 12" pos="5 2" color="black"/>
-            <button id="remove" size="80 13" pos="75 15" label="$(com.minecolonies.coremod.gui.workerhuts.unassign)"/>
-            <label id="dist" size="75 13" pos="5 15" color="black"/>
-        </box>
+    <label id="assignedlabel" size="164 11" pos="13 32" textalign="MIDDLE" color="black"/>
+
+    <list id="assignedCitizen" size="164 30" pos="13 48">
+        <view size="100% 11">
+            <box size="100% 11" linewidth="0">
+                <label id="name" size="100% 11" pos="0 0" textalign="MIDDLE" color="black"/>
+            </box>
+        </view>
     </list>
-    <buttonimage id="recall" size="129 17" pos="30 130" textcolor="black"
+
+    <buttonimage id="assign" size="129 17" pos="30 92" textcolor="black"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 label="$(com.minecolonies.coremod.gui.home.manage)"/>
+    <buttonimage id="recall" size="129 17" pos="30 128" textcolor="black"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  label="$(com.minecolonies.coremod.gui.townhall.recall)"/>
 </window>

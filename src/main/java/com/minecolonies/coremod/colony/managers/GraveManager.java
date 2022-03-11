@@ -12,10 +12,14 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.Colony;
+import net.minecraft.block.AirBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -245,10 +249,39 @@ public class GraveManager implements IGraveManager
     @Override
     public void createCitizenGrave(final World world, final BlockPos pos, final ICitizenData citizenData)
     {
-        final BlockPos firstValidPosition = BlockPosUtil.findAround(world, pos, 15, 10,
-          (blockAccess, current) ->
-            blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
-              blockAccess.getBlockState(current.below()).getMaterial().isSolid());
+        final BlockState here = world.getBlockState(pos);
+        if (here.getBlock() == Blocks.LAVA)
+        {
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.lava");
+            return;
+        }
+
+        BlockPos firstValidPosition = null;
+        if (here.getBlock() == Blocks.WATER)
+        {
+            for (int i = 1; i <= 10; i++)
+            {
+                if (world.getBlockState(pos.above(i)).getBlock() instanceof AirBlock)
+                {
+                    firstValidPosition = searchShore(world, pos.above(i));
+                    break;
+                }
+            }
+
+            if (firstValidPosition == null)
+            {
+                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.water");
+            }
+        }
+        else
+        {
+            firstValidPosition = BlockPosUtil.findAround(world, pos, 10, 10,
+              (blockAccess, current) ->
+                blockAccess.getBlockState(current).getMaterial() == Material.AIR &&
+                  blockAccess.getBlockState(current.below()).getMaterial().isSolid());
+        }
+
+
         if (firstValidPosition != null)
         {
             world.setBlockAndUpdate(firstValidPosition,
@@ -278,5 +311,27 @@ public class GraveManager implements IGraveManager
         {
             InventoryUtils.dropItemHandler(citizenData.getInventory(), world, pos.getX(), pos.getY(), pos.getZ());
         }
+    }
+
+    /**
+     * Search a nearby shore into each direction, up to 10 blocks.
+     * @param world the world to search in.
+     * @param pos the starting position.
+     * @return shore.
+     */
+    private BlockPos searchShore(final World world, final BlockPos pos)
+    {
+        for (int xz = 1; xz <= 10; xz++)
+        {
+            for (final Direction direction : Direction.Plane.HORIZONTAL)
+            {
+                final BlockPos relativePos = pos.relative(direction, xz);
+                if (!world.isWaterAt(relativePos))
+                {
+                    return relativePos;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -385,6 +385,11 @@ public final class WindowConstants
     public static final String BUTTON_BACKWARD = "down";
 
     /**
+     * Toggle enable/disable button.
+     */
+    public static final String BUTTON_TOGGLE= "toggle";
+
+    /**
      * The builders gui file.
      */
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";

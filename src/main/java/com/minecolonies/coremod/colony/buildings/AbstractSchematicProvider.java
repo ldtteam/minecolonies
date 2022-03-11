@@ -12,7 +12,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
-import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
+import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -502,9 +502,19 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public boolean isInBuilding(@NotNull final BlockPos positionVec)
     {
         final Tuple<BlockPos, BlockPos> corners = getCorners();
-        return positionVec.getX() >= corners.getA().getX() - 1 && positionVec.getX() <= corners.getB().getX() + 1
-                 && positionVec.getY() >= corners.getA().getY() - 1 && positionVec.getY() <= corners.getB().getY() + 1
-                 && positionVec.getZ() >= corners.getA().getZ() - 1 && positionVec.getZ() <= corners.getB().getZ() + 1;
+        BlockPos cornerA = corners.getA();
+        BlockPos cornerB = corners.getB();
+
+        if (this.hasModule(IAltersBuildingFootprint.class))
+        {
+            final Tuple<BlockPos, BlockPos> extensions = this.getFirstModuleOccurance(IAltersBuildingFootprint.class).getAdditionalCorners();
+            cornerA = cornerA.offset(extensions.getA());
+            cornerB = cornerB.offset(extensions.getB());
+        }
+
+        return positionVec.getX() >= cornerA.getX() - 1 && positionVec.getX() <= cornerB.getX() + 1
+                 && positionVec.getY() >= cornerA.getY() - 1 && positionVec.getY() <= cornerB.getY() + 1
+                 && positionVec.getZ() >= cornerA.getZ() - 1 && positionVec.getZ() <= cornerB.getZ() + 1;
     }
 
     @Override

@@ -207,7 +207,16 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
     @NotNull
     public Node getActiveNode()
     {
-        Node calcNode = activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED ? levels.get(currentLevel).getRandomNode(oldNode) : activeNode;
+        Node calcNode = activeNode;
+        if (activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED)
+        {
+            if (currentLevel >= levels.size())
+            {
+                currentLevel = levels.size() - 1;
+            }
+            calcNode = levels.get(currentLevel).getRandomNode(oldNode);
+        }
+
         if (activeNode != calcNode)
         {
             activeNode = calcNode;

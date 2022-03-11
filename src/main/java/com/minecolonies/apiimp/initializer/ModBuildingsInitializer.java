@@ -620,7 +620,7 @@ public final class ModBuildingsInitializer
         ModBuildings.simpleQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockSimpleQuarry)
                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
-                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .addBuildingModuleProducer(() -> new QuarryModule(32), () -> MinerAssignmentModuleView::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
                                    .createBuildingEntry();
 
@@ -643,7 +643,7 @@ public final class ModBuildingsInitializer
         ModBuildings.mediumQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockMediumQuarry)
                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
-                                   .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
+                                   .addBuildingModuleProducer(() -> new QuarryModule(64), () -> MinerAssignmentModuleView::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))
                                    .createBuildingEntry();
 

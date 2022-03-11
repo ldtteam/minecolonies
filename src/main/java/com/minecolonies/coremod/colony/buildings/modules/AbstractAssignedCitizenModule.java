@@ -145,6 +145,7 @@ public abstract class AbstractAssignedCitizenModule extends AbstractBuildingModu
             buf.writeInt(citizen.getId());
         }
         buf.writeInt(hiringMode.ordinal());
+        buf.writeInt(getModuleMax());
     }
 
     @Override

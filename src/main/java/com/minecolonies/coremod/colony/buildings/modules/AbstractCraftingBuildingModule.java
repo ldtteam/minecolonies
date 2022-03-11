@@ -50,6 +50,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DISABLED_RECIPES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RECIPES;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_REDUCEABLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.RECIPE_IMPROVED;
@@ -82,6 +83,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
      */
     protected final List<IToken<?>> recipes = new ArrayList<>();
+
+    /**
+     * The list of disabled recipes.
+     */
+    protected final List<IToken<?>> disabledRecipes = new ArrayList<>();
 
     /**
      * The job entry that works at this module.
@@ -189,6 +195,16 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                                                   .map(iToken -> StandardFactoryController.getInstance().serialize(iToken))
                                                   .collect(NBTUtils.toListNBT());
         moduleCompound.put(TAG_RECIPES, recipesTagList);
+
+        @NotNull final ListNBT disabledRecipesTag = new ListNBT();
+        for (@NotNull final IToken<?> recipe : disabledRecipes)
+        {
+            if (disabledRecipes.contains(recipe))
+            {
+                disabledRecipesTag.add(StandardFactoryController.getInstance().serialize(recipe));
+            }
+        }
+        moduleCompound.put(TAG_DISABLED_RECIPES, disabledRecipesTag);
         compound.put(getId(), moduleCompound);
     }
 
@@ -215,6 +231,19 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 IColonyManager.getInstance().getRecipeManager().registerUse(token);
             }
         }
+
+        if (compound.getCompound(getId()).contains(TAG_DISABLED_RECIPES))
+        {
+            final ListNBT disabledRecipeTag = compound.getCompound(getId()).getList(TAG_DISABLED_RECIPES, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < disabledRecipeTag.size(); i++)
+            {
+                final IToken<?> token = StandardFactoryController.getInstance().deserialize(disabledRecipeTag.getCompound(i));
+                if (!disabledRecipes.contains(token))
+                {
+                    disabledRecipes.add(token);
+                }
+            }
+        }
     }
 
     @Override
@@ -234,6 +263,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeBoolean(this.canLearnLargeRecipes());
 
         final List<IRecipeStorage> storages = new ArrayList<>();
+        final List<IRecipeStorage> disabledStorages = new ArrayList<>();
         final Map<ResourceLocation, CustomRecipe> crafterRecipes = CustomRecipeManager.getInstance().getAllRecipes().getOrDefault(getCustomRecipeKey(), Collections.emptyMap());
         for (final IToken<?> token : new ArrayList<>(recipes))
         {
@@ -246,6 +276,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             else
             {
                 storages.add(storage);
+                if (disabledRecipes.contains(token))
+                {
+                    disabledStorages.add(storage);
+                }
             }
         }
 
@@ -254,6 +288,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
         }
+
+        buf.writeInt(disabledStorages.size());
+        for (final IRecipeStorage storage : disabledStorages)
+        {
+            buf.writeNbt(StandardFactoryController.getInstance().serialize(storage));
+        }
+
         buf.writeInt(getMaxRecipes());
         buf.writeUtf(getId());
         buf.writeBoolean(isVisible());
@@ -553,6 +594,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         //Scan through and collect all possible recipes that could fulfill this, taking special note of the first one
         for (final IToken<?> token : recipes)
         {
+            if (disabledRecipes.contains(token))
+            {
+                continue;
+            }
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(stackPredicate::test)))
             {
@@ -587,6 +632,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public boolean holdsRecipe(final IToken<?> token)
     {
+        if (disabledRecipes.contains(token))
+        {
+            return false;
+        }
+
         if (recipes.contains(token))
         {
             return true;
@@ -633,6 +683,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         for (final IToken<?> token : recipes)
         {
+            if (disabledRecipes.contains(token))
+            {
+                continue;
+            }
+
             final IRecipeStorage storage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (storage != null && (stackPredicate.test(storage.getPrimaryOutput()) || storage.getAlternateOutputs().stream().anyMatch(i -> stackPredicate.test(i))))
             {
@@ -692,6 +747,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         for (final IToken<?> token : recipes)
         {
+            if (disabledRecipes.contains(token))
+            {
+                continue;
+            }
+
             final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(token);
             if (recipeStorage != null)
             {
@@ -717,6 +777,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     {
         if(recipes.remove(token))
         {
+            disabledRecipes.remove(token);
             markDirty();
         }
         else
@@ -743,15 +804,47 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public void switchOrder(final int i, final int j)
+    public void switchOrder(final int i, final int j, final boolean fullMove)
     {
-        if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
+        if (fullMove)
+        {
+            if (i > j)
+            {
+                recipes.add(0, recipes.remove(i));
+            }
+            else
+            {
+                recipes.add(recipes.remove(i));
+            }
+        }
+        else if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
         {
             final IToken<?> storage = recipes.get(i);
             recipes.set(i, recipes.get(j));
             recipes.set(j, storage);
             markDirty();
         }
+    }
+
+    @Override
+    public void toggle(int recipeLocation)
+    {
+        final IToken<?> key = recipes.get(recipeLocation);
+        if (disabledRecipes.contains(key))
+        {
+            disabledRecipes.remove(key);
+
+            final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(key);
+            if (recipeStorage != null)
+            {
+                building.getColony().getRequestManager().onColonyUpdate(request -> request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(recipeStorage.getPrimaryOutput()));
+            }
+        }
+        else
+        {
+            disabledRecipes.add(key);
+        }
+        markDirty();
     }
 
     @NotNull

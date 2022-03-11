@@ -10,12 +10,16 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -111,23 +115,23 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
      *                  Passing null when composting is complete will insert resulting compost directly into inventory, spawning overflow as an ItemEntity
      * @return if the barrel took any item
      */
-    public boolean useBarrel(final Player playerIn, final ItemStack itemstack, @Nullable Direction hitFace)
+    public boolean useBarrel(final PlayerEntity playerIn, final ItemStack itemstack, @Nullable Direction hitFace)
     {
         if (done)
         {
             ItemStack compostStack = new ItemStack(ModItems.compost, 6);
             if (hitFace != null) // Spawn all as ItemEntity
             {
-                playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f));
-                this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
+                playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack));
+                this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1, 1);
             }
             else // Insert directly into inventory, spawning overflow as ItemEntity
             {
-                if(!playerIn.getInventory().add(compostStack))
+                if(!playerIn.inventory.add(compostStack))
                 {
-                    playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack, 0, 0.2f, 0));
+                    playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack));
                 }
-                this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1, 1);
+                this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1, 1);
             }
             done = false;
             return true;

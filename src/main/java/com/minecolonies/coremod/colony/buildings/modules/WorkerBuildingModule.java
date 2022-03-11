@@ -163,7 +163,6 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     {
         super.serializeToView(buf);
         buf.writeRegistryId(jobEntry);
-        buf.writeInt(getModuleMax());
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
     }

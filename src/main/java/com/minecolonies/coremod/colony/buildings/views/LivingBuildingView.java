@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +19,16 @@ public abstract class LivingBuildingView extends AbstractBuildingView
 {
     @NotNull
     private final List<Integer> residents = new ArrayList<>();
+
+    /**
+     * Max number of citizens that can live here.
+     */
+    private int max;
+
+    /**
+     * The set hiring mode for the view.
+     */
+    private HiringMode hiringMode;
 
     /**
      * Creates an instance of the citizen hut window.
@@ -46,7 +59,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
      */
     public void removeResident(final int index)
     {
-        residents.remove(index);
+        residents.removeIf(v -> v == index);
     }
 
     /**
@@ -57,6 +70,43 @@ public abstract class LivingBuildingView extends AbstractBuildingView
     public void addResident(final int id)
     {
         residents.add(id);
+    }
+
+    /**
+     * Set the max citizens.
+     * @param max the max.
+     */
+    public void setMax(final int max)
+    {
+        this.max = max;
+    }
+
+    /**
+     * Get the max citizens.
+     * @return the max.
+     */
+    public int getMax()
+    {
+        return this.max;
+    }
+
+    /**
+     * Get the  hiring mode.
+     * @return the mode.
+     */
+    public HiringMode getHiringMode()
+    {
+        return hiringMode;
+    }
+
+    /**
+     * Adjust the hiring mode.
+     * @param value the value to set it to.
+     */
+    public void setHiringMode(final HiringMode value)
+    {
+        this.hiringMode = value;
+        Network.getNetwork().sendToServer(new BuildingHiringModeMessage(this, hiringMode, null));
     }
 
     @Override
@@ -70,5 +120,7 @@ public abstract class LivingBuildingView extends AbstractBuildingView
         {
             residents.add(buf.readInt());
         }
+        hiringMode = HiringMode.values()[buf.readInt()];
+        max = buf.readInt();
     }
 }
