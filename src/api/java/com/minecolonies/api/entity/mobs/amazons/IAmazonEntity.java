@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 /**
- * A tagging interface for Amazon Entities implements IMob, ICommandSource and ICapabilitySerializable<CompoundNBT>
+ * A tagging interface for Amazon Entities.
  */
 public interface IAmazonEntity extends Enemy, ICapabilitySerializable<CompoundTag>
 {
