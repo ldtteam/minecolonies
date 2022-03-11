@@ -4,6 +4,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class ModTags
     public static Tag<Item> raw_ore;
 
     public static Tag<EntityType<?>> hostile;
+
+    public static Tag.Named<StructureFeature<?>> archeologist_visitable;
 
     public static final Map<String, Tag<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, Tag<Item>> crafterProductExclusions    = new HashMap<>();

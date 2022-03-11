@@ -209,9 +209,9 @@ public final class CitizenConstants
     public static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
 
     /**
-     * String which shows if something is a waypoint.
+     * String which shows if something is a part of the infrastructure.
      */
-    public static final String WAYPOINT_STRING = "infrastructure";
+    public static final String INFRASTRUCTURE_DIRECTORY = "infrastructure";
 
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).

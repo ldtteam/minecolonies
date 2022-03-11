@@ -90,6 +90,15 @@ public abstract class AbstractAdvancedPathNavigate extends GroundPathNavigation
     public abstract WaterPathResult moveToWater(final int searchRange, final double speed, final List<Tuple<BlockPos, BlockPos>> ponds);
 
     /**
+     * Used to find a gate.
+     *
+     * @param searchRange in the range.
+     * @param speed walking speed.
+     * @return the result of the search.
+     */
+    public abstract GatePathResult moveToGate(final int searchRange, final double speed);
+
+    /**
      * Used to path away from a ourEntity.
      *
      * @param target        the ourEntity.

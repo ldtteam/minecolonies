@@ -72,7 +72,7 @@ public class TagWorkAroundEventHandler
         {
             // This Tag Supplier is guaranteed to have the output of a transmitted TagSupplier on remote clients.
             // _Only_ these events and ClientWorld.getTags() are guaranteed to be consistent on remote clients.
-            ModTagsInitializer.init(event.getTagManager());
+            ModTagsInitializer.init();
         }
 
         /**

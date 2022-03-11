@@ -664,7 +664,7 @@ public final class ColonyManager implements IColonyManager
         if (!world.isClientSide)
         {
             // Remote clients only guarantee consistent tag behavior if loaded from a TagsUpdatedEvent.
-            ModTagsInitializer.init(world.getTagManager());
+            ModTagsInitializer.init();
 
             // Late-load restore if cap was not loaded
             if (!capLoaded)

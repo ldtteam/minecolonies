@@ -65,6 +65,7 @@ public final class ModBlocks
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutBeekeeper;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutMysticalSite;
     public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutGraveyard;
+    public static AbstractBlockHut<? extends AbstractBlockHut<?>> blockHutArcheologist;
 
     /**
      * Utility blocks.
@@ -74,6 +75,7 @@ public final class ModBlocks
     public static AbstractBlockMinecoloniesGrave<? extends AbstractBlockMinecoloniesGrave<?>>           blockGrave;
     public static AbstractBlockMinecoloniesNamedGrave<? extends AbstractBlockMinecoloniesNamedGrave<?>> blockNamedGrave;
     public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockWayPoint;
+    public static AbstractBlockMinecolonies<? extends AbstractBlockMinecolonies<?>>                     blockGateMarker;
     public static AbstractBlockBarrel<? extends AbstractBlockBarrel<?>>                                 blockBarrel;
     public static AbstractBlockMinecoloniesHorizontal<? extends AbstractBlockMinecoloniesHorizontal<?>> blockDecorationPlaceholder;
     public static AbstractBlockMinecoloniesDefault<? extends AbstractBlockMinecoloniesDefault<?>>       blockScarecrow;
@@ -139,6 +141,8 @@ public final class ModBlocks
           blockHutMysticalSite,
           blockHutFlorist,
           blockPostBox,
-          blockHutGraveyard};
+          blockHutGraveyard,
+          blockHutArcheologist
+        };
     }
 }

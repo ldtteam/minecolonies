@@ -1,0 +1,8 @@
+<window size="190 244" pause="false" lightbox="false">
+
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+
+    <label size="130 11" pos="30 14" color="black" textalign="MIDDLE" label="$(com.minecolonies.coremod.gui.workerhuts.archeologist.target):"/>
+    <label id="target" size="130 11" pos="30 28" color="black" textalign="MIDDLE" label=""/>
+
+</window>

@@ -456,7 +456,9 @@ public final class TranslationConstants
     @NonNls
     public static final String WRONG_COLONY                                                         = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
     @NonNls
-    public static final String INDESTRUCTIBLE_BLOCK_AT_POS                                          = "com.minecolonies.coremod.buildtool.indestructible";
+    public static final String INDESTRUCTIBLE_BLOCK_AT_POS = "com.minecolonies.coremod.buildtool.indestructible";
+    @NonNls
+    public static final String NO_TARGET                   = "com.minecolonies.coremod.gui.no-target";
 
     private TranslationConstants()
     {

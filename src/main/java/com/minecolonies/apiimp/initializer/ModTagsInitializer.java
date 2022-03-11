@@ -2,14 +2,14 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.Log;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraftforge.common.ForgeTagHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TagConstants.*;
@@ -41,15 +41,8 @@ public class ModTagsInitializer
      */
     private static final String INGREDIENT_EXCLUDED = "_ingredient_excluded";
 
-    /**
-     * Cached tag supplier from the last successful TagUpdateEvent
-     */
-    private static TagContainer supplier;
-
-    public static void init(final TagContainer tagSupplier)
+    public static void init()
     {
-        supplier = tagSupplier;
-
         ModTags.decorationItems = getBlockTags(DECORATION_ITEMS);
         ModTags.concretePowder = getItemTags(CONCRETE_POWDER);
         ModTags.concreteBlock = getBlockTags(CONCRETE_BLOCK);
@@ -64,6 +57,7 @@ public class ModTagsInitializer
         ModTags.colonyProtectionException = getBlockTags(COLONYPROTECTIONEXCEPTION);
         ModTags.indestructible = getBlockTags(INDESTRUCTIBLE);
         ModTags.hostile = getEntityTags(HOSTILE);
+        ModTags.archeologist_visitable = getStructureTags(ARCHEOLOGIST_VISITABLE);
 
         initCrafterRules("baker");
         initCrafterRules("blacksmith");
@@ -141,5 +135,15 @@ public class ModTagsInitializer
     private static Tag<EntityType<?>> getEntityTags(final ResourceLocation resourceLocation)
     {
         return EntityTypeTags.getAllTags().getTagOrEmpty(resourceLocation);
+    }
+
+    /**
+     * Get the Tag<StructureType> from the underlying API
+     * @param resourceLocation The resource location specifying the tag ID
+     * @return the tag collection
+     */
+    private static Tag.Named<StructureFeature<?>> getStructureTags(final ResourceLocation resourceLocation)
+    {
+        return ForgeTagHandler.createOptionalTag(ForgeRegistries.STRUCTURE_FEATURES, resourceLocation);
     }
 }

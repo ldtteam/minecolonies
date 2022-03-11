@@ -54,7 +54,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * Client side representation of the Colony.
@@ -149,6 +148,11 @@ public final class ColonyView implements IColonyView
      * The Set of waypoints.
      */
     private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
+
+    /**
+     * The gate markers for the colony entrances and exits.
+     */
+    private final Map<BlockPos, BlockState> gateMarkers = new HashMap<>();
 
     /**
      * The overall happiness of the colony.
@@ -265,6 +269,7 @@ public final class ColonyView implements IColonyView
         final Set<Block> freeBlocks = colony.getFreeBlocks();
         final Set<BlockPos> freePos = colony.getFreePositions();
         final Map<BlockPos, BlockState> waypoints = colony.getWayPoints();
+        final Map<BlockPos, BlockState> gateMarkers = colony.getGateMarkers();
 
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
@@ -401,6 +406,13 @@ public final class ColonyView implements IColonyView
         final CompoundTag graveTag = new CompoundTag();
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
+
+        buf.writeInt(gateMarkers.size());
+        for (final Map.Entry<BlockPos, BlockState> block : gateMarkers.entrySet())
+        {
+            buf.writeBlockPos(block.getKey());
+            buf.writeInt(Block.getId(block.getValue()));
+        }
     }
 
     /**
@@ -642,6 +654,24 @@ public final class ColonyView implements IColonyView
         //noop
     }
 
+    @Override
+    public void addGateMarker(final BlockPos pos, final BlockState state)
+    {
+        //Noop on the client side.
+    }
+
+    @Override
+    public void removeGateMarker(final BlockPos pos)
+    {
+        //Noop on the client side.
+    }
+
+    @Override
+    public Map<BlockPos, BlockState> getGateMarkers()
+    {
+        return gateMarkers;
+    }
+
     /**
      * Sets if citizens can move in.
      *
@@ -789,6 +819,7 @@ public final class ColonyView implements IColonyView
         freePositions.clear();
         freeBlocks.clear();
         wayPoints.clear();
+        gateMarkers.clear();
         lastSpawnPoints.clear();
 
         final int blockListSize = buf.readInt();
@@ -868,6 +899,12 @@ public final class ColonyView implements IColonyView
         }
 
         this.graveManager.read(buf.readNbt());
+
+        final int gatePointListSize = buf.readInt();
+        for (int i = 0; i < gatePointListSize; i++)
+        {
+            gateMarkers.put(buf.readBlockPos(), Block.stateById(buf.readInt()));
+        }
 
         return null;
     }
@@ -1457,6 +1494,12 @@ public final class ColonyView implements IColonyView
 
     @Override
     public IProgressManager getProgressManager()
+    {
+        return null;
+    }
+
+    @Override
+    public ITravellingManager getTravelingManager()
     {
         return null;
     }

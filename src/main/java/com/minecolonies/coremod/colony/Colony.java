@@ -31,6 +31,7 @@ import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
+import com.minecolonies.coremod.colony.traveling.TravellingManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -69,7 +70,6 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.MineColonies.getConfig;
 
 /**
@@ -114,6 +114,16 @@ public class Colony implements IColony
      * List of waypoints of the colony.
      */
     private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
+
+    /**
+     * Internal modifyable map of the gatemarkers in the colony.
+     */
+    private final Map<BlockPos, BlockState> gateMarkers = new HashMap<>();
+
+    /**
+     * Unmodifyable view for the gatemarkers internal map.
+     */
+    private final Map<BlockPos, BlockState> gateMarkersView = Collections.unmodifiableMap(gateMarkers);
 
     /**
      * Work Manager of the colony (Request System).
@@ -243,6 +253,11 @@ public class Colony implements IColony
     private IResearchManager researchManager;
 
     /**
+     * The traveling manager used for traveling large distances
+     */
+    private TravellingManager travelingManager = new TravellingManager(this);
+
+    /**
      * The NBTTag compound of the colony itself.
      */
     private CompoundTag colonyTag;
@@ -314,6 +329,7 @@ public class Colony implements IColony
      */
     private String textureStyle = "default";
 
+
     /**
      * Constructor for a newly created Colony.
      *
@@ -362,6 +378,8 @@ public class Colony implements IColony
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::tickRequests, () -> ACTIVE, UPDATE_RS_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::checkDayTime, () -> ACTIVE, UPDATE_DAYTIME_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateWayPoints, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::updateGateMarkers, () -> ACTIVE, CHECK_WAYPOINT_EVERY));
+        colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, () -> this.travelingManager.onTick(), () -> ACTIVE, UPDATE_TRAVELING_INTERVAL));
         colonyStateMachine.addTransition(new TickingTransition<>(ACTIVE, this::worldTickSlow, () -> ACTIVE, MAX_TICKRATE));
         colonyStateMachine.addTransition(new TickingTransition<>(UNLOADED, this::worldTickUnloaded, () -> UNLOADED, MAX_TICKRATE));
     }
@@ -809,6 +827,18 @@ public class Colony implements IColony
             this.textureStyle = compound.getString(TAG_COL_TEXT);
         }
         this.colonyTag = compound;
+
+        this.gateMarkers.clear();
+        if (compound.contains(TAG_GATE_MARKERS)) {
+            final ListTag gateMarkerTagList = compound.getList(TAG_GATE_MARKERS, Tag.TAG_COMPOUND);
+            for (int i = 0; i < gateMarkerTagList.size(); ++i)
+            {
+                final CompoundTag blockAtPos = gateMarkerTagList.getCompound(i);
+                final BlockPos pos = BlockPosUtil.read(blockAtPos, TAG_GATE_MARKER);
+                final BlockState state = NbtUtils.readBlockState(blockAtPos);
+                gateMarkers.put(pos, state);
+            }
+        }
     }
 
     /**
@@ -911,6 +941,17 @@ public class Colony implements IColony
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
+
+        @NotNull final ListTag gateMarkerTagList = new ListTag();
+        for (@NotNull final Map.Entry<BlockPos, BlockState> entry : gateMarkers.entrySet())
+        {
+            @NotNull final CompoundTag gateMarkerCompound = new CompoundTag();
+            BlockPosUtil.write(gateMarkerCompound, TAG_GATE_MARKER, entry.getKey());
+            gateMarkerCompound.put(TAG_BLOCK, NbtUtils.writeBlockState(entry.getValue()));
+            gateMarkerTagList.add(gateMarkerCompound);
+        }
+        compound.put(TAG_GATE_MARKERS, gateMarkerTagList);
+
         this.colonyTag = compound;
 
         isActive = false;
@@ -1121,6 +1162,40 @@ public class Colony implements IColony
                             || (world.isEmptyBlock(entry.getKey().below()) && !entry.getValue().getMaterial().isSolid()))
                         {
                             wayPoints.remove(entry.getKey());
+                            markDirty();
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Update the gate markers after worldTicks.
+     *
+     * @return false
+     */
+    private boolean updateGateMarkers()
+    {
+        if (!gateMarkers.isEmpty() && world != null)
+        {
+            final int randomPos = world.random.nextInt(gateMarkers.size());
+            int count = 0;
+            for (final Map.Entry<BlockPos, BlockState> entry : gateMarkers.entrySet())
+            {
+                if (count++ == randomPos)
+                {
+                    if (WorldUtil.isBlockLoaded(world, entry.getKey()))
+                    {
+                        final Block worldBlock = world.getBlockState(entry.getKey()).getBlock();
+                        if (
+                          ((worldBlock != (entry.getValue().getBlock()) && entry.getValue().getBlock() != ModBlocks.blockGateMarker) && worldBlock != ModBlocks.blockConstructionTape)
+                            || (world.isEmptyBlock(entry.getKey().below()) && !entry.getValue().getMaterial().isSolid()))
+                        {
+                            gateMarkers.remove(entry.getKey());
                             markDirty();
                         }
                     }
@@ -1568,6 +1643,12 @@ public class Colony implements IColony
         return progressManager;
     }
 
+    @Override
+    public ITravellingManager getTravelingManager()
+    {
+        return travelingManager;
+    }
+
     /**
      * Get all visiting players.
      *
@@ -1867,6 +1948,32 @@ public class Colony implements IColony
         {
             player.sendMessage(component, player.getUUID());
         }
+    }
+
+    @Override
+    public void addGateMarker(final BlockPos pos, final BlockState gateState)
+    {
+        if (!gateMarkers.containsKey(pos) || gateMarkers.get(pos) != gateState)
+        {
+            gateMarkers.put(pos, gateState);
+            this.markDirty();
+        }
+    }
+
+    @Override
+    public void removeGateMarker(final BlockPos pos)
+    {
+        if (gateMarkers.containsKey(pos))
+        {
+            gateMarkers.remove(pos);
+            this.markDirty();
+        }
+    }
+
+    @Override
+    public Map<BlockPos, BlockState> getGateMarkers()
+    {
+        return this.gateMarkersView;
     }
 
     /**

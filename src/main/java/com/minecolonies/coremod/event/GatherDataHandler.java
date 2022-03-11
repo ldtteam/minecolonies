@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.event;
 
+import com.minecolonies.api.items.ModTags;
+import com.minecolonies.apiimp.initializer.ModTagsInitializer;
 import com.minecolonies.coremod.generation.defaults.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
@@ -13,6 +15,8 @@ public class GatherDataHandler
      */
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
+        ModTagsInitializer.init();
+
         final DataGenerator generator = event.getGenerator();
         generator.addProvider(new DefaultBlockLootTableProvider(generator));
         generator.addProvider(new DefaultSoundProvider(generator));
@@ -22,5 +26,6 @@ public class GatherDataHandler
         generator.addProvider(new DefaultFishermanLootProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
         generator.addProvider(new TagProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(new StructureTagProvider(generator, event.getExistingFileHelper()));
     }
 }

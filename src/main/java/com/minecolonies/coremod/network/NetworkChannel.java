@@ -204,6 +204,7 @@ public class NetworkChannel
         registerMessage(++idx, MinerRepairLevelMessage.class, MinerRepairLevelMessage::new);
         registerMessage(++idx, ResetFilterableItemMessage.class, ResetFilterableItemMessage::new);
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
+        registerMessage(++idx, RecallTravellingCitizenMessage.class, RecallTravellingCitizenMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

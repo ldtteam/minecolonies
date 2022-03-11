@@ -577,7 +577,31 @@ public enum AIWorkerState implements IAIState
     /*
 ### Beekeeper ###
      */
-    BEEKEEPER_HARVEST(true);
+    BEEKEEPER_HARVEST(true),
+
+
+    /*
+### Archeologist ###
+     */
+    ARCHEOLOGIST_DETERMINE_TARGET(true),
+    ARCHEOLOGIST_COLLECT_PAYMENT(true),
+    ARCHEOLOGIST_CLAIM_TARGET(true),
+    ARCHEOLOGIST_REQUEST_REQUIRED_RESOURCES(true),
+    /**
+     * The archeologist is looking for a gate.
+     */
+    ARCHEOLOGIST_SEARCHING_GATE(true),
+    /**
+     * The archeologist has found a gate and can start traveling.
+     */
+    ARCHEOLOGIST_GOING_TO_GATE(true),
+    ARCHEOLOGIST_TRAVELLING_TO_STRUCTURE(false),
+    ARCHEOLOGIST_START_RESEARCH(true),
+    ARCHEOLOGIST_SPAWN_WORKSTATION(true),
+    ARCHEOLOGIST_DO_WORK(true),
+    ARCHEOLOGIST_CLEAR_WORKSTATION(true),
+    ARCHEOLOGIST_TRAVEL_HOME(false)
+    ;
 
     /**
      * Is it okay to eat.

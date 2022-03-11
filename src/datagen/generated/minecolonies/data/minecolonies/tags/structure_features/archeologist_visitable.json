@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert_pyramid",
+    "minecraft:jungle_pyramid",
+    "minecraft:bastion_remnant"
+  ]
+}

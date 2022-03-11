@@ -235,6 +235,11 @@ public final class WindowConstants
     public static final String RECALL_ONE = "recallone";
 
     /**
+     * The button id to recall one specific citizen.
+     */
+    public static final String RECALL_TRAVELLERS = "recalltravellers";
+
+    /**
      * The job of the citizen.
      */
     public static final String JOB_LABEL = "job";

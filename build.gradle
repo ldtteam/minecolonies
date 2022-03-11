@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         mavenLocal()
+        maven { url = 'https://files.minecraftforge.net/maven' }
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -26,7 +26,6 @@ configurations.all {
 }
 
 apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 configurations {
     library

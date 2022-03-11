@@ -2216,6 +2216,54 @@ public class InventoryUtils
     }
 
     /**
+     * Remove a list of storages from a given Itemhandler
+     *
+     * @param handler the itemHandler.
+     * @param input   the list of storage.
+     * @return true if succesful.
+     */
+    public static boolean removeStacksFromItemHandler(final IItemHandler handler, final Collection<ItemStorage> input)
+    {
+        final List<ItemStorage> list = new ArrayList<>();
+        int maxTries = 0;
+        for (final ItemStorage storage : input)
+        {
+            maxTries += storage.getAmount();
+            list.add(storage.copy());
+        }
+
+        boolean success = true;
+        int i = 0;
+        int tries = 0;
+        while (i < list.size() && tries < maxTries)
+        {
+            final ItemStorage storage = list.get(i);
+            final int slot = findFirstSlotInItemHandlerNotEmptyWith(handler, lStack -> ItemStackUtils.compareStorageToStackIgnoringStackSize(storage, lStack));
+
+            if (slot == -1)
+            {
+                success = false;
+                i++;
+                continue;
+            }
+
+            final int removedSize = ItemStackUtils.getSize(handler.extractItem(slot, storage.getAmount(), false));
+
+            if (removedSize == storage.getAmount())
+            {
+                i++;
+            }
+            else
+            {
+                ItemStackUtils.changeSize(storage, -removedSize);
+            }
+            tries++;
+        }
+
+        return success && i >= list.size();
+    }
+
+    /**
      * Tries to remove a stack with its size from a given Itemhandler. Only removes sth if the whole size can be removed.
      *
      * @param handler the itemHandler.

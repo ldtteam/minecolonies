@@ -399,6 +399,18 @@ public class CitizenWindowUtils
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
             }
+            else
+            {
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Text.class)
+                               .hide();
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
+                  .hide();
+
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
+                  .hide();
+                windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
+                  .hide();
+            }
 
             final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
@@ -419,6 +431,18 @@ public class CitizenWindowUtils
                                   + SECONDARY_DEPENDENCY_SHARE + "% XP)");
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(new ResourceLocation(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png"), false);
+            }
+            else
+            {
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Text.class)
+                               .hide();
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
+                               .hide();
+
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
+                               .hide();
+                windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
+                               .hide();
             }
         }
         else

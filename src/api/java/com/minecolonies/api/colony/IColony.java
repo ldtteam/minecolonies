@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -8,7 +9,6 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -285,6 +285,8 @@ public interface IColony
 
     IProgressManager getProgressManager();
 
+    ITravellingManager getTravelingManager();
+
     /**
      * Add a visiting player.
      *
@@ -453,4 +455,26 @@ public interface IColony
      * @param component the message.
      */
     void notifyColonyManagers(Component component);
+
+    /**
+     * Adds a position on which a gatemarker is placed.
+     *
+     * @param pos The position of the gatemarker.
+     * @param gateState The state the gate is supposed to be
+     */
+    void addGateMarker(BlockPos pos,  final BlockState gateState);
+
+    /**
+     * Removes the position from the gatemarker list.
+     *
+     * @param pos The position to remove.
+     */
+    void removeGateMarker(BlockPos pos);
+
+    /**
+     * Provides a list of positions which are gate markers.
+     *
+     * @return The gate markers of the colony
+     */
+    Map<BlockPos, BlockState> getGateMarkers();
 }

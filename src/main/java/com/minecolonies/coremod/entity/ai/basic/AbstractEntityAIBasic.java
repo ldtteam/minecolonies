@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -35,6 +36,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -315,6 +318,27 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public B getOwnBuilding()
     {
         return getOwnBuilding(getExpectedBuildingClass());
+    }
+
+    @NotNull
+    public IColony getColony()
+    {
+        return getOwnBuilding().getColony();
+    }
+
+    @NotNull
+    public ServerLevel getServerLevel() {
+        if (getLevel() instanceof ServerLevel serverLevel) {
+            return serverLevel;
+        }
+
+        throw new IllegalStateException("Tried to access server level on client side!");
+    }
+
+    @NotNull
+    public Level getLevel()
+    {
+        return getColony().getWorld();
     }
 
     /**
@@ -1417,6 +1441,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
+     * Check if any of the storages is in the inventory.
+     *
+     * @param storages the list of storages.
+     * @return true if so.
+     */
+    public boolean checkIfRequestForItemStorageExistOrCreate(@NotNull final Collection<ItemStorage> storages)
+    {
+        return storages.stream().allMatch(this::checkIfRequestForItemExistOrCreate);
+    }
+
+    /**
      * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request
      *
      * @param stack the requested stack.
@@ -1426,6 +1461,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         return checkIfRequestForItemExistOrCreate(stack, stack.getCount(), stack.getCount());
     }
+
+    /**
+     * Check if a storage has been requested already or is in the inventory. If not in the inventory and not requested already, create request
+     *
+     * @param storage the requested storage.
+     * @return true if in the inventory, else false.
+     */
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final ItemStorage storage)
+    {
+        return checkIfRequestForItemExistOrCreate(storage.getItemStack(), storage.getAmount(), storage.getAmount());
+    }
+
 
     /**
      * Check if a stack has been requested already or is in the inventory. If not in the inventory and not requested already, create request

@@ -953,6 +953,19 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
+    public GatePathResult moveToGate(final int searchRange, final double speed)
+    {
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
+        return (GatePathResult) setPathJob(
+          new PathJobFindGateway(CompatibilityUtils.getWorldFromEntity(ourEntity),
+            start,
+            ((AbstractEntityCitizen) ourEntity).getCitizenColonyHandler().getWorkBuilding().getPosition(),
+            searchRange,
+            ((AbstractEntityCitizen) ourEntity).getCitizenColonyHandler().getColony().getGateMarkers().keySet(),
+            ourEntity), null, speed, true);
+    }
+
+    @Override
     public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
