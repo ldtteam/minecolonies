@@ -222,7 +222,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
         // Fire citizen if they already have a job
-        if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView) {
+        if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView)
+        {
             IBuildingView oldJob =  colony.getBuilding(citizen.getWorkBuilding());
             oldJob.getModuleViewMatching(IAssignmentModuleView.class,
                                          m -> m.getJobEntry() == citizen.getJobView().getEntry())
@@ -240,7 +241,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      *
      * @param citizen the citizen to sort
      */
-    protected int getCitizenPriority(ICitizenDataView citizen) {
+    protected int getCitizenPriority(ICitizenDataView citizen)
+    {
         if (building.getPosition().equals(citizen.getWorkBuilding()))
             return 0;
         else if (citizen.getWorkBuilding() == null)
@@ -268,6 +270,10 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         jobList.refreshElementPanes();
     }
 
+    /**
+     * Show Employed button clicked to show/hide employed citizens
+     * @param button the clicked button
+     */
     protected void showEmployedToggled(@NotNull final Button button)
     {
 
@@ -277,6 +283,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         onOpened();
     }
 
+    /**
+     * Set up the showEmployed button.
+     * Disable button if not a "normal" building, like a warehouse or quarry
+     * Also disable for pupils
+     */
     private void setupShowEmployed()
     {
         Button button = findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class);
@@ -286,6 +297,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         showEmployed = false;
     }
 
+    /**
+     * Helper function to show _all_ citizens that aren't children if viable.
+     * @param citizen the citizen to check
+     * @return whether the citizen can be assigned to the module
+     */
     private boolean canAssign(ICitizenDataView citizen)
     {
         return (showEmployed && !citizen.isChild()) || selectedModule.canAssign(citizen);

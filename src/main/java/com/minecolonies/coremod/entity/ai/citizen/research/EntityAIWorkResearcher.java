@@ -23,9 +23,9 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     public static final int STUDY_DELAY = 60;
 
     /**
-     * XP gained per study position
+     * base XP gained per study position
      */
-    private static final double XP_PER_STUDYPOS = 0.7;
+    private static final double XP_PER_STUDYPOS = 5;
 
     /**
      * The current pos to study at.
@@ -88,8 +88,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         }
 
         worker.decreaseSaturationForContinuousAction();
-        worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getPrimarySkill(), XP_PER_STUDYPOS, worker.getCitizenData());
-
+        worker.getCitizenExperienceHandler().addExperience(XP_PER_STUDYPOS);
         studyPos = null;
         return getState();
     }
