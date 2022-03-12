@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,11 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     protected final List<IRecipeStorage> recipes = new ArrayList<>();
 
     /**
+     * The list of disabled recipes.
+     */
+    protected final List<IRecipeStorage> disabledRecipes = new ArrayList<>();
+
+    /**
      * The max recipes.
      */
     private int maxRecipes;
@@ -76,6 +82,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         this.canLearnLargeRecipes = buf.readBoolean();
 
         recipes.clear();
+        disabledRecipes.clear();
 
         final int recipesSize = buf.readInt();
         for (int i = 0; i < recipesSize; i++)
@@ -86,6 +93,17 @@ public class CraftingModuleView extends AbstractBuildingModuleView
                 recipes.add(storage);
             }
         }
+
+        final int disabledRecipeSize = buf.readInt();
+        for (int i = 0; i < disabledRecipeSize; i++)
+        {
+            final IRecipeStorage storage = StandardFactoryController.getInstance().deserialize(buf.readNbt());
+            if (storage != null)
+            {
+                disabledRecipes.add(storage);
+            }
+        }
+
         this.maxRecipes = buf.readInt();
         this.id = buf.readUtf(32767);
         this.isVisible = buf.readBoolean();
@@ -174,9 +192,20 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      * @param i first index.
      * @param j second index.
      */
-    public void switchOrder(final int i, final int j)
+    public void switchOrder(final int i, final int j, final boolean fullMove)
     {
-        if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
+        if (fullMove)
+        {
+            if (i > j)
+            {
+                recipes.add(0, recipes.remove(i));
+            }
+            else
+            {
+                recipes.add(recipes.remove(i));
+            }
+        }
+        else if (i < recipes.size() && j < recipes.size() && i >= 0 && j >= 0)
         {
             final IRecipeStorage storage = recipes.get(i);
             recipes.set(i, recipes.get(j));
@@ -194,5 +223,32 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         final BlockPos pos = buildingView.getPosition();
         Minecraft.getInstance().player.openMenu((MenuProvider) Minecraft.getInstance().level.getBlockEntity(pos));
         Network.getNetwork().sendToServer(new OpenCraftingGUIMessage((AbstractBuildingView) buildingView, this.getId()));
+    }
+
+    /**
+     * Enable/disable a recipe.
+     * @param row the location of the recipe.
+     */
+    public void toggle(final int row)
+    {
+        final IRecipeStorage storage = recipes.get(row);
+        if (disabledRecipes.contains(storage))
+        {
+            disabledRecipes.remove(storage);
+        }
+        else
+        {
+            disabledRecipes.add(storage);
+        }
+    }
+
+    /**
+     * Check if a recipe is disabled.
+     * @param recipe the recipe to check for.
+     * @return true if so.
+     */
+    public boolean isDisabled(final IRecipeStorage recipe)
+    {
+        return disabledRecipes.contains(recipe);
     }
 }

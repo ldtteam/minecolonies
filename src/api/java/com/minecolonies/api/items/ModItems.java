@@ -23,6 +23,7 @@ public final class ModItems
     public static Item firearrow;
     public static Item scepterBeekeeper;
     public static Item mistletoe;
+    public static Item spear;
 
     public static Item clipboard;
     public static Item compost;

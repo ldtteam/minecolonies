@@ -30,6 +30,11 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     private String id;
 
     /**
+     * If moving fully up/down.
+     */
+    private boolean fullMove;
+
+    /**
      * Empty public constructor.
      */
     public ChangeRecipePriorityMessage()
@@ -43,13 +48,15 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
      * @param location the recipeLocation.
      * @param up       up or down?
      * @param id the unique id of the crafting module.
+     * @param fullMove if it should be moved to the beginning/end.
      */
-    public ChangeRecipePriorityMessage(@NotNull final IBuildingView building, final int location, final boolean up, final String id)
+    public ChangeRecipePriorityMessage(@NotNull final IBuildingView building, final int location, final boolean up, final String id, final boolean fullMove)
     {
         super(building);
         this.recipeLocation = location;
         this.up = up;
         this.id = id;
+        this.fullMove = fullMove;
     }
 
     /**
@@ -63,6 +70,7 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
         this.recipeLocation = buf.readInt();
         this.up = buf.readBoolean();
         this.id = buf.readUtf(32767);
+        this.fullMove = buf.readBoolean();
     }
 
     /**
@@ -75,7 +83,8 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
     {
         buf.writeInt(this.recipeLocation);
         buf.writeBoolean(this.up);
-        buf.writeUtf(id);
+        buf.writeUtf(this.id);
+        buf.writeBoolean(this.fullMove);
     }
 
     @Override
@@ -84,11 +93,11 @@ public class ChangeRecipePriorityMessage extends AbstractBuildingServerMessage<I
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
         if (up)
         {
-            module.switchOrder(recipeLocation, recipeLocation - 1);
+            module.switchOrder(recipeLocation, recipeLocation - 1, fullMove);
         }
         else
         {
-            module.switchOrder(recipeLocation, recipeLocation + 1);
+            module.switchOrder(recipeLocation, recipeLocation + 1, fullMove);
         }
     }
 }
