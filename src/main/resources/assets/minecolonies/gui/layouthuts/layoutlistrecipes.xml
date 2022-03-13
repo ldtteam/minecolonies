@@ -6,7 +6,7 @@
     <label size="100% 11" pos="70 30"  color="black" id="recipestatus" />
     <list id="recipes" size="85% 150" pos="20 40">
         <view size="100% 50">
-            <gradient id="gradient" size="100% 100%" pos="0 0" visible="false" gradientstart="rgb(160,160,160)" gradientend="rgb(160,160,160)"/>
+            <gradient id="gradient" size="100% 100%" pos="0 0" visible="false" gradientstart="1688248480" gradientend="1688248480"/>
             <itemicon id="output" size="16 16" pos="80 17"/>
             <box id="3x3" size="100% 50" linewidth="2">
                 <itemicon id="res1" size="16 16" pos="20 1"/>

@@ -167,12 +167,12 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     }
 
     @Override
-    public void prePlacementLogic(final BlockPos worldPos, final BlockState blockState)
+    public void prePlacementLogic(final BlockPos worldPos, final BlockState blockState, final List<ItemStack> list)
     {
         WorkerUtil.faceBlock(worldPos, structureAI.getWorker());
         //Move out of the way when placing blocks
-        final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
-        structureAI.getWorker().setItemSlot(EquipmentSlotType.MAINHAND, item == null ? ItemStackUtils.EMPTY : item);
+        final ItemStack item = list.isEmpty() ? ItemStack.EMPTY : list.get(0);
+        structureAI.getWorker().setItemSlot(EquipmentSlotType.MAINHAND, item);
 
         if (MathHelper.floor(structureAI.getWorker().getX()) == worldPos.getX()
               && MathHelper.abs(worldPos.getY() - (int) structureAI.getWorker().getY()) <= 1
