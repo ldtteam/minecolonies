@@ -172,8 +172,6 @@ public final class EntityUtils
           nearPoint.below(),
           2,
           2,
-          2,
-          2,
           Blocks.AIR,
           Blocks.CAVE_AIR,
           Blocks.SNOW,
@@ -248,7 +246,7 @@ public final class EntityUtils
             BlockPos spawnPoint =
               Utils.scanForBlockNearPoint(entity.getCommandSenderWorld(),
                 new BlockPos(x, y, z),
-                SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
+                SCAN_RADIUS, 2,
                 Blocks.AIR,
                 Blocks.CAVE_AIR,
                 Blocks.SNOW,

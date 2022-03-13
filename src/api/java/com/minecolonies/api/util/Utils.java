@@ -41,9 +41,7 @@ public final class Utils
      *
      * @param world   the world.
      * @param point   the point where to search.
-     * @param radiusX x search distance.
-     * @param radiusY y search distance.
-     * @param radiusZ z search distance.
+     * @param radius  search distance.
      * @param height  check if blocks above the found block are air or block.
      * @param blocks  Blocks to test for.
      * @return the coordinates of the found block.
@@ -52,32 +50,32 @@ public final class Utils
     public static BlockPos scanForBlockNearPoint(
       @NotNull final Level world,
       @NotNull final BlockPos point,
-      final int radiusX,
-      final int radiusY,
-      final int radiusZ,
+      final int radius,
       final int height,
       final Block... blocks)
     {
         @Nullable BlockPos closestCoords = null;
         double minDistance = Double.MAX_VALUE;
 
-        for (int j = point.getY(); j <= point.getY() + radiusY; j++)
+        for (int i = 0; i < radius; i++)
         {
-            for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
+            for (int y = 0; y <= i; y++)
             {
-                for (int k = point.getZ() - radiusZ; k <= point.getZ() + radiusZ; k++)
+                for (int x = 0; x <= i; x++)
                 {
-                    if (checkHeight(world, i, j, k, height, blocks))
+                    for (int z = 0; z <= i; z++)
                     {
-                        @NotNull final BlockPos tempCoords = new BlockPos(i, j, k);
-
-                        if (world.getBlockState(tempCoords.below()).getMaterial().isSolid() || world.getBlockState(tempCoords.below(2)).getMaterial().isSolid())
+                        @NotNull final BlockPos tempCoords = new BlockPos(point.getX() + x, point.getY() + y, point.getZ() + z);
+                        if (checkHeight(world, tempCoords.getX(), tempCoords.getY(), tempCoords.getZ(), height, blocks))
                         {
-                            final double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
-                            if (closestCoords == null || distance < minDistance)
+                            if (world.getBlockState(tempCoords.below()).getMaterial().isSolid() || world.getBlockState(tempCoords.below(2)).getMaterial().isSolid())
                             {
-                                closestCoords = tempCoords;
-                                minDistance = distance;
+                                final double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
+                                if (closestCoords == null || distance < minDistance)
+                                {
+                                    closestCoords = tempCoords;
+                                    minDistance = distance;
+                                }
                             }
                         }
                     }

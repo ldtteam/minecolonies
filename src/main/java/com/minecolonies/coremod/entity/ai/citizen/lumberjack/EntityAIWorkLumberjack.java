@@ -480,7 +480,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         {
             @Nullable final BlockPos spawnPoint =
               Utils.scanForBlockNearPoint
-                      (world, workFrom, 1, 1, 1, 3,
+                      (world, workFrom, 1, 3,
                         Blocks.AIR,
                         Blocks.CAVE_AIR,
                         Blocks.SNOW,
