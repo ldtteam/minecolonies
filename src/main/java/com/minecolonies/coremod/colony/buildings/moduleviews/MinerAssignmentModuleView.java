@@ -36,6 +36,11 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
      */
     private HiringMode hiringMode;
 
+    /**
+     * Max number of miners.
+     */
+    private int maxSize;
+
     @Override
     public List<Integer> getAssignedCitizens()
     {
@@ -60,6 +65,7 @@ public class MinerAssignmentModuleView extends AbstractBuildingModuleView implem
         }
 
         this.hiringMode = HiringMode.values()[buf.readInt()];
+        this.maxSize = buf.readInt();
     }
 
     @Override
