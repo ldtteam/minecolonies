@@ -120,16 +120,19 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
         if (done)
         {
             ItemStack compostStack = new ItemStack(ModItems.compost, 6);
+            final ItemEntity itemEntity = new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack);
             if (hitFace != null) // Spawn all as ItemEntity
             {
-                playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack));
+                itemEntity.setDeltaMovement(hitFace.getStepX() / 5f, hitFace.getStepY() / 5f + 0.2f, hitFace.getStepZ() / 5f);
+                playerIn.level.addFreshEntity(itemEntity);
                 this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1, 1);
             }
             else // Insert directly into inventory, spawning overflow as ItemEntity
             {
                 if(!playerIn.inventory.add(compostStack))
                 {
-                    playerIn.level.addFreshEntity(new ItemEntity(playerIn.level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.75, worldPosition.getZ() + 0.5, compostStack));
+                    itemEntity.setDeltaMovement(0, 0.2f, 0);
+                    playerIn.level.addFreshEntity(itemEntity);
                 }
                 this.level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundCategory.BLOCKS, 1, 1);
             }
