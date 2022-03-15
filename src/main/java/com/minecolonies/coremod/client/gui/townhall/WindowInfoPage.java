@@ -171,6 +171,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
         final int maxJobs = jobMaxCountMap.size();
         final List<Map.Entry<String, Tuple<Integer, Integer>>> theList = new ArrayList<>(jobMaxCountMap.entrySet());
+        theList.sort(Map.Entry.comparingByKey());
 
         list.setDataProvider(new ScrollingList.DataProvider()
         {
