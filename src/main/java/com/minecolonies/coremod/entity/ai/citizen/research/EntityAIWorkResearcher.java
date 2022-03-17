@@ -25,7 +25,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     /**
      * base XP gained per study position
      */
-    private static final double XP_PER_STUDYPOS = 0.5;
+    private static final double XP_PER_STUDYPOS = 1.5;
 
     /**
      * The current pos to study at.
