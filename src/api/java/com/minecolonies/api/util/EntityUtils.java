@@ -176,20 +176,20 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final World world, final BlockPos nearPoint)
     {
-        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkHeight(w, p, 2, VALID_SPAWNS));
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2, VALID_SPAWNS));
     }
 
 
     /**
-     * Checks if the blocks above that point are all of the spezified block types.
+     * Checks if the blocks above that point are all of the specified block types and that there is a solid block to stand on.
      *
-     * @param world  the world we check on.
+     * @param world the world we check on.
      * @param pos the position.
      * @param height the number of blocks above to check.
      * @param blocks the block types required.
      * @return true if all blocks are of that type.
      */
-    private static boolean checkHeight(@NotNull final IBlockReader world, final BlockPos pos, final int height, @NotNull final List<Block> blocks)
+    private static boolean checkValidSpawn(@NotNull final IBlockReader world, final BlockPos pos, final int height, @NotNull final List<Block> blocks)
     {
         for (int dy = 0; dy < height; dy++)
         {
