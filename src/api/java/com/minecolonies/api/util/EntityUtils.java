@@ -1,7 +1,10 @@
 package com.minecolonies.api.util;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -13,6 +16,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +43,11 @@ public final class EntityUtils
     private static final int    TELEPORT_RANGE      = 512;
     private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
     private static final int    SCAN_RADIUS         = 5;
+
+    /**
+     * List of valid spawn blocks.
+     */
+    private static final List<Block> VALID_SPAWNS = ImmutableList.of(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS);
 
     /**
      * Private constructor to hide the implicit public one.
@@ -167,19 +176,33 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final World world, final BlockPos nearPoint)
     {
-        return Utils.scanForBlockNearPoint(
-          world,
-          nearPoint.below(),
-          2,
-          2,
-          2,
-          2,
-          Blocks.AIR,
-          Blocks.CAVE_AIR,
-          Blocks.SNOW,
-          Blocks.TALL_GRASS,
-          Blocks.WATER);
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkHeight(w, p, 2, VALID_SPAWNS));
     }
+
+
+    /**
+     * Checks if the blocks above that point are all of the spezified block types.
+     *
+     * @param world  the world we check on.
+     * @param pos the position.
+     * @param height the number of blocks above to check.
+     * @param blocks the block types required.
+     * @return true if all blocks are of that type.
+     */
+    private static boolean checkHeight(@NotNull final IBlockReader world, final BlockPos pos, final int height, @NotNull final List<Block> blocks)
+    {
+        for (int dy = 0; dy < height; dy++)
+        {
+            final BlockState state = world.getBlockState(pos.above(dy));
+            if (!blocks.contains(state.getBlock()) && state.getMaterial().blocksMotion())
+            {
+                return false;
+            }
+        }
+
+        return world.getBlockState(pos.below()).getMaterial().isSolid() || world.getBlockState(pos.below(2)).getMaterial().isSolid();
+    }
+
 
     /**
      * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false. {@link #tryMoveLivingToXYZ(MobEntity, int, int, int, double)}
@@ -245,14 +268,7 @@ public final class EntityUtils
 
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
-            BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint(entity.getCommandSenderWorld(),
-                new BlockPos(x, y, z),
-                SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
-                Blocks.AIR,
-                Blocks.CAVE_AIR,
-                Blocks.SNOW,
-                Blocks.TALL_GRASS);
+            BlockPos spawnPoint = getSpawnPoint(entity.getCommandSenderWorld(), new BlockPos(x,y,z));
 
             if (spawnPoint == null)
             {
