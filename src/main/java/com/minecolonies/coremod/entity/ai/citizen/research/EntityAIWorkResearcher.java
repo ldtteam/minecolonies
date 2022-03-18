@@ -20,12 +20,12 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
     /**
      * Delay for each subject study.
      */
-    public static final int STUDY_DELAY = 60;
+    public static final int STUDY_DELAY = 1200;
 
     /**
      * base XP gained per study position
      */
-    private static final double XP_PER_STUDYPOS = 3.125;
+    private static final double XP_PER_STUDYPOS = 2;
 
     /**
      * The current pos to study at.
