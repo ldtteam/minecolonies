@@ -35,8 +35,8 @@ import com.minecolonies.coremod.entity.pathfinding.registry.PathNavigateRegistry
 import com.minecolonies.coremod.research.GlobalResearchTree;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -172,74 +172,70 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     @Override
     public IForgeRegistry<ResearchEffectEntry> getResearchEffectRegistry() { return researchEffectRegistry;}
 
-    public void onRegistryNewRegistry(final RegistryEvent.NewRegistry event)
+    public void onRegistryNewRegistry(final NewRegistryEvent event)
     {
-        buildingRegistry = new RegistryBuilder<BuildingEntry>()
+        event.create(new RegistryBuilder<BuildingEntry>()
                              .setName(new ResourceLocation(Constants.MOD_ID, "buildings"))
                              .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                              .disableSaving()
                              .allowModification()
                              .setType(BuildingEntry.class)
-                             .setIDRange(0, Integer.MAX_VALUE - 1)
-                             .create();
+                             .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> buildingRegistry = b);
 
-        jobRegistry = new RegistryBuilder<JobEntry>()
+        event.create(new RegistryBuilder<JobEntry>()
                         .setName(new ResourceLocation(Constants.MOD_ID, "jobs"))
                         .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                         .disableSaving()
                         .allowModification()
                         .setType(JobEntry.class)
-                        .setIDRange(0, Integer.MAX_VALUE - 1)
-                        .create();
+                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> jobRegistry = b);
 
-        guardTypeRegistry = new RegistryBuilder<GuardType>()
+       event.create(new RegistryBuilder<GuardType>()
                               .setName(new ResourceLocation(Constants.MOD_ID, "guardtypes"))
                               .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                               .disableSaving()
                               .allowModification()
                               .setDefaultKey(ModGuardTypes.KNIGHT_ID)
                               .setType(GuardType.class)
-                              .setIDRange(0, Integer.MAX_VALUE - 1)
-                              .create();
+                              .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> guardTypeRegistry = b);
 
-        interactionHandlerRegistry = new RegistryBuilder<InteractionResponseHandlerEntry>()
+        event.create(new RegistryBuilder<InteractionResponseHandlerEntry>()
                                        .setName(new ResourceLocation(Constants.MOD_ID, "interactionresponsehandlers"))
                                        .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                                        .disableSaving()
                                        .allowModification()
                                        .setType(InteractionResponseHandlerEntry.class)
-                                       .setIDRange(0, Integer.MAX_VALUE - 1)
-                                       .create();
+                                       .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> interactionHandlerRegistry = b);
 
-        colonyEventRegistry = new RegistryBuilder<ColonyEventTypeRegistryEntry>()
+        event.create(new RegistryBuilder<ColonyEventTypeRegistryEntry>()
                                 .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventtypes"))
                                 .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                                 .disableSaving().allowModification().setType(ColonyEventTypeRegistryEntry.class)
-                                .setIDRange(0, Integer.MAX_VALUE - 1).create();
+                                .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventRegistry = b);
 
-        colonyEventDescriptionRegistry = new RegistryBuilder<ColonyEventDescriptionTypeRegistryEntry>()
+        event.create(new RegistryBuilder<ColonyEventDescriptionTypeRegistryEntry>()
                 .setName(new ResourceLocation(Constants.MOD_ID, "colonyeventdesctypes"))
                 .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "null"))
                 .disableSaving().allowModification().setType(ColonyEventDescriptionTypeRegistryEntry.class)
-                .setIDRange(0, Integer.MAX_VALUE - 1).create();
+                .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventDescriptionRegistry = b);
 
-        recipeTypeEntryRegistry = new RegistryBuilder<RecipeTypeEntry>()
+        event.create(new RegistryBuilder<RecipeTypeEntry>()
                                     .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
                                     .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
                                     .disableSaving().allowModification().setType(RecipeTypeEntry.class)
-                                    .setIDRange(0, Integer.MAX_VALUE - 1).create();
+                                    .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> recipeTypeEntryRegistry = b);
 
-        researchRequirementRegistry = new RegistryBuilder<ResearchRequirementEntry>()
+        event.create(new RegistryBuilder<ResearchRequirementEntry>()
                                         .setName(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"))
                                         .setDefaultKey(RESEARCH_RESEARCH_REQ_ID)
                                         .disableSaving().allowModification().setType(ResearchRequirementEntry.class)
-                                        .setIDRange(0, Integer.MAX_VALUE - 1).create();
+                                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchRequirementRegistry = b);
 
-        researchEffectRegistry = new RegistryBuilder<ResearchEffectEntry>()
+        event.create(new RegistryBuilder<ResearchEffectEntry>()
                                         .setName(new ResourceLocation(Constants.MOD_ID, "researcheffecttypes"))
                                         .setDefaultKey(GLOBAL_EFFECT_ID)
                                         .disableSaving().allowModification().setType(ResearchEffectEntry.class)
-                                        .setIDRange(0, Integer.MAX_VALUE - 1).create();
+                                        .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> researchEffectRegistry = b);
     }
 
     @Override

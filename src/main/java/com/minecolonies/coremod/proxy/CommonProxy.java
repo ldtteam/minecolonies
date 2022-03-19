@@ -32,6 +32,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -96,7 +97,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerNewRegistries(final RegistryEvent.NewRegistry event)
+    public static void registerNewRegistries(final NewRegistryEvent event)
     {
         apiImpl.onRegistryNewRegistry(event);
     }

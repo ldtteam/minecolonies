@@ -40,7 +40,6 @@ public final class ModSoundEvents
      */
     public static void registerSounds(final IForgeRegistry<SoundEvent> registry)
     {
-
         for (final JobEntry job : IJobRegistry.getInstance().getValues())
         {
             if (job.getRegistryName().getNamespace().equals(Constants.MOD_ID) && !job.getRegistryName().getPath().equals("placeholder"))
