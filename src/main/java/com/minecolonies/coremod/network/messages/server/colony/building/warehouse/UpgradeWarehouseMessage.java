@@ -43,8 +43,7 @@ public class UpgradeWarehouseMessage extends AbstractBuildingServerMessage<Build
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingWareHouse building)
+    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingWareHouse building)
     {
         final Player player = ctxIn.getSender();
         if (player == null)
