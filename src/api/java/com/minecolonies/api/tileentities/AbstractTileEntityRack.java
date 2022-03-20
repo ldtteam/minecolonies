@@ -204,7 +204,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
     /**
      * Upgrade the rack by 1. This adds 9 more slots and copies the inventory to the new one.
      */
-    public abstract void upgradeItemStorage();
+    public abstract void upgradeRackSize();
 
     /**
      * Set the building pos it belongs to.
@@ -219,6 +219,12 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
         }
         this.buildingPos = pos;
     }
+
+    /**
+     * Get the upgrade size.
+     * @return the upgrade size.
+     */
+    public abstract int getUpgradeSize();
 
     /* Get the amount of items matching a predicate in the inventory.
      * @param predicate the predicate.

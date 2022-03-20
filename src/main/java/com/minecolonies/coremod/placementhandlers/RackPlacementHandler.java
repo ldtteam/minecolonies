@@ -51,18 +51,13 @@ public class RackPlacementHandler implements IPlacementHandler
         }
 
         BlockEntity entity = world.getBlockEntity(pos);
-        if (entity instanceof ChestBlockEntity)
+
+        world.setBlock(pos, blockState, UPDATE_FLAG);
+        if (tileEntityData != null)
         {
-            BuildingWareHouse.handleBuildingOverChest(pos, (ChestBlockEntity) entity, world, tileEntityData);
+            handleTileEntityPlacement(tileEntityData, world, pos, settings);
         }
-        else
-        {
-            world.setBlock(pos, blockState, UPDATE_FLAG);
-            if (tileEntityData != null)
-            {
-                handleTileEntityPlacement(tileEntityData, world, pos, settings);
-            }
-        }
+
         return ActionProcessingResult.SUCCESS;
     }
 
