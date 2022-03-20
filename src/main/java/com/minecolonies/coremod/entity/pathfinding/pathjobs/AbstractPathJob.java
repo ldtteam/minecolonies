@@ -710,7 +710,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         // Walk downwards node if passable
-        if (isPassable(currentNode.pos.below(), false, currentNode.parent))
+        if (isPassable(currentNode.pos.below(), false, currentNode.parent) && (!currentNode.isSwimming() && isLiquid(world.getBlockState(currentNode.pos.below()))))
         {
             walk(currentNode, BLOCKPOS_DOWN);
         }
@@ -1189,7 +1189,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return pos.getY();
         }
 
-        if (pathingOptions.canSwim() && below.getMaterial() == Material.WATER)
+        if (pathingOptions.canSwim() && SurfaceType.isWater(world, pos.below()))
         {
             //  This is water, and we are allowed to swim
             return pos.getY();

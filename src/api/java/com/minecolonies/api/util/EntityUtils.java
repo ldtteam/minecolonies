@@ -2,7 +2,9 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import net.minecraft.world.level.block.Blocks;
+import com.minecolonies.api.items.ModTags;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -167,19 +169,32 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final Level world, final BlockPos nearPoint)
     {
-        return Utils.scanForBlockNearPoint(
-          world,
-          nearPoint.below(),
-          2,
-          2,
-          2,
-          2,
-          Blocks.AIR,
-          Blocks.CAVE_AIR,
-          Blocks.SNOW,
-          Blocks.TALL_GRASS,
-          Blocks.WATER);
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2));
     }
+
+
+    /**
+     * Checks if the blocks above that point are all of the specified block types and that there is a solid block to stand on.
+     *
+     * @param world the world we check on.
+     * @param pos the position.
+     * @param height the number of blocks above to check.
+     * @return true if all blocks are of that type.
+     */
+    private static boolean checkValidSpawn(@NotNull final BlockGetter world, final BlockPos pos, final int height)
+    {
+        for (int dy = 0; dy < height; dy++)
+        {
+            final BlockState state = world.getBlockState(pos.above(dy));
+            if (!state.is(ModTags.validSpawn) && state.getMaterial().blocksMotion())
+            {
+                return false;
+            }
+        }
+
+        return world.getBlockState(pos.below()).getMaterial().isSolid() || world.getBlockState(pos.below(2)).getMaterial().isSolid();
+    }
+
 
     /**
      * Sets the movement of the entity to specific point. Returns true if direction is set, otherwise false.
@@ -245,14 +260,7 @@ public final class EntityUtils
 
         if (!isLivingAtSite(entity, x, y, z, TELEPORT_RANGE))
         {
-            BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint(entity.getCommandSenderWorld(),
-                new BlockPos(x, y, z),
-                SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
-                Blocks.AIR,
-                Blocks.CAVE_AIR,
-                Blocks.SNOW,
-                Blocks.TALL_GRASS);
+            BlockPos spawnPoint = getSpawnPoint(entity.getCommandSenderWorld(), new BlockPos(x,y,z));
 
             if (spawnPoint == null)
             {

@@ -479,14 +479,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (isOnSapling())
         {
-            @Nullable final BlockPos spawnPoint =
-              Utils.scanForBlockNearPoint
-                      (world, workFrom, 1, 1, 1, 3,
-                        Blocks.AIR,
-                        Blocks.CAVE_AIR,
-                        Blocks.SNOW,
-                        Blocks.TALL_GRASS);
-            WorkerUtil.setSpawnPoint(spawnPoint, worker);
+            @Nullable final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, workFrom);
+            if (spawnPoint != null)
+            {
+                WorkerUtil.setSpawnPoint(spawnPoint, worker);
+            }
         }
 
         if (job.getTree().hasLogs())

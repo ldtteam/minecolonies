@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:buttons",
+    "#minecraft:rails",
+    "minecraft:air",
+    "minecraft:cave_air",
+    "minecraft:snow",
+    "minecraft:tall_grass",
+    "minecraft:grass",
+    "minecraft:fern",
+    "minecraft:torch"
+  ]
+}

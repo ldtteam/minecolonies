@@ -33,6 +33,8 @@ public class ModTags
 
     public static final TagKey<Block> oreChanceBlocks = BlockTags.create(TagConstants.ORECHANCEBLOCKS);
 
+    public static final TagKey<Block> validSpawn = BlockTags.create(TagConstants.VALIDSPAWNBLOCKS);
+
     public static final TagKey<Item> fungi = ItemTags.create(TagConstants.FUNGI);
     public static final TagKey<Item> compostables = ItemTags.create(TagConstants.COMPOSTABLES);
     public static final TagKey<Item> compostables_poor = ItemTags.create(TagConstants.COMPOSTABLES_POOR);
