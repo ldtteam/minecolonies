@@ -183,7 +183,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     }
 
     @Override
-    public void upgradeItemStorage()
+    public void upgradeRackSize()
     {
         ++size;
         final RackInventory tempInventory = new RackInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
@@ -555,11 +555,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         return super.getCapability(capability, dir);
     }
 
-    /**
-     * Get the neighbor of the entity.
-     *
-     * @return the position, a blockPos.
-     */
     @Override
     public BlockPos getNeighbor()
     {
@@ -570,11 +565,12 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         return worldPosition.subtract(relativeNeighbor);
     }
 
-    /**
-     * Define the neighbor for a block.
-     *
-     * @param neighbor the neighbor to define.
-     */
+    @Override
+    public int getUpgradeSize()
+    {
+        return size;
+    }
+
     @Override
     public boolean setNeighbor(final BlockPos neighbor)
     {
