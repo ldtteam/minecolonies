@@ -3,6 +3,7 @@ package com.minecolonies.api.util;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.items.ModTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -43,11 +44,6 @@ public final class EntityUtils
     private static final int    TELEPORT_RANGE      = 512;
     private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
     private static final int    SCAN_RADIUS         = 5;
-
-    /**
-     * List of valid spawn blocks.
-     */
-    private static final List<Block> VALID_SPAWNS = ImmutableList.of(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS);
 
     /**
      * Private constructor to hide the implicit public one.
@@ -176,7 +172,7 @@ public final class EntityUtils
     @Nullable
     public static BlockPos getSpawnPoint(final World world, final BlockPos nearPoint)
     {
-        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2, VALID_SPAWNS));
+        return BlockPosUtil.findAround(world, nearPoint, SCAN_RADIUS, SCAN_RADIUS, (w, p) -> checkValidSpawn(w, p, 2));
     }
 
 
@@ -186,15 +182,14 @@ public final class EntityUtils
      * @param world the world we check on.
      * @param pos the position.
      * @param height the number of blocks above to check.
-     * @param blocks the block types required.
      * @return true if all blocks are of that type.
      */
-    private static boolean checkValidSpawn(@NotNull final IBlockReader world, final BlockPos pos, final int height, @NotNull final List<Block> blocks)
+    private static boolean checkValidSpawn(@NotNull final IBlockReader world, final BlockPos pos, final int height)
     {
         for (int dy = 0; dy < height; dy++)
         {
             final BlockState state = world.getBlockState(pos.above(dy));
-            if (!blocks.contains(state.getBlock()) && state.getMaterial().blocksMotion())
+            if (!ModTags.validSpawn.contains(state.getBlock()) && state.getMaterial().blocksMotion())
             {
                 return false;
             }

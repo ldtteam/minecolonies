@@ -135,5 +135,9 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
         tag(ModTags.oreChanceBlocks)
                 .addTags(Tags.Blocks.STONE, Tags.Blocks.COBBLESTONE)
                 .addTags(BlockTags.BASE_STONE_OVERWORLD, BlockTags.BASE_STONE_NETHER);
+        tag(ModTags.validSpawn)
+          .addTags(BlockTags.BUTTONS)
+          .addTags(BlockTags.RAILS)
+          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH);
     }
 }
