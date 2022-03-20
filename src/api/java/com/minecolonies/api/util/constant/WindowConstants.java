@@ -918,6 +918,11 @@ public final class WindowConstants
     public static final String BUTTON_JOB = "job";
 
     /**
+     * Id of the showEMployed toggle in the GUI.
+     */
+    public static final String TOGGLE_SHOW_EMPLOYED = "showEmployed";
+
+    /**
      * Id of the citizen list in the GUI.
      */
     public static final String CITIZEN_LIST_UNEMP = "unemployed";

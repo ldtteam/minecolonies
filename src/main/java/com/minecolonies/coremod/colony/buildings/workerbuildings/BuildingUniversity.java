@@ -150,11 +150,6 @@ public class BuildingUniversity extends AbstractBuilding
                 return;
             }
 
-            for (final ICitizenData data : getAllAssignedCitizen())
-            {
-                data.getCitizenSkillHandler().addXpToSkill(module.getSecondarySkill(), 25.0, data);
-            }
-
             if (colony.getResearchManager()
                   .getResearchTree()
                   .getResearch(research.getBranch(), research.getId())

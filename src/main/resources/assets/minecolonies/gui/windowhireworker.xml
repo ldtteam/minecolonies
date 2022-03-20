@@ -16,9 +16,11 @@
             <label id="attributes" size="100% 24" pos="1 12" color="white" textscale="0.75"/>
         </view>
     </list>
+    <label id="autoHireWarn" size="100% 11" pos="0 155" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.auto.hire.warning)"/>
     <label id="buildingHireMode" size="200 11" pos="110 165" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.buildinghiremode)"/>
     <button id="mode" size="200 20" pos="110 175"/>
+    <label id="showEmployedLabel" size="120 11" pos="110 200" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.showemployed)"/>
+    <button id="showEmployed" size="20 11" pos="250 200" label="N" textalign="MIDDLE" color="white"/>
 
-    <label id="autoHireWarn" size="100% 11" pos="0 200" textalign="MIDDLE" color="white" label="$(com.minecolonies.coremod.gui.auto.hire.warning)"/>
     <button id="cancel" size="200 20" pos="110 215" label="$(gui.cancel)"/>
 </window>

@@ -1075,6 +1075,7 @@
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
 
   "com.minecolonies.coremod.gui.buildinghiremode": "Building Hiring Mode:",
+  "com.minecolonies.coremod.gui.showemployed": "Show employed?",
   "com.minecolonies.coremod.gui.hiringmode.default": "Default (colony override)",
   "com.minecolonies.coremod.gui.hiringmode.auto": "Automatic",
   "com.minecolonies.coremod.gui.hiringmode.manual": "Manual",

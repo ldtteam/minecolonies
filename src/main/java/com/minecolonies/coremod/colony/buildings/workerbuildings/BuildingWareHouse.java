@@ -125,7 +125,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
     {
         if (block instanceof BlockMinecoloniesRack)
         {
-            final BlockEntity entity = world.getBlockEntity(pos);
+            final TileEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityRack)
             {
                 ((AbstractTileEntityRack) entity).setInWarehouse(true);

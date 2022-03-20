@@ -50,7 +50,7 @@ public class RackPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
-        BlockEntity entity = world.getBlockEntity(pos);
+        TileEntity entity = world.getBlockEntity(pos);
 
         world.setBlock(pos, blockState, UPDATE_FLAG);
         if (tileEntityData != null)
