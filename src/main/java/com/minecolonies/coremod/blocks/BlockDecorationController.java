@@ -2,9 +2,15 @@ package com.minecolonies.coremod.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +38,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
+import java.util.ArrayList;
+
+import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
+import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
 
 /**
  * Creates a decoration controller block.
@@ -112,6 +123,30 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
+    {
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
+
+        /*
+        Only work on server side
+        */
+        if (worldIn.isClientSide)
+        {
+            return;
+        }
+
+        final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
+        if (tileEntity instanceof TileEntityDecorationController && ((TileEntityDecorationController) tileEntity).getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(LEISURE))
+        {
+            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            if (colony != null)
+            {
+                colony.getBuildingManager().addLeisureSite(pos);
+            }
+        }
     }
 
     @Override

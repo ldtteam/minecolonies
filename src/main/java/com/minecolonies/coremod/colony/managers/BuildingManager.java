@@ -35,6 +35,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -294,17 +295,20 @@ public class BuildingManager implements IBuildingManager
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
-                if (colony.getWorld().getBlockEntity(pos) instanceof ScarecrowTileEntity)
-                {
-                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) colony.getWorld().getBlockEntity(pos);
-                    if (scarecrow == null)
-                    {
-                        removeField(pos);
-                    }
-                }
-                else
+                if (!(colony.getWorld().getBlockEntity(pos) instanceof ScarecrowTileEntity))
                 {
                     removeField(pos);
+                }
+            }
+        }
+
+        for (@NotNull final BlockPos pos : leisureSites)
+        {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
+            {
+                if (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController))
+                {
+                    removeLeisureSite(pos);
                 }
             }
         }
@@ -342,6 +346,18 @@ public class BuildingManager implements IBuildingManager
         tempList.add(pos);
         this.leisureSites = ImmutableList.copyOf(tempList);
         colony.markDirty();
+    }
+
+    @Override
+    public void removeLeisureSite(final BlockPos pos)
+    {
+        if (leisureSites.contains(pos))
+        {
+            final List<BlockPos> tempList = new ArrayList<>(leisureSites);
+            tempList.remove(pos);
+            this.leisureSites = ImmutableList.copyOf(tempList);
+            colony.markDirty();
+        }
     }
 
     @Nullable

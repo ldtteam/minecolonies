@@ -91,6 +91,12 @@ public interface IBuildingManager
     void addLeisureSite(BlockPos pos);
 
     /**
+     * Remove a leisure site.
+     * @param pos the position of it.
+     */
+    void removeLeisureSite(BlockPos pos);
+
+    /**
      * Get the closest warehouse relative to a position.
      * @param pos the position,.
      * @return the closest warehouse.

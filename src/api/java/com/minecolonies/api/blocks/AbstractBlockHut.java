@@ -240,17 +240,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
-    /**
-     * Event-Handler for placement of this block.
-     * <p>
-     * Override for custom logic.
-     *
-     * @param worldIn the word we are in.
-     * @param pos     the position where the block was placed.
-     * @param state   the state the placed block is in.
-     * @param placer  the player placing the block.
-     * @param stack   the itemstack from where the block was placed.
-     */
     @Override
     public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
