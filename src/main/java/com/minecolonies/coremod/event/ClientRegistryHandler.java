@@ -12,6 +12,7 @@ import com.minecolonies.coremod.client.model.raiders.*;
 import com.minecolonies.coremod.client.render.*;
 import com.minecolonies.coremod.client.render.mobs.RenderMercenary;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazon;
+import com.minecolonies.coremod.client.render.mobs.amazon.RendererAmazonSpearman;
 import com.minecolonies.coremod.client.render.mobs.amazon.RendererChiefAmazon;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererBarbarian;
 import com.minecolonies.coremod.client.render.mobs.barbarians.RendererChiefBarbarian;
@@ -24,6 +25,8 @@ import com.minecolonies.coremod.client.render.mobs.norsemen.RendererShieldmaiden
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererArcherPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererChiefPirate;
 import com.minecolonies.coremod.client.render.mobs.pirates.RendererPirate;
+import com.minecolonies.coremod.client.render.projectile.FireArrowRenderer;
+import com.mojang.datafixers.kinds.Const;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -102,6 +105,12 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation MALE_STUDENT = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_student"), "male_student");
     public static final ModelLayerLocation MALE_HEALER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_healer"), "male_healer");
     public static final ModelLayerLocation MALE_CRAFTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_crafter"), "male_crafter");
+    public static final ModelLayerLocation MALE_DRUID = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_druid"), "male_druid");
+    public static final ModelLayerLocation FEMALE_DRUID = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_druid"), "female_druid");
+    public static final ModelLayerLocation MALE_NETHERWORKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_netherworker"), "male_netherworker");
+    public static final ModelLayerLocation FEMALE_NETHERWORKER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_netherworker"), "female_netherworker");
+    public static final ModelLayerLocation MALE_ARCHEOLOGIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_archeologist"), "male_archeologist");
+    public static final ModelLayerLocation FEMALE_ARCHEOLOGIST = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_archeologist"), "female_archeologist");
 
     public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
@@ -113,6 +122,7 @@ public class ClientRegistryHandler
 
     public static final ModelLayerLocation AMAZON       = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon"), "amazon");
     public static final ModelLayerLocation AMAZON_CHIEF = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_chief"), "amazon_chief");
+    public static final ModelLayerLocation AMAZON_SPEARMAN = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "amazon_spearman"), "amazon_spearman");
 
     public static final ModelLayerLocation SCARECROW = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "scarecrow"), "scarecrow");
 
@@ -124,6 +134,7 @@ public class ClientRegistryHandler
     {
         event.registerLayerDefinition(AMAZON, ModelAmazon::createMesh);
         event.registerLayerDefinition(AMAZON_CHIEF, ModelAmazonChief::createMesh);
+        event.registerLayerDefinition(AMAZON_SPEARMAN, ModelAmazonSpearman::createMesh);
 
         event.registerLayerDefinition(ARCHER_MUMMY, ModelArcherMummy::createMesh);
         event.registerLayerDefinition(MUMMY, ModelMummy::createMesh);
@@ -197,6 +208,12 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(MALE_STUDENT, ModelEntityStudentMale::createMesh);
         event.registerLayerDefinition(MALE_HEALER, ModelEntityHealerMale::createMesh);
         event.registerLayerDefinition(MALE_CRAFTER, ModelEntityCrafterMale::createMesh);
+        event.registerLayerDefinition(MALE_DRUID, ModelEntityDruidMale::createMesh);
+        event.registerLayerDefinition(FEMALE_DRUID, ModelEntityDruidFemale::createMesh);
+        event.registerLayerDefinition(MALE_NETHERWORKER, ModelEntityNetherWorkerMale::createMesh);
+        event.registerLayerDefinition(FEMALE_NETHERWORKER, ModelEntityNetherWorkerFemale::createMesh);
+        event.registerLayerDefinition(MALE_ARCHEOLOGIST, ModelEntityCrafterMale::createMesh);
+        event.registerLayerDefinition(FEMALE_ARCHEOLOGIST, ModelEntityCrafterFemale::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }
@@ -228,6 +245,7 @@ public class ClientRegistryHandler
 
         event.registerEntityRenderer(ModEntities.AMAZON, RendererAmazon::new);
         event.registerEntityRenderer(ModEntities.AMAZONCHIEF, RendererChiefAmazon::new);
+        event.registerEntityRenderer(ModEntities.AMAZONSPEARMAN, RendererAmazonSpearman::new);
 
         event.registerEntityRenderer(ModEntities.MERCENARY, RenderMercenary::new);
         event.registerEntityRenderer(ModEntities.SITTINGENTITY, RenderSitting::new);

@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.archeologist;
 
+import com.ldtteam.structurize.Structurize;
+import com.ldtteam.structurize.items.ItemScanTool;
+import com.ldtteam.structurize.management.StructureName;
+import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -10,6 +14,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
+import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.GatePathResult;
@@ -21,8 +26,10 @@ import com.minecolonies.coremod.colony.buildings.modules.RemoteAreaChunkLoadingM
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingArcheologist;
 import com.minecolonies.coremod.colony.jobs.JobArcheologist;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.util.RotationUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
@@ -33,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -45,21 +51,23 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.TriPredicate;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.ldtteam.structurize.management.Structures.SCHEMATIC_EXTENSION_NEW;
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.ColonyConstants.KEEP_LOADED_TYPE;
+import static com.minecolonies.api.util.constant.Constants.HALF_BLOCK;
+import static com.minecolonies.api.util.constant.Constants.SLIGHTLY_UP;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_IDLING;
+import static com.minecolonies.coremod.colony.managers.EventStructureManager.STRUCTURE_BACKUP_FOLDER;
 
 public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheologist, BuildingArcheologist>
 {
 
-    private final ResourceLocation WORKSPACE_STRUCTURE = new ResourceLocation(Constants.MOD_ID, "schematics/wooden/archeologist_workspace.blueprint");
+    private final ResourceLocation WORKSPACE_STRUCTURE = new ResourceLocation(Constants.MOD_ID, "schematics/wooden/archeologist_workspace");
 
     /**
      * Predicate defining things we don't want the archeologist to ever touch.
@@ -136,7 +144,8 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
           new AITarget(ARCHEOLOGIST_SPAWN_WORKSTATION, this::spawnWorkstation, 1),
           new AITarget(ARCHEOLOGIST_DO_WORK, this::doResearch, 1),
           new AITarget(ARCHEOLOGIST_CLEAR_WORKSTATION, this::clearWorkstation, 1),
-          new AITarget(ARCHEOLOGIST_TRAVEL_HOME, this::travelHome, 1)
+          new AITarget(ARCHEOLOGIST_TRAVEL_HOME, this::travelHome, 1),
+          new AITarget(ARCHEOLOGIST_RELEASE_TARGET, this::removeTargetClaim, 1)
           );
         worker.setCanPickUpLoot(true);
     }
@@ -150,6 +159,10 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
     {
         worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(COM_MINECOLONIES_COREMOD_STATUS_IDLING));
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
+
+        if (job.getPreEventHandlingState() != null) {
+            return job.getPreEventHandlingState();
+        }
 
         if (walkToBuilding())
         {
@@ -167,27 +180,30 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
     }
 
     private IAIState collectPayment() {
-        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget();
+        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget();
         final int distance = (int) Math.sqrt(targetPosition.distSqr(getOwnBuilding().getPosition()));
         final int paymentInIngots = distance / 9;
 
+        job.setPreEventHandlingState(ARCHEOLOGIST_COLLECT_PAYMENT);
+
         if (checkIfRequestForItemExistOrCreate(new ItemStack(Items.GOLD_INGOT, paymentInIngots))) {
+            job.setPreEventHandlingState(null);
             InventoryUtils.removeStackFromItemHandler(worker.getInventoryCitizen(), new ItemStack(Items.GOLD_INGOT), paymentInIngots);
-            return ARCHEOLOGIST_CLAIM_TARGET;
+            return ARCHEOLOGIST_REQUEST_REQUIRED_RESOURCES;
         };
 
         return ARCHEOLOGIST_COLLECT_PAYMENT;
     }
 
     protected IAIState claimTarget() {
-        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget();
+        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget();
         final ChunkPos chunkPos = new ChunkPos(targetPosition);
 
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
-            for (int x = chunkPos.x - 1; x < chunkPos.x + 1; x++)
+            for (int x = chunkPos.x - 1; x <= chunkPos.x + 1; x++)
             {
-                for (int z = chunkPos.z - 1; z < chunkPos.z + 1; z++)
+                for (int z = chunkPos.z - 1; z <= chunkPos.z + 1; z++)
                 {
                     final ChunkPos targetChunk = new ChunkPos(x, z);
                     getOwnBuilding().getFirstModuleOccurance(RemoteAreaChunkLoadingModule.class).addChunkToClaim(targetChunk);
@@ -196,31 +212,33 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         }
 
         setDelay(DECIDE_DELAY);
-        return ARCHEOLOGIST_GOING_TO_GATE;
+        return ARCHEOLOGIST_SEARCHING_GATE;
     }
 
-    protected void removeTargetClaim()
+    protected AIWorkerState removeTargetClaim()
     {
-        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget();
+        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget();
         final ChunkPos chunkPos = new ChunkPos(targetPosition);
 
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
-            for (int x = chunkPos.x - 1; x < chunkPos.x + 1; x++)
+            for (int x = chunkPos.x - 1; x <= chunkPos.x + 1; x++)
             {
-                for (int z = chunkPos.z - 1; z < chunkPos.z + 1; z++)
+                for (int z = chunkPos.z - 1; z <= chunkPos.z + 1; z++)
                 {
                     final ChunkPos targetChunk = new ChunkPos(x, z);
                     getOwnBuilding().getFirstModuleOccurance(RemoteAreaChunkLoadingModule.class).removeChunkToClaim(targetChunk);
                 }
             }
         }
+
+        return INIT;
     }
 
     private IAIState requestRequiredResources() {
-        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget();
+        final BlockPos targetPosition = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget();
 
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, targetPosition, WORKSPACE_STRUCTURE.toString(), new PlacementSettings(), true);
+        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, targetPosition, WORKSPACE_STRUCTURE.getPath(), new PlacementSettings(), true);
         structure.getBluePrint().rotateWithMirror(Rotation.NONE, Mirror.NONE, world);
         StructurePlacer placer = new StructurePlacer(structure);
         StructurePhasePlacementResult result;
@@ -239,7 +257,10 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         }
         while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
+        job.setPreEventHandlingState(ARCHEOLOGIST_REQUEST_REQUIRED_RESOURCES);
+
         if (checkIfRequestForItemStorageExistOrCreate(resources.values())) {
+            job.setPreEventHandlingState(null);
             InventoryUtils.removeStacksFromItemHandler(worker.getInventoryCitizen(), resources.values());
             return ARCHEOLOGIST_CLAIM_TARGET;
         };
@@ -349,17 +370,19 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         }
 
         //Okey we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
-        final Optional<BlockPos> travelingTargetCandidate = worker.getCitizenData().getColony().getTravelingManager().getTravellingTargetFor(worker.getCitizenData());
-        if (travelingTargetCandidate.isPresent())
+        if (job.getPreEventHandlingState() == ARCHEOLOGIST_TRAVELLING_TO_STRUCTURE)
         {
             //We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
+            job.setPreEventHandlingState(null);
             return ARCHEOLOGIST_SPAWN_WORKSTATION;
         }
 
+        job.setPreEventHandlingState(ARCHEOLOGIST_TRAVELLING_TO_STRUCTURE);
+
         worker.getCitizenData().getColony().getTravelingManager().startTravellingTo(
           worker.getCitizenData(),
-          getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget(),
-          (int) Math.sqrt(getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().distSqr(worker.blockPosition())) * 4
+          getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget(),
+          (int) Math.sqrt(getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget().distSqr(worker.blockPosition())) * 4
         );
 
         worker.remove(Entity.RemovalReason.DISCARDED);
@@ -376,13 +399,15 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         }
 
         //Okey we are either just done traveling or the entity disappeared, lets check if we just finished traveling.
-        final Optional<BlockPos> travelingTargetCandidate = worker.getCitizenData().getColony().getTravelingManager().getTravellingTargetFor(worker.getCitizenData());
-        if (travelingTargetCandidate.isPresent())
+        if (job.getPreEventHandlingState() == ARCHEOLOGIST_TRAVEL_HOME)
         {
             //We just finished traveling, lets spawn the entity by setting the nextRespawnPosition.
+            job.setPreEventHandlingState(null);
             getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).setTarget(null);
-            return START_WORKING;
+            return ARCHEOLOGIST_RELEASE_TARGET;
         }
+
+        job.setPreEventHandlingState(ARCHEOLOGIST_TRAVEL_HOME);
 
         final BlockPos target = job.getGate() == null ? getOwnBuilding().getPosition() : job.getGate().getA();
         worker.getCitizenData().getColony().getTravelingManager().startTravellingTo(
@@ -424,7 +449,7 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .min(Comparator.comparingDouble(o -> worker.blockPosition().distSqr(o)))
+                .min(Comparator.comparingDouble(o -> worker.blockPosition().distSqr(o.workspaceSpawnTarget())))
                 .orElse(null)
             );
         }
@@ -433,8 +458,11 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         return ARCHEOLOGIST_COLLECT_PAYMENT;
     }
 
-    private BlockPos determineSpawningCorner(final BlockPos target, final StructureFeature<?> structureFeature) {
+    private StructureTarget determineSpawningCorner(final BlockPos target, final StructureFeature<?> structureFeature) {
         final StructureStart<?> structureStart = getServerLevel().structureFeatureManager().getStructureAt(target, structureFeature);
+        if (structureStart.getPieces().isEmpty())
+            return null;
+
         final BoundingBox structureBoundingBox = structureStart.getBoundingBox();
 
         final BlockPos center = structureBoundingBox.getCenter();
@@ -451,9 +479,10 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
           center.mutable().move( xOffset,0, -zOffset),
         };
 
-        return Arrays.stream(corners)
+        return new StructureTarget(Arrays.stream(corners)
                  .max(Comparator.comparingInt(o -> determineSpawningSize(o, center)))
-                 .orElse(BlockPosUtil.expandAwayFromZero(target, 3));
+                 .orElse(BlockPosUtil.expandAwayFromZero(target, 3)),
+                 center);
     }
 
     private int determineSpawningSize(final BlockPos target, final BlockPos center) {
@@ -495,16 +524,78 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
 
     private IAIState spawnWorkstation()
     {
+        final BlockPos targetPos = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget();
+        if (targetPos == null)
+            return INIT;
+
+        final BlockPos structurePos = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().structureCenter();
+        if (structurePos == null)
+            return INIT;
+
+        final Vec3i facingVector = structurePos.subtract(targetPos);
+
+        if (!ItemScanTool.saveStructureOnServer(world,
+          targetPos.subtract(new Vec3i(-1, 3, 1)),
+          targetPos.subtract(new Vec3i(-1, 3, 1)).offset(5, 5, 10),
+         Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + getColony().getID() + "/" + getColony().getDimension().location().getNamespace() + getColony().getDimension().location().getPath() + "/" + targetPos,
+          false))
+        {
+            // No structure spawn if we didn't successfully save the surroundings before
+            Log.getLogger().info("Failed to save schematics for archeologist");
+            return INIT;
+        }
+
+        if (worker.level instanceof ServerLevel serverLevel) {
+            CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotationImmediatly(serverLevel, WORKSPACE_STRUCTURE.getPath(),
+              targetPos,
+              RotationUtils.fromVector(facingVector),
+              Mirror.NONE,
+              true,
+              null);
+
+            final BlockPos newSafePos = EntityUtils.getSpawnPoint(serverLevel, worker.blockPosition());
+            if (newSafePos != null)
+            {
+                worker.setPos(newSafePos.getX() + HALF_BLOCK, newSafePos.getY() + SLIGHTLY_UP, newSafePos.getZ() + HALF_BLOCK);
+            }
+        }
+
         return ARCHEOLOGIST_DO_WORK;
     }
 
     private IAIState doResearch()
     {
+        setDelay(1000);
         return ARCHEOLOGIST_CLEAR_WORKSTATION;
     }
 
     private IAIState clearWorkstation()
     {
+
+        final BlockPos targetPos = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().workspaceSpawnTarget();
+        if (targetPos == null)
+            return INIT;
+
+        String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
+                            getColony().getID() + "/" + getColony().getDimension().location().getNamespace() + getColony().getDimension().location().getPath() + "/" + targetPos;
+
+        // TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
+        CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(getColony().getWorld(),
+          fileName,
+          targetPos.subtract(new Vec3i(-1, 3, 1)),
+          Rotation.NONE,
+          Mirror.NONE,
+          true, null);
+
+        try
+        {
+            Structurize.proxy.getSchematicsFolder().toPath().resolve(fileName + SCHEMATIC_EXTENSION_NEW).toFile().delete();
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + fileName, e);
+        }
+
         return ARCHEOLOGIST_TRAVEL_HOME;
     }
 }

@@ -160,4 +160,44 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         }
         return null;
     }
+
+    /**
+     * Load a structure into this world and place it in the right position and rotation.
+     *
+     * @param worldObj       the world to load it in
+     * @param name           the structures name
+     * @param pos            coordinates
+     * @param rotation       the rotation.
+     * @param mirror         the mirror used.
+     * @param fancyPlacement if fancy or complete.
+     * @param player         the placing player.
+     * @return the placed blueprint.
+     */
+    public static Blueprint loadAndPlaceStructureWithRotationImmediatly(
+      final ServerLevel worldObj, @NotNull final String name,
+      @NotNull final BlockPos pos, final Rotation rotation,
+      @NotNull final Mirror mirror,
+      final boolean fancyPlacement,
+      @Nullable final ServerPlayer player)
+    {
+        try
+        {
+            @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement);
+            if (structure.hasBluePrint())
+            {
+                structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
+
+                @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
+                final TickedWorldOperation operation = new TickedWorldOperation(instantPlacer, player);
+                while(!operation.apply(worldObj)) {
+                }
+            }
+            return structure.getBluePrint();
+        }
+        catch (final IllegalStateException e)
+        {
+            Log.getLogger().warn("Could not load structure!", e);
+        }
+        return null;
+    }
 }

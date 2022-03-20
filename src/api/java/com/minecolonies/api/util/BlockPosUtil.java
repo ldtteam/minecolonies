@@ -905,6 +905,6 @@ public final class BlockPosUtil
           fromZero.getX() + (fromZero.getX() < 0 ? -amount : amount),
           fromZero.getY() + (fromZero.getY() < 0 ? -amount : amount),
           fromZero.getZ() + (fromZero.getZ() < 0 ? -amount : amount)
-        )
+        );
     }
 }

@@ -8,7 +8,9 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 
@@ -51,6 +53,8 @@ public class ModTags
 
     public static final Tags.IOptionalNamedTag<EntityType<?>> hostile = EntityTypeTags.createOptional(TagConstants.HOSTILE);
     public static final Tags.IOptionalNamedTag<EntityType<?>> mobAttackBlacklist = EntityTypeTags.createOptional(TagConstants.MOB_ATTACK_BLACKLIST);
+
+    public static Tags.IOptionalNamedTag<StructureFeature<?>> archeologist_visitable = ForgeTagHandler.createOptionalTag(ForgeRegistries.STRUCTURE_FEATURES, TagConstants.ARCHEOLOGIST_VISITABLE);
 
     public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterProduct              = new HashMap<>();
     public static final Map<String, Tags.IOptionalNamedTag<Item>> crafterProductExclusions    = new HashMap<>();
@@ -118,10 +122,5 @@ public class ModTags
     {
         throw new IllegalStateException("Can not instantiate an instance of: ModTags. This is a utility class");
     }
-    public static Tag.Named<StructureFeature<?>> archeologist_visitable;
 
-    public static final Map<String, Tag<Item>> crafterProduct              = new HashMap<>();
-    public static final Map<String, Tag<Item>> crafterProductExclusions    = new HashMap<>();
-    public static final Map<String, Tag<Item>> crafterIngredient           = new HashMap<>();
-    public static final Map<String, Tag<Item>> crafterIngredientExclusions = new HashMap<>();
 }

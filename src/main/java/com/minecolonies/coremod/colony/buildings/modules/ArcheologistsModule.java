@@ -2,26 +2,32 @@ package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.coremod.entity.ai.citizen.archeologist.StructureTarget;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 
+import java.sql.Struct;
+
 public class ArcheologistsModule extends AbstractBuildingModule implements IPersistentModule
 {
-    private static final String TAG_ARCHEOLOGISTS_MODULE = "ArcheologistsModule";
-    private static final String TAG_TARGET = "target";
 
-    private BlockPos target;
+    private StructureTarget target;
 
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        if (compound.contains(TAG_ARCHEOLOGISTS_MODULE)) {
-            final CompoundTag tag = compound.getCompound(TAG_ARCHEOLOGISTS_MODULE);
-            if (tag.contains(TAG_TARGET))
+        if (compound.contains(NbtTagConstants.TAG_ARCHEOLOGISTS_MODULE)) {
+            final CompoundTag tag = compound.getCompound(NbtTagConstants.TAG_ARCHEOLOGISTS_MODULE);
+            if (tag.contains(NbtTagConstants.TAG_STRUCTURE_TARGET))
             {
-                target = NbtUtils.readBlockPos(tag.getCompound(TAG_TARGET));
+                final CompoundTag structureTarget = tag.getCompound(NbtTagConstants.TAG_STRUCTURE_TARGET);
+                target = new StructureTarget(
+                  NbtUtils.readBlockPos(structureTarget.getCompound(NbtTagConstants.TAG_SPAWN_TARGET)),
+                  NbtUtils.readBlockPos(structureTarget.getCompound(NbtTagConstants.TAG_STRUCTURE_POS))
+                );
             }
             else
             {
@@ -39,28 +45,32 @@ public class ArcheologistsModule extends AbstractBuildingModule implements IPers
 
         if (target != null)
         {
-            moduleTag.put(TAG_TARGET, NbtUtils.writeBlockPos(target));
+            final CompoundTag tag = new CompoundTag();
+            tag.put(NbtTagConstants.TAG_SPAWN_TARGET, NbtUtils.writeBlockPos(target.workspaceSpawnTarget()));
+            tag.put(NbtTagConstants.TAG_STRUCTURE_POS, NbtUtils.writeBlockPos(target.structureCenter()));
+            moduleTag.put(NbtTagConstants.TAG_STRUCTURE_TARGET, tag);
         }
 
-        compound.put(TAG_ARCHEOLOGISTS_MODULE, moduleTag);
+        compound.put(NbtTagConstants.TAG_ARCHEOLOGISTS_MODULE, moduleTag);
     }
 
     @Override
     public void serializeToView(final FriendlyByteBuf buf)
     {
-        buf.writeBoolean(getTarget() != null);
-        if (getTarget() != null)
+        buf.writeBoolean(target != null);
+        if (target != null)
         {
-            buf.writeBlockPos(getTarget());
+            buf.writeBlockPos(target.workspaceSpawnTarget());
+            buf.writeBlockPos(target.structureCenter());
         }
     }
 
-    public BlockPos getTarget()
+    public StructureTarget getTarget()
     {
         return target;
     }
 
-    public void setTarget(final BlockPos target)
+    public void setTarget(final StructureTarget target)
     {
         this.target = target;
         this.markDirty();

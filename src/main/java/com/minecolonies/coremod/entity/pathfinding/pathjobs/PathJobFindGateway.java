@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 public class PathJobFindGateway extends AbstractPathJob
 {
     private static final int                                  MIN_DISTANCE = 40;
-    private static final int                                  MAX_RANGE    = 250;
+    private static final int                                  MAX_RANGE    = 300*300;
     private final        BlockPos                             hutLocation;
     @NotNull
     private final        ArrayList<BlockPos> gates;

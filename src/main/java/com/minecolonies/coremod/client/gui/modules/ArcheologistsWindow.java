@@ -68,9 +68,9 @@ public class ArcheologistsWindow extends AbstractModuleWindow
         {
             targetLocationTextField.setText(
               ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("chat.coordinates",
-                moduleView.getTarget().getX(),
-                moduleView.getTarget().getY(),
-                moduleView.getTarget().getZ()))
+                moduleView.getTarget().structureCenter().getX(),
+                moduleView.getTarget().structureCenter().getY(),
+                moduleView.getTarget().structureCenter().getZ()))
             );
         }
         else

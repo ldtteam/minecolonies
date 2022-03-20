@@ -19,12 +19,6 @@ plugins {
   id "org.sonarqube" version "3.0"
 }
 
-configurations.all {
-    resolutionStrategy {
-        force 'cpw.mods:securejarhandler:0.9.50'
-    }
-}
-
 apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
 
 configurations {

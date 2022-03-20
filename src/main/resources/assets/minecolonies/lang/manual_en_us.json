@@ -2164,7 +2164,7 @@
   "com.minecolonies.coremod.setting.minecolonies:fillblock": "Fill block:",
   "com.minecolonies.coremod.setting.minecolonies:maxdepth": "Max Depth:",
   "com.minecolonies.coremod.gui.no-target": "No target set",
-  "com.minecolonies.coremod.gui.workerhuts.archeologist.target": "Current target:"
+  "com.minecolonies.coremod.gui.workerhuts.archeologist.target": "Current target:",
   "block.minecolonies.simplequarry": "Simple Quarry",
   "block.minecolonies.simplequarry.name": "Simple Quarry",
   "block.minecolonies.mediumquarry": "Medium Quarry",

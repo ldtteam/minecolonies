@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.scaledPriority;
@@ -1489,7 +1490,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemStorageExistOrCreate(@NotNull final Collection<ItemStorage> storages)
     {
-        return storages.stream().allMatch(this::checkIfRequestForItemExistOrCreate);
+        boolean complete = true;
+        for (ItemStorage storage : storages)
+        {
+            if (!checkIfRequestForItemExistOrCreate(storage))
+            {
+                complete = false;
+            }
+        }
+        return complete;
     }
 
     /**

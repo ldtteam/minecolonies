@@ -5,6 +5,9 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.coremod.client.gui.modules.ArcheologistsWindow;
 import com.minecolonies.coremod.client.gui.modules.GraveyardManagementWindow;
+import com.minecolonies.coremod.entity.ai.citizen.archeologist.StructureTarget;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,13 +26,16 @@ public class ArcheologistsModuleView extends AbstractBuildingModuleView
      * The position that is currently being targeted by the archeologist.
      */
     @Nullable
-    private BlockPos target;
+    private StructureTarget target;
 
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         if (buf.readBoolean()) {
-            target = buf.readBlockPos();
+            target = new StructureTarget(
+              buf.readBlockPos(),
+              buf.readBlockPos()
+            );
         }
     }
 
@@ -53,7 +59,7 @@ public class ArcheologistsModuleView extends AbstractBuildingModuleView
     }
 
     @Nullable
-    public BlockPos getTarget()
+    public StructureTarget getTarget()
     {
         return target;
     }

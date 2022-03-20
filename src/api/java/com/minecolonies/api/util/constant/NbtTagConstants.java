@@ -676,8 +676,12 @@ public final class NbtTagConstants
      */
     public static final String TAG_INITIAL_TRAVEL_TIME   = "initialTravelTime";
     public static final String TAG_REMAINING_TRAVEL_TIME = "remainingTravelTime";
-    public static final String TRAVELER_DATA             = "travelerData";
-
+    public static final String TRAVELER_DATA = "travelerData";
+    public static final String PRE_TRAVEL_STATE      = "preTravelState";
+    public static final String TAG_ARCHEOLOGISTS_MODULE = "archaeologistsModule";
+    public static final String TAG_STRUCTURE_TARGET = "structureTarget";
+    public static final String TAG_SPAWN_TARGET  = "spawnTarget";
+    public static final String TAG_STRUCTURE_POS = "structurePos";
     /**
      * Private constructor to hide the implicit one.
      */
