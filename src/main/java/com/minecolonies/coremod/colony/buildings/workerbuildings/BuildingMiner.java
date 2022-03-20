@@ -180,6 +180,10 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
         }
         else if (this.getBuildingLevel() == 3)
         {
+            return normalizeMaxDepth(MAX_DEPTH_LEVEL_3, level);
+        }
+        else if (this.getBuildingLevel() == 4)
+        {
             return normalizeMaxDepth(MAX_DEPTH_MAX, level);
         }
         else
