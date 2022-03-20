@@ -16,11 +16,13 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
@@ -344,6 +346,10 @@ public class EntityAIEatTask extends Goal
         final IBuilding cookBuilding = colony.getBuildingManager().getBuilding(restaurantPos);
         if (cookBuilding instanceof BuildingCook)
         {
+            if (!citizen.isWorkerAtSiteWithMove(cookBuilding.getPosition(), MIN_DISTANCE_TO_RESTAURANT))
+            {
+                return GET_FOOD_YOURSELF;
+            }
             InventoryUtils.transferFoodUpToSaturation(cookBuilding,
               citizen.getInventoryCitizen(),
               GET_YOURSELF_SATURATION,
@@ -372,7 +378,7 @@ public class EntityAIEatTask extends Goal
             else
             {
                 waitingTicks++;
-                if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME)
+                if (waitingTicks > SECONDS_A_MINUTE * MINUTES_WAITING_TIME || (citizen.getCitizenData().getJob() instanceof AbstractJobGuard<?> && !WorldUtil.isDayTime(citizen.level)))
                 {
                     waitingTicks = 0;
                     return GET_FOOD_YOURSELF;
