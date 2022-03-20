@@ -33,6 +33,8 @@ public class ModTags
 
     public static final Tags.IOptionalNamedTag<Block> oreChanceBlocks = BlockTags.createOptional(TagConstants.ORECHANCEBLOCKS);
 
+    public static final Tags.IOptionalNamedTag<Block> validSpawn = BlockTags.createOptional(TagConstants.VALIDSPAWNBLOCKS);
+
     public static final Tags.IOptionalNamedTag<Item> fungi = ItemTags.createOptional(TagConstants.FUNGI);
     public static final Tags.IOptionalNamedTag<Item> compostables = ItemTags.createOptional(TagConstants.COMPOSTABLES);
     public static final Tags.IOptionalNamedTag<Item> compostables_poor = ItemTags.createOptional(TagConstants.COMPOSTABLES_POOR);

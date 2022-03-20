@@ -16,6 +16,7 @@ public final class TagConstants
     public static final ResourceLocation FLORIST_FLOWERS = new ResourceLocation(MOD_ID, "florist_flowers");
     public static final ResourceLocation EXCLUDED_FOOD = new ResourceLocation(MOD_ID, "excluded_food");
     public static final ResourceLocation ORECHANCEBLOCKS = new ResourceLocation(MOD_ID, "orechanceblocks");
+    public static final ResourceLocation VALIDSPAWNBLOCKS = new ResourceLocation(MOD_ID, "validspawnblocks");
     public static final ResourceLocation COLONYPROTECTIONEXCEPTION = new ResourceLocation(MOD_ID, "protectionexception");
     public static final ResourceLocation FUNGI = new ResourceLocation(MOD_ID, "fungi");
     public static final ResourceLocation COMPOSTABLES = new ResourceLocation(MOD_ID, "compostables");

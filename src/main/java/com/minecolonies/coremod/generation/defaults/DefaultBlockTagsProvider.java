@@ -155,5 +155,9 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockCompostedDirt)
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
+        tag(ModTags.validSpawn)
+          .addTags(BlockTags.BUTTONS)
+          .addTags(BlockTags.RAILS)
+          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH);
     }
 }
