@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
@@ -79,6 +80,11 @@ public class BuildingManager implements IBuildingManager
     private final List<IMysticalSite> mysticalSites = new ArrayList<>();
 
     /**
+     * List of leisure sites.
+     */
+    private ImmutableList<BlockPos> leisureSites = ImmutableList.of();
+
+    /**
      * The townhall of the colony.
      */
     @Nullable
@@ -148,6 +154,22 @@ public class BuildingManager implements IBuildingManager
                 addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));
             }
         }
+
+        if (compound.getAllKeys().contains(TAG_LEISURE))
+        {
+            // Fields before Buildings, because the Farmer needs them.
+            final ListTag leisureTagList = compound.getList(TAG_LEISURE, Tag.TAG_COMPOUND);
+            final List<BlockPos> leisureSitesList = new ArrayList<>();
+            for (int i = 0; i < leisureTagList.size(); ++i)
+            {
+                final BlockPos pos = BlockPosUtil.read(leisureTagList.getCompound(i), TAG_POS);
+                if (!leisureSitesList.contains(pos))
+                {
+                    leisureSitesList.add(pos);
+                }
+            }
+            leisureSites = ImmutableList.copyOf(leisureSitesList);
+        }
     }
 
     /**
@@ -201,6 +223,16 @@ public class BuildingManager implements IBuildingManager
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_NEW_FIELDS, fieldTagList);
+
+        // Leisure sites
+        @NotNull final ListTag leisureTagList = new ListTag();
+        for (@NotNull final BlockPos pos : leisureSites)
+        {
+            @NotNull final CompoundTag leisureCompound = new CompoundTag();
+            BlockPosUtil.write(leisureCompound, TAG_POS, pos);
+            fieldTagList.add(leisureCompound);
+        }
+        compound.put(TAG_LEISURE, leisureTagList);
     }
 
     @Override
@@ -219,11 +251,6 @@ public class BuildingManager implements IBuildingManager
         isFieldsDirty = false;
     }
 
-    /**
-     * Ticks all buildings when this building manager receives a tick.
-     *
-     * @param colony the colony which is being ticked.
-     */
     @Override
     public void onColonyTick(final IColony colony)
     {
@@ -292,12 +319,6 @@ public class BuildingManager implements IBuildingManager
         removedBuildings.forEach(IBuilding::destroy);
     }
 
-    /**
-     * Get building in Colony by ID.
-     *
-     * @param buildingId ID (coordinates) of the building to get.
-     * @return AbstractBuilding belonging to the given ID.
-     */
     @Override
     public IBuilding getBuilding(final BlockPos buildingId)
     {
@@ -306,6 +327,21 @@ public class BuildingManager implements IBuildingManager
             return buildings.get(buildingId);
         }
         return null;
+    }
+
+    @Override
+    public ImmutableList<BlockPos> getLeisureSites()
+    {
+        return leisureSites;
+    }
+
+    @Override
+    public void addLeisureSite(final BlockPos pos)
+    {
+        final List<BlockPos> tempList = new ArrayList<>(leisureSites);
+        tempList.add(pos);
+        this.leisureSites = ImmutableList.copyOf(tempList);
+        colony.markDirty();
     }
 
     @Nullable

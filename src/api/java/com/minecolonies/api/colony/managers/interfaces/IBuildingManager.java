@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
+import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
@@ -76,6 +77,18 @@ public interface IBuildingManager
      * @return the building.
      */
     IBuilding getBuilding(BlockPos pos);
+
+    /**
+     * Get the immutable list of leisure sites.
+     * @return the list.
+     */
+    ImmutableList<BlockPos> getLeisureSites();
+
+    /**
+     * Register a new leisure site.
+     * @param pos the position of it.
+     */
+    void addLeisureSite(BlockPos pos);
 
     /**
      * Get the closest warehouse relative to a position.
