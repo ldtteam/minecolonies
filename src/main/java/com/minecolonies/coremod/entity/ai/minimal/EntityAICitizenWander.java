@@ -107,10 +107,14 @@ public class EntityAICitizenWander extends Goal
                 return GO_TO_LIBRARY;
             }
         }
-        else if (randomBit < 9)
+
+        if (randomBit < 9)
         {
             walkTo = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite(citizen.getRandom());
-            return GO_TO_LEISURE_SITE;
+            if (walkTo != null)
+            {
+                return GO_TO_LEISURE_SITE;
+            }
         }
 
         citizen.getNavigation().moveToRandomPos(10, this.speed);
@@ -137,7 +141,7 @@ public class EntityAICitizenWander extends Goal
     @Override
     public boolean canContinueToUse()
     {
-        return !citizen.getNavigation().isDone();
+        return !citizen.getNavigation().isDone() || stateMachine.getState() != IDLE;
     }
 
     /**
@@ -145,7 +149,7 @@ public class EntityAICitizenWander extends Goal
      */
     private void reset()
     {
-
+        walkTo = null;
     }
 
     @Override

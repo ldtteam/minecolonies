@@ -86,6 +86,14 @@ public interface IBuildingManager
     ImmutableList<BlockPos> getLeisureSites();
 
     /**
+     * Get the first building instance of the type.
+     * @param predicate the predicate matching the building.
+     * @return the position or null.
+     */
+    @Nullable
+    BlockPos getFirstBuildingOfType(final Predicate<IBuilding> predicate);
+
+    /**
      * Register a new leisure site.
      * @param pos the position of it.
      */

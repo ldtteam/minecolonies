@@ -342,7 +342,50 @@ public class BuildingManager implements IBuildingManager
     @Override
     public BlockPos getRandomLeisureSite(final Random random)
     {
+        BlockPos pos = null;
+        final int randomDist = random.nextInt(4);
+        if (randomDist < 1)
+        {
+            pos = getFirstBuildingOfType(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
+            if (pos != null)
+            {
+                return pos;
+            }
+        }
+
+        if (randomDist < 2)
+        {
+            pos = getFirstBuildingOfType(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+            if (pos != null)
+            {
+                return pos;
+            }
+        }
+
+        if (randomDist < 3)
+        {
+            pos = getFirstBuildingOfType(b -> b.hasModule(TavernBuildingModule.class) && b.getBuildingLevel() >= 1);
+            if (pos != null)
+            {
+                return pos;
+            }
+        }
+
         return leisureSites.isEmpty() ? null : leisureSites.get(random.nextInt(leisureSites.size()));
+    }
+
+    @Nullable
+    @Override
+    public BlockPos getFirstBuildingOfType(final Predicate<IBuilding> predicate)
+    {
+        for (final IBuilding building : buildings.values())
+        {
+            if (predicate.test(building))
+            {
+                return building.getPosition();
+            }
+        }
+        return null;
     }
 
     @Override
