@@ -277,4 +277,16 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
      * @param jobEntry the job entry belonging to it.
      */
     void setRegistryEntry(JobEntry jobEntry);
+
+    /**
+     * Whether the given stack should be dumped by the worker,
+     * regardless of the items the building currently needs.
+     *
+     * @param stack The stack to base the decision on.
+     * @return true if the stack should be dumped in the building regardless.
+     */
+    default boolean shouldDumpAnyway(ItemStack stack)
+    {
+        return false;
+    }
 }

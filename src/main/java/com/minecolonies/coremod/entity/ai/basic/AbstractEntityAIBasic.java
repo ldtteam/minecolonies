@@ -1134,7 +1134,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         boolean dumpAnyway = false;
-        if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
+
+        if (job.shouldDumpAnyway(stackToDump))
+        {
+            dumpAnyway = true;
+        }
+        else if (slotAt + MIN_OPEN_SLOTS * 2 >= totalSize)
         {
             final long openSlots = InventoryUtils.openSlotCount(worker.getInventoryCitizen());
             if (openSlots < MIN_OPEN_SLOTS * 2)
