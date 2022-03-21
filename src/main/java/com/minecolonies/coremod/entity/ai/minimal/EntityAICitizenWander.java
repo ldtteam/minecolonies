@@ -7,11 +7,13 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingT
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
-import static com.minecolonies.coremod.entity.ai.minimal.EntityAIEatTask.EatingState.CHECK_FOR_FOOD;
+import static com.minecolonies.coremod.entity.ai.minimal.EntityAICitizenWander.WanderState.*;
 
 /**
  * Entity action to wander randomly around.
@@ -24,7 +26,6 @@ public class EntityAICitizenWander extends Goal
     public enum WanderState implements IState
     {
         IDLE,
-        WANDER,
         GO_TO_LEISURE_SITE,
         WANDER_AT_LEISURE_SITE,
         SIT_AT_LEISURE_SITE,
@@ -48,6 +49,11 @@ public class EntityAICitizenWander extends Goal
     private final TickRateStateMachine<WanderState> stateMachine;
 
     /**
+     * Position to path to.
+     */
+    private BlockPos walkTo;
+
+    /**
      * Instantiates this task.
      *
      * @param citizen        the citizen.
@@ -60,24 +66,55 @@ public class EntityAICitizenWander extends Goal
         this.speed = speed;
         this.setFlags(EnumSet.of(Flag.MOVE));
 
-        stateMachine = new TickRateStateMachine<>(WanderState.IDLE, e -> Log.getLogger().warn("Wandering AI threw exception:", e));
-        stateMachine.addTransition(new TickingTransition<>(WanderState.IDLE, () -> true, this::decide, 20));
+        stateMachine = new TickRateStateMachine<>(IDLE, e -> Log.getLogger().warn("Wandering AI threw exception:", e));
+        stateMachine.addTransition(new TickingTransition<>(IDLE, () -> true, this::decide, 20));
+        stateMachine.addTransition(new TickingTransition<>(GO_TO_LIBRARY, () -> true, this::goToLibrary, 20));
+        stateMachine.addTransition(new TickingTransition<>(GO_TO_LEISURE_SITE, () -> true, this::goToLeisureSite, 20));
+
         // don't forget tavern.
+    }
+
+    private WanderState goToLibrary()
+    {
+        if (!citizen.isWorkerAtSiteWithMove(walkTo, 3))
+        {
+            return GO_TO_LIBRARY;
+        }
+
+
+        return IDLE;
+    }
+
+    private WanderState goToLeisureSite()
+    {
+        if (!citizen.isWorkerAtSiteWithMove(walkTo, 3))
+        {
+            return GO_TO_LEISURE_SITE;
+        }
+
+
+        return IDLE;
     }
 
     private WanderState decide()
     {
         final int randomBit = citizen.getRandom().nextInt(100);
-        if (randomBit < 5)
+        if (randomBit < 3)
         {
-            return WanderState.GO_TO_LIBRARY;
+            walkTo = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBestBuilding(citizen.blockPosition(), BuildingLibrary.class);
+            if (walkTo != null)
+            {
+                return GO_TO_LIBRARY;
+            }
         }
-        else if (randomBit < 35)
+        else if (randomBit < 9)
         {
-            return WanderState.GO_TO_LEISURE_SITE;
+            walkTo = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite(citizen.getRandom());
+            return GO_TO_LEISURE_SITE;
         }
 
-        return WanderState.WANDER;
+        citizen.getNavigation().moveToRandomPos(10, this.speed);
+        return IDLE;
     }
 
     @Override
@@ -101,12 +138,6 @@ public class EntityAICitizenWander extends Goal
     public boolean canContinueToUse()
     {
         return !citizen.getNavigation().isDone();
-    }
-
-    @Override
-    public void start()
-    {
-        citizen.getNavigation().moveToRandomPos(10, this.speed);
     }
 
     /**

@@ -340,6 +340,12 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
+    public BlockPos getRandomLeisureSite(final Random random)
+    {
+        return leisureSites.isEmpty() ? null : leisureSites.get(random.nextInt(leisureSites.size()));
+    }
+
+    @Override
     public void addLeisureSite(final BlockPos pos)
     {
         final List<BlockPos> tempList = new ArrayList<>(leisureSites);

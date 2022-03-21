@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -321,4 +322,11 @@ public interface IBuildingManager
      * @param level    The new level.
      */
     void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
+
+    /**
+     * Get a random leisure site to go to.
+     * @param random random variable..
+     * @return the position of it.
+     */
+    BlockPos getRandomLeisureSite(Random random);
 }
