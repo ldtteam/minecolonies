@@ -243,6 +243,8 @@ public class BuildingCook extends AbstractBuilding
             return stack.getCount();
         }
 
+        // Make the assistant cook drop everything. We don't want them to keep food.
+        // Neither like the cook does here, nor how the average worker does in the super call.
         if (jobEntry == ModJobs.cookassistant)
         {
             return stack.getCount();
