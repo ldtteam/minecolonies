@@ -51,7 +51,8 @@ public class JobCookAssistant extends AbstractJobCrafter<EntityAIWorkCookAssista
      * @return true if the stack should be dumped in the building regardless.
      */
     @Override
-    public boolean shouldDumpAnyway(ItemStack stack) {
+    public boolean shouldDumpAnyway(ItemStack stack)
+    {
         // The assistant cook should dump everything, and not keep food or fuel in their inventory,
         // which is what the restaurant dictates to its workers.
         // They may incorrectly keep food in their inventory what they just crafted otherwise,
