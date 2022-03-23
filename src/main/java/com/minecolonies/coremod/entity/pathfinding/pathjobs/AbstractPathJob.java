@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
+import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
+import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
@@ -1322,26 +1324,59 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent)
     {
+        final BlockPos parentPos = parent == null ? start : parent.pos;
+        final BlockState parentBlock = world.getBlockState(parentPos);
+        if (parentBlock.getBlock() instanceof TrapDoorBlock || parentBlock.getBlock() instanceof PanelBlock)
+        {
+            final BlockPos dir = pos.subtract(parentPos);
+            if (dir.getX() != 0 || dir.getZ() != 0)
+            {
+                // Check if we can leave the current block, there might be a trapdoor or panel blocking us.
+                final Direction direction = BlockPosUtil.getXZFacing(parentPos, pos);
+                final Direction facing = parentBlock.getValue(TrapDoorBlock.FACING);
+                if (direction == facing.getOpposite())
+                {
+                    return false;
+                }
+            }
+        }
+
         if (block.getMaterial() != Material.AIR)
         {
             final VoxelShape shape = block.getCollisionShape(world, pos);
             if (block.getMaterial().blocksMotion() && !(shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1))
             {
-                if (block.getBlock() instanceof TrapDoorBlock)
+                if (block.getBlock() instanceof TrapDoorBlock || block.getBlock() instanceof PanelBlock)
                 {
-                    final BlockPos parentPos = parent == null ? start : parent.pos;
                     final BlockPos dir = pos.subtract(parentPos);
                     if (dir.getY() != 0 && dir.getX() == 0 && dir.getZ() == 0)
                     {
                         return true;
                     }
+                    //todo, we need one handling for open and one for closed.
 
+                    final Direction direction = BlockPosUtil.getXZFacing(parentPos, pos);
                     final Direction facing = block.getValue(TrapDoorBlock.FACING);
-                    if (dir.getX() != 0)
+
+                    if (block.getBlock() instanceof PanelBlock && !block.getValue(PanelBlock.OPEN)
+                          && ((dir.getY() == 0 && block.getValue(PanelBlock.HALF) == Half.TOP) || (dir.getY() != 0 && block.getValue(PanelBlock.HALF) == Half.BOTTOM)))
                     {
-                        return facing == Direction.NORTH || facing == Direction.SOUTH;
+                        return false;
                     }
-                    return facing == Direction.EAST || facing == Direction.WEST;
+
+                    // We can enter a space of a trapdoor if it's facing the same direction
+                    if (direction == facing.getOpposite())
+                    {
+                        return true;
+                    }
+
+                    // We cannot enter a space of a trapdoor if its facing the opposite direction.
+                    if (direction == facing)
+                    {
+                        return false;
+                    }
+
+                    return true;
                 }
                 else
                 {

@@ -80,15 +80,15 @@ public class GuardBuildingModule extends WorkAtHomeBuildingModule implements IBu
 
         // If we have no active worker, attempt to grab one from the appropriate trainer
         if (building.getSetting(HIRE_TRAINEE).getValue() && !isFull() && ((building.getBuildingLevel() > 0 && building.isBuilt()))
-              && (this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring() || this.getHiringMode() == HiringMode.AUTO))
+              && ((this.getHiringMode() == HiringMode.DEFAULT && !building.getColony().isManualHiring()) || this.getHiringMode() == HiringMode.AUTO))
         {
             ICitizenData trainingCitizen = null;
             int maxSkill = 0;
 
             for (ICitizenData trainee : colony.getCitizenManager().getCitizens())
             {
-                if ((getJobEntry() == ModJobs.archer && trainee.getJob() instanceof JobArcherTraining)
-                      || (getJobEntry() == ModJobs.knight && trainee.getJob() instanceof JobCombatTraining)
+                if ((getJobEntry() == ModJobs.archer && trainee.getJob() instanceof JobArcherTraining
+                      || getJobEntry() == ModJobs.knight && trainee.getJob() instanceof JobCombatTraining)
                            && trainee.getCitizenSkillHandler().getLevel(getPrimarySkill()) > maxSkill)
                 {
                     maxSkill = trainee.getCitizenSkillHandler().getLevel(getPrimarySkill());
