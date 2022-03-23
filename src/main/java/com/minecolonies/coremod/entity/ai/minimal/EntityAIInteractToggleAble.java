@@ -25,12 +25,7 @@ import java.util.*;
 import static net.minecraft.world.level.block.FenceGateBlock.OPEN;
 
 /**
- * AI Taimport net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
-import net.minecraft.world.level.block.state.BlockState;
-
-net.minecraft.world.level.block.DoorBlocklosed when collided
+ * AI to close toggleables when collided.
  */
 public class EntityAIInteractToggleAble extends Goal
 {
@@ -77,6 +72,11 @@ public class EntityAIInteractToggleAble extends Goal
     private final List<ToggleAble> toggleAbles;
 
     /**
+     * The ones this entity specifically toggled.
+     */
+    private final List<ToggleAble> myToggled;
+
+    /**
      * Update timer while active, delay between toggle actions
      */
     private int updateTimer = 10;
@@ -96,6 +96,7 @@ public class EntityAIInteractToggleAble extends Goal
         super();
         this.entity = entityIn;
         this.toggleAbles = Arrays.asList(toggleAbles);
+        this.myToggled = new ArrayList<>();
         if (!(entityIn.getNavigation() instanceof GroundPathNavigation))
         {
             throw new IllegalArgumentException("Unsupported mob type for EntityAIInteractToggleAble");
@@ -330,14 +331,16 @@ public class EntityAIInteractToggleAble extends Goal
             for (final ToggleAble toggleAble : toggleAbles)
             {
                 final BlockState state = entity.level.getBlockState(pos);
-                if (toggleAble.isBlockToggleAble(state))
+                if (toggleAble.isBlockToggleAble(state) && (!toggleAble.onlyCloseYourOpens() || myToggled.contains(toggleAble)))
                 {
                     toggleAble.toggleBlockClosed(entity, state, entity.level, pos);
+                    myToggled.remove(toggleAble);
                     break;
                 }
             }
         }
         toggleAblePositions.clear();
+        myToggled.clear();
     }
 
     /**
@@ -402,9 +405,10 @@ public class EntityAIInteractToggleAble extends Goal
                 final BlockState blockState = entity.level.getBlockState(pos);
                 for (final ToggleAble toggleAble : toggleAbles)
                 {
-                    if (toggleAble.isBlockToggleAble(blockState))
+                    if (toggleAble.isBlockToggleAble(blockState) && (!toggleAble.onlyCloseYourOpens() || myToggled.contains(toggleAble)))
                     {
                         toggleAble.toggleBlockClosed(entity, blockState, entity.level, pos);
+                        myToggled.remove(toggleAble);
                         break;
                     }
                 }
@@ -421,9 +425,10 @@ public class EntityAIInteractToggleAble extends Goal
                 final BlockState state = entity.level.getBlockState(chosen);
                 for (final ToggleAble toggleAble : toggleAbles)
                 {
-                    if (toggleAble.isBlockToggleAble(state))
+                    if (toggleAble.isBlockToggleAble(state) && toggleAble.canOpen(state))
                     {
                         toggleAble.toggleBlock(entity, state, entity.level, chosen);
+                        myToggled.add(toggleAble);
                         break;
                     }
                 }
@@ -443,6 +448,26 @@ public class EntityAIInteractToggleAble extends Goal
          * @return true if valid
          */
         public abstract boolean isBlockToggleAble(final BlockState state);
+
+        /**
+         * Check if the block can be opened.
+         * By default this is true when toggleable, but some blocks (trapdoors) we ever only want to open (and reset).
+         * @param state the state to check.
+         * @return true if so.
+         */
+        public boolean canOpen(final BlockState state)
+        {
+            return isBlockToggleAble(state);
+        }
+
+        /**
+         * Check if the citizen should always close or only close when they were the ones that opened.
+         * @return true if so.
+         */
+        public boolean onlyCloseYourOpens()
+        {
+            return false;
+        }
 
         /**
          * Toggles the given state
@@ -498,6 +523,18 @@ public class EntityAIInteractToggleAble extends Goal
         public boolean isBlockToggleAble(final BlockState state)
         {
             return state.getBlock() instanceof TrapDoorBlock;
+        }
+
+        @Override
+        public boolean canOpen(final BlockState state)
+        {
+            return !state.getValue(BlockStateProperties.OPEN);
+        }
+
+        @Override
+        public boolean onlyCloseYourOpens()
+        {
+            return true;
         }
 
         @Override
