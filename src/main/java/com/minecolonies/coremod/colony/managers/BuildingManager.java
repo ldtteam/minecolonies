@@ -29,6 +29,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -231,7 +232,7 @@ public class BuildingManager implements IBuildingManager
         {
             @NotNull final CompoundTag leisureCompound = new CompoundTag();
             BlockPosUtil.write(leisureCompound, TAG_POS, pos);
-            fieldTagList.add(leisureCompound);
+            leisureTagList.add(leisureCompound);
         }
         compound.put(TAG_LEISURE, leisureTagList);
     }
@@ -355,10 +356,21 @@ public class BuildingManager implements IBuildingManager
 
         if (randomDist < 2)
         {
-            pos = getFirstBuildingOfType(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
-            if (pos != null)
+            if (random.nextBoolean())
             {
-                return pos;
+                pos = getFirstBuildingOfType(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+                if (pos != null)
+                {
+                    return pos;
+                }
+            }
+            else
+            {
+                pos = getFirstBuildingOfType(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
+                if (pos != null)
+                {
+                    return pos;
+                }
             }
         }
 
