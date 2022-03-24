@@ -194,7 +194,8 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Nullable
     protected BlockPos getFirstLocationFromTag(@NotNull final String tagName)
     {
-        return getLocationsFromTag(tagName).stream().findFirst().orElse(null);
+        final List<BlockPos> locations = getLocationsFromTag(tagName);
+        return locations.isEmpty() ? null : locations.get(0);
     }
 
     /**
