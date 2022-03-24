@@ -16,6 +16,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -41,13 +42,15 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     public GenericRecipeCategory(@NotNull final BuildingEntry building,
                                  @NotNull final IJob<?> job,
                                  @NotNull final ICraftingBuildingModule crafting,
-                                 @NotNull final IGuiHelper guiHelper)
+                                 @NotNull final IGuiHelper guiHelper,
+                                 @NotNull final IModIdHelper modIdHelper)
     {
         super(job, Objects.requireNonNull(crafting.getUid()), getCatalyst(building), guiHelper);
 
         this.building = building;
         this.crafting = crafting;
         this.arrow = guiHelper.createDrawable(TEXTURE, 20, 121, 24, 18);
+        this.modIdHelper = modIdHelper;
 
         outputSlotX = CITIZEN_X + CITIZEN_W + 2 + (30 - this.slot.getWidth()) / 2;
         outputSlotY = CITIZEN_Y + CITIZEN_H + 1 - this.slot.getHeight();
@@ -56,6 +59,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @NotNull private final BuildingEntry building;
     @NotNull private final ICraftingBuildingModule crafting;
     @NotNull private final IDrawableStatic arrow;
+    @NotNull private final IModIdHelper modIdHelper;
 
     private static final int LOOT_SLOTS_X = CITIZEN_X + CITIZEN_W + 4;
     private static final int LOOT_SLOTS_W = WIDTH - LOOT_SLOTS_X;
@@ -114,6 +118,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     private void setNormalRecipe(@NotNull final IRecipeLayout layout, @NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
     {
         final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
+        final ResourceLocation id = recipe.getRecipeId();
 
         int x = outputSlotX;
         int y = outputSlotY;
@@ -121,6 +126,10 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         guiItemStacks.init(slot, false, x, y);
         guiItemStacks.setBackground(slot, this.slot);
         guiItemStacks.set(slot, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
+        if (id != null)
+        {
+            guiItemStacks.addTooltipCallback(new RecipeIdTooltipCallback(slot, id, this.modIdHelper));
+        }
         x += this.slot.getWidth();
         ++slot;
 
@@ -136,7 +145,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         if (recipe.getLootTable() != null)
         {
             final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops));
+            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops, recipe.getLootTable()));
             for (final LootTableAnalyzer.LootDrop drop : drops)
             {
                 guiItemStacks.init(slot, false, x, y);
@@ -181,6 +190,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         assert recipe.getLootTable() != null;
         final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
         final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
+        final ResourceLocation id = recipe.getRecipeId();
 
         int x = LOOT_SLOTS_X;
         int y = CITIZEN_Y;
@@ -222,13 +232,17 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
 
             if (showLootTooltip)
             {
-                guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops));
+                guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops, recipe.getLootTable()));
             }
             for (final LootTableAnalyzer.LootDrop drop : drops)
             {
                 guiItemStacks.init(slot, true, x, y);
                 guiItemStacks.setBackground(slot, this.chanceSlot);
                 guiItemStacks.set(slot, drop.getItemStacks());
+                if (id != null)
+                {
+                    guiItemStacks.addTooltipCallback(new RecipeIdTooltipCallback(slot, id, this.modIdHelper));
+                }
                 ++slot;
                 if (++c >= columns)
                 {

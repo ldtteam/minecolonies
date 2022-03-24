@@ -87,7 +87,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
             int c = 0;
             int slot = 1;
 
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops()));
+            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops(), recipe.getId()));
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
             {
                 guiItemStacks.init(slot, true, x, y);
@@ -118,21 +118,29 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
         {
             final List<LootTableAnalyzer.LootDrop> drops = new ArrayList<>(commonDrops);
             drops.addAll(CustomRecipeManager.getInstance().getLootDrops(level.getValue()));
-            recipes.add(new FishingRecipe(level.getKey(), drops));
+            recipes.add(new FishingRecipe(level.getValue(), level.getKey(), drops));
         }
         return recipes;
     }
 
     public static class FishingRecipe
     {
+        private final ResourceLocation id;
         private final int level;
         @NotNull
         private final List<LootTableAnalyzer.LootDrop> drops;
 
-        public FishingRecipe(final int level, @NotNull final List<LootTableAnalyzer.LootDrop> drops)
+        public FishingRecipe(@NotNull final ResourceLocation id, final int level, @NotNull final List<LootTableAnalyzer.LootDrop> drops)
         {
+            this.id = id;
             this.level = level;
             this.drops = drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
+        }
+
+        @NotNull
+        public ResourceLocation getId()
+        {
+            return id;
         }
 
         public int getLevel()
