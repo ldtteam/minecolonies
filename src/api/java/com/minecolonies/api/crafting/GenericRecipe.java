@@ -48,7 +48,7 @@ public class GenericRecipe implements IGenericRecipe
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getResultItem(), calculateSecondaryOutputs(recipe), inputs,
+        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe), inputs,
                 size, intermediate, null, new ArrayList<>(), -1);
     }
 
@@ -59,7 +59,7 @@ public class GenericRecipe implements IGenericRecipe
         final List<List<ItemStack>> inputs = storage.getCleanedInput().stream()
                 .map(input -> Collections.singletonList(toItemStack(input)))
                 .collect(Collectors.toList());
-        return new GenericRecipe(storage.getPrimaryOutput(), storage.getAlternateOutputs(),
+        return new GenericRecipe(storage.getRecipeSource(), storage.getPrimaryOutput(), storage.getAlternateOutputs(),
                 storage.getSecondaryOutputs(), inputs, storage.getGridSize(),
                 storage.getIntermediate(), storage.getLootTable(), restrictions, levelSort);
     }
@@ -77,6 +77,7 @@ public class GenericRecipe implements IGenericRecipe
         return of(IColonyManager.getInstance().getRecipeManager().getRecipes().get(recipeToken));
     }
 
+    @Nullable private final ResourceLocation id;
     private final ItemStack output;
     private final List<ItemStack> allMultiOutputs;
     private final List<ItemStack> additionalOutputs;
@@ -87,7 +88,8 @@ public class GenericRecipe implements IGenericRecipe
     private final List<Component> restrictions;
     private final int levelSort;
 
-    public GenericRecipe(@NotNull final ItemStack output,
+    public GenericRecipe(@Nullable final ResourceLocation id,
+                         @NotNull final ItemStack output,
                          @NotNull final List<ItemStack> additionalOutputs,
                          @NotNull final List<List<ItemStack>> inputs,
                          final int gridSize, @NotNull final Block intermediate,
@@ -95,6 +97,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
+        this.id = id == null || id.getPath().isEmpty() ? null : id;
         this.output = output;
         this.allMultiOutputs = Collections.singletonList(output);
         this.additionalOutputs = Collections.unmodifiableList(additionalOutputs);
@@ -106,7 +109,8 @@ public class GenericRecipe implements IGenericRecipe
         this.levelSort = levelSort;
     }
 
-    public GenericRecipe(@NotNull final ItemStack output,
+    public GenericRecipe(@Nullable final ResourceLocation id,
+                         @NotNull final ItemStack output,
                          @NotNull final List<ItemStack> altOutputs,
                          @NotNull final List<ItemStack> additionalOutputs,
                          @NotNull final List<List<ItemStack>> inputs,
@@ -115,6 +119,7 @@ public class GenericRecipe implements IGenericRecipe
                          @NotNull final List<Component> restrictions,
                          final int levelSort)
     {
+        this.id = id;
         this.output = output;
         this.allMultiOutputs = Collections.unmodifiableList(
                 Stream.concat(Stream.of(output),
@@ -130,6 +135,13 @@ public class GenericRecipe implements IGenericRecipe
 
     @Override
     public int getGridSize() { return this.gridSize; }
+
+    @Override
+    @Nullable
+    public ResourceLocation getRecipeId()
+    {
+        return this.id;
+    }
 
     @Override
     @NotNull
