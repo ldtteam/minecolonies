@@ -296,8 +296,11 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.POPPED_CHORUS_FRUIT)
                 .add(Items.PURPUR_BLOCK, Items.PURPUR_SLAB)
                 .add(Items.PRISMARINE_SHARD, Items.PRISMARINE_CRYSTALS)
+                .add(Items.SMOOTH_STONE)
                 .add(Items.BLACKSTONE)
                 .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_SLAB, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.TERRACOTTA)
+                .addTag(glazedTerracotta)
                 .add(Items.BASALT, Items.POLISHED_BASALT)
                 .add(Items.BRICKS, Items.STONE_BRICKS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONEMASON))
@@ -307,7 +310,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_DYER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON))
                 .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.SANDSTONE)
-                .addTags(ItemTags.STONE_BRICKS, ItemTags.STAIRS, ItemTags.WALLS)
+                .addTags(ItemTags.STONE_BRICKS, ItemTags.STAIRS, ItemTags.SLABS, ItemTags.WALLS)
                 .add(Items.BRICKS, Items.NETHER_BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
                 .add(Items.FURNACE)
                 .add(Items.FLOWER_POT)

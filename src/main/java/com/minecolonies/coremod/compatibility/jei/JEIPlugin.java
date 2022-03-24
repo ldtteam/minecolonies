@@ -24,6 +24,7 @@ import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -72,6 +73,7 @@ public class JEIPlugin implements IModPlugin
     {
         final IJeiHelpers jeiHelpers = registration.getJeiHelpers();
         final IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
+        final IModIdHelper modIdHelper = jeiHelpers.getModIdHelper();
 
         registration.addRecipeCategories(new CompostRecipeCategory(guiHelper));
         registration.addRecipeCategories(new FishermanRecipeCategory(guiHelper));
@@ -89,7 +91,7 @@ public class JEIPlugin implements IModPlugin
                     final IJob<?> job = crafting.getCraftingJob();
                     if (job != null)
                     {
-                        registerCategory(registration, new GenericRecipeCategory(building, job, crafting, guiHelper));
+                        registerCategory(registration, new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper));
                     }
                 }
 

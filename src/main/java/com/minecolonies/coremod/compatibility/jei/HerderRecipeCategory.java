@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -97,7 +98,7 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
             int c = 0;
             int slot = 1;
 
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops()));
+            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops(), recipe.getId()));
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
             {
                 guiItemStacks.init(slot, true, x, y);
@@ -149,12 +150,14 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
         final List<LootTableAnalyzer.LootDrop> drops = this.herding.getExpectedLoot();
         drops.sort(Comparator.comparing(LootTableAnalyzer.LootDrop::getProbability).reversed());
 
-        final HerdingRecipe recipe = new HerdingRecipe(this.herding.getAnimalType(), breedingItems, drops);
+        final HerdingRecipe recipe = new HerdingRecipe(this.herding.getDefaultLootTable(), this.herding.getAnimalType(), breedingItems, drops);
         return Collections.singletonList(recipe);
     }
 
     public static class HerdingRecipe
     {
+        @NotNull
+        private final ResourceLocation id;
         @Nullable
         private final LivingEntity animal;
         @NotNull
@@ -162,13 +165,21 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
         @NotNull
         private final List<LootTableAnalyzer.LootDrop> drops;
 
-        public HerdingRecipe(@NotNull final EntityType<?> animalType,
+        public HerdingRecipe(@NotNull final ResourceLocation id,
+                             @NotNull final EntityType<?> animalType,
                              @NotNull final List<ItemStack> breedingItems,
                              @NotNull final List<LootTableAnalyzer.LootDrop> drops)
         {
+            this.id = id;
             this.animal = (LivingEntity) animalType.create(Minecraft.getInstance().level);
             this.breedingItems = breedingItems;
             this.drops = drops.size() > 18 ? LootTableAnalyzer.consolidate(drops) : drops;
+        }
+
+        @NotNull
+        public ResourceLocation getId()
+        {
+            return this.id;
         }
 
         @Nullable

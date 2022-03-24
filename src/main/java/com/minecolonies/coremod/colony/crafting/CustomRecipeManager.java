@@ -115,7 +115,10 @@ public class CustomRecipeManager
      */
     public void reset()
     {
+        recipeOutputMap.clear();
         recipeMap.clear();
+        lootTables.clear();
+        removedRecipes.clear();
     }
 
     /**
@@ -220,7 +223,19 @@ public class CustomRecipeManager
                 recipeMap.values().stream()
                     .filter(recipes -> recipes.containsKey(toRemove))
                     .findFirst()
-                    .ifPresent(crafterRecipeMap -> crafterRecipeMap.remove(toRemove));
+                    .ifPresent(crafterRecipeMap ->
+                            {
+                                final List<CustomRecipe> emptyList = new ArrayList<>();
+                                final CustomRecipe recipe = crafterRecipeMap.remove(toRemove);
+                                if (recipe != null && !recipe.getPrimaryOutput().isEmpty())
+                                {
+                                    recipeOutputMap.getOrDefault(recipe.getPrimaryOutput().getItem(), emptyList).remove(recipe);
+                                    for (final ItemStack item : recipe.getAltOutputs())
+                                    {
+                                        recipeOutputMap.getOrDefault(item.getItem(), emptyList).remove(recipe);
+                                    }
+                                }
+                            });
             }
 
             removedRecipes.clear();
@@ -272,6 +287,8 @@ public class CustomRecipeManager
      */
     public void sendCustomRecipeManagerPackets(final ServerPlayerEntity player)
     {
+        if (player.getServer() == null || player.getServer().isSingleplayer()) return;   // no need to sync in SP
+
         final PacketBuffer recipeMgrPacketBuffer = new PacketBuffer(Unpooled.buffer());
         serializeNetworkData(recipeMgrPacketBuffer);
         Network.getNetwork().sendToPlayer(new CustomRecipeManagerMessage(recipeMgrPacketBuffer), player);
@@ -318,9 +335,7 @@ public class CustomRecipeManager
      */
     public void handleCustomRecipeManagerMessage(final PacketBuffer buff)
     {
-        recipeOutputMap.clear();
-        recipeMap.clear();
-        lootTables.clear();
+        reset();
 
         for (int crafterNum = buff.readVarInt(); crafterNum > 0; crafterNum--)
         {
