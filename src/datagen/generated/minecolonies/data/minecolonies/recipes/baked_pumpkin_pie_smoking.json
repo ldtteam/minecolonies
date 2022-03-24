@@ -1,9 +1,9 @@
 {
-  "type": "minecraft:smelting",
+  "type": "minecraft:smoking",
   "ingredient": {
     "item": "minecolonies:raw_pumpkin_pie"
   },
   "result": "minecraft:pumpkin_pie",
   "experience": 0.35,
-  "cookingtime": 200
+  "cookingtime": 100
 }
