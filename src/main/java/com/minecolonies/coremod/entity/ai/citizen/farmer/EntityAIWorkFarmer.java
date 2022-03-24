@@ -402,27 +402,34 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     private BlockPos findHoeableSurface(@NotNull BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
         position = getSurfacePos(position);
-        if ((position == null)
+        if (position == null
             || field.isNoPartOfField(world, position) 
             || (world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
             || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
             || !world.getBlockState(position).getBlock().is(Tags.Blocks.DIRT)
         )
-            {
-                return null;
-            }
+        {
+            return null;
+        }
         return position;
     }
 
-
+    /**
+     * Finds the position of the surface near the specified position
+     *
+     * @param position the location to begin the search
+     * @return the position of the surface block or null if it can't be found
+     */
     private BlockPos getSurfacePos(final BlockPos position)
     {
         return getSurfacePos(position, 0);
     }
+
     /**
     * Finds the position of the surface near the specified position
     *
     * @param position the location to begin the search
+    * @param depth the depth of the search for the surface
     * @return the position of the surface block or null if it can't be found
     */
     private BlockPos getSurfacePos(final BlockPos position, final Integer depth)
