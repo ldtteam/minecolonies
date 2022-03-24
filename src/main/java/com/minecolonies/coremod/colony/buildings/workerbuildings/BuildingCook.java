@@ -231,7 +231,7 @@ public class BuildingCook extends AbstractBuilding
     }
 
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
     {
         if (stack.isEmpty())
         {
@@ -242,6 +242,14 @@ public class BuildingCook extends AbstractBuilding
         {
             return stack.getCount();
         }
+
+        // Make the assistant cook drop everything. We don't want them to keep food.
+        // Neither like the cook does here, nor how the average worker does in the super call.
+        if (jobEntry == ModJobs.cookassistant)
+        {
+            return stack.getCount();
+        }
+
         if (isAllowedFood(stack) && (localAlreadyKept.stream().filter(storage -> ISFOOD.test(storage.getItemStack())).mapToInt(ItemStorage::getAmount).sum() < STACKSIZE || !inventory))
         {
             final ItemStorage kept = new ItemStorage(stack);
@@ -266,7 +274,7 @@ public class BuildingCook extends AbstractBuilding
             return 0;
         }
 
-        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
+        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory, jobEntry);
     }
 
     @Override

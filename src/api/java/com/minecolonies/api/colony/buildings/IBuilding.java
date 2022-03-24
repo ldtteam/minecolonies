@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
@@ -264,15 +265,30 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
     void resetGuardBuildingNear();
 
     /**
-     * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.
-     * Just to be sure.
+     * Check if the worker requires a certain amount of that item and the alreadykept list contains it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     *
+     * @param stack            the stack to check it with.
+     * @param localAlreadyKept already kept items.
+     * @param inventory        if it should be in the inventory or in the building.
+     * @param jobEntry the job entry trying to dump.
+     * @return the amount which can get dumped or 0 if not.
+     */
+    int buildingRequiresCertainAmountOfItem(ItemStack stack, List<ItemStorage> localAlreadyKept, boolean inventory, @Nullable final JobEntry jobEntry);
+
+    /**
+     * Check if the building requires a certain amount of that item and the alreadykept list contains it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
      *
      * @param stack            the stack to check it with.
      * @param localAlreadyKept already kept items.
      * @param inventory        if it should be in the inventory or in the building.
      * @return the amount which can get dumped or 0 if not.
      */
-    int buildingRequiresCertainAmountOfItem(ItemStack stack, List<ItemStorage> localAlreadyKept, boolean inventory);
+    default int buildingRequiresCertainAmountOfItem(ItemStack stack, List<ItemStorage> localAlreadyKept, boolean inventory)
+    {
+        return buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory, null);
+    }
 
     /**
      * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this

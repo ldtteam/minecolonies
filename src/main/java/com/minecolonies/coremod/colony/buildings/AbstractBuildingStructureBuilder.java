@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -85,7 +86,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
     }
 
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
     {
         if (inventory)
         {
@@ -141,7 +142,7 @@ public abstract class AbstractBuildingStructureBuilder extends AbstractBuilding
                 return 0;
             }
         }
-        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
+        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory, jobEntry);
     }
 
     /**
