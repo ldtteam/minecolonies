@@ -225,6 +225,8 @@ public class GlobalResearchTree implements IGlobalResearchTree
     @Override
     public void sendGlobalResearchTreePackets(final ServerPlayer player)
     {
+        if (player.getServer() == null || player.getServer().isSingleplayer()) return;   // no need to sync in SP
+
         final FriendlyByteBuf researchTreeFriendlyByteBuf = new FriendlyByteBuf(Unpooled.buffer());
         serializeNetworkData(researchTreeFriendlyByteBuf);
 

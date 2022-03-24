@@ -74,7 +74,7 @@ public final class GenericRecipeUtils
     {
         final IGenericRecipe original = Objects.requireNonNull(GenericRecipe.of(recipe));
         final List<List<ItemStack>> inputs = compact(recipe.getIngredients());
-        return new GenericRecipe(original.getPrimaryOutput(), original.getAdditionalOutputs(), inputs,
+        return new GenericRecipe(original.getRecipeId(), original.getPrimaryOutput(), original.getAdditionalOutputs(), inputs,
                 original.getGridSize(), original.getIntermediate(), original.getLootTable(), new ArrayList<>(), -1);
     }
 
@@ -114,7 +114,8 @@ public final class GenericRecipeUtils
             return recipe;
         }
 
-        return new GenericRecipe(recipe.getPrimaryOutput(),
+        return new GenericRecipe(recipe.getRecipeId(),
+                recipe.getPrimaryOutput(),
                 recipe.getAdditionalOutputs(),
                 newInputs,
                 recipe.getGridSize(),

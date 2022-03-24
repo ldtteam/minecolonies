@@ -33,6 +33,15 @@ public interface IGenericRecipe
     int getGridSize();
 
     /**
+     * Gets the id of the original recipe used to build this.  Note
+     * that it may be null if this is a dynamic/taught recipe.
+     *
+     * @return Null, or the original recipe id.
+     */
+    @Nullable
+    ResourceLocation getRecipeId();
+
+    /**
      * Gets the primary output item of this recipe.
      * If this is empty, it means that this is a "loot recipe" where
      * only the loot table defines the outputs.

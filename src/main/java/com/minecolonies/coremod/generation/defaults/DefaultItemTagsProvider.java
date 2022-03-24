@@ -307,8 +307,11 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.POPPED_CHORUS_FRUIT)
                 .add(Items.PURPUR_BLOCK, Items.PURPUR_SLAB)
                 .add(Items.PRISMARINE_SHARD, Items.PRISMARINE_CRYSTALS)
+                .add(Items.SMOOTH_STONE)
                 .add(Items.BLACKSTONE)
                 .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_SLAB, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.TERRACOTTA)
+                .addTag(glazedTerracotta)
                 .add(Items.BASALT, Items.POLISHED_BASALT)
                 .add(Items.BRICKS, Items.STONE_BRICKS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONEMASON))
