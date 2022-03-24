@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -981,17 +982,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
     //------------------------- Starting Required Tools/Item handling -------------------------//
 
-    /**
-     * Check if the worker requires a certain amount of that item and the alreadykept list contains it. Always leave one stack behind if the worker requires a certain amount of it.
-     * Just to be sure.
-     *
-     * @param stack            the stack to check it with.
-     * @param localAlreadyKept already kept items.
-     * @param inventory        if it should be in the inventory or in the building.
-     * @return the amount which can get dumped or 0 if not.
-     */
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
     {
         for (final Map.Entry<Predicate<ItemStack>, Tuple<Integer, Boolean>> entry : getRequiredItemsAndAmount().entrySet())
         {
