@@ -200,7 +200,7 @@ public class EntityAICitizenWander extends Goal
         final int randomBit = citizen.getRandom().nextInt(100);
         if (randomBit < 10)
         {
-            leisureSite = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite(citizen.getRandom());
+            leisureSite = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite();
             if (leisureSite != null)
             {
                 return GO_TO_LEISURE_SITE;

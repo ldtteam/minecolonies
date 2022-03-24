@@ -55,6 +55,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
@@ -340,10 +341,10 @@ public class BuildingManager implements IBuildingManager
     }
     
     @Override
-    public BlockPos getRandomLeisureSite(final Random random)
+    public BlockPos getRandomLeisureSite()
     {
         BlockPos pos = null;
-        final int randomDist = random.nextInt(4);
+        final int randomDist = RANDOM.nextInt(4);
         if (randomDist < 1)
         {
             pos = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
@@ -355,7 +356,7 @@ public class BuildingManager implements IBuildingManager
 
         if (randomDist < 2)
         {
-            if (random.nextBoolean())
+            if (RANDOM.nextBoolean())
             {
                 pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
                 if (pos != null)
@@ -382,7 +383,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        return leisureSites.isEmpty() ? null : leisureSites.get(random.nextInt(leisureSites.size()));
+        return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
     }
 
     @Nullable

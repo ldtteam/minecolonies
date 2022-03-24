@@ -332,8 +332,7 @@ public interface IBuildingManager
 
     /**
      * Get a random leisure site to go to.
-     * @param random random variable..
      * @return the position of it.
      */
-    BlockPos getRandomLeisureSite(Random random);
+    BlockPos getRandomLeisureSite();
 }
