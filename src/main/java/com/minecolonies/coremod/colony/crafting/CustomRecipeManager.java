@@ -227,7 +227,7 @@ public class CustomRecipeManager
                             {
                                 final List<CustomRecipe> emptyList = new ArrayList<>();
                                 final CustomRecipe recipe = crafterRecipeMap.remove(toRemove);
-                                if (recipe != null && !recipe.getPrimaryOutput().isEmpty())
+                                if (recipe != null)
                                 {
                                     recipeOutputMap.getOrDefault(recipe.getPrimaryOutput().getItem(), emptyList).remove(recipe);
                                     for (final ItemStack item : recipe.getAltOutputs())
