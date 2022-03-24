@@ -434,11 +434,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     */
     private BlockPos getSurfacePos(final BlockPos position, final Integer depth)
     {
-        if (depth > MAX_DEPTH)
-        {
-            return position.below();
-        }
-        else if (depth < (MAX_DEPTH * -1))
+        if (Math.abs(depth) > MAX_DEPTH)
         {
             return null;
         }
