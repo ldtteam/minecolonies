@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
@@ -80,18 +79,18 @@ public interface IBuildingManager
     IBuilding getBuilding(BlockPos pos);
 
     /**
-     * Get the immutable list of leisure sites.
+     * Get the leisure site positions.
      * @return the list.
      */
-    ImmutableList<BlockPos> getLeisureSites();
+    List<BlockPos> getLeisureSites();
 
     /**
-     * Get the first building instance of the type.
+     * Get the first building matching the conditions.
      * @param predicate the predicate matching the building.
      * @return the position or null.
      */
     @Nullable
-    BlockPos getFirstBuildingOfType(final Predicate<IBuilding> predicate);
+    BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate);
 
     /**
      * Register a new leisure site.

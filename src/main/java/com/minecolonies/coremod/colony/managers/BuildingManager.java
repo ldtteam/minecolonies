@@ -147,7 +147,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if (compound.getAllKeys().contains(TAG_NEW_FIELDS))
+        if (compound.contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
             final ListTag fieldTagList = compound.getList(TAG_NEW_FIELDS, Tag.TAG_COMPOUND);
@@ -157,9 +157,8 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if (compound.getAllKeys().contains(TAG_LEISURE))
+        if (compound.contains(TAG_LEISURE))
         {
-            // Fields before Buildings, because the Farmer needs them.
             final ListTag leisureTagList = compound.getList(TAG_LEISURE, Tag.TAG_COMPOUND);
             final List<BlockPos> leisureSitesList = new ArrayList<>();
             for (int i = 0; i < leisureTagList.size(); ++i)
@@ -335,11 +334,11 @@ public class BuildingManager implements IBuildingManager
     }
 
     @Override
-    public ImmutableList<BlockPos> getLeisureSites()
+    public List<BlockPos> getLeisureSites()
     {
         return leisureSites;
     }
-
+    
     @Override
     public BlockPos getRandomLeisureSite(final Random random)
     {
@@ -347,7 +346,7 @@ public class BuildingManager implements IBuildingManager
         final int randomDist = random.nextInt(4);
         if (randomDist < 1)
         {
-            pos = getFirstBuildingOfType(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
+            pos = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
             if (pos != null)
             {
                 return pos;
@@ -358,7 +357,7 @@ public class BuildingManager implements IBuildingManager
         {
             if (random.nextBoolean())
             {
-                pos = getFirstBuildingOfType(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+                pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
                 if (pos != null)
                 {
                     return pos;
@@ -366,7 +365,7 @@ public class BuildingManager implements IBuildingManager
             }
             else
             {
-                pos = getFirstBuildingOfType(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
+                pos = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
                 if (pos != null)
                 {
                     return pos;
@@ -376,7 +375,7 @@ public class BuildingManager implements IBuildingManager
 
         if (randomDist < 3)
         {
-            pos = getFirstBuildingOfType(b -> b.hasModule(TavernBuildingModule.class) && b.getBuildingLevel() >= 1);
+            pos = getFirstBuildingMatching(b -> b.hasModule(TavernBuildingModule.class) && b.getBuildingLevel() >= 1);
             if (pos != null)
             {
                 return pos;
@@ -388,7 +387,7 @@ public class BuildingManager implements IBuildingManager
 
     @Nullable
     @Override
-    public BlockPos getFirstBuildingOfType(final Predicate<IBuilding> predicate)
+    public BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate)
     {
         for (final IBuilding building : buildings.values())
         {
@@ -404,9 +403,12 @@ public class BuildingManager implements IBuildingManager
     public void addLeisureSite(final BlockPos pos)
     {
         final List<BlockPos> tempList = new ArrayList<>(leisureSites);
-        tempList.add(pos);
-        this.leisureSites = ImmutableList.copyOf(tempList);
-        colony.markDirty();
+        if (!tempList.contains(pos))
+        {
+            tempList.add(pos);
+            this.leisureSites = ImmutableList.copyOf(tempList);
+            markBuildingsDirty();
+        }
     }
 
     @Override
@@ -417,7 +419,7 @@ public class BuildingManager implements IBuildingManager
             final List<BlockPos> tempList = new ArrayList<>(leisureSites);
             tempList.remove(pos);
             this.leisureSites = ImmutableList.copyOf(tempList);
-            colony.markDirty();
+            markBuildingsDirty();
         }
     }
 

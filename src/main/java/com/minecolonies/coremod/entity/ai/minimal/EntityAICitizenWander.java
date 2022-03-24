@@ -64,7 +64,7 @@ public class EntityAICitizenWander extends Goal
     private BlockPos walkTo;
 
     /**
-     * Position to path to.
+     * Leisure site to path to.
      */
     private BlockPos leisureSite;
 
@@ -218,7 +218,6 @@ public class EntityAICitizenWander extends Goal
         {
             return false;
         }
-        stateMachine.tick();
         return citizen.getRandom().nextInt(Constants.TICKS_SECOND * 3) == 0 && citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
     }
 
