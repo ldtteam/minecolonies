@@ -46,6 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
+import net.minecraft.tags.FluidTags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,6 +93,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * The EXP Earned per harvest.
      */
     private static final double XP_PER_HARVEST = 0.5;
+
+    /**
+     * The maximum depth to search for a surface
+     */
+    private static final int MAX_DEPTH = 5;
 
     /**
      * Farming icon
@@ -261,7 +267,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final TileEntity entity = world.getBlockEntity(currentField);
         if (entity instanceof ScarecrowTileEntity && ((ScarecrowTileEntity) entity).needsWork())
         {
-            if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, this::shouldHarvest))
+            if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.PLANTED && checkIfShouldExecute((ScarecrowTileEntity) entity, pos -> this.findHarvestableSurface(pos) != null))
             {
                 return FARMER_HARVEST;
             }
@@ -270,7 +276,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 return canGoPlanting((ScarecrowTileEntity) entity, building);
             }
             else if (((ScarecrowTileEntity) entity).getFieldStage() == ScarecrowFieldStage.EMPTY && checkIfShouldExecute((ScarecrowTileEntity) entity,
-              pos -> this.shouldHoe(pos, (ScarecrowTileEntity) entity)))
+              pos -> this.findHoeableSurface(pos, (ScarecrowTileEntity) entity) != null))
             {
                 return FARMER_HOE;
             }
@@ -391,14 +397,63 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      *
      * @param position the position to check.
      * @param field    the field close to this position.
-     * @return true if should be hoed.
+     * @return position of hoeable surface or null if there is not one
      */
-    private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
+    private BlockPos findHoeableSurface(@NotNull BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
+        position = getSurfacePos(position);
+        if ((position == null)
+            || field.isNoPartOfField(world, position) 
+            || (world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
+            || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
+            || !world.getBlockState(position).getBlock().is(Tags.Blocks.DIRT)
+        )
+            {
+                return null;
+            }
+        return position;
+    }
 
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
-                 && !(world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
-                 && (world.getBlockState(position).getBlock().is(Tags.Blocks.DIRT) || world.getBlockState(position).getBlock() instanceof GrassBlock);
+
+    private BlockPos getSurfacePos(final BlockPos position)
+    {
+        return getSurfacePos(position, 0);
+    }
+    /**
+    * Finds the position of the surface near the specified position
+    *
+    * @param position the location to begin the search
+    * @return the position of the surface block or null if it can't be found
+    */
+    private BlockPos getSurfacePos(final BlockPos position, final Integer depth)
+    {
+        if (depth > MAX_DEPTH)
+        {
+            return position.below();
+        }
+        else if (depth < (MAX_DEPTH * -1))
+        {
+            return null;
+        }
+        final BlockState curBlockState = world.getBlockState(position);
+        @Nullable final Block curBlock = curBlockState.getBlock();
+        if (curBlock.is(Tags.Blocks.DIRT) || curBlock.is(Tags.Blocks.STONE) || curBlockState.getMaterial().isLiquid() || curBlock instanceof FarmlandBlock)
+        {
+            if (depth < 0)
+            {
+                return position;
+            }
+            return getSurfacePos(position.above(), depth + 1);
+        }
+        else 
+        {
+            if (depth > 0)
+            {
+                return position.below();
+            }
+            return getSurfacePos(position.below(), depth - 1);
+        }
+        
     }
 
     /**
@@ -566,9 +621,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * @param field    the field close to this position.
      * @return true if the farmer should move on.
      */
-    private boolean hoeIfAble(final BlockPos position, final ScarecrowTileEntity field)
+    private boolean hoeIfAble(BlockPos position, final ScarecrowTileEntity field)
     {
-        if (shouldHoe(position, field) && !checkForToolOrWeapon(ToolType.HOE))
+        position = findHoeableSurface(position, field);
+        if (position != null && !checkForToolOrWeapon(ToolType.HOE))
         {
             if (mineBlock(position.above()))
             {
@@ -596,9 +652,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * @param position the block to harvest.
      * @return true if we harvested or not supposed to.
      */
-    private boolean harvestIfAble(final BlockPos position)
+    private boolean harvestIfAble(BlockPos position)
     {
-        if (shouldHarvest(position))
+        position = findHarvestableSurface(position);
+        if (position != null)
         {
             if (Compatibility.isPamsInstalled())
             {
@@ -631,9 +688,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * @param position the position to try.
      * @return the next state to go to.
      */
-    private boolean tryToPlant(final ScarecrowTileEntity field, final BlockPos position)
+    private boolean tryToPlant(final ScarecrowTileEntity field, BlockPos position)
     {
-        return !shouldPlant(position, field) || plantCrop(field.getSeed(), position);
+        position = findPlantableSurface(position, field);
+        return position == null || plantCrop(field.getSeed(), position);
     }
 
     /**
@@ -649,13 +707,22 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      *
      * @param position the position to check.
      * @param field    the field close to this position.
-     * @return true if the farmer should plant.
+     * @return position of plantable surface or null
      */
-    private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final ScarecrowTileEntity field)
+    private BlockPos findPlantableSurface(@NotNull BlockPos position, @NotNull final ScarecrowTileEntity field)
     {
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
-                 && !(world.getBlockState(position.above()).getBlock() instanceof StemBlock)
-                 && !(world.getBlockState(position).getBlock() instanceof BlockScarecrow) && world.getBlockState(position).getBlock() instanceof FarmlandBlock;
+        position = getSurfacePos(position);
+        if (position == null
+            || field.isNoPartOfField(world, position)
+            || (world.getBlockState(position.above()).getBlock() instanceof CropsBlock)
+            || (world.getBlockState(position.above()).getBlock() instanceof StemBlock)
+            || (world.getBlockState(position).getBlock() instanceof BlockScarecrow)
+            || !(world.getBlockState(position).getBlock() instanceof FarmlandBlock)
+        )
+        {
+            return null;
+        }
+        return position;
     }
 
     /**
@@ -696,16 +763,21 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      * Checks if the crop should be harvested.
      *
      * @param position the position to check.
-     * @return true if should be harvested.
+     * @return position of harvestable block or null
      */
-    private boolean shouldHarvest(@NotNull final BlockPos position)
+    private BlockPos findHarvestableSurface(@NotNull BlockPos position)
     {
+        position = getSurfacePos(position);
+        if (position == null)
+        {
+            return null;
+        }
         BlockState state = world.getBlockState(position.above());
         Block block = state.getBlock();
 
         if (block == Blocks.PUMPKIN || block == Blocks.MELON)
         {
-            return true;
+            return position;
         }
 
         if (isCrop(block))
@@ -713,12 +785,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             @NotNull CropsBlock crop = (CropsBlock) block;
             if (crop.isMaxAge(state))
             {
-                return true;
+                return position;
             }
             final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
             if (amountOfCompostInInv == 0)
             {
-                return false;
+                return null;
             }
 
             if (InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost))
@@ -734,13 +806,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 }
                 else
                 {
-                    return false;
+                    return null;
                 }
             }
-            return crop.isMaxAge(state);
+            return crop.isMaxAge(state) ? position : null;
         }
-
-        return false;
+        return null;
     }
 
     /**
