@@ -3,11 +3,18 @@ package com.minecolonies.api.util;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 /**
  * Useful math stuff to use statically.
  */
 public final class MathUtils
 {
+    /**
+     * Static random for global use.
+     */
+    public static final Random RANDOM = new Random();
+
     /**
      * Private constructor to hide the public one.
      */

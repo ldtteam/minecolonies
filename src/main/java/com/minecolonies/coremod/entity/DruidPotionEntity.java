@@ -118,14 +118,22 @@ public class DruidPotionEntity extends ThrownPotion
         }
     }
 
+    /**
+     * Why do you do this mojang. This should not be possible. Someone did something very messy on this server if the owner is not a citizen.
+     * @return a citizen or null.
+     */
     @Nullable
     @Override
     public AbstractEntityCitizen getOwner()
     {
-        return (AbstractEntityCitizen) super.getOwner();
+        final Entity owner = super.getOwner();
+        if (owner instanceof AbstractEntityCitizen)
+        {
+            return (AbstractEntityCitizen)owner;
+        }
+        return null;
     }
-
-
+    
     /**
      * Throws a potion at the target with the given inaccuracy
      *

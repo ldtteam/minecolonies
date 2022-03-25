@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -76,6 +77,32 @@ public interface IBuildingManager
      * @return the building.
      */
     IBuilding getBuilding(BlockPos pos);
+
+    /**
+     * Get the leisure site positions.
+     * @return the list.
+     */
+    List<BlockPos> getLeisureSites();
+
+    /**
+     * Get the first building matching the conditions.
+     * @param predicate the predicate matching the building.
+     * @return the position or null.
+     */
+    @Nullable
+    BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate);
+
+    /**
+     * Register a new leisure site.
+     * @param pos the position of it.
+     */
+    void addLeisureSite(BlockPos pos);
+
+    /**
+     * Remove a leisure site.
+     * @param pos the position of it.
+     */
+    void removeLeisureSite(BlockPos pos);
 
     /**
      * Get the closest warehouse relative to a position.
@@ -302,4 +329,10 @@ public interface IBuildingManager
      * @param level    The new level.
      */
     void onBuildingUpgradeComplete(@Nullable IBuilding building, int level);
+
+    /**
+     * Get a random leisure site to go to.
+     * @return the position of it.
+     */
+    BlockPos getRandomLeisureSite();
 }

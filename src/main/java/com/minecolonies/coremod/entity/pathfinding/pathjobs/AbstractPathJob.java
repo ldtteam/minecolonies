@@ -1353,7 +1353,6 @@ public abstract class AbstractPathJob implements Callable<Path>
                     {
                         return true;
                     }
-                    //todo, we need one handling for open and one for closed.
 
                     final Direction direction = BlockPosUtil.getXZFacing(parentPos, pos);
                     final Direction facing = block.getValue(TrapDoorBlock.FACING);
