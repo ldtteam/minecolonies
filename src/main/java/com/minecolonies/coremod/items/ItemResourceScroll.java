@@ -8,9 +8,12 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.Language;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -29,6 +32,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,10 +93,13 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 if (!ctx.getLevel().isClientSide)
                 {
-                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                    String buildingTypeKey = buildingEntity.getBuilding().getBuildingType().getTranslationKey();
+                    ITextComponent buildingTypeComponent = new TranslationTextComponent(buildingTypeKey);
+                    ITextComponent mainComponent = new TranslationTextComponent(
                             COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
-                            buildingEntity.getBuildingName(), // TODO: Should be changed with a proper building display name, though this does not seem to be available
+                            buildingTypeComponent,
                             buildingEntity.getColony().getName());
+                    ctx.getPlayer().sendMessage(mainComponent, ctx.getPlayer().getUUID());
                 }
             }
         }
