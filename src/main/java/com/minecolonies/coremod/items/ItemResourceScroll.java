@@ -73,17 +73,22 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         {
             final AbstractTileEntityColonyBuilding buildingEntity = (AbstractTileEntityColonyBuilding) entity;
 
-            if (buildingEntity.getBuilding() instanceof BuildingBuilder) {
+            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
+            {
                 compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
                 BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
 
-                if (!ctx.getLevel().isClientSide) {
+                if (!ctx.getLevel().isClientSide)
+                {
                     LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
                             COM_MINECOLONIES_SCROLL_BUILDING_SET,
                             buildingEntity.getColony().getName());
                 }
-            } else {
-                if (!ctx.getLevel().isClientSide) {
+            }
+            else
+            {
+                if (!ctx.getLevel().isClientSide)
+                {
                     LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
                             COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
                             buildingEntity.getBuildingName(), // TODO: Should be changed with a proper building display name, though this does not seem to be available
