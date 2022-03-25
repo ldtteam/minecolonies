@@ -1079,6 +1079,7 @@
   "com.minecolonies.coremod.gui.building.rename.title": "Rename Your Building",
 
   "com.minecolonies.coremod.gui.buildinghiremode": "Building Hiring Mode:",
+  "com.minecolonies.coremod.gui.showemployed": "Show employed?",
   "com.minecolonies.coremod.gui.hiringmode.default": "Default (colony override)",
   "com.minecolonies.coremod.gui.hiringmode.auto": "Automatic",
   "com.minecolonies.coremod.gui.hiringmode.manual": "Manual",
@@ -1524,6 +1525,7 @@
   "com.minecolonies.coremod.info.graveyard.1.name": "Resurrection",
   "com.minecolonies.coremod.info.graveyard.1": "During their free time, the Undertaker will get to know citizens and visit the Mystical Site, slowly attuning to the mana of the world.\n\nIf their Mana skill is high, the Undertaker has a small chance to resurrect a fallen citizen!\n\nYou can increase this chance by upgrading the Graveyard, building a Mystical Site, and completing researches in the University.",
 
+  "com.minecolonies.coremod.jei.loottableid": "Loot Table: %s",
   "com.minecolonies.coremod.jei.levelrestriction": "L%d-%d",
   "com.minecolonies.coremod.jei.levelrestriction.tip": "This recipe is only available between building levels %d and %d.",
   "com.minecolonies.coremod.jei.onelevelrestriction": "L%d",

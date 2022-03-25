@@ -5,19 +5,24 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.ToggleButton;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
+import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.PupilBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
+import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
 import net.minecraft.util.Tuple;
@@ -26,6 +31,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.RedstoneTorchBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -76,6 +82,11 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     protected IAssignmentModuleView selectedModule;
 
     /**
+     * Whether or not to show citizens who are employed
+     */
+    protected boolean showEmployed;
+
+    /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c          the colony view.
@@ -97,10 +108,13 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         super.registerButton(BUTTON_RESTART, this::restartClicked);
         super.registerButton(BUTTON_MODE, this::modeClicked);
         super.registerButton(BUTTON_JOB, this::jobClicked);
+        super.registerButton(TOGGLE_SHOW_EMPLOYED, this::showEmployedToggled);
+
         moduleViews.addAll(building.getModuleViews(IAssignmentModuleView.class));
         selectedModule = moduleViews.get(0);
 
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
+        setupShowEmployed();
     }
 
     /**
@@ -207,12 +221,41 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         final int row = citizenList.getListElementIndexByPane(button);
         @NotNull final ICitizenDataView citizen = citizens.get(row);
 
+        // Fire citizen if they already have a job
+        if (citizen.getWorkBuilding() != null && selectedModule instanceof WorkerBuildingModuleView)
+        {
+            IBuildingView oldJob =  colony.getBuilding(citizen.getWorkBuilding());
+            oldJob.getModuleViewMatching(IAssignmentModuleView.class,
+                                         m -> m.getJobEntry() == citizen.getJobView().getEntry())
+                    .removeCitizen(citizen);
+        }
+
+
         selectedModule.addCitizen(citizen);
         onOpened();
     }
 
     /**
-     * Fire citizen clicked to fire a citizen.
+     * Value to sort citizens in a WindowHireWorker
+     * current employees -> no job -> library/training -> other job
+     *
+     * @param citizen the citizen to sort
+     */
+    protected int getCitizenPriority(ICitizenDataView citizen)
+    {
+        if (building.getPosition().equals(citizen.getWorkBuilding()))
+            return 0;
+        else if (citizen.getWorkBuilding() == null)
+            return 1;
+        else if (selectedModule.canAssign(citizen))
+            return 2;
+        else
+            return 3;
+    }
+
+
+    /**
+     * Job clicked to select a job a citizen.
      *
      * @param button the clicked button.
      */
@@ -220,10 +263,48 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         final int row = jobList.getListElementIndexByPane(button);
         selectedModule = moduleViews.get(row);
+        setupShowEmployed();
         setupSettings(findPaneOfTypeByID(BUTTON_MODE, Button.class));
         updateCitizens();
         citizenList.refreshElementPanes();
         jobList.refreshElementPanes();
+    }
+
+    /**
+     * Show Employed button clicked to show/hide employed citizens
+     * @param button the clicked button
+     */
+    protected void showEmployedToggled(@NotNull final Button button)
+    {
+
+        button.setText(showEmployed ? "N" : "Y");
+        showEmployed = !showEmployed;
+
+        onOpened();
+    }
+
+    /**
+     * Set up the showEmployed button.
+     * Disable button if not a "normal" building, like a warehouse or quarry
+     * Also disable for pupils
+     */
+    private void setupShowEmployed()
+    {
+        Button button = findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class);
+        button.setEnabled(selectedModule instanceof WorkerBuildingModuleView
+                && !(selectedModule instanceof PupilBuildingModuleView));
+        button.setText("N");
+        showEmployed = false;
+    }
+
+    /**
+     * Helper function to show _all_ citizens that aren't children if viable.
+     * @param citizen the citizen to check
+     * @return whether the citizen can be assigned to the module
+     */
+    private boolean canAssign(ICitizenDataView citizen)
+    {
+        return (showEmployed && !citizen.isChild()) || selectedModule.canAssign(citizen);
     }
 
     /**
@@ -233,19 +314,12 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     {
         citizens.clear();
 
-        //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                     .filter(citizen -> selectedModule.canAssign(citizen))
-                     .sorted(Comparator.comparing(ICitizenDataView::getName))
-                     .collect(Collectors.toList());
+                .filter(this::canAssign)
+                .sorted(Comparator.comparing(this::getCitizenPriority)
+                        .thenComparing(ICitizenDataView::getName))
+                .collect(Collectors.toList());
 
-        citizens.sort(
-                (c1, c2) -> {
-                    int i1 = building.getPosition().equals(c1.getWorkBuilding()) ? -1 : 0;
-                    int i2 = building.getPosition().equals(c2.getWorkBuilding()) ? -1 : 0;
-                    return Integer.compare(i1, i2);
-            }
-        );
     }
 
     /**
@@ -271,7 +345,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 @NotNull final ICitizenDataView citizen = citizens.get(index);
                 final Button isPaused = rowPane.findPaneOfTypeByID(BUTTON_PAUSE, Button.class);
 
-                if (selectedModule.canAssign(citizen)
+                if (canAssign(citizen)
                       && !selectedModule.isFull()
                       && !selectedModule.getAssignedCitizens().contains(citizen.getId()))
                 {

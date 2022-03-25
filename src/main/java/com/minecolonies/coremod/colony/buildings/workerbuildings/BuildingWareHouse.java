@@ -3,15 +3,12 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.views.BOWindow;
-import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.tileentities.*;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesRack;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
@@ -25,16 +22,10 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseConcrete
 import com.minecolonies.coremod.colony.requestsystem.resolvers.WarehouseRequestResolver;
 import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
@@ -131,57 +122,16 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
         if (block instanceof BlockMinecoloniesRack)
         {
             final BlockEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof ChestBlockEntity)
-            {
-                handleBuildingOverChest(pos, (ChestBlockEntity) entity, world, null);
-            }
             if (entity instanceof TileEntityRack)
             {
                 ((AbstractTileEntityRack) entity).setInWarehouse(true);
-            }
-        }
-        super.registerBlockPosition(block, pos, world);
-    }
-
-    /**
-     * Handles the chest placement.
-     *
-     * @param pos            at pos.
-     * @param chest          the entity.
-     * @param world          the world.
-     * @param tileEntityData the rack te data.
-     */
-    public static void handleBuildingOverChest(@NotNull final BlockPos pos, final ChestBlockEntity chest, final Level world, @Nullable final CompoundTag tileEntityData)
-    {
-        final List<ItemStack> inventory = new ArrayList<>();
-        final int size = chest.getContainerSize();
-        for (int slot = 0; slot < size; slot++)
-        {
-            final ItemStack stack = chest.getItem(slot);
-            if (!ItemStackUtils.isEmpty(stack))
-            {
-                inventory.add(stack.copy());
-            }
-            chest.removeItemNoUpdate(slot);
-        }
-
-        world.setBlock(pos, ModBlocks.blockRack.defaultBlockState(), 0x03);
-        if (tileEntityData != null)
-        {
-            handleTileEntityPlacement(tileEntityData, world, pos);
-        }
-        final BlockEntity entity = world.getBlockEntity(pos);
-        if (entity instanceof TileEntityRack)
-        {
-            ((AbstractTileEntityRack) entity).setInWarehouse(true);
-            for (final ItemStack stack : inventory)
-            {
-                if (!ItemStackUtils.isEmpty(stack))
+                while (((TileEntityRack) entity).getUpgradeSize() < getFirstModuleOccurance(WarehouseModule.class).getStorageUpgrade())
                 {
-                    InventoryUtils.addItemStackToItemHandler(((AbstractTileEntityRack) entity).getInventory(), stack);
+                    ((TileEntityRack) entity).upgradeRackSize();
                 }
             }
         }
+        super.registerBlockPosition(block, pos, world);
     }
 
     @Override
@@ -220,7 +170,7 @@ public class BuildingWareHouse extends AbstractBuilding implements IWareHouse
                 final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack && !(entity instanceof TileEntityColonyBuilding))
                 {
-                    ((AbstractTileEntityRack) entity).upgradeItemStorage();
+                    ((AbstractTileEntityRack) entity).upgradeRackSize();
                 }
             }
             getFirstModuleOccurance(WarehouseModule.class).incrementStorageUpgrade();

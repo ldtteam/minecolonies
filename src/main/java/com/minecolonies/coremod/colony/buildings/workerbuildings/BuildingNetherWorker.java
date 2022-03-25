@@ -184,7 +184,7 @@ public class BuildingNetherWorker extends AbstractBuilding
     }
 
     @Override
-    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory)
+    public int buildingRequiresCertainAmountOfItem(final ItemStack stack, final List<ItemStorage> localAlreadyKept, final boolean inventory, final JobEntry jobEntry)
     {
         if (stack.isEmpty())
         {
@@ -214,7 +214,7 @@ public class BuildingNetherWorker extends AbstractBuilding
             }
         }
 
-        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory);
+        return super.buildingRequiresCertainAmountOfItem(stack, localAlreadyKept, inventory, jobEntry);
     }
 
 

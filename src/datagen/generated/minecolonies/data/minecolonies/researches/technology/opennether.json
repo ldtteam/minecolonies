@@ -6,8 +6,8 @@
   "icon": "minecolonies:blockhutnetherworker",
   "requirements": [
     {
-      "item": "minecraft:netherrack",
-      "quantity": 64
+      "item": "minecraft:gilded_blackstone",
+      "quantity": 3
     }
   ],
   "effects": [

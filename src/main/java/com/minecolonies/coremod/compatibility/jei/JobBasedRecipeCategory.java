@@ -17,9 +17,11 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.ITooltipCallback;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.locale.Language;
@@ -283,15 +285,59 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return lines;
     }
 
+    protected static class RecipeIdTooltipCallback implements ITooltipCallback<ItemStack>
+    {
+        private final int slot;
+        private final ResourceLocation id;
+        private final IModIdHelper modIdHelper;
+
+        public RecipeIdTooltipCallback(final int slot, final ResourceLocation id, IModIdHelper modIdHelper)
+        {
+            this.slot = slot;
+            this.id = id;
+            this.modIdHelper = modIdHelper;
+        }
+
+        @Override
+        public void onTooltip(final int slotIndex,
+                              final boolean input,
+                              @NotNull final ItemStack ingredient,
+                              @NotNull final List<Component> tooltip)
+        {
+            if (slotIndex != slot) return;
+
+            if (modIdHelper.isDisplayingModNameEnabled())
+            {
+                final String recipeModId = id.getNamespace();
+                final String ingredientModId = ingredient.getItem().getRegistryName().getNamespace();
+                if (!recipeModId.equals(ingredientModId))
+                {
+                    final String modName = modIdHelper.getFormattedModNameForModId(recipeModId);
+                    final TranslatableComponent recipeBy = new TranslatableComponent("jei.tooltip.recipe.by", modName);
+                    tooltip.add(recipeBy.withStyle(ChatFormatting.GRAY));
+                }
+            }
+
+            final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
+            if (showAdvanced)
+            {
+                final TranslatableComponent recipeId = new TranslatableComponent("jei.tooltip.recipe.id", id.toString());
+                tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
+            }
+        }
+    }
+
     protected static class LootTableTooltipCallback implements ITooltipCallback<ItemStack>
     {
         private final int firstSlot;
         private final List<LootTableAnalyzer.LootDrop> drops;
+        private final ResourceLocation id;
 
-        public LootTableTooltipCallback(final int firstSlot, final List<LootTableAnalyzer.LootDrop> drops)
+        public LootTableTooltipCallback(final int firstSlot, final List<LootTableAnalyzer.LootDrop> drops, final ResourceLocation id)
         {
             this.firstSlot = firstSlot;
             this.drops = drops;
+            this.id = id;
         }
 
         @Override
@@ -319,6 +365,13 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                 if (drop.getConditional())
                 {
                     tooltip.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "conditions.tip"));
+                }
+
+                final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
+                if (showAdvanced)
+                {
+                    final TranslatableComponent recipeId = new TranslatableComponent("com.minecolonies.coremod.jei.loottableid", id.toString());
+                    tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
                 }
             }
         }
