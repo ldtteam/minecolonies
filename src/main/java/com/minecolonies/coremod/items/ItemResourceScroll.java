@@ -37,6 +37,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Class describing the resource scroll item.
@@ -70,14 +71,24 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding)
         {
-            compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
-            BlockPosUtil.write(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
+            final AbstractTileEntityColonyBuilding buildingEntity = (AbstractTileEntityColonyBuilding) entity;
 
-            if (!ctx.getLevel().isClientSide)
-            {
-                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-                  TranslationConstants.COM_MINECOLONIES_SCROLL_BUILDER_SET,
-                  ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
+            if (buildingEntity.getBuilding() instanceof BuildingBuilder) {
+                compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
+                BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
+
+                if (!ctx.getLevel().isClientSide) {
+                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                            COM_MINECOLONIES_SCROLL_BUILDING_SET,
+                            buildingEntity.getColony().getName());
+                }
+            } else {
+                if (!ctx.getLevel().isClientSide) {
+                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                            COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
+                            buildingEntity.getBuildingName(), // TODO: Should be changed with a proper building display name, though this does not seem to be available
+                            buildingEntity.getColony().getName());
+                }
             }
         }
         else if (ctx.getLevel().isClientSide)
@@ -136,7 +147,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 String name = ((BuildingBuilder.View) buildingView).getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
                   ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
-                  : new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_BUILDER));
+                  : new TranslationTextComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }
@@ -171,7 +182,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
+            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
         }
     }
 }
