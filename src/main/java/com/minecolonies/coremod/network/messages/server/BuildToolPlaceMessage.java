@@ -315,7 +315,7 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderDecoration woDeco = new WorkOrderDecorationBuild(schem, woName, rotation, buildPos, mirror);
+            WorkOrderDecoration woDeco = new WorkOrderDecoration(schem, woName, rotation, buildPos, mirror);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);

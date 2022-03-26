@@ -98,7 +98,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
         final int depth = levelsInfo.get(row).getB();
         for (final WorkOrderView wo : workOrders)
         {
-            if (wo.getDisplayName().getContents().contains("main") && wo.getPos().getY() == depth)
+            if (wo.getDisplayName().getContents().contains("main") && wo.getLocation().getY() == depth)
             {
                 return true;
             }

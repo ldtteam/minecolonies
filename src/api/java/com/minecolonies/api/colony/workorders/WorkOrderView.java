@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
  * The WorkOrderView is the client-side representation of a WorkOrders. Views contain the WorkOrder's data that is relevant to a Client, in a more client-friendly form Mutable
  * operations on a View result in a message to the server to perform the operation
  */
-public class WorkOrderView
+public class WorkOrderView implements IWorkOrderView
 {
     /**
-     * The work orders id.
+     * The work order its id.
      */
     private int id;
 
@@ -26,12 +26,7 @@ public class WorkOrderView
     /**
      * Its description.
      */
-    private String schematicName;
-
-    /**
-     * The custom name of the building, if any
-     */
-    private String buildingCustomName;
+    private String structureName;
 
     /**
      * Its description.
@@ -56,26 +51,46 @@ public class WorkOrderView
     /**
      * Level it's being upgraded to.
      */
-    private int upgradeLevel;
+    private int targetLevel;
 
-    /**
-     * Priority getter.
-     *
-     * @return the priority.
-     */
+    public WorkOrderView()
+    {
+    }
+
+    @Override
+    public int getId()
+    {
+        return id;
+    }
+
+    @Override
+    public void setId(final int id)
+    {
+        this.id = id;
+    }
+
+    @Override
     public int getPriority()
     {
         return priority;
     }
 
-    /**
-     * Setter for the priority.
-     *
-     * @param priority the new priority.
-     */
+    @Override
     public void setPriority(final int priority)
     {
         this.priority = priority;
+    }
+
+    @Override
+    public WorkOrderType getType()
+    {
+        return type;
+    }
+
+    @Override
+    public BlockPos getLocation()
+    {
+        return this.pos;
     }
 
     /**
@@ -83,50 +98,16 @@ public class WorkOrderView
      *
      * @return the value String.
      */
-    public String getSchematicName()
+    public String getStructureName()
     {
-        return schematicName.replaceAll("schematics/(?:decorations/)?", "");
+        return structureName.replaceAll("schematics/(?:decorations/)?", "");
     }
 
-    /**
-     * Return the building display name
-     *
-     * @return a translation component
-     */
+    @Override
     public ITextComponent getDisplayName()
     {
         String workOrderName = new TranslationTextComponent(displayName).getString();
-        return new StringTextComponent(String.format("%s %d", workOrderName, upgradeLevel));
-    }
-
-    /**
-     * Type getter.
-     *
-     * @return the type (defined by Enum).
-     */
-    public WorkOrderType getType()
-    {
-        return type;
-    }
-
-    /**
-     * Id getter.
-     *
-     * @return the id.
-     */
-    public int getId()
-    {
-        return id;
-    }
-
-    /**
-     * Id setter.
-     *
-     * @param id the id to set.
-     */
-    public void setId(final int id)
-    {
-        this.id = id;
+        return new StringTextComponent(String.format("%s %d", workOrderName, targetLevel));
     }
 
     /**
@@ -150,35 +131,10 @@ public class WorkOrderView
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
         type = WorkOrderType.values()[buf.readInt()];
-        schematicName = buf.readUtf(32767);
+        structureName = buf.readUtf(32767);
         displayName = buf.readUtf(32767);
         pos = buf.readBlockPos();
-        upgradeLevel = buf.readInt();
-    }
-
-    /**
-     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
-     * @param builderLocation position of the builders own hut.
-     * @param builderLevel level of the builders hut.
-     * @return true if so.
-     */
-    public boolean canBuildIngoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
-    {
-        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
-        //  - The Builder's Work AbstractBuilding is built
-        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
-
-        return (builderLevel >= upgradeLevel || builderLevel == 5 || (builderLocation.equals(pos)));
-    }
-
-    /**
-     * Get the position of the workorder.
-     *
-     * @return the position
-     */
-    public BlockPos getPos()
-    {
-        return this.pos;
+        targetLevel = buf.readInt();
     }
 
     /**
@@ -188,5 +144,20 @@ public class WorkOrderView
     public void setClaimedBy(final BlockPos position)
     {
         this.claimedBy = position;
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     * @param builderLocation position of the builders own hut.
+     * @param builderLevel level of the builders hut.
+     * @return true if so.
+     */
+    public boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
+    {
+        //  A Build WorkOrder may be fulfilled by a Builder as long as any ONE of the following is true:
+        //  - The Builder's Work AbstractBuilding is built
+        //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
+
+        return (builderLevel >= targetLevel || builderLevel == 5 || (builderLocation.equals(pos)));
     }
 }

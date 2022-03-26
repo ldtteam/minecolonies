@@ -5,16 +5,25 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.WorkOrderChangeMessage;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.ASSIGNEE_LABEL;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DELETE;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DOWN;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_UP;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_WORKORDER;
+import static com.minecolonies.api.util.constant.WindowConstants.HIDDEN_WORKORDER_ID;
+import static com.minecolonies.api.util.constant.WindowConstants.LIST_WORKORDER;
+import static com.minecolonies.api.util.constant.WindowConstants.WORK_LABEL;
 
 /**
  * Window for the town hall.
@@ -24,7 +33,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     /**
      * List of workOrders.
      */
-    private final List<WorkOrderView> workOrders = new ArrayList<>();
+    private final List<IWorkOrderView> workOrders = new ArrayList<>();
 
     /**
      * Constructor for the town hall window.
@@ -66,7 +75,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
      */
     private void sortWorkOrders()
     {
-        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
+        workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
     /**
@@ -81,7 +90,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
 
         for (int i = 0; i < workOrders.size(); i++)
         {
-            final WorkOrderView workOrder = workOrders.get(i);
+            final IWorkOrderView workOrder = workOrders.get(i);
             if (workOrder.getId() == id)
             {
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
@@ -143,7 +152,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final WorkOrderView workOrder = workOrders.get(index);
+                final IWorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
                 final int numElements = getElementCount();

@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
@@ -124,8 +125,8 @@ public class DecorationBuildRequestMessage implements IMessage
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-                                                                  .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
-                                                                  .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
+                    .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
+                    .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
 
             if (wo.isPresent())
             {
@@ -165,11 +166,13 @@ public class DecorationBuildRequestMessage implements IMessage
             }
 
             final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
-            final WorkOrderDecoration order = new WorkOrderDecorationBuild(name + level,
-              name + level,
-              difference,
-              pos,
-              state.getValue(BlockDecorationController.MIRROR));
+            final WorkOrderDecoration order = WorkOrderDecoration.create(
+                    WorkOrderType.BUILD,
+                    name + level,
+                    name + " " + level,
+                    difference,
+                    pos,
+                    state.getValue(BlockDecorationController.MIRROR));
 
             if (level != ((TileEntityDecorationController) entity).getTier())
             {

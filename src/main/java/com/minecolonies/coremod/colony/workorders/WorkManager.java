@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.OUT_OF_COLONY;
@@ -351,7 +352,7 @@ public class WorkManager implements IWorkManager
             {
                 iter.remove();
                 dirty = true;
-            } else if (o.hasChanged())
+            } else if (o.isChanged())
             {
                 dirty = true;
                 o.resetChange();
@@ -362,14 +363,33 @@ public class WorkManager implements IWorkManager
     /**
      * Get an ordered list by priority of the work orders.
      *
-     * @param type    the type of workOrder which is required.
      * @param builder the builder wanting to claim it.
+     * @param type    the type of workOrder which is required.
+     * @param <W>     the type.
      * @return the list.
      */
     @Override
-    public <W extends IWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type, final BlockPos builder)
+    public <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder)
     {
-        return workOrders.values().stream().filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)) && type.isInstance(o)).map(o -> (W) o)
+        return getOrderedList(type::isInstance, builder)
+                .stream()
+                .map(m -> (W)m)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get an ordered list by priority of the work orders.
+     *
+     * @param builder the builder wanting to claim it.
+     * @param predicate a predicate to check each item against
+     * @return the list.
+     */
+    @Override
+    public List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder)
+    {
+        return workOrders.values().stream()
+                .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
+                .filter(predicate)
                 .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
                 .collect(Collectors.toList());
     }

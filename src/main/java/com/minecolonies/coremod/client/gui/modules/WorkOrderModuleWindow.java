@@ -6,7 +6,7 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -24,7 +24,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.DESC_LABEL;
+import static com.minecolonies.api.util.constant.WindowConstants.LIST_WORK_ORDERS;
+import static com.minecolonies.api.util.constant.WindowConstants.WORK_ORDER_NAME;
+import static com.minecolonies.api.util.constant.WindowConstants.WORK_ORDER_POS;
+import static com.minecolonies.api.util.constant.WindowConstants.WORK_ORDER_SELECT;
 
 /**
  * Window for the builder hut workorder list.
@@ -34,7 +38,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     /**
      * List of workOrders.
      */
-    private final List<WorkOrderView> workOrders = new ArrayList<>();
+    private final List<IWorkOrderView> workOrders = new ArrayList<>();
 
     /**
      * List of workorders.
@@ -119,7 +123,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
             workOrders.removeIf(order -> !order.getClaimedBy().equals(buildingView.getPosition()));
         }
 
-        workOrders.removeIf(order -> !order.canBuildIngoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()));
+        workOrders.removeIf(order -> !order.canBuildIgnoringDistance(buildingView.getPosition(), buildingView.getBuildingLevel()));
 
         sortWorkOrders();
     }
@@ -129,7 +133,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
      */
     private void sortWorkOrders()
     {
-        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
+        workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
     /**
@@ -140,10 +144,10 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
      */
     private void updateAvailableWorkOrders(final int index, @NotNull final Pane rowPane)
     {
-        final WorkOrderView order = workOrders.get(index);
+        final IWorkOrderView order = workOrders.get(index);
 
         rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class).setText(order.getDisplayName());
-        rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getPos(), buildingView.getPosition())));
+        rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
 
         if (order.getClaimedBy().equals(buildingView.getPosition()))
         {
@@ -163,7 +167,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     private void selectWorkOrder(@NotNull final Button button)
     {
         final int row = workOrdersList.getListElementIndexByPane(button);
-        final WorkOrderView view = workOrders.get(row);
+        final IWorkOrderView view = workOrders.get(row);
 
         if (view.getClaimedBy().equals(buildingView.getPosition()))
         {

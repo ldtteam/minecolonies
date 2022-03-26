@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
@@ -734,7 +735,7 @@ public final class ColonyView implements IColonyView
      * @return a unmodifiable Collection of the workOrders.
      */
     @Override
-    public Collection<WorkOrderView> getWorkOrders()
+    public Collection<IWorkOrderView> getWorkOrders()
     {
         return Collections.unmodifiableCollection(workOrders.values());
     }

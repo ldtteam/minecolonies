@@ -10,8 +10,6 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -21,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
@@ -33,7 +30,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * NBT for storage.
      */
-    private static final String TAG_BUILDING = "building";
     private static final String TAG_TYPE = "type";
     private static final String TAG_TH_PRIORITY = "priority";
     private static final String TAG_ID = "id";
@@ -45,7 +41,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * Bimap of workOrder from string to class.
      */
     @NotNull
-    private static final BiMap<String, Tuple<Type, Class<? extends IWorkOrder>>> nameToClassBiMap = HashBiMap.create();
+    private static final BiMap<String, Class<? extends IWorkOrder>> nameToClassBiMap = HashBiMap.create();
 
     /*
      * WorkOrder registry.
@@ -55,8 +51,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         addMapping("building", WorkOrderBuilding.class);
         addMapping("decoration", WorkOrderDecoration.class);
         addMapping("miner", WorkOrderMiner.class);
-        addMapping("build", WorkOrderBuilding.class);
-        addMapping("removal", WorkOrderBuilding.class);
     }
 
     /**
@@ -65,7 +59,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends IWorkOrder> orderClass, WorkOrderType )
+    private static void addMapping(final String name, @NotNull final Class<? extends IWorkOrder> orderClass)
     {
         if (nameToClassBiMap.containsKey(name))
         {
@@ -76,7 +70,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             if (orderClass.getDeclaredConstructor() != null)
             {
-                nameToClassBiMap.put(name, new Tuple<>(orderClass.getComponentType(), orderClass));
+                nameToClassBiMap.put(name, orderClass);
                 nameToClassBiMap.inverse().put(orderClass, name);
             }
         }
@@ -100,7 +94,15 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
         try
         {
-            oclass = nameToClassBiMap.get(compound.getString(TAG_TYPE));
+            String type = compound.getString(TAG_TYPE);
+            if (type.equals("removal"))
+            {
+                oclass = WorkOrderBuilding.class;
+            }
+            else
+            {
+                oclass = nameToClassBiMap.get(type);
+            }
 
             if (oclass != null)
             {
@@ -161,49 +163,26 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         return workOrderView;
     }
 
-    /**
-     * The id of the work order.
-     */
     private int id;
-
-    /**
-     * The priority of the workOrder.
-     */
     private int priority;
-
-    /**
-     * The position of the worker building claiming this workOrder.
-     */
     private BlockPos claimedBy;
+    private String structureName;
 
-    /**
-     * The type of work order.
-     */
-    private WorkOrderType type;
+    private String workOrderName;
+    private WorkOrderType workOrderType;
 
-    /**
-     * The amount of resources needed for this work order.
-     */
+    private BlockPos location;
+    private int rotation;
+    private boolean isMirrored;
+
+    private int currentLevel;
+    private int targetLevel;
+
     private int amountOfResources;
-
-    /**
-     * Used iterator type in structurize.
-     */
     private String iteratorType;
 
-    /**
-     * Whether the area is cleared.
-     */
     private boolean cleared;
-
-    /**
-     * Whether the resources are requested.
-     */
     private boolean requested;
-
-    /**
-     * If the workOrder changed.
-     */
     private boolean changed = false;
 
     /**
@@ -212,151 +191,80 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public AbstractWorkOrder()
     {
         this.iteratorType = "";
+        this.changed = false;
     }
 
-    public AbstractWorkOrder(WorkOrderType type)
+    protected AbstractWorkOrder(String structureName,
+                                String workOrderName,
+                                WorkOrderType workOrderType,
+                                BlockPos location,
+                                int rotation,
+                                boolean isMirrored,
+                                int currentLevel,
+                                int targetLevel)
     {
-        this.type = type;
-        this.iteratorType = "";
-    }
-
-    /**
-     * Get the schematic this work order should be using, if any
-     *
-     * @return the schematic name.
-     */
-    public abstract String getSchematicName();
-
-    /**
-     * Get the strcuture this work order should be using, if any
-     *
-     * @return the schematic name.
-     */
-    public abstract String getStructureName();
-
-    /**
-     * Get the name for the work order
-     *
-     * @return the name of the work order, only shown if no custom name is provided
-     */
-    public abstract String getWorkOrderName();
-
-    /**
-     * Get a custom name for the work order
-     *
-     * @return the custom name
-     */
-    public abstract String getCustomName();
-
-    /**
-     * Whether the work order can be built or not.
-     *
-     * @param citizen the citizen attempting to perform the work order
-     * @return true if it can be built
-     */
-    protected abstract boolean canBuild(@NotNull final ICitizenData citizen);
-
-    /**
-     * Get the ID of the work order.
-     *
-     * @return ID of the work order
-     */
-    @Override
-    public int getID()
-    {
-        return this.id;
+        this();
+        this.structureName = structureName;
+        this.workOrderName = workOrderName;
+        this.workOrderType = workOrderType;
+        this.location = location;
+        this.rotation = rotation;
+        this.isMirrored = isMirrored;
+        this.currentLevel = currentLevel;
+        this.targetLevel = targetLevel;
     }
 
     @Override
-    public void setID(final int id)
+    public final int getID()
+    {
+        return id;
+    }
+
+    @Override
+    public final void setID(int id)
     {
         this.id = id;
     }
 
-    /**
-     * Get the used iteratortype.
-     *
-     * @return the used type.
-     */
-    public String getIteratorType()
-    {
-        return iteratorType;
-    }
-
-    /**
-     * Set the new iterator type if not set yet.
-     *
-     * @param newType the new type to set.
-     */
-    public void setIteratorType(final String newType)
-    {
-        if (this.iteratorType.isEmpty())
-        {
-            this.iteratorType = newType;
-        }
-    }
-
-    /**
-     * Getter for the priority.
-     *
-     * @return the priority of the work order.
-     */
     @Override
-    public int getPriority()
+    public final int getPriority()
     {
-        return this.priority;
+        return priority;
     }
 
-    /**
-     * Setter for the priority.
-     *
-     * @param priority the new priority.
-     */
     @Override
-    public void setPriority(final int priority)
+    public final void setPriority(int priority)
     {
         this.priority = priority;
     }
 
-    /**
-     * Checks if the workOrder has changed.
-     *
-     * @return true if so.
-     */
     @Override
-    public boolean hasChanged()
+    public final BlockPos getClaimedBy()
     {
-        return changed;
+        return claimedBy;
     }
 
-    /**
-     * Resets the changed variable.
-     */
     @Override
-    public void resetChange()
+    public final void setClaimedBy(BlockPos claimedBy)
     {
-        changed = false;
+        this.claimedBy = claimedBy;
     }
 
-    /**
-     * Is the Work Order claimed?
-     *
-     * @return true if the Work Order has been claimed
-     */
     @Override
-    public boolean isClaimed()
+    public final void setClaimedBy(@Nullable ICitizenData citizen)
+    {
+        changed = true;
+        claimedBy = (citizen != null && citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding().getPosition() : null;
+    }
+
+    @Override
+    public final boolean isClaimed()
     {
         return claimedBy != null;
     }
 
-    /**
-     * Is the Work Order claimed by the given citizen?
-     *
-     * @param citizen The citizen to check
-     * @return true if the Work Order is claimed by this Citizen
-     */
     @Override
-    public boolean isClaimedBy(@NotNull final ICitizenData citizen)
+    public final boolean isClaimedBy(@NotNull ICitizenData citizen)
     {
         if (citizen.getWorkBuilding() != null)
         {
@@ -365,98 +273,119 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         return false;
     }
 
-    /**
-     * Get the ID of the Citizen that the Work Order is claimed by.
-     *
-     * @return ID of citizen the Work Order has been claimed by, or null
-     */
     @Override
-    public BlockPos getClaimedBy()
-    {
-        return claimedBy;
-    }
-
-    /**
-     * Set the Work Order as claimed by the given Citizen.
-     *
-     * @param citizen {@link CitizenData}
-     */
-    @Override
-    public void setClaimedBy(@Nullable final ICitizenData citizen)
-    {
-        changed = true;
-        claimedBy = (citizen != null && citizen.getWorkBuilding() != null) ? citizen.getWorkBuilding().getPosition() : null;
-    }
-
-    /**
-     * Set the Work order as claimed by a given building.
-     *
-     * @param builder the building position.
-     */
-    @Override
-    public void setClaimedBy(final BlockPos builder)
-    {
-        claimedBy = builder;
-    }
-
-    /**
-     * Clear the Claimed By status of the Work Order.
-     */
-    @Override
-    public void clearClaimedBy()
+    public final void clearClaimedBy()
     {
         changed = true;
         claimedBy = null;
     }
 
-    public int getAmountOfResources()
+    @Override
+    public final String getStructureName()
+    {
+        return structureName;
+    }
+
+    @Override
+    public final String getWorkOrderName()
+    {
+        return workOrderName;
+    }
+
+    @Override
+    public final WorkOrderType getWorkOrderType()
+    {
+        return workOrderType;
+    }
+
+    @Override
+    public final BlockPos getLocation()
+    {
+        return location;
+    }
+
+    @Override
+    public final int getRotation()
+    {
+        return rotation;
+    }
+
+    @Override
+    public final boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    @Override
+    public final int getCurrentLevel()
+    {
+        return currentLevel;
+    }
+
+    @Override
+    public final int getTargetLevel()
+    {
+        return targetLevel;
+    }
+
+    @Override
+    public final int getAmountOfResources()
     {
         return amountOfResources;
     }
 
-    public void setAmountOfResources(int amountOfResources)
+    @Override
+    public final void setAmountOfResources(int newQuantity)
     {
-        this.amountOfResources = amountOfResources;
+        this.amountOfResources = newQuantity;
     }
 
-    /**
-     * Gets whether the work order area has been cleared.
-     *
-     * @return true if the work order area has been cleared.
-     */
-    public boolean isCleared()
+    @Override
+    public final String getIteratorType()
+    {
+        return iteratorType;
+    }
+
+    @Override
+    public final void setIteratorType(String iteratorType)
+    {
+        this.iteratorType = iteratorType;
+    }
+
+    @Override
+    public final boolean isCleared()
     {
         return cleared;
     }
 
-    /**
-     * Set whether the work order area has been cleared.
-     *
-     * @param cleared true if the work order area has been cleared.
-     */
-    public void setCleared(final boolean cleared)
+    @Override
+    public final void setCleared(boolean cleared)
     {
         this.cleared = cleared;
     }
 
-    /**
-     * Gets whether the resources for the work order have been requested.
-     *
-     * @return true if the building has been cleared.
-     */
-    public boolean isRequested()
+    @Override
+    public final boolean isRequested()
     {
         return requested;
     }
 
-    /**
-     * Set whether or not the building has been cleared.
-     *
-     * @param requested true if the building has been cleared.
-     */
-    public void setRequested(final boolean requested)
+    @Override
+    public final void setRequested(final boolean requested)
     {
         this.requested = requested;
+    }
+
+    @Override
+    public final boolean isChanged()
+    {
+        return changed;
+    }
+
+    @Override
+    public final void resetChange()
+    {
+        this.changed = false;
     }
 
     /**
@@ -467,13 +396,16 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public String getDisplayName()
     {
-        final String customName = getCustomName();
-        if (!customName.isEmpty())
-        {
-            return customName;
-        }
-        return getWorkOrderName();
+        return workOrderName;
     }
+
+    /**
+     * Whether the work order can be built or not.
+     *
+     * @param citizen the citizen attempting to perform the work order
+     * @return true if it can be built
+     */
+    protected abstract boolean canBuild(@NotNull final ICitizenData citizen);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
@@ -560,10 +492,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(id);
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
-        buf.writeInt(getType().ordinal());
-        buf.writeUtf(getSchematicName());
-        buf.writeUtf(getWorkOrderName());
-        buf.writeUtf(getCustomName());
+        buf.writeUtf(workOrderName);
+        buf.writeInt(workOrderType.ordinal());
+        buf.writeUtf(structureName);
         buf.writeInt(0);
     }
 

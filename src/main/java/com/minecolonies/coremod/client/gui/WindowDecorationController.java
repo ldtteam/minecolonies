@@ -7,8 +7,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -19,11 +19,17 @@ import com.minecolonies.coremod.network.messages.server.DecorationControllerUpda
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.util.Optional;
 
-import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_BUILD;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_CANCEL;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_REPAIR;
+import static com.minecolonies.api.util.constant.WindowConstants.INPUT_NAME;
+import static com.minecolonies.api.util.constant.WindowConstants.LABEL_NO_UPGRADE;
 
 /**
  * Window for a hut name entry.
@@ -86,25 +92,24 @@ public class WindowDecorationController extends AbstractWindowSkeleton
 
         if (view != null)
         {
-            final Optional<WorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getPos().equals(this.controller.getBlockPos())).findFirst();
+            final Optional<IWorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getLocation().equals(this.controller.getBlockPos())).findFirst();
             if (wo.isPresent())
             {
-
                 if (wo.get().getType() == WorkOrderType.BUILD)
                 {
                     if (controller.getTier() == 0)
                     {
-                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
+                        buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
                     }
                     else
                     {
-                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
+                        buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
                 else if (wo.get().getType() == WorkOrderType.BUILD)
                 {
-                    buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
+                    buttonBuild.setText(new TranslationTextComponent("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
             }

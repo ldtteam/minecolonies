@@ -4,6 +4,7 @@ import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -184,7 +185,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(@Nullable final AbstractWorkOrder order)
+    public void setWorkOrder(@Nullable final IWorkOrder order)
     {
         if (order == null)
         {

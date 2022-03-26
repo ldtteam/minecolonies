@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -22,50 +23,66 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WorkOrderBuilding extends AbstractWorkOrder
 {
-    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final String TAG_SCHEMATIC_NAME = "upgrade";
-    private static final String TAG_DISP_NAME = "displayname";
+    private static final String TAG_CUSTOM_NAME = "customName";
 
     /**
-     * Max distance a builder can have from the building site.
+     * Maximum distance a builder can have from the building site.
      */
     private static final double MAX_DISTANCE_SQ = 100 * 100;
 
-    /**
-     * The level the building should be upgraded to
-     */
-    private int currentLevel;
+    public static WorkOrderBuilding create(@NotNull final WorkOrderType type, @NotNull final IBuilding building)
+    {
+        int targetLevel = building.getBuildingLevel();
+        switch (type)
+        {
+            case BUILD:
+                targetLevel = 1;
+                break;
+            case UPGRADE:
+                targetLevel++;
+                break;
+            case REMOVE:
+                targetLevel = 0;
+                break;
+        }
 
-    /**
-     * The level the building should be upgraded to
-     */
-    private int targetLevel;
+        String schematicName = "";
+        if (type != WorkOrderType.REMOVE)
+        {
+            final TileEntity buildingTE = building.getColony().getWorld().getBlockEntity(building.getID());
+            if (buildingTE instanceof AbstractTileEntityColonyBuilding)
+            {
+                if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
+                {
+                    schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
+                            .replaceAll("\\d$", "") + targetLevel;
+                }
+                else
+                {
+                    schematicName = building.getSchematicName() + targetLevel;
+                }
+            }
+            else
+            {
+                schematicName = building.getSchematicName() + targetLevel;
+            }
+        }
 
-    /**
-     * The schematic this building is using
-     */
-    private String schematicName;
+        String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), schematicName).toString();
+        WorkOrderBuilding wo = new WorkOrderBuilding(
+                structureName,
+                building.getBuildingType().getTranslationKey(),
+                type,
+                building.getID(),
+                building.getRotation(),
+                building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored(),
+                building.getBuildingLevel(),
+                targetLevel);
+        wo.setCustomName(building);
+        return wo;
+    }
 
-    /**
-     * The name of the structure
-     */
-    private String structureName;
-
-    /**
-     * The resource key of the building
-     */
-    private String buildingNameResourceKey;
-
-    /**
-     * The building its custom name
-     */
-    private String customBuildingName;
-
-    private BlockPos buildingLocation;
-
-    private int buildingRotation;
-
-    private boolean isBuildingMirrored;
+    private String customName;
 
     /**
      * Unused constructor for reflection.
@@ -75,116 +92,34 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         super();
     }
 
-    /**
-     * Create a new WorkOrder.
-     *
-     * @param type
-     * @param building the building to build.
-     * @param level    the level it should have.
-     */
-    public WorkOrderBuilding(WorkOrderType type, @NotNull final IBuilding building, final int level)
+    private WorkOrderBuilding(String structureName,
+                              String workOrderName,
+                              WorkOrderType workOrderType,
+                              BlockPos location,
+                              int rotation,
+                              boolean isMirrored,
+                              int currentLevel,
+                              int targetLevel)
     {
-        super(type);
-        this.currentLevel = building.getBuildingLevel();
-        this.targetLevel = level;
-        this.buildingNameResourceKey = building.getBuildingType().getTranslationKey();
-        this.buildingLocation = building.getID();
-        this.buildingRotation = building.getRotation();
-        this.isBuildingMirrored = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
+        super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
+    }
 
-        final TileEntity buildingTE = building.getColony().getWorld().getBlockEntity(building.getID());
-        if (buildingTE instanceof AbstractTileEntityColonyBuilding)
-        {
-            if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
-            {
-                this.schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
-                        .replaceAll("\\d$", "") + this.targetLevel;
-            } else
-            {
-                this.schematicName = building.getSchematicName() + this.targetLevel;
-            }
-        } else
-        {
-            this.schematicName = building.getSchematicName() + this.targetLevel;
-        }
+    public String getCustomName()
+    {
+        return customName;
+    }
 
-        //normalize the structureName
-        this.structureName = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), this.schematicName)
-                .toString();
-
-        this.customBuildingName = "";
+    public void setCustomName(final IBuilding building)
+    {
         if (building.hasParent())
         {
             final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
             if (parentBuilding != null)
             {
-                this.customBuildingName = parentBuilding.getCustomBuildingName() + " / ";
+                this.customName = parentBuilding.getCustomBuildingName() + " / ";
             }
         }
-
-        this.customBuildingName += building.getCustomBuildingName();
-    }
-
-    @Override
-    public String getSchematicName()
-    {
-        return schematicName;
-    }
-
-    @Override
-    public String getStructureName()
-    {
-        return structureName;
-    }
-
-    @Override
-    public String getWorkOrderName()
-    {
-        return buildingNameResourceKey;
-    }
-
-    @Override
-    public String getCustomName()
-    {
-        return customBuildingName;
-    }
-
-    @Override
-    public BlockPos getLocation()
-    {
-        return buildingLocation;
-    }
-
-    @Override
-    public int getRotation()
-    {
-        return buildingRotation;
-    }
-
-    @Override
-    public boolean isMirrored()
-    {
-        return isBuildingMirrored;
-    }
-
-    public int getCurrentLevel()
-    {
-        return currentLevel;
-    }
-
-    public void setCurrentLevel(int currentLevel)
-    {
-        this.currentLevel = currentLevel;
-    }
-
-    public int getTargetLevel()
-    {
-        return targetLevel;
-    }
-
-    public void setTargetLevel(int targetLevel)
-    {
-        this.targetLevel = targetLevel;
+        this.customName += building.getCustomBuildingName();
     }
 
     /**
@@ -197,9 +132,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         super.read(compound, manager);
-        targetLevel = compound.getInt(TAG_UPGRADE_LEVEL);
-        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
-        customBuildingName = compound.getString(TAG_DISP_NAME);
+        customName = compound.getString(TAG_CUSTOM_NAME);
     }
 
     /**
@@ -211,9 +144,14 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     public void write(@NotNull final CompoundNBT compound)
     {
         super.write(compound);
-        compound.putInt(TAG_UPGRADE_LEVEL, targetLevel);
-        compound.putString(TAG_SCHEMATIC_NAME, schematicName);
-        compound.putString(TAG_DISP_NAME, customBuildingName);
+        compound.putString(TAG_CUSTOM_NAME, customName);
+    }
+
+    @Override
+    public void serializeViewNetworkData(@NotNull PacketBuffer buf)
+    {
+        super.serializeViewNetworkData(buf);
+        buf.writeUtf(customName);
     }
 
     @Override
@@ -243,7 +181,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
 
-        return (builderLevel >= targetLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL || (builderLocation.equals(getLocation())));
+        return (builderLevel >= this.getTargetLevel() || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL || (builderLocation.equals(getLocation())));
     }
 
     @Override
@@ -274,16 +212,11 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         super.onCompleted(colony, citizen);
 
-        final StructureName structureName = new StructureName(this.structureName);
-        if (this instanceof WorkOrderBuildingBuild)
-        {
-            final int level = this.targetLevel;
-            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
-        } else
+        final StructureName structureName = new StructureName(this.getStructureName());
+        if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));
+                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, this.getTargetLevel()));
         }
     }
 

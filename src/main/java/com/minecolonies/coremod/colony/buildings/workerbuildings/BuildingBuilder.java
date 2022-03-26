@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -46,7 +47,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
      * Both setting options.
      */
     public static final String MANUAL_SETTING = "com.minecolonies.core.builder.setting.manual";
-    public static final String AUTO_SETTING   = "com.minecolonies.core.builder.setting.automatic";
+    public static final String AUTO_SETTING = "com.minecolonies.core.builder.setting.automatic";
 
     /**
      * The job description.
@@ -129,7 +130,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
     /**
      * Checks whether the builder should automatically accept build orders.
-     * 
+     *
      * @return false if he should.
      */
     public boolean getManualMode()
@@ -146,13 +147,20 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<AbstractWorkOrder> list = new ArrayList<>();
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildingRemove.class, getPosition()));
-        // WorkOrderBuildDecoration is the superclass of BuildBuilding and thus returns both
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderDecoration.class, getPosition()));
-        list.removeIf(order -> order instanceof WorkOrderMiner);
+        final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(w -> w instanceof WorkOrderBuilding || w instanceof WorkOrderDecoration, getPosition());
+        list.sort((a, b) -> {
+            if (a.getWorkOrderType() == WorkOrderType.REMOVE)
+            {
+                return -1;
+            }
+            if (b.getWorkOrderType() == WorkOrderType.REMOVE)
+            {
+                return 1;
+            }
+            return 0;
+        });
 
-        final AbstractWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        final IWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
         if (order != null)
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
@@ -165,11 +173,11 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        for (final AbstractWorkOrder wo : list)
+        for (final IWorkOrder wo : list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
 
-            if (wo instanceof WorkOrderBuilding && !(wo instanceof WorkOrderBuildingRemove) && !((WorkOrderBuilding) wo).canBuild(citizen))
+            if (wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE && !wo.canBuild(citizen))
             {
                 continue;
             }
@@ -183,7 +191,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                     continue;
                 }
 
-                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding && ((WorkOrderBuilding) wo).canBuild(otherBuilder))
+                if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding && wo.canBuild(otherBuilder))
                 {
                     final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getLocation());
                     if (distance < distanceToBuilder)
@@ -204,7 +212,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
     /**
      * Sets the work order with the given id as the work order for this buildings citizen.
-     * 
+     *
      * @param orderId the id of the work order to select.
      */
     public void setWorkOrder(int orderId)

@@ -13,12 +13,18 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 public interface IWorkOrder
 {
     /**
-     * Read the WorkOrder data from the CompoundNBT.
+     * Get the ID of the work order.
      *
-     * @param compound NBT Tag compound
-     * @param manager  the workManager calling this method.
+     * @return ID of the work order
      */
-    void read(@NotNull CompoundNBT compound, IWorkManager manager);
+    int getID();
+
+    /**
+     * Set the ID of the work order.
+     *
+     * @param id the new ID for the work order
+     */
+    void setID(int id);
 
     /**
      * Getter for the priority.
@@ -41,17 +47,46 @@ public interface IWorkOrder
      */
     String getStructureName();
 
+    int getCurrentLevel();
+
+    int getTargetLevel();
+
+    int getAmountOfResources();
+
+    void setAmountOfResources(int newQuantity);
+
+    String getIteratorType();
+
+    void setIteratorType(String iteratorType);
+
+    boolean isCleared();
+
+    void setCleared(boolean cleared);
+
+    boolean isRequested();
+
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param requested true if the building has been cleared.
+     */
+    void setRequested(boolean requested);
+
     /**
      * Checks if the workOrder has changed.
      *
      * @return true if so.
      */
-    boolean hasChanged();
+    boolean isChanged();
 
     /**
      * Resets the changed variable.
      */
     void resetChange();
+
+    String getWorkOrderName();
+
+    WorkOrderType getWorkOrderType();
 
     /**
      * Get the current location of the building
@@ -73,15 +108,6 @@ public interface IWorkOrder
      * @return the location
      */
     boolean isMirrored();
-
-    /**
-     * Get the ID of the Work Order.
-     *
-     * @return ID of the work order
-     */
-    int getID();
-
-    void setID(int id);
 
     /**
      * Is the Work Order claimed?
@@ -132,14 +158,7 @@ public interface IWorkOrder
     String getDisplayName();
 
     /**
-     * Save the Work Order to an CompoundNBT.
-     *
-     * @param compound NBT tag compount
-     */
-    void write(@NotNull CompoundNBT compound);
-
-    /**
-     * Is this WorkOrder still valid?  If not, it will be deleted.
+     * Is this WorkOrder still valid? If not, it will be deleted.
      * <p>
      * Suppressing Sonar Rule squid:S1172 This rule does " Unused method parameters should be removed" But in this case extending class may need to use the colony parameter
      *
@@ -148,6 +167,21 @@ public interface IWorkOrder
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     boolean isValid(IColony colony);
+
+    /**
+     * Read the WorkOrder data from the CompoundNBT.
+     *
+     * @param compound NBT Tag compound
+     * @param manager  the workManager calling this method.
+     */
+    void read(@NotNull CompoundNBT compound, IWorkManager manager);
+
+    /**
+     * Save the Work Order to an CompoundNBT.
+     *
+     * @param compound NBT tag compount
+     */
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Writes the workOrders data to a byte buf for transition.
@@ -202,4 +236,6 @@ public interface IWorkOrder
      * @return true if so.
      */
     boolean tooFarFromAnyBuilder(IColony colony, int level);
+
+    boolean canBuild(@NotNull ICitizenData citizen);
 }
