@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
@@ -31,37 +33,30 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * NBT for storage.
      */
-    private static final String TAG_BUILDING            = "building";
-    private static final String TAG_TYPE                = "type";
-    private static final String TAG_TH_PRIORITY         = "priority";
-    private static final String TAG_ID                  = "id";
-    private static final String TAG_CLAIMED_BY          = "claimedBy";
+    private static final String TAG_BUILDING = "building";
+    private static final String TAG_TYPE = "type";
+    private static final String TAG_TH_PRIORITY = "priority";
+    private static final String TAG_ID = "id";
+    private static final String TAG_CLAIMED_BY = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
-    private static final String TAG_ITERATOR            = "iterator";
+    private static final String TAG_ITERATOR = "iterator";
 
     /**
      * Bimap of workOrder from string to class.
      */
     @NotNull
-    private static final BiMap<String, Class<? extends IWorkOrder>> nameToClassBiMap = HashBiMap.create();
+    private static final BiMap<String, Tuple<Type, Class<? extends IWorkOrder>>> nameToClassBiMap = HashBiMap.create();
 
     /*
      * WorkOrder registry.
      */
     static
     {
-        // Old mappings
-        addMapping("build", WorkOrderBuildingUpgrade.class);
-        addMapping("decoration", WorkOrderBuildDecoration.class);
-        addMapping("removal", WorkOrderBuildingRemove.class);
-        addMapping("building", WorkOrderBuildingBuild.class);
-        addMapping("miner", WorkOrderBuildMiner.class);
-
-        // New mappings
-        addMapping("building-build", WorkOrderBuildingBuild.class);
-        addMapping("building-upgrade", WorkOrderBuildingUpgrade.class);
-        addMapping("building-repair", WorkOrderBuildingRepair.class);
-        addMapping("building-remove", WorkOrderBuildingRemove.class);
+        addMapping("building", WorkOrderBuilding.class);
+        addMapping("decoration", WorkOrderDecoration.class);
+        addMapping("miner", WorkOrderMiner.class);
+        addMapping("build", WorkOrderBuilding.class);
+        addMapping("removal", WorkOrderBuilding.class);
     }
 
     /**
@@ -70,7 +65,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends IWorkOrder> orderClass)
+    private static void addMapping(final String name, @NotNull final Class<? extends IWorkOrder> orderClass, WorkOrderType )
     {
         if (nameToClassBiMap.containsKey(name))
         {
@@ -81,7 +76,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             if (orderClass.getDeclaredConstructor() != null)
             {
-                nameToClassBiMap.put(name, orderClass);
+                nameToClassBiMap.put(name, new Tuple<>(orderClass.getComponentType(), orderClass));
                 nameToClassBiMap.inverse().put(orderClass, name);
             }
         }
@@ -187,6 +182,11 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private WorkOrderType type;
 
     /**
+     * The amount of resources needed for this work order.
+     */
+    private int amountOfResources;
+
+    /**
      * Used iterator type in structurize.
      */
     private String iteratorType;
@@ -214,20 +214,25 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         this.iteratorType = "";
     }
 
-    /**
-     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
-     *
-     * @return the type.
-     */
-    @NotNull
-    protected abstract WorkOrderType getType();
+    public AbstractWorkOrder(WorkOrderType type)
+    {
+        this.type = type;
+        this.iteratorType = "";
+    }
 
     /**
      * Get the schematic this work order should be using, if any
      *
      * @return the schematic name.
      */
-    protected abstract String getSchematicName();
+    public abstract String getSchematicName();
+
+    /**
+     * Get the strcuture this work order should be using, if any
+     *
+     * @return the schematic name.
+     */
+    public abstract String getStructureName();
 
     /**
      * Get the name for the work order
@@ -241,28 +246,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      *
      * @return the custom name
      */
-    protected abstract String getCustomName();
-
-    /**
-     * Get the current location of the building
-     *
-     * @return the location
-     */
-    public abstract BlockPos getLocation();
-
-    /**
-     * Get the current rotation of the building
-     *
-     * @return the location
-     */
-    public abstract int getRotation();
-
-    /**
-     * Whether the current building is mirrored
-     *
-     * @return the location
-     */
-    public abstract boolean isMirrored();
+    public abstract String getCustomName();
 
     /**
      * Whether the work order can be built or not.
@@ -278,17 +262,20 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return ID of the work order
      */
     @Override
-    public int getID() {
+    public int getID()
+    {
         return this.id;
     }
 
     @Override
-    public void setID(final int id) {
+    public void setID(final int id)
+    {
         this.id = id;
     }
 
     /**
      * Get the used iteratortype.
+     *
      * @return the used type.
      */
     public String getIteratorType()
@@ -298,6 +285,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
     /**
      * Set the new iterator type if not set yet.
+     *
      * @param newType the new type to set.
      */
     public void setIteratorType(final String newType)
@@ -421,6 +409,16 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         claimedBy = null;
     }
 
+    public int getAmountOfResources()
+    {
+        return amountOfResources;
+    }
+
+    public void setAmountOfResources(int amountOfResources)
+    {
+        this.amountOfResources = amountOfResources;
+    }
+
     /**
      * Gets whether the work order area has been cleared.
      *
@@ -466,6 +464,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      *
      * @return the display name for the work order
      */
+    @Override
     public String getDisplayName()
     {
         final String customName = getCustomName();
@@ -626,10 +625,10 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public boolean canBeResolved(final IColony colony, final int level)
     {
         return colony.getBuildingManager()
-                 .getBuildings()
-                 .values()
-                 .stream()
-                 .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
+                .getBuildings()
+                .values()
+                .stream()
+                .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
     }
 
     /**

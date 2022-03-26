@@ -30,8 +30,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECO
 /**
  * AI class for the builder. Manages building and repairing buildings.
  */
-public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder, BuildingBuilder>
-{
+public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkOrder<JobBuilder, BuildingBuilder> {
     /**
      * over this y level the builder will be faster.
      */
@@ -77,31 +76,27 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      *
      * @param job the job he has.
      */
-    public EntityAIStructureBuilder(@NotNull final JobBuilder job)
-    {
+    public EntityAIStructureBuilder(@NotNull final JobBuilder job) {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING, 100),
-          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
+                new AITarget(IDLE, START_WORKING, 100),
+                new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
         );
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public int getBreakSpeedLevel()
-    {
+    public int getBreakSpeedLevel() {
         return getSecondarySkillLevel();
     }
 
     @Override
-    public int getPlaceSpeedLevel()
-    {
+    public int getPlaceSpeedLevel() {
         return getPrimarySkillLevel();
     }
 
     @Override
-    public Class<BuildingBuilder> getExpectedBuildingClass()
-    {
+    public Class<BuildingBuilder> getExpectedBuildingClass() {
         return BuildingBuilder.class;
     }
 
@@ -110,27 +105,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      *
      * @return true if we got a workorder to work with
      */
-    private boolean checkForWorkOrder()
-    {
-        if (!job.hasWorkOrder())
-        {
+    private boolean checkForWorkOrder() {
+        if (!job.hasWorkOrder()) {
             getOwnBuilding().searchWorkOrder();
             getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return false;
         }
 
-        final WorkOrderBuildDecoration wo = job.getWorkOrder();
+        final AbstractWorkOrder wo = job.getWorkOrder();
 
-        if (wo == null)
-        {
+        if (wo == null) {
             job.setWorkOrder(null);
             getOwnBuilding().setProgressPos(null, null);
             return false;
         }
 
-        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
-        if (building == null && wo instanceof WorkOrderBuilding && !(wo instanceof WorkOrderBuildingRemove))
-        {
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+        if (building == null && wo instanceof WorkOrderBuilding && !(wo instanceof WorkOrderBuildingRemove)) {
             job.complete();
             return false;
         }
@@ -139,25 +130,20 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure)
-    {
-        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
-        {
+    public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure) {
+        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null) {
             job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
         }
         structurePlacer = new Tuple<>(new StructurePlacer(structure, job.getWorkOrder().getIteratorType()), structure);
     }
 
     @Override
-    public boolean isAfterDumpPickupAllowed()
-    {
+    public boolean isAfterDumpPickupAllowed() {
         return !checkForWorkOrder();
     }
 
-    private IAIState startWorkingAtOwnBuilding()
-    {
-        if (walkToBuilding())
-        {
+    private IAIState startWorkingAtOwnBuilding() {
+        if (walkToBuilding()) {
             return getState();
         }
         return LOAD_STRUCTURE;
@@ -166,55 +152,44 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     /**
      * Kill all mobs at the building site.
      */
-    private void killMobs()
-    {
-        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildingBuild)
-        {
-            final BlockPos buildingPos = job.getWorkOrder().getSchematicLocation();
+    private void killMobs() {
+        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildingBuild) {
+            final BlockPos buildingPos = job.getWorkOrder().getLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
-            if (building != null)
-            {
+            if (building != null) {
                 WorldUtil.getEntitiesWithinBuilding(world, MonsterEntity.class, building, null).forEach(Entity::remove);
             }
         }
     }
 
     @Override
-    public void checkForExtraBuildingActions()
-    {
-        if (!getOwnBuilding().hasPurgedMobsToday())
-        {
+    public void checkForExtraBuildingActions() {
+        if (!getOwnBuilding().hasPurgedMobsToday()) {
             killMobs();
             getOwnBuilding().setPurgedMobsToday(true);
         }
     }
 
     @Override
-    public boolean walkToConstructionSite(final BlockPos currentBlock)
-    {
-        if (workFrom == null)
-        {
+    public boolean walkToConstructionSite(final BlockPos currentBlock) {
+        if (workFrom == null) {
             workFrom = findRandomPositionToWalkTo(5, currentBlock);
-            if (workFrom == null && pathBackupFactor > 10)
-            {
+            if (workFrom == null && pathBackupFactor > 10) {
                 workFrom = worker.blockPosition();
             }
             return false;
         }
 
-        if (walkToBlock(workFrom))
-        {
+        if (walkToBlock(workFrom)) {
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5 + 5 * pathBackupFactor)
-        {
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5L + (pathBackupFactor * 5L)) {
             workFrom = null;
             return false;
         }
 
-        if (pathBackupFactor > 1)
-        {
+        if (pathBackupFactor > 1) {
             pathBackupFactor--;
         }
 
@@ -222,34 +197,28 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata)
-    {
+    public boolean shallReplaceSolidSubstitutionBlock(final Block worldBlock, final BlockState worldMetadata) {
         return false;
     }
 
     @Override
-    public BlockState getSolidSubstitution(@NotNull final BlockPos location)
-    {
+    public BlockState getSolidSubstitution(@NotNull final BlockPos location) {
         return BlockUtils.getSubstitutionBlockAtWorld(world, location).getBlockState();
     }
 
     @Override
-    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos)
-    {
+    public int getBlockMiningDelay(@NotNull final BlockState state, @NotNull final BlockPos pos) {
         final int initialDelay = super.getBlockMiningDelay(state, pos);
 
-        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getServer().restrictBuilderUnderground.get())
-        {
+        if (pos.getY() > DEPTH_LEVEL_0 || !MineColonies.getConfig().getServer().restrictBuilderUnderground.get()) {
             return (int) (initialDelay * SPEED_BUFF_0);
         }
 
-        if (pos.getY() > DEPTH_LEVEL_1)
-        {
+        if (pos.getY() > DEPTH_LEVEL_1) {
             return initialDelay;
         }
 
-        if (pos.getY() < DEPTH_LEVEL_2)
-        {
+        if (pos.getY() < DEPTH_LEVEL_2) {
             return initialDelay * SPEED_BUFF_2;
         }
         return initialDelay * SPEED_BUFF_1;
@@ -261,64 +230,56 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * @return the number of actions done before item dump.
      */
     @Override
-    protected int getActionsDoneUntilDumping()
-    {
+    protected int getActionsDoneUntilDumping() {
         return ACTIONS_UNTIL_DUMP;
     }
 
     @Override
-    protected void sendCompletionMessage(final WorkOrderBuildDecoration wo)
-    {
+    protected void sendCompletionMessage(final AbstractWorkOrder wo) {
         super.sendCompletionMessage(wo);
 
-        final BlockPos position = wo.getSchematicLocation();
-        if (getOwnBuilding().getManualMode())
-        {
+        final BlockPos position = wo.getLocation();
+        if (getOwnBuilding().getManualMode()) {
             boolean hasInQueue = false;
-            for (final IWorkOrder workorder : getOwnBuilding().getColony().getWorkManager().getWorkOrders().values())
-            {
-                if (workorder.getID() != wo.getID() && workorder.isClaimedBy(worker.getCitizenData()))
-                {
+            for (final IWorkOrder workorder : getOwnBuilding().getColony().getWorkManager().getWorkOrders().values()) {
+                if (workorder.getID() != wo.getID() && workorder.isClaimedBy(worker.getCitizenData())) {
                     hasInQueue = true;
                 }
             }
 
-            if (!hasInQueue)
-            {
-                if (wo instanceof WorkOrderBuildingBuild)
-                {
+            if (!hasInQueue) {
+                if (wo instanceof WorkOrderBuilding) {
                     worker.getCitizenChatHandler().sendLocalizedChat(
-                      COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL,
-                      wo.getCustomBuildingName(),
-                      position.getX(),
-                      position.getY(),
-                      position.getZ());
-                }
-                else
-                {
+                            COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL,
+                            wo.getDisplayName(),
+                            position.getX(),
+                            position.getY(),
+                            position.getZ());
+                } else if (wo instanceof WorkOrderDecoration) {
                     worker.getCitizenChatHandler().sendLocalizedChat(
-                      COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
-                      wo.getCustomBuildingName(),
-                      position.getX(),
-                      position.getY(),
-                      position.getZ());
+                            COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
+                            wo.getDisplayName(),
+                            position.getX(),
+                            position.getY(),
+                            position.getZ());
                 }
                 return;
             }
         }
 
-        if (wo instanceof WorkOrderBuildingBuild)
-        {
-            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, wo.getCustomBuildingName(), position.getX(), position.getY(), position.getZ());
-        }
-        else
-        {
+        if (wo instanceof WorkOrderBuilding) {
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE,
+                    wo.getDisplayName(),
+                    position.getX(),
+                    position.getY(),
+                    position.getZ());
+        } else if (wo instanceof WorkOrderDecoration) {
             worker.getCitizenChatHandler().sendLocalizedChat(
-              COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
-              wo.getCustomBuildingName(),
-              position.getX(),
-              position.getY(),
-              position.getZ());
+                    COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
+                    wo.getDisplayName(),
+                    position.getX(),
+                    position.getY(),
+                    position.getZ());
         }
     }
 }

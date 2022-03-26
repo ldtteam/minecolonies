@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -19,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents one building order to complete. Has his own structure for the building.
  */
-public abstract class WorkOrderBuilding extends AbstractWorkOrder
+public class WorkOrderBuilding extends AbstractWorkOrder
 {
     private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
     private static final String TAG_SCHEMATIC_NAME = "upgrade";
-    private static final String TAG_DISP_NAME     = "displayname";
+    private static final String TAG_DISP_NAME = "displayname";
 
     /**
      * Max distance a builder can have from the building site.
@@ -77,12 +78,13 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     /**
      * Create a new WorkOrder.
      *
+     * @param type
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuilding(@NotNull final IBuilding building, final int level)
+    public WorkOrderBuilding(WorkOrderType type, @NotNull final IBuilding building, final int level)
     {
-        super();
+        super(type);
         this.currentLevel = building.getBuildingLevel();
         this.targetLevel = level;
         this.buildingNameResourceKey = building.getBuildingType().getTranslationKey();
@@ -97,13 +99,11 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
             {
                 this.schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
                         .replaceAll("\\d$", "") + this.targetLevel;
-            }
-            else
+            } else
             {
                 this.schematicName = building.getSchematicName() + this.targetLevel;
             }
-        }
-        else
+        } else
         {
             this.schematicName = building.getSchematicName() + this.targetLevel;
         }
@@ -126,9 +126,15 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    protected String getSchematicName()
+    public String getSchematicName()
     {
         return schematicName;
+    }
+
+    @Override
+    public String getStructureName()
+    {
+        return structureName;
     }
 
     @Override
@@ -138,7 +144,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    protected String getCustomName()
+    public String getCustomName()
     {
         return customBuildingName;
     }
@@ -150,15 +156,35 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    protected int getRotation()
+    public int getRotation()
     {
         return buildingRotation;
     }
 
     @Override
-    protected boolean isMirrored()
+    public boolean isMirrored()
     {
         return isBuildingMirrored;
+    }
+
+    public int getCurrentLevel()
+    {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int currentLevel)
+    {
+        this.currentLevel = currentLevel;
+    }
+
+    public int getTargetLevel()
+    {
+        return targetLevel;
+    }
+
+    public void setTargetLevel(int targetLevel)
+    {
+        this.targetLevel = targetLevel;
     }
 
     /**
@@ -201,13 +227,14 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
 
         final IBuilding building = citizen.getWorkBuilding();
         return canBuildIgnoringDistance(building.getPosition(), building.getBuildingLevel())
-                 && citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ;
+                && citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ;
     }
 
     /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     *
      * @param builderLocation position of the builders own hut.
-     * @param builderLevel level of the builders hut.
+     * @param builderLevel    level of the builders hut.
      * @return true if so.
      */
     private boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
@@ -223,11 +250,11 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
         return colony.getBuildingManager()
-                 .getBuildings()
-                 .values()
-                 .stream()
-                 .noneMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty()
-                                          && building.getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ);
+                .getBuildings()
+                .values()
+                .stream()
+                .noneMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty()
+                        && building.getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**
@@ -253,8 +280,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
             final int level = this.targetLevel;
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                     AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
-        }
-        else
+        } else
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                     AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, 0));

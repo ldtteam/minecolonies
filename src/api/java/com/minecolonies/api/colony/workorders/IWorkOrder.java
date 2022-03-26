@@ -35,6 +35,13 @@ public interface IWorkOrder
     void setPriority(int priority);
 
     /**
+     * Get the strcuture this work order should be using, if any
+     *
+     * @return the schematic name.
+     */
+    String getStructureName();
+
+    /**
      * Checks if the workOrder has changed.
      *
      * @return true if so.
@@ -45,6 +52,27 @@ public interface IWorkOrder
      * Resets the changed variable.
      */
     void resetChange();
+
+    /**
+     * Get the current location of the building
+     *
+     * @return the location
+     */
+    BlockPos getLocation();
+
+    /**
+     * Get the current rotation of the building
+     *
+     * @return the location
+     */
+    int getRotation();
+
+    /**
+     * Whether the current building is mirrored
+     *
+     * @return the location
+     */
+    boolean isMirrored();
 
     /**
      * Get the ID of the Work Order.
@@ -95,6 +123,13 @@ public interface IWorkOrder
      * Clear the Claimed By status of the Work Order.
      */
     void clearClaimedBy();
+
+    /**
+     * Get the name of the work order, provides the custom name or the work order name when no custom name is given
+     *
+     * @return the display name for the work order
+     */
+    String getDisplayName();
 
     /**
      * Save the Work Order to an CompoundNBT.

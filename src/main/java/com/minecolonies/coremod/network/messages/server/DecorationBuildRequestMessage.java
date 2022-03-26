@@ -10,7 +10,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -124,8 +124,8 @@ public class DecorationBuildRequestMessage implements IMessage
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-                                                                  .filter(entry -> entry.getValue() instanceof WorkOrderBuildDecoration)
-                                                                  .filter(entry -> ((WorkOrderBuildDecoration) entry.getValue()).getSchematicLocation().equals(pos)).findFirst();
+                                                                  .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
+                                                                  .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
 
             if (wo.isPresent())
             {
@@ -165,7 +165,7 @@ public class DecorationBuildRequestMessage implements IMessage
             }
 
             final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
-            final WorkOrderBuildDecoration order = new WorkOrderBuildDecoration(name + level,
+            final WorkOrderDecoration order = new WorkOrderDecorationBuild(name + level,
               name + level,
               difference,
               pos,

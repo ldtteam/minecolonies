@@ -20,34 +20,35 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 /**
  * A work order that the build can take to build decorations.
  */
-public class WorkOrderBuildDecoration extends AbstractWorkOrder
+public class WorkOrderDecoration extends AbstractWorkOrder
 {
     /**
      * NBT Tags for storage.
      */
     private static final String TAG_WORK_ORDER_NAME = "workOrderName";
-    private static final String TAG_IS_CLEARED     = "cleared";
-    private static final String TAG_IS_REQUESTED   = "requested";
-    private static final String TAG_IS_MIRRORED    = "mirrored";
+    private static final String TAG_IS_CLEARED = "cleared";
+    private static final String TAG_IS_REQUESTED = "requested";
+    private static final String TAG_IS_MIRRORED = "mirrored";
 
-    private static final String TAG_SCHEMATIC_NAME    = "structureName";
+    private static final String TAG_SCHEMATIC_NAME = "structureName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
-    private static final String TAG_AMOUNT_OF_RES     = "resQuantity";
+    private static final String TAG_AMOUNT_OF_RES = "resQuantity";
 
-    protected boolean isBuildingMirrored;
-    protected int     buildingRotation;
-    protected String  structureName;
-    protected boolean cleared;
-    protected String  workOrderName;
-    protected int     amountOfRes;
-    protected boolean levelUp                        = false;
-    protected boolean hasSentMessageForThisWorkOrder = false;
-    private   boolean requested;
+    private BlockPos buildingLocation;
+    private int buildingRotation;
+    private boolean isBuildingMirrored;
+    private String structureName;
+    private boolean cleared;
+    private String workOrderName;
+    private int amountOfRes;
+    private boolean levelUp = false;
+    private boolean hasSentMessageForThisWorkOrder = false;
+    private boolean requested;
 
     /**
      * Unused constructor for reflection.
      */
-    public WorkOrderBuildDecoration()
+    public WorkOrderDecoration()
     {
         super();
     }
@@ -61,7 +62,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      * @param location      The location where the decoration should be built.
      * @param mirror        Is the decoration mirrored?
      */
-    public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
+    public WorkOrderDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location, final boolean mirror)
     {
         super();
         //normalise structure name
@@ -90,7 +91,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
      */
     public String getName()
     {
-        return workOrderName.replaceAll("schematics/(?:decorations/)?","");
+        return workOrderName.replaceAll("schematics/(?:decorations/)?", "");
     }
 
     /**
@@ -130,8 +131,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
         if (structureName == null)
         {
             Log.getLogger().error("WorkOrderBuild.write: structureName should not be null!!!", new Exception());
-        }
-        else
+        } else
         {
             compound.putString(TAG_SCHEMATIC_NAME, structureName);
         }
@@ -143,20 +143,7 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public boolean isValid(final IColony colony)
-    {
-        return structureName != null && super.isValid(colony);
-    }
-
-    @NotNull
-    @Override
-    protected WorkOrderType getType()
-    {
-        return WorkOrderType.BUILD;
-    }
-
-    @Override
-    protected String getSchematicName()
+    public String getSchematicName()
     {
         return "";
     }
@@ -168,9 +155,21 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     }
 
     @Override
-    protected String getCustomName()
+    public String getCustomName()
     {
         return "";
+    }
+
+    @Override
+    public BlockPos getLocation()
+    {
+        return null;
+    }
+
+    @Override
+    public int getRotation()
+    {
+        return 0;
     }
 
     @Override
@@ -226,14 +225,10 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
 
         hasSentMessageForThisWorkOrder = true;
         LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-          "entity.builder.messageNoBuilder");
+                "entity.builder.messageNoBuilder");
     }
 
-    /**
-     * Get the name the structure for this work order.
-     *
-     * @return the internal string for this structure.
-     */
+    @Override
     public String getStructureName()
     {
         return structureName;
@@ -322,4 +317,11 @@ public class WorkOrderBuildDecoration extends AbstractWorkOrder
     {
         this.amountOfRes = amountOfRes;
     }
+
+    @Override
+    public boolean isValid(final IColony colony)
+    {
+        return structureName != null && super.isValid(colony);
+    }
+
 }

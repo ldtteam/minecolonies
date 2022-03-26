@@ -149,8 +149,8 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
         final List<AbstractWorkOrder> list = new ArrayList<>();
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildingRemove.class, getPosition()));
         // WorkOrderBuildDecoration is the superclass of BuildBuilding and thus returns both
-        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
-        list.removeIf(order -> order instanceof WorkOrderBuildMiner);
+        list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderDecoration.class, getPosition()));
+        list.removeIf(order -> order instanceof WorkOrderMiner);
 
         final AbstractWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
         if (order != null)
@@ -228,9 +228,9 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (wo instanceof WorkOrderBuildDecoration)
+        if (wo instanceof WorkOrderDecoration)
         {
-            WorkOrderBuildDecoration bo = (WorkOrderBuildDecoration) wo;
+            WorkOrderDecoration bo = (WorkOrderDecoration) wo;
             citizen.getJob(JobBuilder.class).setWorkOrder(bo);
             wo.setClaimedBy(citizen);
             getColony().getWorkManager().setDirty(true);

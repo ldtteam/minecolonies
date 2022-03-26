@@ -35,20 +35,20 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
  */
 public class WorkManager implements IWorkManager
 {
-    private static final String                   TAG_WORK_ORDERS = "workOrders";
+    private static final String TAG_WORK_ORDERS = "workOrders";
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */
-    private final        Colony                   colony;
+    private final Colony colony;
     @NotNull
-    private final        Map<Integer, IWorkOrder> workOrders      = new LinkedHashMap<>();
-    private              int                      topWorkOrderId  = 0;
+    private final Map<Integer, IWorkOrder> workOrders = new LinkedHashMap<>();
+    private int topWorkOrderId = 0;
     /**
      * Checks if there has been changes.
      */
-    private              boolean                  dirty           = false;
+    private boolean dirty = false;
 
     /**
      * Constructor, saves reference to the colony.
@@ -243,28 +243,24 @@ public class WorkManager implements IWorkManager
     {
         dirty = true;
 
-        if (order instanceof WorkOrderBuildDecoration && !(order instanceof WorkOrderBuildMiner))
+        if (order instanceof AbstractWorkOrder && !(order instanceof WorkOrderMiner))
         {
             for (final IWorkOrder or : workOrders.values())
             {
-                if (or instanceof WorkOrderBuildDecoration)
+                if (or.getLocation().equals(order.getLocation()) && or.getStructureName().equals(order.getStructureName()))
                 {
-                    if (((WorkOrderBuildDecoration) or).getSchematicLocation().equals(((WorkOrderBuildDecoration) order).buildingLocation)
-                          && ((WorkOrderBuildDecoration) or).getStructureName().equals(((WorkOrderBuildDecoration) order).getStructureName()))
-                    {
-                        Log.getLogger().warn("Avoiding adding duplicate workOrder");
-                        removeWorkOrder(or);
-                        break;
-                    }
+                    Log.getLogger().warn("Avoiding adding duplicate workOrder");
+                    removeWorkOrder(or);
+                    break;
                 }
             }
-            if (!readingFromNbt && !isWorkOrderWithinColony((WorkOrderBuildDecoration) order))
+            if (!readingFromNbt && !isWorkOrderWithinColony(order))
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  OUT_OF_COLONY,
-                  ((WorkOrderBuildDecoration) order).getName(),
-                  ((WorkOrderBuildDecoration) order).getSchematicLocation().getX(),
-                  ((WorkOrderBuildDecoration) order).getSchematicLocation().getZ());
+                        OUT_OF_COLONY,
+                        order.getDisplayName(),
+                        order.getLocation().getX(),
+                        order.getLocation().getZ());
                 return;
             }
         }
@@ -276,19 +272,18 @@ public class WorkManager implements IWorkManager
             order.setID(topWorkOrderId);
         }
 
-        if (order instanceof WorkOrderBuildDecoration && !readingFromNbt)
+        if (order instanceof AbstractWorkOrder && !readingFromNbt)
         {
-            final StructureName structureName = new StructureName(((WorkOrderBuildDecoration) order).getStructureName());
-            if (order instanceof WorkOrderBuildingBuild)
+            final StructureName structureName = new StructureName(order.getStructureName());
+            if (order instanceof WorkOrderBuilding)
             {
-                final int level = ((WorkOrderBuildingBuild) order).getUpgradeLevel();
+                final int level = ((WorkOrderBuilding) order).getTargetLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
-            }
-            else
+                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
+            } else if (order instanceof WorkOrderDecoration)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
+                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
             }
         }
 
@@ -302,15 +297,15 @@ public class WorkManager implements IWorkManager
      * @param order the workorder to check.
      * @return true if so.
      */
-    private boolean isWorkOrderWithinColony(final WorkOrderBuildDecoration order)
+    private boolean isWorkOrderWithinColony(final IWorkOrder order)
     {
         final World world = colony.getWorld();
         final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(order.getSchematicLocation(),
-          world,
-          new LoadOnlyStructureHandler(world, order.getSchematicLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
-          order.getRotation(world),
-          order.isMirrored());
+                = ColonyUtils.calculateCorners(order.getLocation(),
+                world,
+                new LoadOnlyStructureHandler(world, order.getLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+                order.getRotation(),
+                order.isMirrored());
 
         Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(corners.getA().getX(), corners.getB().getX()) + 1;
@@ -319,9 +314,9 @@ public class WorkManager implements IWorkManager
         final int minZ = Math.min(corners.getA().getZ(), corners.getB().getZ()) + 1;
         final int maxZ = Math.max(corners.getA().getZ(), corners.getB().getZ());
 
-        for (int x = minX; x < maxX; x+=16)
+        for (int x = minX; x < maxX; x += 16)
         {
-            for (int z = minZ; z < maxZ; z+=16)
+            for (int z = minZ; z < maxZ; z += 16)
             {
                 final int chunkX = x >> 4;
                 final int chunkZ = z >> 4;
@@ -356,8 +351,7 @@ public class WorkManager implements IWorkManager
             {
                 iter.remove();
                 dirty = true;
-            }
-            else if (o.hasChanged())
+            } else if (o.hasChanged())
             {
                 dirty = true;
                 o.resetChange();
@@ -376,8 +370,8 @@ public class WorkManager implements IWorkManager
     public <W extends IWorkOrder> List<W> getOrderedList(@NotNull final Class<W> type, final BlockPos builder)
     {
         return workOrders.values().stream().filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)) && type.isInstance(o)).map(o -> (W) o)
-                 .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
-                 .collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+                .collect(Collectors.toList());
     }
 
     /**

@@ -17,12 +17,14 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,13 +94,13 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
-            final WorkOrderBuildDecoration workOrderBuildDecoration = structureBuilderJob.getWorkOrder();
-            if (workOrderBuildDecoration != null)
+            final AbstractWorkOrder workOrderDecoration = structureBuilderJob.getWorkOrder();
+            if (workOrderDecoration != null)
             {
-                final ITextComponent name = workOrderBuildDecoration.getCustomBuildingName();
+                final ITextComponent name = new TranslationTextComponent(workOrderDecoration.getDisplayName());
                 buf.writeUtf(name.getContents());
 
-                buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
+                buf.writeDouble(workOrderDecoration.getAmountOfResources() == 0 ? 0 : qty / workOrderDecoration.getAmountOfResources());
                 buf.writeInt(totalStages);
                 buf.writeInt(currentStage);
                 return;

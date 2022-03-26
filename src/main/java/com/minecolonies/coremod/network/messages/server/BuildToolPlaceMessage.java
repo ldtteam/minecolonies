@@ -16,16 +16,14 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -279,7 +277,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Creates the {@link WorkOrderBuildDecoration} to start building the decoration.
+     * Creates the {@link WorkOrderDecoration} to start building the decoration.
      *
      * @param world         The world the decoration is being built in.
      * @param player        The player who placed the decoration.
@@ -317,7 +315,7 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror);
+            WorkOrderDecoration woDeco = new WorkOrderDecorationBuild(schem, woName, rotation, buildPos, mirror);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);
