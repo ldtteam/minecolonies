@@ -46,10 +46,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.Tags;
-import net.minecraft.tags.FluidTags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.state.properties.BlockStateProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -440,7 +440,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         final BlockState curBlockState = world.getBlockState(position);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if (curBlock.is(Tags.Blocks.DIRT) || curBlock.is(Tags.Blocks.STONE) || curBlockState.getMaterial().isLiquid() || curBlock instanceof FarmlandBlock)
+        if (curBlock.is(Tags.Blocks.DIRT) || curBlock.is(Tags.Blocks.STONE) || curBlockState.getMaterial().isLiquid() || ((curBlock instanceof IWaterLoggable) && curBlockState.getValue(BlockStateProperties.WATERLOGGED)) || curBlock instanceof FarmlandBlock)
         {
             if (depth < 0)
             {
