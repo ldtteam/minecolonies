@@ -398,18 +398,18 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_dough", has(ModItems.breadDough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_bread"), "_", method));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cakeBatter),
-                Items.CAKE, 0.35f, 200)
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.cakeBatter),
+                Items.CAKE, 0.35f, cookingTime, serializer)
                 .unlockedBy("has_dough", has(ModItems.cakeBatter))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cake"), "_", method));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cookieDough),
-                Items.COOKIE, 0.0475f, 25)
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.cookieDough),
+                Items.COOKIE, 0.0475f, cookingTime / 8, serializer)
                 .unlockedBy("has_dough", has(ModItems.cookieDough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cookies"), "_", method));
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.rawPumpkinPie),
-                Items.PUMPKIN_PIE, 0.35f, 200)
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.rawPumpkinPie),
+                Items.PUMPKIN_PIE, 0.35f, cookingTime, serializer)
                 .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", method));
     }

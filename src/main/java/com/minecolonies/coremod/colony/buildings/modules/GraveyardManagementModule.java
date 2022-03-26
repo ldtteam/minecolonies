@@ -145,6 +145,23 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
     }
 
     /**
+     * Check if one of the citizens in the list is resting.
+     * @param citizens the citizens to check.
+     * @return true if so.
+     */
+    public boolean hasRestingCitizen(final Set<String> citizens)
+    {
+        for (final String citizen : citizens)
+        {
+            if (restingCitizen.contains(citizen))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Add a citizen to the list of resting citizen in this graveyard
      */
     public void buryCitizenHere(final Tuple<BlockPos, Direction> positionAndDirection)
@@ -168,7 +185,10 @@ public class GraveyardManagementModule extends AbstractBuildingModule implements
                 final ArrayList<String> lines = new ArrayList<>();
                 lines.add(firstName);
                 lines.add(lastName);
-                if (lastGraveData.getCitizenJobName() != null) { lines.add(lastGraveData.getCitizenJobName()); }
+                if (lastGraveData.getCitizenJobName() != null)
+                {
+                    lines.add(lastGraveData.getCitizenJobName());
+                }
                 ((TileEntityNamedGrave) tileEntity).setTextLines(lines);
             }
 
