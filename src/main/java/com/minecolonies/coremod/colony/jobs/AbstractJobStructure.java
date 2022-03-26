@@ -5,7 +5,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -138,7 +138,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                         final CompoundNBT compoundNBT = tileEntityData[y][z][x];
                         if (compoundNBT != null && compoundNBT.contains(TAG_BLUEPRINTDATA))
                         {
-                            final BlockPos tePos = getWorkOrder().getSchematicLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
+                            final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
                             final TileEntity te = getColony().getWorld().getBlockEntity(tePos);
                             if (te instanceof IBlueprintDataProvider)
                             {
@@ -162,9 +162,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return WorkOrderBuildDecoration for the Build
      */
-    public WorkOrderBuildDecoration getWorkOrder()
+    public AbstractWorkOrder getWorkOrder()
     {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuildDecoration.class);
+        return getColony().getWorkManager().getWorkOrder(workOrderId, AbstractWorkOrder.class);
     }
 
     /**
@@ -184,7 +184,7 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(@Nullable final WorkOrderBuildDecoration order)
+    public void setWorkOrder(@Nullable final AbstractWorkOrder order)
     {
         if (order == null)
         {

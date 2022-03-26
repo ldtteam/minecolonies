@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -12,13 +11,10 @@ import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -196,57 +192,19 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private String iteratorType;
 
     /**
-     * If the workOrder changed.
-     */
-    private boolean changed = false;
-
-    /**
      * Whether the area is cleared.
      */
     private boolean cleared;
 
-    private BlockPos location;
+    /**
+     * Whether the resources are requested.
+     */
+    private boolean requested;
 
-    private int rotation;
-
-    private boolean isMirrored;
-//
-//    /**
-//     * The location to built at.
-//     */
-//    private BlockPos buildingLocation;
-//
-//    /**
-//     * The rotation to build with.
-//     */
-//    private int buildingRotation;
-//
-//    /**
-//     * Whether the building was mirrored.
-//     */
-//    private boolean isBuildingMirrored;
-//
-//    /**
-//     * The level of the building before the work order.
-//     */
-//    private int currentLevel;
-//
-//    /**
-//     * The level of the building after the work order.
-//     */
-//    private int completedLevel;
-//
-//
-//
-//    private String structureName;
-//
-//    private String workOrderName;
-//
-//    private int amountOfResources;
-//
-//    private boolean hasSentMessageForThisWorkOrder = false;
-//
-//    private boolean requested;
+    /**
+     * If the workOrder changed.
+     */
+    private boolean changed = false;
 
     /**
      * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
@@ -290,21 +248,21 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      *
      * @return the location
      */
-    protected abstract BlockPos getLocation();
+    public abstract BlockPos getLocation();
 
     /**
      * Get the current rotation of the building
      *
      * @return the location
      */
-    protected abstract int getRotation();
+    public abstract int getRotation();
 
     /**
      * Whether the current building is mirrored
      *
      * @return the location
      */
-    protected abstract int isMirrored();
+    public abstract boolean isMirrored();
 
     /**
      * Whether the work order can be built or not.
@@ -464,9 +422,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     /**
-     * Gets whether or not the building has been cleared.
+     * Gets whether the work order area has been cleared.
      *
-     * @return true if the building has been cleared.
+     * @return true if the work order area has been cleared.
      */
     public boolean isCleared()
     {
@@ -474,13 +432,48 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     /**
-     * Set whether or not the building has been cleared.
+     * Set whether the work order area has been cleared.
      *
-     * @param cleared true if the building has been cleared.
+     * @param cleared true if the work order area has been cleared.
      */
     public void setCleared(final boolean cleared)
     {
         this.cleared = cleared;
+    }
+
+    /**
+     * Gets whether the resources for the work order have been requested.
+     *
+     * @return true if the building has been cleared.
+     */
+    public boolean isRequested()
+    {
+        return requested;
+    }
+
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param requested true if the building has been cleared.
+     */
+    public void setRequested(final boolean requested)
+    {
+        this.requested = requested;
+    }
+
+    /**
+     * Get the name of the work order, provides the custom name or the work order name when no custom name is given
+     *
+     * @return the display name for the work order
+     */
+    public String getDisplayName()
+    {
+        final String customName = getCustomName();
+        if (!customName.isEmpty())
+        {
+            return customName;
+        }
+        return getWorkOrderName();
     }
 
     /**
@@ -496,28 +489,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public boolean isValid(final IColony colony)
     {
         return true;
-    }
-
-    public void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
-    {
-        if (hasSentMessageForThisWorkOrder)
-        {
-            return;
-        }
-
-        if (hasBuilder && sendMessage)
-        {
-            hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                    "entity.builder.messageBuilderNecessary", Integer.toString(this.upgradeLevel));
-        }
-
-        if (!hasBuilder)
-        {
-            hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                    "entity.builder.messageNoBuilder");
-        }
     }
 
     /**
@@ -551,7 +522,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
-        location = BlockPosUtil.read(compound, TAG_BUILDING);
         iteratorType = compound.getString(TAG_ITERATOR);
     }
 
@@ -577,7 +547,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        BlockPosUtil.write(compound, TAG_BUILDING, location);
         compound.putString(TAG_ITERATOR, iteratorType);
     }
 
@@ -596,25 +565,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeUtf(getSchematicName());
         buf.writeUtf(getWorkOrderName());
         buf.writeUtf(getCustomName());
-        buf.writeBlockPos(location == null ? BlockPos.ZERO : location);
-        buf.writeInt(rotation);
-        buf.writeBoolean(isMirrored);
         buf.writeInt(0);
-    }
-
-    /**
-     * Get the display name of the work order
-     *
-     * @return a description string.
-     */
-    public ITextComponent getCustomBuildingName()
-    {
-        String customName = getCustomName();
-        if (customName != null)
-        {
-
-        }
-        return new TranslationTextComponent(getWorkOrderName());
     }
 
     /**

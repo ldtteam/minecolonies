@@ -28,6 +28,7 @@ import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +97,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
-            final WorkOrderBuildDecoration wo = job.getWorkOrder();
+            final AbstractWorkOrder wo = job.getWorkOrder();
             if (wo == null)
             {
                 Log.getLogger().error(
@@ -109,16 +110,17 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
             if (wo instanceof WorkOrderBuildingBuild)
             {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
                       String.format("Worker (%d:%d) ERROR - Starting and missing building(%s)",
-                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getSchematicLocation()), new Exception());
+                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getLocation()), new Exception());
                     return IDLE;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getWorkOrder().getCustomBuildingName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART,
+                        new TranslationTextComponent(job.getWorkOrder().getDisplayName()));
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -128,7 +130,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if (!(wo instanceof WorkOrderBuildMiner))
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getCustomBuildingName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART,
+                        new TranslationTextComponent(job.getWorkOrder().getDisplayName()));
             }
             return getState();
         }
@@ -148,15 +151,15 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void loadStructure()
     {
-        final WorkOrderBuildDecoration workOrder = job.getWorkOrder();
+        final AbstractWorkOrder workOrder = job.getWorkOrder();
 
         if (workOrder == null)
         {
             return;
         }
 
-        final BlockPos pos = workOrder.getSchematicLocation();
-        if (workOrder instanceof WorkOrderBuildingBuild && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
+        final BlockPos pos = workOrder.getLocation();
+        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(workOrder);

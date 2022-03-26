@@ -17,10 +17,7 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildingRemove;
+import com.minecolonies.coremod.colony.workorders.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -149,13 +146,13 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<WorkOrderBuildDecoration> list = new ArrayList<>();
+        final List<AbstractWorkOrder> list = new ArrayList<>();
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildingRemove.class, getPosition()));
         // WorkOrderBuildDecoration is the superclass of BuildBuilding and thus returns both
         list.addAll(getColony().getWorkManager().getOrderedList(WorkOrderBuildDecoration.class, getPosition()));
         list.removeIf(order -> order instanceof WorkOrderBuildMiner);
 
-        final WorkOrderBuildDecoration order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
+        final AbstractWorkOrder order = list.stream().filter(w -> w.getClaimedBy() != null && w.getClaimedBy().equals(getPosition())).findFirst().orElse(null);
         if (order != null)
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(order);
@@ -168,7 +165,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        for (final WorkOrderBuildDecoration wo : list)
+        for (final AbstractWorkOrder wo : list)
         {
             double distanceToBuilder = Double.MAX_VALUE;
 
@@ -188,7 +185,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
 
                 if (!job.hasWorkOrder() && wo instanceof WorkOrderBuilding && ((WorkOrderBuilding) wo).canBuild(otherBuilder))
                 {
-                    final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getSchematicLocation());
+                    final double distance = otherBuilder.getWorkBuilding().getID().distSqr(wo.getLocation());
                     if (distance < distanceToBuilder)
                     {
                         distanceToBuilder = distance;
@@ -196,7 +193,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
                 }
             }
 
-            if (citizen.getWorkBuilding().getID().distSqr(wo.getSchematicLocation()) < distanceToBuilder)
+            if (citizen.getWorkBuilding().getID().distSqr(wo.getLocation()) < distanceToBuilder)
             {
                 citizen.getJob(JobBuilder.class).setWorkOrder(wo);
                 wo.setClaimedBy(citizen);

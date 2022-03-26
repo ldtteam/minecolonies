@@ -2,22 +2,18 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,7 +38,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     /**
      * The level the building should be upgraded to
      */
-    private int upgradeLevel;
+    private int targetLevel;
 
     /**
      * The schematic this building is using
@@ -88,7 +84,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     {
         super();
         this.currentLevel = building.getBuildingLevel();
-        this.upgradeLevel = level;
+        this.targetLevel = level;
         this.buildingNameResourceKey = building.getBuildingType().getTranslationKey();
         this.buildingLocation = building.getID();
         this.buildingRotation = building.getRotation();
@@ -100,16 +96,16 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
             if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
             {
                 this.schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
-                        .replaceAll("\\d$", "") + level;
+                        .replaceAll("\\d$", "") + this.targetLevel;
             }
             else
             {
-                this.schematicName = building.getSchematicName() + level;
+                this.schematicName = building.getSchematicName() + this.targetLevel;
             }
         }
         else
         {
-            this.schematicName = building.getSchematicName() + level;
+            this.schematicName = building.getSchematicName() + this.targetLevel;
         }
 
         //normalize the structureName
@@ -148,9 +144,21 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    protected BlockPos getLocation()
+    public BlockPos getLocation()
     {
         return buildingLocation;
+    }
+
+    @Override
+    protected int getRotation()
+    {
+        return buildingRotation;
+    }
+
+    @Override
+    protected boolean isMirrored()
+    {
+        return isBuildingMirrored;
     }
 
     /**
@@ -163,7 +171,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         super.read(compound, manager);
-        upgradeLevel = compound.getInt(TAG_UPGRADE_LEVEL);
+        targetLevel = compound.getInt(TAG_UPGRADE_LEVEL);
         schematicName = compound.getString(TAG_SCHEMATIC_NAME);
         customBuildingName = compound.getString(TAG_DISP_NAME);
     }
@@ -177,7 +185,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     public void write(@NotNull final CompoundNBT compound)
     {
         super.write(compound);
-        compound.putInt(TAG_UPGRADE_LEVEL, upgradeLevel);
+        compound.putInt(TAG_UPGRADE_LEVEL, targetLevel);
         compound.putString(TAG_SCHEMATIC_NAME, schematicName);
         compound.putString(TAG_DISP_NAME, customBuildingName);
     }
@@ -208,7 +216,7 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
 
-        return (builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL || (builderLocation.equals(getLocation())));
+        return (builderLevel >= targetLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL || (builderLocation.equals(getLocation())));
     }
 
     @Override
@@ -235,25 +243,14 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    public ITextComponent getCustomBuildingName()
-    {
-        if (customBuildingName.isEmpty())
-        {
-            return new TranslationTextComponent(schematicName);
-        }
-
-        return new TranslationTextComponent(customBuildingName);
-    }
-
-    @Override
     public void onCompleted(final IColony colony, ICitizenData citizen)
     {
         super.onCompleted(colony, citizen);
 
-        final StructureName structureName = new StructureName(getStructureName());
+        final StructureName structureName = new StructureName(this.structureName);
         if (this instanceof WorkOrderBuildingBuild)
         {
-            final int level = this.getUpgradeLevel();
+            final int level = this.targetLevel;
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                     AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, level));
         }
@@ -286,20 +283,5 @@ public abstract class WorkOrderBuilding extends AbstractWorkOrder
             building.markDirty();
             ConstructionTapeHelper.removeConstructionTape(building.getCorners(), colony.getWorld());
         }
-    }
-
-    private static boolean isLocationTownhall(@NotNull final IColony colony, final BlockPos buildingLocation)
-    {
-        return colony.hasTownHall() && colony.getBuildingManager().getTownHall() != null && colony.getBuildingManager().getTownHall().getID().equals(buildingLocation);
-    }
-
-    /**
-     * Returns the level up level of the building.
-     *
-     * @return Level after upgrade.
-     */
-    public int getUpgradeLevel()
-    {
-        return upgradeLevel;
     }
 }
