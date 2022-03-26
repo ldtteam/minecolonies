@@ -178,13 +178,10 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         else if (block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
-            if (block instanceof BlockMinecoloniesRack)
+            final BlockEntity entity = world.getBlockEntity(pos);
+            if (entity instanceof TileEntityRack)
             {
-                final BlockEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    ((TileEntityRack) entity).setBuildingPos(this.getID());
-                }
+                ((TileEntityRack) entity).setBuildingPos(this.getID());
             }
         }
     }
