@@ -15,7 +15,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildingBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.BuildingUtils;
@@ -176,7 +176,7 @@ public class BuildToolPasteMessage implements IMessage
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
                 {
-                    final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(building, 1);
+                    final WorkOrderBuildingBuild workOrder = new WorkOrderBuildingBuild(building, 1);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorldFromEntity(player));
                 }
             }

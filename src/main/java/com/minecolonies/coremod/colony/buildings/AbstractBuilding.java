@@ -48,9 +48,9 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildBuilding;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildRemoval;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildingBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildingRemove;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -422,7 +422,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     protected void requestWorkOrder(final int level, final BlockPos builder, final boolean removal)
     {
-        for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
+        for (@NotNull final WorkOrderBuildingBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildingBuild.class))
         {
             if (o.getSchematicLocation().equals(getID()))
             {
@@ -430,7 +430,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        WorkOrderBuild workOrder;
+        WorkOrderBuilding workOrder;
         if (removal)
         {
             if (!canDeconstruct())
@@ -439,11 +439,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                   "entity.builder.cantdeconstruct");
                 return;
             }
-            workOrder = new WorkOrderBuildRemoval(this, level);
+            workOrder = new WorkOrderBuildingRemove(this, level);
         }
         else
         {
-            workOrder = new WorkOrderBuildBuilding(this, level);
+            workOrder = new WorkOrderBuildingBuild(this, level);
         }
 
         if (!removal && !canBeBuiltByBuilder(level) && !workOrder.canBeResolved(colony, level))
@@ -493,7 +493,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (workOrder.getID() != 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workorderadded", workOrder.getDisplayName(), colony.getName(), workOrder.getSchematicLocation().getX(), workOrder.getSchematicLocation().getY(), workOrder.getSchematicLocation().getZ());
+            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.workorderadded", workOrder.getCustomBuildingName(), colony.getName(), workOrder.getSchematicLocation().getX(), workOrder.getSchematicLocation().getY(), workOrder.getSchematicLocation().getZ());
         }
         markDirty();
     }
@@ -575,7 +575,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     private int getCurrentWorkOrderLevel()
     {
-        for (@NotNull final WorkOrderBuildBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildBuilding.class))
+        for (@NotNull final WorkOrderBuildingBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildingBuild.class))
         {
             if (o.getSchematicLocation().equals(getID()))
             {
@@ -583,7 +583,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
         }
 
-        for (@NotNull final WorkOrderBuildRemoval o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildRemoval.class))
+        for (@NotNull final WorkOrderBuildingRemove o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuildingRemove.class))
         {
             if (o.getSchematicLocation().equals(getID()))
             {
@@ -602,9 +602,9 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void removeWorkOrder()
     {
-        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final WorkOrderBuilding o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuilding.class))
         {
-            if (o.getSchematicLocation().equals(getID()) && (o instanceof WorkOrderBuildBuilding || o instanceof WorkOrderBuildRemoval))
+            if (o.getSchematicLocation().equals(getID()) && (o instanceof WorkOrderBuildingBuild || o instanceof WorkOrderBuildingRemove))
             {
                 colony.getWorkManager().removeWorkOrder(o.getID());
                 markDirty();
@@ -744,6 +744,10 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         this.customName = name;
         this.markDirty();
+        if (this.hasWorkOrder())
+        {
+            this.colony.getWorkManager().setDirty(true);
+        }
     }
 
     /**
@@ -944,7 +948,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        final WorkOrderBuildBuilding workOrder = new WorkOrderBuildBuilding(this, Math.max(1, getBuildingLevel()));
+        final WorkOrderBuildingBuild workOrder = new WorkOrderBuildingBuild(this, Math.max(1, getBuildingLevel()));
         final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (!wrapper.hasBluePrint())
         {

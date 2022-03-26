@@ -2,6 +2,9 @@ package com.minecolonies.api.colony.workorders;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,6 +27,11 @@ public class WorkOrderView
      * Its description.
      */
     private String schematicName;
+
+    /**
+     * The custom name of the building, if any
+     */
+    private String buildingCustomName;
 
     /**
      * Its description.
@@ -81,13 +89,14 @@ public class WorkOrderView
     }
 
     /**
-     * Return the display name
+     * Return the building display name
      *
-     * @return
+     * @return a translation component
      */
-    public String getDisplayName()
+    public ITextComponent getDisplayName()
     {
-        return displayName;
+        String workOrderName = new TranslationTextComponent(displayName).getString();
+        return new StringTextComponent(String.format("%s %d", workOrderName, upgradeLevel));
     }
 
     /**

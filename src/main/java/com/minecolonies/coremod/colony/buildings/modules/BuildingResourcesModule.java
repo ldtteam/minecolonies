@@ -22,6 +22,7 @@ import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,8 +95,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             final WorkOrderBuildDecoration workOrderBuildDecoration = structureBuilderJob.getWorkOrder();
             if (workOrderBuildDecoration != null)
             {
-                final String name = workOrderBuildDecoration.getDisplayName();
-                buf.writeUtf(name);
+                final ITextComponent name = workOrderBuildDecoration.getCustomBuildingName();
+                buf.writeUtf(name.getContents());
 
                 buf.writeDouble(workOrderBuildDecoration.getAmountOfRes() == 0 ? 0 : qty / workOrderBuildDecoration.getAmountOfRes());
                 buf.writeInt(totalStages);

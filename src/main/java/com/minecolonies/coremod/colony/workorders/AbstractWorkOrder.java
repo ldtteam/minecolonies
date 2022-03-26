@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -11,10 +12,13 @@ import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,70 +54,18 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      */
     static
     {
-        addMapping("build", WorkOrderBuild.class);
+        // Old mappings
+        addMapping("build", WorkOrderBuildingUpgrade.class);
         addMapping("decoration", WorkOrderBuildDecoration.class);
-        addMapping("removal", WorkOrderBuildRemoval.class);
-        addMapping("building", WorkOrderBuildBuilding.class);
+        addMapping("removal", WorkOrderBuildingRemove.class);
+        addMapping("building", WorkOrderBuildingBuild.class);
         addMapping("miner", WorkOrderBuildMiner.class);
-    }
 
-    /**
-     * The id of the workOrder.
-     */
-    protected int id;
-
-    /**
-     * The position of the worker building claiming this workOrder.
-     */
-    private BlockPos claimedBy;
-
-    /**
-     * The priority of the workOrder.
-     */
-    private int priority;
-
-    /**
-     * If the workOrder changed.
-     */
-    private boolean changed = false;
-
-    /**
-     * The location to built at.
-     */
-    protected BlockPos buildingLocation;
-
-    /**
-     * Used iterator type in structurize.
-     */
-    private String iteratorType;
-
-    /**
-     * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
-     */
-    public AbstractWorkOrder()
-    {
-        this.iteratorType = "";
-    }
-
-    /**
-     * Get the used iteratortype.
-     * @return the used type.
-     */
-    public String getIteratorType()
-    {
-        return iteratorType;
-    }
-
-    /**
-     * Set the new iterator type if not set yet.
-     * @param newType the new type to set.
-     */
-    public void setIteratorType(final String newType)
-    {
-        if (this.iteratorType.isEmpty())
-        {
-            this.iteratorType = newType;
-        }
+        // New mappings
+        addMapping("building-build", WorkOrderBuildingBuild.class);
+        addMapping("building-upgrade", WorkOrderBuildingUpgrade.class);
+        addMapping("building-repair", WorkOrderBuildingRepair.class);
+        addMapping("building-remove", WorkOrderBuildingRemove.class);
     }
 
     /**
@@ -186,46 +138,11 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_TYPE), oclass.getName()), ex);
+                    compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
 
         return order;
-    }
-
-    /**
-     * Read the WorkOrder data from the CompoundNBT.
-     *
-     * @param compound NBT Tag compound
-     * @param manager  the workManager calling this method.
-     */
-    @Override
-    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
-    {
-        id = compound.getInt(TAG_ID);
-        if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
-        {
-            priority = compound.getInt(TAG_TH_PRIORITY);
-        }
-
-        if (compound.getAllKeys().contains(TAG_CLAIMED_BY))
-        {
-            final int citizenId = compound.getInt(TAG_CLAIMED_BY);
-            if (manager.getColony() != null)
-            {
-                final ICitizenData data = manager.getColony().getCitizenManager().getCivilian(citizenId);
-                if (data != null && data.getWorkBuilding() != null)
-                {
-                    claimedBy = data.getWorkBuilding().getPosition();
-                }
-            }
-        }
-        else if (compound.getAllKeys().contains(TAG_CLAIMED_BY_BUILDING))
-        {
-            claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
-        }
-        buildingLocation = BlockPosUtil.read(compound, TAG_BUILDING);
-        iteratorType = compound.getString(TAG_ITERATOR);
     }
 
     /**
@@ -246,11 +163,191 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              workOrderView.getId()), ex);
+                    workOrderView.getId()), ex);
             workOrderView = null;
         }
 
         return workOrderView;
+    }
+
+    /**
+     * The id of the work order.
+     */
+    private int id;
+
+    /**
+     * The priority of the workOrder.
+     */
+    private int priority;
+
+    /**
+     * The position of the worker building claiming this workOrder.
+     */
+    private BlockPos claimedBy;
+
+    /**
+     * The type of work order.
+     */
+    private WorkOrderType type;
+
+    /**
+     * Used iterator type in structurize.
+     */
+    private String iteratorType;
+
+    /**
+     * If the workOrder changed.
+     */
+    private boolean changed = false;
+
+    /**
+     * Whether the area is cleared.
+     */
+    private boolean cleared;
+
+    private BlockPos location;
+
+    private int rotation;
+
+    private boolean isMirrored;
+//
+//    /**
+//     * The location to built at.
+//     */
+//    private BlockPos buildingLocation;
+//
+//    /**
+//     * The rotation to build with.
+//     */
+//    private int buildingRotation;
+//
+//    /**
+//     * Whether the building was mirrored.
+//     */
+//    private boolean isBuildingMirrored;
+//
+//    /**
+//     * The level of the building before the work order.
+//     */
+//    private int currentLevel;
+//
+//    /**
+//     * The level of the building after the work order.
+//     */
+//    private int completedLevel;
+//
+//
+//
+//    private String structureName;
+//
+//    private String workOrderName;
+//
+//    private int amountOfResources;
+//
+//    private boolean hasSentMessageForThisWorkOrder = false;
+//
+//    private boolean requested;
+
+    /**
+     * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
+     */
+    public AbstractWorkOrder()
+    {
+        this.iteratorType = "";
+    }
+
+    /**
+     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
+     *
+     * @return the type.
+     */
+    @NotNull
+    protected abstract WorkOrderType getType();
+
+    /**
+     * Get the schematic this work order should be using, if any
+     *
+     * @return the schematic name.
+     */
+    protected abstract String getSchematicName();
+
+    /**
+     * Get the name for the work order
+     *
+     * @return the name of the work order, only shown if no custom name is provided
+     */
+    public abstract String getWorkOrderName();
+
+    /**
+     * Get a custom name for the work order
+     *
+     * @return the custom name
+     */
+    protected abstract String getCustomName();
+
+    /**
+     * Get the current location of the building
+     *
+     * @return the location
+     */
+    protected abstract BlockPos getLocation();
+
+    /**
+     * Get the current rotation of the building
+     *
+     * @return the location
+     */
+    protected abstract int getRotation();
+
+    /**
+     * Whether the current building is mirrored
+     *
+     * @return the location
+     */
+    protected abstract int isMirrored();
+
+    /**
+     * Whether the work order can be built or not.
+     *
+     * @param citizen the citizen attempting to perform the work order
+     * @return true if it can be built
+     */
+    protected abstract boolean canBuild(@NotNull final ICitizenData citizen);
+
+    /**
+     * Get the ID of the work order.
+     *
+     * @return ID of the work order
+     */
+    @Override
+    public int getID() {
+        return this.id;
+    }
+
+    @Override
+    public void setID(final int id) {
+        this.id = id;
+    }
+
+    /**
+     * Get the used iteratortype.
+     * @return the used type.
+     */
+    public String getIteratorType()
+    {
+        return iteratorType;
+    }
+
+    /**
+     * Set the new iterator type if not set yet.
+     * @param newType the new type to set.
+     */
+    public void setIteratorType(final String newType)
+    {
+        if (this.iteratorType.isEmpty())
+        {
+            this.iteratorType = newType;
+        }
     }
 
     /**
@@ -293,23 +390,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public void resetChange()
     {
         changed = false;
-    }
-
-    /**
-     * Get the ID of the Work Order.
-     *
-     * @return ID of the work order
-     */
-    @Override
-    public int getID()
-    {
-        return id;
-    }
-
-    @Override
-    public void setID(final int id)
-    {
-        this.id = id;
     }
 
     /**
@@ -384,6 +464,98 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     /**
+     * Gets whether or not the building has been cleared.
+     *
+     * @return true if the building has been cleared.
+     */
+    public boolean isCleared()
+    {
+        return cleared;
+    }
+
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param cleared true if the building has been cleared.
+     */
+    public void setCleared(final boolean cleared)
+    {
+        this.cleared = cleared;
+    }
+
+    /**
+     * Is this WorkOrder still valid?  If not, it will be deleted.
+     * <p>
+     * Suppressing Sonar Rule squid:S1172 This rule does " Unused method parameters should be removed" But in this case extending class may need to use the colony parameter
+     *
+     * @param colony The colony that owns the Work Order
+     * @return True if the WorkOrder is still valid, or False if it should be deleted
+     */
+    @Override
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    public boolean isValid(final IColony colony)
+    {
+        return true;
+    }
+
+    public void sendBuilderMessage(@NotNull final Colony colony, final boolean hasBuilder, final boolean sendMessage)
+    {
+        if (hasSentMessageForThisWorkOrder)
+        {
+            return;
+        }
+
+        if (hasBuilder && sendMessage)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                    "entity.builder.messageBuilderNecessary", Integer.toString(this.upgradeLevel));
+        }
+
+        if (!hasBuilder)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
+                    "entity.builder.messageNoBuilder");
+        }
+    }
+
+    /**
+     * Read the WorkOrder data from the CompoundNBT.
+     *
+     * @param compound NBT Tag compound
+     * @param manager  the workManager calling this method.
+     */
+    @Override
+    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    {
+        id = compound.getInt(TAG_ID);
+        if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
+        {
+            priority = compound.getInt(TAG_TH_PRIORITY);
+        }
+
+        if (compound.getAllKeys().contains(TAG_CLAIMED_BY))
+        {
+            final int citizenId = compound.getInt(TAG_CLAIMED_BY);
+            if (manager.getColony() != null)
+            {
+                final ICitizenData data = manager.getColony().getCitizenManager().getCivilian(citizenId);
+                if (data != null && data.getWorkBuilding() != null)
+                {
+                    claimedBy = data.getWorkBuilding().getPosition();
+                }
+            }
+        }
+        else if (compound.getAllKeys().contains(TAG_CLAIMED_BY_BUILDING))
+        {
+            claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
+        }
+        location = BlockPosUtil.read(compound, TAG_BUILDING);
+        iteratorType = compound.getString(TAG_ITERATOR);
+    }
+
+    /**
      * Save the Work Order to an CompoundNBT.
      *
      * @param compound NBT tag compount
@@ -405,23 +577,8 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        BlockPosUtil.write(compound, TAG_BUILDING, buildingLocation);
+        BlockPosUtil.write(compound, TAG_BUILDING, location);
         compound.putString(TAG_ITERATOR, iteratorType);
-    }
-
-    /**
-     * Is this WorkOrder still valid?  If not, it will be deleted.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172 This rule does " Unused method parameters should be removed" But in this case extending class may need to use the colony parameter
-     *
-     * @param colony The colony that owns the Work Order
-     * @return True if the WorkOrder is still valid, or False if it should be deleted
-     */
-    @Override
-    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public boolean isValid(final IColony colony)
-    {
-        return true;
     }
 
     /**
@@ -436,26 +593,29 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
         buf.writeInt(getType().ordinal());
-        buf.writeUtf("");
-        buf.writeUtf(getDisplayName());
-        buf.writeBlockPos(buildingLocation == null ? BlockPos.ZERO : buildingLocation);
+        buf.writeUtf(getSchematicName());
+        buf.writeUtf(getWorkOrderName());
+        buf.writeUtf(getCustomName());
+        buf.writeBlockPos(location == null ? BlockPos.ZERO : location);
+        buf.writeInt(rotation);
+        buf.writeBoolean(isMirrored);
         buf.writeInt(0);
     }
 
     /**
-     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
-     *
-     * @return the type.
-     */
-    @NotNull
-    protected abstract WorkOrderType getType();
-
-    /**
-     * Get the display name of the workorder
+     * Get the display name of the work order
      *
      * @return a description string.
      */
-    public abstract String getDisplayName();
+    public ITextComponent getCustomBuildingName()
+    {
+        String customName = getCustomName();
+        if (customName != null)
+        {
+
+        }
+        return new TranslationTextComponent(getWorkOrderName());
+    }
 
     /**
      * Executed when a work order is added.

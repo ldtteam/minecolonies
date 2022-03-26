@@ -129,7 +129,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
-        if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
+        if (building == null && wo instanceof WorkOrderBuilding && !(wo instanceof WorkOrderBuildingRemove))
         {
             job.complete();
             return false;
@@ -168,7 +168,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      */
     private void killMobs()
     {
-        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
+        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildingBuild)
         {
             final BlockPos buildingPos = job.getWorkOrder().getSchematicLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
@@ -285,11 +285,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
             if (!hasInQueue)
             {
-                if (wo instanceof WorkOrderBuildBuilding)
+                if (wo instanceof WorkOrderBuildingBuild)
                 {
                     worker.getCitizenChatHandler().sendLocalizedChat(
                       COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL,
-                      wo.getDisplayName(),
+                      wo.getCustomBuildingName(),
                       position.getX(),
                       position.getY(),
                       position.getZ());
@@ -298,7 +298,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                 {
                     worker.getCitizenChatHandler().sendLocalizedChat(
                       COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
-                      wo.getDisplayName(),
+                      wo.getCustomBuildingName(),
                       position.getX(),
                       position.getY(),
                       position.getZ());
@@ -307,15 +307,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             }
         }
 
-        if (wo instanceof WorkOrderBuildBuilding)
+        if (wo instanceof WorkOrderBuildingBuild)
         {
-            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, wo.getDisplayName(), position.getX(), position.getY(), position.getZ());
+            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, wo.getCustomBuildingName(), position.getX(), position.getY(), position.getZ());
         }
         else
         {
             worker.getCitizenChatHandler().sendLocalizedChat(
               COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
-              wo.getDisplayName(),
+              wo.getCustomBuildingName(),
               position.getX(),
               position.getY(),
               position.getZ());

@@ -279,9 +279,9 @@ public class WorkManager implements IWorkManager
         if (order instanceof WorkOrderBuildDecoration && !readingFromNbt)
         {
             final StructureName structureName = new StructureName(((WorkOrderBuildDecoration) order).getStructureName());
-            if (order instanceof WorkOrderBuildBuilding)
+            if (order instanceof WorkOrderBuildingBuild)
             {
-                final int level = ((WorkOrderBuildBuilding) order).getUpgradeLevel();
+                final int level = ((WorkOrderBuildingBuild) order).getUpgradeLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                                                                               AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
             }

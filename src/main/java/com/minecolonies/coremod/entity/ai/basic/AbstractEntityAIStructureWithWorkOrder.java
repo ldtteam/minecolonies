@@ -107,7 +107,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 return IDLE;
             }
 
-            if (wo instanceof WorkOrderBuildBuilding)
+            if (wo instanceof WorkOrderBuildingBuild)
             {
                 final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
                 if (building == null)
@@ -118,7 +118,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return IDLE;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getWorkOrder().getDisplayName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getWorkOrder().getCustomBuildingName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -128,7 +128,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if (!(wo instanceof WorkOrderBuildMiner))
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getDisplayName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getCustomBuildingName());
             }
             return getState();
         }
@@ -156,7 +156,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final BlockPos pos = workOrder.getSchematicLocation();
-        if (workOrder instanceof WorkOrderBuildBuilding && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
+        if (workOrder instanceof WorkOrderBuildingBuild && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(workOrder);
@@ -164,7 +164,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
 
         final int tempRotation = workOrder.getRotation(world);
-        final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
+        final boolean removal = workOrder instanceof WorkOrderBuildingRemove;
 
         loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
@@ -176,7 +176,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void requestMaterialsState()
     {
-        if (Constants.BUILDER_INF_RESOURECES || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
+        if (Constants.BUILDER_INF_RESOURECES || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildingRemove)
         {
             return;
         }
@@ -328,22 +328,22 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final String structureName = job.getBlueprint().getName();
         final WorkOrderBuildDecoration wo = job.getWorkOrder();
 
-        if (wo instanceof WorkOrderBuildBuilding)
+        if (wo instanceof WorkOrderBuildingBuild)
         {
             sendCompletionMessage(wo);
 
-            WorkOrderBuild wob = (WorkOrderBuild) wo;
+            WorkOrderBuilding wob = (WorkOrderBuilding) wo;
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
                   buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.lastIndexOf(String.valueOf(wob.getUpgradeLevel())));
             job.getColony().getEventDescriptionManager().addEventDescription(wob.getUpgradeLevel() > 1 ? new BuildingUpgradedEvent(wo.getSchematicLocation(), buildingName,
               wob.getUpgradeLevel()) : new BuildingBuiltEvent(wo.getSchematicLocation(), buildingName, wob.getUpgradeLevel()));
         }
-        else if (wo instanceof WorkOrderBuildRemoval)
+        else if (wo instanceof WorkOrderBuildingRemove)
         {
             worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE, structureName);
 
-            WorkOrderBuild wob = (WorkOrderBuild) wo;
+            WorkOrderBuilding wob = (WorkOrderBuilding) wo;
             String buildingName = wo.getStructureName();
             buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
                   buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
@@ -365,7 +365,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         {
             job.complete();
 
-            if (wo instanceof WorkOrderBuildBuilding)
+            if (wo instanceof WorkOrderBuildingBuild)
             {
                 final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
                 if (building == null)
@@ -381,12 +381,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     final TileEntity te = worker.level.getBlockEntity(building.getID());
                     if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProvider) te).getSchematicName().isEmpty())
                     {
-                        building.onUpgradeComplete(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
-                        building.setBuildingLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
+                        building.onUpgradeComplete(((WorkOrderBuildingBuild) wo).getUpgradeLevel());
+                        building.setBuildingLevel(((WorkOrderBuildingBuild) wo).getUpgradeLevel());
                     }
                 }
             }
-            else if (wo instanceof WorkOrderBuildRemoval)
+            else if (wo instanceof WorkOrderBuildingRemove)
             {
                 final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
                 if (building == null)
