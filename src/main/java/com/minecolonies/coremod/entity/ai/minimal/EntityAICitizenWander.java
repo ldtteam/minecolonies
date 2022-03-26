@@ -33,6 +33,11 @@ import static com.minecolonies.coremod.entity.ai.minimal.EntityAICitizenWander.W
 public class EntityAICitizenWander extends Goal
 {
     /**
+     * Chance to enter the leisure state.
+     */
+    private static final int LEISURE_CHANCE = 5;
+
+    /**
      * The different types of AIStates related to eating.
      */
     public enum WanderState implements IState
@@ -198,7 +203,7 @@ public class EntityAICitizenWander extends Goal
     private WanderState decide()
     {
         final int randomBit = citizen.getRandom().nextInt(100);
-        if (randomBit < 10)
+        if (randomBit < LEISURE_CHANCE)
         {
             leisureSite = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getRandomLeisureSite();
             if (leisureSite != null)
@@ -218,7 +223,7 @@ public class EntityAICitizenWander extends Goal
         {
             return false;
         }
-        return citizen.getRandom().nextInt(Constants.TICKS_SECOND * 3) == 0 && citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
+        return citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
     }
 
     @Override

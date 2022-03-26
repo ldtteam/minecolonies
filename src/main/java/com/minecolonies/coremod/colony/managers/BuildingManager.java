@@ -725,8 +725,7 @@ public class BuildingManager implements IBuildingManager
             return null;
         }
 
-        Collections.shuffle(allowedBuildings);
-        return allowedBuildings.get(0).getPosition();
+        return allowedBuildings.get(RANDOM.nextInt(allowedBuildings.size())).getPosition();
     }
 
     /**

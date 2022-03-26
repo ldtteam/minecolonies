@@ -42,11 +42,6 @@ public class BuildingGraveyard extends AbstractBuilding
     private static final String GRAVEYARD = "graveyard";
 
     /**
-     * Descriptive string of the profession.
-     */
-    private static final String UNDERTAKER = "undertaker";
-
-    /**
      * The maximum building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;
@@ -171,6 +166,15 @@ public class BuildingGraveyard extends AbstractBuilding
         }
         compound.put(TAG_VISUAL_GRAVES, visualGraveTagList);
         return compound;
+    }
+
+    /**
+     * Get the set of grave positions.
+     * @return the set of positions with their directions.
+     */
+    public Set<Tuple<BlockPos, Direction>> getGravePositions()
+    {
+        return visualGravePositions;
     }
 
     @NotNull
