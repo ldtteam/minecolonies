@@ -14,7 +14,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.colony.managers.interfaces.IRegisteredBuildingManager;
+import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.FireworkUtils;
@@ -294,7 +294,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public Set<BlockPos> getChildren()
     {
         // Validate childs existance
-        final IRegisteredBuildingManager manager = colony.getBuildingManager();
+        final IRegisteredStructureManager manager = colony.getBuildingManager();
         List<BlockPos> toRemove = null;
 
         for (final BlockPos pos : childSchematics)

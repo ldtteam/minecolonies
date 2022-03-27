@@ -1401,7 +1401,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public IRegisteredBuildingManager getBuildingManager()
+    public IRegisteredStructureManager getBuildingManager()
     {
         return null;
     }

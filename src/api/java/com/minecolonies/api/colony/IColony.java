@@ -244,7 +244,7 @@ public interface IColony
 
     void setStyle(String style);
 
-    IRegisteredBuildingManager getBuildingManager();
+    IRegisteredStructureManager getBuildingManager();
 
     ICitizenManager getCitizenManager();
 
