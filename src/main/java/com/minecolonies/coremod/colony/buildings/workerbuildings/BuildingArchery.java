@@ -110,6 +110,11 @@ public class BuildingArchery extends AbstractBuilding
      */
     public BlockPos getRandomShootingStandPosition(final Random random)
     {
+        final List<BlockPos> tagged = getLocationsFromTag(TAG_WORK);
+        if (!tagged.isEmpty())
+        {
+            return tagged.get(random.nextInt(tagged.size()));
+        }
         if (!shootingStands.isEmpty())
         {
             return shootingStands.get(random.nextInt(shootingStands.size()));
