@@ -13,7 +13,7 @@ import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.colony.managers.interfaces.IRegisteredBuildingManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -59,7 +59,7 @@ import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
-public class BuildingManager implements IBuildingManager
+public class RegisteredStructureManager implements IRegisteredBuildingManager
 {
     /**
      * List of building in the colony.
@@ -121,7 +121,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param colony the colony.
      */
-    public BuildingManager(final Colony colony)
+    public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
     }

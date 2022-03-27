@@ -69,7 +69,6 @@ import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.coremod.MineColonies.getConfig;
 
 /**
@@ -123,7 +122,7 @@ public class Colony implements IColony
     /**
      * Building manager of the colony.
      */
-    private final IBuildingManager buildingManager = new BuildingManager(this);
+    private final IRegisteredBuildingManager buildingManager = new RegisteredStructureManager(this);
 
     /**
      * Grave manager of the colony.
@@ -1479,7 +1478,7 @@ public class Colony implements IColony
      * @return the buildingManager.
      */
     @Override
-    public IBuildingManager getBuildingManager()
+    public IRegisteredBuildingManager getBuildingManager()
     {
         return buildingManager;
     }

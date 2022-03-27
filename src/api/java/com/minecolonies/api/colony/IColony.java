@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -245,7 +244,7 @@ public interface IColony
 
     void setStyle(String style);
 
-    IBuildingManager getBuildingManager();
+    IRegisteredBuildingManager getBuildingManager();
 
     ICitizenManager getCitizenManager();
 

@@ -20,14 +20,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Interface for building managers.
+ * Interface for the managers for registered structures.
+ * Buildings, Fields, Decorations, etc.
  */
-public interface IBuildingManager
+public interface IRegisteredBuildingManager
 {
     /**
      * Read the buildings from NBT.
