@@ -8,10 +8,10 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -30,7 +30,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,8 +91,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                 if (!ctx.getLevel().isClientSide)
                 {
                     String buildingTypeKey = buildingEntity.getBuilding().getBuildingType().getTranslationKey();
-                    ITextComponent buildingTypeComponent = new TranslationTextComponent(buildingTypeKey);
-                    ITextComponent mainComponent = new TranslationTextComponent(
+                    MutableComponent buildingTypeComponent = new TranslatableComponent(buildingTypeKey);
+                    MutableComponent mainComponent = new TranslatableComponent(
                             COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
                             buildingTypeComponent,
                             buildingEntity.getColony().getName());
@@ -156,8 +155,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 String name = ((BuildingBuilder.View) buildingView).getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
-                  ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
-                  : new TranslationTextComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
+                  ? new TextComponent(ChatFormatting.DARK_PURPLE + name)
+                  : new TranslatableComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }
@@ -192,7 +191,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
+            player.displayClientMessage(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
         }
     }
 }
