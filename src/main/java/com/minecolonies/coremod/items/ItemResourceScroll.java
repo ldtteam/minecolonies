@@ -8,6 +8,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -29,6 +30,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +39,7 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Class describing the resource scroll item.
@@ -70,14 +73,32 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
         if (entity instanceof TileEntityColonyBuilding)
         {
-            compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
-            BlockPosUtil.write(compound, TAG_BUILDER, ((AbstractTileEntityColonyBuilding) entity).getPosition());
+            final AbstractTileEntityColonyBuilding buildingEntity = (AbstractTileEntityColonyBuilding) entity;
 
-            if (!ctx.getLevel().isClientSide)
+            if (buildingEntity.getBuilding() instanceof BuildingBuilder)
             {
-                LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-                  TranslationConstants.COM_MINECOLONIES_SCROLL_BUILDER_SET,
-                  ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
+                compound.putInt(TAG_COLONY_ID, buildingEntity.getColonyId());
+                BlockPosUtil.write(compound, TAG_BUILDER, buildingEntity.getPosition());
+
+                if (!ctx.getLevel().isClientSide)
+                {
+                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
+                            COM_MINECOLONIES_SCROLL_BUILDING_SET,
+                            buildingEntity.getColony().getName());
+                }
+            }
+            else
+            {
+                if (!ctx.getLevel().isClientSide)
+                {
+                    String buildingTypeKey = buildingEntity.getBuilding().getBuildingType().getTranslationKey();
+                    ITextComponent buildingTypeComponent = new TranslationTextComponent(buildingTypeKey);
+                    ITextComponent mainComponent = new TranslationTextComponent(
+                            COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
+                            buildingTypeComponent,
+                            buildingEntity.getColony().getName());
+                    ctx.getPlayer().sendMessage(mainComponent, ctx.getPlayer().getUUID());
+                }
             }
         }
         else if (ctx.getLevel().isClientSide)
@@ -135,8 +156,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 String name = ((BuildingBuilder.View) buildingView).getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
-                  ? new TextComponent(ChatFormatting.DARK_PURPLE + name)
-                  : new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_BUILDER));
+                  ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
+                  : new TranslationTextComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }
@@ -171,7 +192,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NEED_BUILDER), true);
+            player.displayClientMessage(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
         }
     }
 }
