@@ -123,7 +123,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                double yOffset = model.young ? -0.8 : 0;
+                double yOffset = model.young ? -0.3 : 0;
                 boolean isSneaking = entityIn.isShiftKeyDown();
                 double height = entityIn.getBbHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
                 double y = height + 0.3 + yOffset;

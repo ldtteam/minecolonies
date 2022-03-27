@@ -15,6 +15,7 @@ import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
@@ -224,6 +225,10 @@ public class ColonyPermissionEventHandler
             {
                 IColonyManager.getInstance().deleteColonyByWorld(building.getColony().getID(), false, event.getPlayer().level);
             }
+        }
+        else if (event.getState().getBlock() instanceof BlockDecorationController)
+        {
+            colony.getBuildingManager().removeLeisureSite(event.getPos());
         }
         else
         {
