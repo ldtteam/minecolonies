@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -127,19 +126,8 @@ public class BuildingCook extends AbstractBuilding
             return;
         }
 
-        final IBlueprintDataProvider te = getTileEntity();
-        if (te != null)
-        {
-            initTags = true;
-            sitPositions = new ArrayList<>();
-            for (final Map.Entry<BlockPos, List<String>> entry : te.getWorldTagPosMap().entrySet())
-            {
-                if (entry.getValue().contains(TAG_SITTING))
-                {
-                    sitPositions.add(entry.getKey());
-                }
-            }
-        }
+        sitPositions = getLocationsFromTag(TAG_SITTING);
+        initTags = !sitPositions.isEmpty();
     }
 
     @Override
