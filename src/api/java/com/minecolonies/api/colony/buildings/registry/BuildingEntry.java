@@ -153,6 +153,11 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
         }
     }
 
+    public String getTranslationKey()
+    {
+        return "com." + getRegistryName().getNamespace() + ".building." + getRegistryName().getPath();
+    }
+
     private final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
 
     public AbstractBlockHut<?> getBuildingBlock()
