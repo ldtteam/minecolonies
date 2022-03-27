@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
@@ -45,10 +46,19 @@ public interface ISetting
     void trigger();
 
     /**
-     * Check if this setting is visible.
+     * Check if this setting is effective (provided {@link ISettingsModule#getOptionalSetting(ISettingKey)} is used).
+     * @return true by default
+     */
+    default boolean isActive(ISettingsModule module)
+    {
+        return true;
+    }
+
+    /**
+     * Check if this setting is visible in the GUI.
      * @return true by default.
      */
-    default boolean isActive(ISettingsModuleView modle)
+    default boolean isActive(ISettingsModuleView module)
     {
         return true;
     }

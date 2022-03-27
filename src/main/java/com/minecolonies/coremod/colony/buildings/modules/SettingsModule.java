@@ -14,9 +14,11 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Module containing all settings.
@@ -32,6 +34,14 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
     public <T extends ISetting> T getSetting(final ISettingKey<T> key)
     {
         return (T) settings.getOrDefault(key, null);
+    }
+
+    @Override
+    @NotNull
+    public <T extends ISetting> Optional<T> getOptionalSetting(final ISettingKey<T> key)
+    {
+        final T setting = getSetting(key);
+        return setting == null || !setting.isActive(this) ? Optional.empty() : Optional.of(setting);
     }
 
     @Override

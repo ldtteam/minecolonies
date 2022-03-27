@@ -1120,6 +1120,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return getFirstModuleOccurance(ISettingsModule.class).getSetting(key);
     }
 
+    @Override
+    @NotNull
+    public <T extends ISetting> Optional<T> getOptionalSetting(@NotNull final ISettingKey<T> key)
+    {
+        return getFirstOptionalModuleOccurance(ISettingsModule.class)
+                .flatMap(module -> module.getOptionalSetting(key));
+    }
+
     /**
      * Get the right module for the recipe.
      * @param token the recipe trying to be fulfilled.
