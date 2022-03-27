@@ -236,7 +236,7 @@ public class RecipeStorage implements IRecipeStorage
                 secondaryStacks.add(container);
             }
         }
-        return ImmutableList.copyOf(secondaryStacks);
+        return secondaryStacks;
     }
 
     /**

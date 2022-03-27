@@ -127,7 +127,7 @@ public class Colony implements IColony
     /**
      * Building manager of the colony.
      */
-    private final IBuildingManager buildingManager = new BuildingManager(this);
+    private final IRegisteredStructureManager buildingManager = new RegisteredStructureManager(this);
 
     /**
      * Grave manager of the colony.
@@ -1488,7 +1488,7 @@ public class Colony implements IColony
      * @return the buildingManager.
      */
     @Override
-    public IBuildingManager getBuildingManager()
+    public IRegisteredStructureManager getBuildingManager()
     {
         return buildingManager;
     }

@@ -33,7 +33,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     /**
      * One in X chance to gain experience
      */
-    private static final int ONE_IN_X_CHANCE = 8;
+    public static final int ONE_IN_X_CHANCE = 8;
 
     /**
      * The current pos to study at.

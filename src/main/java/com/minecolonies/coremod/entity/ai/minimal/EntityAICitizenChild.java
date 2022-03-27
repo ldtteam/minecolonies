@@ -335,7 +335,7 @@ public class EntityAICitizenChild extends Goal
     @Override
     public boolean canContinueToUse()
     {
-        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isBaby() || child.getCitizenData() == null)
+        if (child.getDesiredActivity() == DesiredActivity.SLEEP || !child.isBaby() || child.getCitizenData() == null || child.getDesiredActivity() == DesiredActivity.MOURN)
         {
             return false;
         }

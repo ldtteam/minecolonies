@@ -2,14 +2,19 @@ package com.minecolonies.coremod.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
+import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -24,6 +29,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+
+import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
 
 /**
  * Creates a decoration controller block.
@@ -104,6 +112,30 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
             }
         }
         return ActionResultType.SUCCESS;
+    }
+
+    @Override
+    public void setPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
+    {
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
+
+        /*
+        Only work on server side
+        */
+        if (worldIn.isClientSide)
+        {
+            return;
+        }
+
+        final TileEntity tileEntity = worldIn.getBlockEntity(pos);
+        if (tileEntity instanceof TileEntityDecorationController && ((TileEntityDecorationController) tileEntity).getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(LEISURE))
+        {
+            @Nullable final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            if (colony != null)
+            {
+                colony.getBuildingManager().addLeisureSite(pos);
+            }
+        }
     }
 
     @Override

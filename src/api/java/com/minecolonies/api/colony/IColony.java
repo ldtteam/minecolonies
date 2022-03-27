@@ -240,7 +240,7 @@ public interface IColony
 
     void setStyle(String style);
 
-    IBuildingManager getBuildingManager();
+    IRegisteredStructureManager getBuildingManager();
 
     ICitizenManager getCitizenManager();
 
