@@ -440,7 +440,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         final BlockState curBlockState = world.getBlockState(position);
         @Nullable final Block curBlock = curBlockState.getBlock();
-        if (curBlock.is(Tags.Blocks.DIRT) || curBlock.is(Tags.Blocks.STONE) || curBlockState.getMaterial().isLiquid() || ((curBlock instanceof IWaterLoggable) && curBlockState.getValue(BlockStateProperties.WATERLOGGED)) || curBlock instanceof FarmlandBlock)
+        if ((curBlockState.getMaterial().isSolid() && !(curBlock instanceof PumpkinBlock) && !(curBlock instanceof MelonBlock) && !(curBlock instanceof WebBlock)) || curBlockState.getMaterial().isLiquid())
         {
             if (depth < 0)
             {
