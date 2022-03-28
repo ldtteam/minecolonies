@@ -1,5 +1,7 @@
-package com.minecolonies.api.colony.workorders;
+package com.minecolonies.coremod.colony.workorders.view;
 
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * The WorkOrderView is the client-side representation of a WorkOrders. Views contain the WorkOrder's data that is relevant to a Client, in a more client-friendly form Mutable
  * operations on a View result in a message to the server to perform the operation
  */
-public class WorkOrderView implements IWorkOrderView
+public abstract class AbstractWorkOrderView implements IWorkOrderView
 {
     /**
      * The work order its id.
@@ -53,7 +55,7 @@ public class WorkOrderView implements IWorkOrderView
      */
     private int targetLevel;
 
-    public WorkOrderView()
+    public AbstractWorkOrderView()
     {
     }
 
@@ -81,6 +83,25 @@ public class WorkOrderView implements IWorkOrderView
         this.priority = priority;
     }
 
+    /**
+     * ClaimedBy getter.
+     *
+     * @return citizen id who claimed the workOrder.
+     */
+    public BlockPos getClaimedBy()
+    {
+        return claimedBy;
+    }
+
+    /**
+     * Claim the view.
+     * @param position the pos of the claiming worker.
+     */
+    public void setClaimedBy(final BlockPos position)
+    {
+        this.claimedBy = position;
+    }
+
     @Override
     public WorkOrderType getType()
     {
@@ -103,21 +124,25 @@ public class WorkOrderView implements IWorkOrderView
         return structureName.replaceAll("schematics/(?:decorations/)?", "");
     }
 
+    /**
+     * Whether this work order should be shown in the town hall.
+     *
+     * @return a boolean
+     */
+    public abstract boolean shouldShowInTownHall();
+
+    /**
+     * Whether this work order should be shown in the builder.
+     *
+     * @return a boolean
+     */
+    public abstract boolean shouldShowInBuilder();
+
     @Override
     public ITextComponent getDisplayName()
     {
         String workOrderName = new TranslationTextComponent(displayName).getString();
         return new StringTextComponent(String.format("%s %d", workOrderName, targetLevel));
-    }
-
-    /**
-     * ClaimedBy getter.
-     *
-     * @return citizen id who claimed the workOrder.
-     */
-    public BlockPos getClaimedBy()
-    {
-        return claimedBy;
     }
 
     /**
@@ -135,15 +160,6 @@ public class WorkOrderView implements IWorkOrderView
         displayName = buf.readUtf(32767);
         pos = buf.readBlockPos();
         targetLevel = buf.readInt();
-    }
-
-    /**
-     * Claim the view.
-     * @param position the pos of the claiming worker.
-     */
-    public void setClaimedBy(final BlockPos position)
-    {
-        this.claimedBy = position;
     }
 
     /**

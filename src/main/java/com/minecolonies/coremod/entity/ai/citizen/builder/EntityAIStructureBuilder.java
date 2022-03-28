@@ -5,6 +5,7 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.*;
@@ -121,7 +122,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         }
 
         final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
-        if (building == null && wo instanceof WorkOrderBuilding && !(wo instanceof WorkOrderBuildingRemove)) {
+        if (building == null && wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE) {
             job.complete();
             return false;
         }
@@ -153,7 +154,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      * Kill all mobs at the building site.
      */
     private void killMobs() {
-        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildingBuild) {
+        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD) {
             final BlockPos buildingPos = job.getWorkOrder().getLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null) {

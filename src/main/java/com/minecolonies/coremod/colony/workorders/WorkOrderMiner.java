@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
@@ -13,7 +14,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * A work order that the build can take to build mine.
  */
-public class WorkOrderMiner extends WorkOrderDecoration
+public class WorkOrderMiner extends AbstractWorkOrder
 {
     /**
      * Position of the issuer of the order.
@@ -46,14 +47,8 @@ public class WorkOrderMiner extends WorkOrderDecoration
       final boolean mirror,
       final BlockPos minerBuilding)
     {
-        super(structureName, workOrderName, rotation, location, mirror);
+        super(structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
         this.minerBuilding = minerBuilding;
-    }
-
-    @Override
-    protected @NotNull WorkOrderType getType()
-    {
-        return WorkOrderType.BUILD;
     }
 
     /**
@@ -79,6 +74,12 @@ public class WorkOrderMiner extends WorkOrderDecoration
     {
         super.write(compound);
         BlockPosUtil.write(compound, TAG_POS, minerBuilding);
+    }
+
+    @Override
+    public boolean canBuild(@NotNull ICitizenData citizen)
+    {
+        return this.minerBuilding.equals(citizen.getWorkBuilding().getID());
     }
 
     @Override

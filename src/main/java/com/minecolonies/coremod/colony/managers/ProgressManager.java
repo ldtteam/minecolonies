@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.ColonyProgressType;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -108,7 +109,7 @@ public class ProgressManager implements IProgressManager
     @Override
     public void progressWorkOrderPlacement(final IWorkOrder workOrder)
     {
-        if (workOrder instanceof WorkOrderBuildingBuild && ((WorkOrderBuildingBuild) workOrder).getStructureName().contains("Builder"))
+        if (workOrder.getWorkOrderType() == WorkOrderType.BUILD && workOrder.getStructureName().contains("Builder"))
         {
             trigger(BUILT_ENQUEUED);
         }

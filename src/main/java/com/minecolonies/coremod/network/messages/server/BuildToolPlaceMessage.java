@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.network.IMessage;
@@ -315,7 +316,7 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderDecoration woDeco = new WorkOrderDecoration(schem, woName, rotation, buildPos, mirror);
+            WorkOrderDecoration woDeco = WorkOrderDecoration.create(WorkOrderType.BUILD, schem, woName, buildPos, rotation, mirror, 0);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);

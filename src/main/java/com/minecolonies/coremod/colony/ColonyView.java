@@ -13,7 +13,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
@@ -70,7 +70,7 @@ public final class ColonyView implements IColonyView
 
     //  General Attributes
     private final int                            id;
-    private final Map<Integer, WorkOrderView>    workOrders  = new HashMap<>();
+    private final Map<Integer, AbstractWorkOrderView>    workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
@@ -901,7 +901,8 @@ public final class ColonyView implements IColonyView
         final int amount = buf.readInt();
         for (int i = 0; i < amount; i++)
         {
-            @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+            String woMapping = buf.readUtf();
+            @Nullable final AbstractWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(woMapping, buf);
             if (workOrder != null)
             {
                 workOrders.put(workOrder.getId(), workOrder);

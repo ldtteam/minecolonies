@@ -10,7 +10,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
 /**
@@ -21,23 +20,35 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     public static WorkOrderDecoration create(@NotNull final WorkOrderType type,
                                              final String structureName,
                                              final String workOrderName,
-                                             final int rotation,
                                              final BlockPos location,
-                                             final boolean mirror)
+                                             final int rotation,
+                                             final boolean mirror,
+                                             final int currentLevel)
     {
-        WorkOrderDecoration wo = new WorkOrderDecoration(
+        int targetLevel = currentLevel;
+        switch (type)
+        {
+            case BUILD:
+                targetLevel = 1;
+                break;
+            case UPGRADE:
+                targetLevel++;
+                break;
+            case REMOVE:
+                targetLevel = 0;
+                break;
+        }
+
+        return new WorkOrderDecoration(
                 structureName,
                 workOrderName,
                 type,
                 location,
                 rotation,
                 mirror,
-                building.getBuildingLevel(),
+                currentLevel,
                 targetLevel);
-        return wo;
     }
-
-    private boolean levelUp = false;
 
     /**
      * Unused constructor for reflection.
@@ -47,19 +58,10 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         super();
     }
 
-    public WorkOrderDecoration(String structureName, String workOrderName, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
-                               int targetLevel, boolean levelUp)
+    private WorkOrderDecoration(String structureName, String workOrderName, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
+                               int targetLevel)
     {
         super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
-        this.levelUp = levelUp;
-    }
-
-    /**
-     * Make a decoration level up with this.
-     */
-    public void setLevelUp()
-    {
-        this.levelUp = true;
     }
 
     /**
@@ -71,7 +73,6 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         super.read(compound, manager);
-        levelUp = compound.getBoolean(TAG_LEVEL);
     }
 
     /**
@@ -94,7 +95,7 @@ public class WorkOrderDecoration extends AbstractWorkOrder
      * @return true if he is able to.
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    protected boolean canBuild(@NotNull final ICitizenData citizen)
+    public boolean canBuild(@NotNull final ICitizenData citizen)
     {
         return true;
     }

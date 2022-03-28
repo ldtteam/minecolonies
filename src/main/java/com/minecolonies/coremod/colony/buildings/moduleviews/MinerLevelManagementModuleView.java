@@ -3,8 +3,9 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
+import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,9 +31,9 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     public int current;
 
     /**
-     * WorkOrders that are part of thi sminer.
+     * WorkOrders that are part of this miner.
      */
-    private List<WorkOrderView> workOrders = new ArrayList<>();
+    private List<WorkOrderMinerView> workOrders = new ArrayList<>();
 
     @Override
     public void deserialize(@NotNull final PacketBuffer buf)
@@ -50,7 +51,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
         workOrders.clear();
         for (int i = 0; i < woSize; i++)
         {
-            final WorkOrderView view = new WorkOrderView();
+            final WorkOrderMinerView view = new WorkOrderMinerView();
             view.deserialize(buf);
             workOrders.add(view);
         }
@@ -96,7 +97,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     public boolean doesWorkOrderExist(final int row)
     {
         final int depth = levelsInfo.get(row).getB();
-        for (final WorkOrderView wo : workOrders)
+        for (final AbstractWorkOrderView wo : workOrders)
         {
             if (wo.getDisplayName().getContents().contains("main") && wo.getLocation().getY() == depth)
             {

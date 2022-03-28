@@ -11,10 +11,12 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.BuildingUtils;
@@ -51,13 +53,13 @@ public class BuildToolPasteMessage implements IMessage
      */
     private BlockState state;
 
-    private boolean  complete;
-    private String   structureName;
-    private String   workOrderName;
-    private int      rotation;
+    private boolean complete;
+    private String structureName;
+    private String workOrderName;
+    private int rotation;
     private BlockPos pos;
-    private boolean  isHut;
-    private boolean  mirror;
+    private boolean isHut;
+    private boolean mirror;
 
     /**
      * Empty constructor used when registering the
@@ -80,10 +82,10 @@ public class BuildToolPasteMessage implements IMessage
      * @param state         the state.
      */
     public BuildToolPasteMessage(
-      final String structureName,
-      final String workOrderName, final BlockPos pos,
-      final int rotation, final boolean isHut,
-      final Mirror mirror, final boolean complete, final BlockState state)
+            final String structureName,
+            final String workOrderName, final BlockPos pos,
+            final int rotation, final boolean isHut,
+            final Mirror mirror, final boolean complete, final BlockState state)
     {
         super();
         this.structureName = structureName;
@@ -170,25 +172,25 @@ public class BuildToolPasteMessage implements IMessage
             {
                 handleHut(CompatibilityUtils.getWorldFromEntity(player), player, sn, rotation, pos, mirror, state, complete);
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
+                        pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(CompatibilityUtils.getWorldFromEntity(player), pos);
                 if (building != null)
                 {
-                    final WorkOrderBuildingBuild workOrder = new WorkOrderBuildingBuild(building);
+                    final WorkOrderBuilding workOrder = WorkOrderBuilding.create(WorkOrderType.BUILD, building);
                     ConstructionTapeHelper.removeConstructionTape(workOrder, CompatibilityUtils.getWorldFromEntity(player));
                 }
             }
             else
             {
                 StructurePlacementUtils.loadAndPlaceStructureWithRotation(ctxIn.getSender().level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, ctxIn.getSender());
+                        pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, ctxIn.getSender());
             }
         }
         else if (structureName.contains("supply"))
         {
             if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
-                  && !isFreeInstantPlacementMH(player))
+                    && !isFreeInstantPlacementMH(player))
             {
                 LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
                 return;
@@ -207,7 +209,8 @@ public class BuildToolPasteMessage implements IMessage
             if (isFreeInstantPlacementMH(player))
             {
                 searchPredicate =
-                  searchPredicate.and(stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
+                        searchPredicate.and(
+                                stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
             }
 
             final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.inventory), searchPredicate);
@@ -222,7 +225,7 @@ public class BuildToolPasteMessage implements IMessage
                 }
 
                 CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(player.level, structureName,
-                  pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
+                        pos, BlockPosUtil.getRotationFromRotations(rotation), mirror ? Mirror.FRONT_BACK : Mirror.NONE, !complete, player);
             }
             else
             {
@@ -256,14 +259,14 @@ public class BuildToolPasteMessage implements IMessage
      * @param complete If complete or not.
      */
     private static void handleHut(
-      @NotNull final World world, @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
+            @NotNull final World world, @NotNull final PlayerEntity player,
+            final StructureName sn,
+            final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)
     {
         final IColony tempColony = IColonyManager.getInstance().getClosestColony(world, buildPos);
         if (!complete && tempColony != null
-              && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
-              && IColonyManager.getInstance().isFarEnoughFromColonies(world, buildPos))
+                && !tempColony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)
+                && IColonyManager.getInstance().isFarEnoughFromColonies(world, buildPos))
         {
             return;
         }
@@ -295,12 +298,12 @@ public class BuildToolPasteMessage implements IMessage
      * @param mirror   Whether or not the strcture is mirrored.
      */
     private static void setupBuilding(
-      @NotNull final World world,
-      @NotNull final PlayerEntity player,
-      final StructureName sn,
-      final int rotation,
-      @NotNull final BlockPos buildPos,
-      final boolean mirror)
+            @NotNull final World world,
+            @NotNull final PlayerEntity player,
+            final StructureName sn,
+            final int rotation,
+            @NotNull final BlockPos buildPos,
+            final boolean mirror)
     {
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, buildPos);
 

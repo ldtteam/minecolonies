@@ -2,7 +2,7 @@ package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
@@ -36,7 +36,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     }
 
     /**
-     * Updates a {@link WorkOrderView} of the workOrders.
+     * Updates a {@link AbstractWorkOrderView} of the workOrders.
      *
      * @param colony        colony of the workOrder.
      * @param workOrderList list of workorders to send to the client

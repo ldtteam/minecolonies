@@ -115,7 +115,7 @@ public class DecorationBuildRequestMessage implements IMessage
         }
         final PlayerEntity player = ctxIn.getSender();
 
-        //Verify player has permission to change this huts settings
+        //Verify player has permission to change this hut its settings
         if (!colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS))
         {
             return;
@@ -166,18 +166,31 @@ public class DecorationBuildRequestMessage implements IMessage
             }
 
             final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
-            final WorkOrderDecoration order = WorkOrderDecoration.create(
-                    WorkOrderType.BUILD,
-                    name + level,
-                    name + " " + level,
-                    difference,
-                    pos,
-                    state.getValue(BlockDecorationController.MIRROR));
-
-            if (level != ((TileEntityDecorationController) entity).getTier())
+            final int currentLevel = ((TileEntityDecorationController) entity).getTier();
+            WorkOrderDecoration order;
+            if (level > currentLevel)
             {
-                order.setLevelUp();
+                order = WorkOrderDecoration.create(
+                        WorkOrderType.UPGRADE,
+                        name + level,
+                        name + " " + level,
+                        pos,
+                        difference,
+                        state.getValue(BlockDecorationController.MIRROR),
+                        currentLevel);
             }
+            else
+            {
+                order = WorkOrderDecoration.create(
+                        WorkOrderType.BUILD,
+                        name + level,
+                        name,
+                        pos,
+                        difference,
+                        state.getValue(BlockDecorationController.MIRROR),
+                        currentLevel);
+            }
+
             colony.getWorkManager().addWorkOrder(order, false);
         }
     }

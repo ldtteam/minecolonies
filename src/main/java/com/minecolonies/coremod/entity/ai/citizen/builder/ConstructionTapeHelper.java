@@ -45,7 +45,7 @@ public final class ConstructionTapeHelper
           = ColonyUtils.calculateCorners(workOrder.getLocation(),
           world,
           new LoadOnlyStructureHandler(world, workOrder.getLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
-          workOrder.getRotation(world),
+          workOrder.getRotation(),
           workOrder.isMirrored());
         placeConstructionTape(corners, world);
     }

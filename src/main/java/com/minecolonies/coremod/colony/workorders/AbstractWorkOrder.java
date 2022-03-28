@@ -6,11 +6,16 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
+import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
+import com.minecolonies.coremod.colony.workorders.view.WorkOrderDecorationView;
+import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -38,19 +43,30 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private static final String TAG_ITERATOR = "iterator";
 
     /**
+     * Old NBT tags for storage
+     */
+    private static final String TAG_BUILDING_OLD = "building";
+    private static final String TAG_TYPE_OLD = "type";
+    private static final String TAG_TH_PRIORITY_OLD = "priority";
+    private static final String TAG_ID_OLD = "id";
+    private static final String TAG_CLAIMED_BY_OLD = "claimedBy";
+    private static final String TAG_CLAIMED_BY_BUILDING_OLD = "claimedByBuilding";
+    private static final String TAG_ITERATOR_OLD = "iterator";
+
+    /**
      * Bimap of workOrder from string to class.
      */
     @NotNull
-    private static final BiMap<String, Class<? extends IWorkOrder>> nameToClassBiMap = HashBiMap.create();
+    private static final BiMap<String, Tuple<Class<? extends IWorkOrder>, Class<? extends IWorkOrderView>>> nameToClassBiMap = HashBiMap.create();
 
     /*
      * WorkOrder registry.
      */
     static
     {
-        addMapping("building", WorkOrderBuilding.class);
-        addMapping("decoration", WorkOrderDecoration.class);
-        addMapping("miner", WorkOrderMiner.class);
+        addMapping("building", WorkOrderBuilding.class, WorkOrderBuildingView.class);
+        addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
+        addMapping("miner", WorkOrderMiner.class, WorkOrderMinerView.class);
     }
 
     /**
@@ -59,7 +75,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends IWorkOrder> orderClass)
+    private static void addMapping(final String name,
+                                   @NotNull final Class<? extends IWorkOrder> orderClass,
+                                   @NotNull final Class<? extends IWorkOrderView> viewClass)
     {
         if (nameToClassBiMap.containsKey(name))
         {
@@ -70,8 +88,8 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             if (orderClass.getDeclaredConstructor() != null)
             {
-                nameToClassBiMap.put(name, orderClass);
-                nameToClassBiMap.inverse().put(orderClass, name);
+                nameToClassBiMap.put(name, new Tuple<>(orderClass, viewClass));
+                nameToClassBiMap.inverse().put(new Tuple<>(orderClass, viewClass), name);
             }
         }
         catch (final NoSuchMethodException exception)
@@ -94,6 +112,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
         try
         {
+            // TODO: In 1.19 remove this check as this is purely for backwards compatibility with old class mappings
             String type = compound.getString(TAG_TYPE);
             if (type.equals("removal"))
             {
@@ -101,7 +120,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             }
             else
             {
-                oclass = nameToClassBiMap.get(type);
+                oclass = nameToClassBiMap.get(type).getA();
             }
 
             if (oclass != null)
@@ -120,12 +139,14 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             Log.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
             return null;
         }
+
         try
         {
             if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
             {
                 order.setPriority(compound.getInt(TAG_TH_PRIORITY));
             }
+
             order.read(compound, manager);
         }
         catch (final RuntimeException ex)
@@ -145,22 +166,42 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static WorkOrderView createWorkOrderView(final PacketBuffer buf)
+    public static AbstractWorkOrderView createWorkOrderView(final String mappingName, final PacketBuffer buf)
     {
-        @Nullable WorkOrderView workOrderView = new WorkOrderView();
+        @Nullable AbstractWorkOrderView orderView = null;
 
         try
         {
-            workOrderView.deserialize(buf);
+            @Nullable Class<? extends IWorkOrderView> oclass = nameToClassBiMap.get(mappingName).getB();
+
+            if (oclass != null)
+            {
+                final Constructor<?> constructor = oclass.getDeclaredConstructor();
+                orderView = (AbstractWorkOrderView) constructor.newInstance();
+            }
+        }
+        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e)
+        {
+            Log.getLogger().trace(e);
+        }
+
+        if (orderView == null)
+        {
+            Log.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", mappingName));
+            return null;
+        }
+        try
+        {
+            orderView.deserialize(buf);
         }
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    workOrderView.getId()), ex);
-            workOrderView = null;
+                    orderView.getId()), ex);
+            return null;
         }
 
-        return workOrderView;
+        return orderView;
     }
 
     private int id;
@@ -183,7 +224,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
     private boolean cleared;
     private boolean requested;
-    private boolean changed = false;
+    private boolean changed;
 
     /**
      * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.
@@ -405,7 +446,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @param citizen the citizen attempting to perform the work order
      * @return true if it can be built
      */
-    protected abstract boolean canBuild(@NotNull final ICitizenData citizen);
+    public abstract boolean canBuild(@NotNull final ICitizenData citizen);
 
     /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
@@ -431,6 +472,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
+        // TODO: In 1.19 remove this method call as this is purely for backwards compatibility with old class mappings
+        migrateOldNbt(compound);
+
         id = compound.getInt(TAG_ID);
         if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
         {
@@ -573,5 +617,39 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
         return false;
+    }
+
+    // TODO: In 1.19 remove this method as this is purely for backwards compatibility with old class mappings
+    private static void migrateOldNbt(final CompoundNBT compound)
+    {
+//        BlockPos oldBlockPos = BlockPosUtil.read(compound, TAG_BUILDING_OLD);
+//        if (oldBlockPos != null) {
+//
+//        }
+//
+//        int id = compound.getInt(TAG_ID_OLD);
+//        if (compound.getAllKeys().contains(TAG_TH_PRIORITY_OLD))
+//        {
+//            priority = compound.getInt(TAG_TH_PRIORITY_OLD);
+//        }
+//
+//        if (compound.getAllKeys().contains(TAG_CLAIMED_BY_OLD))
+//        {
+//            final int citizenId = compound.getInt(TAG_CLAIMED_BY_OLD);
+//            if (manager.getColony() != null)
+//            {
+//                final ICitizenData data = manager.getColony().getCitizenManager().getCivilian(citizenId);
+//                if (data != null && data.getWorkBuilding() != null)
+//                {
+//                    claimedBy = data.getWorkBuilding().getPosition();
+//                }
+//            }
+//        }
+//        else if (compound.getAllKeys().contains(TAG_CLAIMED_BY_BUILDING_OLD))
+//        {
+//            claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING_OLD);
+//        }
+//        buildingLocation = BlockPosUtil.read(compound, TAG_BUILDING_OLD);
+//        iteratorType = compound.getString(TAG_ITERATOR);
     }
 }

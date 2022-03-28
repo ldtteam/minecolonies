@@ -122,6 +122,16 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         this.customName += building.getCustomBuildingName();
     }
 
+    @Override
+    public String getDisplayName()
+    {
+        String customName = getCustomName();
+        if (!customName.isEmpty()) {
+            return customName;
+        }
+        return getWorkOrderName();
+    }
+
     /**
      * Read the WorkOrder data from the CompoundNBT.
      *

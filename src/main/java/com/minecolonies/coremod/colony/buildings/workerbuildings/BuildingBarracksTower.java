@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -70,7 +68,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
-            requestWorkOrder(buildingLevel + 1, builder, false);
+            requestWorkOrder(WorkOrderType.UPGRADE, builder);
         }
         else
         {
