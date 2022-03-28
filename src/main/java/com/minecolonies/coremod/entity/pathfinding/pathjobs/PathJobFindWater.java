@@ -103,7 +103,7 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (world.getBlockState(n.pos).getBlock() != Blocks.WATER && (!world.isEmptyBlock(n.pos) || world.getBlockState(n.pos).getBlock() != Blocks.WATER))
+        if (world.getBlockState(n.pos).getBlock() != Blocks.WATER && world.getBlockState(n.pos.below()).getBlock() != Blocks.WATER)
         {
             if (n.pos.getX() == n.parent.pos.getX())
             {

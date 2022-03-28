@@ -28,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.colony.requestsystem.requestable.deliveryman.AbstractDeliverymanRequestable.getMaxBuildingPriority;
@@ -178,13 +175,10 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
         else if (block instanceof BlockMinecoloniesRack)
         {
             addContainerPosition(pos);
-            if (block instanceof BlockMinecoloniesRack)
+            final TileEntity entity = world.getBlockEntity(pos);
+            if (entity instanceof TileEntityRack)
             {
-                final TileEntity entity = world.getBlockEntity(pos);
-                if (entity instanceof TileEntityRack)
-                {
-                    ((TileEntityRack) entity).setBuildingPos(this.getID());
-                }
+                ((TileEntityRack) entity).setBuildingPos(this.getID());
             }
         }
     }
@@ -194,20 +188,26 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
      * @param tagName the name of the tag to query
      * @return the BlockPos, or null if not found
      */
-    protected BlockPos getFirstLocationFromTag(String tagName)
+    @Nullable
+    protected BlockPos getFirstLocationFromTag(@NotNull final String tagName)
     {
-        if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
+        final List<BlockPos> locations = getLocationsFromTag(tagName);
+        return locations.isEmpty() ? null : locations.get(0);
+    }
+
+    /**
+     * Gets the list of tags, and finds all locations registered there.
+     * @param tagName the name of the tag to query
+     * @return all the matching BlockPos, or an empty list if not found
+     */
+    @NotNull
+    protected List<BlockPos> getLocationsFromTag(@NotNull final String tagName)
+    {
+        if (tileEntity != null)
         {
-            for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
-            {
-                if(entry.getValue().contains(tagName))
-                {
-                    //Tagged block for a portal location should be one of the obsidian block at the bottom of the opening
-                    return getPosition().offset(entry.getKey());
-                }
-            }
+            return new ArrayList<>(tileEntity.getWorldTagNamePosMap().getOrDefault(tagName, Collections.emptySet()));
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

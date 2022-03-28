@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.managers;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
@@ -12,7 +13,7 @@ import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.managers.interfaces.IBuildingManager;
+import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -28,12 +29,15 @@ import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -51,10 +55,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 
-public class BuildingManager implements IBuildingManager
+public class RegisteredStructureManager implements IRegisteredStructureManager
 {
     /**
      * List of building in the colony.
@@ -76,6 +81,11 @@ public class BuildingManager implements IBuildingManager
      * The warehouse building position. Initially null.
      */
     private final List<IMysticalSite> mysticalSites = new ArrayList<>();
+
+    /**
+     * List of leisure sites.
+     */
+    private ImmutableList<BlockPos> leisureSites = ImmutableList.of();
 
     /**
      * The townhall of the colony.
@@ -111,7 +121,7 @@ public class BuildingManager implements IBuildingManager
      *
      * @param colony the colony.
      */
-    public BuildingManager(final Colony colony)
+    public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
     }
@@ -138,7 +148,7 @@ public class BuildingManager implements IBuildingManager
             }
         }
 
-        if (compound.getAllKeys().contains(TAG_NEW_FIELDS))
+        if (compound.contains(TAG_NEW_FIELDS))
         {
             // Fields before Buildings, because the Farmer needs them.
             final ListNBT fieldTagList = compound.getList(TAG_NEW_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -146,6 +156,21 @@ public class BuildingManager implements IBuildingManager
             {
                 addField(BlockPosUtil.read(fieldTagList.getCompound(i), TAG_POS));
             }
+        }
+
+        if (compound.contains(TAG_LEISURE))
+        {
+            final ListNBT leisureTagList = compound.getList(TAG_LEISURE, Constants.NBT.TAG_COMPOUND);
+            final List<BlockPos> leisureSitesList = new ArrayList<>();
+            for (int i = 0; i < leisureTagList.size(); ++i)
+            {
+                final BlockPos pos = BlockPosUtil.read(leisureTagList.getCompound(i), TAG_POS);
+                if (!leisureSitesList.contains(pos))
+                {
+                    leisureSitesList.add(pos);
+                }
+            }
+            leisureSites = ImmutableList.copyOf(leisureSitesList);
         }
     }
 
@@ -200,6 +225,16 @@ public class BuildingManager implements IBuildingManager
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_NEW_FIELDS, fieldTagList);
+
+        // Leisure sites
+        @NotNull final ListNBT leisureTagList = new ListNBT();
+        for (@NotNull final BlockPos pos : leisureSites)
+        {
+            @NotNull final CompoundNBT leisureCompound = new CompoundNBT();
+            BlockPosUtil.write(leisureCompound, TAG_POS, pos);
+            leisureTagList.add(leisureCompound);
+        }
+        compound.put(TAG_LEISURE, leisureTagList);
     }
 
     @Override
@@ -218,11 +253,6 @@ public class BuildingManager implements IBuildingManager
         isFieldsDirty = false;
     }
 
-    /**
-     * Ticks all buildings when this building manager receives a tick.
-     *
-     * @param colony the colony which is being ticked.
-     */
     @Override
     public void onColonyTick(final IColony colony)
     {
@@ -266,17 +296,20 @@ public class BuildingManager implements IBuildingManager
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
             {
-                if (colony.getWorld().getBlockEntity(pos) instanceof ScarecrowTileEntity)
-                {
-                    final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) colony.getWorld().getBlockEntity(pos);
-                    if (scarecrow == null)
-                    {
-                        removeField(pos);
-                    }
-                }
-                else
+                if (!(colony.getWorld().getBlockEntity(pos) instanceof ScarecrowTileEntity))
                 {
                     removeField(pos);
+                }
+            }
+        }
+
+        for (@NotNull final BlockPos pos : leisureSites)
+        {
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), pos))
+            {
+                if (!(colony.getWorld().getBlockEntity(pos) instanceof TileEntityDecorationController))
+                {
+                    removeLeisureSite(pos);
                 }
             }
         }
@@ -291,12 +324,6 @@ public class BuildingManager implements IBuildingManager
         removedBuildings.forEach(IBuilding::destroy);
     }
 
-    /**
-     * Get building in Colony by ID.
-     *
-     * @param buildingId ID (coordinates) of the building to get.
-     * @return AbstractBuilding belonging to the given ID.
-     */
     @Override
     public IBuilding getBuilding(final BlockPos buildingId)
     {
@@ -305,6 +332,96 @@ public class BuildingManager implements IBuildingManager
             return buildings.get(buildingId);
         }
         return null;
+    }
+
+    @Override
+    public List<BlockPos> getLeisureSites()
+    {
+        return leisureSites;
+    }
+    
+    @Override
+    public BlockPos getRandomLeisureSite()
+    {
+        BlockPos pos = null;
+        final int randomDist = RANDOM.nextInt(4);
+        if (randomDist < 1)
+        {
+            pos = getFirstBuildingMatching(b -> b instanceof BuildingTownHall && b.getBuildingLevel() >= 3);
+            if (pos != null)
+            {
+                return pos;
+            }
+        }
+
+        if (randomDist < 2)
+        {
+            if (RANDOM.nextBoolean())
+            {
+                pos = getFirstBuildingMatching(b -> b instanceof BuildingMysticalSite && b.getBuildingLevel() >= 1);
+                if (pos != null)
+                {
+                    return pos;
+                }
+            }
+            else
+            {
+                pos = getFirstBuildingMatching(b -> b instanceof BuildingLibrary && b.getBuildingLevel() >= 1);
+                if (pos != null)
+                {
+                    return pos;
+                }
+            }
+        }
+
+        if (randomDist < 3)
+        {
+            pos = getFirstBuildingMatching(b -> b.hasModule(TavernBuildingModule.class) && b.getBuildingLevel() >= 1);
+            if (pos != null)
+            {
+                return pos;
+            }
+        }
+
+        return leisureSites.isEmpty() ? null : leisureSites.get(RANDOM.nextInt(leisureSites.size()));
+    }
+
+    @Nullable
+    @Override
+    public BlockPos getFirstBuildingMatching(final Predicate<IBuilding> predicate)
+    {
+        for (final IBuilding building : buildings.values())
+        {
+            if (predicate.test(building))
+            {
+                return building.getPosition();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void addLeisureSite(final BlockPos pos)
+    {
+        final List<BlockPos> tempList = new ArrayList<>(leisureSites);
+        if (!tempList.contains(pos))
+        {
+            tempList.add(pos);
+            this.leisureSites = ImmutableList.copyOf(tempList);
+            markBuildingsDirty();
+        }
+    }
+
+    @Override
+    public void removeLeisureSite(final BlockPos pos)
+    {
+        if (leisureSites.contains(pos))
+        {
+            final List<BlockPos> tempList = new ArrayList<>(leisureSites);
+            tempList.remove(pos);
+            this.leisureSites = ImmutableList.copyOf(tempList);
+            markBuildingsDirty();
+        }
     }
 
     @Nullable
@@ -608,8 +725,7 @@ public class BuildingManager implements IBuildingManager
             return null;
         }
 
-        Collections.shuffle(allowedBuildings);
-        return allowedBuildings.get(0).getPosition();
+        return allowedBuildings.get(RANDOM.nextInt(allowedBuildings.size())).getPosition();
     }
 
     /**

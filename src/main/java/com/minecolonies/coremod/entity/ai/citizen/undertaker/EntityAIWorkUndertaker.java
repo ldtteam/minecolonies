@@ -9,6 +9,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
@@ -36,6 +37,7 @@ import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
 
@@ -135,27 +137,16 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     @NotNull
     private IAIState wander()
     {
-        if(wanderPos == null)
+        if (worker.getNavigation().isDone())
         {
-            wanderPos = worker.getCitizenColonyHandler().getColony().getBuildingManager().
-                    getRandomBuilding(b -> b.hasModule(LivingBuildingModule.class) || b instanceof BuildingMysticalSite || b instanceof BuildingEnchanter);
-            return getState();
-        }
-
-        if (walkToBlock(wanderPos, 3))
-        {
-            return getState();
-        }
-
-        if(wanderPos == getOwnBuilding().getPosition())
-        {
-            wanderPos = null;
-            worker.decreaseSaturationForAction();
-            worker.getCitizenData().getCitizenSkillHandler().addXpToSkill(getModuleForJob().getSecondarySkill(), XP_PER_WANDER, worker.getCitizenData());
-        }
-        else
-        {
-            wanderPos = getOwnBuilding().getPosition();
+            if (getOwnBuilding().isInBuilding(worker.blockPosition()))
+            {
+                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+            }
+            else
+            {
+                walkToBuilding();
+            }
         }
 
         return IDLE;
@@ -280,19 +271,18 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         if (!checkForToolOrWeapon(ToolType.SHOVEL))
         {
+            equipShovel();
+            worker.swing(worker.getUsedItemHand());
             if (mineBlock(position))
             {
-                equipShovel();
-                worker.swing(worker.getUsedItemHand());
                 world.setBlockAndUpdate(position, Blocks.AIR.defaultBlockState());
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
                 getOwnBuilding().ClearCurrentGrave();
                 return true;
             }
-            return false;
         }
-        return true;
+        return false;
     }
 
     /**

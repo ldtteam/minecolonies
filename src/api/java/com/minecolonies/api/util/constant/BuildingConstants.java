@@ -98,6 +98,15 @@ public final class BuildingConstants
     public static final String FUEL_LIST = "fuel";
 
     /**
+     * String tag to identify a deactivated building.
+     */
+    public static final String DEACTIVATED = "deactivated";
+
+    /**
+     * String tag to identify a leisure decoration.
+     */
+    public static final String LEISURE = "leisure";
+    /**
      * Private constructor to hide implicit public one.
      */
     private BuildingConstants()

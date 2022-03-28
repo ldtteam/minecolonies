@@ -303,11 +303,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         // Attempt to light the portal and travel
         final BlockPos portal = getOwnBuilding().getPortalLocation();
-        final BlockState block = world.getBlockState(portal);
-
-
         if(portal != null && currentRecipeStorage != null)
         {
+            final BlockState block = world.getBlockState(portal);
             if (block.is(Blocks.NETHER_PORTAL))
             {
                 if(walkToBlock(portal, 1))
@@ -642,9 +640,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         // Attempt to light the portal and travel
         final BlockPos portal = getOwnBuilding().getPortalLocation();
-        final BlockState block = world.getBlockState(portal);
         if(portal != null && currentRecipeStorage != null)
         {
+            final BlockState block = world.getBlockState(portal);
             final Optional<PortalSize> ps = PortalSize.findPortalShape(world, portal, p -> p.isValid(), Direction.Axis.X);
 
             if(!ps.isPresent())

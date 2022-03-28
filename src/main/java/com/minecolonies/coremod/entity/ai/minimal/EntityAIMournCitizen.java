@@ -1,23 +1,30 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.tileentities.TileEntityNamedGrave;
+import com.minecolonies.api.util.*;
+import com.minecolonies.coremod.colony.buildings.modules.GraveyardManagementModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.EnumSet;
+import java.util.*;
 
-import net.minecraft.entity.ai.goal.Goal.Flag;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
  * Citizen mourning goal. Has citizens randomly walk around townhall.
@@ -30,9 +37,13 @@ public class EntityAIMournCitizen extends Goal
     public enum MourningState implements IState
     {
         IDLE,
+        DECIDE,
         WALKING_TO_TOWNHALL,
         WANDERING,
-        STARING
+        STARING,
+        WALKING_TO_GRAVEYARD,
+        WANDER_AT_GRAVEYARD,
+        WALK_TO_GRAVE
     }
 
     /**
@@ -63,6 +74,16 @@ public class EntityAIMournCitizen extends Goal
     private static final int AVERAGE_STARE_TIME = 10 * 20;
 
     /**
+     * The position of the graveyard.
+     */
+    private BlockPos graveyard;
+
+    /**
+     * Position of the grave to walk to.
+     */
+    private BlockPos gravePos;
+
+    /**
      * Instantiates this task.
      *
      * @param citizen the citizen.
@@ -77,11 +98,14 @@ public class EntityAIMournCitizen extends Goal
 
         stateMachine = new TickRateStateMachine<>(MourningState.IDLE, e -> Log.getLogger().warn("Mourning AI threw exception:", e));
 
-        stateMachine.addTransition(new TickingTransition<>(this::shouldMourn, () -> MourningState.IDLE, 20));
-        stateMachine.addTransition(new TickingTransition<>(MourningState.IDLE, () -> true, this::decide, 20));
+        stateMachine.addTransition(new TickingTransition<>(MourningState.IDLE, () -> true, () -> MourningState.DECIDE, 20));
+        stateMachine.addTransition(new TickingTransition<>(MourningState.DECIDE, () -> true, this::decide, 20));
         stateMachine.addTransition(new TickingTransition<>(MourningState.WALKING_TO_TOWNHALL, () -> true, this::walkToTownHall, 20));
         stateMachine.addTransition(new TickingTransition<>(MourningState.WANDERING, () -> true, this::wander, 20));
         stateMachine.addTransition(new TickingTransition<>(MourningState.STARING, () -> true, this::stare, 20));
+        stateMachine.addTransition(new TickingTransition<>(MourningState.WALKING_TO_GRAVEYARD, () -> true, this::walkToGraveyard, 20));
+        stateMachine.addTransition(new TickingTransition<>(MourningState.WANDER_AT_GRAVEYARD, () -> true, this::wanderAtGraveyard, 20));
+        stateMachine.addTransition(new TickingTransition<>(MourningState.WALK_TO_GRAVE, () -> true, this::walkToGrave, 20));
     }
 
     /**
@@ -90,14 +114,14 @@ public class EntityAIMournCitizen extends Goal
      */
     private boolean shouldMourn()
     {
-        if (citizen.getDesiredActivity() == DesiredActivity.MOURN && this.citizen.getRandom().nextInt(AVERAGE_MOURN_TIME) < 1)
+        final boolean shouldMourn = citizen.getDesiredActivity() == DesiredActivity.MOURN;
+        if (shouldMourn && this.citizen.getRandom().nextInt(AVERAGE_MOURN_TIME) < 1)
         {
             this.citizen.getCitizenData().getCitizenMournHandler().clearDeceasedCitizen();
             this.citizen.getCitizenData().getCitizenMournHandler().setMourning(false);
             citizen.getCitizenData().setVisibleStatus(null);
-            return true;
         }
-        return false;
+        return shouldMourn;
     }
 
     /**
@@ -109,6 +133,118 @@ public class EntityAIMournCitizen extends Goal
         final BlockPos pos = getMournLocation();
         citizen.getNavigation().moveToXYZ(pos.getX(), pos.getY(), pos.getZ(), this.speed);
         return MourningState.IDLE;
+    }
+
+    /**
+     * Path to the graveyard.
+     * @return the next state to go to.
+     */
+    private MourningState walkToGraveyard()
+    {
+        if (graveyard == null)
+        {
+            return MourningState.DECIDE;
+        }
+
+        if (!citizen.isWorkerAtSiteWithMove(graveyard, 3))
+        {
+            return MourningState.WALKING_TO_GRAVEYARD;
+        }
+
+        return MourningState.WANDER_AT_GRAVEYARD;
+    }
+
+    /**
+     * Wander at the graveyard and visit the graves.
+     * While wandering at the graveyard, the chance to stop mourning is doubled.
+     * @return the next state to go to.
+     */
+    private MourningState wanderAtGraveyard()
+    {
+        if (graveyard == null)
+        {
+            return MourningState.DECIDE;
+        }
+
+        // Double the chance to stop mourning by checking here as well.
+        if (!shouldMourn())
+        {
+            return MourningState.IDLE;
+        }
+
+        final IBuilding graveyardBuilding = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(graveyard);
+        if (!(graveyardBuilding instanceof BuildingGraveyard))
+        {
+            graveyard = null;
+            return MourningState.DECIDE;
+        }
+
+        if (!citizen.getNavigation().isDone())
+        {
+            return MourningState.WANDER_AT_GRAVEYARD;
+        }
+
+        // Wander around randomly.
+        if (MathUtils.RANDOM.nextInt(100) < 90)
+        {
+            citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, graveyardBuilding.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+            return MourningState.WANDER_AT_GRAVEYARD;
+        }
+
+        // Try find the grave of one of the diseased.
+        final Set<Tuple<BlockPos, Direction>> gravePositions = ((BuildingGraveyard) graveyardBuilding).getGravePositions();
+        for (final Tuple<BlockPos, Direction> gravePos : gravePositions)
+        {
+            if (WorldUtil.isBlockLoaded(citizen.level, gravePos.getA()))
+            {
+                final TileEntity blockEntity = citizen.level.getBlockEntity(gravePos.getA());
+                if (blockEntity instanceof TileEntityNamedGrave)
+                {
+                    final Iterator<String> iterator = citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens().iterator();
+                    if (!iterator.hasNext())
+                    {
+                        continue;
+                    }
+                    final String deathBud = iterator.next();
+                    final String firstName = StringUtils.split(deathBud)[0];
+                    final String lastName = deathBud.replaceFirst(firstName,"");
+
+                    final List<String> graveNameList = ((TileEntityNamedGrave) blockEntity).getTextLines();
+                    if (!graveNameList.isEmpty() && graveNameList.contains(firstName) && graveNameList.contains(lastName))
+                    {
+                        this.gravePos = gravePos.getA();
+                        return MourningState.WALK_TO_GRAVE;
+                    }
+                }
+            }
+        }
+
+        return MourningState.DECIDE;
+    }
+
+    /**
+     * Walk to grave state.
+     * @return next state.
+     */
+    private MourningState walkToGrave()
+    {
+        if (gravePos == null)
+        {
+            return MourningState.DECIDE;
+        }
+
+        // Double the chance to stop mourning by checking here as well.
+        if (!shouldMourn())
+        {
+            return MourningState.IDLE;
+        }
+
+        if (!citizen.isWorkerAtSiteWithMove(gravePos, 3))
+        {
+            return MourningState.WALK_TO_GRAVE;
+        }
+
+        return MourningState.DECIDE;
     }
 
     /**
@@ -174,7 +310,22 @@ public class EntityAIMournCitizen extends Goal
             citizen.getCitizenItemHandler().removeHeldItem();
             citizen.getCitizenData().setVisibleStatus(VisibleCitizenStatus.MOURNING);
             citizen.getCitizenStatusHandler().setStatus(Status.MOURN);
-            return MourningState.WALKING_TO_TOWNHALL;
+        }
+
+        if (this.citizen.getRandom().nextBoolean())
+        {
+            return MourningState.STARING;
+        }
+
+        if (this.graveyard == null)
+        {
+            this.graveyard = citizen.getCitizenColonyHandler().getColony().getBuildingManager().getFirstBuildingMatching(b -> b instanceof BuildingGraveyard && b.getFirstModuleOccurance(
+              GraveyardManagementModule.class).hasRestingCitizen(citizen.getCitizenData().getCitizenMournHandler().getDeceasedCitizens()));
+        }
+
+        if (graveyard != null)
+        {
+            return MourningState.WALKING_TO_GRAVEYARD;
         }
 
         citizen.getLookControl().setLookAt(citizen.getX(), citizen.getY() - 10, citizen.getZ(), (float) citizen.getMaxHeadYRot(),
@@ -185,19 +336,17 @@ public class EntityAIMournCitizen extends Goal
             return MourningState.WALKING_TO_TOWNHALL;
         }
 
-        if (this.citizen.getRandom().nextBoolean())
-        {
-            return MourningState.STARING;
-        }
-
         return MourningState.WANDERING;
     }
 
     @Override
     public boolean canUse()
     {
-        stateMachine.tick();
-        return stateMachine.getState() != MourningState.IDLE;
+        if (citizen.getDesiredActivity() == DesiredActivity.MOURN && MathUtils.RANDOM.nextInt(20) < 1)
+        {
+            return shouldMourn();
+        }
+        return citizen.getDesiredActivity() == DesiredActivity.MOURN;
     }
 
     @Override
@@ -211,6 +360,8 @@ public class EntityAIMournCitizen extends Goal
     {
         stateMachine.reset();
         citizen.getCitizenData().setVisibleStatus(null);
+        this.graveyard = null;
+        this.gravePos = null;
     }
 
     /**
