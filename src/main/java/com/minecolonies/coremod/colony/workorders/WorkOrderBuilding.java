@@ -122,6 +122,11 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         return customParentName;
     }
 
+    public String getParentTranslationKey()
+    {
+        return parentTranslationKey;
+    }
+
     public void setCustomName(@NotNull final IBuilding building)
     {
         this.customName = building.getCustomName();

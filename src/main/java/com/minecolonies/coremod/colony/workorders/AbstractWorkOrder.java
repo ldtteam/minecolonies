@@ -17,8 +17,10 @@ import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderDecorationView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
+import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -714,13 +716,30 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         else if (targetLevel > 1)
         {
             IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
-            if (building.getBuildingLevel() == targetLevel)
+            TileEntity entity = manager.getColony().getWorld().getBlockEntity(BlockPosUtil.read(compound, TAG_LOCATION));
+
+            if (building != null)
             {
-                compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
+                if (building.getBuildingLevel() == targetLevel)
+                {
+                    compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
+                }
+                else
+                {
+                    compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
+                }
             }
-            else
+            else if (entity instanceof TileEntityDecorationController)
             {
-                compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
+                TileEntityDecorationController dEntity = (TileEntityDecorationController) entity;
+                if (dEntity.getTier() == targetLevel)
+                {
+                    compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
+                }
+                else
+                {
+                    compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
+                }
             }
             compound.putInt(TAG_TARGET_LEVEL, targetLevel);
             compound.putInt(TAG_CURRENT_LEVEL, building.getBuildingLevel());
@@ -731,5 +750,17 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         compound.remove(TAG_BUILDING_ROTATION_OLD);
         compound.remove(TAG_IS_MIRRORED_OLD);
         compound.remove(TAG_AMOUNT_OF_RESOURCES_OLD);
+        compound.remove(TAG_UPGRADE_LEVEL_OLD);
+
+        // Building specific info
+        IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
+        if (building != null)
+        {
+            final WorkOrderBuilding test = new WorkOrderBuilding();
+            test.setCustomName(building);
+            compound.putString("customName", test.getCustomName());
+            compound.putString("customParentName", test.getCustomParentName());
+            compound.putString("parentTranslationKey", test.getParentTranslationKey());
+        }
     }
 }
