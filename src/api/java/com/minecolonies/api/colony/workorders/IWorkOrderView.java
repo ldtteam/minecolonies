@@ -46,12 +46,13 @@ public interface IWorkOrderView
      * @param position the pos of the claiming worker.
      */
     void setClaimedBy(BlockPos position);
+
     /**
      * Type getter.
      *
      * @return the type (defined by Enum).
      */
-    WorkOrderType getType();
+    WorkOrderType getWorkOrderType();
 
     /**
      * Get the position of the workorder.

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
@@ -10,6 +11,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.WorkOrderChangeMessage;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -184,9 +186,14 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class).setText(workOrder.getDisplayName());
-                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(claimingCitizen);
-                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Integer.toString(workOrder.getId()));
+                Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class);
+                PaneBuilders.tooltipBuilder()
+                        .append(workOrder.getDisplayName())
+                        .hoverPane(workOrderTextPanel)
+                        .build();
+                workOrderTextPanel.setText(workOrder.getDisplayName());
+                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(new StringTextComponent(claimingCitizen));
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(new StringTextComponent(Integer.toString(workOrder.getId())));
             }
         });
     }

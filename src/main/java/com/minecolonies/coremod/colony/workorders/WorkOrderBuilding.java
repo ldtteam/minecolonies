@@ -46,26 +46,24 @@ public class WorkOrderBuilding extends AbstractWorkOrder
                 break;
         }
 
-        String schematicName = "";
-        if (type != WorkOrderType.REMOVE)
+        String schematicName;
+        final int targetSchematicLevel = type == WorkOrderType.REMOVE ? building.getBuildingLevel() : targetLevel;
+        final TileEntity buildingTE = building.getColony().getWorld().getBlockEntity(building.getID());
+        if (buildingTE instanceof AbstractTileEntityColonyBuilding)
         {
-            final TileEntity buildingTE = building.getColony().getWorld().getBlockEntity(building.getID());
-            if (buildingTE instanceof AbstractTileEntityColonyBuilding)
+            if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
             {
-                if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
-                {
-                    schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
-                            .replaceAll("\\d$", "") + targetLevel;
-                }
-                else
-                {
-                    schematicName = building.getSchematicName() + targetLevel;
-                }
+                schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
+                        .replaceAll("\\d$", "") + targetSchematicLevel;
             }
             else
             {
-                schematicName = building.getSchematicName() + targetLevel;
+                schematicName = building.getSchematicName() + targetSchematicLevel;
             }
+        }
+        else
+        {
+            schematicName = building.getSchematicName() + targetSchematicLevel;
         }
 
         String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), schematicName).toString();
@@ -109,24 +107,28 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         return customName;
     }
 
-    public void setCustomName(final IBuilding building)
+    public void setCustomName(@NotNull final IBuilding building)
     {
         if (building.hasParent())
         {
             final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
             if (parentBuilding != null)
             {
-                this.customName = parentBuilding.getCustomBuildingName() + " / ";
+                this.customName = parentBuilding.getCustomName() + " / " + building.getCustomName();
             }
         }
-        this.customName += building.getCustomBuildingName();
+        else
+        {
+            this.customName = building.getCustomName();
+        }
     }
 
     @Override
     public String getDisplayName()
     {
         String customName = getCustomName();
-        if (!customName.isEmpty()) {
+        if (!customName.isEmpty())
+        {
             return customName;
         }
         return getWorkOrderName();

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockout.Pane;
+import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
@@ -56,7 +57,6 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     private int tick = 0;
 
     /**
-     *
      * @param res
      * @param building
      * @param moduleView
@@ -138,7 +138,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
 
     /**
      * Updates the available work orders page.
-     * 
+     *
      * @param index   index in the list of resources.
      * @param rowPane The Pane to use to display the information.
      */
@@ -146,8 +146,14 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     {
         final IWorkOrderView order = workOrders.get(index);
 
-        rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class).setText(order.getDisplayName());
-        rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class).setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
+        Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class);
+        PaneBuilders.tooltipBuilder()
+                .append(order.getDisplayName())
+                .hoverPane(workOrderTextPanel)
+                .build();
+        workOrderTextPanel.setText(order.getDisplayName());
+        rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class)
+                .setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
 
         if (order.getClaimedBy().equals(buildingView.getPosition()))
         {
@@ -161,7 +167,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
 
     /**
      * On click select the clicked work order.
-     * 
+     *
      * @param button the clicked button.
      */
     private void selectWorkOrder(@NotNull final Button button)

@@ -41,6 +41,11 @@ public class DecorationBuildRequestMessage implements IMessage
     private BlockPos pos;
 
     /**
+     * The display name of the decoration.
+     */
+    private String displayName;
+
+    /**
      * The name of the decoration.
      */
     private String name;
@@ -66,15 +71,17 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * Creates a build request for a decoration.
      *
-     * @param pos       the position of it.
-     * @param name      it's name.
-     * @param level     the level.
-     * @param dimension the dimension we're executing on.
+     * @param pos         the position of it.
+     * @param displayName it's name.
+     * @param name        it's name.
+     * @param level       the level.
+     * @param dimension   the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String name, final int level, final RegistryKey<World> dimension)
+    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String displayName, final String name, final int level, final RegistryKey<World> dimension)
     {
         super();
         this.pos = pos;
+        this.displayName = displayName;
         this.name = name;
         this.level = level;
         this.dimension = dimension;
@@ -84,6 +91,7 @@ public class DecorationBuildRequestMessage implements IMessage
     public void fromBytes(@NotNull final PacketBuffer buf)
     {
         this.pos = buf.readBlockPos();
+        this.displayName = buf.readUtf(32767);
         this.name = buf.readUtf(32767);
         this.level = buf.readInt();
         this.dimension = RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
@@ -93,6 +101,7 @@ public class DecorationBuildRequestMessage implements IMessage
     public void toBytes(@NotNull final PacketBuffer buf)
     {
         buf.writeBlockPos(this.pos);
+        buf.writeUtf(this.displayName);
         buf.writeUtf(this.name);
         buf.writeInt(this.level);
         buf.writeUtf(this.dimension.location().toString());
@@ -173,7 +182,17 @@ public class DecorationBuildRequestMessage implements IMessage
                 order = WorkOrderDecoration.create(
                         WorkOrderType.UPGRADE,
                         name + level,
-                        name + " " + level,
+                        displayName,
+                        pos,
+                        difference,
+                        state.getValue(BlockDecorationController.MIRROR),
+                        currentLevel);
+            }
+            else if (level == currentLevel) {
+                order = WorkOrderDecoration.create(
+                        WorkOrderType.REPAIR,
+                        name + level,
+                        displayName,
                         pos,
                         difference,
                         state.getValue(BlockDecorationController.MIRROR),
@@ -184,7 +203,7 @@ public class DecorationBuildRequestMessage implements IMessage
                 order = WorkOrderDecoration.create(
                         WorkOrderType.BUILD,
                         name + level,
-                        name,
+                        displayName,
                         pos,
                         difference,
                         state.getValue(BlockDecorationController.MIRROR),

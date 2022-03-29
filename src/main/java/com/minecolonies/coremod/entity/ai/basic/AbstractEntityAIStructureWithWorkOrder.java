@@ -40,6 +40,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.P
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -335,7 +336,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final String structureName = job.getBlueprint().getName();
         final AbstractWorkOrder wo = job.getWorkOrder();
 
         if (wo == null)
@@ -348,72 +348,67 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         else
         {
             String buildingName = wo.getDisplayName();
-            buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
-                    buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.lastIndexOf(String.valueOf(wo.getTargetLevel())));
+            sendCompletionMessage(wo);
 
             switch (wo.getWorkOrderType())
             {
                 case BUILD:
-                    sendCompletionMessage(wo);
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), buildingName));
                     break;
                 case UPGRADE:
-                    sendCompletionMessage(wo);
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), buildingName, wo.getTargetLevel()));
                     break;
                 case REPAIR:
-                    worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE, structureName);
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), buildingName, wo.getCurrentLevel()));
                     break;
                 case REMOVE:
-                    worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE, structureName);
                     job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), buildingName, wo.getCurrentLevel()));
                     break;
-                default:
-                    sendCompletionMessage(wo);
-                    break;
+            }
+
+            if (job.getWorkOrder() instanceof WorkOrderBuilding)
+            {
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                switch (wo.getWorkOrderType())
+                {
+                    case BUILD:
+                    case UPGRADE:
+                    case REPAIR:
+                        if (building == null)
+                        {
+                            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                                    worker.getCitizenColonyHandler().getColony().getID(),
+                                    worker.getCitizenData().getId(),
+                                    wo.getLocation()));
+                        }
+                        else
+                        {
+                            // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
+                            final TileEntity te = worker.level.getBlockEntity(building.getID());
+                            if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProvider) te).getSchematicName().isEmpty())
+                            {
+                                building.onUpgradeComplete(wo.getTargetLevel());
+                                building.setBuildingLevel(wo.getTargetLevel());
+                            }
+                        }
+                        break;
+                    case REMOVE:
+                        if (building == null)
+                        {
+                            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                                    worker.getCitizenColonyHandler().getColony().getID(),
+                                    worker.getCitizenData().getId(),
+                                    wo.getLocation()));
+                        }
+                        else
+                        {
+                            building.setDeconstructed();
+                        }
+                        break;
+                }
             }
 
             job.complete();
-
-            final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
-            switch (wo.getWorkOrderType())
-            {
-                case BUILD:
-                case UPGRADE:
-                case REPAIR:
-                    if (building == null)
-                    {
-                        Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                                worker.getCitizenColonyHandler().getColony().getID(),
-                                worker.getCitizenData().getId(),
-                                wo.getLocation()));
-                    }
-                    else
-                    {
-                        // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
-                        final TileEntity te = worker.level.getBlockEntity(building.getID());
-                        if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProvider) te).getSchematicName().isEmpty())
-                        {
-                            building.onUpgradeComplete(wo.getTargetLevel());
-                            building.setBuildingLevel(wo.getTargetLevel());
-                        }
-                    }
-                    break;
-                case REMOVE:
-                    if (building == null)
-                    {
-                        Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                                worker.getCitizenColonyHandler().getColony().getID(),
-                                worker.getCitizenData().getId(),
-                                wo.getLocation()));
-                    }
-                    else
-                    {
-                        building.setDeconstructed();
-                    }
-                    break;
-            }
         }
         getOwnBuilding().resetNeededResources();
     }

@@ -27,6 +27,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.permissions.Player;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -83,6 +84,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -120,6 +122,7 @@ import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.ASYNC_REQUEST;
 import static com.minecolonies.api.util.constant.TranslationConstants.NORMAL_REQUEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.WORK_ORDER_CREATED;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -277,11 +280,24 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      */
     @Override
     @NotNull
-    public String getCustomBuildingName()
+    public String getCustomName()
+    {
+        return this.customName;
+    }
+
+    /**
+     * Getter for the custom name of a building.
+     * Returns either the custom name (if any) or the translation key.
+     *
+     * @return the custom name or the schematic name.
+     */
+    @Override
+    @NotNull
+    public String getBuildingDisplayName()
     {
         if (customName.isEmpty())
         {
-            return getSchematicName();
+            return getBuildingType().getTranslationKey();
         }
         return this.customName;
     }
@@ -515,13 +531,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (workOrder.getID() != 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
-                    "com.minecolonies.coremod.workorderadded",
-                    workOrder.getDisplayName(),
-                    colony.getName(),
-                    workOrder.getLocation().getX(),
-                    workOrder.getLocation().getY(),
-                    workOrder.getLocation().getZ());
+            for (PlayerEntity player : colony.getImportantMessageEntityPlayers())
+            {
+                ITextComponent displayNameComponent = new TranslationTextComponent(workOrder.getDisplayName());
+                ITextComponent fullTextComponent = new TranslationTextComponent(WORK_ORDER_CREATED,
+                        displayNameComponent,
+                        colony.getName(),
+                        workOrder.getLocation().getX(),
+                        workOrder.getLocation().getY(),
+                        workOrder.getLocation().getZ());
+                player.sendMessage(fullTextComponent, player.getUUID());
+            }
         }
         markDirty();
     }
@@ -809,7 +829,11 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         final IBuilding parentBuilding = colony.getBuildingManager().getBuilding(getParent());
 
-        if (getBuildingLevel() < getMaxBuildingLevel() && (parentBuilding == null || getBuildingLevel() < parentBuilding.getBuildingLevel()))
+        if (getBuildingLevel() == 0 && (parentBuilding == null || parentBuilding.getBuildingLevel() > 0))
+        {
+            requestWorkOrder(WorkOrderType.BUILD, builder);
+        }
+        else if (getBuildingLevel() < getMaxBuildingLevel() && (parentBuilding == null || getBuildingLevel() < parentBuilding.getBuildingLevel()))
         {
             requestWorkOrder(WorkOrderType.UPGRADE, builder);
         }

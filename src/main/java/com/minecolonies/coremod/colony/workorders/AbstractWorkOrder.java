@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
@@ -24,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
 
@@ -36,22 +39,31 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * NBT for storage.
      */
     private static final String TAG_TYPE = "type";
-    private static final String TAG_TH_PRIORITY = "priority";
     private static final String TAG_ID = "id";
+    private static final String TAG_TH_PRIORITY = "priority";
     private static final String TAG_CLAIMED_BY = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
+    private static final String TAG_STRUCTURE_NAME = "structureName";
+    private static final String TAG_WO_NAME = "workOrderName";
+    private static final String TAG_WO_TYPE = "workOrderType";
+    private static final String TAG_LOCATION = "location";
+    private static final String TAG_ROTATION = "rotation";
+    private static final String TAG_IS_MIRRORED = "isMirrored";
+    private static final String TAG_CURRENT_LEVEL = "currentLevel";
+    private static final String TAG_TARGET_LEVEL = "targetLevel";
+    private static final String TAG_AMOUNT_OF_RESOURCES = "amountOfResources";
     private static final String TAG_ITERATOR = "iterator";
+    private static final String TAG_IS_CLEARED = "cleared";
+    private static final String TAG_IS_REQUESTED = "requested";
 
     /**
      * Old NBT tags for storage
      */
     private static final String TAG_BUILDING_OLD = "building";
-    private static final String TAG_TYPE_OLD = "type";
-    private static final String TAG_TH_PRIORITY_OLD = "priority";
-    private static final String TAG_ID_OLD = "id";
-    private static final String TAG_CLAIMED_BY_OLD = "claimedBy";
-    private static final String TAG_CLAIMED_BY_BUILDING_OLD = "claimedByBuilding";
-    private static final String TAG_ITERATOR_OLD = "iterator";
+    private static final String TAG_BUILDING_ROTATION_OLD = "buildingRotation";
+    private static final String TAG_IS_MIRRORED_OLD = "mirrored";
+    private static final String TAG_AMOUNT_OF_RESOURCES_OLD = "resQuantity";
+    private static final String TAG_UPGRADE_LEVEL_OLD = "upgradeLevel";
 
     /**
      * Bimap of workOrder from string to class.
@@ -142,11 +154,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
         try
         {
-            if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
-            {
-                order.setPriority(compound.getInt(TAG_TH_PRIORITY));
-            }
-
             order.read(compound, manager);
         }
         catch (final RuntimeException ex)
@@ -473,15 +480,15 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
     {
         // TODO: In 1.19 remove this method call as this is purely for backwards compatibility with old class mappings
-        migrateOldNbt(compound);
+        migrateOldNbt(compound, manager);
 
         id = compound.getInt(TAG_ID);
-        if (compound.getAllKeys().contains(TAG_TH_PRIORITY))
+        if (compound.contains(TAG_TH_PRIORITY))
         {
             priority = compound.getInt(TAG_TH_PRIORITY);
         }
 
-        if (compound.getAllKeys().contains(TAG_CLAIMED_BY))
+        if (compound.contains(TAG_CLAIMED_BY))
         {
             final int citizenId = compound.getInt(TAG_CLAIMED_BY);
             if (manager.getColony() != null)
@@ -493,11 +500,22 @@ public abstract class AbstractWorkOrder implements IWorkOrder
                 }
             }
         }
-        else if (compound.getAllKeys().contains(TAG_CLAIMED_BY_BUILDING))
+        else if (compound.contains(TAG_CLAIMED_BY_BUILDING))
         {
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
+        structureName = compound.getString(TAG_STRUCTURE_NAME);
+        workOrderName = compound.getString(TAG_WO_NAME);
+        workOrderType = WorkOrderType.values()[compound.getInt(TAG_WO_TYPE)];
+        location = BlockPosUtil.read(compound, TAG_LOCATION);
+        rotation = compound.getInt(TAG_ROTATION);
+        isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
+        currentLevel = compound.getInt(TAG_CURRENT_LEVEL);
+        targetLevel = compound.getInt(TAG_TARGET_LEVEL);
+        amountOfResources = compound.getInt(TAG_AMOUNT_OF_RESOURCES);
         iteratorType = compound.getString(TAG_ITERATOR);
+        cleared = compound.getBoolean(TAG_IS_CLEARED);
+        requested = compound.getBoolean(TAG_IS_REQUESTED);
     }
 
     /**
@@ -508,21 +526,25 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public void write(@NotNull final CompoundNBT compound)
     {
-        final String s = nameToClassBiMap.inverse().get(this.getClass());
-
-        if (s == null)
-        {
-            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
-        }
-
         compound.putInt(TAG_TH_PRIORITY, priority);
-        compound.putString(TAG_TYPE, s);
+        compound.putString(TAG_TYPE, getMappingName());
         compound.putInt(TAG_ID, id);
         if (claimedBy != null)
         {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
+        compound.putString(TAG_STRUCTURE_NAME, structureName);
+        compound.putString(TAG_WO_NAME, workOrderName);
+        compound.putInt(TAG_WO_TYPE, workOrderType.ordinal());
+        BlockPosUtil.write(compound, TAG_LOCATION, location);
+        compound.putInt(TAG_ROTATION, rotation);
+        compound.putBoolean(TAG_IS_MIRRORED, isMirrored);
+        compound.putInt(TAG_CURRENT_LEVEL, currentLevel);
+        compound.putInt(TAG_TARGET_LEVEL, targetLevel);
+        compound.putInt(TAG_AMOUNT_OF_RESOURCES, amountOfResources);
         compound.putString(TAG_ITERATOR, iteratorType);
+        compound.putBoolean(TAG_IS_CLEARED, cleared);
+        compound.putBoolean(TAG_IS_REQUESTED, requested);
     }
 
     /**
@@ -533,13 +555,36 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public void serializeViewNetworkData(@NotNull final PacketBuffer buf)
     {
+        buf.writeUtf(getMappingName());
         buf.writeInt(id);
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
+        buf.writeUtf(structureName);
         buf.writeUtf(workOrderName);
         buf.writeInt(workOrderType.ordinal());
-        buf.writeUtf(structureName);
-        buf.writeInt(0);
+        buf.writeBlockPos(location);
+        buf.writeInt(rotation);
+        buf.writeBoolean(isMirrored);
+        buf.writeInt(currentLevel);
+        buf.writeInt(targetLevel);
+        buf.writeInt(amountOfResources);
+        buf.writeUtf(iteratorType);
+        buf.writeBoolean(cleared);
+        buf.writeBoolean(requested);
+    }
+
+    private String getMappingName() {
+        final Optional<String> s = nameToClassBiMap.entrySet().stream()
+                .filter(f -> this.getClass().equals(f.getValue().getA()))
+                .map(Map.Entry::getKey)
+                .findFirst();
+
+        if (!s.isPresent())
+        {
+            throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
+        }
+
+        return s.get();
     }
 
     /**
@@ -620,36 +665,60 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     // TODO: In 1.19 remove this method as this is purely for backwards compatibility with old class mappings
-    private static void migrateOldNbt(final CompoundNBT compound)
+    private static void migrateOldNbt(final CompoundNBT compound, IWorkManager manager)
     {
-//        BlockPos oldBlockPos = BlockPosUtil.read(compound, TAG_BUILDING_OLD);
-//        if (oldBlockPos != null) {
-//
-//        }
-//
-//        int id = compound.getInt(TAG_ID_OLD);
-//        if (compound.getAllKeys().contains(TAG_TH_PRIORITY_OLD))
-//        {
-//            priority = compound.getInt(TAG_TH_PRIORITY_OLD);
-//        }
-//
-//        if (compound.getAllKeys().contains(TAG_CLAIMED_BY_OLD))
-//        {
-//            final int citizenId = compound.getInt(TAG_CLAIMED_BY_OLD);
-//            if (manager.getColony() != null)
-//            {
-//                final ICitizenData data = manager.getColony().getCitizenManager().getCivilian(citizenId);
-//                if (data != null && data.getWorkBuilding() != null)
-//                {
-//                    claimedBy = data.getWorkBuilding().getPosition();
-//                }
-//            }
-//        }
-//        else if (compound.getAllKeys().contains(TAG_CLAIMED_BY_BUILDING_OLD))
-//        {
-//            claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING_OLD);
-//        }
-//        buildingLocation = BlockPosUtil.read(compound, TAG_BUILDING_OLD);
-//        iteratorType = compound.getString(TAG_ITERATOR);
+        // When the old TAG_BUILDING tag no longer exists in the compound NBT, it means the work order has already migrated
+        if (!compound.contains(TAG_BUILDING_OLD) && !compound.getString(TAG_TYPE).equals("removal"))
+        {
+            return;
+        }
+
+        // Migrate tags
+        // Re-write the location
+        BlockPosUtil.write(compound, TAG_LOCATION, BlockPosUtil.read(compound, TAG_BUILDING_OLD));
+        // Re-write the rotation
+        compound.putInt(TAG_ROTATION, compound.getInt(TAG_BUILDING_ROTATION_OLD));
+        // Re-write the mirrored state
+        compound.putBoolean(TAG_ROTATION, compound.getBoolean(TAG_BUILDING_ROTATION_OLD));
+        // Re-write the mirrored state
+        compound.putInt(TAG_AMOUNT_OF_RESOURCES, compound.getInt(TAG_AMOUNT_OF_RESOURCES_OLD));
+
+        // Re-write the current and upgrade level
+        int targetLevel = compound.getInt(TAG_UPGRADE_LEVEL_OLD);
+
+        // If the tag is removal it's indicating an old removal request
+        if (compound.getString(TAG_TYPE).equals("removal"))
+        {
+            compound.putString(TAG_TYPE, "building");
+            compound.putInt(TAG_WO_TYPE, WorkOrderType.REMOVE.ordinal());
+            compound.putInt(TAG_CURRENT_LEVEL, targetLevel);
+            compound.putInt(TAG_TARGET_LEVEL, 0);
+        }
+        else if (targetLevel == 1)
+        {
+            compound.putInt(TAG_WO_TYPE, WorkOrderType.BUILD.ordinal());
+            compound.putInt(TAG_CURRENT_LEVEL, 0);
+            compound.putInt(TAG_TARGET_LEVEL, targetLevel);
+        }
+        else if (targetLevel > 1)
+        {
+            IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
+            if (building.getBuildingLevel() == targetLevel)
+            {
+                compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
+            }
+            else
+            {
+                compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
+            }
+            compound.putInt(TAG_TARGET_LEVEL, targetLevel);
+            compound.putInt(TAG_CURRENT_LEVEL, building.getBuildingLevel());
+        }
+
+        // Remove old NBT
+        compound.remove(TAG_BUILDING_OLD);
+        compound.remove(TAG_BUILDING_ROTATION_OLD);
+        compound.remove(TAG_IS_MIRRORED_OLD);
+        compound.remove(TAG_AMOUNT_OF_RESOURCES_OLD);
     }
 }

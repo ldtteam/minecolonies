@@ -4,9 +4,6 @@ import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,34 +23,54 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     private int priority;
 
     /**
-     * Its description.
-     */
-    private String structureName;
-
-    /**
-     * Its description.
-     */
-    private String displayName;
-
-    /**
-     * The type (defined by an enum).
-     */
-    private WorkOrderType type;
-
-    /**
      * Claimed by building id pos.
      */
     private BlockPos claimedBy;
 
     /**
+     * Its description.
+     */
+    private String structureName;
+
+    /**
+     * The name of the work order
+     */
+    private String workOrderName;
+
+    /**
+     * The type (defined by an enum).
+     */
+    private WorkOrderType workOrderType;
+
+    /**
      * Position where its being built at.
      */
-    private BlockPos pos;
+    private BlockPos location;
+
+    /**
+     * Position where its being built at.
+     */
+    private int rotation;
+
+    /**
+     * Position where its being built at.
+     */
+    private boolean isMirrored;
+
+    /**
+     * The level it's at before the upgrade.
+     */
+    private int currentLevel;
 
     /**
      * Level it's being upgraded to.
      */
     private int targetLevel;
+
+    private int amountOfResources;
+    private String iteratorType;
+    private boolean cleared;
+    private boolean requested;
 
     public AbstractWorkOrderView()
     {
@@ -95,23 +112,12 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
 
     /**
      * Claim the view.
+     *
      * @param position the pos of the claiming worker.
      */
     public void setClaimedBy(final BlockPos position)
     {
         this.claimedBy = position;
-    }
-
-    @Override
-    public WorkOrderType getType()
-    {
-        return type;
-    }
-
-    @Override
-    public BlockPos getLocation()
-    {
-        return this.pos;
     }
 
     /**
@@ -122,6 +128,62 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     public String getStructureName()
     {
         return structureName.replaceAll("schematics/(?:decorations/)?", "");
+    }
+
+    public String getWorkOrderName()
+    {
+        return workOrderName;
+    }
+
+    public WorkOrderType getWorkOrderType()
+    {
+        return workOrderType;
+    }
+
+    @Override
+    public BlockPos getLocation()
+    {
+        return this.location;
+    }
+
+    public int getRotation()
+    {
+        return rotation;
+    }
+
+    public boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    public int getCurrentLevel()
+    {
+        return currentLevel;
+    }
+
+    public int getTargetLevel()
+    {
+        return targetLevel;
+    }
+
+    public int getAmountOfResources()
+    {
+        return amountOfResources;
+    }
+
+    public String getIteratorType()
+    {
+        return iteratorType;
+    }
+
+    public boolean isCleared()
+    {
+        return cleared;
+    }
+
+    public boolean isRequested()
+    {
+        return requested;
     }
 
     /**
@@ -138,13 +200,6 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      */
     public abstract boolean shouldShowInBuilder();
 
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        String workOrderName = new TranslationTextComponent(displayName).getString();
-        return new StringTextComponent(String.format("%s %d", workOrderName, targetLevel));
-    }
-
     /**
      * Deserialize the attributes and variables from transition. Buffer may be not readable because the workOrderView may be null.
      *
@@ -155,17 +210,25 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         id = buf.readInt();
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
-        type = WorkOrderType.values()[buf.readInt()];
-        structureName = buf.readUtf(32767);
-        displayName = buf.readUtf(32767);
-        pos = buf.readBlockPos();
+        structureName = buf.readUtf();
+        workOrderName = buf.readUtf();
+        workOrderType = WorkOrderType.values()[buf.readInt()];
+        location = buf.readBlockPos();
+        rotation = buf.readInt();
+        isMirrored = buf.readBoolean();
+        currentLevel = buf.readInt();
         targetLevel = buf.readInt();
+        amountOfResources = buf.readInt();
+        iteratorType = buf.readUtf();
+        cleared = buf.readBoolean();
+        requested = buf.readBoolean();
     }
 
     /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     *
      * @param builderLocation position of the builders own hut.
-     * @param builderLevel level of the builders hut.
+     * @param builderLevel    level of the builders hut.
      * @return true if so.
      */
     public boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel)
@@ -174,6 +237,6 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         //  - The Builder's Work AbstractBuilding is built
         //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
 
-        return (builderLevel >= targetLevel || builderLevel == 5 || (builderLocation.equals(pos)));
+        return (builderLevel >= targetLevel || builderLevel == 5 || (builderLocation.equals(location)));
     }
 }
