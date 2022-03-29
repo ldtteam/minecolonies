@@ -67,6 +67,32 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     }
 
     /**
+     * Checks if a builder may accept this workOrder.
+     * <p>
+     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the citizen parameter
+     *
+     * @param citizen which could build it or not
+     * @return true if he is able to.
+     */
+    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
+    public boolean canBuild(@NotNull final ICitizenData citizen)
+    {
+        return true;
+    }
+
+    @Override
+    public boolean canBeMadeByBuilder()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isValid(final IColony colony)
+    {
+        return super.isValid(colony) && this.getStructureName() != null;
+    }
+
+    /**
      * Read the WorkOrder data from the CompoundNBT.
      *
      * @param compound NBT Tag compound.
@@ -86,26 +112,6 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     public void write(@NotNull final CompoundNBT compound)
     {
         super.write(compound);
-    }
-
-    /**
-     * Checks if a builder may accept this workOrder.
-     * <p>
-     * Suppressing Sonar Rule squid:S1172 This rule does "Unused method parameters should be removed" But in this case extending class may need to use the citizen parameter
-     *
-     * @param citizen which could build it or not
-     * @return true if he is able to.
-     */
-    @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
-    public boolean canBuild(@NotNull final ICitizenData citizen)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isValid(final IColony colony)
-    {
-        return super.isValid(colony) && this.getStructureName() != null;
     }
 
     @Override

@@ -135,36 +135,10 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         return getWorkOrderName();
     }
 
-    /**
-     * Read the WorkOrder data from the CompoundNBT.
-     *
-     * @param compound NBT Tag compound.
-     * @param manager  the work manager.
-     */
     @Override
-    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    public boolean canBeMadeByBuilder()
     {
-        super.read(compound, manager);
-        customName = compound.getString(TAG_CUSTOM_NAME);
-    }
-
-    /**
-     * Save the Work Order to an CompoundNBT.
-     *
-     * @param compound NBT tag compound.
-     */
-    @Override
-    public void write(@NotNull final CompoundNBT compound)
-    {
-        super.write(compound);
-        compound.putString(TAG_CUSTOM_NAME, customName);
-    }
-
-    @Override
-    public void serializeViewNetworkData(@NotNull PacketBuffer buf)
-    {
-        super.serializeViewNetworkData(buf);
-        buf.writeUtf(customName);
+        return true;
     }
 
     @Override
@@ -218,6 +192,38 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     public boolean isValid(@NotNull final IColony colony)
     {
         return super.isValid(colony) && colony.getBuildingManager().getBuilding(getLocation()) != null;
+    }
+
+    /**
+     * Read the WorkOrder data from the CompoundNBT.
+     *
+     * @param compound NBT Tag compound.
+     * @param manager  the work manager.
+     */
+    @Override
+    public void read(@NotNull final CompoundNBT compound, final IWorkManager manager)
+    {
+        super.read(compound, manager);
+        customName = compound.getString(TAG_CUSTOM_NAME);
+    }
+
+    /**
+     * Save the Work Order to an CompoundNBT.
+     *
+     * @param compound NBT tag compound.
+     */
+    @Override
+    public void write(@NotNull final CompoundNBT compound)
+    {
+        super.write(compound);
+        compound.putString(TAG_CUSTOM_NAME, customName);
+    }
+
+    @Override
+    public void serializeViewNetworkData(@NotNull PacketBuffer buf)
+    {
+        super.serializeViewNetworkData(buf);
+        buf.writeUtf(customName);
     }
 
     @Override

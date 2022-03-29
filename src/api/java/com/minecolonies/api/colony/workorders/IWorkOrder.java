@@ -238,4 +238,11 @@ public interface IWorkOrder
     boolean tooFarFromAnyBuilder(IColony colony, int level);
 
     boolean canBuild(@NotNull ICitizenData citizen);
+
+    /**
+     * Whether this work order can be made by a builder.
+     *
+     * @return a boolean.
+     */
+    boolean canBeMadeByBuilder();
 }

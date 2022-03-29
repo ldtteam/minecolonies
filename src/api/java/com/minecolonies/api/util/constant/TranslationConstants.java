@@ -20,11 +20,9 @@ public final class TranslationConstants
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                              = "block.minecolonies.blockhutfarmer.name";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART                   = "entity.builder.messagebuildstart";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START                  = "entity.builder.messagebuildstart";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE               = "entity.builder.messagebuildcomplete";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL         = "entity.builder.messagebuildcomplete_manual";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE           = "entity.builder.messagerepaircomplete";
     @NonNls

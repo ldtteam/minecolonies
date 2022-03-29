@@ -51,6 +51,24 @@ public class WorkOrderMiner extends AbstractWorkOrder
         this.minerBuilding = minerBuilding;
     }
 
+    @Override
+    public boolean canBuild(@NotNull ICitizenData citizen)
+    {
+        return this.minerBuilding.equals(citizen.getWorkBuilding().getID());
+    }
+
+    @Override
+    public boolean canBeMadeByBuilder()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isValid(final IColony colony)
+    {
+        return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
+    }
+
     /**
      * Read the WorkOrder data from the CompoundNBT.
      *
@@ -74,18 +92,6 @@ public class WorkOrderMiner extends AbstractWorkOrder
     {
         super.write(compound);
         BlockPosUtil.write(compound, TAG_POS, minerBuilding);
-    }
-
-    @Override
-    public boolean canBuild(@NotNull ICitizenData citizen)
-    {
-        return this.minerBuilding.equals(citizen.getWorkBuilding().getID());
-    }
-
-    @Override
-    public boolean isValid(final IColony colony)
-    {
-        return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }
 
     /**

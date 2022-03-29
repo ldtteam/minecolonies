@@ -449,6 +449,13 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     /**
+     * Whether this work order can be made by a builder.
+     *
+     * @return a boolean.
+     */
+    public abstract boolean canBeMadeByBuilder();
+
+    /**
      * Whether the work order can be built or not.
      *
      * @param citizen the citizen attempting to perform the work order

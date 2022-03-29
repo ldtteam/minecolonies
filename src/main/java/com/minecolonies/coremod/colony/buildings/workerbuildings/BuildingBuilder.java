@@ -236,10 +236,9 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (wo instanceof WorkOrderDecoration)
+        if (wo.canBeMadeByBuilder())
         {
-            WorkOrderDecoration bo = (WorkOrderDecoration) wo;
-            citizen.getJob(JobBuilder.class).setWorkOrder(bo);
+            citizen.getJob(JobBuilder.class).setWorkOrder(wo);
             wo.setClaimedBy(citizen);
             getColony().getWorkManager().setDirty(true);
             markDirty();
