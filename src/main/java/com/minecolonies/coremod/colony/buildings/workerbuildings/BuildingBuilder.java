@@ -147,7 +147,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(w -> w instanceof WorkOrderBuilding || w instanceof WorkOrderDecoration, getPosition());
+        final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(IWorkOrder::canBeMadeByBuilder, getPosition());
         list.sort((a, b) -> {
             if (a.getWorkOrderType() == WorkOrderType.REMOVE)
             {
