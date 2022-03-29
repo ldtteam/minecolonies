@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,7 +156,7 @@ public interface IWorkOrder
      *
      * @return the display name for the work order
      */
-    String getDisplayName();
+    ITextComponent getDisplayName();
 
     /**
      * Is this WorkOrder still valid? If not, it will be deleted.

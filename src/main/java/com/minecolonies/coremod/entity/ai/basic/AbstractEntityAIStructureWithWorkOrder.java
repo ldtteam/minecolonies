@@ -32,6 +32,7 @@ import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,7 +125,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
                 worker.getCitizenChatHandler().sendLocalizedChat(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
-                  new TranslationTextComponent(job.getWorkOrder().getDisplayName()));
+                  job.getWorkOrder().getDisplayName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -136,7 +137,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             {
                 worker.getCitizenChatHandler().sendLocalizedChat(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
-                  new TranslationTextComponent(job.getWorkOrder().getDisplayName()));
+                  job.getWorkOrder().getDisplayName());
             }
             return getState();
         }
@@ -349,22 +350,22 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         else
         {
-            String buildingName = wo.getDisplayName();
+            String workOrderName = wo.getWorkOrderName();
             sendCompletionMessage(wo);
 
             switch (wo.getWorkOrderType())
             {
                 case BUILD:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), buildingName));
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
                     break;
                 case UPGRADE:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), buildingName, wo.getTargetLevel()));
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), workOrderName, wo.getTargetLevel()));
                     break;
                 case REPAIR:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), buildingName, wo.getCurrentLevel()));
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
                     break;
                 case REMOVE:
-                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), buildingName, wo.getCurrentLevel()));
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
                     break;
             }
 

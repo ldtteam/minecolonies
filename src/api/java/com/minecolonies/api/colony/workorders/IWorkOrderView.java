@@ -70,6 +70,20 @@ public interface IWorkOrderView
     ITextComponent getDisplayName();
 
     /**
+     * Whether this work order should be shown in the town hall.
+     *
+     * @return a boolean
+     */
+    boolean shouldShowInTownHall();
+
+    /**
+     * Whether this work order should be shown in the builder.
+     *
+     * @return a boolean
+     */
+    boolean shouldShowInBuilder();
+
+    /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
      *
      * @param builderLocation position of the builders own hut.

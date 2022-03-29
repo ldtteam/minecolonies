@@ -501,9 +501,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             for (PlayerEntity player : colony.getImportantMessageEntityPlayers())
             {
-                ITextComponent displayNameComponent = new TranslationTextComponent(workOrder.getDisplayName());
                 ITextComponent fullTextComponent = new TranslationTextComponent(WORK_ORDER_CREATED,
-                  displayNameComponent,
+                  workOrder.getDisplayName(),
                   colony.getName(),
                   workOrder.getLocation().getX(),
                   workOrder.getLocation().getY(),
@@ -748,15 +747,19 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         this.customName = name;
         this.markDirty();
-        if (this.hasWorkOrder())
-        {
-            this.colony.getWorkManager().getWorkOrders().values().stream()
-              .filter(f -> f instanceof WorkOrderBuilding)
-              .map(m -> (WorkOrderBuilding) m)
-              .filter(f -> f.getLocation().equals(this.getID()))
-              .forEach(f -> f.setCustomName(this));
-            this.colony.getWorkManager().setDirty(true);
-        }
+
+        this.colony.getWorkManager().getWorkOrders().values().stream()
+          .filter(f -> f instanceof WorkOrderBuilding)
+          .map(m -> (WorkOrderBuilding) m)
+          .filter(f -> f.getLocation().equals(this.getID()) || this.getChildren().contains(f.getLocation()))
+          .forEach(f -> {
+              IBuilding building = this.colony.getBuildingManager().getBuilding(f.getLocation());
+              if (building != null)
+              {
+                  f.setCustomName(building);
+                  this.colony.getWorkManager().setDirty(true);
+              }
+          });
     }
 
     /**

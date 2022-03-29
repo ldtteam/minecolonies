@@ -20,6 +20,8 @@ import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -443,9 +445,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return the display name for the work order
      */
     @Override
-    public String getDisplayName()
+    public ITextComponent getDisplayName()
     {
-        return workOrderName;
+        return new TranslationTextComponent(workOrderName);
     }
 
     /**

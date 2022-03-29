@@ -10,18 +10,24 @@ import org.jetbrains.annotations.NotNull;
 public class WorkOrderBuildingView extends AbstractWorkOrderView
 {
     private String customBuildingName;
+    private String customParentBuildingName;
+    private String parentTranslationKey;
 
     @Override
     public ITextComponent getDisplayName()
     {
+        ITextComponent buildingComponent = customBuildingName.isEmpty() ? new TranslationTextComponent(getWorkOrderName()) : new StringTextComponent(customBuildingName);
+
         ITextComponent nameComponent;
-        if (!customBuildingName.isEmpty())
+        if (parentTranslationKey.isEmpty())
         {
-            nameComponent = new StringTextComponent(customBuildingName);
+            nameComponent = buildingComponent;
         }
         else
         {
-            nameComponent = new TranslationTextComponent(getWorkOrderName());
+            ITextComponent parentComponent =
+              customParentBuildingName.isEmpty() ? new TranslationTextComponent(parentTranslationKey) : new StringTextComponent(customParentBuildingName);
+            nameComponent = new TranslationTextComponent("%s / %s", parentComponent, buildingComponent);
         }
         return getOrderTypePrefix(nameComponent);
     }
@@ -48,6 +54,8 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     {
         super.deserialize(buf);
         customBuildingName = buf.readUtf(32767);
+        customParentBuildingName = buf.readUtf(32767);
+        parentTranslationKey = buf.readUtf(32767);
     }
 
     @Override

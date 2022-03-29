@@ -299,7 +299,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             case REPAIR:
                 message = new TranslationTextComponent(
                         COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
-                        new TranslationTextComponent(wo.getDisplayName()),
+                        wo.getDisplayName(),
                         position.getX(),
                         position.getY(),
                         position.getZ());
@@ -307,7 +307,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             case REMOVE:
                 message = new TranslationTextComponent(
                         COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
-                        new TranslationTextComponent(wo.getDisplayName()),
+                  wo.getDisplayName(),
                         position.getX(),
                         position.getY(),
                         position.getZ());
@@ -315,7 +315,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             default:
                 message = new TranslationTextComponent(
                         COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
-                        new TranslationTextComponent(wo.getDisplayName()),
+                  wo.getDisplayName(),
                         position.getX(),
                         position.getY(),
                         position.getZ());

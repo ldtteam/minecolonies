@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -108,7 +109,9 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(buildingView.getColony().getWorkOrders());
+        workOrders.addAll(buildingView.getColony().getWorkOrders().stream()
+          .filter(IWorkOrderView::shouldShowInBuilder)
+          .collect(Collectors.toList()));
 
         if (manualMode)
         {

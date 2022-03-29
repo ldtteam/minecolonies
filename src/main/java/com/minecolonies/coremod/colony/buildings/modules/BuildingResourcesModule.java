@@ -97,9 +97,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             final AbstractWorkOrder workOrderDecoration = structureBuilderJob.getWorkOrder();
             if (workOrderDecoration != null)
             {
-                final ITextComponent name = new TranslationTextComponent(workOrderDecoration.getDisplayName());
-                buf.writeUtf(name.getContents());
-
+                buf.writeUtf(workOrderDecoration.getDisplayName().getContents());
                 buf.writeDouble(workOrderDecoration.getAmountOfResources() == 0 ? 0 : qty / workOrderDecoration.getAmountOfResources());
                 buf.writeInt(totalStages);
                 buf.writeInt(currentStage);

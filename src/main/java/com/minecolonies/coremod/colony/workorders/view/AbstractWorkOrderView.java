@@ -187,20 +187,6 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     }
 
     /**
-     * Whether this work order should be shown in the town hall.
-     *
-     * @return a boolean
-     */
-    public abstract boolean shouldShowInTownHall();
-
-    /**
-     * Whether this work order should be shown in the builder.
-     *
-     * @return a boolean
-     */
-    public abstract boolean shouldShowInBuilder();
-
-    /**
      * Deserialize the attributes and variables from transition. Buffer may be not readable because the workOrderView may be null.
      *
      * @param buf Byte buffer to deserialize.

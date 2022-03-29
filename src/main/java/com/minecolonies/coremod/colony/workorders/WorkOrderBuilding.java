@@ -16,6 +16,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +26,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WorkOrderBuilding extends AbstractWorkOrder
 {
-    private static final String TAG_CUSTOM_NAME = "customName";
+    private static final String TAG_CUSTOM_NAME            = "customName";
+    private static final String TAG_CUSTOM_PARENT_NAME     = "customParentName";
+    private static final String TAG_PARENT_TRANSLATION_KEY = "parentTranslationKey";
 
     /**
      * Maximum distance a builder can have from the building site.
@@ -82,6 +87,10 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
     private String customName;
 
+    private String customParentName;
+
+    private String parentTranslationKey;
+
     /**
      * Unused constructor for reflection.
      */
@@ -108,31 +117,44 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         return customName;
     }
 
+    public String getCustomParentName()
+    {
+        return customParentName;
+    }
+
     public void setCustomName(@NotNull final IBuilding building)
     {
+        this.customName = building.getCustomName();
+        this.customParentName = "";
+        this.parentTranslationKey = "";
+
         if (building.hasParent())
         {
             final IBuilding parentBuilding = building.getColony().getBuildingManager().getBuilding(building.getParent());
             if (parentBuilding != null)
             {
-                this.customName = parentBuilding.getCustomName() + " / " + building.getCustomName();
+                this.customParentName = parentBuilding.getCustomName();
+                this.parentTranslationKey = parentBuilding.getBuildingType().getTranslationKey();
             }
-        }
-        else
-        {
-            this.customName = building.getCustomName();
         }
     }
 
     @Override
-    public String getDisplayName()
+    public ITextComponent getDisplayName()
     {
+        String customParentName = getCustomParentName();
         String customName = getCustomName();
-        if (!customName.isEmpty())
+        ITextComponent buildingComponent = customName.isEmpty() ? new TranslationTextComponent(getWorkOrderName()) : new StringTextComponent(customName);
+
+        if (parentTranslationKey.isEmpty())
         {
-            return customName;
+            return buildingComponent;
         }
-        return getWorkOrderName();
+        else
+        {
+            ITextComponent parentComponent = customParentName.isEmpty() ? new TranslationTextComponent(parentTranslationKey) : new StringTextComponent(customParentName);
+            return new TranslationTextComponent("%s / %s", parentComponent, buildingComponent);
+        }
     }
 
     @Override
@@ -205,6 +227,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         super.read(compound, manager);
         customName = compound.getString(TAG_CUSTOM_NAME);
+        customParentName = compound.getString(TAG_CUSTOM_PARENT_NAME);
+        parentTranslationKey = compound.getString(TAG_PARENT_TRANSLATION_KEY);
     }
 
     /**
@@ -217,6 +241,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         super.write(compound);
         compound.putString(TAG_CUSTOM_NAME, customName);
+        compound.putString(TAG_CUSTOM_PARENT_NAME, customParentName);
+        compound.putString(TAG_PARENT_TRANSLATION_KEY, parentTranslationKey);
     }
 
     @Override
@@ -224,6 +250,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         super.serializeViewNetworkData(buf);
         buf.writeUtf(customName);
+        buf.writeUtf(customParentName);
+        buf.writeUtf(parentTranslationKey);
     }
 
     @Override

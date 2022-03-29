@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -61,7 +62,9 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(building.getColony().getWorkOrders());
+        workOrders.addAll(building.getColony().getWorkOrders().stream()
+          .filter(IWorkOrderView::shouldShowInTownHall)
+          .collect(Collectors.toList()));
         sortWorkOrders();
     }
 
