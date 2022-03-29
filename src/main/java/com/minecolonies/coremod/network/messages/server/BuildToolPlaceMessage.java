@@ -35,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +60,7 @@ public class BuildToolPlaceMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
-    public BlockPos builder = BlockPos.ZERO;
+    public  BlockPos builder = BlockPos.ZERO;
 
     /**
      * Empty constructor used when registering the
@@ -206,7 +207,8 @@ public class BuildToolPlaceMessage implements IMessage
 
         final Block block = state.getBlock();
         final ItemStack tempStack = new ItemStack(block, 1);
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
+        final int slot =
+          InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
         if (slot < 0)
         {
             return;
@@ -316,7 +318,13 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderDecoration woDeco = WorkOrderDecoration.create(WorkOrderType.BUILD, schem, woName, buildPos, rotation, mirror, 0);
+            WorkOrderDecoration woDeco = WorkOrderDecoration.create(WorkOrderType.BUILD,
+              schem,
+              WordUtils.capitalizeFully(woName),
+              buildPos,
+              rotation,
+              mirror,
+              0);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);
@@ -354,7 +362,7 @@ public class BuildToolPlaceMessage implements IMessage
         {
             if (!sn.getHutName().equals(ModBuildings.TOWNHALL_ID))
             {
-            SoundUtils.playErrorSound(player, player.blockPosition());
+                SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
             }
         }

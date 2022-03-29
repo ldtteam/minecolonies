@@ -24,6 +24,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,8 +135,8 @@ public class DecorationBuildRequestMessage implements IMessage
         if (entity instanceof TileEntityDecorationController)
         {
             final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-                    .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
-                    .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
+              .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
+              .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
 
             if (wo.isPresent())
             {
@@ -180,34 +181,35 @@ public class DecorationBuildRequestMessage implements IMessage
             if (level > currentLevel)
             {
                 order = WorkOrderDecoration.create(
-                        WorkOrderType.UPGRADE,
-                        name + level,
-                        displayName,
-                        pos,
-                        difference,
-                        state.getValue(BlockDecorationController.MIRROR),
-                        currentLevel);
+                  WorkOrderType.UPGRADE,
+                  name + level,
+                  WordUtils.capitalizeFully(displayName),
+                  pos,
+                  difference,
+                  state.getValue(BlockDecorationController.MIRROR),
+                  currentLevel);
             }
-            else if (level == currentLevel) {
+            else if (level == currentLevel)
+            {
                 order = WorkOrderDecoration.create(
-                        WorkOrderType.REPAIR,
-                        name + level,
-                        displayName,
-                        pos,
-                        difference,
-                        state.getValue(BlockDecorationController.MIRROR),
-                        currentLevel);
+                  WorkOrderType.REPAIR,
+                  name + level,
+                  WordUtils.capitalizeFully(displayName),
+                  pos,
+                  difference,
+                  state.getValue(BlockDecorationController.MIRROR),
+                  currentLevel);
             }
             else
             {
                 order = WorkOrderDecoration.create(
-                        WorkOrderType.BUILD,
-                        name + level,
-                        displayName,
-                        pos,
-                        difference,
-                        state.getValue(BlockDecorationController.MIRROR),
-                        currentLevel);
+                  WorkOrderType.BUILD,
+                  name + level,
+                  WordUtils.capitalizeFully(displayName),
+                  pos,
+                  difference,
+                  state.getValue(BlockDecorationController.MIRROR),
+                  currentLevel);
             }
 
             colony.getWorkManager().addWorkOrder(order, false);
