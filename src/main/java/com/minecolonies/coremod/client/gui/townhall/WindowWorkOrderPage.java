@@ -18,14 +18,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.WindowConstants.ASSIGNEE_LABEL;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DELETE;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DOWN;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_UP;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_WORKORDER;
-import static com.minecolonies.api.util.constant.WindowConstants.HIDDEN_WORKORDER_ID;
-import static com.minecolonies.api.util.constant.WindowConstants.LIST_WORKORDER;
-import static com.minecolonies.api.util.constant.WindowConstants.WORK_LABEL;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the town hall.
@@ -188,9 +181,9 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
 
                 Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class);
                 PaneBuilders.tooltipBuilder()
-                        .append(workOrder.getDisplayName())
-                        .hoverPane(workOrderTextPanel)
-                        .build();
+                  .append(workOrder.getDisplayName())
+                  .hoverPane(workOrderTextPanel)
+                  .build();
                 workOrderTextPanel.setText(workOrder.getDisplayName());
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(new StringTextComponent(claimingCitizen));
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(new StringTextComponent(Integer.toString(workOrder.getId())));

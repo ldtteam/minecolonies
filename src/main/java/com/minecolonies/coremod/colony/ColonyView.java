@@ -901,8 +901,7 @@ public final class ColonyView implements IColonyView
         final int amount = buf.readInt();
         for (int i = 0; i < amount; i++)
         {
-            String woMapping = buf.readUtf();
-            @Nullable final AbstractWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(woMapping, buf);
+            @Nullable final AbstractWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
             if (workOrder != null)
             {
                 workOrders.put(workOrder.getId(), workOrder);

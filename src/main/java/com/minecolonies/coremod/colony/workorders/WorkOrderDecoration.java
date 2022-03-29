@@ -17,13 +17,14 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
  */
 public class WorkOrderDecoration extends AbstractWorkOrder
 {
-    public static WorkOrderDecoration create(@NotNull final WorkOrderType type,
-                                             final String structureName,
-                                             final String workOrderName,
-                                             final BlockPos location,
-                                             final int rotation,
-                                             final boolean mirror,
-                                             final int currentLevel)
+    public static WorkOrderDecoration create(
+      @NotNull final WorkOrderType type,
+      final String structureName,
+      final String workOrderName,
+      final BlockPos location,
+      final int rotation,
+      final boolean mirror,
+      final int currentLevel)
     {
         int targetLevel = currentLevel;
         switch (type)
@@ -40,14 +41,14 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         }
 
         return new WorkOrderDecoration(
-                structureName,
-                workOrderName,
-                type,
-                location,
-                rotation,
-                mirror,
-                currentLevel,
-                targetLevel);
+          structureName,
+          workOrderName,
+          type,
+          location,
+          rotation,
+          mirror,
+          currentLevel,
+          targetLevel);
     }
 
     /**
@@ -58,8 +59,9 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         super();
     }
 
-    private WorkOrderDecoration(String structureName, String workOrderName, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
-                               int targetLevel)
+    private WorkOrderDecoration(
+      String structureName, String workOrderName, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
+      int targetLevel)
     {
         super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
     }
@@ -114,11 +116,10 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
             LanguageHandler.sendPlayersMessage(
-                    colony.getImportantMessageEntityPlayers(),
-                    "com.minecolonies.coremod.decoorderadded", colony.getName());
+              colony.getImportantMessageEntityPlayers(),
+              "com.minecolonies.coremod.decoorderadded", colony.getName());
         }
     }
-
 
     @Override
     public void onRemoved(final IColony colony)
@@ -126,5 +127,4 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         super.onRemoved(colony);
         ConstructionTapeHelper.removeConstructionTape(this, colony.getWorld());
     }
-
 }

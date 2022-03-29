@@ -24,12 +24,7 @@ import net.minecraft.world.World;
 
 import java.util.Optional;
 
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_BUILD;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_CANCEL;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_DONE;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_REPAIR;
-import static com.minecolonies.api.util.constant.WindowConstants.INPUT_NAME;
-import static com.minecolonies.api.util.constant.WindowConstants.LABEL_NO_UPGRADE;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for a hut name entry.
@@ -125,7 +120,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         {
             final String structureName = controller.getSchematicPath().replace("/structurize/", "").replaceAll("\\d$", "");
             structure =
-                    new LoadOnlyStructureHandler(world, b, structureName + (controller.getTier() + 1), new PlacementSettings(), true);
+              new LoadOnlyStructureHandler(world, b, structureName + (controller.getTier() + 1), new PlacementSettings(), true);
         }
         catch (final Exception e)
         {
@@ -196,13 +191,13 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void confirmClicked()
     {
         Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-                controller.getSchematicName()
-                        .substring(controller.getSchematicName().lastIndexOf("/") + 1)
-                        .replaceAll("\\d$", ""),
-                controller.getSchematicPath()
-                        .replaceAll("\\d$", ""),
-                controller.getTier() + 1,
-                world.dimension()));
+          controller.getSchematicName()
+            .substring(controller.getSchematicName().lastIndexOf("/") + 1)
+            .replaceAll("\\d$", ""),
+          controller.getSchematicPath()
+            .replaceAll("\\d$", ""),
+          controller.getTier() + 1,
+          world.dimension()));
         close();
     }
 
@@ -212,13 +207,13 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void repairClicked()
     {
         Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-                controller.getSchematicName()
-                        .substring(controller.getSchematicName().lastIndexOf("/") + 1)
-                        .replaceAll("\\d$", ""),
-                controller.getSchematicPath()
-                        .replaceAll("\\d$", ""),
-                controller.getTier(),
-                world.dimension()));
+          controller.getSchematicName()
+            .substring(controller.getSchematicName().lastIndexOf("/") + 1)
+            .replaceAll("\\d$", ""),
+          controller.getSchematicPath()
+            .replaceAll("\\d$", ""),
+          controller.getTier(),
+          world.dimension()));
         close();
     }
 }

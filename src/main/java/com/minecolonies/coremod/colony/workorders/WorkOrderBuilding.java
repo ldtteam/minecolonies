@@ -54,7 +54,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
             if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
             {
                 schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
-                        .replaceAll("\\d$", "") + targetSchematicLevel;
+                  .replaceAll("\\d$", "") + targetSchematicLevel;
             }
             else
             {
@@ -68,14 +68,14 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), schematicName).toString();
         WorkOrderBuilding wo = new WorkOrderBuilding(
-                structureName,
-                building.getBuildingType().getTranslationKey(),
-                type,
-                building.getID(),
-                building.getRotation(),
-                building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored(),
-                building.getBuildingLevel(),
-                targetLevel);
+          structureName,
+          building.getBuildingType().getTranslationKey(),
+          type,
+          building.getID(),
+          building.getRotation(),
+          building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored(),
+          building.getBuildingLevel(),
+          targetLevel);
         wo.setCustomName(building);
         return wo;
     }
@@ -90,14 +90,15 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         super();
     }
 
-    private WorkOrderBuilding(String structureName,
-                              String workOrderName,
-                              WorkOrderType workOrderType,
-                              BlockPos location,
-                              int rotation,
-                              boolean isMirrored,
-                              int currentLevel,
-                              int targetLevel)
+    private WorkOrderBuilding(
+      String structureName,
+      String workOrderName,
+      WorkOrderType workOrderType,
+      BlockPos location,
+      int rotation,
+      boolean isMirrored,
+      int currentLevel,
+      int targetLevel)
     {
         super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
     }
@@ -177,7 +178,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         final IBuilding building = citizen.getWorkBuilding();
         return canBuildIgnoringDistance(building.getPosition(), building.getBuildingLevel())
-                && citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ;
+                 && citizen.getWorkBuilding().getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ;
     }
 
     /**
@@ -200,11 +201,11 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
         return colony.getBuildingManager()
-                .getBuildings()
-                .values()
-                .stream()
-                .noneMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty()
-                        && building.getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ);
+          .getBuildings()
+          .values()
+          .stream()
+          .noneMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty()
+                                   && building.getPosition().distSqr(getLocation()) <= MAX_DISTANCE_SQ);
     }
 
     /**
@@ -228,7 +229,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                    AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, this.getTargetLevel()));
+                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, this.getTargetLevel()));
         }
     }
 

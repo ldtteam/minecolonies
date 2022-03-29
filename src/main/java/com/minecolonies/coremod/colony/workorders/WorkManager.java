@@ -36,20 +36,20 @@ import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
  */
 public class WorkManager implements IWorkManager
 {
-    private static final String TAG_WORK_ORDERS = "workOrders";
+    private static final String                   TAG_WORK_ORDERS = "workOrders";
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
      * The Colony the workManager takes part of.
      */
-    private final Colony colony;
+    private final        Colony                   colony;
     @NotNull
-    private final Map<Integer, IWorkOrder> workOrders = new LinkedHashMap<>();
-    private int topWorkOrderId = 0;
+    private final        Map<Integer, IWorkOrder> workOrders      = new LinkedHashMap<>();
+    private              int                      topWorkOrderId  = 0;
     /**
      * Checks if there has been changes.
      */
-    private boolean dirty = false;
+    private              boolean                  dirty           = false;
 
     /**
      * Constructor, saves reference to the colony.
@@ -258,10 +258,10 @@ public class WorkManager implements IWorkManager
             if (!readingFromNbt && !isWorkOrderWithinColony(order))
             {
                 LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                        OUT_OF_COLONY,
-                        order.getDisplayName(),
-                        order.getLocation().getX(),
-                        order.getLocation().getZ());
+                  OUT_OF_COLONY,
+                  order.getDisplayName(),
+                  order.getLocation().getX(),
+                  order.getLocation().getZ());
                 return;
             }
         }
@@ -280,11 +280,12 @@ public class WorkManager implements IWorkManager
             {
                 final int level = ((WorkOrderBuilding) order).getTargetLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
-            } else if (order instanceof WorkOrderDecoration)
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
+            }
+            else if (order instanceof WorkOrderDecoration)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                        AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
             }
         }
 
@@ -302,11 +303,11 @@ public class WorkManager implements IWorkManager
     {
         final World world = colony.getWorld();
         final Tuple<BlockPos, BlockPos> corners
-                = ColonyUtils.calculateCorners(order.getLocation(),
-                world,
-                new LoadOnlyStructureHandler(world, order.getLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
-                order.getRotation(),
-                order.isMirrored());
+          = ColonyUtils.calculateCorners(order.getLocation(),
+          world,
+          new LoadOnlyStructureHandler(world, order.getLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          order.getRotation(),
+          order.isMirrored());
 
         Set<ChunkPos> chunks = new HashSet<>();
         final int minX = Math.min(corners.getA().getX(), corners.getB().getX()) + 1;
@@ -352,7 +353,8 @@ public class WorkManager implements IWorkManager
             {
                 iter.remove();
                 dirty = true;
-            } else if (o.isChanged())
+            }
+            else if (o.isChanged())
             {
                 dirty = true;
                 o.resetChange();
@@ -372,15 +374,15 @@ public class WorkManager implements IWorkManager
     public <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder)
     {
         return getOrderedList(type::isInstance, builder)
-                .stream()
-                .map(m -> (W)m)
-                .collect(Collectors.toList());
+          .stream()
+          .map(m -> (W) m)
+          .collect(Collectors.toList());
     }
 
     /**
      * Get an ordered list by priority of the work orders.
      *
-     * @param builder the builder wanting to claim it.
+     * @param builder   the builder wanting to claim it.
      * @param predicate a predicate to check each item against
      * @return the list.
      */
@@ -388,10 +390,10 @@ public class WorkManager implements IWorkManager
     public List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder)
     {
         return workOrders.values().stream()
-                .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
-                .filter(predicate)
-                .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
-                .collect(Collectors.toList());
+          .filter(o -> (!o.isClaimed() || o.getClaimedBy().equals(builder)))
+          .filter(predicate)
+          .sorted(Comparator.comparingInt(IWorkOrder::getPriority).reversed())
+          .collect(Collectors.toList());
     }
 
     /**

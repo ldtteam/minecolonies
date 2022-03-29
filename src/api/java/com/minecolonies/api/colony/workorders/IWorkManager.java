@@ -35,8 +35,7 @@ public interface IWorkManager
      * @param <W>  the type of work order to return.
      * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
      */
-    @Nullable
-    <W extends IWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type);
+    @Nullable <W extends IWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type);
 
     /**
      * Get a work order of the specified id.
@@ -53,8 +52,7 @@ public interface IWorkManager
      * @param <W>  the type of work order to return.
      * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
      */
-    @Nullable
-    <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type);
+    @Nullable <W extends IWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type);
 
     /**
      * Get all work orders of a specified type.
@@ -122,7 +120,7 @@ public interface IWorkManager
     /**
      * Get an ordered list by priority of the work orders.
      *
-     * @param builder the builder wanting to claim it.
+     * @param builder   the builder wanting to claim it.
      * @param predicate a predicate to check each item against
      * @return the list.
      */

@@ -38,39 +38,38 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * NBT for storage.
      */
-    private static final String TAG_TYPE = "type";
-    private static final String TAG_ID = "id";
-    private static final String TAG_TH_PRIORITY = "priority";
-    private static final String TAG_CLAIMED_BY = "claimedBy";
+    private static final String TAG_TYPE                = "type";
+    private static final String TAG_ID                  = "id";
+    private static final String TAG_TH_PRIORITY         = "priority";
+    private static final String TAG_CLAIMED_BY          = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
-    private static final String TAG_STRUCTURE_NAME = "structureName";
-    private static final String TAG_WO_NAME = "workOrderName";
-    private static final String TAG_WO_TYPE = "workOrderType";
-    private static final String TAG_LOCATION = "location";
-    private static final String TAG_ROTATION = "rotation";
-    private static final String TAG_IS_MIRRORED = "isMirrored";
-    private static final String TAG_CURRENT_LEVEL = "currentLevel";
-    private static final String TAG_TARGET_LEVEL = "targetLevel";
+    private static final String TAG_STRUCTURE_NAME      = "structureName";
+    private static final String TAG_WO_NAME             = "workOrderName";
+    private static final String TAG_WO_TYPE             = "workOrderType";
+    private static final String TAG_LOCATION            = "location";
+    private static final String TAG_ROTATION            = "rotation";
+    private static final String TAG_IS_MIRRORED         = "isMirrored";
+    private static final String TAG_CURRENT_LEVEL       = "currentLevel";
+    private static final String TAG_TARGET_LEVEL        = "targetLevel";
     private static final String TAG_AMOUNT_OF_RESOURCES = "amountOfResources";
-    private static final String TAG_ITERATOR = "iterator";
-    private static final String TAG_IS_CLEARED = "cleared";
-    private static final String TAG_IS_REQUESTED = "requested";
+    private static final String TAG_ITERATOR            = "iterator";
+    private static final String TAG_IS_CLEARED          = "cleared";
+    private static final String TAG_IS_REQUESTED        = "requested";
 
     /**
      * Old NBT tags for storage
      */
-    private static final String TAG_BUILDING_OLD = "building";
-    private static final String TAG_BUILDING_ROTATION_OLD = "buildingRotation";
-    private static final String TAG_IS_MIRRORED_OLD = "mirrored";
+    private static final String TAG_BUILDING_OLD            = "building";
+    private static final String TAG_BUILDING_ROTATION_OLD   = "buildingRotation";
+    private static final String TAG_IS_MIRRORED_OLD         = "mirrored";
     private static final String TAG_AMOUNT_OF_RESOURCES_OLD = "resQuantity";
-    private static final String TAG_UPGRADE_LEVEL_OLD = "upgradeLevel";
+    private static final String TAG_UPGRADE_LEVEL_OLD       = "upgradeLevel";
 
     /**
      * Bimap of workOrder from string to class.
      */
     @NotNull
     private static final BiMap<String, Tuple<Class<? extends IWorkOrder>, Class<? extends IWorkOrderView>>> nameToClassBiMap = HashBiMap.create();
-
     /*
      * WorkOrder registry.
      */
@@ -80,16 +79,16 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
         addMapping("miner", WorkOrderMiner.class, WorkOrderMinerView.class);
     }
-
     /**
      * Add a given Work Order mapping.
      *
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(final String name,
-                                   @NotNull final Class<? extends IWorkOrder> orderClass,
-                                   @NotNull final Class<? extends IWorkOrderView> viewClass)
+    private static void addMapping(
+      final String name,
+      @NotNull final Class<? extends IWorkOrder> orderClass,
+      @NotNull final Class<? extends IWorkOrderView> viewClass)
     {
         if (nameToClassBiMap.containsKey(name))
         {
@@ -159,7 +158,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    compound.getString(TAG_TYPE), oclass.getName()), ex);
+              compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
 
@@ -173,9 +172,10 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static AbstractWorkOrderView createWorkOrderView(final String mappingName, final PacketBuffer buf)
+    public static AbstractWorkOrderView createWorkOrderView(final PacketBuffer buf)
     {
         @Nullable AbstractWorkOrderView orderView = null;
+        String mappingName = buf.readUtf(32767);
 
         try
         {
@@ -204,29 +204,29 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    orderView.getId()), ex);
+              orderView.getId()), ex);
             return null;
         }
 
         return orderView;
     }
 
-    private int id;
-    private int priority;
+    private int      id;
+    private int      priority;
     private BlockPos claimedBy;
-    private String structureName;
+    private String   structureName;
 
-    private String workOrderName;
+    private String        workOrderName;
     private WorkOrderType workOrderType;
 
     private BlockPos location;
-    private int rotation;
-    private boolean isMirrored;
+    private int      rotation;
+    private boolean  isMirrored;
 
     private int currentLevel;
     private int targetLevel;
 
-    private int amountOfResources;
+    private int    amountOfResources;
     private String iteratorType;
 
     private boolean cleared;
@@ -242,14 +242,15 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         this.changed = false;
     }
 
-    protected AbstractWorkOrder(String structureName,
-                                String workOrderName,
-                                WorkOrderType workOrderType,
-                                BlockPos location,
-                                int rotation,
-                                boolean isMirrored,
-                                int currentLevel,
-                                int targetLevel)
+    protected AbstractWorkOrder(
+      String structureName,
+      String workOrderName,
+      WorkOrderType workOrderType,
+      BlockPos location,
+      int rotation,
+      boolean isMirrored,
+      int currentLevel,
+      int targetLevel)
     {
         this();
         this.structureName = structureName;
@@ -573,11 +574,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeBoolean(requested);
     }
 
-    private String getMappingName() {
+    private String getMappingName()
+    {
         final Optional<String> s = nameToClassBiMap.entrySet().stream()
-                .filter(f -> this.getClass().equals(f.getValue().getA()))
-                .map(Map.Entry::getKey)
-                .findFirst();
+          .filter(f -> this.getClass().equals(f.getValue().getA()))
+          .map(Map.Entry::getKey)
+          .findFirst();
 
         if (!s.isPresent())
         {
@@ -645,10 +647,10 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public boolean canBeResolved(final IColony colony, final int level)
     {
         return colony.getBuildingManager()
-                .getBuildings()
-                .values()
-                .stream()
-                .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
+          .getBuildings()
+          .values()
+          .stream()
+          .anyMatch(building -> building instanceof BuildingBuilder && !building.getAllAssignedCitizen().isEmpty() && building.getBuildingLevel() >= level);
     }
 
     /**

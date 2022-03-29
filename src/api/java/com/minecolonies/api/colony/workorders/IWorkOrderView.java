@@ -43,6 +43,7 @@ public interface IWorkOrderView
 
     /**
      * Claim the view.
+     *
      * @param position the pos of the claiming worker.
      */
     void setClaimedBy(BlockPos position);
@@ -70,8 +71,9 @@ public interface IWorkOrderView
 
     /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.
+     *
      * @param builderLocation position of the builders own hut.
-     * @param builderLevel level of the builders hut.
+     * @param builderLevel    level of the builders hut.
      * @return true if so.
      */
     boolean canBuildIgnoringDistance(@NotNull final BlockPos builderLocation, final int builderLevel);

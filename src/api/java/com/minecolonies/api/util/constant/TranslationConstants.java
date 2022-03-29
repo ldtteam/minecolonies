@@ -22,7 +22,7 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART                   = "entity.builder.messagebuildstart";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE = "entity.builder.messagebuildcomplete";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE               = "entity.builder.messagebuildcomplete";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL         = "entity.builder.messagebuildcomplete_manual";
     @NonNls

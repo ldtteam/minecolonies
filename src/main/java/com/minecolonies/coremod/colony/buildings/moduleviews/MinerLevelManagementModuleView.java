@@ -3,8 +3,10 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
+import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -51,9 +53,11 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
         workOrders.clear();
         for (int i = 0; i < woSize; i++)
         {
-            final WorkOrderMinerView view = new WorkOrderMinerView();
-            view.deserialize(buf);
-            workOrders.add(view);
+            final IWorkOrderView woView = AbstractWorkOrder.createWorkOrderView(buf);
+            if (woView instanceof WorkOrderMinerView)
+            {
+                workOrders.add((WorkOrderMinerView) woView);
+            }
         }
     }
 
@@ -91,6 +95,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
 
     /**
      * Check if there is a workorder for this node already.
+     *
      * @param row the row of the level.
      * @return true if so.
      */

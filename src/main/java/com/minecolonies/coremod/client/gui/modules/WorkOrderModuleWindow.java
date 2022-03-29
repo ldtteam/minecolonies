@@ -25,11 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.WindowConstants.DESC_LABEL;
-import static com.minecolonies.api.util.constant.WindowConstants.LIST_WORK_ORDERS;
-import static com.minecolonies.api.util.constant.WindowConstants.WORK_ORDER_NAME;
-import static com.minecolonies.api.util.constant.WindowConstants.WORK_ORDER_POS;
-import static com.minecolonies.api.util.constant.WindowConstants.WORK_ORDER_SELECT;
+import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
  * Window for the builder hut workorder list.
@@ -148,12 +144,12 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
 
         Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_ORDER_NAME, Text.class);
         PaneBuilders.tooltipBuilder()
-                .append(order.getDisplayName())
-                .hoverPane(workOrderTextPanel)
-                .build();
+          .append(order.getDisplayName())
+          .hoverPane(workOrderTextPanel)
+          .build();
         workOrderTextPanel.setText(order.getDisplayName());
         rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class)
-                .setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
+          .setText(new TranslationTextComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
 
         if (order.getClaimedBy().equals(buildingView.getPosition()))
         {

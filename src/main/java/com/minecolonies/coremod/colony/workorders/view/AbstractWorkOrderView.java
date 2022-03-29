@@ -67,8 +67,8 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      */
     private int targetLevel;
 
-    private int amountOfResources;
-    private String iteratorType;
+    private int     amountOfResources;
+    private String  iteratorType;
     private boolean cleared;
     private boolean requested;
 
@@ -210,8 +210,8 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         id = buf.readInt();
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
-        structureName = buf.readUtf();
-        workOrderName = buf.readUtf();
+        structureName = buf.readUtf(32767);
+        workOrderName = buf.readUtf(32767);
         workOrderType = WorkOrderType.values()[buf.readInt()];
         location = buf.readBlockPos();
         rotation = buf.readInt();
@@ -219,7 +219,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         currentLevel = buf.readInt();
         targetLevel = buf.readInt();
         amountOfResources = buf.readInt();
-        iteratorType = buf.readUtf();
+        iteratorType = buf.readUtf(32767);
         cleared = buf.readBoolean();
         requested = buf.readBoolean();
     }
