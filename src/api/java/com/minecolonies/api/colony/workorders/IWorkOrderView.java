@@ -1,5 +1,7 @@
 package com.minecolonies.api.colony.workorders;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -70,18 +72,12 @@ public interface IWorkOrderView
     ITextComponent getDisplayName();
 
     /**
-     * Whether this work order should be shown in the town hall.
+     * Whether this work order should be shown in a specific building.
      *
+     * @param view the building view.
      * @return a boolean
      */
-    boolean shouldShowInTownHall();
-
-    /**
-     * Whether this work order should be shown in the builder.
-     *
-     * @return a boolean
-     */
-    boolean shouldShowInBuilder();
+    boolean shouldShowIn(IBuildingView view);
 
     /**
      * Checks if a builder may accept this workOrder while ignoring the distance to the builder.

@@ -26,13 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.LOAD_STRUCTURE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.START_WORKING;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -88,8 +83,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING, 100),
-                new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
+          new AITarget(IDLE, START_WORKING, 100),
+          new AITarget(START_WORKING, this::checkForWorkOrder, this::startWorkingAtOwnBuilding, 100)
         );
         worker.setCanPickUpLoot(true);
     }
@@ -149,7 +144,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure)
     {
         if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) &&
-                getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+              getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
         {
             job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
         }
@@ -298,31 +293,32 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         {
             case REPAIR:
                 message = new TranslationTextComponent(
-                        COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
-                        wo.getDisplayName(),
-                        position.getX(),
-                        position.getY(),
-                        position.getZ());
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
+                  wo.getDisplayName(),
+                  position.getX(),
+                  position.getY(),
+                  position.getZ());
                 break;
             case REMOVE:
                 message = new TranslationTextComponent(
-                        COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
                   wo.getDisplayName(),
-                        position.getX(),
-                        position.getY(),
-                        position.getZ());
+                  position.getX(),
+                  position.getY(),
+                  position.getZ());
                 break;
             default:
                 message = new TranslationTextComponent(
-                        COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
                   wo.getDisplayName(),
-                        position.getX(),
-                        position.getY(),
-                        position.getZ());
+                  position.getX(),
+                  position.getY(),
+                  position.getZ());
                 break;
         }
 
-        if (showManualSuffix) {
+        if (showManualSuffix)
+        {
             message.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 

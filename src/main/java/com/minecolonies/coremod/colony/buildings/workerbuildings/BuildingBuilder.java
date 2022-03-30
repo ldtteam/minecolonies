@@ -26,7 +26,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PURGED_MOBS;
@@ -147,7 +146,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(IWorkOrder::canBeMadeByBuilder, getPosition());
+        final List<IWorkOrder> list = getColony().getWorkManager().getOrderedList(wo -> wo.canBeMadeBy(citizen.getJob()), getPosition());
         list.sort((a, b) -> {
             if (a.getWorkOrderType() == WorkOrderType.REMOVE)
             {
@@ -236,7 +235,7 @@ public class BuildingBuilder extends AbstractBuildingStructureBuilder
             return;
         }
 
-        if (wo.canBeMadeByBuilder())
+        if (wo.canBeMadeBy(citizen.getJob()))
         {
             citizen.getJob(JobBuilder.class).setWorkOrder(wo);
             wo.setClaimedBy(citizen);

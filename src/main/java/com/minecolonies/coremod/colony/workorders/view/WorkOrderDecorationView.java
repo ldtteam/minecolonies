@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.colony.workorders.view;
 
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -30,14 +34,8 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
     }
 
     @Override
-    public boolean shouldShowInTownHall()
+    public boolean shouldShowIn(IBuildingView view)
     {
-        return true;
-    }
-
-    @Override
-    public boolean shouldShowInBuilder()
-    {
-        return true;
+        return view instanceof ITownHallView || view instanceof BuildingBuilder.View;
     }
 }

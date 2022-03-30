@@ -69,7 +69,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -446,7 +445,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         WorkOrderBuilding workOrder = WorkOrderBuilding.create(type, this);
         if (type == WorkOrderType.REMOVE && !canDeconstruct())
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "entity.builder.cantdeconstruct");
+            colony.notifyPlayers(new TranslationTextComponent(BUILDER_CANNOT_DECONSTRUCT));
             return;
         }
 
@@ -454,26 +453,26 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               !canBeBuiltByBuilder(workOrder.getTargetLevel()) &&
               !workOrder.canBeResolved(colony, workOrder.getTargetLevel()))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "entity.builder.messagebuildernecessary", Integer.toString(workOrder.getTargetLevel()));
+            colony.notifyPlayers(new TranslationTextComponent(BUILDER_NECESSARY, Integer.toString(workOrder.getTargetLevel())));
             return;
         }
 
         if (workOrder.tooFarFromAnyBuilder(colony, workOrder.getTargetLevel()) &&
               builder.equals(BlockPos.ZERO))
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "entity.builder.messagebuilderstoofar");
+            colony.notifyPlayers(new TranslationTextComponent(BUILDER_TOO_FAR_AWAY));
             return;
         }
 
         if (getCorners().getA().getY() >= MAX_BUILD_HEIGHT ||
               getCorners().getB().getY() >= MAX_BUILD_HEIGHT)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "entity.builder.messagebuildtoohigh");
+            colony.notifyPlayers(new TranslationTextComponent(BUILDER_BUILDING_TOO_HIGH));
             return;
         }
         else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "entity.builder.messagebuildtoolow");
+            colony.notifyPlayers(new TranslationTextComponent(BUILDER_BUILDING_TOO_LOW));
             return;
         }
 
@@ -487,9 +486,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  "entity.builder.messagebuildernecessary",
-                  Integer.toString(workOrder.getTargetLevel()));
+                colony.notifyPlayers(new TranslationTextComponent(BUILDER_NECESSARY, Integer.toString(workOrder.getTargetLevel())));
                 return;
             }
         }
@@ -499,16 +496,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (workOrder.getID() != 0)
         {
-            for (PlayerEntity player : colony.getImportantMessageEntityPlayers())
-            {
-                ITextComponent fullTextComponent = new TranslationTextComponent(WORK_ORDER_CREATED,
-                  workOrder.getDisplayName(),
-                  colony.getName(),
-                  workOrder.getLocation().getX(),
-                  workOrder.getLocation().getY(),
-                  workOrder.getLocation().getZ());
-                player.sendMessage(fullTextComponent, player.getUUID());
-            }
+            colony.notifyColonyManagers(new TranslationTextComponent(WORK_ORDER_CREATED,
+              workOrder.getDisplayName(),
+              colony.getName(),
+              workOrder.getLocation().getX(),
+              workOrder.getLocation().getY(),
+              workOrder.getLocation().getZ()));
         }
         markDirty();
     }

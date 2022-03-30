@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -42,32 +43,77 @@ public interface IWorkOrder
     void setPriority(int priority);
 
     /**
-     * Get the strcuture this work order should be using, if any
+     * Get the structure this work order should be using, if any.
      *
      * @return the schematic name.
      */
     String getStructureName();
 
+    /**
+     * Get the current level of the structure of the work order.
+     *
+     * @return the current level.
+     */
     int getCurrentLevel();
 
+    /**
+     * Get the target level of the structure of the work order.
+     *
+     * @return the target level.
+     */
     int getTargetLevel();
 
+    /**
+     * Get the amount of resources this work order still requires.
+     *
+     * @return the amount of resources.
+     */
     int getAmountOfResources();
 
+    /**
+     * Set the amount of resources this work order still requires.
+     *
+     * @param newQuantity the new amount of resources.
+     */
     void setAmountOfResources(int newQuantity);
 
+    /**
+     * Get the iterator type (method of construction) of the work order.
+     *
+     * @return the iterator type.
+     */
     String getIteratorType();
 
+    /**
+     * Set the iterator type (method of construction) of the work order.
+     *
+     * @param iteratorType the new iterator type.
+     */
     void setIteratorType(String iteratorType);
 
+    /**
+     * Whether the area of the work order has been cleared out or not.
+     *
+     * @return true if the area is cleared.
+     */
     boolean isCleared();
 
+    /**
+     * Set whether the area of the work order has been cleared out or not.
+     *
+     * @param cleared the new cleared state.
+     */
     void setCleared(boolean cleared);
 
+    /**
+     * Set whether the resources for this work order have been requested.
+     *
+     * @return true when the resources are requested.
+     */
     boolean isRequested();
 
     /**
-     * Set whether or not the building has been cleared.
+     * Set whether the building has been cleared.
      *
      * @param requested true if the building has been cleared.
      */
@@ -85,8 +131,18 @@ public interface IWorkOrder
      */
     void resetChange();
 
+    /**
+     * The name of the work order.
+     *
+     * @return the work order name.
+     */
     String getWorkOrderName();
 
+    /**
+     * The type of the work order.
+     *
+     * @return the work order type.
+     */
     WorkOrderType getWorkOrderType();
 
     /**
@@ -244,6 +300,7 @@ public interface IWorkOrder
      * Whether this work order can be made by a builder.
      *
      * @return a boolean.
+     * @param job
      */
-    boolean canBeMadeByBuilder();
+    boolean canBeMadeBy(final IJob<?> job);
 }

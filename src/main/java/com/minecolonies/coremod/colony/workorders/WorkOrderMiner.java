@@ -2,9 +2,11 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.jobs.JobMiner;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -58,9 +60,9 @@ public class WorkOrderMiner extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBeMadeByBuilder()
+    public boolean canBeMadeBy(final IJob<?> job)
     {
-        return false;
+        return job instanceof JobMiner;
     }
 
     @Override

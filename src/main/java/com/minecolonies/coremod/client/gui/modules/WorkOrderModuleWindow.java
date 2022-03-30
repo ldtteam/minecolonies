@@ -110,7 +110,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     {
         workOrders.clear();
         workOrders.addAll(buildingView.getColony().getWorkOrders().stream()
-          .filter(IWorkOrderView::shouldShowInBuilder)
+          .filter(wo -> wo.shouldShowIn(buildingView))
           .collect(Collectors.toList()));
 
         if (manualMode)

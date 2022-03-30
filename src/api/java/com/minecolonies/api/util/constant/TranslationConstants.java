@@ -479,6 +479,16 @@ public final class TranslationConstants
     public static final String BUILDER_ACTION_REMOVING                                              = "com.minecolonies.coremod.action.builder.removing";
     @NonNls
     public static final String WORK_ORDER_CREATED                                                   = "com.minecolonies.coremod.workorderadded";
+    @NonNls
+    public static final String BUILDER_CANNOT_DECONSTRUCT                                           = "entity.builder.cantdeconstruct";
+    @NonNls
+    public static final String BUILDER_NECESSARY                                                    = "entity.builder.messagebuildernecessary";
+    @NonNls
+    public static final String BUILDER_TOO_FAR_AWAY                                                 = "entity.builder.messagebuilderstoofar";
+    @NonNls
+    public static final String BUILDER_BUILDING_TOO_HIGH                                            = "entity.builder.messagebuildtoohigh";
+    @NonNls
+    public static final String BUILDER_BUILDING_TOO_LOW                                             = "entity.builder.messagebuildtoolow";
 
     private TranslationConstants()
     {

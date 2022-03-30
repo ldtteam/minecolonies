@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
@@ -215,26 +216,84 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         return orderView;
     }
 
-    private int      id;
-    private int      priority;
-    private BlockPos claimedBy;
-    private String   structureName;
+    /**
+     * The ID of the work order.
+     */
+    private int id;
 
-    private String        workOrderName;
+    /**
+     * The priority of the work order.
+     */
+    private int priority;
+
+    /**
+     * Which building has claimed this work order.
+     */
+    private BlockPos claimedBy;
+
+    /**
+     * The structurize schematic name.
+     */
+    private String structureName;
+
+    /**
+     * The work order name.
+     */
+    private String workOrderName;
+
+    /**
+     * The work order type.
+     */
     private WorkOrderType workOrderType;
 
+    /**
+     * The location of this work order its structure.
+     */
     private BlockPos location;
-    private int      rotation;
-    private boolean  isMirrored;
 
+    /**
+     * The rotation of this work order its structure.
+     */
+    private int rotation;
+
+    /**
+     * Whether the work order its structure is mirrored or not.
+     */
+    private boolean isMirrored;
+
+    /**
+     * The current level of the work order its structure.
+     */
     private int currentLevel;
+
+    /**
+     * The target level of the work order its structure.
+     */
     private int targetLevel;
 
-    private int    amountOfResources;
+    /**
+     * The amount of resources the work order its structure still requires.
+     */
+    private int amountOfResources;
+
+    /**
+     * The iterator type (building method) of this work order.
+     */
     private String iteratorType;
 
+    /**
+     * Whether the work order area is cleared.
+     */
     private boolean cleared;
+
+    /**
+     * Whether the resources for the work order have been requested.
+     */
     private boolean requested;
+
+    /**
+     * Internal flag to see if anything has been changed.
+     */
     private boolean changed;
 
     /**
@@ -455,9 +514,10 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * Whether this work order can be made by a builder.
      *
+     * @param job
      * @return a boolean.
      */
-    public abstract boolean canBeMadeByBuilder();
+    public abstract boolean canBeMadeBy(final IJob<?> job);
 
     /**
      * Whether the work order can be built or not.

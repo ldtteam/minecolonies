@@ -67,9 +67,24 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      */
     private int targetLevel;
 
-    private int     amountOfResources;
-    private String  iteratorType;
+    /**
+     * The amount of resources the work order requires.
+     */
+    private int amountOfResources;
+
+    /**
+     * The iterator type (building method) this work order uses.
+     */
+    private String iteratorType;
+
+    /**
+     * Whether the work order area has been cleared.
+     */
     private boolean cleared;
+
+    /**
+     * Whether the work order resources have been requested.
+     */
     private boolean requested;
 
     public AbstractWorkOrderView()
@@ -100,21 +115,11 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         this.priority = priority;
     }
 
-    /**
-     * ClaimedBy getter.
-     *
-     * @return citizen id who claimed the workOrder.
-     */
     public BlockPos getClaimedBy()
     {
         return claimedBy;
     }
 
-    /**
-     * Claim the view.
-     *
-     * @param position the pos of the claiming worker.
-     */
     public void setClaimedBy(final BlockPos position)
     {
         this.claimedBy = position;

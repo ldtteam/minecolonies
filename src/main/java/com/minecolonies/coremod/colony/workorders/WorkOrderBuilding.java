@@ -6,10 +6,12 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -29,6 +31,21 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     private static final String TAG_CUSTOM_NAME            = "customName";
     private static final String TAG_CUSTOM_PARENT_NAME     = "customParentName";
     private static final String TAG_PARENT_TRANSLATION_KEY = "parentTranslationKey";
+
+    /**
+     * The custom name of the building.
+     */
+    private String customName;
+
+    /**
+     * The custom name of the parent building.
+     */
+    private String customParentName;
+
+    /**
+     * The translation key of the parent building.
+     */
+    private String parentTranslationKey;
 
     /**
      * Maximum distance a builder can have from the building site.
@@ -84,12 +101,6 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         wo.setCustomName(building);
         return wo;
     }
-
-    private String customName;
-
-    private String customParentName;
-
-    private String parentTranslationKey;
 
     /**
      * Unused constructor for reflection.
@@ -163,9 +174,9 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBeMadeByBuilder()
+    public boolean canBeMadeBy(final IJob<?> job)
     {
-        return true;
+        return job instanceof JobBuilder;
     }
 
     @Override

@@ -63,7 +63,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     {
         workOrders.clear();
         workOrders.addAll(building.getColony().getWorkOrders().stream()
-          .filter(IWorkOrderView::shouldShowInTownHall)
+          .filter(wo -> wo.shouldShowIn(building))
           .collect(Collectors.toList()));
         sortWorkOrders();
     }

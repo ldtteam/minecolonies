@@ -3,8 +3,10 @@ package com.minecolonies.coremod.colony.workorders;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -81,9 +83,9 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     }
 
     @Override
-    public boolean canBeMadeByBuilder()
+    public boolean canBeMadeBy(final IJob<?> job)
     {
-        return true;
+        return job instanceof JobBuilder;
     }
 
     @Override
