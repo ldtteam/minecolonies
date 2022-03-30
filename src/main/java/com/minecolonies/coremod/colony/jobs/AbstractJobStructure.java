@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -174,9 +175,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
     private void resetNeededItems()
     {
         final IBuilding workerBuilding = this.getCitizen().getWorkBuilding();
-        if (workerBuilding instanceof BuildingBuilder)
+        if (workerBuilding instanceof AbstractBuildingStructureBuilder)
         {
-            ((BuildingBuilder) workerBuilding).resetNeededResources();
+            ((AbstractBuildingStructureBuilder) workerBuilding).resetNeededResources();
         }
     }
 

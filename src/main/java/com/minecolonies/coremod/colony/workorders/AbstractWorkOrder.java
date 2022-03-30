@@ -84,6 +84,87 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
         addMapping("miner", WorkOrderMiner.class, WorkOrderMinerView.class);
     }
+
+    /**
+     * The ID of the work order.
+     */
+    private int id;
+
+    /**
+     * The priority of the work order.
+     */
+    private int priority;
+
+    /**
+     * Which building has claimed this work order.
+     */
+    private BlockPos claimedBy;
+
+    /**
+     * The structurize schematic name.
+     */
+    private String structureName;
+
+    /**
+     * The work order name.
+     */
+    private String workOrderName;
+
+    /**
+     * The work order type.
+     */
+    private WorkOrderType workOrderType;
+
+    /**
+     * The location of this work order its structure.
+     */
+    private BlockPos location;
+
+    /**
+     * The rotation of this work order its structure.
+     */
+    private int rotation;
+
+    /**
+     * Whether the work order its structure is mirrored or not.
+     */
+    private boolean isMirrored;
+
+    /**
+     * The current level of the work order its structure.
+     */
+    private int currentLevel;
+
+    /**
+     * The target level of the work order its structure.
+     */
+    private int targetLevel;
+
+    /**
+     * The amount of resources the work order its structure still requires.
+     */
+    private int amountOfResources;
+
+    /**
+     * The iterator type (building method) of this work order.
+     */
+    private String iteratorType;
+
+    /**
+     * Whether the work order area is cleared.
+     */
+    private boolean cleared;
+
+    /**
+     * Whether the resources for the work order have been requested.
+     */
+    private boolean requested;
+
+    /**
+     * Internal flag to see if anything has been changed.
+     */
+    private boolean changed;
+
     /**
      * Add a given Work Order mapping.
      *
@@ -215,86 +296,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
 
         return orderView;
     }
-
-    /**
-     * The ID of the work order.
-     */
-    private int id;
-
-    /**
-     * The priority of the work order.
-     */
-    private int priority;
-
-    /**
-     * Which building has claimed this work order.
-     */
-    private BlockPos claimedBy;
-
-    /**
-     * The structurize schematic name.
-     */
-    private String structureName;
-
-    /**
-     * The work order name.
-     */
-    private String workOrderName;
-
-    /**
-     * The work order type.
-     */
-    private WorkOrderType workOrderType;
-
-    /**
-     * The location of this work order its structure.
-     */
-    private BlockPos location;
-
-    /**
-     * The rotation of this work order its structure.
-     */
-    private int rotation;
-
-    /**
-     * Whether the work order its structure is mirrored or not.
-     */
-    private boolean isMirrored;
-
-    /**
-     * The current level of the work order its structure.
-     */
-    private int currentLevel;
-
-    /**
-     * The target level of the work order its structure.
-     */
-    private int targetLevel;
-
-    /**
-     * The amount of resources the work order its structure still requires.
-     */
-    private int amountOfResources;
-
-    /**
-     * The iterator type (building method) of this work order.
-     */
-    private String iteratorType;
-
-    /**
-     * Whether the work order area is cleared.
-     */
-    private boolean cleared;
-
-    /**
-     * Whether the resources for the work order have been requested.
-     */
-    private boolean requested;
-
-    /**
-     * Internal flag to see if anything has been changed.
-     */
-    private boolean changed;
 
     /**
      * Default constructor; we also start with a new id and replace it during loading; this greatly simplifies creating subclasses.

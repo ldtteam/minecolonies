@@ -33,6 +33,11 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     private static final String TAG_PARENT_TRANSLATION_KEY = "parentTranslationKey";
 
     /**
+     * Maximum distance a builder can have from the building site.
+     */
+    private static final double MAX_DISTANCE_SQ = 100 * 100;
+
+    /**
      * The custom name of the building.
      */
     private String customName;
@@ -46,11 +51,6 @@ public class WorkOrderBuilding extends AbstractWorkOrder
      * The translation key of the parent building.
      */
     private String parentTranslationKey;
-
-    /**
-     * Maximum distance a builder can have from the building site.
-     */
-    private static final double MAX_DISTANCE_SQ = 100 * 100;
 
     public static WorkOrderBuilding create(@NotNull final WorkOrderType type, @NotNull final IBuilding building)
     {
