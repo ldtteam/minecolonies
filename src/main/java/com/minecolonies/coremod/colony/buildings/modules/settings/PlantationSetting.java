@@ -10,11 +10,11 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
@@ -24,6 +24,8 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
  */
 public class PlantationSetting extends StringSetting
 {
+    public static String SPLIT_TOKEN = "/";
+
     /**
      * Cached research.
      */
@@ -67,14 +69,7 @@ public class PlantationSetting extends StringSetting
     @Override
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
     {
-        if (hasResearch)
-        {
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(getCombinedSetting());
-        }
-        else
-        {
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(getSettings().get(getCurrentIndex())));
-        }
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(getCombinedSetting());
     }
 
     /**
@@ -84,19 +79,22 @@ public class PlantationSetting extends StringSetting
      */
     private IFormattableTextComponent getCombinedSetting()
     {
-        final IFormattableTextComponent component = new TranslationTextComponent("");
-        for (int i = 0; i < getSettings().size(); i++)
+        int index = getCurrentIndex();
+        if (!hasResearch)
         {
-            if (i != getCurrentIndex())
-            {
-                if (!component.getSiblings().isEmpty())
-                {
-                    component.append(new StringTextComponent(" & "));
-                }
-                component.append(new TranslationTextComponent(getSettings().get(i)));
-            }
+            index -= (getSettings().size() / 2);
         }
 
-        return component;
+        final String[] inputSplit = getSettings().get(index).split(SPLIT_TOKEN);
+        return Arrays.stream(inputSplit)
+          .map(TranslationTextComponent::new)
+          .reduce(new TranslationTextComponent(""), (current, next) -> {
+              current.append(next);
+              if (!next.getKey().equals(inputSplit[inputSplit.length - 1]))
+              {
+                  current.append(" & ");
+              }
+              return current;
+          });
     }
 }
