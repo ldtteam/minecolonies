@@ -115,6 +115,10 @@ public class StringSetting implements IStringSetting
         {
             this.settings.clear();
             this.settings.addAll(((StringSetting) iSetting).settings);
+            if (currentIndex >= this.settings.size())
+            {
+                currentIndex = this.settings.size() - 1;
+            }
         }
     }
 
