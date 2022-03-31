@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -99,7 +100,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 43;
+            return SerializationIdentifierConstants.BOOLEAN_SETTINGS_ID;
         }
     }
 
@@ -206,7 +207,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 46;
+            return SerializationIdentifierConstants.STRING_SETTINGS_ID;
         }
     }
 
@@ -284,7 +285,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 47;
+            return SerializationIdentifierConstants.BLOCK_SETTINGS_ID;
         }
     }
 
@@ -361,7 +362,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 48;
+            return SerializationIdentifierConstants.INTEGER_SETTINGS_ID;
         }
     }
 
@@ -387,7 +388,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 49;
+            return SerializationIdentifierConstants.PLANTATION_SETTINGS_ID;
         }
     }
 
@@ -413,7 +414,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 50;
+            return SerializationIdentifierConstants.STRING_W_DESC_SETTINGS_ID;
         }
     }
 
@@ -439,7 +440,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 51;
+            return SerializationIdentifierConstants.PATROL_MODE_SETTINGS_ID;
         }
     }
 
@@ -465,7 +466,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 52;
+            return SerializationIdentifierConstants.GUARD_TASK_SETTINGS_ID;
         }
     }
 
@@ -491,7 +492,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 53;
+            return SerializationIdentifierConstants.FOLLOW_MODE_SETTINGS_ID;
         }
     }
 
@@ -517,7 +518,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 55;
+            return SerializationIdentifierConstants.CRAFTER_RECIPE_SETTINGS_ID;
         }
     }
 
@@ -543,7 +544,7 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 56;
+            return SerializationIdentifierConstants.BUILDER_MODE_SETTINGS_ID;
         }
     }
 
@@ -567,7 +568,33 @@ public class SettingsFactories
         @Override
         public short getSerializationId()
         {
-            return 57;
+            return SerializationIdentifierConstants.DYNAMIC_TREES_SETTINGS_ID;
+        }
+    }
+
+    /**
+     * Specific factory for the beekeeper collection setting.
+     */
+    public static class BeekeeperCollectionSettingsFactory extends AbstractStringSettingsFactory<BeekeeperCollectionSetting>
+    {
+        @NotNull
+        @Override
+        public TypeToken<BeekeeperCollectionSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(BeekeeperCollectionSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public BeekeeperCollectionSetting getNewInstance(final List<String> value, final int curr)
+        {
+            return new BeekeeperCollectionSetting(value, curr);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return SerializationIdentifierConstants.BEEKEEPER_COLLECTION_SETTINGS_ID;
         }
     }
 }

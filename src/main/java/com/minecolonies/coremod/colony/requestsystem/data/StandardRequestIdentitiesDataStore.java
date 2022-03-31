@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -158,7 +159,7 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
         @Override
         public short getSerializationId()
         {
-            return 32;
+            return SerializationIdentifierConstants.STANDARD_REQUEST_IDENTITIES_DATASTORE_ID;
         }
     }
 }

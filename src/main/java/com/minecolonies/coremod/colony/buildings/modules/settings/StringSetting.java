@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.Log;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,9 +36,10 @@ public class StringSetting implements IStringSetting
 
     /**
      * Create a new string list setting.
+     *
      * @param settings the overall list of settings.
      */
-    public StringSetting(final String...settings)
+    public StringSetting(final String... settings)
     {
         this.settings = Arrays.asList(settings);
         this.currentIndex = 0;
@@ -45,7 +47,8 @@ public class StringSetting implements IStringSetting
 
     /**
      * Create a new string list setting.
-     * @param settings the overall list of settings.
+     *
+     * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
     public StringSetting(final List<String> settings, final int currentIndex)
@@ -100,11 +103,32 @@ public class StringSetting implements IStringSetting
     @Override
     public void trigger()
     {
-        this.currentIndex++;
-        if (currentIndex >= settings.size())
+        boolean hasAllowedValue = false;
+        for (int i = 0; i < settings.size(); i++)
         {
+            currentIndex++;
+            if (currentIndex >= settings.size())
+            {
+                currentIndex = 0;
+            }
+
+            if (isIndexAllowed(currentIndex))
+            {
+                hasAllowedValue = true;
+                break;
+            }
+        }
+
+        if (!hasAllowedValue)
+        {
+            Log.getLogger().warn(this.getClass().getName() + " could not select any allowed value, currentIndex is reset to 0, please report this to the developers.");
             currentIndex = 0;
         }
+    }
+
+    public boolean isIndexAllowed(int index)
+    {
+        return index >= 0 && index < settings.size();
     }
 
     @Override
