@@ -40,6 +40,7 @@ import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreCriteria;
 import net.minecraft.scoreboard.ScoreCriteria.RenderType;
 import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -285,20 +286,21 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
 
         // Set up Objectives and scores. 
-        if(!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
+        Scoreboard sb = world.getScoreboard();
+        if(sb.getObjective(OBJECTIVE_HUT_LEVEL) == null)
         {
-            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ScoreCriteria.DUMMY, new StringTextComponent("Worker Building Level"), RenderType.INTEGER);
+            sb.addObjective(OBJECTIVE_HUT_LEVEL, ScoreCriteria.DUMMY, new StringTextComponent("Worker Building Level"), RenderType.INTEGER);
         }
-        if(!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
+        if(sb.getObjective(OBJECTIVE_SECONDARY_SKILL) == null)
         {
-            world.getScoreboard().addObjective(OBJECTIVE_SECONDARY_SKILL, ScoreCriteria.DUMMY, new StringTextComponent("Worker Secondary Skill Level"), RenderType.INTEGER);
+            sb.addObjective(OBJECTIVE_SECONDARY_SKILL, ScoreCriteria.DUMMY, new StringTextComponent("Worker Secondary Skill Level"), RenderType.INTEGER);
         }
-        final ScoreObjective hutLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_HUT_LEVEL);
-        final ScoreObjective secondarySkillLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL);
+        final ScoreObjective hutLevelObjective = sb.getObjective(OBJECTIVE_HUT_LEVEL);
+        final ScoreObjective secondarySkillLevelObjective = sb.getObjective(OBJECTIVE_SECONDARY_SKILL);
 
-        Score s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), hutLevelObjective);
+        Score s = sb.getOrCreatePlayerScore(worker.getScoreboardName(), hutLevelObjective);
         s.setScore(getOwnBuilding().getBuildingLevel());
-        s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), secondarySkillLevelObjective);
+        s = sb.getOrCreatePlayerScore(worker.getScoreboardName(), secondarySkillLevelObjective);
         s.setScore(getSecondarySkillLevel());
 
         // Attempt to light the portal and travel
