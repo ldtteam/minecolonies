@@ -250,7 +250,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     }
 
     /**
-     * Check if the entity to serve can eat the given tack
+     * Check if the entity to serve can eat the given stack
      * @param stack the stack to check
      * @param citizen the citizen to check for.
      * @return true if the stack can be eaten
