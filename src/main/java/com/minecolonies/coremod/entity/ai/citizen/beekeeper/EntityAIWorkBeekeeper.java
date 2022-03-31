@@ -451,7 +451,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 return false;
             }
 
-            return true;
+            return flowerCount >= NUM_OF_FLOWERS_TO_BREED;
         }
 
         return false;
