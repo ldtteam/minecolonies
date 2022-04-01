@@ -4,6 +4,7 @@ import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.placement.StructureIterators;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.BUILDER_MODE;
@@ -18,7 +19,7 @@ public class BuilderModeSetting extends StringSetting
      */
     public BuilderModeSetting()
     {
-        super(StructureIterators.getKeySet(), 0);
+        super(new ArrayList<>(StructureIterators.getKeySet()), 0);
         set(Structurize.getConfig().getServer().iteratorType.get());
     }
 
@@ -29,7 +30,7 @@ public class BuilderModeSetting extends StringSetting
      */
     public BuilderModeSetting(final List<String> value, final int curr)
     {
-        super(StructureIterators.getKeySet(), 0);
+        super(new ArrayList<>(StructureIterators.getKeySet()), 0);
         set(value.get(curr));
     }
 
