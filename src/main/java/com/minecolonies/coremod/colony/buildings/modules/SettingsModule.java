@@ -56,6 +56,7 @@ public class SettingsModule extends AbstractBuildingModule implements IPersisten
                 final ISettingKey<?> settingsKey = new SettingKey<>(setting.getClass(), key);
                 if (settings.containsKey(settingsKey))
                 {
+                    setting.updateSetting(settings.get(settingsKey));
                     settings.put(settingsKey, setting);
                 }
             }
