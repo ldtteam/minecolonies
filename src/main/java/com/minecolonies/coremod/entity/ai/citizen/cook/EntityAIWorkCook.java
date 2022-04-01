@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.citizen.cook;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
@@ -37,6 +38,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -150,7 +152,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             return true;
         }
-        return InventoryUtils.getCountFromBuilding(getOwnBuilding(), ItemStackUtils.CAN_EAT) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
+        return InventoryUtils.getCountFromBuilding(getOwnBuilding(), ItemStackUtils.CAN_EAT.and(stack -> stack.getItem().getFoodProperties().getNutrition() >= getOwnBuilding().getBuildingLevel() - 1)) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
     }
 
     @Override
@@ -313,21 +315,33 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                       && getOwnBuilding().getColony().getPermissions().hasPermission(player, Action.MANAGE_HUTS)
         );
 
-        if (!citizenList.isEmpty() || !playerList.isEmpty())
+        playerToServe.addAll(playerList);
+
+        boolean hasFoodInBuilding = false;
+        for (final AbstractEntityCitizen citizen : citizenList)
         {
-            citizenToServe.addAll(citizenList);
-            playerToServe.addAll(playerList);
-
-            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.CAN_EAT.test(stack)))
+            final Predicate<ItemStack> foodPredicate = stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack) && canEat(stack, citizen);
+            if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
             {
-                return COOK_SERVE_FOOD_TO_CITIZEN;
+                citizenToServe.add(citizen);
             }
-            else if (!InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack)))
+            else
             {
-                return START_WORKING;
+                if (InventoryUtils.hasItemInProvider(getOwnBuilding(), foodPredicate))
+                {
+                    hasFoodInBuilding = true;
+                    needsCurrently = new Tuple<>(foodPredicate, STACKSIZE);
+                }
             }
+        }
 
-            needsCurrently = new Tuple<>(stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack), STACKSIZE);
+        if (!citizenToServe.isEmpty())
+        {
+            return COOK_SERVE_FOOD_TO_CITIZEN;
+        }
+
+        if (hasFoodInBuilding)
+        {
             return GATHERING_REQUIRED_MATERIALS;
         }
 
