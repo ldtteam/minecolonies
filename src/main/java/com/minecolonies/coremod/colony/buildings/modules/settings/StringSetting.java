@@ -6,6 +6,7 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
@@ -105,6 +106,20 @@ public class StringSetting implements IStringSetting
         if (currentIndex >= settings.size())
         {
             currentIndex = 0;
+        }
+    }
+
+    @Override
+    public void updateSetting(final ISetting iSetting)
+    {
+        if (iSetting instanceof StringSetting)
+        {
+            this.settings.clear();
+            this.settings.addAll(((StringSetting) iSetting).settings);
+            if (currentIndex >= this.settings.size())
+            {
+                currentIndex = this.settings.size() - 1;
+            }
         }
     }
 
