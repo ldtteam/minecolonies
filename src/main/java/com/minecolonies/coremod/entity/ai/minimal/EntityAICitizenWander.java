@@ -222,7 +222,7 @@ public class EntityAICitizenWander extends Goal
         {
             return false;
         }
-        return citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone();
+        return citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone() && !citizen.isBaby();
     }
 
     @Override

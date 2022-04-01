@@ -6,6 +6,7 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
@@ -129,6 +130,20 @@ public class StringSetting implements IStringSetting
     public boolean isIndexAllowed(int index)
     {
         return index >= 0 && index < settings.size();
+    }
+
+    @Override
+    public void updateSetting(final ISetting iSetting)
+    {
+        if (iSetting instanceof StringSetting)
+        {
+            this.settings.clear();
+            this.settings.addAll(((StringSetting) iSetting).settings);
+            if (currentIndex >= this.settings.size())
+            {
+                currentIndex = this.settings.size() - 1;
+            }
+        }
     }
 
     @Override
