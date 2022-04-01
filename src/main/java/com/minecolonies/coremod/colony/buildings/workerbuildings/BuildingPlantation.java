@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -25,11 +26,15 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
-import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
@@ -43,7 +48,8 @@ public class BuildingPlantation extends AbstractBuilding
     /**
      * Settings key for the building mode.
      */
-    public static final ISettingKey<PlantationSetting> MODE = new SettingKey<>(PlantationSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "mode"));
+    public static final ISettingKey<PlantationSetting> MODE =
+      new SettingKey<>(PlantationSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "mode"));
 
     /**
      * Description string of the building.
@@ -59,11 +65,6 @@ public class BuildingPlantation extends AbstractBuilding
      * The current phase (default sugarcane).
      */
     private Item currentPhase = Items.SUGAR_CANE;
-
-    /**
-     * All the possible settings.
-     */
-    private final List<Item> settings = Arrays.asList(Items.SUGAR_CANE, Items.CACTUS, Items.BAMBOO);
 
     /**
      * Instantiates a new plantation building.
@@ -147,7 +148,7 @@ public class BuildingPlantation extends AbstractBuilding
             {
                 if ((entry.getValue().contains("bamboo") && phase == Items.BAMBOO)
                       || (entry.getValue().contains("sugar") && phase == Items.SUGAR_CANE)
-                      || (entry.getValue().contains("cactus") && phase== Items.CACTUS))
+                      || (entry.getValue().contains("cactus") && phase == Items.CACTUS))
                 {
                     filtered.add(getPosition().offset(entry.getKey()));
                 }
@@ -159,43 +160,68 @@ public class BuildingPlantation extends AbstractBuilding
 
     /**
      * Iterates over available plants
+     *
      * @return the item of the new or unchanged plant phase
      */
     public Item nextPlantPhase()
     {
-        if (getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0)
-        {
-            int next = settings.indexOf(currentPhase);
-
-            do
-            {
-                next = (next + 1) % settings.size();
-            }
-            while (settings.get(next) == getSetting());
-
-            currentPhase = settings.get(next);
-            return currentPhase;
-        }
-
-        return getSetting();
-    }
-
-    private Item getSetting()
-    {
-        final String setting = getSetting(MODE).getValue();
-        if (setting.equals(Items.SUGAR_CANE.getDescriptionId()))
+        final List<Item> availablePlants = getAvailablePlants();
+        if (availablePlants.isEmpty())
         {
             return Items.SUGAR_CANE;
         }
-        if (setting.equals(Items.CACTUS.getDescriptionId()))
+
+        if (!availablePlants.contains(currentPhase))
         {
-            return Items.CACTUS;
+            // Setting may have changed causing the current phase plant to no longer be available.
+            // Therefore, we reset the current phase back to the first item of the available plants.
+            currentPhase = availablePlants.get(0);
         }
-        if (setting.equals(Items.BAMBOO.getDescriptionId()))
+        else
         {
-            return Items.BAMBOO;
+            // Find the index of the current phase plant, increase that index and set the current phase
+            // to the next available plant in the cycle.
+            int selectedIndex = IntStream.range(0, availablePlants.size())
+              .filter(i -> currentPhase.equals(availablePlants.get(i)))
+              .findFirst()
+              .orElse(0);
+
+            selectedIndex++;
+            if (selectedIndex >= availablePlants.size()) {
+                selectedIndex = 0;
+            }
+
+            currentPhase = availablePlants.get(selectedIndex);
         }
-        return Items.SUGAR_CANE;
+
+        return currentPhase;
+    }
+
+    private List<Item> getAvailablePlants()
+    {
+        final String setting = getSetting(MODE).getValue();
+
+        List<Item> items = new ArrayList<>();
+        if (setting.contains(Items.SUGAR_CANE.getDescriptionId()))
+        {
+            items.add(Items.SUGAR_CANE);
+        }
+        if (setting.contains(Items.CACTUS.getDescriptionId()))
+        {
+            items.add(Items.CACTUS);
+        }
+        if (setting.contains(Items.BAMBOO.getDescriptionId()))
+        {
+            items.add(Items.BAMBOO);
+        }
+
+        // Add sugar cane as the default plant cycle as a fallback in case nothing exists in the settings
+        if (items.isEmpty())
+        {
+            items.add(Items.SUGAR_CANE);
+            Log.getLogger().log(Level.WARN, "Plantation plant setting contains none of the preconfigured plants, please report this to the developers!");
+        }
+        return items;
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
@@ -215,13 +241,16 @@ public class BuildingPlantation extends AbstractBuilding
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION)
-                    .combine(super.getIngredientValidator());
+              .combine(super.getIngredientValidator());
         }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            if (!super.isRecipeCompatible(recipe)) return false;
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_PLANTATION);
             return isRecipeAllowed.orElse(false);
         }

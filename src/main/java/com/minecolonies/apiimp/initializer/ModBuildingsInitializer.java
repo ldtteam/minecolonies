@@ -560,9 +560,9 @@ public final class ModBuildingsInitializer
                                                                          Items.SUGAR_CANE.getDescriptionId(),
                                                                          Items.CACTUS.getDescriptionId(),
                                                                          Items.BAMBOO.getDescriptionId(),
-                                                                         Items.SUGAR_CANE.getDescriptionId() + PlantationSetting.SPLIT_TOKEN + Items.CACTUS.getDescriptionId(),
-                                                                         Items.CACTUS.getDescriptionId() + PlantationSetting.SPLIT_TOKEN + Items.BAMBOO.getDescriptionId(),
-                                                                         Items.BAMBOO.getDescriptionId() + PlantationSetting.SPLIT_TOKEN + Items.SUGAR_CANE.getDescriptionId()))
+                                                                         PlantationSetting.SUGAR_CANE_AND_CACTUS,
+                                                                         PlantationSetting.CACTUS_AND_BAMBOO,
+                                                                         PlantationSetting.BAMBOO_AND_SUGAR_CANE))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry();
 
