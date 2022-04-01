@@ -431,12 +431,17 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private boolean isReadyForBreeding()
     {
+        if (getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue())
+        {
+            return false;
+        }
+
         final ItemListModule flowersModule = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
         final List<BeeEntity> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
 
         final int breedableAnimals = (int) bees.stream().filter(animal -> animal.getAge() == 0).count();
 
-        boolean canBreed = getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue() && !hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED;
+        boolean canBreed = !hasMaxAnimals(bees) && breedableAnimals >= NUM_OF_ANIMALS_TO_BREED;
         if (canBreed)
         {
             int flowerCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), (stack) -> flowersModule.isItemInList(new ItemStorage(stack)))
