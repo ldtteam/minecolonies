@@ -29,10 +29,9 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -50,6 +49,18 @@ public class BuildingPlantation extends AbstractBuilding
      */
     public static final ISettingKey<PlantationSetting> MODE =
       new SettingKey<>(PlantationSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "mode"));
+
+    /**
+     * The combinations of items/blocks/tags.
+     */
+    public static final Map<Item, ItemCombination> COMBINATIONS = Collections.unmodifiableMap(new HashMap<Item, ItemCombination>()
+    {
+        {
+            put(Items.SUGAR_CANE, new ItemCombination(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar"));
+            put(Items.CACTUS, new ItemCombination(Items.CACTUS, Blocks.CACTUS, "cactus"));
+            put(Items.BAMBOO, new ItemCombination(Items.BAMBOO, Blocks.BAMBOO, "bamboo"));
+        }
+    });
 
     /**
      * Description string of the building.
@@ -134,23 +145,40 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     /**
-     * Get a list of positions to check for crops for the current phase.
+     * Get a list of all the available working positions.
      *
      * @return the list of positions.
      */
-    public List<BlockPos> getPosForPhase()
+    public List<ItemPosition> getAllWorkPositions()
     {
-        final List<BlockPos> filtered = new ArrayList<>();
+        return getWorkPositions((tag, item) -> true);
+    }
+
+    /**
+     * Get a list of all the available working positions.
+     *
+     * @param filter a predicate to filter against, contains the tag of a building.
+     * @return the list of positions.
+     */
+    private List<ItemPosition> getWorkPositions(BiPredicate<String, Item> filter)
+    {
+        final List<ItemPosition> filtered = new ArrayList<>();
         if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
-            final Item phase = nextPlantPhase();
+            Map<String, Item> availableTags = COMBINATIONS.entrySet().stream().collect(Collectors.toMap(k -> k.getValue().getTag(), Map.Entry::getKey));
+
             for (final Map.Entry<BlockPos, List<String>> entry : tileEntity.getPositionedTags().entrySet())
             {
-                if ((entry.getValue().contains("bamboo") && phase == Items.BAMBOO)
-                      || (entry.getValue().contains("sugar") && phase == Items.SUGAR_CANE)
-                      || (entry.getValue().contains("cactus") && phase == Items.CACTUS))
+                final Optional<String> foundTag = entry.getValue().stream().filter(availableTags::containsKey).findFirst();
+                if (!foundTag.isPresent())
                 {
-                    filtered.add(getPosition().offset(entry.getKey()));
+                    continue;
+                }
+
+                Item item = availableTags.get(foundTag.get());
+                if (filter.test(foundTag.get(), item))
+                {
+                    filtered.add(new ItemPosition(getPosition().offset(entry.getKey()), COMBINATIONS.get(item)));
                 }
             }
         }
@@ -159,11 +187,21 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     /**
+     * Get the current phase.
+     *
+     * @return the current phase.
+     */
+    public Item getCurrentPhase()
+    {
+        return currentPhase;
+    }
+
+    /**
      * Iterates over available plants
      *
      * @return the item of the new or unchanged plant phase
      */
-    public Item nextPlantPhase()
+    public Item getNextPhase()
     {
         final List<Item> availablePlants = getAvailablePlants();
         if (availablePlants.isEmpty())
@@ -181,13 +219,11 @@ public class BuildingPlantation extends AbstractBuilding
         {
             // Find the index of the current phase plant, increase that index and set the current phase
             // to the next available plant in the cycle.
-            int selectedIndex = IntStream.range(0, availablePlants.size())
-              .filter(i -> currentPhase.equals(availablePlants.get(i)))
-              .findFirst()
-              .orElse(0);
+            int selectedIndex = IntStream.range(0, availablePlants.size()).filter(i -> currentPhase.equals(availablePlants.get(i))).findFirst().orElse(0);
 
             selectedIndex++;
-            if (selectedIndex >= availablePlants.size()) {
+            if (selectedIndex >= availablePlants.size())
+            {
                 selectedIndex = 0;
             }
 
@@ -197,7 +233,12 @@ public class BuildingPlantation extends AbstractBuilding
         return currentPhase;
     }
 
-    private List<Item> getAvailablePlants()
+    /**
+     * Obtain the current list of available plants to use.
+     *
+     * @return a list of plants.
+     */
+    public List<Item> getAvailablePlants()
     {
         final String setting = getSetting(MODE).getValue();
 
@@ -240,8 +281,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION)
-              .combine(super.getIngredientValidator());
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION).combine(super.getIngredientValidator());
         }
 
         @Override
@@ -253,6 +293,113 @@ public class BuildingPlantation extends AbstractBuilding
             }
             final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_PLANTATION);
             return isRecipeAllowed.orElse(false);
+        }
+    }
+
+    public static class ItemPosition
+    {
+        /**
+         * The position.
+         */
+        private final BlockPos position;
+
+        /**
+         * The item combination data.
+         */
+        private final ItemCombination combination;
+
+        /**
+         * Default constructor.
+         *
+         * @param position    the position.
+         * @param combination the item combination data.
+         */
+        private ItemPosition(final BlockPos position, final ItemCombination combination)
+        {
+            this.position = position;
+            this.combination = combination;
+        }
+
+        /**
+         * Get the position.
+         *
+         * @return the position.
+         */
+        public BlockPos getPosition()
+        {
+            return position;
+        }
+
+        /**
+         * Get the item combination data.
+         *
+         * @return the item combination data.
+         */
+        public ItemCombination getCombination()
+        {
+            return combination;
+        }
+    }
+
+    public static class ItemCombination
+    {
+        /**
+         * The item of the combination.
+         */
+        private final Item item;
+
+        /**
+         * The block of the combination.
+         */
+        private final Block block;
+
+        /**
+         * The tag of the combination.
+         */
+        private final String tag;
+
+        /**
+         * Default constructor.
+         *
+         * @param item  the item.
+         * @param block the block.
+         * @param tag   the tag.
+         */
+        private ItemCombination(Item item, Block block, String tag)
+        {
+            this.item = item;
+            this.block = block;
+            this.tag = tag;
+        }
+
+        /**
+         * Get the item of the combination.
+         *
+         * @return the item.
+         */
+        public Item getItem()
+        {
+            return item;
+        }
+
+        /**
+         * Get the block of the combination.
+         *
+         * @return the block.
+         */
+        public Block getBlock()
+        {
+            return block;
+        }
+
+        /**
+         * Get the tag of the combination.
+         *
+         * @return the tag.
+         */
+        public String getTag()
+        {
+            return tag;
         }
     }
 }
