@@ -1,23 +1,29 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
-import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.DO_REALLY_WANNA_TP;
+import static com.minecolonies.api.util.constant.TranslationConstants.TH_TOO_LOW;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -50,6 +56,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
+        registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
 
         registerButton(BUTTON_TP, this::teleportToColony);
     }
@@ -156,6 +163,15 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void mercenaryClicked()
     {
         @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
+        window.open();
+    }
+
+    /**
+     * Opens the map on button clicked
+     */
+    private void mapButtonClicked()
+    {
+        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
         window.open();
     }
 

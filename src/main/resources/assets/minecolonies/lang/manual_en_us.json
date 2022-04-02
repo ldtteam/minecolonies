@@ -263,7 +263,7 @@
   "minecolonies.config.creativeresolve.comment": "Should the request system creatively resolve (if possible) when the player is required to resolve a request? This is a debugging tool and can take a very long time to resolve a request.",
   "minecolonies.config.canplayeruseresetcommand": "Can Players Use the Request System Reset Command",
   "minecolonies.config.canplayeruseresetcommand.comment": "Should players be allowed to use the /mc colony requestsystem-reset command?",
-  
+
   "minecolonies.config.default.boolean": "[Default: %b]",
   "minecolonies.config.default.int": "[Default: %d, min: %d, max: %d]",
   "minecolonies.config.default.long": "[Default: %d, min: %d, max: %d]",
@@ -507,6 +507,7 @@
   "com.minecolonies.coremod.gui.townhall.build": "Build Town Hall",
   "com.minecolonies.coremod.gui.townhall.repair": "Repair Town Hall",
 
+  "com.minecolonies.coremod.gui.townHall.map": "Show Colony Map",
   "com.minecolonies.coremod.gui.townhall.mercenary": "Hire Mercenaries",
   "com.minecolonies.coremod.gui.townhall.mercenary.title": "Mercenary Help",
   "com.minecolonies.coremod.gui.townhall.mercenaryhire": "Hire",
@@ -614,7 +615,6 @@
 
   "com.minecolonies.coremod.gui.workerhuts.assignedbed": "%s became a/n %s. The %s at %s now has an open bed slot for a new citizen.",
 
-
   "com.minecolonies.coremod.gui.workerhuts.guardactions": "Guard Actions:",
   "com.minecolonies.coremod.gui.workerhuts.assign": "Assign the Guard to the job:",
   "com.minecolonies.coremod.gui.workerhuts.patrol": "Find patrol target:",
@@ -657,7 +657,7 @@
   "com.minecolonies.coremod.gui.workerhuts.forcepickup": "Request Pickup Now",
   "com.minecolonies.coremod.mercenary.mercenarystealcitizen": "%s is unhappy, a Mercenary took their %s!",
   "com.minecolonies.coremod.mercenary.stealbuilding": "A Mercenary just stole %s from a building!",
-  
+
   "com.minecolonies.coremod.gui.happiness.happinessmodifier": "Happiness Modifiers",
 
   "com.minecolonies.coremod.permission.no": "You do not have permission to do this in this colony!",
@@ -901,8 +901,6 @@
   "com.minecolonies.coremod.gui.workerhuts.recipe.crafting": "Crafting Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipe.smelting": "Smelting Recipes",
   "com.minecolonies.coremod.gui.workerhuts.recipe.custom": "Custom Recipes",
-
-
 
   "com.minecolonies.coremod.dimension.no": "You are not allowed to place colonies in other dimensions. (This is changeable in the config file.)",
 
