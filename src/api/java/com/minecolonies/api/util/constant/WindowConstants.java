@@ -2,7 +2,8 @@ package com.minecolonies.api.util.constant;
 
 import net.minecraft.util.ResourceLocation;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
 
 /**
  * Class which contains all constants required for windows.
@@ -73,6 +74,11 @@ public final class WindowConstants
      * Id of the mercenary button in the GUI.
      */
     public static final String BUTTON_MERCENARY = "mercenaries";
+
+    /**
+     * Id of the mercenary button in the GUI.
+     */
+    public static final String BUTTON_TOWNHALLMAP = "map";
 
     /**
      * Id of the add player button in the GUI.

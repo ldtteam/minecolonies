@@ -37,12 +37,12 @@ public class CustomRecipeManager
     /**
      * The map of loaded recipes by crafter.
      */
-    private final HashMap<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
+    private final Map<String, Map<ResourceLocation, CustomRecipe>> recipeMap = new HashMap<>();
 
     /**
      * The map of all loaded recipes by output.
      */
-    private final HashMap<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
+    private final Map<Item, List<CustomRecipe>> recipeOutputMap = new HashMap<>();
 
     /**
      * The recipes that are marked for removal after loading all resource packs
@@ -284,6 +284,11 @@ public class CustomRecipeManager
      */
     private void serializeNetworkData(final PacketBuffer recipeMgrPacketBuffer)
     {
+        if (true)
+        {
+            return;
+        }
+
         // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
         // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
         // Including all recipes in transfer results in total transfer size around ~670KB for just Minecolonies + Structurize recipes.

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui.map;
 
-import com.ldtteam.blockout.MouseEventCallback;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneParams;
 import com.ldtteam.blockout.views.View;
@@ -13,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ZoomDragMap extends View
 {
-    private double scrollX = 0d;
-    private double scrollY = 0d;
+    public  double scrollX = 0d;
+    public  double scrollY = 0d;
     private double scale   = 1d;
 
     protected int contentHeight = 0;
@@ -127,14 +126,6 @@ public class ZoomDragMap extends View
         setScrollX(scrollX);
     }
 
-    protected void abstractDrawSelfPre(final MatrixStack ms, final double mx, final double my)
-    {
-    }
-
-    protected void abstractDrawSelfPost(final MatrixStack ms, final double mx, final double my)
-    {
-    }
-
     @Override
     public void drawSelf(final MatrixStack ms, final double mx, final double my)
     {
@@ -145,9 +136,7 @@ public class ZoomDragMap extends View
         ms.translate((1 - scale) * x, (1 - scale) * y, 0.0d);
         final float renderScale = (float) MathHelper.clamp(scale, 0.26219988382999904, 6d);
         ms.scale(renderScale, renderScale, 1.0f);
-        abstractDrawSelfPre(ms, mx, my);
         super.drawSelf(ms, calcRelativeX(mx), calcRelativeY(my));
-        abstractDrawSelfPost(ms, mx, my);
         ms.popPose();
 
         scissorsEnd(ms);
@@ -195,11 +184,11 @@ public class ZoomDragMap extends View
     @Override
     public boolean scrollInput(final double wheel, final double mx, final double my)
     {
-        final boolean childResult = super.scrollInput(wheel, mx, my);
+        final boolean childResult = super.scrollInput(wheel, (width - scrollX) / 2, (height - scrollY) / 2);
         if (!childResult && zoomEnabled)
         {
-            final double childX = mx - x;
-            final double childY = my - y;
+            final double childX = (width - scrollX) / 2;
+            final double childY = (height - scrollY) / 2;
             final double oldX = (childX + scrollX) / scale;
             final double oldY = (childY + scrollY) / scale;
             scale = wheel < 0 ? scale / zoomFactor : scale * zoomFactor;
@@ -209,22 +198,6 @@ public class ZoomDragMap extends View
             return true;
         }
         return childResult;
-    }
-
-    @Override
-    public boolean mouseEventProcessor(
-      final double mx,
-      final double my,
-      final MouseEventCallback panePredicate,
-      final MouseEventCallback eventCallbackPositive,
-      final MouseEventCallback eventCallbackNegative)
-    {
-        return super.mouseEventProcessor(calcRelativeX(mx), calcRelativeY(my), panePredicate, eventCallbackPositive, eventCallbackNegative);
-    }
-
-    public void treeViewHelperAddChild(final Pane child)
-    {
-        super.addChild(child);
     }
 
     public double getScale()

@@ -242,6 +242,8 @@ public class NetworkChannel
 
         // Crafter Recipe-related messages
         registerMessage(++idx, CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
+
+        registerMessage(++idx, ColonyListMessage.class, ColonyListMessage::new);
     }
 
     private void setupInternalMessages()

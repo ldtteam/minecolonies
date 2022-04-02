@@ -23,7 +23,6 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Renderer for the citizens.
@@ -84,7 +83,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
     private void setupMainModelFrom(@NotNull final AbstractEntityCitizen citizen)
     {
-        final @Nullable IModelType modelType = IModelTypeRegistry.getInstance().getModelType(citizen.getModelType());
+        final IModelType modelType = IModelTypeRegistry.getInstance().getModelType(citizen.getModelType());
         model = citizen.isFemale() ? modelType.getFemaleModel() : modelType.getMaleModel();
         if (model == null)
         {
