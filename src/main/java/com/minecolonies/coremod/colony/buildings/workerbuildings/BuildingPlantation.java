@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableMap;
 import com.ldtteam.blockout.Log;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
@@ -29,7 +30,10 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -53,14 +57,11 @@ public class BuildingPlantation extends AbstractBuilding
     /**
      * The combinations of items/blocks/tags.
      */
-    public static final Map<Item, ItemCombination> COMBINATIONS = Collections.unmodifiableMap(new HashMap<Item, ItemCombination>()
-    {
-        {
-            put(Items.SUGAR_CANE, new ItemCombination(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar"));
-            put(Items.CACTUS, new ItemCombination(Items.CACTUS, Blocks.CACTUS, "cactus"));
-            put(Items.BAMBOO, new ItemCombination(Items.BAMBOO, Blocks.BAMBOO, "bamboo"));
-        }
-    });
+    public static final Map<Item, PlantationItem> COMBINATIONS = ImmutableMap.<Item, PlantationItem>builder()
+      .put(Items.SUGAR_CANE, new PlantationItem(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar"))
+      .put(Items.CACTUS, new PlantationItem(Items.CACTUS, Blocks.CACTUS, "cactus"))
+      .put(Items.BAMBOO, new PlantationItem(Items.BAMBOO, Blocks.BAMBOO, "bamboo"))
+      .build();
 
     /**
      * Description string of the building.
@@ -149,7 +150,7 @@ public class BuildingPlantation extends AbstractBuilding
      *
      * @return the list of positions.
      */
-    public List<ItemPosition> getAllWorkPositions()
+    public List<PlantationItemPosition> getAllWorkPositions()
     {
         return getWorkPositions((tag, item) -> true);
     }
@@ -160,9 +161,9 @@ public class BuildingPlantation extends AbstractBuilding
      * @param filter a predicate to filter against, contains the tag of a building.
      * @return the list of positions.
      */
-    private List<ItemPosition> getWorkPositions(BiPredicate<String, Item> filter)
+    private List<PlantationItemPosition> getWorkPositions(BiPredicate<String, Item> filter)
     {
-        final List<ItemPosition> filtered = new ArrayList<>();
+        final List<PlantationItemPosition> filtered = new ArrayList<>();
         if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
             Map<String, Item> availableTags = COMBINATIONS.entrySet().stream().collect(Collectors.toMap(k -> k.getValue().getTag(), Map.Entry::getKey));
@@ -178,7 +179,7 @@ public class BuildingPlantation extends AbstractBuilding
                 Item item = availableTags.get(foundTag.get());
                 if (filter.test(foundTag.get(), item))
                 {
-                    filtered.add(new ItemPosition(getPosition().offset(entry.getKey()), COMBINATIONS.get(item)));
+                    filtered.add(new PlantationItemPosition(getPosition().offset(entry.getKey()), COMBINATIONS.get(item)));
                 }
             }
         }
@@ -296,7 +297,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
     }
 
-    public static class ItemPosition
+    public static class PlantationItemPosition
     {
         /**
          * The position.
@@ -306,7 +307,7 @@ public class BuildingPlantation extends AbstractBuilding
         /**
          * The item combination data.
          */
-        private final ItemCombination combination;
+        private final PlantationItem combination;
 
         /**
          * Default constructor.
@@ -314,7 +315,7 @@ public class BuildingPlantation extends AbstractBuilding
          * @param position    the position.
          * @param combination the item combination data.
          */
-        private ItemPosition(final BlockPos position, final ItemCombination combination)
+        private PlantationItemPosition(final BlockPos position, final PlantationItem combination)
         {
             this.position = position;
             this.combination = combination;
@@ -331,17 +332,17 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         /**
-         * Get the item combination data.
+         * Get the plantation item.
          *
-         * @return the item combination data.
+         * @return the plantation item.
          */
-        public ItemCombination getCombination()
+        public PlantationItem getCombination()
         {
             return combination;
         }
     }
 
-    public static class ItemCombination
+    public static class PlantationItem
     {
         /**
          * The item of the combination.
@@ -365,7 +366,7 @@ public class BuildingPlantation extends AbstractBuilding
          * @param block the block.
          * @param tag   the tag.
          */
-        private ItemCombination(Item item, Block block, String tag)
+        private PlantationItem(Item item, Block block, String tag)
         {
             this.item = item;
             this.block = block;

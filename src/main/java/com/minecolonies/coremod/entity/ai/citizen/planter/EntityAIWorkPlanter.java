@@ -46,7 +46,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     /**
      * The current farm pos to take care of.
      */
-    private BuildingPlantation.ItemPosition workPos;
+    private BuildingPlantation.PlantationItemPosition workPos;
 
     /**
      * Constructor for the planter.
@@ -208,25 +208,25 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final Item currentItem = plantation.getNextPhase();
         final List<Item> availablePlants = plantation.getAvailablePlants();
-        final List<BuildingPlantation.ItemPosition> list = plantation.getAllWorkPositions();
+        final List<BuildingPlantation.PlantationItemPosition> list = plantation.getAllWorkPositions();
 
         // Iterate all positions to check if there's a valid block or if there's anything to harvest
-        for (final BuildingPlantation.ItemPosition itemPosition : list)
+        for (final BuildingPlantation.PlantationItemPosition plantationItemPosition : list)
         {
-            if (isItemPositionAir(itemPosition))
+            if (isItemPositionAir(plantationItemPosition))
             {
                 continue;
             }
 
-            if (positionHasInvalidBlock(itemPosition))
+            if (positionHasInvalidBlock(plantationItemPosition))
             {
-                this.workPos = itemPosition;
+                this.workPos = plantationItemPosition;
                 return PLANTATION_CLEAR_OBSTACLE;
             }
 
-            if (isAtLeastThreeHigh(itemPosition) || !availablePlants.contains(itemPosition.getCombination().getItem()))
+            if (isAtLeastThreeHigh(plantationItemPosition) || !availablePlants.contains(plantationItemPosition.getCombination().getItem()))
             {
-                this.workPos = itemPosition;
+                this.workPos = plantationItemPosition;
                 return PLANTATION_FARM;
             }
         }
@@ -246,11 +246,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return GATHERING_REQUIRED_MATERIALS;
         }
 
-        for (final BuildingPlantation.ItemPosition itemPosition : list)
+        for (final BuildingPlantation.PlantationItemPosition plantationItemPosition : list)
         {
-            if (itemPosition.getCombination().getItem() == currentItem && isItemPositionAir(itemPosition))
+            if (plantationItemPosition.getCombination().getItem() == currentItem && isItemPositionAir(plantationItemPosition))
             {
-                this.workPos = itemPosition;
+                this.workPos = plantationItemPosition;
                 return PLANTATION_PLANT;
             }
         }
@@ -275,38 +275,38 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     /**
      * Check if the position is air.
      *
-     * @param itemPosition the item position data.
+     * @param plantationItemPosition the item position data.
      * @return true if so.
      */
-    private boolean isItemPositionAir(final BuildingPlantation.ItemPosition itemPosition)
+    private boolean isItemPositionAir(final BuildingPlantation.PlantationItemPosition plantationItemPosition)
     {
-        Block foundBlock = world.getBlockState(itemPosition.getPosition().above(1)).getBlock();
+        Block foundBlock = world.getBlockState(plantationItemPosition.getPosition().above(1)).getBlock();
         return foundBlock instanceof AirBlock;
     }
 
     /**
      * Check if the position has a valid plant.
      *
-     * @param itemPosition the item position data.
+     * @param plantationItemPosition the item position data.
      * @return true if so.
      */
-    private boolean positionHasInvalidBlock(final BuildingPlantation.ItemPosition itemPosition)
+    private boolean positionHasInvalidBlock(final BuildingPlantation.PlantationItemPosition plantationItemPosition)
     {
-        Block foundBlock = world.getBlockState(itemPosition.getPosition().above(1)).getBlock();
-        return itemPosition.getCombination().getBlock() != foundBlock;
+        Block foundBlock = world.getBlockState(plantationItemPosition.getPosition().above(1)).getBlock();
+        return plantationItemPosition.getCombination().getBlock() != foundBlock;
     }
 
     /**
      * Check if the plant at pos it at least three high.
      *
-     * @param itemPosition the item position data.
+     * @param plantationItemPosition the item position data.
      * @return true if so.
      */
-    private boolean isAtLeastThreeHigh(final BuildingPlantation.ItemPosition itemPosition)
+    private boolean isAtLeastThreeHigh(final BuildingPlantation.PlantationItemPosition plantationItemPosition)
     {
-        BlockPos position = itemPosition.getPosition();
+        BlockPos position = plantationItemPosition.getPosition();
         Block firstBlock = world.getBlockState(position.above(1)).getBlock();
-        if (itemPosition.getCombination().getBlock() != firstBlock)
+        if (plantationItemPosition.getCombination().getBlock() != firstBlock)
         {
             return false;
         }
