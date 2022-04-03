@@ -431,7 +431,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
      */
     private boolean isReadyForBreeding()
     {
-        if (getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue())
+        if (!getOwnBuilding().getSetting(BuildingBeekeeper.BREEDING).getValue())
         {
             return false;
         }
