@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesMo
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -77,14 +78,37 @@ public class WindowResourceList extends AbstractWindowSkeleton
         this.builder = null;
     }
 
+    public WindowResourceList(final int colonyId, final BlockPos buildingPos, final List optional_warehouse_list)
+    {
+        this(colonyId, buildingPos);
+    }
+
+    // right click open constructor
+    public WindowResourceList(final int colonyId, final BlockPos buildingPos, final BlockPos optional_warehouse_pos)
+    {
+        this(colonyId, buildingPos);
+        this.warehousePos = wareHousePos;
+
+        //todo make a special Message and image visible, with an "ok" button.
+
+        //You just loaded a warehouse snapshot into the resoruce scroll
+        // ok button (which hides the message).
+    }
+
+    //todo okay button handling (to make image and button invisible)
+
     /**
      * Retrieve resources from the building to display in GUI.
      */
     private void pullResourcesFromHut()
     {
+        //todo also consider warehouse content
         final IBuildingView newView = builder.getColony().getBuilding(builder.getID());
         if (newView instanceof BuildingBuilder.View)
         {
+            final Compound itemCompound;
+            builder.getColony().getBuilding(warehousepos).getContainerList();
+
             final BuildingResourcesModuleView moduleView = newView.getModuleView(BuildingResourcesModuleView.class);
             final Inventory inventory = this.mc.player.getInventory();
             final boolean isCreative = this.mc.player.isCreative();
@@ -113,6 +137,15 @@ public class WindowResourceList extends AbstractWindowSkeleton
                       InventoryUtils.getItemCountInItemHandler(new InvWrapper(inventory),
                         stack -> !ItemStackUtils.isEmpty(stack) && ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack()));
                 }
+
+                if (warehOusePos != null)
+                {
+                    check warehouse content and fill nbt
+                }
+                else if (warehousenbt contains warehouse tag)
+                {
+                    resource.setWarehouseAmount();
+                }
                 resource.setPlayerAmount(amountToSet);
 
                 resource.setAmountInDelivery(0);
@@ -134,6 +167,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator(NOT_NEEDED, HAVE_ENOUGH, IN_DELIVERY, NEED_MORE, DONT_HAVE));
+
+            if warehousePos is not null, sync the nbt over with a message
         }
     }
 
@@ -221,15 +256,22 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final Text resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Text.class);
         final Text neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Text.class);
 
+        rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(false);
+        rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText("");
+        rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(false);
+        rowPane.findPaneOfTypeByID(IN_WAREHOUSE_AMOUNT, Text.class).setText("");
+
         if (resource.getAmountInDelivery() > 0)
         {
             rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(true);
             rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText("" + resource.getAmountInDelivery());
         }
-        else
+        else if (resource.getAmountInWarehouse() > 0)
         {
-            rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(false);
-            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText("");
+            rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(true);
+            rowPane.findPaneOfTypeByID(IN_WAREHOUSE_AMOUNT, Text.class).setText("" + resource.getAmountInWarehouse());
+
+            //todo add tooltip that tells the player that this is a temporary snapshot and might be outdated.
         }
 
         switch (resource.getAvailabilityStatus())

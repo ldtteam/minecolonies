@@ -3,6 +3,7 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -11,6 +12,8 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
@@ -85,6 +88,10 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                             COM_MINECOLONIES_SCROLL_BUILDING_SET,
                             buildingEntity.getColony().getName());
                 }
+            }
+            else if (buildingEntity instanceof TileEntityWareHouse && ctx.getLevel().isClientSide)
+            {
+                openWindow(compound, ctx.getPlayer(), buildingEntity.getPosition());
             }
             else
             {
@@ -181,13 +188,14 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      * @param compound the item compound
      * @param player the player entity opening the window
      */
-    private static void openWindow(CompoundTag compound, Player player)
+    private static void openWindow(final Item item, CompoundTag compound, Player player)
     {
         if (compound.getAllKeys().contains(TAG_COLONY_ID) && compound.getAllKeys().contains(TAG_BUILDER))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+            //todo also read the warehouse contnets from nbt and hand it over. (else empty list)
+            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos, item, optional warehousepos, warehousecontents);
         }
         else
         {
