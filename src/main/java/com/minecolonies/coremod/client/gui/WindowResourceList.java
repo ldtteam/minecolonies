@@ -46,6 +46,8 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
+// TODO: Introduce a work order "hash" so we can notice changes in the work order of the builder and reset the warehouse snapshot when that happens
+
 /**
  * Window for the resource list item.
  */
