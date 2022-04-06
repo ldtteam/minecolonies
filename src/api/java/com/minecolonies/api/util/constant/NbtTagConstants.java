@@ -191,6 +191,11 @@ public final class NbtTagConstants
     public static final String TAG_HEIGHT  = "height";
 
     /**
+     * Tag to store a snapshot of a given warehouse in the resource scroll.
+     */
+    public static final String TAG_WAREHOUSE_SNAPSHOT = "version";
+
+    /**
      * Tag to store if the field has been taken.
      */
     public static final String TAG_TAKEN = "taken";
