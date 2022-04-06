@@ -36,10 +36,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -58,9 +58,9 @@ public class BuildingPlantation extends AbstractBuilding
      * The combinations of items/blocks/tags.
      */
     public static final Map<Item, PlantationItem> COMBINATIONS = ImmutableMap.<Item, PlantationItem>builder()
-      .put(Items.SUGAR_CANE, new PlantationItem(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar"))
-      .put(Items.CACTUS, new PlantationItem(Items.CACTUS, Blocks.CACTUS, "cactus"))
-      .put(Items.BAMBOO, new PlantationItem(Items.BAMBOO, Blocks.BAMBOO, "bamboo"))
+      .put(Items.SUGAR_CANE, new PlantationItem(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar", 3))
+      .put(Items.CACTUS, new PlantationItem(Items.CACTUS, Blocks.CACTUS, "cactus", 3))
+      .put(Items.BAMBOO, new PlantationItem(Items.BAMBOO, Blocks.BAMBOO, "bamboo", 3))
       .build();
 
     /**
@@ -72,11 +72,6 @@ public class BuildingPlantation extends AbstractBuilding
      * List of sand blocks to grow onto.
      */
     private final List<BlockPos> sand = new ArrayList<>();
-
-    /**
-     * The current phase (default sugarcane).
-     */
-    private Item currentPhase = Items.SUGAR_CANE;
 
     /**
      * Instantiates a new plantation building.
@@ -126,7 +121,6 @@ public class BuildingPlantation extends AbstractBuilding
         {
             sand.add(NBTUtil.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
         }
-        this.currentPhase = ItemStack.of(compound.getCompound(TAG_CURRENT_PHASE)).getItem();
     }
 
     @Override
@@ -141,7 +135,6 @@ public class BuildingPlantation extends AbstractBuilding
             sandCompoundList.add(sandCompound);
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
-        compound.put(TAG_CURRENT_PHASE, new ItemStack(currentPhase).save(new CompoundNBT()));
         return compound;
     }
 
@@ -150,9 +143,9 @@ public class BuildingPlantation extends AbstractBuilding
      *
      * @return the list of positions.
      */
-    public List<PlantationItemPosition> getAllWorkPositions()
+    public List<PlantationSoilPosition> getAllSoilPositions()
     {
-        return getWorkPositions((tag, item) -> true);
+        return getSoilPositions((tag, item) -> true);
     }
 
     /**
@@ -161,9 +154,9 @@ public class BuildingPlantation extends AbstractBuilding
      * @param filter a predicate to filter against, contains the tag of a building.
      * @return the list of positions.
      */
-    private List<PlantationItemPosition> getWorkPositions(BiPredicate<String, Item> filter)
+    private List<PlantationSoilPosition> getSoilPositions(BiPredicate<String, Item> filter)
     {
-        final List<PlantationItemPosition> filtered = new ArrayList<>();
+        final List<PlantationSoilPosition> filtered = new ArrayList<>();
         if (tileEntity != null && !tileEntity.getPositionedTags().isEmpty())
         {
             Map<String, Item> availableTags = COMBINATIONS.entrySet().stream().collect(Collectors.toMap(k -> k.getValue().getTag(), Map.Entry::getKey));
@@ -179,59 +172,12 @@ public class BuildingPlantation extends AbstractBuilding
                 Item item = availableTags.get(foundTag.get());
                 if (filter.test(foundTag.get(), item))
                 {
-                    filtered.add(new PlantationItemPosition(getPosition().offset(entry.getKey()), COMBINATIONS.get(item)));
+                    filtered.add(new PlantationSoilPosition(getPosition().offset(entry.getKey()), COMBINATIONS.get(item)));
                 }
             }
         }
 
         return filtered;
-    }
-
-    /**
-     * Get the current phase.
-     *
-     * @return the current phase.
-     */
-    public Item getCurrentPhase()
-    {
-        return currentPhase;
-    }
-
-    /**
-     * Iterates over available plants
-     *
-     * @return the item of the new or unchanged plant phase
-     */
-    public Item getNextPhase()
-    {
-        final List<Item> availablePlants = getAvailablePlants();
-        if (availablePlants.isEmpty())
-        {
-            return Items.SUGAR_CANE;
-        }
-
-        if (!availablePlants.contains(currentPhase))
-        {
-            // Setting may have changed causing the current phase plant to no longer be available.
-            // Therefore, we reset the current phase back to the first item of the available plants.
-            currentPhase = availablePlants.get(0);
-        }
-        else
-        {
-            // Find the index of the current phase plant, increase that index and set the current phase
-            // to the next available plant in the cycle.
-            int selectedIndex = IntStream.range(0, availablePlants.size()).filter(i -> currentPhase.equals(availablePlants.get(i))).findFirst().orElse(0);
-
-            selectedIndex++;
-            if (selectedIndex >= availablePlants.size())
-            {
-                selectedIndex = 0;
-            }
-
-            currentPhase = availablePlants.get(selectedIndex);
-        }
-
-        return currentPhase;
     }
 
     /**
@@ -297,7 +243,7 @@ public class BuildingPlantation extends AbstractBuilding
         }
     }
 
-    public static class PlantationItemPosition
+    public static class PlantationSoilPosition
     {
         /**
          * The position.
@@ -315,7 +261,7 @@ public class BuildingPlantation extends AbstractBuilding
          * @param position    the position.
          * @param combination the item combination data.
          */
-        private PlantationItemPosition(final BlockPos position, final PlantationItem combination)
+        private PlantationSoilPosition(final BlockPos position, final PlantationItem combination)
         {
             this.position = position;
             this.combination = combination;
@@ -360,17 +306,24 @@ public class BuildingPlantation extends AbstractBuilding
         private final String tag;
 
         /**
+         * The minimum length of this combination.
+         */
+        private final int minimumLength;
+
+        /**
          * Default constructor.
          *
-         * @param item  the item.
-         * @param block the block.
-         * @param tag   the tag.
+         * @param item          the item.
+         * @param block         the block.
+         * @param tag           the tag.
+         * @param minimumLength the minimum length.
          */
-        private PlantationItem(Item item, Block block, String tag)
+        private PlantationItem(Item item, Block block, String tag, int minimumLength)
         {
             this.item = item;
             this.block = block;
             this.tag = tag;
+            this.minimumLength = minimumLength;
         }
 
         /**
@@ -401,6 +354,16 @@ public class BuildingPlantation extends AbstractBuilding
         public String getTag()
         {
             return tag;
+        }
+
+        /**
+         * Get the minimum length of the combination.
+         *
+         * @return the minimum length.
+         */
+        public int getMinimumLength()
+        {
+            return minimumLength;
         }
     }
 }
