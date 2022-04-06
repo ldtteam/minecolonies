@@ -2,7 +2,7 @@
   "branch": "minecolonies:technology",
   "researchLevel": 1,
   "subtitle": "com.minecolonies.research.technology.stonecake.subtitle",
-  "sortOrder": 3,
+  "sortOrder": 4,
   "icon": "minecolonies:blockhutstonemason",
   "requirements": [
     {
