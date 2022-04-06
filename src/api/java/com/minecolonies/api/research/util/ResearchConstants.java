@@ -150,8 +150,9 @@ public final class ResearchConstants
     public static final ResourceLocation WORKING_IN_RAIN   = new ResourceLocation(Constants.MOD_ID, "effects/workinginrainunlock");
     public static final ResourceLocation USE_TOTEM         = new ResourceLocation(Constants.MOD_ID, "effects/usetotemunlock");
     public static final ResourceLocation RECIPE_MODE       = new ResourceLocation(Constants.MOD_ID, "effects/recipemodeunlock");
-    public static final ResourceLocation BUILDER_MODE       = new ResourceLocation(Constants.MOD_ID, "effects/buildermodeunlock");
+    public static final ResourceLocation BUILDER_MODE      = new ResourceLocation(Constants.MOD_ID, "effects/buildermodeunlock");
     public static final ResourceLocation DRUID_USE_POTIONS = new ResourceLocation(Constants.MOD_ID, "effects/consumepotions");
+    public static final ResourceLocation SOFT_SHOES        = new ResourceLocation(Constants.MOD_ID, "effects/softshoesunlock");
 
     /**
      * Private constructor to hide implicit public one.
