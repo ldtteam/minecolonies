@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraftforge.fml.ModList;
@@ -22,6 +23,12 @@ public class DynamicTreesSetting extends IntSetting
     public DynamicTreesSetting(int value, int defaultValue)
     {
         super(value, defaultValue);
+    }
+
+    @Override
+    public boolean isActive(final ISettingsModule module)
+    {
+        return ModList.get().isLoaded("dynamictrees");
     }
 
     /**
