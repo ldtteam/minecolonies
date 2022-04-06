@@ -407,7 +407,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             || field.isNoPartOfField(world, position) 
             || (world.getBlockState(position.above()).getBlock() instanceof CropBlock)
             || (world.getBlockState(position.above()).getBlock() instanceof BlockScarecrow)
-            || !world.getBlockState(position).is(Tags.Blocks.DIRT)
+            || !world.getBlockState(position).is(BlockTags.DIRT)
         )
         {
             return null;
