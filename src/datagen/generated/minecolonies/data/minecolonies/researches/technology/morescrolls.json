@@ -1,7 +1,7 @@
 {
   "branch": "minecolonies:technology",
   "researchLevel": 1,
-  "sortOrder": 2,
+  "sortOrder": 3,
   "icon": "minecolonies:scroll_highlight",
   "requirements": [
     {

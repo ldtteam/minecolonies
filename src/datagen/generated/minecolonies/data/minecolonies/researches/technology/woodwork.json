@@ -2,7 +2,7 @@
   "branch": "minecolonies:technology",
   "researchLevel": 1,
   "subtitle": "com.minecolonies.research.technology.woodwork.subtitle",
-  "sortOrder": 4,
+  "sortOrder": 5,
   "icon": "minecolonies:blockhutsawmill",
   "requirements": [
     {
