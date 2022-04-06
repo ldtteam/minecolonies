@@ -29,6 +29,7 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawned
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
+import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
@@ -89,6 +90,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
@@ -751,6 +753,24 @@ public class EventHandler
         {
             IColonyManager.getInstance().resetColonyViews();
             Log.getLogger().info("Removed all colony views");
+        }
+    }
+
+/**
+ * Gets called when farmland is trampled
+ * 
+ * @param event the event to handle
+ */
+    @SubscribeEvent
+    public static void onCropTrample(BlockEvent.FarmlandTrampleEvent event)
+    {
+        if (!event.getWorld().isClientSide()
+            && event.getEntity() instanceof AbstractEntityCitizen
+            && ((AbstractEntityCitizen) event.getEntity()).getCitizenJobHandler().getColonyJob() instanceof JobFarmer
+            && ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SOFT_SHOES) > 0
+            )
+        {
+            event.setCanceled(true);
         }
     }
 
