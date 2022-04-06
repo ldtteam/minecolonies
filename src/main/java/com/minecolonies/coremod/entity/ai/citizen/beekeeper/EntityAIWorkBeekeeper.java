@@ -233,7 +233,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
             return BEEKEEPER_HARVEST;
         }
 
-        final List<BeeEntity> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
+        final List<BeeEntity> bees = searchForAnimals(world, getOwnBuilding());
 
         final JobBeekeeper job = worker.getCitizenJobHandler().getColonyJob(JobBeekeeper.class);
         if (bees.isEmpty())
@@ -437,7 +437,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
         }
 
         final ItemListModule flowersModule = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(BUILDING_FLOWER_LIST));
-        final List<BeeEntity> bees = new ArrayList<>(searchForAnimals(world, getOwnBuilding()));
+        final List<BeeEntity> bees = searchForAnimals(world, getOwnBuilding());
 
         final int breedableAnimals = (int) bees.stream().filter(animal -> animal.getAge() == 0).count();
 
