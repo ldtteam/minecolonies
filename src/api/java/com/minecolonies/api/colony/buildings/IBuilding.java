@@ -519,9 +519,18 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * Get setting for key. Utility function.
      * @param key the key.
      * @param <T> the key type.
-     * @return the optional wrapping the value.
+     * @return the setting.
      */
     <T extends ISetting> T getSetting(@NotNull final ISettingKey<T> key);
+
+    /**
+     * Get setting for key. Utility function.
+     * @param key the key.
+     * @param <T> the key type.
+     * @return the optional wrapping the value.
+     */
+    @NotNull
+    <T extends ISetting> Optional<T> getOptionalSetting(@NotNull final ISettingKey<T> key);
 
     /**
      * Check if the assigned citizens are allowed to eat the following stack.

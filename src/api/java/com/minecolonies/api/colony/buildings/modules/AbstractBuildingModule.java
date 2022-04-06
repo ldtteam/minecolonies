@@ -40,6 +40,12 @@ public abstract class AbstractBuildingModule implements IBuildingModule
     }
 
     @Override
+    public IBuilding getBuilding()
+    {
+        return this.building;
+    }
+
+    @Override
     public IBuildingModule setBuilding(final IBuilding building)
     {
         this.building = building;

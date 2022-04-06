@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -12,6 +11,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
@@ -143,11 +143,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure)
     {
-        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) &&
-              getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+        if (job.getWorkOrder().getIteratorType().isEmpty())
         {
-            job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
+            final String mode = BuilderModeSetting.getActualValue(getOwnBuilding());
+            job.getWorkOrder().setIteratorType(mode);
         }
+
         structurePlacer = new Tuple<>(new StructurePlacer(structure, job.getWorkOrder().getIteratorType()), structure);
     }
 
