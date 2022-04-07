@@ -13,6 +13,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -25,6 +26,12 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANT_2;
  */
 public class PlantationSetting extends StringSetting
 {
+    public static final String SUGAR_CANE_AND_CACTUS = Items.SUGAR_CANE.getDescriptionId() + PlantationSetting.SPLIT_TOKEN + Items.CACTUS.getDescriptionId();
+    public static final String CACTUS_AND_BAMBOO     = Items.CACTUS.getDescriptionId() + PlantationSetting.SPLIT_TOKEN + Items.BAMBOO.getDescriptionId();
+    public static final String BAMBOO_AND_SUGAR_CANE = Items.BAMBOO.getDescriptionId() + PlantationSetting.SPLIT_TOKEN + Items.SUGAR_CANE.getDescriptionId();
+
+    private final static String SPLIT_TOKEN = "/";
+
     /**
      * Cached research.
      */
@@ -54,28 +61,32 @@ public class PlantationSetting extends StringSetting
     @OnlyIn(Dist.CLIENT)
     @Override
     public void setupHandler(
-      final ISettingKey<?> key,
-      final Pane pane,
-      final ISettingsModuleView settingsModuleView,
-      final IBuildingView building, final BOWindow window)
+      final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         hasResearch = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0;
         Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("id", Text.class).setText(new TextComponent(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
     @Override
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
-        if (hasResearch)
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(getCombinedSetting());
+    }
+
+    @Override
+    public boolean isIndexAllowed(final int index)
+    {
+        boolean isAllowed = super.isIndexAllowed(index);
+        if (!isAllowed)
         {
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(getCombinedSetting());
+            return false;
         }
-        else
-        {
-            pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(getSettings().get(getCurrentIndex())));
-        }
+
+        int maxSplitTokens = hasResearch ? 1 : 0;
+        final String[] split = getSettings().get(index).split(SPLIT_TOKEN);
+        return (split.length - 1) <= maxSplitTokens;
     }
 
     /**
@@ -85,19 +96,17 @@ public class PlantationSetting extends StringSetting
      */
     private MutableComponent getCombinedSetting()
     {
-        final MutableComponent component = new TranslatableComponent("");
-        for (int i = 0; i < getSettings().size(); i++)
+        final String[] inputSplit = getSettings().get(getCurrentIndex()).split(SPLIT_TOKEN);
+
+        TranslatableComponent component = new TranslatableComponent("");
+        for (int idx = 0; idx < inputSplit.length; idx++)
         {
-            if (i != getCurrentIndex())
+            component.append(new TranslatableComponent(inputSplit[idx]));
+            if (idx != (inputSplit.length - 1))
             {
-                if (!component.getSiblings().isEmpty())
-                {
-                    component.append(new TextComponent(" & "));
-                }
-                component.append(new TranslatableComponent(getSettings().get(i)));
+                component.append(" & ");
             }
         }
-
         return component;
     }
 }
