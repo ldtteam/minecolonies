@@ -599,7 +599,7 @@ public final class ModBuildingsInitializer
                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.beekeeper, Skill.Dexterity, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                    .addBuildingModuleProducer(() -> new SettingsModule()
                                                                       .with(AbstractBuilding.BREEDING, new BoolSetting(true))
-                                                                      .with(BuildingBeekeeper.MODE, new StringSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
+                                                                      .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
                                    .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, false,
                                      (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
                                    .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterBeekeeper))

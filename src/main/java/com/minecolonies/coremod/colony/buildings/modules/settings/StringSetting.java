@@ -37,9 +37,10 @@ public class StringSetting implements IStringSetting
 
     /**
      * Create a new string list setting.
+     *
      * @param settings the overall list of settings.
      */
-    public StringSetting(final String...settings)
+    public StringSetting(final String... settings)
     {
         this.settings = Arrays.asList(settings);
         this.currentIndex = 0;
@@ -47,7 +48,8 @@ public class StringSetting implements IStringSetting
 
     /**
      * Create a new string list setting.
-     * @param settings the overall list of settings.
+     *
+     * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
     public StringSetting(final List<String> settings, final int currentIndex)

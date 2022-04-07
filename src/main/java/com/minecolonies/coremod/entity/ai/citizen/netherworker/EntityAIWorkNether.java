@@ -746,7 +746,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             {
                 return true;
             }
-            checkIfRequestForItemExistOrCreateAsynch(new ItemStack(item.getItem(), count - (itemsInInv + itemsInBuilding)), count, count - (itemsInInv + itemsInBuilding));
+            checkIfRequestForItemExistOrCreateAsync(new ItemStack(item.getItem(), count - (itemsInInv + itemsInBuilding)), count, count - (itemsInInv + itemsInBuilding));
             return false;
         }
         return true;

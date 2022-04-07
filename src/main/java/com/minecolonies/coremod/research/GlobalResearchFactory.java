@@ -11,6 +11,7 @@ import com.minecolonies.api.research.effects.registry.IResearchEffectRegistry;
 import com.minecolonies.api.research.factories.IGlobalResearchFactory;
 import com.minecolonies.api.research.registry.IResearchRequirementRegistry;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -256,6 +257,6 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
     @Override
     public short getSerializationId()
     {
-        return 28;
+        return SerializationIdentifierConstants.GLOBAL_RESEARCH_ID;
     }
 }

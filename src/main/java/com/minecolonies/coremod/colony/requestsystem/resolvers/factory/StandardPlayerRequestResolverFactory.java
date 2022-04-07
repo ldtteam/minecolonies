@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardPlayerRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
@@ -126,6 +127,6 @@ public class StandardPlayerRequestResolverFactory implements IFactory<IRequestMa
     @Override
     public short getSerializationId()
     {
-        return 24;
+        return SerializationIdentifierConstants.STANDARD_PLAYER_REQUEST_RESOLVER_ID;
     }
 }
