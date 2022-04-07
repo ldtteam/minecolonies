@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PickupRequestResolver;
 import net.minecraft.nbt.CompoundTag;
@@ -86,6 +87,6 @@ public class PickupRequestResolverFactory implements IRequestResolverFactory<Pic
     @Override
     public short getSerializationId()
     {
-        return 16;
+        return SerializationIdentifierConstants.PICKUP_REQUEST_RESOLVER_ID;
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -219,7 +220,7 @@ public class StaticLocation implements ILocation
         @Override
         public short getSerializationId()
         {
-            return 3;
+            return SerializationIdentifierConstants.STATIC_LOCATION_ID;
         }
     }
 

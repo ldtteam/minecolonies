@@ -8,7 +8,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
@@ -1504,9 +1503,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param stacks the stacks.
      * @return true if they're in the inventory.
      */
-    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack... stacks)
+    public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack... stacks)
     {
-        return checkIfRequestForItemExistOrCreateAsynch(Lists.newArrayList(stacks));
+        return checkIfRequestForItemExistOrCreateAsync(Lists.newArrayList(stacks));
     }
 
     /**
@@ -1515,9 +1514,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param stacks the list of stacks.
      * @return true if so.
      */
-    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final Collection<ItemStack> stacks)
+    public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final Collection<ItemStack> stacks)
     {
-        return stacks.stream().allMatch(this::checkIfRequestForItemExistOrCreateAsynch);
+        return stacks.stream().allMatch(this::checkIfRequestForItemExistOrCreateAsync);
     }
 
     /**
@@ -1526,9 +1525,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param stack the requested stack.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack)
+    public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack)
     {
-        return checkIfRequestForItemExistOrCreateAsynch(stack, stack.getCount(), stack.getCount());
+        return checkIfRequestForItemExistOrCreateAsync(stack, stack.getCount(), stack.getCount());
     }
 
     /**
@@ -1539,9 +1538,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param minCount the min count.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount)
+    public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack, final int count, final int minCount)
     {
-        return checkIfRequestForItemExistOrCreateAsynch(stack, count, minCount, true);
+        return checkIfRequestForItemExistOrCreateAsync(stack, count, minCount, true);
     }
 
     /**
@@ -1553,7 +1552,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param matchNBT if nbt has to be matched.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForItemExistOrCreateAsynch(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
+    public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
     {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
           s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
@@ -1589,7 +1588,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @param tag the requested tag.
      * @return true if in the inventory, else false.
      */
-    public boolean checkIfRequestForTagExistOrCreateAsynch(@NotNull final TagKey<Item> tag, final int count)
+    public boolean checkIfRequestForTagExistOrCreateAsync(@NotNull final TagKey<Item> tag, final int count)
     {
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), stack -> stack.is(tag) && stack.getCount() >= count))
         {

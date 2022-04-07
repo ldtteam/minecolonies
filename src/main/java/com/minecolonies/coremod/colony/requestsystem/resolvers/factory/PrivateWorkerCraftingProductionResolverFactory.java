@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PrivateWorkerCraftingProductionResolver;
 import net.minecraft.network.FriendlyByteBuf;
@@ -90,6 +91,6 @@ public class PrivateWorkerCraftingProductionResolverFactory implements IRequestR
     @Override
     public short getSerializationId()
     {
-        return 21;
+        return SerializationIdentifierConstants.PRIVATE_WORKER_CRAFTING_PRODUCTION_RESOLVER_ID;
     }
 }

@@ -8,6 +8,7 @@ import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
@@ -295,6 +296,6 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
     @Override
     public short getSerializationId()
     {
-        return 26;
+        return SerializationIdentifierConstants.RECIPE_STORAGE_ID;
     }
 }

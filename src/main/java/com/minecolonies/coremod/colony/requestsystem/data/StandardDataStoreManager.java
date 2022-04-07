@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -151,7 +152,7 @@ public class StandardDataStoreManager implements IDataStoreManager
         @Override
         public short getSerializationId()
         {
-            return 40;
+            return SerializationIdentifierConstants.STANDARD_DATASTORE_MANAGER_ID;
         }
     }
 }
