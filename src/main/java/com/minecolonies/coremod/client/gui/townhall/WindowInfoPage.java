@@ -2,8 +2,7 @@ package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.Button;
-import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -12,7 +11,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
-import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -87,42 +86,42 @@ public class WindowInfoPage extends AbstractWindowTownHall
         final int citizensSize = building.getColony().getCitizens().size();
         final int citizensCap;
 
-        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
+        if(MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(CITIZEN_CAP))
         {
             citizensCap = (int) (Math.min(MineColonies.getConfig().getServer().maxCitizenPerColony.get(),
               25 + this.building.getColony().getResearchManager().getResearchEffects().getEffectStrength(CITIZEN_CAP)));
         }
         else
         {
-            citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
+              citizensCap = MineColonies.getConfig().getServer().maxCitizenPerColony.get();
         }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
         totalCitizenLabel.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
-          citizensSize,
-          Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
+            citizensSize,
+            Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
         List<IFormattableTextComponent> hoverText = new ArrayList<>();
-        if (citizensSize < (citizensCap * 0.9) && citizensSize < (building.getColony().getCitizenCountLimit() * 0.9))
+        if(citizensSize < (citizensCap * 0.9) && citizensSize < (building.getColony().getCitizenCountLimit() * 0.9))
         {
             totalCitizenLabel.setColors(DARKGREEN);
         }
-        else if (citizensSize < citizensCap)
+        else if(citizensSize < citizensCap)
         {
             hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited", this.building.getColony().getName()));
             totalCitizenLabel.setColors(ORANGE);
         }
         else
         {
-            if (citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
+            if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
                 hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.researchlimited", this.building.getColony().getName()));
             }
             else
             {
-                hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.configlimited", this.building.getColony().getName()));
+                hoverText.add(new TranslationTextComponent( "com.minecolonies.coremod.gui.townhall.population.totalcitizens.configlimited", this.building.getColony().getName()));
             }
             totalCitizenLabel.setText(
-              LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
+                LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
         }
         PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
@@ -254,7 +253,6 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
                     Collections.reverse(colonyEvents);
                     final IColonyEventDescription event = colonyEvents.get(index);
-
                     if (event instanceof CitizenDiedEvent)
                     {
                         actionLabel.setText(((CitizenDiedEvent) event).getDeathCause());
@@ -302,9 +300,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     public void permissionEventsClicked(@NotNull final Button button)
     {
         permissionEvents = !permissionEvents;
-        button.setText(LanguageHandler.format(permissionEvents
-                                                ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS
-                                                : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
+        button.setText(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 
     @Override
