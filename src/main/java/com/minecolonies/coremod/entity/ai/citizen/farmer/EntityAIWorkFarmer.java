@@ -53,7 +53,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -387,7 +386,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
 
         seeds.setCount(seeds.getMaxStackSize());
-        checkIfRequestForItemExistOrCreateAsynch(seeds, seeds.getMaxStackSize(), 1);
+        checkIfRequestForItemExistOrCreateAsync(seeds, seeds.getMaxStackSize(), 1);
         currentField.nextState();
         return PREPARING;
     }

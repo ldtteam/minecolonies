@@ -1,19 +1,15 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BeekeeperCollectionSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.modules.settings.StringSetting;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
@@ -27,7 +23,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,14 +38,15 @@ public class BuildingBeekeeper extends AbstractBuilding
     /**
      * The beekeeper mode.
      */
-    public static final ISettingKey<StringSetting> MODE = new SettingKey<>(StringSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "beekeeper"));
+    public static final ISettingKey<BeekeeperCollectionSetting> MODE =
+      new SettingKey<>(BeekeeperCollectionSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "beekeeper"));
 
     /**
      * Both setting options.
      */
     public static final String HONEYCOMB = "com.minecolonies.core.apiary.setting.honeycomb";
-    public static final String HONEY   = "com.minecolonies.core.apiary.setting.honey";
-    public static final String BOTH   = "com.minecolonies.core.apiary.setting.both";
+    public static final String HONEY     = "com.minecolonies.core.apiary.setting.honey";
+    public static final String BOTH      = "com.minecolonies.core.apiary.setting.both";
 
     /**
      * Description of the job executed in the hut.
@@ -73,7 +69,7 @@ public class BuildingBeekeeper extends AbstractBuilding
         super(c, l);
         keepX.put(stack -> Items.SHEARS == stack.getItem(), new Tuple<>(1, true));
         keepX.put(stack -> Items.GLASS_BOTTLE == stack.getItem(), new Tuple<>(4, true));
-        keepX.put(stack -> ItemTags.FLOWERS.contains(stack.getItem()), new Tuple<>(STACKSIZE,true));
+        keepX.put(stack -> ItemTags.FLOWERS.contains(stack.getItem()), new Tuple<>(STACKSIZE, true));
     }
 
     /**
@@ -171,6 +167,7 @@ public class BuildingBeekeeper extends AbstractBuilding
     {
         return (int) Math.pow(2, getBuildingLevel() - 1);
     }
+
     /**
      * Bee herding module
      */
@@ -195,8 +192,8 @@ public class BuildingBeekeeper extends AbstractBuilding
             }
 
             return CompatibilityManager.getAllBeekeeperFlowers().stream()
-                    .map(flower -> new ItemStack(flower.getItem(), 2))
-                    .collect(Collectors.toList());
+              .map(flower -> new ItemStack(flower.getItem(), 2))
+              .collect(Collectors.toList());
         }
 
         @Override

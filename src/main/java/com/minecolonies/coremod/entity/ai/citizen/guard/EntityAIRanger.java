@@ -42,7 +42,7 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
 
             if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
             {
-                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
+                checkIfRequestForItemExistOrCreateAsync(new ItemStack(Items.ARROW), 64, 16);
             }
         }
     }

@@ -269,12 +269,12 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
                 getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue())
         {
             final ItemStack breedingItem = getBreedingItem();
-            checkIfRequestForItemExistOrCreateAsynch(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
+            checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
         }
 
         for (final ItemStack item : getExtraItemsNeeded())
         {
-            checkIfRequestForItemExistOrCreateAsynch(item);
+            checkIfRequestForItemExistOrCreateAsync(item);
         }
 
         return DECIDE;
@@ -568,7 +568,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public boolean equipItem(final Hand hand, final ItemStack itemStack)
     {
-        if (checkIfRequestForItemExistOrCreateAsynch(itemStack))
+        if (checkIfRequestForItemExistOrCreateAsync(itemStack))
         {
             worker.getCitizenItemHandler().setHeldItem(hand, getItemSlot(itemStack.getItem()));
             return true;

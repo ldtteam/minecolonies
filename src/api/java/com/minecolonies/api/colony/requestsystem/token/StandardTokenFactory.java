@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +36,6 @@ public class StandardTokenFactory extends AbstractTokenFactory<UUID>
     @Override
     public short getSerializationId()
     {
-        return 0;
+        return SerializationIdentifierConstants.STANDARD_TOKEN_ID;
     }
 }

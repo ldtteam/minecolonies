@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Pickup;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
@@ -143,7 +144,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 5;
+            return SerializationIdentifierConstants.ITEM_STACK_REQUEST_ID;
         }
     }
 
@@ -241,7 +242,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 6;
+            return SerializationIdentifierConstants.ITEM_STACK_LIST_REQUEST_ID;
         }
     }
 
@@ -341,7 +342,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 7;
+            return SerializationIdentifierConstants.ITEM_TAG_REQUEST_ID;
         }
     }
 
@@ -440,7 +441,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 8;
+            return SerializationIdentifierConstants.DELIVERY_REQUEST_ID;
         }
     }
 
@@ -539,7 +540,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 9;
+            return SerializationIdentifierConstants.PICKUP_REQUEST_ID;
         }
     }
 
@@ -651,7 +652,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 42;
+            return SerializationIdentifierConstants.PRIVATE_CRAFTING_REQUEST_ID;
         }
     }
 
@@ -673,7 +674,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 41;
+            return SerializationIdentifierConstants.PUBLIC_CRAFTING_REQUEST_ID;
         }
     }
 
@@ -746,7 +747,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 10;
+            return SerializationIdentifierConstants.TOOL_REQUEST_ID;
         }
     }
 
@@ -819,7 +820,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 11;
+            return SerializationIdentifierConstants.FOOD_REQUEST_ID;
         }
     }
 
@@ -892,7 +893,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 12;
+            return SerializationIdentifierConstants.SMELTABLE_ORE_REQUEST_ID;
         }
     }
 
@@ -965,7 +966,7 @@ public final class StandardRequestFactories
         @Override
         public short getSerializationId()
         {
-            return 13;
+            return SerializationIdentifierConstants.BURNABLE_REQUEST_ID;
         }
     }
 
