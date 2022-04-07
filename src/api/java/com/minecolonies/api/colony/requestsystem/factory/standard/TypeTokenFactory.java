@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.ITypeOverrideHandler;
 import com.minecolonies.api.util.ReflectionUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -98,6 +99,6 @@ public class TypeTokenFactory implements IFactory<Class<?>, TypeToken<?>>
     @Override
     public short getSerializationId()
     {
-        return 31;
+        return SerializationIdentifierConstants.TYPE_TOKEN_ID;
     }
 }

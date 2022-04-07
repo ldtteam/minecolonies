@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
@@ -73,6 +74,6 @@ public class BuildingBasedRequesterFactory implements IFactory<AbstractBuilding,
     @Override
     public short getSerializationId()
     {
-        return 14;
+        return SerializationIdentifierConstants.BUILDER_BASED_REQUESTER_ID;
     }
 }

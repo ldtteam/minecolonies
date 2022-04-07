@@ -135,7 +135,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
                 }
                 final ItemStack stack = currentRecipeStorage.getInput().get(0).getItemStack().copy();
                 stack.setCount(requestQty);
-                checkIfRequestForItemExistOrCreateAsynch(stack);
+                checkIfRequestForItemExistOrCreateAsync(stack);
                 return START_WORKING;
             }
             else

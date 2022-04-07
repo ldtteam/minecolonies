@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.IItemStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -107,6 +108,6 @@ public class ItemStorageFactory implements IItemStorageFactory
     @Override
     public short getSerializationId()
     {
-        return 27;
+        return SerializationIdentifierConstants.ITEM_STORAGE_ID;
     }
 }
