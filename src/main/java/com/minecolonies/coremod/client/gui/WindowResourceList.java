@@ -78,7 +78,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
     private final BlockPos warehousePos;
 
     /**
-     * The compound data to store the warehouse snapshot to.
+     * The direct compound of the itemStack. We write the warehouse data to it to update the stack on the client side.
      */
     @Nullable
     private final CompoundNBT compound;
