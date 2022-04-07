@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.ldtteam.blockout.Loader;
+import com.ldtteam.blockout.Log;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
