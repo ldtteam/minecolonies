@@ -64,25 +64,6 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RED_CONCRETE_POWDER)
                 .add(Items.BLACK_CONCRETE_POWDER);
 
-        final Tags.IOptionalNamedTag<Item> dyedTerracotta = ItemTags.createOptional(new ResourceLocation(MOD_ID, "dyed_terracotta"));
-        tag(dyedTerracotta)
-                .add(Items.WHITE_TERRACOTTA)
-                .add(Items.ORANGE_TERRACOTTA)
-                .add(Items.MAGENTA_TERRACOTTA)
-                .add(Items.LIGHT_BLUE_TERRACOTTA)
-                .add(Items.YELLOW_TERRACOTTA)
-                .add(Items.LIME_TERRACOTTA)
-                .add(Items.PINK_TERRACOTTA)
-                .add(Items.GRAY_TERRACOTTA)
-                .add(Items.LIGHT_GRAY_TERRACOTTA)
-                .add(Items.CYAN_TERRACOTTA)
-                .add(Items.PURPLE_TERRACOTTA)
-                .add(Items.BLUE_TERRACOTTA)
-                .add(Items.BROWN_TERRACOTTA)
-                .add(Items.GREEN_TERRACOTTA)
-                .add(Items.RED_TERRACOTTA)
-                .add(Items.BLACK_TERRACOTTA);
-
         final Tags.IOptionalNamedTag<Item> glazedTerracotta = ItemTags.createOptional(new ResourceLocation(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta)
                 .add(Items.WHITE_GLAZED_TERRACOTTA)
@@ -354,8 +335,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_BRICKS)
                 .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
                 .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
-                .add(Items.TERRACOTTA)
-                .addTags(dyedTerracotta, glazedTerracotta)
+                .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
                 .add(Items.BASALT, Items.POLISHED_BASALT)
                 .add(Items.BRICKS, Items.STONE_BRICKS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONEMASON))
@@ -400,8 +380,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.STONE)
                 .add(Items.SMOOTH_STONE)
                 .add(Items.DEEPSLATE)
-                .add(Items.TERRACOTTA)
-                .addTag(glazedTerracotta)
+                .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
                 .addTag(ItemTags.STONE_BRICKS)
                 .add(Items.SMOOTH_BASALT)
                 .add(Items.SMOOTH_QUARTZ)

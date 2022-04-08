@@ -8,7 +8,7 @@
     "#forge:stone",
     "minecraft:smooth_stone",
     "minecraft:deepslate",
-    "minecraft:terracotta",
+    "#minecraft:terracotta",
     "#minecolonies:glazed_terracotta",
     "#minecraft:stone_bricks",
     "minecraft:smooth_basalt",
