@@ -4,13 +4,11 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
@@ -305,51 +303,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @NotNull
     public List<IGenericRecipe> findRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla)
     {
-        final List<IGenericRecipe> recipes = new ArrayList<>();
-
-        // vanilla shaped and shapeless crafting recipes
-        if (this.crafting.canLearnCraftingRecipes())
-        {
-            for (final IGenericRecipe recipe : vanilla.get(RecipeType.CRAFTING))
-            {
-                if (!this.crafting.canLearnLargeRecipes() && recipe.getGridSize() > 2) continue;
-
-                final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, this.crafting.getIngredientValidator());
-                if (safeRecipe == null || !this.crafting.isRecipeCompatible(safeRecipe)) continue;
-
-                recipes.add(safeRecipe);
-            }
-        }
-
-        // vanilla furnace recipes (do we want to check smoking and blasting too?)
-        if (this.crafting.canLearnFurnaceRecipes())
-        {
-            for (final IGenericRecipe recipe : vanilla.get(RecipeType.SMELTING))
-            {
-                final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, this.crafting.getIngredientValidator());
-                if (safeRecipe == null || !this.crafting.isRecipeCompatible(safeRecipe)) continue;
-
-                recipes.add(safeRecipe);
-            }
-        }
-
-        // custom MineColonies additional recipes
-        for (final CustomRecipe customRecipe : CustomRecipeManager.getInstance().getRecipes(this.crafting.getCustomRecipeKey()))
-        {
-            final IRecipeStorage recipeStorage = customRecipe.getRecipeStorage();
-            if (!recipeStorage.getAlternateOutputs().isEmpty())
-            {
-                // this is a multi-output recipe; assume it replaces a bunch of vanilla
-                // recipes we already added above
-                recipes.removeIf(r -> ItemStackUtils.compareItemStacksIgnoreStackSize(recipeStorage.getPrimaryOutput(), r.getPrimaryOutput()));
-                recipes.removeIf(r -> recipeStorage.getAlternateOutputs().stream()
-                        .anyMatch(s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, r.getPrimaryOutput())));
-            }
-            recipes.add(GenericRecipeUtils.create(customRecipe, recipeStorage));
-        }
-
-        // and even more recipes that can't be taught, but are just inherent in the worker AI
-        recipes.addAll(this.crafting.getAdditionalRecipesForDisplayPurposesOnly());
+        final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(vanilla, this.crafting);
 
         return recipes.stream()
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)
