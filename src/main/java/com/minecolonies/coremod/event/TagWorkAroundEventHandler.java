@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
+import com.minecolonies.coremod.compatibility.CraftingTagAuditor;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -83,6 +85,12 @@ public class TagWorkAroundEventHandler
             else
             {
                 recipeManager.sendCustomRecipeManagerPackets(event.getPlayer());
+            }
+
+            if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
+                    (event.getPlayer() == null || event.getPlayerList().getPlayers().isEmpty()))
+            {
+                CraftingTagAuditor.doRecipeAudit(event.getPlayerList().getServer(), recipeManager);
             }
         }
     }
