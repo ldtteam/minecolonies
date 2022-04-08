@@ -64,6 +64,25 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RED_CONCRETE_POWDER)
                 .add(Items.BLACK_CONCRETE_POWDER);
 
+        final Tags.IOptionalNamedTag<Item> dyedTerracotta = ItemTags.createOptional(new ResourceLocation(MOD_ID, "dyed_terracotta"));
+        tag(dyedTerracotta)
+                .add(Items.WHITE_TERRACOTTA)
+                .add(Items.ORANGE_TERRACOTTA)
+                .add(Items.MAGENTA_TERRACOTTA)
+                .add(Items.LIGHT_BLUE_TERRACOTTA)
+                .add(Items.YELLOW_TERRACOTTA)
+                .add(Items.LIME_TERRACOTTA)
+                .add(Items.PINK_TERRACOTTA)
+                .add(Items.GRAY_TERRACOTTA)
+                .add(Items.LIGHT_GRAY_TERRACOTTA)
+                .add(Items.CYAN_TERRACOTTA)
+                .add(Items.PURPLE_TERRACOTTA)
+                .add(Items.BLUE_TERRACOTTA)
+                .add(Items.BROWN_TERRACOTTA)
+                .add(Items.GREEN_TERRACOTTA)
+                .add(Items.RED_TERRACOTTA)
+                .add(Items.BLACK_TERRACOTTA);
+
         final Tags.IOptionalNamedTag<Item> glazedTerracotta = ItemTags.createOptional(new ResourceLocation(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta)
                 .add(Items.WHITE_GLAZED_TERRACOTTA)
@@ -91,7 +110,11 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.DRIED_KELP_BLOCK)
                 .add(Items.HONEY_BLOCK)
                 .add(Items.HONEYCOMB_BLOCK)
-                .add(Items.SNOW_BLOCK);
+                .add(Items.SNOW_BLOCK)
+                .add(Items.COPPER_BLOCK)
+                .add(Items.RAW_COPPER_BLOCK)
+                .add(Items.RAW_GOLD_BLOCK)
+                .add(Items.RAW_IRON_BLOCK);
 
         // Be careful adding tags to this, as some, especially #minecraft:small_flowers, have logical impacts that
         // has made them used heavily in mods, including many where high availability has severe balance ramifications.
@@ -163,15 +186,15 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.CROPS)
                 .addTag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_DYER))
                 .addTag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_MECHANIC))
-                .addTag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONEMASON))
-                .add(Items.BRICK);
+                .add(Items.BRICK, Items.NETHER_BRICK);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BLACKSMITH))
                 .addTags(Tags.Items.NUGGETS, Tags.Items.INGOTS)
-                .add(Items.SHEARS);
+                .add(Items.SHEARS, Items.LIGHTNING_ROD);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_BLACKSMITH))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_DYER))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
+                .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON))
                 .add(Items.FIREWORK_STAR);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_COOK))
@@ -219,11 +242,13 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.STRING)
                 .addTag(ItemTags.WOOL)
                 .add(Items.RABBIT_HIDE)
-                .add(Items.LEATHER);
+                .add(Items.LEATHER)
+                .add(Items.FISHING_ROD);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_FLETCHER))
                 .addTag(Tags.Items.DYES);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_FLETCHER))
-                .addTag(Tags.Items.STRING);
+                .addTag(Tags.Items.STRING)
+                .add(Items.MOSS_CARPET);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FLETCHER))
                 .add(Items.BOOK)
                 .add(Items.ITEM_FRAME);
@@ -242,12 +267,16 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.DUSTS_REDSTONE)
                 .addTag(Tags.Items.ORES_REDSTONE)
                 .addTag(Tags.Items.STORAGE_BLOCKS_REDSTONE)
+                .addTag(storageBlocks)
                 .add(Items.BLAZE_ROD)
+                .add(Items.SLIME_BALL)
+                .add(Items.GUNPOWDER)
                 .add(Items.ENDER_PEARL)
                 .add(Items.ENDER_EYE)
                 .add(Items.REDSTONE_TORCH)
                 .add(Items.GLOWSTONE_DUST)
-                .add(Items.DRIED_KELP_BLOCK);
+                .add(Items.DRIED_KELP_BLOCK)
+                .add(Items.AMETHYST_SHARD);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_MECHANIC));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(storageBlocks)
@@ -260,7 +289,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.BLUE_ICE)
                 .add(Items.PACKED_ICE)
                 .add(Items.DAYLIGHT_DETECTOR)
+                .add(Items.COMPARATOR)
                 .add(Items.LEVER)
+                .add(Items.PISTON)
                 .add(Items.STICKY_PISTON)
                 .add(Items.TRIPWIRE_HOOK)
                 .add(Items.ENCHANTING_TABLE)
@@ -269,12 +300,21 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.SEA_LANTERN)
                 .add(Items.SOUL_LANTERN)
                 .add(Items.SOUL_TORCH)
+                .add(Items.END_ROD)
                 .add(Items.TORCH)
                 .add(Items.ENDER_CHEST)
-                .add(Items.TRAPPED_CHEST);
+                .add(Items.TRAPPED_CHEST)
+                .add(Items.FIRE_CHARGE)
+                .add(Items.CONDUIT)
+                .add(Items.RESPAWN_ANCHOR)
+                .add(Items.SHULKER_BOX)
+                .add(Items.SLIME_BALL)
+                .add(Items.GLOW_ITEM_FRAME)
+                .add(Items.SPYGLASS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_MECHANIC))
                 .add(Items.SPECTRAL_ARROW)
-                .add(Items.HAY_BLOCK);
+                .add(Items.HAY_BLOCK)
+                .add(Items.LEAD);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_PLANTATION))
                 .add(Items.BAMBOO);
@@ -294,23 +334,28 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.DUSTS_REDSTONE)
                 .addTag(Tags.Items.STRING);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
-                .add(ModBlocks.blockBarrel.asItem());
+                .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem());
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
-                .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC));
+                .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
+                .add(Items.MAGMA_CREAM);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONEMASON))
                 .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.END_STONES)
                 .addTags(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
                 .addTags(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
-                .add(Items.NETHER_BRICK)
+                .addTags(ItemTags.STAIRS, ItemTags.SLABS, ItemTags.WALLS)
+                .add(Items.NETHER_BRICK, Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS)
+                .add(Items.CRACKED_DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_TILES)
                 .add(Items.POPPED_CHORUS_FRUIT)
                 .add(Items.PURPUR_BLOCK, Items.PURPUR_SLAB)
                 .add(Items.PRISMARINE_SHARD, Items.PRISMARINE_CRYSTALS)
                 .add(Items.SMOOTH_STONE)
                 .add(Items.BLACKSTONE)
-                .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_SLAB, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
+                .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
                 .add(Items.TERRACOTTA)
-                .addTag(glazedTerracotta)
+                .addTags(dyedTerracotta, glazedTerracotta)
                 .add(Items.BASALT, Items.POLISHED_BASALT)
                 .add(Items.BRICKS, Items.STONE_BRICKS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONEMASON))
@@ -323,16 +368,26 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
                 .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.SANDSTONE)
                 .addTags(ItemTags.STONE_BRICKS, ItemTags.SLABS, ItemTags.STAIRS, ItemTags.WALLS)
-                .add(Items.BRICKS, Items.NETHER_BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.POLISHED_DEEPSLATE, Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES)
+                .add(Items.CRACKED_DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_TILES)
+                .add(Items.BRICKS, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS)
+                .add(Items.DRIPSTONE_BLOCK)
                 .add(Items.FURNACE)
                 .add(Items.FLOWER_POT)
                 .add(Items.CHISELED_QUARTZ_BLOCK)
                 .add(Items.QUARTZ_PILLAR)
-                .add(Items.QUARTZ_BRICKS);
+                .add(Items.QUARTZ_BRICKS)
+                .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
+                .add(Items.WAXED_COPPER_BLOCK, Items.WAXED_EXPOSED_COPPER, Items.WAXED_OXIDIZED_COPPER, Items.WAXED_WEATHERED_COPPER)
+                .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
+                .add(Items.MAGMA_BLOCK)
+                .add(Items.SNOW);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONEMASON))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(ItemTags.WOODEN_SLABS)
-                .addTag(ItemTags.WOODEN_STAIRS);
+                .addTag(ItemTags.WOODEN_STAIRS)
+                .add(Items.LECTERN, Items.PISTON);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
@@ -344,11 +399,14 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.NETHER_BRICK)
                 .addTag(Tags.Items.STONE)
                 .add(Items.SMOOTH_STONE)
+                .add(Items.DEEPSLATE)
                 .add(Items.TERRACOTTA)
                 .addTag(glazedTerracotta)
                 .addTag(ItemTags.STONE_BRICKS)
+                .add(Items.SMOOTH_BASALT)
                 .add(Items.SMOOTH_QUARTZ)
                 .add(Items.POPPED_CHORUS_FRUIT)
+                .add(Items.SPONGE)
                 .add(Items.SMOOTH_SANDSTONE)
                 .add(Items.SMOOTH_RED_SANDSTONE);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_STONE_SMELTERY));

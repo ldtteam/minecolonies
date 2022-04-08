@@ -11,7 +11,9 @@
     "minecraft:blue_ice",
     "minecraft:packed_ice",
     "minecraft:daylight_detector",
+    "minecraft:comparator",
     "minecraft:lever",
+    "minecraft:piston",
     "minecraft:sticky_piston",
     "minecraft:tripwire_hook",
     "minecraft:enchanting_table",
@@ -20,8 +22,16 @@
     "minecraft:sea_lantern",
     "minecraft:soul_lantern",
     "minecraft:soul_torch",
+    "minecraft:end_rod",
     "minecraft:torch",
     "minecraft:ender_chest",
-    "minecraft:trapped_chest"
+    "minecraft:trapped_chest",
+    "minecraft:fire_charge",
+    "minecraft:conduit",
+    "minecraft:respawn_anchor",
+    "minecraft:shulker_box",
+    "minecraft:slime_ball",
+    "minecraft:glow_item_frame",
+    "minecraft:spyglass"
   ]
 }
