@@ -444,6 +444,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
+                if (getRandom().nextInt(2) == 0)
+                {
+                    getCitizenDiseaseHandler().cure();
+                }
+
                 playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
                 Network.getNetwork()
                   .sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER),
@@ -490,6 +495,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 player.sendMessage(new TranslatableComponent("com.minecolonies.coremod.interaction.ouch", getCitizenData().getName()), player.getUUID());
                 getNavigation().moveAwayFromLivingEntity(player, 5, 1);
+                setJumping(true);
             }
 
             interactionCooldown = 20 * 60 * 5;
@@ -542,6 +548,14 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
+                final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+                  .getResearchManager()
+                  .getResearchEffects()
+                  .getEffectStrength(SATURATION));
+                citizenData.increaseSaturation(satIncrease / 2.0);
+
+                addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300));
+
                 playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
                 Network.getNetwork()
                   .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
