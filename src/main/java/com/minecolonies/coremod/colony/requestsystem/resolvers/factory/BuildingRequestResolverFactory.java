@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolverFactory;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import net.minecraft.nbt.CompoundNBT;
@@ -83,6 +84,6 @@ public class BuildingRequestResolverFactory implements IRequestResolverFactory<B
     @Override
     public short getSerializationId()
     {
-        return 23;
+        return SerializationIdentifierConstants.BUILDER_BASED_RESOLVER_ID;
     }
 }

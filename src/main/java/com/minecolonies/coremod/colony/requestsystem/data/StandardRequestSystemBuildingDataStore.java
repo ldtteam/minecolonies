@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -316,7 +317,7 @@ public class StandardRequestSystemBuildingDataStore implements IRequestSystemBui
         @Override
         public short getSerializationId()
         {
-            return 37;
+            return SerializationIdentifierConstants.STANDARD_REQUEST_SYSTEM_BUILDING_DATASTORE_ID;
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.ldtteam.blockout.Loader;
+import com.ldtteam.blockout.Log;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.modules.settings.IStringSetting;
@@ -35,9 +37,10 @@ public class StringSetting implements IStringSetting
 
     /**
      * Create a new string list setting.
+     *
      * @param settings the overall list of settings.
      */
-    public StringSetting(final String...settings)
+    public StringSetting(final String... settings)
     {
         this.settings = Arrays.asList(settings);
         this.currentIndex = 0;
@@ -45,7 +48,8 @@ public class StringSetting implements IStringSetting
 
     /**
      * Create a new string list setting.
-     * @param settings the overall list of settings.
+     *
+     * @param settings     the overall list of settings.
      * @param currentIndex the current selected index.
      */
     public StringSetting(final List<String> settings, final int currentIndex)
@@ -100,10 +104,45 @@ public class StringSetting implements IStringSetting
     @Override
     public void trigger()
     {
-        this.currentIndex++;
-        if (currentIndex >= settings.size())
+        boolean hasAllowedValue = false;
+        for (int i = 0; i < settings.size(); i++)
         {
+            currentIndex++;
+            if (currentIndex >= settings.size())
+            {
+                currentIndex = 0;
+            }
+
+            if (isIndexAllowed(currentIndex))
+            {
+                hasAllowedValue = true;
+                break;
+            }
+        }
+
+        if (!hasAllowedValue)
+        {
+            Log.getLogger().warn(this.getClass().getName() + " could not select any allowed value, currentIndex is reset to 0, please report this to the developers.");
             currentIndex = 0;
+        }
+    }
+
+    public boolean isIndexAllowed(int index)
+    {
+        return index >= 0 && index < settings.size();
+    }
+
+    @Override
+    public void updateSetting(final ISetting iSetting)
+    {
+        if (iSetting instanceof StringSetting)
+        {
+            this.settings.clear();
+            this.settings.addAll(((StringSetting) iSetting).settings);
+            if (currentIndex >= this.settings.size())
+            {
+                currentIndex = this.settings.size() - 1;
+            }
         }
     }
 

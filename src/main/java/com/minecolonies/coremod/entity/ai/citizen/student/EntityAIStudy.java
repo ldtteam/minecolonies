@@ -117,7 +117,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
                 }
                 else
                 {
-                    checkIfRequestForItemExistOrCreateAsynch(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
+                    checkIfRequestForItemExistOrCreateAsync(new ItemStack(studyItem.getItem(), studyItem.getBreakPct() / 10 > 0 ? studyItem.getBreakPct() / 10 : 1));
                 }
             }
         }
