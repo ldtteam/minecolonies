@@ -1661,6 +1661,10 @@
   "com.minecolonies.coremod.entity.citizen.raid": "Help! The colony is being raided. I am running for shelter.",
   "com.minecolonies.coremod.entity.citizen.sleeping": "zZzz... I want to sleep... Why are you bothering me?",
   "com.minecolonies.coremod.entity.citizen.mourning": "I'm still processing %ss death, I can't work today.",
+  "com.minecolonies.coremod.interaction.nocookie": "%s: I want cookie!",
+  "com.minecolonies.coremod.interaction.notnow": "%s: I can't do that right now",
+  "com.minecolonies.coremod.interaction.ouch": "%s: Oh is that for me... Ouch!",
+  "com.minecolonies.coremod.interaction.visitor.food": "%s: Tasty food? I guess I'll stay a bit longer here",
 
   "com.minecolonies.coremod.gui.townhall.happiness.homelessness": "Housing",
   "com.minecolonies.coremod.gui.townhall.happiness.unemployment": "Unemployment",
