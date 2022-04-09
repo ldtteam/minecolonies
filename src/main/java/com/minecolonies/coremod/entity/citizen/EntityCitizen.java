@@ -439,7 +439,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (usedStack.getItem() == Items.GOLDEN_APPLE && getCitizenDiseaseHandler().isSick())
         {
-            usedStack.setCount(usedStack.getCount() - 1);
+            usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
 
             if (!level.isClientSide())
@@ -478,7 +478,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (usedStack.getItem() == Items.BOOK && isBaby())
         {
-            usedStack.setCount(usedStack.getCount() - 1);
+            usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
 
             if (!level.isClientSide())
@@ -492,7 +492,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (usedStack.getItem() == Items.CACTUS)
         {
-            usedStack.setCount(usedStack.getCount() - 1);
+            usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
 
             if (!level.isClientSide())
@@ -508,7 +508,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (usedStack.getItem() == Items.GLOWSTONE_DUST)
         {
-            usedStack.setCount(usedStack.getCount() - 1);
+            usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
 
             if (!level.isClientSide())
@@ -546,7 +546,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         if (usedStack.getDisplayName().getString().toLowerCase(Locale.ENGLISH).contains("cookie"))
         {
-            usedStack.setCount(usedStack.getCount() - 1);
+            usedStack.shrink(1);
             player.setItemInHand(hand, usedStack);
             interactionCooldown = 100;
 
@@ -595,7 +595,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void eatFoodInteraction(final ItemStack usedStack, final Player player, final InteractionHand hand)
     {
-        usedStack.setCount(usedStack.getCount() - 1);
+        usedStack.shrink(1);
         player.setItemInHand(hand, usedStack);
         interactionCooldown = 100;
 
