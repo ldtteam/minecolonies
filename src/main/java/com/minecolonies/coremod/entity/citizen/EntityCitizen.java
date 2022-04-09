@@ -444,19 +444,23 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                if (getRandom().nextInt(2) == 0)
+                if (getRandom().nextInt(3) == 0)
                 {
                     getCitizenDiseaseHandler().cure();
+                    playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
+                    Network.getNetwork()
+                      .sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER),
+                        this);
                 }
-
-                playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
-                Network.getNetwork()
-                  .sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER),
-                    this);
             }
 
             interactionCooldown = 20 * 60 * 5;
             return InteractionResult.CONSUME;
+        }
+
+        if (getCitizenDiseaseHandler().isSick())
+        {
+            return null;
         }
 
         if (ISFOOD.test(usedStack) && usedStack.getItem() != Items.GOLDEN_APPLE)
