@@ -14,7 +14,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
@@ -121,7 +120,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final AbstractWorkOrder wo = job.getWorkOrder();
+        final IWorkOrder wo = job.getWorkOrder();
 
         if (wo == null)
         {
@@ -271,7 +270,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    protected void sendCompletionMessage(final AbstractWorkOrder wo)
+    protected void sendCompletionMessage(final IWorkOrder wo)
     {
         super.sendCompletionMessage(wo);
 

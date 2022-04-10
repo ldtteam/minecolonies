@@ -6,6 +6,7 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
@@ -23,7 +24,6 @@ import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDecon
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
@@ -98,7 +98,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
-            final AbstractWorkOrder wo = job.getWorkOrder();
+            final IWorkOrder wo = job.getWorkOrder();
             if (wo == null)
             {
                 Log.getLogger().error(
@@ -154,7 +154,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void loadStructure()
     {
-        final AbstractWorkOrder workOrder = job.getWorkOrder();
+        final IWorkOrder workOrder = job.getWorkOrder();
 
         if (workOrder == null)
         {
@@ -336,7 +336,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final AbstractWorkOrder wo = job.getWorkOrder();
+        final IWorkOrder wo = job.getWorkOrder();
 
         if (wo == null)
         {
@@ -418,7 +418,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      *
      * @param wo the completed workorder.
      */
-    protected void sendCompletionMessage(final AbstractWorkOrder wo)
+    protected void sendCompletionMessage(final IWorkOrder wo)
     {
         //noop
     }

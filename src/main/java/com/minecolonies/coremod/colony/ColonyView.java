@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
@@ -70,7 +69,7 @@ public final class ColonyView implements IColonyView
 
     //  General Attributes
     private final int                            id;
-    private final Map<Integer, AbstractWorkOrderView>    workOrders  = new HashMap<>();
+    private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
@@ -81,7 +80,7 @@ public final class ColonyView implements IColonyView
     private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
     private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
     private       String                         name        = "Unknown";
-    private       RegistryKey<World>                            dimensionId;
+    private       RegistryKey<World>             dimensionId;
 
     /**
      * Colony team color.
@@ -91,11 +90,11 @@ public final class ColonyView implements IColonyView
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListNBT        colonyFlag      = new BannerPattern.Builder()
-        .addPattern(BannerPattern.BASE, DyeColor.WHITE)
-        .toListTag();
+    private ListNBT colonyFlag = new BannerPattern.Builder()
+      .addPattern(BannerPattern.BASE, DyeColor.WHITE)
+      .toListTag();
 
-    private BlockPos       center          = BlockPos.ZERO;
+    private BlockPos center = BlockPos.ZERO;
 
     /**
      * Defines if workers are hired manually or automatically.
@@ -649,7 +648,7 @@ public final class ColonyView implements IColonyView
      * @param newMoveIn true if citizens can move in.
      */
     @Override
-    public void setMoveIn(final boolean newMoveIn) { this.moveIn = newMoveIn; }
+    public void setMoveIn(final boolean newMoveIn) {this.moveIn = newMoveIn;}
 
     /**
      * Get the town hall View for this ColonyView.
@@ -847,13 +846,21 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+            allies.add(new CompactColonyReference(buf.readUtf(32767),
+              buf.readBlockPos(),
+              buf.readInt(),
+              buf.readBoolean(),
+              RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), false, RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+            feuds.add(new CompactColonyReference(buf.readUtf(32767),
+              buf.readBlockPos(),
+              buf.readInt(),
+              false,
+              RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         this.manager.readFromNBT(buf.readNbt());
@@ -901,7 +908,7 @@ public final class ColonyView implements IColonyView
         final int amount = buf.readInt();
         for (int i = 0; i < amount; i++)
         {
-            @Nullable final AbstractWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+            @Nullable final IWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
             if (workOrder != null)
             {
                 workOrders.put(workOrder.getId(), workOrder);
@@ -1101,7 +1108,7 @@ public final class ColonyView implements IColonyView
      * @return the ListNBT of flag (banner) patterns
      */
     @Override
-    public ListNBT getColonyFlag() { return colonyFlag; }
+    public ListNBT getColonyFlag() {return colonyFlag;}
 
     /**
      * Sets the name of the view.

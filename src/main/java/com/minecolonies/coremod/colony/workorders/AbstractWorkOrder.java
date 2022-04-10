@@ -200,11 +200,11 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      *
      * @param compound the compound that contains the data for the Work Order
      * @param manager  the work manager.
-     * @return {@link AbstractWorkOrder} from the NBT
+     * @return {@link IWorkOrder} from the NBT
      */
-    public static AbstractWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
+    public static IWorkOrder createFromNBT(@NotNull final CompoundNBT compound, final WorkManager manager)
     {
-        @Nullable AbstractWorkOrder order = null;
+        @Nullable IWorkOrder order = null;
         @Nullable Class<? extends IWorkOrder> oclass = null;
 
         try
@@ -223,7 +223,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
             if (oclass != null)
             {
                 final Constructor<?> constructor = oclass.getDeclaredConstructor();
-                order = (AbstractWorkOrder) constructor.newInstance();
+                order = (IWorkOrder) constructor.newInstance();
             }
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
@@ -258,7 +258,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static AbstractWorkOrderView createWorkOrderView(final PacketBuffer buf)
+    public static IWorkOrderView createWorkOrderView(final PacketBuffer buf)
     {
         @Nullable AbstractWorkOrderView orderView = null;
         String mappingName = buf.readUtf(32767);

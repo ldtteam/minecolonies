@@ -6,8 +6,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -164,9 +162,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
      *
      * @return WorkOrderBuildDecoration for the Build
      */
-    public AbstractWorkOrder getWorkOrder()
+    public IWorkOrder getWorkOrder()
     {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, AbstractWorkOrder.class);
+        return getColony().getWorkManager().getWorkOrder(workOrderId, IWorkOrder.class);
     }
 
     /**

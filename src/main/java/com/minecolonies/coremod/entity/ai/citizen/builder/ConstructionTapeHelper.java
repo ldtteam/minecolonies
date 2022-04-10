@@ -2,10 +2,10 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.block.Block;
@@ -149,7 +149,7 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world     the world.
      */
-    public static void removeConstructionTape(@NotNull final AbstractWorkOrder workOrder, @NotNull final World world)
+    public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final World world)
     {
         final LoadOnlyStructureHandler structure =
           new LoadOnlyStructureHandler(world, workOrder.getLocation(), workOrder.getStructureName(), new PlacementSettings(), true);

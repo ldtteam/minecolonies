@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.jobs.IJobWithExternalWorkStations;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.util.InventoryUtils;
@@ -17,14 +18,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilde
 import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +50,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     /**
      * Total amount of stages.
      */
-    private int totalStages = 0;
+    private int totalStages  = 0;
     private int currentStage = 0;
 
     @Override
@@ -94,7 +91,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
-            final AbstractWorkOrder workOrderDecoration = structureBuilderJob.getWorkOrder();
+            final IWorkOrder workOrderDecoration = structureBuilderJob.getWorkOrder();
             if (workOrderDecoration != null)
             {
                 buf.writeUtf(workOrderDecoration.getDisplayName().getContents());
@@ -179,7 +176,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     @Nullable
     public BuilderBucket getRequiredResources()
     {
-        return (buckets.isEmpty() || ((AbstractBuildingStructureBuilder) building).getProgress() == null || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
+        return (buckets.isEmpty() || ((AbstractBuildingStructureBuilder) building).getProgress() == null
+                  || ((AbstractBuildingStructureBuilder) building).getProgress().getB() == BuildingStructureHandler.Stage.CLEAR) ? null : buckets.getFirst();
     }
 
     /**
@@ -192,7 +190,6 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
     {
         return neededResources.get(res);
     }
-
 
     /**
      * Add a new resource to the needed list.
@@ -353,7 +350,8 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
               stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
 
             int totalAmount = neededResources.containsKey(entry.getKey()) ? neededResources.get(entry.getKey()).getAmount() : 0;
-            int workerInvCount = InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
+            int workerInvCount =
+              InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
             if ((workerInv && (count + workerInvCount) < entry.getValue())
                   || (count < entry.getValue() && (count + workerInvCount) < totalAmount))
             {
@@ -393,6 +391,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
     /**
      * Set the total number of stages.
+     *
      * @param total the total.
      */
     public void setTotalStages(final int total)

@@ -64,7 +64,7 @@ public class WorkManager implements IWorkManager
     /**
      * Removes a work order from the work manager.
      *
-     * @param order {@link AbstractWorkOrder} to remove.
+     * @param order {@link IWorkOrder} to remove.
      */
     @Override
     public void removeWorkOrder(@NotNull final IWorkOrder order)
@@ -215,7 +215,7 @@ public class WorkManager implements IWorkManager
         for (int i = 0; i < list.size(); ++i)
         {
             final CompoundNBT orderCompound = list.getCompound(i);
-            @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
+            @Nullable final IWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound, this);
             if (o != null)
             {
                 addWorkOrder(o, true);
@@ -244,7 +244,7 @@ public class WorkManager implements IWorkManager
     {
         dirty = true;
 
-        if (order instanceof AbstractWorkOrder && !(order instanceof WorkOrderMiner))
+        if (!(order instanceof WorkOrderMiner))
         {
             for (final IWorkOrder or : workOrders.values())
             {
@@ -266,19 +266,18 @@ public class WorkManager implements IWorkManager
             }
         }
 
-
         if (order.getID() == 0)
         {
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
 
-        if (order instanceof AbstractWorkOrder && !readingFromNbt)
+        if (!readingFromNbt)
         {
             final StructureName structureName = new StructureName(order.getStructureName());
             if (order instanceof WorkOrderBuilding)
             {
-                final int level = ((WorkOrderBuilding) order).getTargetLevel();
+                final int level = order.getTargetLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
                                                                               AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
             }
