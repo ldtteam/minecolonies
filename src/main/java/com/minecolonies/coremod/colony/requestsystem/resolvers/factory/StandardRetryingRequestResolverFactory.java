@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -163,6 +164,6 @@ public class StandardRetryingRequestResolverFactory implements IFactory<IRequest
     @Override
     public short getSerializationId()
     {
-        return 25;
+        return SerializationIdentifierConstants.STANDARD_RETRYING_REQUEST_RESOLVER_ID;
     }
 }

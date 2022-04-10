@@ -1,0 +1,10 @@
+{
+  "texture": "41b08972-806c-4792-be5b-24fddd4ea9c8",
+  "citizensuffix": "_w",
+  "name": "Tamamo No Mae",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.shashand",
+  "recruitcost": "minecolonies:ancienttome",
+  "recruitcostcount": 9,
+  "gender": "female"
+}

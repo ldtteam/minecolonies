@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -180,7 +181,7 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         @Override
         public short getSerializationId()
         {
-            return 39;
+            return SerializationIdentifierConstants.STANDARD_REQUEST_SYSTEM_CRAFTER_JOB_DATASTORE_ID;
         }
     }
 }

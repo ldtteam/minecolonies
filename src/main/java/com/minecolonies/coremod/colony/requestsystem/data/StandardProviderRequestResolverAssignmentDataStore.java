@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.NbtTagConstants;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -164,7 +165,7 @@ public class StandardProviderRequestResolverAssignmentDataStore implements IProv
         @Override
         public short getSerializationId()
         {
-            return 34;
+            return SerializationIdentifierConstants.STANDARD_PROVIDER_REQUEST_RESOLVER_ASSIGNMENT_DATASTORE_ID;
         }
     }
 }

@@ -6,7 +6,6 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -16,8 +15,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
@@ -200,9 +199,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final WorkerLoadOnlyStructureHandler structure =
           new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
 
-        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+        if (job.getWorkOrder().getIteratorType().isEmpty())
         {
-            job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
+            final String mode = BuilderModeSetting.getActualValue(getOwnBuilding());
+            job.getWorkOrder().setIteratorType(mode);
         }
 
         final StructurePlacer placer = new StructurePlacer(structure, job.getWorkOrder().getIteratorType());

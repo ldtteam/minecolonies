@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -337,6 +338,6 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     @Override
     public short getSerializationId()
     {
-        return 44;
+        return SerializationIdentifierConstants.CUSTOM_RECIPE_ID;
     }
 }

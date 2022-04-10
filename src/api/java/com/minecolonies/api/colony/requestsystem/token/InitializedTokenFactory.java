@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.requestsystem.token;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,6 @@ public class InitializedTokenFactory extends AbstractTokenFactory<FactoryVoidInp
     @Override
     public short getSerializationId()
     {
-        return 1;
+        return SerializationIdentifierConstants.INITIALIZED_TOKEN_ID;
     }
 }
