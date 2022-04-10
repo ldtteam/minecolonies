@@ -5,11 +5,9 @@ import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.AbstractTextBuilder.TextBuilder;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Arrays;
@@ -62,8 +60,8 @@ public class WindowInfo extends AbstractWindowSkeleton
             name.putInside(view);
 
             final TextBuilder preText = textBuilder.get();
-            Arrays.stream(LanguageHandler.format(translationPrefix + i).split("\\n"))
-                .map(StringTextComponent::new)
+            Arrays.stream((translationPrefix + i).split("\\n"))
+                .map(TranslationTextComponent::new)
                 .forEach(preText::appendNL);
             final Text text = preText.build();
             text.setPosition(0, 16);

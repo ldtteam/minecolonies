@@ -5,12 +5,11 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,24 +46,29 @@ public class CitizenChatHandler implements ICitizenChatHandler
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+            TranslationTextComponent contentComponent;
             if (job != null)
             {
-                final ITextComponent component = new TranslationTextComponent(
-                  "block.blockhuttownhall.messageworkerdead",
+                contentComponent = new TranslationTextComponent(
+                  TranslationConstants.WORKER_DIED,
                   new TranslationTextComponent(job.getJobRegistryEntry().getTranslationKey()),
                   citizen.getCitizenData().getName(),
-                  (int) citizen.getX(), (int) citizen.getY(),
-                  (int) citizen.getZ(), new TranslationTextComponent(damageSource.msgId));
-                LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "", component);
+                  Math.round(citizen.getX()),
+                  Math.round(citizen.getY()),
+                  Math.round(citizen.getZ()),
+                  new TranslationTextComponent(damageSource.msgId));
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
-                  new TranslationTextComponent("block.blockhuttownhall.messagecolonistdead",
-                    citizen.getCitizenData().getName(), (int) citizen.getX(), (int) citizen.getY(),
-                    (int) citizen.getZ(), new TranslationTextComponent(damageSource.msgId)));
+                contentComponent = new TranslationTextComponent(
+                  TranslationConstants.COLONIST_DIED,
+                  citizen.getCitizenData().getName(),
+                  Math.round(citizen.getX()),
+                  Math.round(citizen.getY()),
+                  Math.round(citizen.getZ()),
+                  new TranslationTextComponent(damageSource.msgId));
             }
+            citizen.getCitizenColonyHandler().getColony().notifyColonyManagers(contentComponent.setStyle(Style.EMPTY.withColor(TextFormatting.RED)));
         }
     }
 
@@ -100,11 +104,15 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 players.remove(owner);
                 LanguageHandler.sendPlayerMessage(owner,
-                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(), new StringTextComponent(" "), citizenDescription, requiredItem);
+                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
+                  new StringTextComponent(" "),
+                  citizenDescription,
+                  requiredItem);
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(), new StringTextComponent(" "),
+              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
+              new StringTextComponent(" "),
               citizenDescription,
               colonyDescription,
               requiredItem);

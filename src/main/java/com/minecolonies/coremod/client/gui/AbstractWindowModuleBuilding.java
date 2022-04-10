@@ -10,10 +10,12 @@ import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMess
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -89,16 +91,16 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
     private void buildClicked()
     {
         final String buttonLabel = buttonBuild.getTextAsString();
-        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelbuild"))
-              || buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelupgrade")))
+        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_BUILD))
+              || buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_UPGRADE)))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelrepair")))
+        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_REPAIR)))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.canceldeconstruction")))
+        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_DECONSTRUCTION)))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO));
         }
@@ -150,24 +152,24 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         {
             if (buildingView.getBuildingLevel() == 0)
             {
-                buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelbuild"));
+                buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_BUILD));
             }
             else
             {
-                buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelupgrade"));
+                buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_UPGRADE));
             }
         }
         else if (buildingView.isRepairing())
         {
-            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelrepair"));
+            buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_REPAIR));
         }
         else if (buildingView.isDeconstructing())
         {
-            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.canceldeconstruction"));
+            buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_DECONSTRUCTION));
         }
         else
         {
-            buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.buildrepair"));
+            buttonBuild.setText(new TranslationTextComponent(ACTION_BUILD_REPAIR));
         }
     }
 
@@ -177,16 +179,17 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         super.onOpened();
         setPage(false, 0);
 
-        final String name = building.getCustomName().isEmpty() ? LanguageHandler.format(getBuildingName()) : building.getCustomName();
+        final IFormattableTextComponent component = building.getCustomName().isEmpty() ? new TranslationTextComponent(getBuildingName()) : new StringTextComponent(building.getCustomName());
         if (switchView != null && switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
         {
-            // Townhall does not need level in colony name
-            title.setText(name);
+            // Town hall does not need level in colony name
+            title.setText(component);
             findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(LanguageHandler.format(CMC_GUI_TOWNHALL_BUILDING_LEVEL) + ": " + buildingView.getBuildingLevel());
         }
         else if (title != null)
         {
-            title.setText(name + " " + buildingView.getBuildingLevel());
+            final IFormattableTextComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
+            title.setText(componentWithLevel);
         }
     }
 }

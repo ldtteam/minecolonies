@@ -1,6 +1,5 @@
 package com.minecolonies.api.util;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -22,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -713,11 +713,11 @@ public final class BlockPosUtil
 
         if (pos.getZ() > building.getZ() + 1)
         {
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
+            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
         }
         else if (pos.getZ() < building.getZ() - 1)
         {
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
+            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
         }
 
         if (pos.getX() > building.getX() + 1)
@@ -726,7 +726,7 @@ public final class BlockPosUtil
             {
                 dist.append('/');
             }
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
+            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
         }
         else if (pos.getX() < building.getX() - 1)
         {
@@ -734,7 +734,7 @@ public final class BlockPosUtil
             {
                 dist.append('/');
             }
-            dist.append(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
+            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
         }
 
         return dist.toString();

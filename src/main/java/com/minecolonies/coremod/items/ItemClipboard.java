@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
@@ -57,10 +56,9 @@ public class ItemClipboard extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             if (!ctx.getLevel().isClientSide)
             {
-                LanguageHandler.sendPlayerMessage(
-                        ctx.getPlayer(),
-                        TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
-                        ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
+                final TranslationTextComponent component =
+                  new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColony().getName());
+                ctx.getPlayer().sendMessage(component, ctx.getPlayer().getUUID());
             }
         }
         else if (ctx.getLevel().isClientSide)

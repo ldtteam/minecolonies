@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.controls.TextField;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -11,6 +10,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -19,10 +19,12 @@ import com.minecolonies.coremod.network.messages.server.DecorationControllerUpda
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import java.util.Optional;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -94,17 +96,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     if (controller.getTier() == 0)
                     {
-                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelBuild"));
+                        buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_BUILD));
                     }
                     else
                     {
-                        buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelUpgrade"));
+                        buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_UPGRADE));
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
                 else if (wo.get().getType() == WorkOrderType.BUILD)
                 {
-                    buttonBuild.setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
+                    buttonBuild.setText(new TranslationTextComponent(ACTION_CANCEL_REPAIR));
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
             }
@@ -142,7 +144,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         }
         else
         {
-            findPaneOfTypeByID("nameLabel", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.deco.namescan"));
+            findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslationTextComponent(WARNING_DECORATION_NAME_SCAN));
         }
     }
 
@@ -166,7 +168,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             if (name.length() > MAX_NAME_LENGTH)
             {
                 name = name.substring(0, MAX_NAME_LENGTH);
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.name.toolong", name);
+                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_NAME_TOO_LONG, name);
             }
 
             final String levelString = findPaneOfTypeByID(INPUT_LEVEL, TextField.class).getText();

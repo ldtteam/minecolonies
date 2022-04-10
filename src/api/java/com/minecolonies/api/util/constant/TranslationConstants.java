@@ -290,7 +290,9 @@ public final class TranslationConstants
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST                  = "entity.composter.noitems";
     @NonNls
-    public static final String TOWNHALL_BREAKING_MESSAGE                                            = "com.minecolonies.coremod.pvp.townhall.broke";
+    public static final String TOWNHALL_BREAKING_START_MESSAGE                                      = "com.minecolonies.coremod.pvp.townhall.break.start";
+    @NonNls
+    public static final String TOWNHALL_BREAKING_DONE_MESSAGE                                       = "com.minecolonies.coremod.pvp.townhall.broke";
     @NonNls
     public static final String COLONY_DEFENDED_SUCCESS_MESSAGE                                      = "com.minecolonies.coremod.pvp.defended.success";
     @NonNls
@@ -471,6 +473,56 @@ public final class TranslationConstants
     public static final String WRONG_COLONY                                                         = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
     @NonNls
     public static final String INDESTRUCTIBLE_BLOCK_AT_POS                                          = "com.minecolonies.coremod.buildtool.indestructible";
+    @NonNls
+    public static final String COLONIST_DIED                                                        = "block.blockhuttownhall.messagecolonistdead";
+    @NonNls
+    public static final String WORKER_DIED                                                          = "block.blockhuttownhall.messageworkerdead";
+    @NonNls
+    public static final String HUT_BREAK_WARNING_CHILD_BUILDINGS                                    = "block.minecolonies.blockhut.breakwarn.children";
+    @NonNls
+    public static final String HUT_BLOCK_MISSING_BUILDING                                           = "com.minecolonies.coremod.gui.nobuilding";
+    @NonNls
+    public static final String HUT_BLOCK_MISSING_COLONY                                             = "com.minecolonies.coremod.gui.nocolony";
+    @NonNls
+    public static final String NO_PERMISSION_IN_COLONY                                              = "com.minecolonies.coremod.permission.no";
+    @NonNls
+    public static final String ACTION_CANCEL_BUILD                                                  = "com.minecolonies.coremod.gui.workerhuts.cancelbuild";
+    @NonNls
+    public static final String ACTION_CANCEL_UPGRADE                                                = "com.minecolonies.coremod.gui.workerhuts.cancelupgrade";
+    @NonNls
+    public static final String ACTION_CANCEL_REPAIR                                                 = "com.minecolonies.coremod.gui.workerhuts.cancelrepair";
+    @NonNls
+    public static final String ACTION_CANCEL_DECONSTRUCTION                                         = "com.minecolonies.coremod.gui.workerhuts.canceldeconstruction";
+    @NonNls
+    public static final String ACTION_BUILD_REPAIR                                                  = "com.minecolonies.coremod.gui.workerhuts.buildrepair";
+    @NonNls
+    public static final String ACTION_BUILD                                                         = "com.minecolonies.coremod.gui.workerhuts.build";
+    @NonNls
+    public static final String TEXT_PICKUP_PRIORITY                                                 = "com.minecolonies.coremod.gui.workerhuts.buildPrio";
+    @NonNls
+    public static final String TEXT_PICKUP_PRIORITY_NEVER                                           = "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never";
+    @NonNls
+    public static final String WARNING_NAME_TOO_LONG                                                = "com.minecolonies.coremod.gui.name.toolong";
+    @NonNls
+    public static final String WARNING_DECORATION_NAME_SCAN                                         = "com.minecolonies.coremod.gui.deco.namescan";
+    @NonNls
+    public static final String HIRING_MODE_DEFAULT                                                  = "com.minecolonies.coremod.gui.hiringmode.default";
+    @NonNls
+    public static final String HIRING_MODE_AUTOMATIC                                                = "com.minecolonies.coremod.gui.hiringmode.auto";
+    @NonNls
+    public static final String HIRING_MODE_MANUAL                                                   = "com.minecolonies.coremod.gui.hiringmode.manual";
+    @NonNls
+    public static final String WARNING_SUPPLY_SHIP_IN_WATER                                         = "item.supplyChestDeployer.invalid";
+    @NonNls
+    public static final String WARNING_MISSING_BUILD_TOOL                                           = "item.buildtool.missing";
+    @NonNls
+    public static final String DESCRIPTION_BARRACKS_HIRE_SPIES                                      = "com.minecolonies.coremod.gui.barracks.spies.desc";
+
+    // Command texts
+    @NonNls
+    public static final String COMMAND_COLONY_ID_NOT_FOUND = "com.minecolonies.command.colonyidnotfound";
+    @NonNls
+    public static final String COMMAND_TELEPORT_SUCCESS    = "com.minecolonies.command.teleport.success";
 
     private TranslationConstants()
     {

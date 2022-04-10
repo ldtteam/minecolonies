@@ -5,9 +5,9 @@ import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.event.HighlightManager;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.management.StructureName.HUTS;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_SHIP_IN_WATER;
 
 /**
  * BuildTool window.
@@ -136,7 +136,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.supplyChestDeployer.invalid");
+                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_SUPPLY_SHIP_IN_WATER);
             }
         }
         else if (schemName.contains("supplycamp"))
@@ -152,7 +152,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.supply.badblocks");
+            MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, "item.supply.badblocks");
 
             for (final PlacementError error : placementErrorList)
             {

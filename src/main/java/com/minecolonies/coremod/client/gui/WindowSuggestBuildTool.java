@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.structurize.items.ModItems;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.DirectPlaceMessage;
@@ -15,6 +15,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MISSING_BUILD_TOOL;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -78,7 +79,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
             new WindowMinecoloniesBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
             return;
         }
-        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.buildtool.missing");
+        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_MISSING_BUILD_TOOL);
         close();
     }
 

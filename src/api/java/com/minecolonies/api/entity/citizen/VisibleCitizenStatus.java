@@ -1,6 +1,5 @@
 package com.minecolonies.api.entity.citizen;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.util.ResourceLocation;
 
@@ -75,9 +74,9 @@ public class VisibleCitizenStatus
      *
      * @return String to display
      */
-    public String getTranslatedText()
+    public String getTranslationKey()
     {
-        return LanguageHandler.translateKey(translationKey);
+        return translationKey;
     }
 
     /**
