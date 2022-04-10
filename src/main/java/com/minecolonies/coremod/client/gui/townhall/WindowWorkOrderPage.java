@@ -62,9 +62,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(building.getColony().getWorkOrders().stream()
-          .filter(wo -> wo.shouldShowIn(building))
-          .collect(Collectors.toList()));
+        workOrders.addAll(building.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(building)).collect(Collectors.toList()));
         sortWorkOrders();
     }
 
@@ -183,10 +181,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
                 }
 
                 Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class);
-                PaneBuilders.tooltipBuilder()
-                  .append(workOrder.getDisplayName())
-                  .hoverPane(workOrderTextPanel)
-                  .build();
+                PaneBuilders.tooltipBuilder().append(workOrder.getDisplayName()).hoverPane(workOrderTextPanel).build();
                 workOrderTextPanel.setText(workOrder.getDisplayName());
                 rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(new StringTextComponent(claimingCitizen));
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(new StringTextComponent(Integer.toString(workOrder.getId())));
