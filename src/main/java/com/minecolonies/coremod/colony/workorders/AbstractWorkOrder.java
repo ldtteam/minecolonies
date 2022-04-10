@@ -450,6 +450,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public final void setAmountOfResources(int newQuantity)
     {
+        changed = true;
         this.amountOfResources = newQuantity;
     }
 
@@ -462,6 +463,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public final void setIteratorType(String iteratorType)
     {
+        changed = true;
         this.iteratorType = iteratorType;
     }
 
@@ -474,6 +476,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public final void setCleared(boolean cleared)
     {
+        changed = true;
         this.cleared = cleared;
     }
 
@@ -486,11 +489,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public final void setRequested(final boolean requested)
     {
+        changed = true;
         this.requested = requested;
     }
 
     @Override
-    public final boolean isChanged()
+    public final boolean isDirty()
     {
         return changed;
     }

@@ -10,10 +10,24 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The client side representation for a work order that the builder can take to build buildings.
+ */
 public class WorkOrderBuildingView extends AbstractWorkOrderView
 {
+    /**
+     * The custom name of a building.
+     */
     private String customBuildingName;
+
+    /**
+     * The custom name of a parent building, if any.
+     */
     private String customParentBuildingName;
+
+    /**
+     * The translation key of a parent building, if any.
+     */
     private String parentTranslationKey;
 
     @Override

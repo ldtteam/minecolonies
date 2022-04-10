@@ -4,10 +4,12 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
+/**
+ * The client side representation for a work order that the builder can take to build decorations.
+ */
 public class WorkOrderDecorationView extends AbstractWorkOrderView
 {
     @Override

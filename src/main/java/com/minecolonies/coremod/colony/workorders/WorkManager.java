@@ -236,7 +236,7 @@ public class WorkManager implements IWorkManager
     /**
      * Adds work order to the work manager.
      *
-     * @param order          Order to add.
+     * @param order          Order adding.
      * @param readingFromNbt if being read from NBT.
      */
     @Override
@@ -353,7 +353,7 @@ public class WorkManager implements IWorkManager
                 iter.remove();
                 dirty = true;
             }
-            else if (o.isChanged())
+            else if (o.isDirty())
             {
                 dirty = true;
                 o.resetChange();

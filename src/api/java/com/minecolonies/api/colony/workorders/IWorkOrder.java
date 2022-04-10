@@ -124,7 +124,7 @@ public interface IWorkOrder
      *
      * @return true if so.
      */
-    boolean isChanged();
+    boolean isDirty();
 
     /**
      * Resets the changed variable.

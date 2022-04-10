@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.coremod.client.gui.modules.WindowHutMinerModule;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
-import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
@@ -102,7 +101,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     public boolean doesWorkOrderExist(final int row)
     {
         final int depth = levelsInfo.get(row).getB();
-        for (final AbstractWorkOrderView wo : workOrders)
+        for (final IWorkOrderView wo : workOrders)
         {
             if (wo.getDisplayName().getContents().contains("main") && wo.getLocation().getY() == depth)
             {

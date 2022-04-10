@@ -140,5 +140,10 @@ public interface IWorkManager
      */
     void setDirty(boolean dirty);
 
+    /**
+     * Get the colony where this work order has been made.
+     *
+     * @return the colony.
+     */
     IColony getColony();
 }
