@@ -80,5 +80,7 @@ public class FemaleCourierModel extends CitizenModel<AbstractEntityCitizen>
         head.getChild("Ponytail").xRot = showBackPack ? 0.48f : 0.1f;
         head.getChild("Ponytail").z = showBackPack ? 4.9f : 3f;
         body.getChild("backpack").visible = showBackPack;
+        leftArm.y = showBackPack ? 2f : 2.5f;
+        rightArm.y = showBackPack ? 2f : 2.5f;
     }
 }

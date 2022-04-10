@@ -9,6 +9,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
@@ -66,6 +67,13 @@ public class MaleCourierModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         body.y += 12;
-        body.getChild("backpack").visible = entity.getRenderMetadata().contains(RENDER_META_BACKPACK);
+
+        final boolean showBackPack = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_BACKPACK);
+        head.z = showBackPack ? -2.1f : 0;
+        head.getChild("Ponytail").xRot = showBackPack ? 0.48f : 0.1f;
+        head.getChild("Ponytail").z = showBackPack ? 4.9f : 3f;
+        body.getChild("backpack").visible = showBackPack;
+        leftArm.y = showBackPack ? 2f : 2.5f;
+        rightArm.y = showBackPack ? 2f : 2.5f;
     }
 }
