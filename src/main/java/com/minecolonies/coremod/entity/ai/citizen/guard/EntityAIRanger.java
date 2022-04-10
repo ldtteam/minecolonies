@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
 
 /**
@@ -20,11 +21,24 @@ import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_AR
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBuildingGuards>
 {
+    public static final String RENDER_META_ARROW = "arrow";
+
     public EntityAIRanger(@NotNull final JobRanger job)
     {
         super(job);
         toolsNeeded.add(ToolType.BOW);
         new RangerCombatAI((EntityCitizen) worker, getStateAI(), this);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.ARROW))
+        {
+            renderMeta += RENDER_META_ARROW;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override

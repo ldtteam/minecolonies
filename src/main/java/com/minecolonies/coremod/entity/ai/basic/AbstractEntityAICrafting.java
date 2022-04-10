@@ -107,6 +107,12 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata(getState() == CRAFT ? RENDER_META_WORKING : "");
+    }
+
     /**
      * Main method to decide on what to do.
      *

@@ -24,7 +24,7 @@ public class JobFlorist extends AbstractJob<EntityAIWorkFlorist, JobFlorist>
     @Override
     public ResourceLocation getModel()
     {
-        return ModModelTypes.COMPOSTER_ID;
+        return ModModelTypes.FLORIST_ID;
     }
 
     @Override

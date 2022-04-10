@@ -80,8 +80,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Delivery icon
      */
-    private final static VisibleCitizenStatus DELIVERING =
+    private final static VisibleCitizenStatus DELIVERING           =
       new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/delivery.png"), "com.minecolonies.gui.visiblestatus.delivery");
+
+    /**
+     * Render meta backpack.
+     */
+    public static final String RENDER_META_BACKPACK = "backpack";
 
     /**
      * Amount of stacks left to gather from the inventory at the gathering step.
@@ -114,6 +119,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         );
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata(worker.getInventoryCitizen().isEmpty() ? "" : RENDER_META_BACKPACK);
     }
 
     @Override

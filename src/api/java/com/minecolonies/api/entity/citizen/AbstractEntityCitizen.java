@@ -241,10 +241,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @NotNull
     public ResourceLocation getTexture()
     {
-        final String renderMeta = getRenderMetadata();
         if (texture == null
               || textureDirty
-              || !texture.getPath().contains(renderMeta)
               || !texture.getPath().contains(getEntityData().get(DATA_STYLE))
               || !texture.getPath().contains(getEntityData().get(DATA_TEXTURE_SUFFIX)))
         {

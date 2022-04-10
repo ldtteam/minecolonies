@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,12 +26,12 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
         super.setupAnim(citizen, f1, f2, f3, f4, f5);
         if (body.xRot == 0)
         {
-            body.xRot = getActualRotation();
+            body.xRot = getActualRotation(citizen);
         }
 
         if (head.xRot == 0)
         {
-            head.xRot = getActualRotation();
+            head.xRot = getActualRotation(citizen);
         }
     }
 
@@ -45,7 +46,7 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
      *
      * @return the rotation.
      */
-    public float getActualRotation()
+    public float getActualRotation(@NotNull final AbstractEntityCitizen entity)
     {
         return 0;
     }

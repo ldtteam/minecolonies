@@ -61,7 +61,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     /**
      * The render name to render logs.
      */
-    private static final String RENDER_META_LOGS = "logs";
+    public static final String RENDER_META_LOGS = "logs";
 
     /**
      * The range in which the lumberjack searches for trees.

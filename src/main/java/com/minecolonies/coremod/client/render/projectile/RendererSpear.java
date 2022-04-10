@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.render.projectile;
 
 import com.minecolonies.api.entity.SpearEntity;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.model.ModelSpear;
+import com.minecolonies.coremod.client.model.SpearModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class RendererSpear extends EntityRenderer<SpearEntity>
 {
     private final ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/entity/spear.png");
-    private final ModelSpear model ;
+    private final SpearModel       model ;
 
     /**
      * Create a new spear renderer.
@@ -34,7 +34,7 @@ public class RendererSpear extends EntityRenderer<SpearEntity>
     public RendererSpear(final EntityRendererProvider.Context context)
     {
         super(context);
-        this.model = new ModelSpear(context.bakeLayer(ModelLayers.TRIDENT));
+        this.model = new SpearModel(context.bakeLayer(ModelLayers.TRIDENT));
     }
 
     @Override

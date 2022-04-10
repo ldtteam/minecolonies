@@ -50,7 +50,7 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
     @Override
     public ResourceLocation getModel()
     {
-        return ModModelTypes.STUDENT_ID;
+        return ModModelTypes.ENCHANTER_ID;
     }
 
     @Override
