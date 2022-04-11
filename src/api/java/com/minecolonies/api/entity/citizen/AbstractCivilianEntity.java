@@ -6,11 +6,16 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.INPC;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.sounds.EventType.INTERACTION;
+import static com.minecolonies.api.util.SoundUtils.playSoundAtCivilian;
 
 public abstract class AbstractCivilianEntity extends AgeableEntity implements INPC, IStuckHandlerEntity
 {
@@ -31,6 +36,13 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
      * @param data the data to set.
      */
     public abstract void setCivilianData(@Nullable ICivilianData data);
+
+    /**
+     * Setter for the citizen data.
+     *
+     * @return civilian data
+     */
+    public abstract ICivilianData getCivilianData();
 
     /**
      * Mark the citizen dirty to synch the data with the client.
@@ -65,6 +77,32 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
     public void setCanBeStuck(final boolean canBeStuck)
     {
         this.canBeStuck = canBeStuck;
+    }
+
+    @Override
+    public void push(@NotNull final Entity entityIn)
+    {
+        if (entityIn instanceof ServerPlayerEntity)
+        {
+            onPlayerCollide((PlayerEntity) entityIn);
+        }
+        super.push(entityIn);
+    }
+
+    /**
+     * On player collision action
+     *
+     * @param player
+     */
+    public void onPlayerCollide(final PlayerEntity player)
+    {
+        if (getNavigation().getPath() != null)
+        {
+            getNavigation().stop();
+            getLookControl().setLookAt(player.position().add(0, player.eyeHeight, 0));
+
+            playSoundAtCivilian(level, blockPosition(), INTERACTION, getCivilianData());
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRat
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
@@ -44,6 +45,8 @@ import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
+import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
+import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.*;
@@ -59,9 +62,11 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.NameTagItem;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.Team;
@@ -69,9 +74,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -87,6 +90,7 @@ import java.util.*;
 
 import static com.minecolonies.api.entity.citizen.VisibleCitizenStatus.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -210,7 +214,8 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Our entities threat list
      */
-    private final ThreatTable threatTable = new ThreatTable<>(this);
+    private final ThreatTable threatTable         = new ThreatTable<>(this);
+    private       int         interactionCooldown = 0;
 
     /**
      * The entities states
@@ -370,6 +375,12 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return super.checkAndHandleImportantInteractions(player, hand);
         }
 
+        final ActionResultType result = directPlayerInteraction(player, hand);
+        if (result != null)
+        {
+            return result;
+        }
+
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide && iColonyView != null)
         {
             if (player.isShiftKeyDown() && !isInvisible())
@@ -386,6 +397,213 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             }
         }
         return ActionResultType.SUCCESS;
+    }
+
+    /**
+     * Direct interaction actions with a player
+     *
+     * @param player
+     * @param hand
+     * @return interaction result
+     */
+    private ActionResultType directPlayerInteraction(final PlayerEntity player, final Hand hand)
+    {
+        final ItemStack usedStack = player.getItemInHand(hand);
+
+        if (isInteractionItem(usedStack) && interactionCooldown > 0)
+        {
+            if (!level.isClientSide())
+            {
+                playSound(SoundEvents.VILLAGER_NO, 0.5f, (float) SoundUtils.getRandomPitch(getRandom()));
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.notnow", this.getCitizenData().getName()).setStyle(Style.EMPTY.withColor(
+                    TextFormatting.RED)),
+                  player.getUUID());
+            }
+            return null;
+        }
+
+        if (usedStack.getItem() == Items.GOLDEN_APPLE && getCitizenDiseaseHandler().isSick())
+        {
+            usedStack.shrink(1);
+            player.setItemInHand(hand, usedStack);
+
+            if (!level.isClientSide())
+            {
+                if (getRandom().nextInt(3) == 0)
+                {
+                    getCitizenDiseaseHandler().cure();
+                    playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
+                    Network.getNetwork()
+                      .sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER),
+                        this);
+                }
+            }
+
+            interactionCooldown = 20 * 60 * 5;
+            return ActionResultType.CONSUME;
+        }
+
+        if (getCitizenDiseaseHandler().isSick())
+        {
+            return null;
+        }
+
+        if (ISFOOD.test(usedStack) && usedStack.getItem() != Items.GOLDEN_APPLE)
+        {
+            if (isBaby())
+            {
+                childFoodInteraction(usedStack, player, hand);
+            }
+            else
+            {
+                eatFoodInteraction(usedStack, player, hand);
+            }
+            return ActionResultType.CONSUME;
+        }
+
+        if (usedStack.getItem() == Items.BOOK && isBaby())
+        {
+            usedStack.shrink(1);
+            player.setItemInHand(hand, usedStack);
+
+            if (!level.isClientSide())
+            {
+                getCitizenData().getCitizenSkillHandler().addXpToSkill(Skill.Intelligence, 50, getCitizenData());
+            }
+
+            interactionCooldown = 20 * 60 * 5;
+            return ActionResultType.CONSUME;
+        }
+
+        if (usedStack.getItem() == Items.CACTUS)
+        {
+            usedStack.shrink(1);
+            player.setItemInHand(hand, usedStack);
+
+            if (!level.isClientSide())
+            {
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.ouch", getCitizenData().getName()), player.getUUID());
+                getNavigation().moveAwayFromLivingEntity(player, 5, 1);
+                setJumping(true);
+            }
+
+            interactionCooldown = 20 * 60 * 5;
+            return ActionResultType.CONSUME;
+        }
+
+        if (usedStack.getItem() == Items.GLOWSTONE_DUST)
+        {
+            usedStack.shrink(1);
+            player.setItemInHand(hand, usedStack);
+
+            if (!level.isClientSide())
+            {
+                addEffect(new EffectInstance(Effects.GLOWING, 20 * 60 * 3));
+            }
+
+            interactionCooldown = 20 * 60 * 3;
+            return ActionResultType.CONSUME;
+        }
+
+        return null;
+    }
+
+    /**
+     * Tests if the itemstack is used for citizen interactions
+     *
+     * @param stack
+     * @return
+     */
+    public boolean isInteractionItem(final ItemStack stack)
+    {
+        return ISFOOD.test(stack) || stack.getItem() == Items.BOOK || stack.getItem() == Items.GOLDEN_APPLE || stack.getItem() == Items.CACTUS
+                 || stack.getItem() == Items.GLOWSTONE_DUST;
+    }
+
+    /**
+     * Interaction with children for offering food
+     *
+     * @param usedStack
+     * @param player
+     * @param hand
+     */
+    private void childFoodInteraction(final ItemStack usedStack, final PlayerEntity player, final Hand hand)
+    {
+        if (usedStack.getDisplayName().getString().toLowerCase(Locale.ENGLISH).contains("cookie"))
+        {
+            usedStack.shrink(1);
+            player.setItemInHand(hand, usedStack);
+            interactionCooldown = 100;
+
+            if (!level.isClientSide())
+            {
+                final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+                  .getResearchManager()
+                  .getResearchEffects()
+                  .getEffectStrength(SATURATION));
+                citizenData.increaseSaturation(satIncrease / 2.0);
+
+                addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 300));
+
+                playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
+                Network.getNetwork()
+                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    getRotationPitch(),
+                    getRotationYaw(),
+                    getEyeHeight()), this);
+            }
+        }
+        else
+        {
+            player.inventory.removeItem(usedStack);
+            player.drop(usedStack, true, true);
+            if (!level.isClientSide())
+            {
+                playSound(SoundEvents.VILLAGER_NO, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.nocookie",
+                    this.getCitizenData().getName()).setStyle(Style.EMPTY.withColor(
+                    TextFormatting.RED)),
+                  player.getUUID());
+            }
+        }
+    }
+
+    /**
+     * Eats food on right click
+     *
+     * @param usedStack
+     * @param player
+     * @param hand
+     */
+    private void eatFoodInteraction(final ItemStack usedStack, final PlayerEntity player, final Hand hand)
+    {
+        usedStack.shrink(1);
+        player.setItemInHand(hand, usedStack);
+        interactionCooldown = 100;
+
+        if (!level.isClientSide())
+        {
+            final double satIncrease = usedStack.getItem().getFoodProperties().getNutrition() * (1.0 + getCitizenColonyHandler().getColony()
+              .getResearchManager()
+              .getResearchEffects()
+              .getEffectStrength(SATURATION));
+            citizenData.increaseSaturation(satIncrease / 2.0);
+
+
+            playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
+            // Position needs to be centered on citizen, Eat AI wrong too?
+            Network.getNetwork()
+              .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
+                getX(),
+                getY(),
+                getZ(),
+                getRotationPitch(),
+                getRotationYaw(),
+                getEyeHeight()), this);
+        }
     }
 
     @Override
@@ -454,6 +672,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         super.aiStep();
         entityStatemachine.tick();
+        if (interactionCooldown > 0)
+        {
+            interactionCooldown--;
+        }
     }
 
     /**
@@ -604,7 +826,6 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         return getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(VINES) > 0;
     }
 
-
     /**
      * Reduces saturation for walking every 25 blocks.
      */
@@ -731,6 +952,17 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     @Override
     public ICitizenData getCitizenData()
+    {
+        return citizenData;
+    }
+
+    /**
+     * Getter for the civilian data
+     *
+     * @return the data.
+     */
+    @Override
+    public ICivilianData getCivilianData()
     {
         return citizenData;
     }
@@ -1085,7 +1317,10 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (!getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING, citizenData.getCitizenMournHandler().getDeceasedCitizens().iterator().next()), new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING), ChatPriority.IMPORTANT));
+                citizenData.triggerInteraction(new StandardInteraction(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
+                  citizenData.getCitizenMournHandler().getDeceasedCitizens().iterator().next()),
+                  new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+                  ChatPriority.IMPORTANT));
             }
             setVisibleStatusIfNone(MOURNING);
             desiredActivity = DesiredActivity.MOURN;
@@ -1331,7 +1566,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         float damageInc = Math.min(damage, (getMaxHealth() * 0.2f));
 
         //If we are in simulation, don't cap damage
-        if(citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.msgId == "nether")
+        if (citizenJobHandler.getColonyJob() instanceof JobNetherWorker && citizenData != null && damageSource.msgId == "nether")
         {
             damageInc = damage;
         }
@@ -1511,7 +1746,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
 
-            if(!isInvisible())
+            if (!isInvisible())
             {
                 if (citizenColonyHandler.getColony().isCoordInColony(level, blockPosition()))
                 {
