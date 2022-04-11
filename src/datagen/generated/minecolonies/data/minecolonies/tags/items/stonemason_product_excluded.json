@@ -3,6 +3,8 @@
   "values": [
     "#minecolonies:mechanic_product",
     "#minecraft:wooden_slabs",
-    "#minecraft:wooden_stairs"
+    "#minecraft:wooden_stairs",
+    "minecraft:lectern",
+    "minecraft:piston"
   ]
 }

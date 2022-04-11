@@ -3,9 +3,14 @@
     {
       "name": "blocks",
       "rolls": {
+        "type": "minecraft:uniform",
         "min": 3.0,
-        "max": 10.0,
-        "type": "minecraft:uniform"
+        "max": 10.0
+      },
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "min": 0.3,
+        "max": 0.3
       },
       "entries": [
         {
@@ -15,10 +20,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 5.0,
-                "max": 25.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 25.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:netherrack"
@@ -30,10 +36,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 7.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 7.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:soul_sand"
@@ -45,10 +52,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 5.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 5.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:soul_soil"
@@ -60,10 +68,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 10.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 10.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:gravel"
@@ -75,10 +84,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 4.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:nether_quartz_ore"
@@ -90,10 +100,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 2.0,
-                "max": 4.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 4.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:glowstone"
@@ -105,10 +116,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 2.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 2.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:nether_wart"
@@ -120,10 +132,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 2.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 2.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:brown_mushroom"
@@ -135,10 +148,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 2.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 2.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:red_mushroom"
@@ -149,7 +163,12 @@
           "functions": [
             {
               "function": "minecraft:set_count",
-              "count": 1.0
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1.0,
+                "max": 1.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:crimson_nylium"
@@ -161,10 +180,11 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 0.0,
-                "max": 1.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 1.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:crimson_fungus"
@@ -176,23 +196,28 @@
             {
               "function": "minecraft:set_count",
               "count": {
+                "type": "minecraft:uniform",
                 "min": 1.0,
-                "max": 3.0,
-                "type": "minecraft:uniform"
-              }
+                "max": 3.0
+              },
+              "add": false
             }
           ],
           "name": "minecraft:crimson_stem"
         }
-      ],
-      "bonus_rolls": 0.3
+      ]
     },
     {
       "name": "mobs",
       "rolls": {
+        "type": "minecraft:uniform",
         "min": 2.0,
-        "max": 6.0,
-        "type": "minecraft:uniform"
+        "max": 6.0
+      },
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "min": 0.1,
+        "max": 0.1
       },
       "entries": [
         {
@@ -202,7 +227,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{entity-type:\"minecraft:zombified_piglin\",xp-dropped:5,damage-done:5}"
+              "tag": "{damage-done:5,entity-type:\"minecraft:zombified_piglin\",xp-dropped:5}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -214,7 +239,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{entity-type:\"minecraft:magma_cube\",xp-dropped:4,damage-done:3}"
+              "tag": "{damage-done:3,entity-type:\"minecraft:magma_cube\",xp-dropped:4}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -226,7 +251,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{entity-type:\"minecraft:hoglin\",xp-dropped:5,damage-done:3}"
+              "tag": "{damage-done:3,entity-type:\"minecraft:hoglin\",xp-dropped:5}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -238,7 +263,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{entity-type:\"minecraft:ghast\",xp-dropped:5,damage-done:12}"
+              "tag": "{damage-done:12,entity-type:\"minecraft:ghast\",xp-dropped:5}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -250,7 +275,7 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{entity-type:\"minecraft:enderman\",xp-dropped:5,damage-done:7}"
+              "tag": "{damage-done:7,entity-type:\"minecraft:enderman\",xp-dropped:5}"
             }
           ],
           "name": "minecolonies:adventure_token"
@@ -262,13 +287,12 @@
           "functions": [
             {
               "function": "minecraft:set_nbt",
-              "tag": "{entity-type:\"minecraft:blaze\",xp-dropped:10,damage-done:5}"
+              "tag": "{damage-done:5,entity-type:\"minecraft:blaze\",xp-dropped:10}"
             }
           ],
           "name": "minecolonies:adventure_token"
         }
-      ],
-      "bonus_rolls": 0.1
+      ]
     }
   ]
 }
