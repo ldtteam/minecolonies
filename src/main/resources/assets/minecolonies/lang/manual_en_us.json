@@ -241,6 +241,8 @@
   "minecolonies.config.fishingroddurabilityadjustt2.comment": "Offset for the maximum durability unenchanted rod a T2 Fishing Hut can use, compared to iron tools (250). Thermal Foundation Iron requires +6. T3 huts can use unenchanted rods of any durability level, so long as they can take damage at all. Anything below -250 will only allow vanilla rods, except as allowed by T1.",
   "minecolonies.config.enabledmodtags": "Enabled Mod Tags",
   "minecolonies.config.enabledmodtags.comment": "List of recognized and enabled tags.",
+  "minecolonies.config.auditcraftingtags": "Audit Crafting Tags",
+  "minecolonies.config.auditcraftingtags.comment": "Generate crafting_audit.csv on loading recipes to verify tags.",
   "minecolonies.config.debuginventories": "Debug Inventories",
   "minecolonies.config.debuginventories.comment": "Enable inventory debugging.",
   "minecolonies.config.luckyores": "List of Lucky Ores",

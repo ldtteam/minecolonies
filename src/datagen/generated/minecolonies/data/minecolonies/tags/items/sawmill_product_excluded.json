@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#minecolonies:mechanic_product"
+    "#minecolonies:mechanic_product",
+    "minecraft:magma_cream"
   ]
 }

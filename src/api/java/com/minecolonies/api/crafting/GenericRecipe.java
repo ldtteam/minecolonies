@@ -4,19 +4,20 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class GenericRecipe implements IGenericRecipe
 {
     @Nullable
-    public static IGenericRecipe of(@Nullable final Recipe<?> recipe)
+    public static IGenericRecipe of(@Nullable final Recipe<?> recipe, @Nullable final Level world)
     {
         if (recipe == null) return null;
         final List<List<ItemStack>> inputs = recipe.getIngredients().stream()
@@ -48,7 +49,7 @@ public class GenericRecipe implements IGenericRecipe
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe), inputs,
+        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe, world), inputs,
                 size, intermediate, null, new ArrayList<>(), -1);
     }
 
@@ -232,7 +233,8 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @NotNull
-    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final Recipe<?> recipe)
+    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final Recipe<?> recipe,
+                                                             @Nullable final Level world)
     {
         if (recipe instanceof CraftingRecipe)
         {
@@ -253,7 +255,7 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setItem(slot, stacks[0]);
                 }
             }
-            if (((CraftingRecipe) recipe).matches(inv, null))
+            if (((CraftingRecipe) recipe).matches(inv, world))
             {
                 return ((CraftingRecipe) recipe).getRemainingItems(inv).stream()
                         .filter(ItemStackUtils::isNotEmpty)

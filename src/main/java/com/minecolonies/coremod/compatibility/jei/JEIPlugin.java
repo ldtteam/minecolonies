@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.compatibility.jei;
 
-import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
@@ -15,6 +14,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipesReloadedEvent;
+import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
 import com.minecolonies.coremod.compatibility.jei.transfer.CraftingGuiHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.FurnaceCraftingGuiHandler;
 import com.minecolonies.coremod.compatibility.jei.transfer.PrivateCraftingTeachingTransferHandler;
@@ -130,7 +130,7 @@ public class JEIPlugin implements IModPlugin
             return;
         }
 
-        populateRecipes(buildVanillaRecipesMap(), registration::addRecipes);
+        populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(), Minecraft.getInstance().level), registration::addRecipes);
         recipesLoaded = true;
     }
 
@@ -167,48 +167,6 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private Map<RecipeType<?>, List<IGenericRecipe>> buildVanillaRecipesMap()
-    {
-        final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
-
-        final List<IGenericRecipe> craftingRecipes = new ArrayList<>();
-        for (final Recipe<CraftingContainer> recipe : recipeManager.byType(RecipeType.CRAFTING).values())
-        {
-            if (!recipe.canCraftInDimensions(3, 3)) continue;
-
-            tryAddingVanillaRecipe(craftingRecipes, recipe);
-        }
-
-        final List<IGenericRecipe> smeltingRecipes = new ArrayList<>();
-        for (final Recipe<Container> recipe : recipeManager.byType(RecipeType.SMELTING).values())
-        {
-            tryAddingVanillaRecipe(smeltingRecipes, recipe);
-        }
-
-        return new ImmutableMap.Builder<RecipeType<?>, List<IGenericRecipe>>()
-                .put(RecipeType.CRAFTING, craftingRecipes)
-                .put(RecipeType.SMELTING, smeltingRecipes)
-                .build();
-    }
-
-    private void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
-                                        @NotNull final Recipe<?> recipe)
-    {
-        if (recipe.getResultItem().isEmpty()) return;     // invalid or special recipes
-
-        try
-        {
-            final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
-            if (genericRecipe.getInputs().isEmpty()) return;
-
-            recipes.add(genericRecipe);
-        }
-        catch (final Exception ex)
-        {
-            Log.getLogger().warn("Error evaluating recipe " + recipe.getId() + "; ignoring.", ex);
-        }
-    }
-
     private void populateRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla,
                                  @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
     {
@@ -243,7 +201,8 @@ public class JEIPlugin implements IModPlugin
             if (runtime != null)
             {
                 final IRecipeManager jeiManager = runtime.getRecipeManager();
-                populateRecipes(buildVanillaRecipesMap(), (list, uid) ->
+                populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(),
+                        Minecraft.getInstance().level), (list, uid) ->
                 {
                     for (final Object recipe : list)
                     {
