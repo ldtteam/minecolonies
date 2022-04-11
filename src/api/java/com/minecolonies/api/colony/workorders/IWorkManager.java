@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public interface IWorkManager
 {
@@ -109,12 +110,21 @@ public interface IWorkManager
     /**
      * Get an ordered list by priority of the work orders.
      *
-     * @param type    the type of workOrder which is required.
      * @param builder the builder wanting to claim it.
+     * @param type    the type of workOrder which is required.
      * @param <W>     the type.
      * @return the list.
      */
-    <W extends IWorkOrder> List<W> getOrderedList(@NotNull Class<W> type, BlockPos builder);
+    <W extends IWorkOrder> List<W> getOrderedList(Class<W> type, BlockPos builder);
+
+    /**
+     * Get an ordered list by priority of the work orders.
+     *
+     * @param builder   the builder wanting to claim it.
+     * @param predicate a predicate to check each item against
+     * @return the list.
+     */
+    List<IWorkOrder> getOrderedList(@NotNull Predicate<IWorkOrder> predicate, final BlockPos builder);
 
     /**
      * Checks if changes has been made.
@@ -130,5 +140,10 @@ public interface IWorkManager
      */
     void setDirty(boolean dirty);
 
+    /**
+     * Get the colony where this work order has been made.
+     *
+     * @return the colony.
+     */
     IColony getColony();
 }

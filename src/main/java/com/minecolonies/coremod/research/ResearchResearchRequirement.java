@@ -58,7 +58,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     }
 
     /**
-     * Create a research-based research requirement from a CompoundNBT.
+     * Create a research-based research requirement from a CompoundTag.
      * @param nbt       the nbt containing the research information.
      */
     public ResearchResearchRequirement(final CompoundTag nbt)
