@@ -11,6 +11,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.BuildReq
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
@@ -184,7 +185,10 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         {
             // Town hall does not need level in colony name
             title.setText(component);
-            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(LanguageHandler.format(CMC_GUI_TOWNHALL_BUILDING_LEVEL) + ": " + buildingView.getBuildingLevel());
+
+            final ITextComponent levelComponent = new TranslationTextComponent(CMC_GUI_TOWNHALL_BUILDING_LEVEL)
+              .append(": " + buildingView.getBuildingLevel());
+            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(levelComponent);
         }
         else if (title != null)
         {

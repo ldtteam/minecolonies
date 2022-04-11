@@ -157,10 +157,10 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             for (final PlacementError error : placementErrorList)
             {
                 HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
-                                                                     .setPos(error.getPos())
-                                                                     .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
-                                                                     .addText(LanguageHandler.translateKey("item.supply.error." + error.getType().toString().toLowerCase()))
-                                                                     .setColor(0xFF0000));
+                  .setPos(error.getPos())
+                  .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
+                  .addText(LanguageHandler.translateKey("item.supply.error." + error.getType().toString().toLowerCase()))
+                  .setColor(0xFF0000));
             }
         }
 
