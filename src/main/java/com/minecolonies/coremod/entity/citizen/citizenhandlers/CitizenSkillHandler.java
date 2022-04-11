@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -178,9 +179,9 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         final IBuilding home = data.getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
-        final double citizenHutMaxLevel = home == null ? 5 : home.getMaxBuildingLevel();
+        final double citizenHutMaxLevel = home == null ? MAX_BUILDING_LEVEL : home.getMaxBuildingLevel();
 
-        if ((citizenHutLevel < citizenHutMaxLevel && (citizenHutLevel + 1) * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
+        if (((citizenHutLevel < citizenHutMaxLevel || citizenHutMaxLevel < MAX_BUILDING_LEVEL) && (citizenHutLevel + 1) * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
         {
             return;
         }
