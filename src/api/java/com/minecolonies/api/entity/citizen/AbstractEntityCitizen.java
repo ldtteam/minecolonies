@@ -6,7 +6,6 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.jobs.IJob;
-import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -368,8 +367,8 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void onPlayerCollide(final Player player)
     {
-        final IJob job = getCitizenData().getJob();
-        if (job == null || job.getJobRegistryEntry() != ModJobs.archer && job.getJobRegistryEntry() != ModJobs.knight && job.getJobRegistryEntry() != ModJobs.druid)
+        final IJob<?> job = getCitizenData().getJob();
+        if (job == null || !job.isGuard())
         {
             super.onPlayerCollide(player);
         }

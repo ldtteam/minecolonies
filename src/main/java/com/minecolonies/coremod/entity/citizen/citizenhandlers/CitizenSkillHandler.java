@@ -177,10 +177,10 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
 
         final IBuilding home = data.getHomeBuilding();
 
-        final double citizenHutLevel = home == null ? 1 : home.getBuildingLevel();
+        final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
         final double citizenHutMaxLevel = home == null ? 5 : home.getMaxBuildingLevel();
 
-        if ((citizenHutLevel < citizenHutMaxLevel && citizenHutLevel * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
+        if ((citizenHutLevel < citizenHutMaxLevel && (citizenHutLevel + 1) * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
         {
             return;
         }
