@@ -1,6 +1,6 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
-    <option name="myName" value="Minecolonies" />
+    <option name="myName" value="Project Default" />
     <inspection_tool class="AbstractClassExtendsConcreteClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AbstractClassNeverImplemented" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AbstractClassWithoutAbstractMethods" enabled="true" level="WARNING" enabled_by_default="true" />
