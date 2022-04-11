@@ -20,8 +20,6 @@ import java.util.Set;
 import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_COMPLAINS_DAYS;
 import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;
 
-;
-
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
 {
     /**
