@@ -9,6 +9,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Pose;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 public class FemaleFarmerModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -77,5 +81,13 @@ public class FemaleFarmerModel extends CitizenModel<AbstractEntityCitizen>
           .texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 64);
+    }
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        body.getChild("seedBox").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("LassCap").visible = entity.getPose() != Pose.SLEEPING;
     }
 }

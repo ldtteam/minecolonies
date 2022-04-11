@@ -9,6 +9,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Pose;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
+import static com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman.RENDER_META_BACKPACK;
 
 public class MaleShepherdModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -76,5 +81,15 @@ public class MaleShepherdModel extends CitizenModel<AbstractEntityCitizen>
           .texOffs(72, 27).addBox(-2.01F, -1.45F, -2.5F, 4.0F, 7.0F, 4.0F, new CubeDeformation(0.251F)), PartPose.offsetAndRotation(-1.0F, 4.5F, 0.5F, -1.5708F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 64);
+    }
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        final boolean showPole = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING) && entity.getMainHandItem().isEmpty();
+        body.getChild("FoldedRightArm").visible = showPole;
+        rightArm.visible = !showPole;
+        head.getChild("straw").visible = entity.getPose() != Pose.SLEEPING;
     }
 }
