@@ -13,8 +13,10 @@
 *.iws
 *.iml
 /.idea/*
-!/.idea
-!/.idea/inspectionProfiles/
+!/.idea/codeStyles/codeStyleConfig.xml
+!/.idea/codeStyles/Minecolonies.xml
+!/.idea/inspectionProfiles/profiles_settings.xml
+!/.idea/inspectionProfiles/Minecolonies.xml
 /.idea/gradle.xml
 /classes
 
