@@ -1,14 +1,15 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.sounds.EventType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.world.NoteBlockEvent.Note;
 import org.jetbrains.annotations.NotNull;
@@ -238,6 +239,39 @@ public final class SoundUtils
         }
 
         final SoundEvent event = citizenData.isFemale() ? map.get(type).getB() : map.get(type).getA();
+
+        if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
+        {
+            worldIn.playSound(null,
+              position,
+              event,
+              SoundSource.NEUTRAL,
+              (float) VOLUME,
+              (float) PITCH);
+        }
+    }
+
+    /**
+     * Plays a sound with a certain chance at a certain position.
+     *
+     * @param worldIn      the world to play the sound in.
+     * @param position     position to play the sound at.
+     * @param type         sound to play.
+     * @param civilianData the citizen.
+     */
+    public static void playSoundAtCivilian(
+      @NotNull final Level worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICivilianData civilianData)
+    {
+        if (civilianData == null)
+        {
+            return;
+        }
+
+        final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = CITIZEN_SOUND_EVENTS.get(civilianData.isChild() ? "child" : "citizen");
+        final SoundEvent event = civilianData.isFemale() ? map.get(type).getB() : map.get(type).getA();
 
         if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
         {
