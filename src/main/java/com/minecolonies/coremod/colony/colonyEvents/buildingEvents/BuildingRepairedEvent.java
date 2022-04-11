@@ -10,43 +10,44 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Event handling a new building being built.
  */
-public class BuildingBuiltEvent extends AbstractBuildingEvent
+public class BuildingRepairedEvent extends AbstractBuildingEvent
 {
 
     /**
      * This events id, registry entries use res locations as ids.
      */
-    public static final ResourceLocation BUILDING_BUILT_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "building_built");
+    public static final ResourceLocation BUILDING_REPAIRED_EVENT_ID = new ResourceLocation(Constants.MOD_ID, "building_repaired");
 
     /**
-     * Creates a new building built event.
+     * Creates a new building repaired event.
      */
-    public BuildingBuiltEvent()
+    public BuildingRepairedEvent()
     {
         super();
     }
 
     /**
-     * Creates a new building built event.
-     * 
+     * Creates a new building repaired event.
+     *
      * @param eventPos      the position of the hut block of the building.
      * @param buildingName  the name of the building.
+     * @param level         the level of the repaired building
      */
-    public BuildingBuiltEvent(BlockPos eventPos, String buildingName)
+    public BuildingRepairedEvent(BlockPos eventPos, String buildingName, int level)
     {
-        super(eventPos, buildingName, 1);
+        super(eventPos, buildingName, level);
     }
 
     @Override
     public ResourceLocation getEventTypeId()
     {
-        return BUILDING_BUILT_EVENT_ID;
+        return BUILDING_REPAIRED_EVENT_ID;
     }
 
     @Override
     public String getName()
     {
-        return "Building Built";
+        return "Building Repaired";
     }
 
     /**
@@ -55,9 +56,9 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param compound the NBT compound
      * @return the colony to load.
      */
-    public static BuildingBuiltEvent loadFromNBT(@NotNull final CompoundNBT compound)
+    public static BuildingRepairedEvent loadFromNBT(@NotNull final CompoundNBT compound)
     {
-        final BuildingBuiltEvent buildEvent = new BuildingBuiltEvent();
+        final BuildingRepairedEvent buildEvent = new BuildingRepairedEvent();
         buildEvent.deserializeNBT(compound);
         return buildEvent;
     }
@@ -68,9 +69,9 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * @param buf the packet buffer.
      * @return the colony to load.
      */
-    public static BuildingBuiltEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
+    public static BuildingRepairedEvent loadFromPacketBuffer(@NotNull final PacketBuffer buf)
     {
-        final BuildingBuiltEvent buildEvent = new BuildingBuiltEvent();
+        final BuildingRepairedEvent buildEvent = new BuildingRepairedEvent();
         buildEvent.deserialize(buf);
         return buildEvent;
     }

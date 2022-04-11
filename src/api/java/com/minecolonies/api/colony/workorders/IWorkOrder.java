@@ -2,9 +2,11 @@ package com.minecolonies.api.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,12 +15,18 @@ import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAM
 public interface IWorkOrder
 {
     /**
-     * Read the WorkOrder data from the CompoundNBT.
+     * Get the ID of the work order.
      *
-     * @param compound NBT Tag compound
-     * @param manager  the workManager calling this method.
+     * @return ID of the work order
      */
-    void read(@NotNull CompoundNBT compound, IWorkManager manager);
+    int getID();
+
+    /**
+     * Set the ID of the work order.
+     *
+     * @param id the new ID for the work order
+     */
+    void setID(int id);
 
     /**
      * Getter for the priority.
@@ -35,11 +43,88 @@ public interface IWorkOrder
     void setPriority(int priority);
 
     /**
+     * Get the structure this work order should be using, if any.
+     *
+     * @return the schematic name.
+     */
+    String getStructureName();
+
+    /**
+     * Get the current level of the structure of the work order.
+     *
+     * @return the current level.
+     */
+    int getCurrentLevel();
+
+    /**
+     * Get the target level of the structure of the work order.
+     *
+     * @return the target level.
+     */
+    int getTargetLevel();
+
+    /**
+     * Get the amount of resources this work order still requires.
+     *
+     * @return the amount of resources.
+     */
+    int getAmountOfResources();
+
+    /**
+     * Set the amount of resources this work order still requires.
+     *
+     * @param newQuantity the new amount of resources.
+     */
+    void setAmountOfResources(int newQuantity);
+
+    /**
+     * Get the iterator type (method of construction) of the work order.
+     *
+     * @return the iterator type.
+     */
+    String getIteratorType();
+
+    /**
+     * Set the iterator type (method of construction) of the work order.
+     *
+     * @param iteratorType the new iterator type.
+     */
+    void setIteratorType(String iteratorType);
+
+    /**
+     * Whether the area of the work order has been cleared out or not.
+     *
+     * @return true if the area is cleared.
+     */
+    boolean isCleared();
+
+    /**
+     * Set whether the area of the work order has been cleared out or not.
+     *
+     * @param cleared the new cleared state.
+     */
+    void setCleared(boolean cleared);
+
+    /**
+     * Set whether the resources for this work order have been requested.
+     *
+     * @return true when the resources are requested.
+     */
+    boolean isRequested();
+
+    /**
+     * Set whether the building has been cleared.
+     *
+     * @param requested true if the building has been cleared.
+     */
+    void setRequested(boolean requested);
+
+    /**
      * Checks if the workOrder has changed.
      *
      * @return true if so.
      */
-    boolean hasChanged();
+    boolean isDirty();
 
     /**
      * Resets the changed variable.
@@ -47,13 +132,39 @@ public interface IWorkOrder
     void resetChange();
 
     /**
-     * Get the ID of the Work Order.
+     * The name of the work order.
      *
-     * @return ID of the work order
+     * @return the work order name.
      */
-    int getID();
+    String getWorkOrderName();
 
-    void setID(int id);
+    /**
+     * The type of the work order.
+     *
+     * @return the work order type.
+     */
+    WorkOrderType getWorkOrderType();
+
+    /**
+     * Get the current location of the building
+     *
+     * @return the location
+     */
+    BlockPos getLocation();
+
+    /**
+     * Get the current rotation of the building
+     *
+     * @return the location
+     */
+    int getRotation();
+
+    /**
+     * Whether the current building is mirrored
+     *
+     * @return the location
+     */
+    boolean isMirrored();
 
     /**
      * Is the Work Order claimed?
@@ -97,14 +208,14 @@ public interface IWorkOrder
     void clearClaimedBy();
 
     /**
-     * Save the Work Order to an CompoundNBT.
+     * Get the name of the work order, provides the custom name or the work order name when no custom name is given
      *
-     * @param compound NBT tag compount
+     * @return the display name for the work order
      */
-    void write(@NotNull CompoundNBT compound);
+    ITextComponent getDisplayName();
 
     /**
-     * Is this WorkOrder still valid?  If not, it will be deleted.
+     * Is this WorkOrder still valid? If not, it will be deleted.
      * <p>
      * Suppressing Sonar Rule squid:S1172 This rule does " Unused method parameters should be removed" But in this case extending class may need to use the colony parameter
      *
@@ -113,6 +224,21 @@ public interface IWorkOrder
      */
     @SuppressWarnings(UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED)
     boolean isValid(IColony colony);
+
+    /**
+     * Read the WorkOrder data from the CompoundNBT.
+     *
+     * @param compound NBT Tag compound
+     * @param manager  the workManager calling this method.
+     */
+    void read(@NotNull CompoundNBT compound, IWorkManager manager);
+
+    /**
+     * Save the Work Order to an CompoundNBT.
+     *
+     * @param compound NBT tag compount
+     */
+    void write(@NotNull CompoundNBT compound);
 
     /**
      * Writes the workOrders data to a byte buf for transition.
@@ -167,4 +293,14 @@ public interface IWorkOrder
      * @return true if so.
      */
     boolean tooFarFromAnyBuilder(IColony colony, int level);
+
+    boolean canBuild(@NotNull ICitizenData citizen);
+
+    /**
+     * Whether this work order can be made by a builder.
+     *
+     * @return a boolean.
+     * @param job
+     */
+    boolean canBeMadeBy(final IJob<?> job);
 }

@@ -11,21 +11,20 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -36,6 +35,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +60,7 @@ public class BuildToolPlaceMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
-    public BlockPos builder = BlockPos.ZERO;
+    public  BlockPos builder = BlockPos.ZERO;
 
     /**
      * Empty constructor used when registering the
@@ -207,7 +207,8 @@ public class BuildToolPlaceMessage implements IMessage
 
         final Block block = state.getBlock();
         final ItemStack tempStack = new ItemStack(block, 1);
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
+        final int slot =
+          InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
         if (slot < 0)
         {
             return;
@@ -279,7 +280,7 @@ public class BuildToolPlaceMessage implements IMessage
     }
 
     /**
-     * Creates the {@link WorkOrderBuildDecoration} to start building the decoration.
+     * Creates the {@link WorkOrderDecoration} to start building the decoration.
      *
      * @param world         The world the decoration is being built in.
      * @param player        The player who placed the decoration.
@@ -317,7 +318,13 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror);
+            WorkOrderDecoration woDeco = WorkOrderDecoration.create(WorkOrderType.BUILD,
+              schem,
+              WordUtils.capitalizeFully(woName),
+              buildPos,
+              rotation,
+              mirror,
+              0);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);
@@ -355,7 +362,7 @@ public class BuildToolPlaceMessage implements IMessage
         {
             if (!sn.getHutName().equals(ModBuildings.TOWNHALL_ID))
             {
-            SoundUtils.playErrorSound(player, player.blockPosition());
+                SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
             }
         }

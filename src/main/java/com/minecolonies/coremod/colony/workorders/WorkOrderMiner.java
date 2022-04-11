@@ -2,8 +2,11 @@ package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.colony.jobs.JobMiner;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +16,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 /**
  * A work order that the build can take to build mine.
  */
-public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
+public class WorkOrderMiner extends AbstractWorkOrder
 {
     /**
      * Position of the issuer of the order.
@@ -23,7 +26,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     /**
      * Unused constructor for reflection.
      */
-    public WorkOrderBuildMiner()
+    public WorkOrderMiner()
     {
         super();
     }
@@ -38,7 +41,7 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
      * @param mirror        Is the mine mirrored?
      * @param minerBuilding The id of the building of the miner.
      */
-    public WorkOrderBuildMiner(
+    public WorkOrderMiner(
       final String structureName,
       final String workOrderName,
       final int rotation,
@@ -46,8 +49,26 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
       final boolean mirror,
       final BlockPos minerBuilding)
     {
-        super(structureName, workOrderName, rotation, location, mirror);
+        super(structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
         this.minerBuilding = minerBuilding;
+    }
+
+    @Override
+    public boolean canBuild(@NotNull ICitizenData citizen)
+    {
+        return this.minerBuilding.equals(citizen.getWorkBuilding().getID());
+    }
+
+    @Override
+    public boolean canBeMadeBy(final IJob<?> job)
+    {
+        return job instanceof JobMiner;
+    }
+
+    @Override
+    public boolean isValid(final IColony colony)
+    {
+        return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }
 
     /**
@@ -73,36 +94,6 @@ public class WorkOrderBuildMiner extends WorkOrderBuildDecoration
     {
         super.write(compound);
         BlockPosUtil.write(compound, TAG_POS, minerBuilding);
-    }
-
-    @Override
-    public void onAdded(final IColony colony, final boolean readingFromNbt)
-    {
-        /*
-         * Override this to avoid action!
-         */
-    }
-
-    @Override
-    public void onRemoved(final IColony colony)
-    {
-        /*
-         * Override this to avoid action!
-         */
-    }
-
-    @Override
-    public void onCompleted(final IColony colony, final ICitizenData citizen)
-    {
-        /*
-         * Override this to avoid action!
-         */
-    }
-
-    @Override
-    public boolean isValid(final IColony colony)
-    {
-        return super.isValid(colony) && colony.getBuildingManager().getBuilding(minerBuilding) != null;
     }
 
     /**

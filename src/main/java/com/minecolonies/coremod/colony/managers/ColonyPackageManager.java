@@ -8,7 +8,6 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewMessage;
@@ -213,14 +212,7 @@ public class ColonyPackageManager implements IColonyPackageManager
             players.addAll(closeSubscribers);
             players.addAll(newSubscribers);
 
-            List<IWorkOrder> workOrders = new ArrayList<>();
-            for (final IWorkOrder workOrder : workManager.getWorkOrders().values())
-            {
-                if (!(workOrder instanceof WorkOrderBuildMiner))
-                {
-                    workOrders.add(workOrder);
-                }
-            }
+            List<IWorkOrder> workOrders = new ArrayList<>(workManager.getWorkOrders().values());
             players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewWorkOrderMessage(colony, workOrders), player));
 
             workManager.setDirty(false);
