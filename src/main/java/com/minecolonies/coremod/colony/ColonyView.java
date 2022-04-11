@@ -12,7 +12,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.research.IResearchManager;
@@ -62,13 +62,13 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATT
 public final class ColonyView implements IColonyView
 {
     /**
-     * Max allowed CompoundNBT in bytes
+     * Max allowed CompoundTag in bytes
      */
     private static final int REQUEST_MANAGER_MAX_SIZE = 700000;
 
     //  General Attributes
     private final int                            id;
-    private final Map<Integer, WorkOrderView>    workOrders  = new HashMap<>();
+    private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
     //  Administration/permissions
     @NotNull
     private final PermissionsView                permissions = new PermissionsView();
@@ -93,7 +93,7 @@ public final class ColonyView implements IColonyView
         .addPattern(BannerPattern.BASE, DyeColor.WHITE)
         .toListTag();
 
-    private BlockPos       center          = BlockPos.ZERO;
+    private BlockPos center = BlockPos.ZERO;
 
     /**
      * Defines if workers are hired manually or automatically.
@@ -232,7 +232,7 @@ public final class ColonyView implements IColonyView
     }
 
     /**
-     * Create a ColonyView given a UUID and CompoundNBT.
+     * Create a ColonyView given a UUID and CompoundTag.
      *
      * @param id Id of the colony view.
      * @return the new colony view.
@@ -647,7 +647,7 @@ public final class ColonyView implements IColonyView
      * @param newMoveIn true if citizens can move in.
      */
     @Override
-    public void setMoveIn(final boolean newMoveIn) { this.moveIn = newMoveIn; }
+    public void setMoveIn(final boolean newMoveIn) {this.moveIn = newMoveIn;}
 
     /**
      * Get the town hall View for this ColonyView.
@@ -733,7 +733,7 @@ public final class ColonyView implements IColonyView
      * @return a unmodifiable Collection of the workOrders.
      */
     @Override
-    public Collection<WorkOrderView> getWorkOrders()
+    public Collection<IWorkOrderView> getWorkOrders()
     {
         return Collections.unmodifiableCollection(workOrders.values());
     }
@@ -845,13 +845,21 @@ public final class ColonyView implements IColonyView
         final int noOfAllies = buf.readInt();
         for (int i = 0; i < noOfAllies; i++)
         {
-            allies.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), buf.readBoolean(), ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+            allies.add(new CompactColonyReference(buf.readUtf(32767),
+              buf.readBlockPos(),
+              buf.readInt(),
+              buf.readBoolean(),
+              ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
         for (int i = 0; i < noOfFeuds; i++)
         {
-            feuds.add(new CompactColonyReference(buf.readUtf(32767), buf.readBlockPos(), buf.readInt(), false, ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+            feuds.add(new CompactColonyReference(buf.readUtf(32767),
+              buf.readBlockPos(),
+              buf.readInt(),
+              false,
+              ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         this.manager.readFromNBT(buf.readNbt());
@@ -899,7 +907,7 @@ public final class ColonyView implements IColonyView
         final int amount = buf.readInt();
         for (int i = 0; i < amount; i++)
         {
-            @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
+            @Nullable final IWorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
             if (workOrder != null)
             {
                 workOrders.put(workOrder.getId(), workOrder);

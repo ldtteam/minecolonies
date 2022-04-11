@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import net.minecraft.nbt.CompoundTag;
@@ -116,9 +116,9 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
             buf.writeInt(level.getDepth());
         }
 
-        final List<WorkOrderBuildMiner> list = building.getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, building.getPosition());
+        final List<WorkOrderMiner> list = building.getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, building.getPosition());
         buf.writeInt(list.size());
-        for (@NotNull final WorkOrderBuildMiner wo : list)
+        for (@NotNull final WorkOrderMiner wo : list)
         {
             wo.serializeViewNetworkData(buf);
         }

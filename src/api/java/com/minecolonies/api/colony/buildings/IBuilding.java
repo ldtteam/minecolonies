@@ -95,7 +95,16 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @return the custom name.
      */
     @NotNull
-    String getCustomBuildingName();
+    String getCustomName();
+
+    /**
+     * Getter for the display name of a building.
+     * Returns either the custom name (if any) or the schematic name.
+     *
+     * @return the display name.
+     */
+    @NotNull
+    String getBuildingDisplayName();
 
     /**
      * Executed when a new day start.

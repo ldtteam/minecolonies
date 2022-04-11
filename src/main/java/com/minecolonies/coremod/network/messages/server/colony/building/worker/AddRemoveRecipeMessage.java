@@ -15,6 +15,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -151,7 +152,7 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             if (!module.addRecipe(token))
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
-                LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, building.getCustomBuildingName());
+                LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, new TranslatableComponent(building.getBuildingDisplayName()));
             }
             else
             {

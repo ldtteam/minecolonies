@@ -119,9 +119,9 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
-            final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
-                final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
-                final IRequestResolver<?> resolver = controller.deserialize(CompoundNBT.getCompound(TAG_RESOLVER));
+            final Map<IToken<?>, IRequestResolver<?>> map = NBTUtils.streamCompound(list).map(CompoundTag -> {
+                final IToken<?> id = controller.deserialize(CompoundTag.getCompound(TAG_TOKEN));
+                final IRequestResolver<?> resolver = controller.deserialize(CompoundTag.getCompound(TAG_RESOLVER));
 
                 return new Tuple<IToken<?>, IRequestResolver<?>>(id, resolver);
             }).collect(Collectors.toMap((Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequestResolver<?>> t) -> t.getB()));

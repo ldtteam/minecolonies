@@ -2,10 +2,10 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.ColonyUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,13 +38,13 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world     the world.
      */
-    public static void placeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final Level world)
+    public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
         final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(workOrder.getSchematicLocation(),
+          = ColonyUtils.calculateCorners(workOrder.getLocation(),
           world,
-          new LoadOnlyStructureHandler(world, workOrder.getSchematicLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
-          workOrder.getRotation(world),
+          new LoadOnlyStructureHandler(world, workOrder.getLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          workOrder.getRotation(),
           workOrder.isMirrored());
         placeConstructionTape(corners, world);
     }
@@ -148,14 +148,14 @@ public final class ConstructionTapeHelper
      * @param workOrder the workOrder.
      * @param world     the world.
      */
-    public static void removeConstructionTape(@NotNull final WorkOrderBuildDecoration workOrder, @NotNull final Level world)
+    public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
         final LoadOnlyStructureHandler structure =
-          new LoadOnlyStructureHandler(world, workOrder.getSchematicLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
+          new LoadOnlyStructureHandler(world, workOrder.getLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
         if (structure.hasBluePrint())
         {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getSchematicLocation(), world,
-              structure.getBluePrint(), workOrder.getRotation(world), workOrder.isMirrored());
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world,
+              structure.getBluePrint(), workOrder.getRotation(), workOrder.isMirrored());
             removeConstructionTape(corners, world);
         }
     }

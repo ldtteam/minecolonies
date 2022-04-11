@@ -115,9 +115,9 @@ public class StandardDataStoreManager implements IDataStoreManager
         @Override
         public StandardDataStoreManager deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt) throws Throwable
         {
-            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundNBT -> {
-                final IToken<?> token = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
-                final IDataStore store = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_VALUE));
+            final Map<IToken<?>, IDataStore> storeMap = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND)).map(CompoundTag -> {
+                final IToken<?> token = controller.deserialize(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                final IDataStore store = controller.deserialize(CompoundTag.getCompound(NbtTagConstants.TAG_VALUE));
 
                 return new Tuple<>(token, store);
             }).collect(Collectors.toMap(Tuple::getA, Tuple::getB));
