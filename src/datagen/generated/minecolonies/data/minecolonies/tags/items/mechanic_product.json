@@ -22,6 +22,11 @@
     "minecraft:soul_torch",
     "minecraft:torch",
     "minecraft:ender_chest",
-    "minecraft:trapped_chest"
+    "minecraft:trapped_chest",
+    "minecraft:fire_charge",
+    "minecraft:conduit",
+    "minecraft:respawn_anchor",
+    "minecraft:shulker_box",
+    "minecraft:slime_ball"
   ]
 }

@@ -136,6 +136,7 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue                            fishingRodDurabilityAdjustT1;
     public final ForgeConfigSpec.IntValue                            fishingRodDurabilityAdjustT2;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> diseases;
+    public final ForgeConfigSpec.BooleanValue                        auditCraftingTags;
     public final ForgeConfigSpec.BooleanValue                        debugInventories;
 
 
@@ -476,6 +477,7 @@ public class ServerConfiguration extends AbstractConfiguration
             "Smallpox,1,minecraft:honey_bottle,minecraft:golden_apple"),
           s -> s instanceof String);
 
+        auditCraftingTags = defineBoolean(builder, "auditcraftingtags", false);
         debugInventories = defineBoolean(builder, "debuginventories", false);
 
         swapToCategory(builder, "pathfinding");

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.compatibility.jei;
+package com.minecolonies.coremod.colony.crafting;
 
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -7,7 +7,6 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -17,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,9 +70,9 @@ public final class GenericRecipeUtils
     }
 
     @NotNull
-    public static IGenericRecipe create(@NotNull final IRecipe<?> recipe)
+    public static IGenericRecipe create(@NotNull final IRecipe<?> recipe, @Nullable final World world)
     {
-        final IGenericRecipe original = Objects.requireNonNull(GenericRecipe.of(recipe));
+        final IGenericRecipe original = Objects.requireNonNull(GenericRecipe.of(recipe, world));
         final List<List<ItemStack>> inputs = compact(recipe.getIngredients());
         return new GenericRecipe(original.getRecipeId(), original.getPrimaryOutput(), original.getAdditionalOutputs(), inputs,
                 original.getGridSize(), original.getIntermediate(), original.getLootTable(), new ArrayList<>(), -1);
@@ -85,9 +85,9 @@ public final class GenericRecipeUtils
      * @param predicate an ingredient predicate that returns false to reject an ingredient
      * @return the original recipe, if there were no problems.
      *         or a modified recipe, if some ingredients were banned but alternates were acceptable.
-     *         or null, if no acceptable alternatives were available for some slot.
+     *         some slots might still contain banned ingredients if there were no valid alternatives.
      */
-    @Nullable
+    @NotNull
     public static IGenericRecipe filterInputs(@NotNull IGenericRecipe recipe,
                                               @NotNull OptionalPredicate<ItemStack> predicate)
     {
@@ -102,7 +102,10 @@ public final class GenericRecipeUtils
 
             if (newSlot.isEmpty() && !slot.isEmpty())
             {
-                return null;
+                // don't reduce the slot to nothing; it's possible despite all excluded ingredients the overall
+                // recipe will still be allowed in the end due to another rule
+                newInputs.add(slot);
+                continue;
             }
             modified |= newSlot.size() != slot.size();
 
