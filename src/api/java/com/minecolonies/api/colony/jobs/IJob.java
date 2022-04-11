@@ -5,20 +5,20 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_COMPLAINS_DAYS;
-import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;;
+import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;
 
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
 {
@@ -274,7 +274,18 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundTag>
 
     /**
      * Set the registry entry of the job.
+     *
      * @param jobEntry the job entry belonging to it.
      */
     void setRegistryEntry(JobEntry jobEntry);
+
+    /**
+     * Whether the job is a guard
+     *
+     * @return
+     */
+    default boolean isGuard()
+    {
+        return false;
+    }
 }

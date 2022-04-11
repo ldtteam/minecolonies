@@ -6,8 +6,8 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
-import net.minecraft.world.damagesource.DamageSource;
 import com.minecolonies.coremod.util.AttributeModifierUtils;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.GUARD_SLEEP;
@@ -47,6 +47,12 @@ public abstract class AbstractJobGuard<J extends AbstractJobGuard<J>> extends Ab
     public boolean allowsAvoidance()
     {
         return false;
+    }
+
+    @Override
+    public boolean isGuard()
+    {
+        return true;
     }
 
     /**
