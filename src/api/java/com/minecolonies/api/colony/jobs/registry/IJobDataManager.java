@@ -20,10 +20,10 @@ public interface IJobDataManager
     }
 
     /**
-     * Create a Job from saved CompoundNBT data.
+     * Create a Job from saved CompoundTag data.
      *
      * @param citizen  The citizen that owns the Job.
-     * @param compound The CompoundNBT containing the saved Job data.
+     * @param compound The CompoundTag containing the saved Job data.
      * @return New Job created from the data, or null.
      */
     @Nullable

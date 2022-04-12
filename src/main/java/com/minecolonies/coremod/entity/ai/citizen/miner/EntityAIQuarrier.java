@@ -20,7 +20,7 @@ import com.minecolonies.coremod.colony.buildings.modules.QuarryModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobQuarrier;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
@@ -130,7 +130,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             }
 
             final String name = Structures.SCHEMATICS_PREFIX + "/" + quarry.getStyle() + "/" + quarry.getSchematicName() + "shaft1";
-            final WorkOrderBuildMiner wo = new WorkOrderBuildMiner(name, name, quarry.getRotation(), quarry.getPosition().below(2), false, getOwnBuilding().getPosition());
+            final WorkOrderMiner wo = new WorkOrderMiner(name, name, quarry.getRotation(), quarry.getPosition().below(2), false, getOwnBuilding().getPosition());
             getOwnBuilding().getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
         }
@@ -475,7 +475,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             return true;
         }
-        else if(job.getWorkOrder() != null && !job.getWorkOrder().getSchematicLocation().equals(job.findQuarry().getPosition().below(2)))
+        else if(job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))
         {
             blockToMine = null;
             job.complete();

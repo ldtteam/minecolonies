@@ -6,6 +6,8 @@ import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -19,9 +21,11 @@ import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSet
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
-import com.minecolonies.coremod.colony.workorders.*;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
+import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
@@ -34,8 +38,7 @@ import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_P
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -95,7 +98,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
-            final WorkOrderBuildDecoration wo = job.getWorkOrder();
+            final IWorkOrder wo = job.getWorkOrder();
             if (wo == null)
             {
                 Log.getLogger().error(
@@ -106,18 +109,20 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 return IDLE;
             }
 
-            if (wo instanceof WorkOrderBuildBuilding)
+            if (wo instanceof WorkOrderBuilding)
             {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
                 if (building == null)
                 {
                     Log.getLogger().error(
                       String.format("Worker (%d:%d) ERROR - Starting and missing building(%s)",
-                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getSchematicLocation()), new Exception());
+                        worker.getCitizenColonyHandler().getColony().getID(), worker.getCitizenData().getId(), wo.getLocation()), new Exception());
                     return IDLE;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, job.getWorkOrder().getDisplayName());
+                worker.getCitizenChatHandler().sendLocalizedChat(
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
+                  job.getWorkOrder().getDisplayName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -125,9 +130,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     wo.setCleared(true);
                 }
             }
-            else if (!(wo instanceof WorkOrderBuildMiner))
+            else if (!(wo instanceof WorkOrderMiner))
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART, wo.getDisplayName());
+                worker.getCitizenChatHandler().sendLocalizedChat(
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
+                  job.getWorkOrder().getDisplayName());
             }
             return getState();
         }
@@ -143,27 +150,27 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     /**
-     * Load the struction into the AI.
+     * Load the structure into the AI.
      */
     private void loadStructure()
     {
-        final WorkOrderBuildDecoration workOrder = job.getWorkOrder();
+        final IWorkOrder workOrder = job.getWorkOrder();
 
         if (workOrder == null)
         {
             return;
         }
 
-        final BlockPos pos = workOrder.getSchematicLocation();
-        if (workOrder instanceof WorkOrderBuildBuilding && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
+        final BlockPos pos = workOrder.getLocation();
+        if (workOrder instanceof WorkOrderBuilding && worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(pos) == null)
         {
             Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getCitizenColonyHandler().getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
 
-        final int tempRotation = workOrder.getRotation(world);
-        final boolean removal = workOrder instanceof WorkOrderBuildRemoval;
+        final int tempRotation = workOrder.getRotation();
+        final boolean removal = workOrder.getWorkOrderType() == WorkOrderType.REMOVE;
 
         loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
@@ -175,7 +182,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
      */
     private void requestMaterialsState()
     {
-        if (Constants.BUILDER_INF_RESOURECES || job.getWorkOrder().isRequested() || job.getWorkOrder() instanceof WorkOrderBuildRemoval)
+        if (Constants.BUILDER_INF_RESOURECES || job.getWorkOrder().isRequested() || job.getWorkOrder().getWorkOrderType() == WorkOrderType.REMOVE)
         {
             return;
         }
@@ -186,9 +193,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             job.getWorkOrder().setRequested(true);
         }
         int newQuantity = buildingWorker.getNeededResources().values().stream().mapToInt(ItemStorage::getAmount).sum();
-        if (job.getWorkOrder().getAmountOfRes() == 0 || newQuantity > job.getWorkOrder().getAmountOfRes())
+        if (job.getWorkOrder().getAmountOfResources() == 0 || newQuantity > job.getWorkOrder().getAmountOfResources())
         {
-            job.getWorkOrder().setAmountOfRes(newQuantity);
+            job.getWorkOrder().setAmountOfResources(newQuantity);
         }
     }
 
@@ -196,8 +203,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure =
-          new WorkerLoadOnlyStructureHandler(world, structurePlacer.getB().getWorldPos(), structurePlacer.getB().getBluePrint(), new PlacementSettings(), true, this);
+        final WorkerLoadOnlyStructureHandler structure = new WorkerLoadOnlyStructureHandler(world,
+          structurePlacer.getB().getWorldPos(),
+          structurePlacer.getB().getBluePrint(),
+          new PlacementSettings(),
+          true,
+          this);
 
         if (job.getWorkOrder().getIteratorType().isEmpty())
         {
@@ -224,9 +235,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
-                                                                                                                                                  .getState()
-                                                                                                                                                  .getBlock()))),
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -246,9 +257,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
-                                                                                                                                                   .getState()
-                                                                                                                                                   .getBlock()))),
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -263,14 +274,14 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 }
                 return false;
             case ENTITIES:
-                    result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                      () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
-                    requestProgress = result.getIteratorPos();
+                result = placer.executeStructureStep(world, null, requestProgress, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getEntities().length == 0)), true);
+                requestProgress = result.getIteratorPos();
 
-                    for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-                    {
-                        getOwnBuilding().addNeededResource(stack, stack.getCount());
-                    }
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                }
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
@@ -325,34 +336,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final String structureName = job.getBlueprint().getName();
-        final WorkOrderBuildDecoration wo = job.getWorkOrder();
-
-        if (wo instanceof WorkOrderBuildBuilding)
-        {
-            sendCompletionMessage(wo);
-
-            WorkOrderBuild wob = (WorkOrderBuild) wo;
-            String buildingName = wo.getStructureName();
-            buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
-                  buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.lastIndexOf(String.valueOf(wob.getUpgradeLevel())));
-            job.getColony().getEventDescriptionManager().addEventDescription(wob.getUpgradeLevel() > 1 ? new BuildingUpgradedEvent(wo.getSchematicLocation(), buildingName,
-              wob.getUpgradeLevel()) : new BuildingBuiltEvent(wo.getSchematicLocation(), buildingName, wob.getUpgradeLevel()));
-        }
-        else if (wo instanceof WorkOrderBuildRemoval)
-        {
-            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE, structureName);
-
-            WorkOrderBuild wob = (WorkOrderBuild) wo;
-            String buildingName = wo.getStructureName();
-            buildingName = buildingName.substring(buildingName.indexOf('/') + 1, buildingName.lastIndexOf('/')) + " " +
-                  buildingName.substring(buildingName.lastIndexOf('/') + 1, buildingName.indexOf(String.valueOf(wob.getUpgradeLevel())));
-            job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getSchematicLocation(), buildingName, wob.getUpgradeLevel()));
-        }
-        else
-        {
-            sendCompletionMessage(wo);
-        }
+        final IWorkOrder wo = job.getWorkOrder();
 
         if (wo == null)
         {
@@ -363,42 +347,66 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         else
         {
+            String workOrderName = wo.getWorkOrderName();
+            sendCompletionMessage(wo);
+
+            switch (wo.getWorkOrderType())
+            {
+                case BUILD:
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingBuiltEvent(wo.getLocation(), workOrderName));
+                    break;
+                case UPGRADE:
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingUpgradedEvent(wo.getLocation(), workOrderName, wo.getTargetLevel()));
+                    break;
+                case REPAIR:
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingRepairedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
+                    break;
+                case REMOVE:
+                    job.getColony().getEventDescriptionManager().addEventDescription(new BuildingDeconstructedEvent(wo.getLocation(), workOrderName, wo.getCurrentLevel()));
+                    break;
+            }
+
             job.complete();
 
-            if (wo instanceof WorkOrderBuildBuilding)
+            if (wo instanceof WorkOrderBuilding)
             {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
-                if (building == null)
+                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+                switch (wo.getWorkOrderType())
                 {
-                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                      worker.getCitizenColonyHandler().getColony().getID(),
-                      worker.getCitizenData().getId(),
-                      wo.getSchematicLocation()));
-                }
-                else
-                {
-                    // Normally levels are done through the schematic data, but incase it is missing we do it manually here.
-                    final BlockEntity te = worker.level.getBlockEntity(building.getID());
-                    if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProvider) te).getSchematicName().isEmpty())
-                    {
-                        building.onUpgradeComplete(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
-                        building.setBuildingLevel(((WorkOrderBuildBuilding) wo).getUpgradeLevel());
-                    }
-                }
-            }
-            else if (wo instanceof WorkOrderBuildRemoval)
-            {
-                final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
-                if (building == null)
-                {
-                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                      worker.getCitizenColonyHandler().getColony().getID(),
-                      worker.getCitizenData().getId(),
-                      wo.getSchematicLocation()));
-                }
-                else
-                {
-                    building.setDeconstructed();
+                    case BUILD:
+                    case UPGRADE:
+                    case REPAIR:
+                        if (building == null)
+                        {
+                            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                              worker.getCitizenColonyHandler().getColony().getID(),
+                              worker.getCitizenData().getId(),
+                              wo.getLocation()));
+                        }
+                        else
+                        {
+                            // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
+                            final BlockEntity te = worker.level.getBlockEntity(building.getID());
+                            if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProvider) te).getSchematicName().isEmpty())
+                            {
+                                building.onUpgradeComplete(wo.getTargetLevel());
+                                building.setBuildingLevel(wo.getTargetLevel());
+                            }
+                        }
+                        break;
+                    case REMOVE:
+                        if (building == null)
+                        {
+                            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                              worker.getCitizenColonyHandler().getColony().getID(),
+                              worker.getCitizenData().getId(),
+                              wo.getLocation()));
+                        }
+                        else
+                        {
+                            building.setDeconstructed();
+                        }
+                        break;
                 }
             }
         }
@@ -407,9 +415,10 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
     /**
      * Send a completion message to the colony if necessary.
+     *
      * @param wo the completed workorder.
      */
-    protected void sendCompletionMessage(final WorkOrderBuildDecoration wo)
+    protected void sendCompletionMessage(final IWorkOrder wo)
     {
         //noop
     }
@@ -436,7 +445,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
-        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getSchematicLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
     }
 
     @Override

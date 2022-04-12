@@ -27,9 +27,9 @@ public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequire
         /**
          * Set the function to reconstruct the ResearchRequirement during deserialization.
          * This function will be available from ResearchRequirementEntry.readFromNBT
-         * It must take a CompoundNBT and return an IResearchRequirement containing a meaningful Description:
+         * It must take a CompoundTag and return an IResearchRequirement containing a meaningful Description:
          * implementing either a Constructor or static method is encouraged.
-         * @param readFromNBT  a function taking CompoundNBT and returning an IResearchRequirement.
+         * @param readFromNBT  a function taking CompoundTag and returning an IResearchRequirement.
          * @return The builder.
          */
         public Builder setReadFromNBT(final Function<CompoundTag, IResearchRequirement> readFromNBT)

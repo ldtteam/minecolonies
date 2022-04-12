@@ -91,7 +91,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
         this.hiringMode = HiringMode.values()[buf.readInt()];
         this.maxInhabitants = buf.readInt();
 
-        this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);;
+        this.jobEntry = buf.readRegistryIdSafe(JobEntry.class);
         this.primary = Skill.values()[buf.readInt()];
         this.secondary = Skill.values()[buf.readInt()];
     }
@@ -143,9 +143,10 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     public boolean canAssign(final ICitizenDataView citizen)
     {
         return !citizen.isChild() &&
-        (citizen.getWorkBuilding() == null
-           || workerIDs.contains(citizen.getId())
-           || buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry())) != null);
+                 (citizen.getWorkBuilding() == null
+                    || workerIDs.contains(citizen.getId())
+                    || buildingView.getColony().getBuilding(citizen.getWorkBuilding()).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.canBeHiredAs(getJobEntry()))
+                         != null);
     }
 
     @Override
@@ -156,6 +157,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
 
     /**
      * Get the display name of the job.
+     *
      * @return the display name.
      */
     public String getJobDisplayName()
@@ -172,6 +174,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
 
     /**
      * Getter for the job entry of the module view.
+     *
      * @return the entry.
      */
     public JobEntry getJobEntry()

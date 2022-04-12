@@ -1,18 +1,23 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.WorkOrderChangeMessage;
+import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -24,7 +29,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     /**
      * List of workOrders.
      */
-    private final List<WorkOrderView> workOrders = new ArrayList<>();
+    private final List<IWorkOrderView> workOrders = new ArrayList<>();
 
     /**
      * Constructor for the town hall window.
@@ -57,7 +62,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
     private void updateWorkOrders()
     {
         workOrders.clear();
-        workOrders.addAll(building.getColony().getWorkOrders());
+        workOrders.addAll(building.getColony().getWorkOrders().stream().filter(wo -> wo.shouldShowIn(building)).collect(Collectors.toList()));
         sortWorkOrders();
     }
 
@@ -66,7 +71,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
      */
     private void sortWorkOrders()
     {
-        workOrders.sort(Comparator.comparing(WorkOrderView::getPriority, Comparator.reverseOrder()));
+        workOrders.sort(Comparator.comparing(IWorkOrderView::getPriority, Comparator.reverseOrder()));
     }
 
     /**
@@ -81,7 +86,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
 
         for (int i = 0; i < workOrders.size(); i++)
         {
-            final WorkOrderView workOrder = workOrders.get(i);
+            final IWorkOrderView workOrder = workOrders.get(i);
             if (workOrder.getId() == id)
             {
                 if (buttonLabel.equals(BUTTON_UP) && i > 0)
@@ -143,7 +148,7 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final WorkOrderView workOrder = workOrders.get(index);
+                final IWorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
                 final int numElements = getElementCount();
@@ -175,9 +180,11 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
                     }
                 }
 
-                rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class).setText(workOrder.getDisplayName());
-                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(claimingCitizen);
-                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Integer.toString(workOrder.getId()));
+                Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class);
+                PaneBuilders.tooltipBuilder().append(workOrder.getDisplayName()).hoverPane(workOrderTextPanel).build();
+                workOrderTextPanel.setText(workOrder.getDisplayName());
+                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(new TextComponent(claimingCitizen));
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(new TextComponent(Integer.toString(workOrder.getId())));
             }
         });
     }

@@ -8,9 +8,9 @@
             <box size="100% 30" linewidth="1">
                 <button id="plus" size="15 15" label="↥" pos="0 0"/>
                 <button id="minus" size="15 15" label="↧" pos="0 15"/>
-                <label id="assignee" size="50 8" pos="25 15" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>
+                <label id="assignee" size="80 8" pos="25 18" textalign="MIDDLE_LEFT" color="black" textscale="0.8"/>
 
-                <label id="work" size="60 12" pos="20 5" textalign="MIDDLE_LEFT" color="black"/>
+                <label id="work" size="90 12" pos="20 5" textalign="MIDDLE_LEFT" color="black"  />
                 <button id="delete" size="15 15" label="§n§4X" pos="115 8"/>
                 <label id="hiddenId" size="1 1" pos="100 100"/>
             </box>

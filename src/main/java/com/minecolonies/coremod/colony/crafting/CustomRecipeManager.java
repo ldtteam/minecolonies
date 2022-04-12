@@ -301,7 +301,7 @@ public class CustomRecipeManager
      */
     private void serializeNetworkData(final FriendlyByteBuf recipeMgrFriendlyByteBuf)
     {
-        // Custom Recipe Manager packets can potentially get very large, and individual CompoundNBTs can not be parsed if they exceed 2MB.
+        // Custom Recipe Manager packets can potentially get very large, and individual CompoundTags can not be parsed if they exceed 2MB.
         // For safety with arbitrary data packs (or sets of data packs), we can not wrap the entire CustomRecipeManager into single ListNBT.
         // Including all recipes in transfer results in total transfer size around ~670KB for just Minecolonies + Structurize recipes.
         // See CustomRecipeFactory.serialize for last tested numbers and more precise breakdown.
