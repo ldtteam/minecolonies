@@ -98,11 +98,17 @@ public class CraftingTagAuditor
         {
             writeItemData(writer, item);
 
-            for (final ResourceLocation tag : item.getItem().getTags())
-            {
-                writer.write(',');
-                writer.write(tag.toString());
-            }
+            item.getTags().forEach(t -> {
+                try
+                {
+                    writer.write(',');
+                    writer.write(t.location().toString());
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            });
             writer.newLine();
         }
     }
