@@ -113,9 +113,9 @@ public class StandardRequestResolverRequestAssignmentDataStore implements IReque
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(NbtTagConstants.TAG_TOKEN));
             final Map<IToken<?>, Collection<IToken<?>>> map = NBTUtils.streamCompound(nbt.getList(NbtTagConstants.TAG_LIST, Tag.TAG_COMPOUND))
-                                                                .map(CompoundNBT -> {
-                                                                    final IToken<?> elementToken = controller.deserialize(CompoundNBT.getCompound(NbtTagConstants.TAG_TOKEN));
-                                                                    final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundNBT.getList(NbtTagConstants.TAG_LIST,
+                                                                .map(CompoundTag -> {
+                                                                    final IToken<?> elementToken = controller.deserialize(CompoundTag.getCompound(NbtTagConstants.TAG_TOKEN));
+                                                                    final Collection<IToken<?>> elements = NBTUtils.streamCompound(CompoundTag.getList(NbtTagConstants.TAG_LIST,
                                                                       Tag.TAG_COMPOUND)).map(elementCompound -> (IToken<?>) controller.deserialize(elementCompound))
                                                                                                              .collect(Collectors.toList());
 

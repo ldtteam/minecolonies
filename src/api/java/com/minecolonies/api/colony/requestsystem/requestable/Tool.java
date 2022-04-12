@@ -77,7 +77,7 @@ public class Tool implements IDeliverable
      *
      * @param controller The IFactoryController used to serialize sub types.
      * @param tool       the tool to serialize.
-     * @return The CompoundNBT containing the tool data.
+     * @return The CompoundTag containing the tool data.
      */
     @NotNull
     public static CompoundTag serialize(final IFactoryController controller, final Tool tool)

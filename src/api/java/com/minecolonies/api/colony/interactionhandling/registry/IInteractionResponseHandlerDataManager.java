@@ -19,10 +19,10 @@ public interface IInteractionResponseHandlerDataManager
     }
 
     /**
-     * Create an interactionResponseHandler from saved CompoundNBT data.
+     * Create an interactionResponseHandler from saved CompoundTag data.
      *
      * @param citizen  The citizen that owns the interaction response handler..
-     * @param compound The CompoundNBT containing the saved interaction data.
+     * @param compound The CompoundTag containing the saved interaction data.
      * @return New InteractionResponseHandler created from the data, or null.
      */
     @Nullable
