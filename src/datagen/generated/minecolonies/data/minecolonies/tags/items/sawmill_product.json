@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecolonies:barrel_block"
+    "minecolonies:barrel_block",
+    "minecolonies:blockhutcrusher"
   ]
 }

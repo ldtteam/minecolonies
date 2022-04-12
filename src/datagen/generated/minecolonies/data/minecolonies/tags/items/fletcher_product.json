@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#forge:string"
+    "#forge:string",
+    "minecraft:moss_carpet"
   ]
 }

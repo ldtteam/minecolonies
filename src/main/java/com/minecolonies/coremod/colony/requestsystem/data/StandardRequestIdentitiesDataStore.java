@@ -117,9 +117,9 @@ public class StandardRequestIdentitiesDataStore implements IRequestIdentitiesDat
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final ListTag list = nbt.getList(TAG_LIST, Tag.TAG_COMPOUND);
 
-            final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(CompoundNBT -> {
-                final IToken<?> id = controller.deserialize(CompoundNBT.getCompound(TAG_TOKEN));
-                final IRequest<?> request = controller.deserialize(CompoundNBT.getCompound(TAG_REQUEST));
+            final Map<IToken<?>, IRequest<?>> map = NBTUtils.streamCompound(list).map(CompoundTag -> {
+                final IToken<?> id = controller.deserialize(CompoundTag.getCompound(TAG_TOKEN));
+                final IRequest<?> request = controller.deserialize(CompoundTag.getCompound(TAG_REQUEST));
 
                 return new Tuple<IToken<?>, IRequest<?>>(id, request);
             }).collect(Collectors.toMap((Tuple<IToken<?>, IRequest<?>> t) -> t.getA(), (Tuple<IToken<?>, IRequest<?>> t) -> t.getB()));

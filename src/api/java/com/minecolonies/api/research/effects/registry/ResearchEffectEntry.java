@@ -27,9 +27,9 @@ public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
         /**
          * Set the function to reconstruct the ResearchEffect during deserialization.
          * This function will be available from ResearchEffectEntry.readFromNBT
-         * It must take a CompoundNBT and return an IResearchEffect containing a meaningful Description.
+         * It must take a CompoundTag and return an IResearchEffect containing a meaningful Description.
          * Implementing either a Constructor or static method is encouraged.
-         * @param readFromNBT  a function taking CompoundNBT and returning an IResearchEffect.
+         * @param readFromNBT  a function taking CompoundTag and returning an IResearchEffect.
          * @return The builder.
          */
         public Builder setReadFromNBT(final Function<CompoundTag, IResearchEffect<?>> readFromNBT)

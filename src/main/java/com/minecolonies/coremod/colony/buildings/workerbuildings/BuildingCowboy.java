@@ -101,7 +101,7 @@ public class BuildingCowboy extends AbstractBuilding
 
             final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "",
                     new ItemStack(Items.MILK_BUCKET), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BUCKET)));
-            recipes.add(GenericRecipe.of(milk));
+            recipes.add(GenericRecipe.of(milk, null));
 
             return recipes;
         }

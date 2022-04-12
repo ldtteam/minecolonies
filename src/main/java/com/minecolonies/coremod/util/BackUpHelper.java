@@ -282,10 +282,10 @@ public final class BackUpHelper
     }
 
     /**
-     * Save an CompoundNBT to a file.  Does so in a safe manner using an intermediate tmp file.
+     * Save an CompoundTag to a file.  Does so in a safe manner using an intermediate tmp file.
      *
      * @param file     The destination file to write the data to.
-     * @param compound The CompoundNBT to write to the file.
+     * @param compound The CompoundTag to write to the file.
      */
     public static void saveNBTToPath(@Nullable final File file, @NotNull final CompoundTag compound)
     {
@@ -304,10 +304,10 @@ public final class BackUpHelper
     }
 
     /**
-     * Load a file and return the data as an CompoundNBT.
+     * Load a file and return the data as an CompoundTag.
      *
      * @param file The path to the file.
-     * @return the data from the file as an CompoundNBT, or null.
+     * @return the data from the file as an CompoundTag, or null.
      */
     public static CompoundTag loadNBTFromPath(@Nullable final File file)
     {

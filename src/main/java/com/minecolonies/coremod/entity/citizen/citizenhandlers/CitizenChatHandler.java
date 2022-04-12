@@ -50,20 +50,20 @@ public class CitizenChatHandler implements ICitizenChatHandler
             if (job != null)
             {
                 final Component component = new TranslatableComponent(
-                  "block.blockhuttownhall.messageworkerdead",
-                  new TranslatableComponent(job.getJobRegistryEntry().getTranslationKey()),
-                  citizen.getCitizenData().getName(),
-                  (int) citizen.getX(), (int) citizen.getY(),
-                  (int) citizen.getZ(), new TranslatableComponent(damageSource.msgId));
+                        "block.blockhuttownhall.messageworkerdead",
+                        new TranslatableComponent(job.getJobRegistryEntry().getTranslationKey()),
+                        citizen.getCitizenData().getName(),
+                        (int) citizen.getX(), (int) citizen.getY(),
+                        (int) citizen.getZ(), new TranslatableComponent(damageSource.msgId));
                 LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "", component);
             }
             else
             {
                 LanguageHandler.sendPlayersMessage(
-                  citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
-                  new TranslatableComponent("block.blockhuttownhall.messagecolonistdead",
-                    citizen.getCitizenData().getName(), (int) citizen.getX(), (int) citizen.getY(),
-                    (int) citizen.getZ(), new TranslatableComponent(damageSource.msgId)));
+                        citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
+                        new TranslatableComponent("block.blockhuttownhall.messagecolonistdead",
+                                citizen.getCitizenData().getName(), (int) citizen.getX(), (int) citizen.getY(),
+                                (int) citizen.getZ(), new TranslatableComponent(damageSource.msgId)));
             }
         }
     }
@@ -88,25 +88,37 @@ public class CitizenChatHandler implements ICitizenChatHandler
             requiredItem = new TranslatableComponent(key, msg);
         }
 
-        final Component citizenDescription = new TextComponent(citizen.getCustomName().getString());
+        sendLocalizedChat(requiredItem);
+    }
+
+    @Override
+    public void sendLocalizedChat(Component component)
+    {
+        final TextComponent citizenDescription = new TextComponent(citizen.getCustomName().getString());
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
             final TextComponent colonyDescription = new TextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
             final List<Player> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
-            final Player owner = ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final Player owner = ServerUtils.getPlayerFromUUID(
+                    CompatibilityUtils.getWorldFromCitizen(citizen),
+                    citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {
                 players.remove(owner);
                 LanguageHandler.sendPlayerMessage(owner,
-                  citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(), new TextComponent(" "), citizenDescription, requiredItem);
+                        citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
+                        new TextComponent(" "),
+                        citizenDescription,
+                        component);
             }
 
             LanguageHandler.sendPlayersMessage(players,
-              citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(), new TextComponent(" "),
-              citizenDescription,
-              colonyDescription,
-              requiredItem);
+                    citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
+                    new TextComponent(" "),
+                    citizenDescription,
+                    colonyDescription,
+                    component);
         }
     }
 }

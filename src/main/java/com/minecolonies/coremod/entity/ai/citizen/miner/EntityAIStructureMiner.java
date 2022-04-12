@@ -14,7 +14,7 @@ import com.minecolonies.coremod.colony.buildings.modules.MinerLevelManagementMod
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
@@ -162,7 +162,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
 
         if (!job.hasWorkOrder())
         {
-            final List<WorkOrderBuildMiner> list = getOwnBuilding().getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, getOwnBuilding().getPosition());
+            final List<WorkOrderMiner> list = getOwnBuilding().getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, getOwnBuilding().getPosition());
             if (!list.isEmpty())
             {
                 job.setWorkOrder(list.get(0));
@@ -846,7 +846,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
         {
             if (job.getBlueprint().getName().contains("minermainshaft"))
             {
-                final int depth = job.getWorkOrder().getSchematicLocation().getY();
+                final int depth = job.getWorkOrder().getLocation().getY();
                 boolean exists = false;
                 for (final MinerLevel level : module.getLevels())
                 {
@@ -857,8 +857,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     }
                 }
 
-                @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint(), job.getWorkOrder().getSchematicLocation());
-                @NotNull final MinerLevel currentLevel = new MinerLevel(minerBuilding, job.getWorkOrder().getSchematicLocation().getY(), levelSignPos);
+                @Nullable final BlockPos levelSignPos = WorkerUtil.findFirstLevelSign(job.getBlueprint(), job.getWorkOrder().getLocation());
+                @NotNull final MinerLevel currentLevel = new MinerLevel(minerBuilding, job.getWorkOrder().getLocation().getY(), levelSignPos);
                 if (!exists)
                 {
                     module.addLevel(currentLevel);
@@ -979,7 +979,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                     return false;
             }
         }
-        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getSchematicLocation())) && getState() != PICK_UP_RESIDUALS;
+        return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
     }
 
     private boolean ladderDamaged()

@@ -135,10 +135,10 @@ public class StandardRequestSystemCrafterJobDataStore implements IRequestSystemC
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                                  .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final List<IToken<?>> taskList = NBTUtils.streamCompound(nbt.getList(TAG_ASSIGNED_LIST, Tag.TAG_COMPOUND))
-                                               .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                               .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
                                                .collect(Collectors.toList());
 
             return new StandardRequestSystemCrafterJobDataStore(token, queue, taskList);

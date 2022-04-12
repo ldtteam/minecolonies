@@ -97,7 +97,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         // However, for large sets, such as CustomRecipeManager, this can grow into a very large total (ie, default Minecolonies + Structurize recipes alone can total >600KB).
         // If transmitting a large number of recipes at once across a network, favor the byte-based serializer instead.
         // This serialization also populates the RecipeStorage inside the Custom Recipe, which remains cached until the next data pack reload.
-        // Be aware of the 2MB limit for CompoundNBTs if assigning a large number of these together into a listNBT.
+        // Be aware of the 2MB limit for CompoundTags if assigning a large number of these together into a listNBT.
         final CompoundTag compound = new CompoundTag();
         compound.putString(RECIPE_CRAFTER_PROP, recipe.getCrafter());
         compound.putString(CUSTOM_RECIPE_ID_PROP, recipe.getRecipeStorage().getRecipeSource().toString());
@@ -234,7 +234,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
     @Override
     public void serialize(@NotNull IFactoryController controller, CustomRecipe recipe, FriendlyByteBuf packetBuffer)
     {
-        // This serialization is drastically more efficient: expect <150 bytes per recipes, avg, compared to 800 bytes for CompoundNBT variant.
+        // This serialization is drastically more efficient: expect <150 bytes per recipes, avg, compared to 800 bytes for CompoundTag variant.
         // It also avoids populating the RecipeStorage cached inside the CustomRecipe.
         packetBuffer.writeUtf(recipe.getCrafter());
         packetBuffer.writeResourceLocation(recipe.getRecipeStorage().getRecipeSource());

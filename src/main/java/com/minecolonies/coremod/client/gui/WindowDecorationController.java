@@ -7,8 +7,8 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
@@ -87,11 +87,10 @@ public class WindowDecorationController extends AbstractWindowSkeleton
 
         if (view != null)
         {
-            final Optional<WorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getPos().equals(this.controller.getBlockPos())).findFirst();
+            final Optional<IWorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getLocation().equals(this.controller.getBlockPos())).findFirst();
             if (wo.isPresent())
             {
-
-                if (wo.get().getType() == WorkOrderType.BUILD)
+                if (wo.get().getWorkOrderType() == WorkOrderType.BUILD)
                 {
                     if (controller.getTier() == 0)
                     {
@@ -103,7 +102,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
-                else if (wo.get().getType() == WorkOrderType.BUILD)
+                else if (wo.get().getWorkOrderType() == WorkOrderType.BUILD)
                 {
                     buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelRepair"));
                     findPaneByID(BUTTON_REPAIR).hide();
@@ -191,11 +190,14 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-            controller.getSchematicPath().replaceAll("\\d$", ""),
-            controller.getTier() + 1,
-            world.dimension()));
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
+          controller.getSchematicName()
+            .substring(controller.getSchematicName().lastIndexOf("/") + 1)
+            .replaceAll("\\d$", ""),
+          controller.getSchematicPath()
+            .replaceAll("\\d$", ""),
+          controller.getTier() + 1,
+          world.dimension()));
         close();
     }
 
@@ -204,11 +206,14 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        Network.getNetwork()
-          .sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-            controller.getSchematicPath().replaceAll("\\d$", ""),
-            controller.getTier(),
-            world.dimension()));
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
+          controller.getSchematicName()
+            .substring(controller.getSchematicName().lastIndexOf("/") + 1)
+            .replaceAll("\\d$", ""),
+          controller.getSchematicPath()
+            .replaceAll("\\d$", ""),
+          controller.getTier(),
+          world.dimension()));
         close();
     }
 }

@@ -20,17 +20,15 @@ public final class TranslationConstants
     @NonNls
     public static final String TILE_MINECOLONIES_BLOCK_HUT_FARMER_NAME                              = "block.minecolonies.blockhutfarmer.name";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDSTART                   = "entity.builder.messagebuildstart";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START                  = "entity.builder.messagebuildstart";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE                = "entity.builder.messagebuildcomplete";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE               = "entity.builder.messagebuildcomplete";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL         = "entity.builder.messagebuildcomplete_manual";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE           = "entity.builder.messagerepaircomplete";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE      = "entity.builder.messageremovalcomplete";
     @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE                 = "entity.builder.messagedecocomplete";
-    @NonNls
-    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL          = "entity.builder.messagedecocomplete_manual";
+    public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX                = "entity.builder.messagebuildmanualfinish";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP              = "entity.deliveryman.forcepickup";
     @NonNls
@@ -471,6 +469,26 @@ public final class TranslationConstants
     public static final String WRONG_COLONY                                                         = "com.minecolonies.coremod.gui.buildtool.wrongcolony";
     @NonNls
     public static final String INDESTRUCTIBLE_BLOCK_AT_POS                                          = "com.minecolonies.coremod.buildtool.indestructible";
+    @NonNls
+    public static final String BUILDER_ACTION_BUILDING                                              = "com.minecolonies.coremod.action.builder.building";
+    @NonNls
+    public static final String BUILDER_ACTION_UPGRADING                                             = "com.minecolonies.coremod.action.builder.upgrading";
+    @NonNls
+    public static final String BUILDER_ACTION_REPAIRING                                             = "com.minecolonies.coremod.action.builder.repairing";
+    @NonNls
+    public static final String BUILDER_ACTION_REMOVING                                              = "com.minecolonies.coremod.action.builder.removing";
+    @NonNls
+    public static final String WORK_ORDER_CREATED                                                   = "com.minecolonies.coremod.workorderadded";
+    @NonNls
+    public static final String BUILDER_CANNOT_DECONSTRUCT                                           = "entity.builder.cantdeconstruct";
+    @NonNls
+    public static final String BUILDER_NECESSARY                                                    = "entity.builder.messagebuildernecessary";
+    @NonNls
+    public static final String BUILDER_TOO_FAR_AWAY                                                 = "entity.builder.messagebuilderstoofar";
+    @NonNls
+    public static final String BUILDER_BUILDING_TOO_HIGH                                            = "entity.builder.messagebuildtoohigh";
+    @NonNls
+    public static final String BUILDER_BUILDING_TOO_LOW                                             = "entity.builder.messagebuildtoolow";
 
     private TranslationConstants()
     {

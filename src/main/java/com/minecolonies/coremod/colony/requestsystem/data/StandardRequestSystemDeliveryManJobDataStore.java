@@ -108,10 +108,10 @@ public class StandardRequestSystemDeliveryManJobDataStore implements IRequestSys
         {
             final IToken<?> token = controller.deserialize(nbt.getCompound(TAG_TOKEN));
             final LinkedList<IToken<?>> queue = NBTUtils.streamCompound(nbt.getList(TAG_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                                  .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
                                                   .collect(Collectors.toCollection(LinkedList::new));
             final HashSet<IToken<?>> ongoingDeliveries = NBTUtils.streamCompound(nbt.getList(TAG_ONGOING_LIST, Tag.TAG_COMPOUND))
-                                                  .map(CompoundNBT -> (IToken<?>) controller.deserialize(CompoundNBT))
+                                                  .map(CompoundTag -> (IToken<?>) controller.deserialize(CompoundTag))
                                                   .collect(Collectors.toCollection(HashSet::new));
             return new StandardRequestSystemDeliveryManJobDataStore(token, queue, ongoingDeliveries);
         }

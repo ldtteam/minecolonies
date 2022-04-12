@@ -5,6 +5,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -17,7 +18,6 @@ import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.SoundUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -134,14 +134,15 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
 
     /**
      * Get the default attributes with their values.
+     *
      * @return the attribute modifier map.
      */
     public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
-                 .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
-                 .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
-                 .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
+          .add(Attributes.MAX_HEALTH, BASE_MAX_HEALTH)
+          .add(Attributes.MOVEMENT_SPEED, BASE_MOVEMENT_SPEED)
+          .add(Attributes.FOLLOW_RANGE, BASE_PATHFINDING_RANGE);
     }
 
     public GoalSelector getTasks()
@@ -179,8 +180,9 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     }
 
     /**
-     * Calculate adjusted damage. 
+     * Calculate adjusted damage.
      * This doesn't actually damage armor, for non-player entities.
+     *
      * @param source
      * @param damage
      * @return
@@ -358,6 +360,21 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
             return;
         }
         super.push(entityIn);
+    }
+
+    @Override
+    public void onPlayerCollide(final Player player)
+    {
+        final IJob<?> job = getCitizenData().getJob();
+        if (job == null || !job.isGuard())
+        {
+            super.onPlayerCollide(player);
+        }
+        else
+        {
+            // guards push the player out of their way
+            push(player);
+        }
     }
 
     @Override
