@@ -17,12 +17,12 @@ import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
@@ -294,7 +295,7 @@ public class CitizenWindowUtils
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
+        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(new TranslationTextComponent(DESCRIPTION_HAPPINESS_MODIFIER));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
@@ -309,9 +310,9 @@ public class CitizenWindowUtils
             label.setSize(136, 11);
             label.setPosition(70, yPos);
             label.setColors(BLACK);
-            label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
+            label.setText(new TranslationTextComponent(DESCRIPTION_HAPPINESS_MODIFIER_NAME_BASE + name));
             window.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent(DESCRIPTION_HAPPINESS_MODIFIER_DESCRIPTION_BASE + name)).build();
 
             if (value > 1.0)
             {

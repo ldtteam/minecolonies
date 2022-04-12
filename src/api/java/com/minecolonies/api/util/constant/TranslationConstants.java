@@ -517,6 +517,18 @@ public final class TranslationConstants
     public static final String WARNING_MISSING_BUILD_TOOL                                           = "item.buildtool.missing";
     @NonNls
     public static final String DESCRIPTION_BARRACKS_HIRE_SPIES                                      = "com.minecolonies.coremod.gui.barracks.spies.desc";
+    @NonNls
+    public static final String DESCRIPTION_HAPPINESS_MODIFIER                                       = "com.minecolonies.coremod.gui.happiness.happinessmodifier";
+    /**
+     * Note that this constant is not a complete translation key, it requires the happiness modifier to be appended after this constant.
+     */
+    @NonNls
+    public static final String DESCRIPTION_HAPPINESS_MODIFIER_NAME_BASE                             = "com.minecolonies.coremod.gui.townhall.happiness.";
+    /**
+     * Note that this constant is not a complete translation key, it requires the happiness modifier to be appended after this constant.
+     */
+    @NonNls
+    public static final String DESCRIPTION_HAPPINESS_MODIFIER_DESCRIPTION_BASE                      = "com.minecolonies.coremod.gui.townhall.happiness.desc.";
 
     // Command texts
     @NonNls
