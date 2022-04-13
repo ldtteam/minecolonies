@@ -16,9 +16,11 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -34,6 +36,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
+import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
  * Abstract class for the principal crafting AIs.
@@ -357,6 +360,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
+        Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(worker.getMainHandItem(), worker.blockPosition()), worker);
 
         currentRequest = job.getCurrentTask();
 

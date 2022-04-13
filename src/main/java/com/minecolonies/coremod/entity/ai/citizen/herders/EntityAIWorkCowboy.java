@@ -32,6 +32,11 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     private static final int MAX_ANIMALS_PER_LEVEL = 2;
 
     /**
+     * Bucket metadata.
+     */
+    public static final String RENDER_META_BUCKET = "bucket";
+
+    /**
      * Herd cow icon
      */
     private final static VisibleCitizenStatus HERD_COW               =
@@ -48,6 +53,17 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         super.registerTargets(
           new AITarget(COWBOY_MILK, this::milkCows, 1)
         );
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.BUCKET))
+        {
+            renderMeta += RENDER_META_BUCKET;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override
@@ -103,7 +119,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
     }
 
     /**
-     * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty bucket for a milk bucket, there's no actual "Milk" method in {@link CowEntity}
+     * Makes the Cowboy "Milk" the cows (Honestly all he does is swap an empty bucket for a milk bucket, there's no actual "Milk" method in {@link Cow}
      *
      * @return The next {@link IAIState}
      */

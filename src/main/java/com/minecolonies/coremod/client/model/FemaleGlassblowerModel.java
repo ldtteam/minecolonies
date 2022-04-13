@@ -10,6 +10,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
+
 public class FemaleGlassblowerModel extends CitizenModel<AbstractEntityCitizen>
 {
     public FemaleGlassblowerModel(final ModelPart part)
@@ -90,4 +94,15 @@ public class FemaleGlassblowerModel extends CitizenModel<AbstractEntityCitizen>
 
 		return LayerDefinition.create(meshdefinition, 128, 64);
 	}
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        final boolean working = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("glasses").visible = working;
+        body.getChild("apronBody").visible = working;
+        leftLeg.getChild("apronLeftLeg").visible = working;
+        rightLeg.getChild("apronRightLeg").visible = working;
+    }
 }
