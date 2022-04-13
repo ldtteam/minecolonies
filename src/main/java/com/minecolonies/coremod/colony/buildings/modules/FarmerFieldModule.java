@@ -361,6 +361,7 @@ public class FarmerFieldModule extends AbstractBuildingModule implements IPersis
                 ((ScarecrowTileEntity) scarecrow).setOwner(module.getFirstCitizen().getId());
             }
             farmerFields.add(position);
+            markDirty();
         }
     }
 

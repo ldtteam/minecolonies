@@ -214,8 +214,6 @@ public final class ModBuildingsInitializer
                                      .setBuildingViewProducer(() -> EmptyView::new)
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DELIVERYMAN_ID))
                                      .addBuildingModuleProducer(() -> new DeliverymanAssignmentModule(ModJobs.delivery, Skill.Agility, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
-                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                      .createBuildingEntry();
 
         ModBuildings.farmer = new BuildingEntry.Builder()

@@ -1983,7 +1983,7 @@
   "com.minecolonies.coremod.setting.minecolonies:replant": "Replanting:",
   "com.minecolonies.coremod.setting.minecolonies:restrict": "Zoning Mode:",
   "com.minecolonies.coremod.gui.tooldesc.scepterlumberjack": "Restrict the Forester's working area by right-clicking one corner and left-clicking the opposite corner with the tool.",
-  "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Left click positions to mark as guard or patrol points. Left-click the same position to close and discard.",
+  "com.minecolonies.coremod.gui.tooldesc.scepterguard": "Right click positions to mark as guard or patrol points. Right-click the same position to close and discard.",
 
   "com.minecolonies.coremod.setting.minecolonies:fertilize": "Request Fertilizer",
   "com.minecolonies.coremod.setting.minecolonies:warehousemin": "Min Warehouse Stock:",
