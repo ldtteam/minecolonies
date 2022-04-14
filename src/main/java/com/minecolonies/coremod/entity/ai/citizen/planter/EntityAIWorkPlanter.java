@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
@@ -16,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -83,8 +85,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         final ItemStack currentStack = new ItemStack(plantableSoilPos.getCombination().getItem());
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
-        if (plantInInv <= 0)
+        if (!hasSufficientItems(currentStack))
         {
             return START_WORKING;
         }
@@ -198,15 +199,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         if (isItemPositionAir(plantableSoilPos))
         {
             final Item currentItem = plantableSoilPos.getCombination().getItem();
-            final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(new ItemStack(currentItem)));
-            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(new ItemStack(currentItem)));
 
             if (!availablePlants.contains(currentItem))
             {
                 return START_WORKING;
             }
 
-            if (plantInBuilding + plantInInv <= 0)
+            if (!hasSufficientItems(new ItemStack(currentItem)))
             {
                 requestPlantable(currentItem);
                 return START_WORKING;
@@ -279,7 +278,15 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final BuildingPlantation plantation = getOwnBuilding();
         final List<BuildingPlantation.PlantationSoilPosition> soilPositions = plantation.getAllSoilPositions();
-        int soilPositionIndex = worker.getRandom().nextInt(soilPositions.size());
+
+        if (soilPositions.isEmpty())
+        {
+            Log.getLogger()
+              .log(Level.WARN, "Planter building returned 0 available soil positions, schematic is " + plantation.getSchematicName() + ", please report this to the developer!");
+            return START_WORKING;
+        }
+
+        final int soilPositionIndex = worker.getRandom().nextInt(soilPositions.size());
 
         plantableSoilPos = soilPositions.get(soilPositionIndex);
         return PLANTATION_MOVE_TO_SOIL;
@@ -341,5 +348,12 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
         return true;
+    }
+
+    private boolean hasSufficientItems(ItemStack stack)
+    {
+        final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(stack));
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(stack));
+        return plantInBuilding + plantInInv > 0;
     }
 }
