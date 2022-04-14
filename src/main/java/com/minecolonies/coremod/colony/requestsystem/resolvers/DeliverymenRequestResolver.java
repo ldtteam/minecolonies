@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -76,6 +77,12 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
         }
 
         return citizenList;
+    }
+
+    @Override
+    public int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    {
+        return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
     }
 
     @Nullable
