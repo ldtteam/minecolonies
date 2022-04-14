@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
@@ -85,7 +86,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
 
         final ItemStack currentStack = new ItemStack(plantableSoilPos.getCombination().getItem());
-        if (!hasSufficientItems(currentStack))
+        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
+        if (plantInInv <= 0)
         {
             return START_WORKING;
         }
@@ -199,16 +201,25 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         if (isItemPositionAir(plantableSoilPos))
         {
             final Item currentItem = plantableSoilPos.getCombination().getItem();
+            final ItemStack currentStack = new ItemStack(currentItem);
 
             if (!availablePlants.contains(currentItem))
             {
                 return START_WORKING;
             }
 
-            if (!hasSufficientItems(new ItemStack(currentItem)))
+            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
+            final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(currentStack));
+            if (plantInInv + plantInBuilding <= 0)
             {
                 requestPlantable(currentItem);
                 return START_WORKING;
+            }
+
+            if (plantInInv == 0 && plantInBuilding > 0)
+            {
+                needsCurrently = new Tuple<>(itemStack -> itemStack.sameItem(currentStack), Math.min(plantInBuilding, PLANT_TO_REQUEST));
+                return GATHERING_REQUIRED_MATERIALS;
             }
 
             return PLANTATION_PLANT;
@@ -348,12 +359,5 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
         }
         return true;
-    }
-
-    private boolean hasSufficientItems(ItemStack stack)
-    {
-        final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(stack));
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(stack));
-        return plantInBuilding + plantInInv > 0;
     }
 }
