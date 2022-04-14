@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -91,17 +90,21 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void buildClicked()
     {
-        final String buttonLabel = buttonBuild.getTextAsString();
-        if (buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_BUILD))
-              || buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_UPGRADE)))
+        String buttonLabel = buttonBuild.getTextAsString();
+        if (buttonBuild.getText() instanceof TranslationTextComponent)
+        {
+            buttonLabel = ((TranslationTextComponent) buttonBuild.getText()).getKey();
+        }
+
+        if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_REPAIR)))
+        else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_REPAIR))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(LanguageHandler.format(ACTION_CANCEL_DECONSTRUCTION)))
+        else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_DECONSTRUCTION))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO));
         }
@@ -134,7 +137,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     public String getBuildingName()
     {
-        return  "com." + buildingView.getBuildingType().getRegistryName().getNamespace() + ".building." + buildingView.getBuildingType().getRegistryName().getPath();
+        return "com." + buildingView.getBuildingType().getRegistryName().getNamespace() + ".building." + buildingView.getBuildingType().getRegistryName().getPath();
     }
 
     /**
@@ -180,14 +183,15 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         super.onOpened();
         setPage(false, 0);
 
-        final IFormattableTextComponent component = building.getCustomName().isEmpty() ? new TranslationTextComponent(getBuildingName()) : new StringTextComponent(building.getCustomName());
+        final IFormattableTextComponent component =
+          building.getCustomName().isEmpty() ? new TranslationTextComponent(getBuildingName()) : new StringTextComponent(building.getCustomName());
         if (switchView != null && switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
         {
             // Town hall does not need level in colony name
             title.setText(component);
 
             final ITextComponent levelComponent = new TranslationTextComponent(CMC_GUI_TOWNHALL_BUILDING_LEVEL)
-              .append(": " + buildingView.getBuildingLevel());
+                                                    .append(": " + buildingView.getBuildingLevel());
             findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(levelComponent);
         }
         else if (title != null)

@@ -536,17 +536,27 @@ public final class TranslationConstants
     @NonNls
     public static final String DESCRIPTION_BARRACKS_HIRE_SPIES                                      = "com.minecolonies.coremod.gui.barracks.spies.desc";
     @NonNls
-    public static final String DESCRIPTION_HAPPINESS_MODIFIER                                       = "com.minecolonies.coremod.gui.happiness.happinessmodifier";
-    /**
-     * Note that this constant is not a complete translation key, it requires the happiness modifier to be appended after this constant.
-     */
+    public static final String LABEL_HAPPINESS_MODIFIER                                             = "com.minecolonies.coremod.gui.happiness.happinessmodifier";
     @NonNls
-    public static final String DESCRIPTION_HAPPINESS_MODIFIER_NAME_BASE                             = "com.minecolonies.coremod.gui.townhall.happiness.";
-    /**
-     * Note that this constant is not a complete translation key, it requires the happiness modifier to be appended after this constant.
-     */
+    public static final String LABEL_HAPPINESS_POSITIVE                                             = "com.minecolonies.coremod.gui.happiness.positive";
     @NonNls
-    public static final String DESCRIPTION_HAPPINESS_MODIFIER_DESCRIPTION_BASE                      = "com.minecolonies.coremod.gui.townhall.happiness.desc.";
+    public static final String LABEL_HAPPINESS_NEUTRAL                                              = "com.minecolonies.coremod.gui.happiness.neutral";
+    @NonNls
+    public static final String LABEL_HAPPINESS_SLIGHTLY_NEGATIVE                                    = "com.minecolonies.coremod.gui.happiness.slightlynegative";
+    @NonNls
+    public static final String LABEL_HAPPINESS_NEGATIVE                                             = "com.minecolonies.coremod.gui.happiness.negative";
+    @NonNls
+    public static final String LABEL_CITIZEN_JOB                                                    = "com.minecolonies.coremod.gui.citizen.job.label";
+    @NonNls
+    public static final String DESCRIPTION_CITIZEN_JOB                                              = "com.minecolonies.coremod.gui.citizen.job.label.desc";
+
+    // Partial keys
+    @NonNls
+    public static final String PARTIAL_HAPPINESS_MODIFIER_NAME        = "com.minecolonies.coremod.gui.townhall.happiness.";
+    @NonNls
+    public static final String PARTIAL_HAPPINESS_MODIFIER_DESCRIPTION = "com.minecolonies.coremod.gui.townhall.happiness.desc.";
+    @NonNls
+    public static final String PARTIAL_SKILL_NAME                     = "com.minecolonies.coremod.gui.citizen.job.skills.";
 
     // Command texts
     @NonNls
