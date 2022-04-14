@@ -13,10 +13,9 @@
 *.iws
 *.iml
 /.idea/*
+!/.idea
+!/.idea/inspectionProfiles/
 /.idea/gradle.xml
-!/.idea/codeStyles/codeStyleConfig.xml
-!/.idea/codeStyles/Project.xml
-!/.idea/inspectionProfiles/Project_Default.xml
 /classes
 
 # gradle
