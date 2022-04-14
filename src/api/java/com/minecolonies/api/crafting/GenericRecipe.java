@@ -17,6 +17,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class GenericRecipe implements IGenericRecipe
 {
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipe<?> recipe)
+    public static IGenericRecipe of(@Nullable final IRecipe<?> recipe, @Nullable final World world)
     {
         if (recipe == null) return null;
         final List<List<ItemStack>> inputs = recipe.getIngredients().stream()
@@ -48,7 +49,7 @@ public class GenericRecipe implements IGenericRecipe
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe), inputs,
+        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe, world), inputs,
                 size, intermediate, null, new ArrayList<>(), -1);
     }
 
@@ -232,7 +233,8 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @NotNull
-    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final IRecipe<?> recipe)
+    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final IRecipe<?> recipe,
+                                                             @Nullable final World world)
     {
         if (recipe instanceof ICraftingRecipe)
         {
@@ -253,7 +255,7 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setItem(slot, stacks[0]);
                 }
             }
-            if (((ICraftingRecipe) recipe).matches(inv, null))
+            if (((ICraftingRecipe) recipe).matches(inv, world))
             {
                 return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()
                         .filter(ItemStackUtils::isNotEmpty)

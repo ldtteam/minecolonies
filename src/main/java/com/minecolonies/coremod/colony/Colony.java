@@ -115,6 +115,11 @@ public class Colony implements IColony
     private Set<Long> pendingChunks = new HashSet<>();
 
     /**
+     * List of chunks pending for unloading, which have their tickets removed
+     */
+    private Set<Long> pendingToUnloadChunks = new HashSet<>();
+
+    /**
      * List of waypoints of the colony.
      */
     private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
@@ -472,11 +477,13 @@ public class Colony implements IColony
                 if (getPermissions().hasPermission(sub, Action.CAN_KEEP_COLONY_ACTIVE_WHILE_AWAY))
                 {
                     this.forceLoadTimer = CHUNK_UNLOAD_DELAY;
+                    pendingChunks.addAll(pendingToUnloadChunks);
                     for (final long pending : pendingChunks)
                     {
                         checkChunkAndRegisterTicket(pending, world.getChunk(ChunkPos.getX(pending), ChunkPos.getZ(pending)));
                     }
 
+                    pendingToUnloadChunks.clear();
                     pendingChunks.clear();
                     return;
                 }
@@ -495,6 +502,7 @@ public class Colony implements IColony
                         {
                             final ChunkPos pos = new ChunkPos(chunkX, chunkZ);
                             ((ServerChunkProvider) world.getChunkSource()).removeRegionTicket(KEEP_LOADED_TYPE, pos, 2, pos);
+                            pendingToUnloadChunks.add(chunkPos);
                         }
                     }
                     ticketedChunks.clear();
@@ -1815,6 +1823,7 @@ public class Colony implements IColony
     public void removeLoadedChunk(final long chunkPos)
     {
         loadedChunks.remove(chunkPos);
+        pendingToUnloadChunks.remove(chunkPos);
     }
 
     @Override

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Message to execute the renaiming of the townHall.
+ * Message to execute the renaming of the townHall.
  */
 public class HutRenameMessage extends AbstractBuildingServerMessage<IBuilding>
 {

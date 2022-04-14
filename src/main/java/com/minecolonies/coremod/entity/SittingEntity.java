@@ -28,6 +28,7 @@ public class SittingEntity extends Entity
      * The lifetime in ticks of the entity, auto-dismounts after.
      */
     int maxLifeTime = 100;
+    private BlockPos sittingpos = BlockPos.ZERO;
 
     public SittingEntity(final EntityType<?> type, final World worldIn)
     {
@@ -151,7 +152,8 @@ public class SittingEntity extends Entity
     @Override
     public Vector3d getDismountLocationForPassenger(@NotNull final LivingEntity passenger)
     {
-        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level, this.blockPosition());
+        final BlockPos start = sittingpos == BlockPos.ZERO ? blockPosition().above() : sittingpos;
+        final BlockPos spawn = EntityUtils.getSpawnPoint(this.level, start);
         if (spawn == null)
         {
             return super.getDismountLocationForPassenger(passenger);
@@ -167,6 +169,16 @@ public class SittingEntity extends Entity
     public void setMaxLifeTime(final int maxLifeTime)
     {
         this.maxLifeTime = maxLifeTime;
+    }
+
+    /**
+     * Sets the original block to sit "at" also used for standing up again.
+     *
+     * @param pos
+     */
+    public void setSittingPos(final BlockPos pos)
+    {
+        sittingpos = pos;
     }
 
     /**
@@ -206,6 +218,7 @@ public class SittingEntity extends Entity
 
         sittingEntity.setPos(pos.getX() + 0.5f, (pos.getY() + minY) - entity.getBbHeight() / 2, pos.getZ() + 0.5f);
         sittingEntity.setMaxLifeTime(maxLifeTime);
+        sittingEntity.setSittingPos(pos);
         entity.level.addFreshEntity(sittingEntity);
         entity.startRiding(sittingEntity);
         entity.getNavigation().stop();

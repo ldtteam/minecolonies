@@ -92,13 +92,20 @@ public class CitizenChatHandler implements ICitizenChatHandler
             requiredItem = new TranslationTextComponent(key, msg);
         }
 
+        sendLocalizedChat(requiredItem);
+    }
+
+    @Override
+    public void sendLocalizedChat(ITextComponent component)
+    {
         final ITextComponent citizenDescription = new StringTextComponent(citizen.getCustomName().getString());
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
             final StringTextComponent colonyDescription = new StringTextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
             final List<PlayerEntity> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
-            final PlayerEntity owner =
-              ServerUtils.getPlayerFromUUID(CompatibilityUtils.getWorldFromCitizen(citizen), citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final PlayerEntity owner = ServerUtils.getPlayerFromUUID(
+              CompatibilityUtils.getWorldFromCitizen(citizen),
+              citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
 
             if (owner != null)
             {
@@ -107,7 +114,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
                   new StringTextComponent(" "),
                   citizenDescription,
-                  requiredItem);
+                  component);
             }
 
             LanguageHandler.sendPlayersMessage(players,
@@ -115,7 +122,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
               new StringTextComponent(" "),
               citizenDescription,
               colonyDescription,
-              requiredItem);
+              component);
         }
     }
 }

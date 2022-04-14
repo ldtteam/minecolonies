@@ -7,12 +7,14 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenSkillHandler;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.ExperienceUtils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MAX_CITIZEN_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -30,11 +33,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class CitizenSkillHandler implements ICitizenSkillHandler
 {
-    /**
-     * Chance to level up intelligence.
-     */
-    private static final int CHANCE_TO_LEVEL = 50;
-
     /**
      * Skill map.
      */
@@ -181,9 +179,9 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         final IBuilding home = data.getHomeBuilding();
 
         final double citizenHutLevel = home == null ? 0 : home.getBuildingLevel();
-        final double citizenHutMaxLevel = home == null ? 5 : home.getMaxBuildingLevel();
+        final double citizenHutMaxLevel = home == null ? MAX_BUILDING_LEVEL : home.getMaxBuildingLevel();
 
-        if ((citizenHutLevel < citizenHutMaxLevel && citizenHutLevel * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
+        if (((citizenHutLevel < citizenHutMaxLevel || citizenHutMaxLevel < MAX_BUILDING_LEVEL) && (citizenHutLevel + 1) * 10 <= level) || level >= MAX_CITIZEN_LEVEL)
         {
             return;
         }
@@ -247,6 +245,7 @@ public class CitizenSkillHandler implements ICitizenSkillHandler
         if (data.getEntity().isPresent())
         {
             final AbstractEntityCitizen citizen = data.getEntity().get();
+            citizen.playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(citizen.getRandom()));
             Network.getNetwork()
               .sendToTrackingEntity(new VanillaParticleMessage(citizen.getX(), citizen.getY(), citizen.getZ(), ParticleTypes.HAPPY_VILLAGER),
                 data.getEntity().get());
