@@ -59,7 +59,7 @@ public class MaleCourierModel extends CitizenModel<AbstractEntityCitizen>
     @Override
     public float getActualRotation(@NotNull final AbstractEntityCitizen entity)
     {
-        return 0.1745F;
+        return entity.getPose() == Pose.SLEEPING || !entity.getRenderMetadata().contains(RENDER_META_BACKPACK) ? 0 : 0.1745F;
     }
 
     @Override
@@ -70,8 +70,6 @@ public class MaleCourierModel extends CitizenModel<AbstractEntityCitizen>
 
         final boolean showBackPack = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_BACKPACK);
         head.z = showBackPack ? -2.1f : 0;
-        head.getChild("Ponytail").xRot = showBackPack ? 0.48f : 0.1f;
-        head.getChild("Ponytail").z = showBackPack ? 4.9f : 3f;
         body.getChild("backpack").visible = showBackPack;
         leftArm.y = showBackPack ? 2f : 2.5f;
         rightArm.y = showBackPack ? 2f : 2.5f;
