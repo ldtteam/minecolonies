@@ -120,5 +120,6 @@ public class FemaleMinerModel extends CitizenModel<AbstractEntityCitizen>
         backpack.getChild("pick").visible = entity.getRenderMetadata().contains(RENDER_META_PICKAXE);
 
         head.getChild("glasses").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        backpack.visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
     }
 }

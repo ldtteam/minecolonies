@@ -116,6 +116,11 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
     private List<Tuple<String, BlockPos>> builders = new ArrayList<>();
 
     /**
+     * Update delay.
+     */
+    private int tick;
+
+    /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
      * @param c        the colony view.
@@ -289,6 +294,8 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
+        tick = 20;
+
         if (stylesDropDownList.getSelectedIndex() == -1)
         {
             return;
@@ -490,6 +497,16 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         updateStyles();
         updateBuilders();
         updateResources();
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+        if (resources.isEmpty() && tick > 0 && --tick == 0)
+        {
+            updateResources();
+        }
     }
 
     public void updateResourceList()

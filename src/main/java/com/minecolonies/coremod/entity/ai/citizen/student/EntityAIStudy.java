@@ -57,6 +57,12 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     }
 
     @Override
+    protected void updateRenderMetaData()
+    {
+
+    }
+
+    @Override
     public Class<BuildingLibrary> getExpectedBuildingClass()
     {
         return BuildingLibrary.class;

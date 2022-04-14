@@ -10,6 +10,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import org.jetbrains.annotations.NotNull;
 
 public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -50,7 +51,7 @@ public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
         PartDefinition bipedLeftArm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(48, 48).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.5F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
-        PartDefinition rightFoldedArm = partdefinition.addOrReplaceChild("rightFoldedArm", CubeListBuilder.create(), PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
+        PartDefinition rightFoldedArm = bipedBody.addOrReplaceChild("rightFoldedArm", CubeListBuilder.create(), PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
 
         PartDefinition rightShoulder = rightFoldedArm.addOrReplaceChild("rightShoulder", CubeListBuilder.create().texOffs(56, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(72, 16).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.0472F, 0.0F, 0.0F));
@@ -58,7 +59,7 @@ public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
         PartDefinition rightForeArm = rightFoldedArm.addOrReplaceChild("rightForeArm", CubeListBuilder.create().texOffs(88, 16).addBox(-2.01F, -0.6F, -2.3F, 8.0F, 4.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(88, 24).addBox(-2.01F, -0.6F, -2.3F, 8.0F, 4.0F, 4.0F, new CubeDeformation(0.251F)), PartPose.offsetAndRotation(-1.0F, 2.5F, -3.8F, -1.0472F, 0.0F, 0.0F));
 
-        PartDefinition leftFoldedArm = partdefinition.addOrReplaceChild("leftFoldedArm", CubeListBuilder.create(), PartPose.offsetAndRotation(5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
+        PartDefinition leftFoldedArm = bipedBody.addOrReplaceChild("leftFoldedArm", CubeListBuilder.create(), PartPose.offsetAndRotation(5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
 
         PartDefinition leftShoulder = leftFoldedArm.addOrReplaceChild("leftShoulder", CubeListBuilder.create().texOffs(56, 26).mirror().addBox(-1.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false)
           .texOffs(72, 26).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.0472F, 0.0F, 0.0F));
@@ -73,5 +74,11 @@ public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
           .texOffs(0, 48).addBox(-1.94F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.591F)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 64);
+    }
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 }
