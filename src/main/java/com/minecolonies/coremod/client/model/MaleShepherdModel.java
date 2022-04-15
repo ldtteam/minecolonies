@@ -91,5 +91,6 @@ public class MaleShepherdModel extends CitizenModel<AbstractEntityCitizen>
         body.getChild("FoldedRightArm").visible = showPole;
         rightArm.visible = !showPole;
         head.getChild("straw").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("Cap").visible = entity.getPose() != Pose.SLEEPING;
     }
 }

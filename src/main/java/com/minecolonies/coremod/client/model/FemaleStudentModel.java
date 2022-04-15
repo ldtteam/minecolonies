@@ -59,7 +59,7 @@ public class FemaleStudentModel extends CitizenModel<AbstractEntityCitizen>
         PartDefinition bipedLeftArm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(48, 48).addBox(-1.0F, -2.03F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.45F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
-        PartDefinition rightFoldedArm = partdefinition.addOrReplaceChild("rightFoldedArm", CubeListBuilder.create(), PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
+        PartDefinition rightFoldedArm = bipedBody.addOrReplaceChild("rightFoldedArm", CubeListBuilder.create(), PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
 
         PartDefinition rightShoulder = rightFoldedArm.addOrReplaceChild("rightShoulder", CubeListBuilder.create().texOffs(56, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(72, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.0472F, 0.0F, 0.0F));
