@@ -81,9 +81,11 @@ public final class ItemStackUtils
     private static final int SILK_TOUCH_ENCHANT_ID = 33;
 
     /**
-     * Predicate describing food.
+     * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
-    public static Predicate<ItemStack> ISFOOD;
+    public static final Predicate<ItemStack> ISFOOD =
+      stack -> ItemStackUtils.isNotEmpty(stack) && stack.isEdible() && stack.getItem().getFoodProperties() != null && stack.getItem().getFoodProperties().getNutrition() > 0
+                 && stack.getItem().getFoodProperties().getSaturationModifier() > 0;
 
     /**
      * Predicate describing things which work in the furnace.
@@ -338,6 +340,7 @@ public final class ItemStackUtils
 
     /**
      * Check if the first stack is a better tool than the second stack.
+     *
      * @param stack1 the first stack to check.
      * @param stack2 the second to compare with.
      * @return true if better, false if worse or either of them is not a tool.
@@ -348,7 +351,7 @@ public final class ItemStackUtils
         {
             if (isTool(stack1, toolType) && isTool(stack2, toolType) && getMiningLevel(stack1, toolType) > getMiningLevel(stack2, toolType))
             {
-                 return true;
+                return true;
             }
         }
         return false;
@@ -596,29 +599,6 @@ public final class ItemStackUtils
         return fortune;
     }
 
-    public static boolean hasSilkTouch(@Nullable final ItemStack tool)
-    {
-        if (tool == null)
-        {
-            return false;
-        }
-        boolean hasSilk = false;
-        if (tool.isEnchanted())
-        {
-            final ListNBT t = tool.getEnchantmentTags();
-
-            for (int i = 0; i < t.size(); i++)
-            {
-                final int id = t.getCompound(i).getShort(NBT_TAG_ENCHANT_ID);
-                if (id == SILK_TOUCH_ENCHANT_ID)
-                {
-                    hasSilk = true;
-                }
-            }
-        }
-        return hasSilk;
-    }
-
     /**
      * Checks if an item serves as a weapon.
      *
@@ -741,7 +721,6 @@ public final class ItemStackUtils
         return stack.getMaxDamage() - stack.getDamageValue();
     }
 
-
     /**
      * Method to compare to stacks, ignoring their stacksize.
      *
@@ -802,18 +781,18 @@ public final class ItemStackUtils
                 CompoundNBT nbt1 = itemStack1.getTag();
                 CompoundNBT nbt2 = itemStack2.getTag();
 
-                for(String key :nbt1.getAllKeys())
+                for (String key : nbt1.getAllKeys())
                 {
-                    if(!matchDamage && key.equals("Damage"))
+                    if (!matchDamage && key.equals("Damage"))
                     {
                         continue;
                     }
-                    if(!nbt2.contains(key) || !nbt1.get(key).equals(nbt2.get(key)))
+                    if (!nbt2.contains(key) || !nbt1.get(key).equals(nbt2.get(key)))
                     {
                         return false;
                     }
                 }
-                
+
                 return nbt1.getAllKeys().size() == nbt2.getAllKeys().size();
             }
             else
@@ -946,6 +925,7 @@ public final class ItemStackUtils
 
     /**
      * Convert an Item string with NBT to an ItemStack
+     *
      * @param itemData ie: minecraft:potion{Potion=minecraft:water}
      * @return stack with any defined NBT
      */
@@ -956,11 +936,11 @@ public final class ItemStackUtils
         final String tag = tagIndex > 0 ? itemId.substring(tagIndex) : null;
         itemId = tagIndex > 0 ? itemId.substring(0, tagIndex) : itemId;
         String[] split = itemId.split(":");
-        if(split.length != 2)
+        if (split.length != 2)
         {
-            if(split.length == 1)
+            if (split.length == 1)
             {
-                final String[] tempArray ={"minecraft", split[0]};
+                final String[] tempArray = {"minecraft", split[0]};
                 split = tempArray;
             }
             else
@@ -1004,7 +984,10 @@ public final class ItemStackUtils
         // plus all items from the player's inventory not already listed (adds items with extra NBT)
         for (final ItemStack stack : player.inventory.items)
         {
-            if (stack.isEmpty()) continue;
+            if (stack.isEmpty())
+            {
+                continue;
+            }
 
             ItemStack pristine = stack;
             if (stack.isDamageableItem() && stack.isDamaged())

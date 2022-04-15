@@ -22,6 +22,7 @@ import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,18 +92,18 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
         if (data != null && data.getJob() instanceof AbstractJobStructure)
         {
             final AbstractJobStructure<?, ?> structureBuilderJob = (AbstractJobStructure<?, ?>) data.getJob();
-            final IWorkOrder workOrderDecoration = structureBuilderJob.getWorkOrder();
-            if (workOrderDecoration != null)
+            final IWorkOrder workOrder = structureBuilderJob.getWorkOrder();
+            if (workOrder != null)
             {
-                buf.writeUtf(workOrderDecoration.getDisplayName().getContents());
-                buf.writeDouble(workOrderDecoration.getAmountOfResources() == 0 ? 0 : qty / workOrderDecoration.getAmountOfResources());
+                buf.writeComponent(workOrder.getDisplayName());
+                buf.writeDouble(workOrder.getAmountOfResources() == 0 ? 0 : qty / workOrder.getAmountOfResources());
                 buf.writeInt(totalStages);
                 buf.writeInt(currentStage);
                 return;
             }
         }
 
-        buf.writeUtf("");
+        buf.writeComponent(new StringTextComponent(""));
         buf.writeDouble(0.0);
         buf.writeInt(0);
         buf.writeInt(0);
