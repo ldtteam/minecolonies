@@ -9,7 +9,10 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 public class MaleHealerModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -119,5 +122,8 @@ public class MaleHealerModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        head.getChild("Hat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("plagueMask").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        body.getChild("bag").visible = entity.getPose() != Pose.SLEEPING  && entity.getRenderMetadata().contains(RENDER_META_WORKING);
     }
 }

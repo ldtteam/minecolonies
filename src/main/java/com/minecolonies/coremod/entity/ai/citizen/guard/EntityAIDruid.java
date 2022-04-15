@@ -14,6 +14,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 
 /**
@@ -22,10 +23,26 @@ import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POT
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuildingGuards>
 {
+    /**
+     * Potion meta data.
+     */
+    public static final String RENDER_META_POTION = "potion";
+
     public EntityAIDruid(@NotNull final JobDruid job)
     {
         super(job);
         new DruidCombatAI((EntityCitizen) worker, getStateAI(), this);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.POTION))
+        {
+            renderMeta += RENDER_META_POTION;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override

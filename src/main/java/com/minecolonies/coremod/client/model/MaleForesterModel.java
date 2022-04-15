@@ -9,6 +9,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.RENDER_META_LOGS;
@@ -101,5 +102,6 @@ public class MaleForesterModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         body.getChild("LogPack").getChild("Logs").visible = entity.getRenderMetadata().contains(RENDER_META_LOGS);
+        head.getChild("WoodsmanHat").visible = entity.getPose() != Pose.SLEEPING;
     }
 }

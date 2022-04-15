@@ -9,6 +9,10 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
+import static com.minecolonies.coremod.entity.ai.citizen.guard.EntityAIDruid.RENDER_META_POTION;
 
 public class FemaleDruidModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -106,5 +110,12 @@ public class FemaleDruidModel extends CitizenModel<AbstractEntityCitizen>
           .texOffs(0, 48).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(1.9F, 12.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 64);
+    }
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        body.getChild("potionSatchet").visible = entity.getRenderMetadata().contains(RENDER_META_POTION) && entity.getRenderMetadata().contains(RENDER_META_WORKING);
     }
 }

@@ -70,10 +70,4 @@ public class FemaleConcreteMixerModel extends CitizenModel<AbstractEntityCitizen
 
         return LayerDefinition.create(meshdefinition, 128, 64);
     }
-
-    @Override
-    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
-    {
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-    }
 }

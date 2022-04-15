@@ -9,6 +9,11 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.world.entity.Pose;
+import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
+import static com.minecolonies.coremod.entity.ai.citizen.florist.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 
 public class MaleFloristModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -82,4 +87,18 @@ public class MaleFloristModel extends CitizenModel<AbstractEntityCitizen>
 
 		return LayerDefinition.create(meshdefinition, 128, 64);
 	}
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        final boolean working = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+
+        body.getChild("apronBody").visible = working;
+        leftLeg.getChild("apronLeftLeg").visible = working;
+        rightLeg.getChild("apronRightLeg").visible = working;
+
+        head.getChild("WoodsmanHat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("WoodsmanHat").getChild("flowers").visible = entity.getRenderMetadata().contains(RENDER_META_FLOWERS);
+    }
 }
