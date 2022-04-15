@@ -18,6 +18,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker;
@@ -194,6 +195,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             }
             return NETHER_AWAY;
         }
+
         if (worker.isInvisible())
         {
             returnFromVault();
@@ -220,8 +222,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             }
         }
 
-        //todo report if portal location is off
-        //todo check if we don't have enough ladders or so.
+        final BlockPos portal = getOwnBuilding().getPortalLocation();
+        if (portal == null)
+        {
+            Log.getLogger().warn("--- Missing Portal Tag In Nether Worker Building! Aborting Operation! ---");
+            return IDLE;
+        }
 
         // Make sure we have a stash of some food 
         checkAndRequestFood(16);
@@ -248,7 +254,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 worker.getCitizenData().setIdleAtJob(true);
             }
 
-            final BlockPos portal = getOwnBuilding().getPortalLocation();
             if(portal != null && currentRecipeStorage == null && getOwnBuilding().shallClosePortalOnReturn())
             {
                 final BlockState block = world.getBlockState(portal);
@@ -757,7 +762,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             {
                 return true;
             }
-            checkIfRequestForItemExistOrCreateAsync(new ItemStack(item.getItem(), count - (itemsInInv + itemsInBuilding)), count, count - (itemsInInv + itemsInBuilding));
+            checkIfRequestForItemExistOrCreateAsync(new ItemStack(item.getItem(), 1), count - itemsInInv, count - itemsInInv);
             return false;
         }
         return true;
@@ -799,7 +804,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return;
         }
 
-        if(InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> edible.matches(item)) < itemCount)
+        if(InventoryUtils.getItemCountInProvider(getOwnBuilding(), edible::matches) < itemCount)
         {
             if (!getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
