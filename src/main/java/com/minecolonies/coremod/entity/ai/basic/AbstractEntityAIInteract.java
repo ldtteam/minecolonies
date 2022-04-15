@@ -9,15 +9,15 @@ import com.minecolonies.api.util.MathUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -179,21 +179,15 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             //calculate fortune enchantment
             final int fortune = ItemStackUtils.getFortuneOf(tool);
 
-            //check if tool has Silk Touch
-            final boolean silkTouch = ItemStackUtils.hasSilkTouch(tool);
-
             //create list for all item drops to be stored in
             List<ItemStack> localItems = new ArrayList<ItemStack>();
 
             //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
-            if (silkTouch || shouldSilkTouchBlock(curBlockState))
+            if (shouldSilkTouchBlock(curBlockState))
             {
-                //Stores Silk Touch Block in localItems
-                final ItemStack silkItem = curBlockState.getBlock().getCloneItemStack(world, blockToMine,curBlockState);
-                if (!ItemStackUtils.isEmpty(silkItem))
-                {
-                    localItems.add(silkItem);
-                }
+                final ItemStack fakeTool = tool.copy();
+                fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
+                localItems.addAll(BlockPosUtil.getBlockDrops(world, blockToMine, fortune, fakeTool, worker));
             }
             //If Silk Touch doesn't work, get blocks with Fortune value as normal.
             else
