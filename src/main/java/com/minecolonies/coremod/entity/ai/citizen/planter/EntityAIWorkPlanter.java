@@ -5,6 +5,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
@@ -198,18 +200,25 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         if (isItemPositionAir(plantableSoilPos))
         {
             final Item currentItem = plantableSoilPos.getCombination().getItem();
-            final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(new ItemStack(currentItem)));
-            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(new ItemStack(currentItem)));
+            final ItemStack currentStack = new ItemStack(currentItem);
 
             if (!availablePlants.contains(currentItem))
             {
                 return START_WORKING;
             }
 
-            if (plantInBuilding + plantInInv <= 0)
+            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
+            final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(currentStack));
+            if (plantInInv + plantInBuilding <= 0)
             {
                 requestPlantable(currentItem);
                 return START_WORKING;
+            }
+
+            if (plantInInv == 0 && plantInBuilding > 0)
+            {
+                needsCurrently = new Tuple<>(itemStack -> itemStack.sameItem(currentStack), Math.min(plantInBuilding, PLANT_TO_REQUEST));
+                return GATHERING_REQUIRED_MATERIALS;
             }
 
             return PLANTATION_PLANT;
@@ -279,7 +288,14 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         final BuildingPlantation plantation = getOwnBuilding();
         final List<BuildingPlantation.PlantationSoilPosition> soilPositions = plantation.getAllSoilPositions();
-        int soilPositionIndex = worker.getRandom().nextInt(soilPositions.size());
+
+        if (soilPositions.isEmpty())
+        {
+            Log.getLogger().warn("Planter building returned 0 available soil positions, schematic is " + plantation.getSchematicName() + ", please report this to the developer!");
+            return START_WORKING;
+        }
+
+        final int soilPositionIndex = worker.getRandom().nextInt(soilPositions.size());
 
         plantableSoilPos = soilPositions.get(soilPositionIndex);
         return PLANTATION_MOVE_TO_SOIL;
