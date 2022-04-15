@@ -370,8 +370,7 @@ public class CitizenWindowUtils
                 return;
             }
 
-            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(new TranslationTextComponent(LABEL_CITIZEN_JOB,
-              LanguageHandler.format(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(new TranslationTextComponent(LABEL_CITIZEN_JOB, new TranslationTextComponent(citizen.getJob())));
             windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(new TranslationTextComponent(DESCRIPTION_CITIZEN_JOB));
 
             final Skill primary = moduleView.getPrimarySkill();

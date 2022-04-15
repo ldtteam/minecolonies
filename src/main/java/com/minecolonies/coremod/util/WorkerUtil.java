@@ -2,7 +2,6 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
@@ -29,7 +28,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +38,8 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
 import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_MINE_NODE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_NODES;
 
 /**
  * Utility methods for BlockPos.
@@ -305,12 +306,10 @@ public final class WorkerUtil
                 final BlockState BlockState = world.getBlockState(levelSignPos);
                 final SignTileEntity teLevelSign = (SignTileEntity) te;
 
-                teLevelSign.setMessage(0, new StringTextComponent(TextFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId)));
-                teLevelSign.setMessage(1, new StringTextComponent(TextFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
-                teLevelSign.setMessage(2, new StringTextComponent(TextFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes())));
-                teLevelSign.setMessage(3, new StringTextComponent(TextFormatting.stripFormatting("")));
+                teLevelSign.setMessage(0, new TranslationTextComponent(MINER_MINE_NODE).append(": " + levelId));
+                teLevelSign.setMessage(1, new StringTextComponent("Y: " + (level.getDepth() + 1)));
+                teLevelSign.setMessage(2, new TranslationTextComponent(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.setMessage(3, new StringTextComponent(""));
 
                 teLevelSign.setChanged();
                 world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);

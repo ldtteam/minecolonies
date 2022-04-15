@@ -4,7 +4,6 @@ import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -22,13 +21,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_SHIP_IN_WATER;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * BuildTool window.
@@ -152,14 +152,14 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
-            MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, "item.supply.badblocks");
+            MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_SUPPLY_BUILDING_BAD_BLOCKS);
 
             for (final PlacementError error : placementErrorList)
             {
                 HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
                   .setPos(error.getPos())
                   .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
-                  .addText(LanguageHandler.translateKey("item.supply.error." + error.getType().toString().toLowerCase()))
+                  .addText(new TranslationTextComponent(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0xFF0000));
             }
         }

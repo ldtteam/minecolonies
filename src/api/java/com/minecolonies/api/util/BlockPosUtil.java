@@ -21,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -705,39 +707,49 @@ public final class BlockPosUtil
      *
      * @param building the building.
      * @param pos      the position.
-     * @return a string describing the direction.
+     * @return a text component describing the direction.
      */
-    public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
+    public static ITextComponent calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
     {
-        final StringBuilder dist = new StringBuilder();
+        IFormattableTextComponent compoment = null;
 
-        if (pos.getZ() > building.getZ() + 1)
+        if (pos.getZ() > building.getZ() + 1 && pos.getX() > building.getX() + 1)
         {
-            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH));
+            compoment = new TranslationTextComponent(DIRECTION_SOUTH);
         }
         else if (pos.getZ() < building.getZ() - 1)
         {
-            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH));
+            compoment = new TranslationTextComponent(DIRECTION_NORTH);
         }
 
         if (pos.getX() > building.getX() + 1)
         {
-            if (!dist.toString().isEmpty())
+            if (compoment != null)
             {
-                dist.append('/');
+                compoment
+                  .append("/")
+                  .append(new TranslationTextComponent(DIRECTION_EAST));
             }
-            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST));
+            else
+            {
+                compoment = new TranslationTextComponent(DIRECTION_EAST);
+            }
         }
         else if (pos.getX() < building.getX() - 1)
         {
-            if (!dist.toString().isEmpty())
+            if (compoment != null)
             {
-                dist.append('/');
+                compoment
+                  .append("/")
+                  .append(new TranslationTextComponent(DIRECTION_WEST));
             }
-            dist.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST));
+            else
+            {
+                compoment = new TranslationTextComponent(DIRECTION_WEST);
+            }
         }
 
-        return dist.toString();
+        return compoment;
     }
 
     /**

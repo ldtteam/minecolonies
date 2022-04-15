@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui.citizen;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -9,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
@@ -17,9 +17,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -152,11 +152,10 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
 
             if (slot == -1)
             {
-                final ITextComponent chatMessage = new StringTextComponent("<" + citizen.getName() + "> " +
-                                                                             LanguageHandler.format(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .setStyle(Style.EMPTY.withBold(false).withColor(TextFormatting.WHITE)
-                                                     );
-                Minecraft.getInstance().player.sendMessage(chatMessage, Minecraft.getInstance().player.getUUID());
+                final ITextComponent chatMessage = new TranslationTextComponent("<%s> ")
+                                                     .append(new TranslationTextComponent(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
+                                                     .setStyle(Style.EMPTY.withBold(false).withColor(TextFormatting.WHITE));
+                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, chatMessage);
 
                 return; // We don't have one that isn't in our armour slot
             }
