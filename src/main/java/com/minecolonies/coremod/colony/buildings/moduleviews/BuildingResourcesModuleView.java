@@ -5,8 +5,9 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
     /**
      * The building he is working on.
      */
-    private String constructionName;
+    private Component constructionName;
 
     /**
      * Building progress.
@@ -55,7 +56,7 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
             resources.put(key, resource);
         }
 
-        constructionName = buf.readUtf(32767);
+        constructionName = buf.readComponent();
         progress = buf.readDouble();
         totalStages = buf.readInt();
         finishedStages = buf.readInt();
@@ -66,7 +67,7 @@ public class BuildingResourcesModuleView extends AbstractBuildingModuleView
      *
      * @return a string describing it.
      */
-    public String getConstructionName()
+    public Component getConstructionName()
     {
         return constructionName;
     }
