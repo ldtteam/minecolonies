@@ -40,6 +40,7 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEve
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.SittingEntity;
+import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.ai.minimal.*;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
@@ -1717,6 +1718,16 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         if (!level.isClientSide && entity instanceof AbstractEntityCitizen)
         {
             getCitizenDiseaseHandler().onCollission((AbstractEntityCitizen) entity);
+        }
+    }
+
+    @Override
+    public void onPlayerCollide(final Player player)
+    {
+        super.onPlayerCollide(player);
+        if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
+        {
+            ((AbstractEntityAIBasic) citizenJobHandler.getColonyJob().getWorkerAI()).setDelay(TICKS_SECOND * 10);
         }
     }
 
