@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.sounds.EventType.SUCCESS;
 import static com.minecolonies.api.util.SoundUtils.playSoundAtCivilian;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, IStuckHandlerEntity
 {
@@ -103,7 +104,7 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     {
         if (player.level.getGameTime() > nextPlayerCollisionTime)
         {
-            nextPlayerCollisionTime = player.level.getGameTime() + 20 * 15;
+            nextPlayerCollisionTime = player.level.getGameTime() + TICKS_SECOND * 15;
             getNavigation().stop();
             getLookControl().setLookAt(player);
 
