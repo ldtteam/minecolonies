@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.sounds.EventType.INTERACTION;
+import static com.minecolonies.api.sounds.EventType.SUCCESS;
 import static com.minecolonies.api.util.SoundUtils.playSoundAtCivilian;
 
 public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, IStuckHandlerEntity
@@ -24,6 +24,8 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
      * Whether this entity can be stuck for stuckhandling
      */
     private boolean canBeStuck = true;
+
+    protected long nextPlayerCollisionTime = 0;
 
     protected AbstractCivilianEntity(final EntityType<? extends AgeableMob> type, final Level worldIn)
     {
@@ -96,12 +98,13 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
      */
     public void onPlayerCollide(final Player player)
     {
-        if (getNavigation().getPath() != null)
+        if (player.level.getGameTime() > nextPlayerCollisionTime)
         {
+            nextPlayerCollisionTime = player.level.getGameTime() + 20 * 15;
             getNavigation().stop();
             getLookControl().setLookAt(player);
 
-            playSoundAtCivilian(level, blockPosition(), INTERACTION, getCivilianData());
+            playSoundAtCivilian(level, blockPosition(), SUCCESS, getCivilianData());
         }
     }
 
