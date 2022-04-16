@@ -25,6 +25,9 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
      */
     private boolean canBeStuck = true;
 
+    /**
+     * Time after which the next player collision is possible
+     */
     protected long nextPlayerCollisionTime = 0;
 
     protected AbstractCivilianEntity(final EntityType<? extends AgeableMob> type, final Level worldIn)
