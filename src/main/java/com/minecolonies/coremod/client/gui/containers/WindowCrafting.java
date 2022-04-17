@@ -129,8 +129,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button
-          doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
+        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
         if (!module.canLearnRecipe(ICraftingBuildingModule.CrafingType.CRAFTING))
         {
