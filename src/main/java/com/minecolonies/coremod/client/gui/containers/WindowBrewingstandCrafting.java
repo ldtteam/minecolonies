@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
+import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -20,6 +18,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -31,9 +30,9 @@ import java.util.List;
 /**
  * Furnace crafting gui.
  */
-public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurnace>
+public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftingBrewingstand>
 {
-    private static final ResourceLocation CRAFTING_FURNACE = new ResourceLocation(Constants.MOD_ID, "textures/gui/furnace.png");
+    private static final ResourceLocation BREWING_STAND_LOCATION = new ResourceLocation("textures/gui/container/brewing_stand.png");
 
     /**
      * X offset of the button.
@@ -58,7 +57,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     /**
      * The building the window belongs to.
      */
-    private final ContainerCraftingFurnace container;
+    private final ContainerCraftingBrewingstand container;
 
     /**
      * The building assigned to this.
@@ -77,7 +76,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
      * @param playerInventory the player inv.
      * @param iTextComponent  the display text component.
      */
-    public WindowFurnaceCrafting(final ContainerCraftingFurnace container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
+    public WindowBrewingstandCrafting(final ContainerCraftingBrewingstand container, final PlayerInventory playerInventory, final ITextComponent iTextComponent)
     {
         super(container, playerInventory, iTextComponent);
         this.container = container;
@@ -95,13 +94,13 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
+        if (!module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING))
         {
             doneButton.active = false;
         }
@@ -112,15 +111,21 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
+            if (module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING))
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));
-                final ItemStack primaryOutput = container.slots.get(1).getItem().copy();
+                input.add(new ItemStorage(container.slots.get(1).getItem()));
+                input.add(new ItemStorage(container.slots.get(2).getItem()));
+                input.add(new ItemStorage(container.slots.get(3).getItem()));
+
+                final ItemStack
+                  primaryOutput = net.minecraftforge.common.brewing.BrewingRecipeRegistry.getOutput(container.slots.get(3).getItem(), container.slots.get(0).getItem()).copy();
+                primaryOutput.setCount(3);
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.FURNACE, module.getId()));
+                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, 1, primaryOutput, false, Blocks.BREWING_STAND, module.getId()));
                 }
             }
         }
@@ -129,19 +134,23 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     /**
      * Draws the background layer of this container (behind the items).
      */
-    @Override
-    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
-    {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bind(CRAFTING_FURNACE);
-        this.blit(stack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-    }
-
-    @Override
     public void render(@NotNull final MatrixStack stack, int x, int y, float z)
     {
         this.renderBackground(stack);
         super.render(stack, x, y, z);
         this.renderTooltip(stack, x, y);
+    }
+
+    protected void renderBg(@NotNull final MatrixStack stack, final float partialTicks, final int mouseX, final int mouseY)
+    {
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bind(BREWING_STAND_LOCATION);
+        int i = (this.width - this.imageWidth) / 2;
+        int j = (this.height - this.imageHeight) / 2;
+        this.blit(stack, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        int l = MathHelper.clamp((20 - 1) / 20, 0, 18);
+        if (l > 0) {
+            this.blit(stack, i + 60, j + 44, 176, 29, l, 4);
+        }
     }
 }

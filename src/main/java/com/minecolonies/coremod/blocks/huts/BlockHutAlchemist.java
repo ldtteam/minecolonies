@@ -5,21 +5,18 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Block of the Archers trainings camp.
- */
-public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
+public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist>
 {
     @NotNull
     @Override
     public String getHutName()
     {
-        return "blockhutarchery";
+        return "blockhutalchemist";
     }
 
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.archery;
+        return ModBuildings.alchemist;
     }
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -17,8 +18,10 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_BAKER;
@@ -122,10 +125,12 @@ public class BuildingBaker extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnCraftingRecipes()
+        public Set<CrafingType> getSupportedRecipeTypes()
         {
-            if (building == null) return true;  // because it can learn at *some* level
-            return building.getBuildingLevel() >= 3;
+            if (building == null)
+                return ImmutableSet.of(CrafingType.CRAFTING);  // because it can learn at *some* level
+
+            return building.getBuildingLevel() >= 3 ? ImmutableSet.of(CrafingType.CRAFTING) : Collections.emptySet();
         }
 
         @Override
@@ -177,10 +182,12 @@ public class BuildingBaker extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnFurnaceRecipes()
+        public Set<CrafingType> getSupportedRecipeTypes()
         {
-            if (building == null) return true;  // because it can learn at *some* level
-            return building.getBuildingLevel() >= 3;
+            if (building == null)
+                return ImmutableSet.of(CrafingType.SMELTING);  // because it can learn at *some* level
+
+            return building.getBuildingLevel() >= 3 ? ImmutableSet.of(CrafingType.SMELTING) : Collections.emptySet();
         }
     }
 }

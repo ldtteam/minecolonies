@@ -1968,6 +1968,8 @@
   "item.minecolonies.sifter_mesh_flint": "Flint Mesh",
   "item.minecolonies.sifter_mesh_iron": "Iron Mesh",
   "item.minecolonies.sifter_mesh_diamond": "Diamond Mesh",
+  "block.minecolonies.blockhutalchemist": "Alchemist Tower",
+  "block.minecolonies.blockhutalchemist.name": "Alchemist Tower",
 
   "com.minecolonies.coremod.gui.maintab": "Main",
   "com.minecolonies.coremod.setting.minecolonies:producedirt": "Produce Dirt:",
@@ -2083,6 +2085,7 @@
   "com.minecolonies.job.cookassistant": "Assistant Cook",
   "com.minecolonies.job.smelter": "Smelter",
   "com.minecolonies.job.druid": "Druid",
+  "com.minecolonies.job.alchemist": "Alchemist Laboratory",
 
   "com.minecolonies.building.miner": "Mine",
   "com.minecolonies.building.farmer": "Farm",
@@ -2130,6 +2133,7 @@
   "com.minecolonies.building.sifter": "Sifter",
   "com.minecolonies.building.enchanter": "Enchanter's Tower",
   "com.minecolonies.building.composter": "Composter's Hut",
+  "com.minecolonies.building.alchemist": "Alchemist Laboratory",
 
   "com.minecolonies.coremod.gui.chat.potatogod": "I used to be just Jack then I made a bet with the Devil.. What was his name?.. 'Ray', I think. Anyways, being a cactus has.. interrupted my relationships. I've been wandering these lands for as long as I can remember. Then finally, I saw your pathetic village and thought 'hmm.. someone that lame could definitely use my help!'",
   "com.minecolonies.coremod.recruit.message.custom": "%s has decided to stay in your colony as a citizen! They quickly switched out of their travellers gear into some new clothes to fit in!",
@@ -2195,6 +2199,7 @@
   "minecolonies:smelter.job.desc": "Breaks ore blocks into raw ore and smelts raw ores into ingots.",
   "minecolonies:druid.job.desc": "Support type unit. Buffs friendlies and nerfs enemies.",
   "minecolonies:netherworker.job.desc": "Wanders into the Nether to gather a wide range of materials. A very dangerous job!.",
+  "minecolonies:alchemist.job.desc": "Brews Potions, plants Netherwart and harvests Mistletoes",
 
   "minecolonies:builder.skills.desc": "Affects placement and breaking speed.",
   "minecolonies:deliveryman.skills.desc": "Affects walking speed and concurrent request fulfillment capacity.",
@@ -2240,6 +2245,7 @@
   "minecolonies:smelter.skills.desc": "Affects smelting/working speed and chance of multiplying ore.",
   "minecolonies:druid.skills.desc": "Affects accuracy and potion quality.",
   "minecolonies:netherworker.skills.desc": "Affects the survival chances and loot.",
+  "minecolonies:alchemist.skills.desc": "Affects recipe improvement chance and working speed.",
 
   "com.minecolonies.coremod.grave.lava": "Could not spawn a grave because all remains already burned.",
   "com.minecolonies.coremod.grave.water": "The citizen drowned too deep or too far away from the shore to recover their remains.",

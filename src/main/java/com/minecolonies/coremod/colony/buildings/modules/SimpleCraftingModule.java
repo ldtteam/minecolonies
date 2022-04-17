@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -7,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This module is used for the buildings that only support simple
@@ -40,8 +42,8 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     }
 
     @Override
-    public boolean canLearnLargeRecipes()
+    public Set<CrafingType> getSupportedRecipeTypes()
     {
-        return false;
+        return ImmutableSet.of(CrafingType.CRAFTING);
     }
 }

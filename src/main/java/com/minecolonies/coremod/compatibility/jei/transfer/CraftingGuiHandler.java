@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei.transfer;
 
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.containers.WindowCrafting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
@@ -49,7 +50,7 @@ public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCraftin
     @Override
     protected boolean isSupportedCraftingModule(@NotNull final CraftingModuleView moduleView)
     {
-        return moduleView.canLearnCraftingRecipes();
+        return moduleView.canLearnRecipe(ICraftingBuildingModule.CrafingType.CRAFTING);
     }
 
     @Override

@@ -622,13 +622,6 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .createBuildingEntry();
 
-        ModBuildings.simpleQuarry = new BuildingEntry.Builder()
-                                   .setBuildingBlock(ModBlocks.blockSimpleQuarry)
-                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
-                                   .addBuildingModuleProducer(() -> new QuarryModule(32), () -> MinerAssignmentModuleView::new)
-                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
-                                   .createBuildingEntry();
-
         ModBuildings.netherWorker = new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutNetherWorker)
                                     .setBuildingProducer(BuildingNetherWorker::new)
@@ -644,7 +637,14 @@ public final class ModBuildingsInitializer
                                         (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .createBuildingEntry();
-      
+
+        ModBuildings.simpleQuarry = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockSimpleQuarry)
+                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
+                                    .addBuildingModuleProducer(() -> new QuarryModule(32), () -> MinerAssignmentModuleView::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
+                                    .createBuildingEntry();
+
         ModBuildings.mediumQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockMediumQuarry)
                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
@@ -658,6 +658,12 @@ public final class ModBuildingsInitializer
                                    .addBuildingModuleProducer(QuarryModule::new, () -> MinerAssignmentModuleView::new)
                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LARGE_QUARRY_ID))
                                    .createBuildingEntry();*/
+
+        ModBuildings.alchemist = new BuildingEntry.Builder()
+                                    .setBuildingBlock(ModBlocks.blockHutAlchemist)
+                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.ALCHEMIST_ID, 5)).setBuildingViewProducer(() -> EmptyView::new)
+                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ALCHEMIST_ID))
+                                    .createBuildingEntry();
 
         reg.register(ModBuildings.archery);
         reg.register(ModBuildings.bakery);
@@ -710,5 +716,6 @@ public final class ModBuildingsInitializer
         reg.register(ModBuildings.simpleQuarry);
         reg.register(ModBuildings.mediumQuarry);
         //reg.register(ModBuildings.largeQuarry);
+        reg.register(ModBuildings.alchemist);
     }
 }

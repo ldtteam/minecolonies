@@ -86,11 +86,11 @@ public final class RecipeAnalyzer
         final List<IGenericRecipe> recipes = new ArrayList<>();
 
         // vanilla shaped and shapeless crafting recipes
-        if (crafting.canLearnCraftingRecipes())
+        if (crafting.canLearnRecipe(ICraftingBuildingModule.CrafingType.CRAFTING))
         {
             for (final IGenericRecipe recipe : vanilla.get(IRecipeType.CRAFTING))
             {
-                if (!crafting.canLearnLargeRecipes() && recipe.getGridSize() > 2) continue;
+                if (!crafting.canLearnRecipe(ICraftingBuildingModule.CrafingType.LARGE) && recipe.getGridSize() > 2) continue;
 
                 final IGenericRecipe safeRecipe = GenericRecipeUtils.filterInputs(recipe, crafting.getIngredientValidator());
                 if (!crafting.isRecipeCompatible(safeRecipe)) continue;
@@ -100,7 +100,7 @@ public final class RecipeAnalyzer
         }
 
         // vanilla furnace recipes (do we want to check smoking and blasting too?)
-        if (crafting.canLearnFurnaceRecipes())
+        if (crafting.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
         {
             for (final IGenericRecipe recipe : vanilla.get(IRecipeType.SMELTING))
             {

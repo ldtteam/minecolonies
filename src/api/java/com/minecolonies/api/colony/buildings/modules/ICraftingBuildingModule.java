@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -37,6 +38,13 @@ import java.util.function.Predicate;
  */
 public interface ICraftingBuildingModule extends IBuildingModule
 {
+    public enum CrafingType
+    {
+        CRAFTING,
+        SMELTING,
+        LARGE,
+        BREWING
+    }
     /**
      * Gets the crafting job associated with this building type.
      * This might not be the primary job of the building.
@@ -78,28 +86,20 @@ public interface ICraftingBuildingModule extends IBuildingModule
     String getCustomRecipeKey();
 
     /**
-     * Check if this building type can learn (or otherwise process)
-     * vanilla crafting recipes of some kind.
-     *
-     * @return True if so; false otherwise.
+     * Check if the worker can learn a certain type of recipe.
+     * @param type the type to check for.
+     * @return true if so.
      */
-    boolean canLearnCraftingRecipes();
+    default boolean canLearnRecipe(final CrafingType type)
+    {
+        return getSupportedRecipeTypes().contains(type);
+    }
 
     /**
-     * Check if this building type can learn (or otherwise process)
-     * vanilla smelting recipes of some kind.
-     *
-     * @return True if so; false otherwise.
+     * Get the supported recipe types.
+     * @return a set of types.
      */
-    boolean canLearnFurnaceRecipes();
-
-    /**
-     * Check if it is possible for this building type to learn
-     * recipes that will only fit in a 3x3 crafting grid.
-     *
-     * @return True if 3x3 recipes can be taught.
-     */
-    boolean canLearnLargeRecipes();
+    Set<CrafingType> getSupportedRecipeTypes();
 
     /**
      * Checks if this particular recipe is *possible* to be learned by

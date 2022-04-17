@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -143,7 +144,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     protected int getMaxRecipes()
     {
         final double increase;
-        if(canLearnLargeRecipes() || canLearnFurnaceRecipes())
+        if(canLearnRecipe(CrafingType.LARGE) || canLearnRecipe(CrafingType.SMELTING))
         {
             increase = (1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
         }
@@ -258,9 +259,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             buf.writeBoolean(false);
         }
-        buf.writeBoolean(this.canLearnCraftingRecipes());
-        buf.writeBoolean(this.canLearnFurnaceRecipes());
-        buf.writeBoolean(this.canLearnLargeRecipes());
+
+        buf.writeInt(this.getSupportedRecipeTypes().size());
+        for (final CrafingType type : this.getSupportedRecipeTypes())
+        {
+            buf.writeInt(type.ordinal());
+        }
 
         final List<IRecipeStorage> storages = new ArrayList<>();
         final List<IRecipeStorage> disabledStorages = new ArrayList<>();
@@ -901,18 +905,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return true; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return false; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return true; }
+        public Set<CrafingType> getSupportedRecipeTypes()
+        {
+            return ImmutableSet.of(CrafingType.CRAFTING, CrafingType.LARGE);
+        }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearnCraftingRecipes() &&
+            return canLearnRecipe(CrafingType.CRAFTING) &&
                     recipe.getIntermediate() == Blocks.AIR;
         }
 
@@ -941,18 +942,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return false; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return true; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return false; }
+        public Set<CrafingType> getSupportedRecipeTypes()
+        {
+            return ImmutableSet.of(CrafingType.SMELTING);
+        }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearnFurnaceRecipes() &&
+            return canLearnRecipe(CrafingType.SMELTING) &&
                     recipe.getIntermediate() == Blocks.FURNACE;
         }
 
@@ -964,6 +962,43 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public String getId()
         {
             return "smelting";
+        }
+    }
+
+    /** this module is for brewing-only users */
+    public abstract static class Brewing extends AbstractCraftingBuildingModule
+    {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Brewing(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
+        @Override
+        public Set<CrafingType> getSupportedRecipeTypes()
+        {
+            return ImmutableSet.of(CrafingType.BREWING);
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return canLearnRecipe(CrafingType.BREWING) &&
+                     recipe.getIntermediate() == Blocks.BREWING_STAND;
+        }
+
+        /**
+         * Get a string identifier to this.
+         * @return the id.
+         */
+        @NotNull
+        public String getId()
+        {
+            return "brewing";
         }
     }
 
@@ -981,13 +1016,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return false; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return false; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return false; }
+        public Set<CrafingType> getSupportedRecipeTypes()
+        {
+            return Collections.emptySet();
+        }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) { return false; }

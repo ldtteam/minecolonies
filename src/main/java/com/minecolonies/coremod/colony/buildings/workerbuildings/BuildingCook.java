@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -310,11 +311,14 @@ public class BuildingCook extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnCraftingRecipes()
+        public Set<CrafingType> getSupportedRecipeTypes()
         {
-            if (building == null) return true;  // because it can learn at *some* level
-            return building.getBuildingLevel() >= 3;
+            if (building == null)
+                return ImmutableSet.of(CrafingType.SMELTING);  // because it can learn at *some* level
+
+            return building.getBuildingLevel() >= 3 ? ImmutableSet.of(CrafingType.CRAFTING) : Collections.emptySet();
         }
+
 
         @Override
         public boolean isVisible()
