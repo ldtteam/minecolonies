@@ -18,6 +18,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker;
@@ -78,21 +79,24 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private static final String OBJECTIVE_SECONDARY_SKILL = "SecSkillLevel";
 
     /**
-     * Multiplier for damage reduction. 
+     * Multiplier for damage reduction.
      */
-    private static final float SECONDARY_DAMAGE_REDUCTION = .005f; 
+    private static final float SECONDARY_DAMAGE_REDUCTION = .005f;
 
     /**
-     * Virtual slots for equipment, so we can track what is "equipped" without having it visible when
-     * the citizen is invisible.
+     * Virtual slots for equipment, so we can track what is "equipped" without having it visible when the citizen is invisible.
      */
     private final Map<EquipmentSlot, ItemStack> virtualEquipmentSlots = new HashMap<>();
 
     /**
      * Edibles that the worker will attempt to eat while in the nether (unfiltered)
      */
-    final List<ItemStack> netherEdible = IColonyManager.getInstance().getCompatibilityManager().getEdibles(getOwnBuilding().getBuildingLevel() - 1).stream().map(item -> item.getItemStack()).collect(Collectors.toList());
-
+    final List<ItemStack> netherEdible = IColonyManager.getInstance()
+      .getCompatibilityManager()
+      .getEdibles(getOwnBuilding().getBuildingLevel() - 1)
+      .stream()
+      .map(item -> item.getItemStack())
+      .collect(Collectors.toList());
 
     /**
      * List of items that are required by the guard based on building level and guard level.  This array holds a pointer to the building level and then pointer to GuardGear
@@ -110,13 +114,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
           new AITarget(NETHER_CLOSEPORTAL, this::closePortal, TICK_DELAY)
         );
         worker.setCanPickUpLoot(true);
-    
+
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_IRON, ARMOR_LEVEL_MAX, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_CHAIN, ARMOR_LEVEL_DIAMOND, LEATHER_BUILDING_LEVEL_RANGE, DIA_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE));
-
     }
 
     @Override
@@ -124,7 +127,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         return BuildingNetherWorker.class;
     }
-  
+
     @Override
     public IAIState getStateAfterPickUp()
     {
@@ -141,7 +144,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         worker.setInvisible(true);
         BlockPos vaultPos = getOwnBuilding().getVaultLocation();
-        if(vaultPos != null)
+        if (vaultPos != null)
         {
             worker.moveTo(vaultPos.getX() + 0.5, vaultPos.getY(), vaultPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
             worker.getNavigation().stop();
@@ -152,7 +155,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         BlockPos vaultPos = getOwnBuilding().getVaultLocation();
         BlockPos portalPos = getOwnBuilding().getPortalLocation();
-        if(portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
+        if (portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
         {
             worker.moveTo(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
             worker.getNavigation().stop();
@@ -163,7 +166,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     @Override
     protected IAIState decide()
     {
-        if(job.isInNether())
+        if (job.isInNether())
         {
             if (!worker.isInvisible())
             {
@@ -171,6 +174,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             }
             return NETHER_AWAY;
         }
+
         if (worker.isInvisible())
         {
             returnFromVault();
@@ -178,7 +182,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         IAIState crafterState = super.decide();
 
-        if(crafterState != IDLE && crafterState != START_WORKING)
+        if (crafterState != IDLE && crafterState != START_WORKING)
         {
             return crafterState;
         }
@@ -189,12 +193,28 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         // Check for materials needed to go to the Nether: 
         IRecipeStorage rs = getOwnBuilding().getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
-        if(rs != null)
+        boolean hasItemsAvailable = true;
+        if (rs != null)
         {
-            for(ItemStorage item : rs.getInput())
+            for (ItemStorage item : rs.getInput())
             {
-                checkAndRequestMaterials(item.getItemStack(), item.getAmount());
+                if (!checkIfRequestForItemExistOrCreateAsync(new ItemStack(item.getItem(), 1), item.getAmount(), item.getAmount()))
+                {
+                    hasItemsAvailable = false;
+                }
             }
+        }
+
+        if (!hasItemsAvailable)
+        {
+            return IDLE;
+        }
+
+        final BlockPos portal = getOwnBuilding().getPortalLocation();
+        if (portal == null)
+        {
+            Log.getLogger().warn("--- Missing Portal Tag In Nether Worker Building! Aborting Operation! ---");
+            return IDLE;
         }
 
         // Make sure we have a stash of some food 
@@ -202,12 +222,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         // Get other adventuring supplies. These are required. 
         // Done this way to get all the requests in parallel
-        boolean haveAxe = checkForToolOrWeapon(ToolType.AXE);
-        boolean havePick = checkForToolOrWeapon(ToolType.PICKAXE);
-        boolean haveShovel = checkForToolOrWeapon(ToolType.SHOVEL);
-        boolean haveSword = checkForToolOrWeapon(ToolType.SWORD);
-        boolean haveLighter = checkForToolOrWeapon(ToolType.FLINT_N_STEEL);
-        if(haveAxe || havePick || haveShovel || haveSword || haveLighter)
+        boolean missingAxe = checkForToolOrWeapon(ToolType.AXE);
+        boolean missingPick = checkForToolOrWeapon(ToolType.PICKAXE);
+        boolean missingShovel = checkForToolOrWeapon(ToolType.SHOVEL);
+        boolean missingSword = checkForToolOrWeapon(ToolType.SWORD);
+        boolean missingLighter = checkForToolOrWeapon(ToolType.FLINT_N_STEEL);
+        if (missingAxe || missingPick || missingShovel || missingSword || missingLighter)
         {
             worker.getCitizenData().setIdleAtJob(true);
             return IDLE;
@@ -217,13 +237,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class);
             currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
-            if(getOwnBuilding().isReadyForTrip())
+            if (getOwnBuilding().isReadyForTrip())
             {
                 worker.getCitizenData().setIdleAtJob(true);
             }
 
-            final BlockPos portal = getOwnBuilding().getPortalLocation();
-            if(portal != null && currentRecipeStorage == null && getOwnBuilding().shallClosePortalOnReturn())
+            if (currentRecipeStorage == null && getOwnBuilding().shallClosePortalOnReturn())
             {
                 final BlockState block = world.getBlockState(portal);
                 if (block.is(Blocks.NETHER_PORTAL))
@@ -234,7 +253,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
             return getState();
         }
-        else 
+        else
         {
             if (!getOwnBuilding().isReadyForTrip())
             {
@@ -251,14 +270,14 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             }
 
             IAIState checkResult = checkForItems(currentRecipeStorage);
-            
-            if(checkResult == GET_RECIPE)
+
+            if (checkResult == GET_RECIPE)
             {
                 currentRecipeStorage = null;
                 worker.getCitizenData().setIdleAtJob(true);
                 return IDLE;
             }
-            if(checkResult != CRAFT)
+            if (checkResult != CRAFT)
             {
                 return checkResult;
             }
@@ -267,7 +286,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     }
 
     /**
-     * Leave for the Nether by walking to the portal and going invisible. 
+     * Leave for the Nether by walking to the portal and going invisible.
      */
     protected IAIState leaveForNether()
     {
@@ -284,13 +303,14 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
 
         // Set up Objectives and scores. 
-        if(!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
+        if (!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
         {
             world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ObjectiveCriteria.DUMMY, new TextComponent("Worker Building Level"), ObjectiveCriteria.RenderType.INTEGER);
         }
-        if(!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
+        if (!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
         {
-            world.getScoreboard().addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, new TextComponent("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER);
+            world.getScoreboard()
+              .addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, new TextComponent("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER);
         }
         final Objective hutLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_HUT_LEVEL);
         final Objective secondarySkillLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL);
@@ -302,12 +322,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         // Attempt to light the portal and travel
         final BlockPos portal = getOwnBuilding().getPortalLocation();
-        if(portal != null && currentRecipeStorage != null)
+        if (portal != null && currentRecipeStorage != null)
         {
             final BlockState block = world.getBlockState(portal);
             if (block.is(Blocks.NETHER_PORTAL))
             {
-                if(walkToBlock(portal, 1))
+                if (walkToBlock(portal, 1))
                 {
                     return getState();
                 }
@@ -328,17 +348,17 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         worker.getCitizenData().setIdleAtJob(true);
         return IDLE;
     }
-   
+
     /**
      * Stay "in the Nether" and process the queues
      */
     protected IAIState stayInNether()
     {
-        if(getOwnBuilding().getVaultLocation() == null)
+        if (getOwnBuilding().getVaultLocation() == null)
         {
             //Ensure we stay put in the portal
             final BlockPos portal = getOwnBuilding().getPortalLocation();
-            if(portal !=null && walkToBlock(portal, 1))
+            if (portal != null && walkToBlock(portal, 1))
             {
                 return getState();
             }
@@ -352,26 +372,26 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (!job.getCraftedResults().isEmpty())
         {
             ItemStack currStack = job.getCraftedResults().poll();
-            if(currStack.getItem() instanceof ItemAdventureToken)
+            if (currStack.getItem() instanceof ItemAdventureToken)
             {
-                if(currStack.hasTag())
+                if (currStack.hasTag())
                 {
                     CompoundTag tag = currStack.getTag();
-                    if(tag.contains(TAG_DAMAGE))
+                    if (tag.contains(TAG_DAMAGE))
                     {
-                        int slotOfSwordStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(), 
-                            itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof SwordItem);
+                        int slotOfSwordStack = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getItemHandlerCitizen(),
+                          itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() instanceof SwordItem);
                         DamageSource source = new DamageSource("nether");
 
                         //Set up the mob to do battle with
                         EntityType<?> mobType = EntityType.ZOMBIE;
-                        if(tag.contains(TAG_ENTITY_TYPE))
+                        if (tag.contains(TAG_ENTITY_TYPE))
                         {
                             mobType = EntityType.byString(tag.getString(TAG_ENTITY_TYPE)).orElse(EntityType.ZOMBIE);
                         }
                         LivingEntity mob = (LivingEntity) mobType.create(world);
                         float mobHealth = mob.getHealth();
-                        
+
                         // Calculate how much damage the mob will do if it lands a hit (Before armor)
                         float incomingDamage = tag.getFloat(TAG_DAMAGE);
                         incomingDamage -= incomingDamage * (getSecondarySkillLevel() * SECONDARY_DAMAGE_REDUCTION);
@@ -381,8 +401,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                         setEquipSlot(EquipmentSlot.CHEST, true);
                         setEquipSlot(EquipmentSlot.LEGS, true);
                         setEquipSlot(EquipmentSlot.FEET, true);
-                        
-                        for(int hit = 0; mobHealth > 0 && ! worker.isDeadOrDying(); hit++)
+
+                        for (int hit = 0; mobHealth > 0 && !worker.isDeadOrDying(); hit++)
                         {
                             // Clear anti-hurt timers.
                             worker.hurtTime = 0;
@@ -394,12 +414,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             boolean takeDamage = worker.getRandom().nextBoolean();
 
                             // Calculate if the sword still exists, how much damage will be done to the mob
-                            if(slotOfSwordStack != -1)
+                            if (slotOfSwordStack != -1)
                             {
                                 final ItemStack sword = worker.getInventoryCitizen().getStackInSlot(slotOfSwordStack);
-                                if(!sword.isEmpty())
+                                if (!sword.isEmpty())
                                 {
-                                    if(sword.getItem() instanceof SwordItem)
+                                    if (sword.getItem() instanceof SwordItem)
                                     {
                                         damageToDo += ((SwordItem) sword.getItem()).getDamage();
                                     }
@@ -408,15 +428,15 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                                         damageToDo += TinkersToolHelper.getDamage(sword);
                                     }
                                     damageToDo += EnchantmentHelper.getDamageBonus(sword, mob.getMobType()) / 2.5;
-                                    if(doDamage)
+                                    if (doDamage)
                                     {
-                                    sword.hurtAndBreak(1, mob, entity -> {});
+                                        sword.hurtAndBreak(1, mob, entity -> {});
                                     }
                                 }
                             }
 
                             // Hit the mob
-                            if(doDamage)
+                            if (doDamage)
                             {
                                 mobHealth -= damageToDo;
                             }
@@ -430,11 +450,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             }
 
                             // Every other round, heal up if possible, to compensate for all of this happening in a single tick. 
-                            if(hit % 2 == 0)
+                            if (hit % 2 == 0)
                             {
                                 float healAmount = checkHeal(worker);
                                 final float saturationFactor = 0.25f;
-                                if(healAmount > 0)
+                                if (healAmount > 0)
                                 {
                                     worker.heal(healAmount);
                                     worker.getCitizenData().decreaseSaturation(healAmount * saturationFactor);
@@ -442,13 +462,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                             }
                             else
                             {
-                                if(worker.getCitizenData().getSaturation() < AVERAGE_SATURATION)
+                                if (worker.getCitizenData().getSaturation() < AVERAGE_SATURATION)
                                 {
                                     attemptToEat();
                                 }
                             }
                         }
-
 
 
                         if (worker.isDeadOrDying())
@@ -471,7 +490,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
                     if (currStack.getTag().contains(TAG_XP_DROPPED))
                     {
-                        worker.getCitizenExperienceHandler().addExperience( worker.getCitizenItemHandler().applyMending(currStack.getTag().getInt(TAG_XP_DROPPED)));
+                        worker.getCitizenExperienceHandler().addExperience(worker.getCitizenItemHandler().applyMending(currStack.getTag().getInt(TAG_XP_DROPPED)));
                     }
 
                     setEquipSlot(EquipmentSlot.MAINHAND, false);
@@ -484,29 +503,29 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             else
             {
                 int itemDelay = 0;
-                if(currStack.getItem() instanceof BlockItem)
+                if (currStack.getItem() instanceof BlockItem)
                 {
                     final BlockItem bi = (BlockItem) currStack.getItem();
                     final Block block = bi.getBlock();
 
                     int slotOfStack = getMostEfficientTool(block.defaultBlockState(), worker.blockPosition());
-                    if(slotOfStack != -1)
+                    if (slotOfStack != -1)
                     {
                         ItemStack tool = worker.getInventoryCitizen().getStackInSlot(slotOfStack);
                         if (tool.getItem() instanceof TieredItem)
                         {
                             worker.setItemSlot(EquipmentSlot.MAINHAND, tool);
-                            
-                            for(int i=0; i < currStack.getCount() && !tool.isEmpty() ; i++)
+
+                            for (int i = 0; i < currStack.getCount() && !tool.isEmpty(); i++)
                             {
                                 LootContext context = this.getLootContext();
                                 LootTable loot = world.getServer().getLootTables().get(block.getLootTable());
                                 List<ItemStack> mobLoot = loot.getRandomItems(context);
-        
+
                                 job.addProcessedResultsList(mobLoot);
                                 tool.hurtAndBreak(1, worker, entity -> {});
-                                worker.getCitizenExperienceHandler().addExperience(worker.getCitizenItemHandler().applyMending(xpOnDrop(block)));  
-                                
+                                worker.getCitizenExperienceHandler().addExperience(worker.getCitizenItemHandler().applyMending(xpOnDrop(block)));
+
                                 itemDelay += TICK_DELAY;
                             }
                         }
@@ -515,9 +534,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     else
                     {
                         //we didn't have a tool to use. 
-                        itemDelay = TICK_DELAY; 
+                        itemDelay = TICK_DELAY;
                     }
-                } 
+                }
                 else
                 {
                     job.addProcessedResultsList(ImmutableList.of(currStack));
@@ -529,9 +548,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return getState();
         }
 
-        if(!job.getProcessedResults().isEmpty())
+        if (!job.getProcessedResults().isEmpty())
         {
-            if(!worker.isDeadOrDying())
+            if (!worker.isDeadOrDying())
             {
                 ItemStack item = job.getProcessedResults().poll();
 
@@ -563,7 +582,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             return rnd.nextInt(3, 7);
         }
-        else if (block == Blocks.EMERALD_ORE) 
+        else if (block == Blocks.EMERALD_ORE)
         {
             return rnd.nextInt(3, 7);
         }
@@ -580,7 +599,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return block == Blocks.NETHER_GOLD_ORE ? rnd.nextInt(0, 1) : 0;
         }
     }
-    
+
     /**
      * Return from the nether by going visible, walking to building and preparing to close the portal
      */
@@ -588,28 +607,28 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
 
         if (currentRecipeStorage == null)
-        {  
-            if(worker.isInvisible())
+        {
+            if (worker.isInvisible())
             {
                 returnFromVault();
             }
             return IDLE;
         }
 
-        if(worker.isInvisible())
+        if (worker.isInvisible())
         {
             returnFromVault();
             return getState();
         }
 
-        if(walkToBuilding())
+        if (walkToBuilding())
         {
             return getState();
         }
-        
+
         worker.getCitizenData().setIdleAtJob(true);
         job.setInNether(false);
-        
+
         //Shutdown Portal
         if (getOwnBuilding().shallClosePortalOnReturn())
         {
@@ -627,12 +646,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         // Attempt to light the portal and travel
         final BlockPos portal = getOwnBuilding().getPortalLocation();
-        if(portal != null && currentRecipeStorage != null)
+        if (portal != null && currentRecipeStorage != null)
         {
             final BlockState block = world.getBlockState(portal);
             final Optional<PortalShape> ps = PortalShape.findPortalShape(world, portal, p -> p.isValid(), Direction.Axis.X);
 
-            if(!ps.isPresent())
+            if (!ps.isPresent())
             {
                 // Can't find the portal
                 return IDLE;
@@ -655,7 +674,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         final BlockState block = world.getBlockState(getOwnBuilding().getPortalLocation());
 
-        if(block.is(Blocks.NETHER_PORTAL))
+        if (block.is(Blocks.NETHER_PORTAL))
         {
             useFlintAndSteel();
             world.setBlockAndUpdate(getOwnBuilding().getPortalLocation(), Blocks.AIR.defaultBlockState());
@@ -671,7 +690,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private void useFlintAndSteel()
     {
         final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), i -> i.getItem() instanceof FlintAndSteelItem);
-        if(slot > -1)
+        if (slot > -1)
         {
             worker.getInventoryCitizen().damageInventoryItem(slot, 1, worker, entity -> {});
         }
@@ -679,12 +698,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     /**
      * Equip or Un-equip armor etc.
+     *
      * @param equipSlot Slot to attempt to modify
-     * @param equip true if equipping, false if clearing
+     * @param equip     true if equipping, false if clearing
      */
     private void setEquipSlot(EquipmentSlot equipSlot, boolean equip)
     {
-        if(equip)
+        if (equip)
         {
             final BuildingNetherWorker building = getOwnBuilding();
 
@@ -692,11 +712,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             {
                 for (final GuardGear item : itemList)
                 {
-                    
-                    if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && item.getType().equals(equipSlot) && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
+
+                    if (ItemStackUtils.isEmpty(worker.getItemBySlot(item.getType())) && item.getType().equals(equipSlot)
+                          && building.getBuildingLevel() >= item.getMinBuildingLevelRequired() && building.getBuildingLevel() <= item.getMaxBuildingLevelRequired())
                     {
                         final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(worker.getInventoryCitizen(), item::test);
-    
+
                         if (slot > -1)
                         {
                             final ItemStack toBeEquipped = worker.getInventoryCitizen().getStackInSlot(slot);
@@ -712,29 +733,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             worker.setItemSlot(equipSlot, ItemStack.EMPTY);
             virtualEquipmentSlots.put(equipSlot, ItemStack.EMPTY);
         }
-    }
-
-    /**
-     * Check to see if we have the item being requested, and generate request if not. 
-     * @param item to check
-     * @param count count needed
-     * @return true if the item is in the inventory or building
-     */
-    protected boolean checkAndRequestMaterials(ItemStack item, int count)
-    {
-        final Predicate<ItemStack> isItem = checkItem -> !checkItem.isEmpty() && checkItem.getItem() == item.getItem();
-        final int itemsInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), isItem);
-        if (itemsInInv < count)
-        {
-            final int itemsInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), isItem);
-            if (itemsInInv + itemsInBuilding >= count)
-            {
-                return true;
-            }
-            checkIfRequestForItemExistOrCreateAsync(new ItemStack(item.getItem(), count - (itemsInInv + itemsInBuilding)), count, count - (itemsInInv + itemsInBuilding));
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -755,36 +753,16 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         List<ItemStack> edibleList = getEdiblesList();
         final IDeliverable edible = new StackList(edibleList, "Edible Food", itemCount);
 
-        List<ItemStack> foodInInv = InventoryUtils.getContainedFromItemHandler(edibleList, worker.getItemHandlerCitizen());
-
-        double availSaturation = 0;
-        for(ItemStack item : foodInInv)
-        {
-            // Figure out what the total saturation value of the stack is
-            final FoodProperties itemFood = item.getItem().getFoodProperties();
-            final double satIncrease = itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION)) * item.getCount();
-
-            // update the running total
-            availSaturation +=  satIncrease;
-        }
-
-        if(availSaturation >= AVERAGE_SATURATION)
+        int count = InventoryUtils.getItemCountInItemHandler(worker.getItemHandlerCitizen(), edible::matches);
+        if (count >= itemCount)
         {
             return;
         }
 
-        if(InventoryUtils.getItemCountInProvider(getOwnBuilding(), item -> edible.matches(item)) < itemCount)
+        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
+              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
         {
-            if (!getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
-             && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
-            {
-                getOwnBuilding().createRequest(edible, true);
-            }
-        }
-        else
-        {
-            int amountToTransfer = (int) (AVERAGE_SATURATION - availSaturation);
-            InventoryUtils.transferFoodUpToSaturation(getOwnBuilding(), worker.getInventoryCitizen(), amountToTransfer, edible::matches);
+            getOwnBuilding().createRequest(edible, true);
         }
     }
 
@@ -801,11 +779,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
             final FoodProperties itemFood = stack.getItem().getFoodProperties();
             final double satIncrease =
-            itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
-  
+              itemFood.getNutrition() * (1.0 + worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SATURATION));
+
             citizenData.increaseSaturation(satIncrease / 2.0);
             citizenData.getInventory().extractItem(slot, 1, false);
-    
+
             final ItemStack containerItem = stack.getContainerItem();
 
             if (containerItem != null && !(containerItem.getItem() instanceof AirItem))
@@ -813,11 +791,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 if (citizenData.getInventory().isFull())
                 {
                     InventoryUtils.spawnItemStack(
-                        worker.level,
-                        worker.getX(),
-                        worker.getY(),
-                        worker.getZ(),
-                        containerItem
+                      worker.level,
+                      worker.getX(),
+                      worker.getY(),
+                      worker.getZ(),
+                      containerItem
                     );
                 }
                 else
@@ -825,13 +803,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     InventoryUtils.addItemStackToItemHandler(worker.getItemHandlerCitizen(), containerItem);
                 }
             }
-          }
+        }
     }
 
     /**
-     * Make sure we have all the needed adventuring supplies
-     * This is very similar to the AbstractEntityAiFight "atBuildingActions"
-     * But doesn't handle shields, and doesn't equip or leave equipped armor. 
+     * Make sure we have all the needed adventuring supplies This is very similar to the AbstractEntityAiFight "atBuildingActions" But doesn't handle shields, and doesn't equip or
+     * leave equipped armor.
      */
     protected void checkAndRequestArmor()
     {
@@ -859,7 +836,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     if (equipSlot > -1)
                     {
                         ItemStack invItem = worker.getItemHandlerCitizen().getStackInSlot(equipSlot);
-                        if(!virtualEquipmentSlots.containsKey(item.getType()) || ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
+                        if (!virtualEquipmentSlots.containsKey(item.getType()) || ItemStackUtils.isEmpty(virtualEquipmentSlots.get(item.getType())))
                         {
                             virtualEquipmentSlots.put(item.getType(), invItem);
                             bestLevel = ItemStackUtils.getMiningLevel(invItem, item.getItemNeeded());

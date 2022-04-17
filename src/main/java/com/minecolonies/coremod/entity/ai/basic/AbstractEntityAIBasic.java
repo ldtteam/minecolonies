@@ -1554,17 +1554,24 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkIfRequestForItemExistOrCreateAsync(@NotNull final ItemStack stack, final int count, final int minCount, final boolean matchNBT)
     {
-        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),
-          s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack) && s.getCount() >= stack.getCount()))
+        if (stack.isEmpty())
         {
             return true;
         }
 
+        final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(s, stack));
+        if (invCount >= count)
+        {
+            return true;
+        }
+        final int updatedCount = count - invCount;
+        final int updatedMinCount = Math.min(updatedCount, minCount);
+
         if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT)) >= minCount &&
+          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT)) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
-                stack.getCount(),
+                updatedCount,
                 worker.getInventoryCitizen()))
         {
             return true;
@@ -1575,7 +1582,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
-            final Stack stackRequest = new Stack(stack, count, minCount, matchNBT);
+            final Stack stackRequest = new Stack(stack, updatedCount, updatedMinCount, matchNBT);
             worker.getCitizenData().createRequestAsync(stackRequest);
         }
 
