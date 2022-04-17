@@ -1601,7 +1601,7 @@
   "com.minecolonies.coremod.journeymap.options.guards.tooltip": "When ticked, guards will be shown on the map (may be useful to hide non-guards during a raid)",
   "com.minecolonies.coremod.journeymap.options.citizens.tooltip": "When ticked, non-guard citizens will be shown on the map",
   "com.minecolonies.coremod.journeymap.options.visitors.tooltip": "When ticked, visitors will be shown on the map",
-  "com.minecolonies.coremod.journeymap.options.raiders.tooltip": "Specifies how to show raiders on the map",
+  "com.minecolonies.coremod.journeymap.options.raiders.tooltip": "Specifies the dot color for raiders on the map",
   "com.minecolonies.coremod.journeymap.borderstyle.hidden": "Hidden",
   "com.minecolonies.coremod.journeymap.borderstyle.framed": "Framed",
   "com.minecolonies.coremod.journeymap.borderstyle.filled": "Filled",
