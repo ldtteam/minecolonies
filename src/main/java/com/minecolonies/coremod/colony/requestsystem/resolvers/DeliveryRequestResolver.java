@@ -25,8 +25,8 @@ public class DeliveryRequestResolver extends DeliverymenRequestResolver<Delivery
     @Override
     public boolean canResolveRequest(@NotNull final IRequestManager manager, final IRequest<? extends Delivery> requestToCheck)
     {
-        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getClosestWarehouseInColony(requestToCheck.getRequest().getStart().getInDimensionLocation());
-        if (wareHouse == null || !wareHouse.getID().equals(getLocation().getInDimensionLocation()))
+        final IWareHouse wareHouse = manager.getColony().getBuildingManager().getBuilding(getLocation().getInDimensionLocation(), IWareHouse.class);
+        if (wareHouse == null)
         {
             return false;
         }

@@ -17,7 +17,8 @@ public class UpdateHandler implements IUpdateHandler
     @VisibleForTesting
     private static final List<IUpdateStep> UPDATE_STEPS = Lists.newArrayList(
       new InitialUpdate(),
-      new ResetRSToStoreJobInResolvers()
+      new ResetRSToStoreJobInResolvers(),
+      new ResetRSToUpdateRestaurantResolver()
     );
 
     private final IStandardRequestManager manager;

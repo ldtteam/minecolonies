@@ -145,6 +145,9 @@ public class RequestHandler implements IRequestHandler
                                                                .thenComparingInt((IRequestResolver<?> r) -> typeIndexList.indexOf(r.getRequestType())))
                                                      .collect(Collectors.toCollection(LinkedHashSet::new));
 
+        IRequestResolver previousResolver = null;
+        int previousMetric = Integer.MAX_VALUE;
+        @Nullable List<IToken<?>> attemptResult = null;
         for (@SuppressWarnings(RAWTYPES) final IRequestResolver resolver : resolvers)
         {
             //Skip when the resolver is in the blacklist.
@@ -159,54 +162,92 @@ public class RequestHandler implements IRequestHandler
                 continue;
             }
 
-            @Nullable final List<IToken<?>> attemptResult = resolver.attemptResolveRequest(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
-
-            //Skip if attempt failed (aka attemptResult == null)
-            if (attemptResult == null)
+            if (previousResolver == null)
             {
+                //Skip if attempt failed (aka attemptResult == null)
+                attemptResult = resolver.attemptResolveRequest(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+                if (attemptResult != null)
+                {
+                    previousResolver = resolver;
+                    previousMetric = resolver.getSuitabilityMetric(request);
+                }
                 continue;
             }
 
-            //Successfully found a resolver. Registering
-            manager.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
-
-            manager.getResolverHandler().addRequestToResolver(resolver, request);
-            //TODO: Change this false to simulation.
-            resolver.onRequestAssigned(manager, request, false);
-
-            for (final IToken<?> childRequestToken :
-              attemptResult)
+            if (previousResolver.getClass().equals(resolver.getClass()))
             {
-                final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
-
-                childRequest.setParent(request.getId());
-                request.addChild(childRequest.getId());
-            }
-
-            for (final IToken<?> childRequestToken :
-              attemptResult)
-            {
-                final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
-
-                if (!isAssigned(childRequestToken))
+                final int currentResolverMetric = resolver.getSuitabilityMetric(request);
+                if (currentResolverMetric < previousMetric)
                 {
-                    assignRequest(childRequest, resolverTokenBlackList);
+                    @Nullable List<IToken<?>> tempAttemptResolveRequest = resolver.attemptResolveRequest(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
+                    if (tempAttemptResolveRequest != null)
+                    {
+                        previousResolver = resolver;
+                        previousMetric = resolver.getSuitabilityMetric(request);
+                        attemptResult = tempAttemptResolveRequest;
+                    }
                 }
             }
-
-            if (request.getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
+            else
             {
-                request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
-                if (!request.hasChildren())
-                {
-                    resolveRequest(request);
-                }
+                break;
             }
+        }
 
-            return resolver.getId();
+        if (previousResolver != null)
+        {
+            return resolve(request, previousResolver, resolverTokenBlackList, attemptResult);
         }
 
         return null;
+    }
+
+    /**
+     * Attempt to resolve a given request with a set resolver.
+     * @param request the request to fulfill.
+     * @param resolver the resolver to use.
+     * @param resolverTokenBlackList the black list.
+     * @return the resolver token.
+     */
+    private IToken<?> resolve(final IRequest<?> request, final IRequestResolver resolver, final Collection<IToken<?>> resolverTokenBlackList, @Nullable final List<IToken<?>> attemptResult)
+    {
+        //Successfully found a resolver. Registering
+        manager.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
+
+        manager.getResolverHandler().addRequestToResolver(resolver, request);
+        //TODO: Change this false to simulation.
+        resolver.onRequestAssigned(manager, request, false);
+
+        for (final IToken<?> childRequestToken :
+          attemptResult)
+        {
+            final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
+
+            childRequest.setParent(request.getId());
+            request.addChild(childRequest.getId());
+        }
+
+        for (final IToken<?> childRequestToken :
+          attemptResult)
+        {
+            final IRequest<?> childRequest = manager.getRequestHandler().getRequest(childRequestToken);
+
+            if (!isAssigned(childRequestToken))
+            {
+                assignRequest(childRequest, resolverTokenBlackList);
+            }
+        }
+
+        if (request.getState().ordinal() < RequestState.IN_PROGRESS.ordinal())
+        {
+            request.setState(new WrappedStaticStateRequestManager(manager), RequestState.IN_PROGRESS);
+            if (!request.hasChildren())
+            {
+                resolveRequest(request);
+            }
+        }
+
+        return resolver.getId();
     }
 
     /**
