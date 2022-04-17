@@ -1722,7 +1722,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     }
 
     @Override
-    public void onPlayerCollide(final Player player)
+    public void onPlayerCollide(final PlayerEntity player)
     {
         super.onPlayerCollide(player);
         if (citizenJobHandler.getColonyJob() != null && citizenJobHandler.getColonyJob().getWorkerAI() instanceof AbstractEntityAIBasic)
