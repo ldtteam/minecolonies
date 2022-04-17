@@ -154,8 +154,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (gotMaterial)
         {
-            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER), 1);
-            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.mistletoe), 1);
+            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.magicpotion, 1), 1);
         }
 
         this.instantEffect = effect.isInstantenous();

@@ -1,0 +1,17 @@
+{
+  "type" : "recipe",
+  "crafter": "alchemist_crafting",
+  "inputs": [
+    {
+      "item" : "minecolonies:mistletoe",
+      "count": 1
+    },
+    {
+      "item" : "minecraft:potion{Potion:\"minecraft:water\"}",
+      "count": 1
+    }
+  ],
+  "result": "minecolonies:magicpotion",
+  "count": 1,
+  "intermediate" : "minecraft:air"
+}

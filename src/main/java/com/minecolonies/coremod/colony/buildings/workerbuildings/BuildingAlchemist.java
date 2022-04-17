@@ -1,8 +1,14 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
@@ -12,22 +18,23 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PLANTGROUND;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_BAKER;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_PLANTATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -42,10 +49,14 @@ public class BuildingAlchemist extends AbstractBuilding
     private static final String ALCHEMIST = "alchemist";
 
     /**
-     * List of sand blocks to grow onto.
+     * List of soul sand blocks to grow onto.
      */
     private final List<BlockPos> soulsand = new ArrayList<>();
-    //todo also need one for leaves.
+
+    /**
+     * List of leave blocks to gather mistletoes from.
+     */
+    private final List<BlockPos> leaves = new ArrayList<>();
 
     /**
      * Instantiates a new plantation building.
@@ -80,6 +91,10 @@ public class BuildingAlchemist extends AbstractBuilding
         {
             soulsand.add(pos);
         }
+        else if (block.is(BlockTags.LEAVES))
+        {
+            leaves.add(pos);
+        }
     }
 
     @Override
@@ -90,6 +105,12 @@ public class BuildingAlchemist extends AbstractBuilding
         for (int i = 0; i < sandPos.size(); ++i)
         {
             soulsand.add(NBTUtil.readBlockPos(sandPos.getCompound(i).getCompound(TAG_POS)));
+        }
+
+        final ListNBT leavesPos = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < leavesPos.size(); ++i)
+        {
+            soulsand.add(NBTUtil.readBlockPos(leavesPos.getCompound(i).getCompound(TAG_POS)));
         }
     }
 
@@ -105,6 +126,16 @@ public class BuildingAlchemist extends AbstractBuilding
             sandCompoundList.add(sandCompound);
         }
         compound.put(TAG_PLANTGROUND, sandCompoundList);
+
+        @NotNull final ListNBT leavesCompoundList = new ListNBT();
+        for (@NotNull final BlockPos entry : leaves)
+        {
+            @NotNull final CompoundNBT sandCompound = new CompoundNBT();
+            sandCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            leavesCompoundList.add(sandCompound);
+        }
+        compound.put(TAG_LEAVES, leavesCompoundList);
+
         return compound;
     }
 
@@ -118,17 +149,39 @@ public class BuildingAlchemist extends AbstractBuilding
         return soulsand;
     }
 
-    //todo list: We want the block, the job, the workermodel, the AI
+    //todo list: We want the workermodel, the AI
 
     //todo we got two types of recipes. a) Custom (based on the mistletoe) and b) Brewing.
-
-    //todo we want in here also the position of leaves.
 
     //todo add the custom recipe being unlocked by the druid research. + custom potion (stackable, useless for player) for the Druid.
 
     //todo craft on demand (RS), and harvest/plant netherwart randomly && harvest mistletoe randomly (small chance for mistletoe).
 
     //todo we need special fuel handling here.
+
+    public static class BrewingModule extends AbstractCraftingBuildingModule.Brewing
+    {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public BrewingModule(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
+
+            return recipe.getPrimaryOutput().getItem() == Items.POTION;
+        }
+    }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
     {
@@ -142,22 +195,19 @@ public class BuildingAlchemist extends AbstractBuilding
             super(jobEntry);
         }
 
-        @NotNull
-        @Override
-        public OptionalPredicate<ItemStack> getIngredientValidator()
-        {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_PLANTATION).combine(super.getIngredientValidator());
-        }
-
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             if (!super.isRecipeCompatible(recipe))
-            {
                 return false;
-            }
-            final Optional<Boolean> isRecipeAllowed = CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_PLANTATION);
-            return isRecipeAllowed.orElse(false);
+
+            return recipe.getPrimaryOutput().getItem() == ModItems.magicpotion;
+        }
+
+        @Override
+        public Set<CrafingType> getSupportedRecipeTypes()
+        {
+            return Collections.emptySet();
         }
     }
 }

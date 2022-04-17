@@ -2154,6 +2154,7 @@
   "com.minecolonies.coremod.gui.quarry.desc": "To start the Quarry construct a Mine, hire a Quarrier and assign the Quarrier to the Quarry",
   "com.minecolonies.coremod.gui.workerhuts.druid": "Druid",
   "item.minecolonies.mistletoe": "Mistletoe",
+  "item.minecolonies.magicpotion": "Magic Potion",
 
   "minecolonies:builder.job.desc": "Constructs buildings and decorations.",
   "minecolonies:deliveryman.job.desc": "Delivers requested items and blocks to players and colonists.",

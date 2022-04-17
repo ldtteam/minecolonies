@@ -661,8 +661,11 @@ public final class ModBuildingsInitializer
 
         ModBuildings.alchemist = new BuildingEntry.Builder()
                                     .setBuildingBlock(ModBlocks.blockHutAlchemist)
-                                    .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.ALCHEMIST_ID, 5)).setBuildingViewProducer(() -> EmptyView::new)
+                                    .setBuildingProducer(BuildingAlchemist::new).setBuildingViewProducer(() -> EmptyView::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ALCHEMIST_ID))
+                                    .addBuildingModuleProducer(() -> new BuildingAlchemist.CraftingModule(ModJobs.alchemist), () -> CraftingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new BuildingAlchemist.BrewingModule(ModJobs.alchemist), () -> CraftingModuleView::new)
+                                    .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .createBuildingEntry();
 
         reg.register(ModBuildings.archery);

@@ -124,6 +124,9 @@ public final class ModItemsInitializer
         ModItems.sifterMeshIron = new ItemSifterMesh("sifter_mesh_iron", new Item.Properties().durability(1500).setNoRepair());
         ModItems.sifterMeshDiamond = new ItemSifterMesh("sifter_mesh_diamond", new Item.Properties().durability(2000).setNoRepair());
 
+        ModItems.magicpotion = new ItemMagicPotion("magicpotion", ModCreativeTabs.MINECOLONIES, new Item.Properties());
+
+
         registry.register(ModItems.supplyChest);
         registry.register(ModItems.permTool);
         registry.register(ModItems.scepterGuard);
@@ -178,6 +181,8 @@ public final class ModItemsInitializer
         registry.register(ModItems.sifterMeshFlint);
         registry.register(ModItems.sifterMeshIron);
         registry.register(ModItems.sifterMeshDiamond);
+
+        registry.register(ModItems.magicpotion);
 
         registry.register(new SpawnEggItem(ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
