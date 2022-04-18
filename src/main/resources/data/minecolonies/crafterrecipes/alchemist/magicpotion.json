@@ -13,5 +13,7 @@
   ],
   "result": "minecolonies:magicpotion",
   "count": 1,
-  "intermediate" : "minecraft:air"
+  "intermediate" : "minecraft:air",
+  "research-id" : "minecolonies:effects/consumepotions",
+  "show-tooltip": true
 }
