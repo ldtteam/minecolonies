@@ -1,5 +1,6 @@
 package com.minecolonies.api.compatibility.tinkers;
 
+import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -129,6 +130,11 @@ public final class TinkersToolHelper extends TinkersToolProxy
         if (ToolType.PICKAXE.equals(toolType) && stack.canPerformAction(ToolActions.PICKAXE_DIG))
         {
             return true;
+        }
+
+        if (ToolType.HOE.equals(toolType))
+        {
+            return stack.canPerformAction(ToolActions.HOE_DIG);
         }
 
         return stack.is(TinkerTags.Items.HARVEST);
