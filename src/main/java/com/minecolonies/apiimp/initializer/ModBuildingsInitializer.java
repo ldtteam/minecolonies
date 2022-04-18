@@ -663,6 +663,7 @@ public final class ModBuildingsInitializer
                                     .setBuildingBlock(ModBlocks.blockHutAlchemist)
                                     .setBuildingProducer(BuildingAlchemist::new).setBuildingViewProducer(() -> EmptyView::new)
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ALCHEMIST_ID))
+                                    .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.alchemist, Skill.Dexterity, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingAlchemist.CraftingModule(ModJobs.alchemist), () -> CraftingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingAlchemist.BrewingModule(ModJobs.alchemist), () -> CraftingModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)

@@ -89,6 +89,12 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
     //todo missing decide class.
 
+    //todo list: We want the workermodel, the AI
+
+    //todo craft on demand (RS), and harvest/plant netherwart randomly && harvest mistletoe randomly (small chance for mistletoe).
+
+    //todo we need special fuel handling here.
+
     @Override
     public Class<BuildingAlchemist> getExpectedBuildingClass()
     {
