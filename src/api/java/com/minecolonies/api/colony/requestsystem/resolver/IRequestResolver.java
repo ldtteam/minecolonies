@@ -118,6 +118,16 @@ public interface IRequestResolver<R extends IRequestable> extends IRequester
     }
 
     /**
+     * Check how suitable this resolver is for the request.
+     * @param request the request to check.
+     * @return the suitability metric (an int for easy comparison).
+     */
+    default int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    {
+        return 0;
+    }
+
+    /**
      * The priority of this resolver. The higher the priority the earlier this resolver is called.
      *
      * @return The priority of this resolver.

@@ -170,7 +170,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> EmptyView::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
-                              .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.cook, Skill.Adaptability, Skill.Knowledge, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                              .addBuildingModuleProducer(() -> new NoPrivateCrafterWorkerModule(ModJobs.cook, Skill.Adaptability, Skill.Knowledge, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
                               .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.cookassistant, Skill.Creativity, Skill.Knowledge, false, (b) -> b.getBuildingLevel() >= 3 ? 1 : 0, Skill.Knowledge, Skill.Creativity), () -> WorkerBuildingModuleView::new)
                               .addBuildingModuleProducer(() -> new BuildingCook.CraftingModule(ModJobs.cookassistant), () -> CraftingModuleView::new)
                               .addBuildingModuleProducer(() -> new BuildingCook.SmeltingModule(ModJobs.cookassistant), () -> CraftingModuleView::new)
