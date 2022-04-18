@@ -2,9 +2,15 @@ package com.minecolonies.api.compatibility.tinkers;
 
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import slimeknights.tconstruct.common.TinkerTags;
+import slimeknights.tconstruct.library.tools.helper.ToolDamageUtil;
+import slimeknights.tconstruct.library.tools.nbt.ToolStack;
+import slimeknights.tconstruct.library.tools.stat.ToolStats;
 
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.
@@ -31,8 +37,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean isTinkersWeapon(@NotNull final ItemStack stack)
     {
-        return false;
-        //return !ItemStackUtils.isEmpty(stack) && stack.is(TinkerTags.Items.SWORD);
+        return !ItemStackUtils.isEmpty(stack) && stack.is(TinkerTags.Items.SWORD);
     }
 
     /**
@@ -44,8 +49,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public double getAttackDamage(@NotNull final ItemStack stack)
     {
-        return 0;
-        //return ToolStack.from(stack).getStats().getFloat(ToolStats.ATTACK_DAMAGE);
+        return ToolStack.from(stack).getStats().get(ToolStats.ATTACK_DAMAGE);
     }
 
     /**
@@ -61,8 +65,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
         {
             return -1;
         }
-        return -1;
-        //return (ToolStack.from(stack).getStats().getInt(ToolStats.HARVEST_LEVEL));
+        return (ToolStack.from(stack).getStats().get(ToolStats.HARVEST_TIER).getLevel());
     }
 
     /**
@@ -96,8 +99,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean checkTinkersBroken(@Nullable final ItemStack stack)
     {
-        return false;
-        //return !ItemStackUtils.isEmpty(stack) && ToolDamageUtil.isBroken(stack);
+        return !ItemStackUtils.isEmpty(stack) && ToolDamageUtil.isBroken(stack);
     }
 
     /**
@@ -109,16 +111,26 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType)
     {
-        return false;
-
-
-        /*if (ItemStackUtils.isEmpty(stack) || !stack.getToolTypes().contains(ToolType.get(toolType.getName())))
+        if (ItemStackUtils.isEmpty(stack))
         {
             return false;
         }
-        else
+
+        if (ToolType.AXE.equals(toolType) && stack.canPerformAction(ToolActions.AXE_DIG))
         {
-            return stack.is(TinkerTags.Items.HARVEST);
-        }*/
+            return true;
+        }
+
+        if (ToolType.SHOVEL.equals(toolType) && stack.canPerformAction(ToolActions.SHOVEL_DIG))
+        {
+            return true;
+        }
+
+        if (ToolType.PICKAXE.equals(toolType) && stack.canPerformAction(ToolActions.PICKAXE_DIG))
+        {
+            return true;
+        }
+
+        return stack.is(TinkerTags.Items.HARVEST);
     }
 }
