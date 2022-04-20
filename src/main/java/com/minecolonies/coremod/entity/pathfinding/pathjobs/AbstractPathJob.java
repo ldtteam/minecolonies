@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
-import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
@@ -10,7 +9,6 @@ import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.entity.pathfinding.PathingOptions;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -21,25 +19,26 @@ import com.minecolonies.coremod.entity.pathfinding.PathPointExtended;
 import com.minecolonies.coremod.network.messages.client.SyncPathMessage;
 import com.minecolonies.coremod.network.messages.client.SyncPathReachedMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,8 +47,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 import static com.minecolonies.api.util.constant.PathingConstants.*;
-
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
@@ -1069,7 +1066,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             node.setLadder();
         }
-        else if (isSwimming)
+
+        if (isSwimming)
         {
             node.setSwimming();
         }
@@ -1160,8 +1158,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         final boolean canDrop = parent != null && !parent.isLadder();
         //  Nothing to stand on
-        if (!canDrop || isSwimming || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.below(), false, parent)
-                                         && SurfaceType.getSurfaceType(world, world.getBlockState(parent.pos.below()), parent.pos.below()) == SurfaceType.DROPABLE))
+        if (!canDrop || ((parent.pos.getX() != pos.getX() || parent.pos.getZ() != pos.getZ()) && isPassable(parent.pos.below(), false, parent)
+                           && SurfaceType.getSurfaceType(world, world.getBlockState(parent.pos.below()), parent.pos.below()) == SurfaceType.DROPABLE))
         {
             return -100;
         }
