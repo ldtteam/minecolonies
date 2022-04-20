@@ -466,22 +466,22 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        spawnPos = BlockPosUtil.findAround(colony.getWorld(),
+        BlockPos worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
           BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
           3,
           30,
           SOLID_AIR_POS_SELECTOR);
 
-        if (spawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
+        if (worldSpawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
         {
-            spawnPos = BlockPosUtil.findAround(colony.getWorld(),
+            worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
               BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
               10,
               15,
               DOUBLE_AIR_POS_SELECTOR);
         }
 
-        return spawnPos;
+        return worldSpawnPos;
     }
 
     /**
@@ -496,35 +496,28 @@ public class RaidManager implements IRaiderManager
       final BlockPos advancePos)
     {
         BlockPos spawnPos = new BlockPos(start);
-        BlockPos tempPos = new BlockPos(spawnPos);
+        Vec3 tempPos = new Vec3(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
 
-        final int xDiff = start.getX() - advancePos.getX();
-        final int zDiff = start.getZ() - advancePos.getZ();
+        final int xDiff = Math.abs(start.getX() - advancePos.getX());
+        final int zDiff = Math.abs(start.getZ() - advancePos.getZ());
 
-        Vec3 rates = new Vec3(1, 1, 1);
-
-        if (xDiff > zDiff)
-        {
-            rates = new Vec3((xDiff) / ((double) zDiff), 1, start.getZ() < advancePos.getZ() ? 1 : -1);
-        }
-        else
-        {
-            rates = new Vec3(start.getX() < advancePos.getX() ? 1 : -1, 1, (zDiff) / ((double) xDiff));
-        }
+        Vec3 xzRatio = new Vec3(xDiff * (start.getX() < advancePos.getX() ? 1 : -1), 0, zDiff * (start.getZ() < advancePos.getZ() ? 1 : -1));
+        // Reduce ratio to 3 chunks a step
+        xzRatio = xzRatio.normalize().scale(3);
 
         int validChunkCount = 0;
         for (int i = 0; i < 10; i++)
         {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
             {
-                tempPos = tempPos.offset(16 * rates.x, 0, 16 * rates.z);
+                tempPos = tempPos.add(16 * xzRatio.x, 0, 16 * xzRatio.z);
 
-                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
                 {
-                    if (isValidSpawnPoint(buildings, tempPos))
+                    if (isValidSpawnPoint(buildings, new BlockPos(tempPos)))
                     {
-                        spawnPos = tempPos;
+                        spawnPos = new BlockPos(tempPos);
                         validChunkCount++;
                         if (validChunkCount > 5)
                         {

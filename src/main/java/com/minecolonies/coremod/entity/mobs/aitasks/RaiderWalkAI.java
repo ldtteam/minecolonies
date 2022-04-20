@@ -11,8 +11,10 @@ import com.minecolonies.api.entity.combat.CombatAIStates;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.HordeRaidEvent;
-import net.minecraft.core.BlockPos;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
+import net.minecraft.core.BlockPos;
+
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 /**
  * AI for handling the raiders walking directions
@@ -32,7 +34,7 @@ public class RaiderWalkAI implements IStateAI
     /**
      * Campfire walk timer
      */
-    private long nextCampfireTime = 0;
+    private long walkTimer = 0;
 
     public RaiderWalkAI(final AbstractEntityMinecoloniesMob raider, final ITickRateStateMachine<IState> stateMachine)
     {
@@ -61,9 +63,15 @@ public class RaiderWalkAI implements IStateAI
                 return false;
             }
 
-            if (targetBlock == null || raider.getNavigation().isDone() || (targetBlock != null && raider.blockPosition().distSqr(targetBlock) < 25))
+            if (targetBlock == null || raider.blockPosition().distSqr(targetBlock) < 25 || raider.level.getGameTime() > walkTimer)
             {
                 targetBlock = raider.getColony().getRaiderManager().getRandomBuilding();
+                walkTimer = raider.level.getGameTime() + TICKS_SECOND * 240;
+                final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(((IColonyRaidEvent) event).getWayPoints(), raider.blockPosition(), targetBlock);
+                raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.1);
+            }
+            else if (raider.getNavigation().isDone() || raider.getNavigation().getDesiredPos() == null)
+            {
                 final BlockPos moveToPos = ShipBasedRaiderUtils.chooseWaypointFor(((IColonyRaidEvent) event).getWayPoints(), raider.blockPosition(), targetBlock);
                 raider.getNavigation().moveToXYZ(moveToPos.getX(), moveToPos.getY(), moveToPos.getZ(), 1.1);
             }
@@ -77,7 +85,7 @@ public class RaiderWalkAI implements IStateAI
      */
     private void walkToCampFire()
     {
-        if (raider.level.getGameTime() - nextCampfireTime < 0)
+        if (raider.level.getGameTime() - walkTimer < 0)
         {
             return;
         }
@@ -89,7 +97,7 @@ public class RaiderWalkAI implements IStateAI
             return;
         }
 
-        nextCampfireTime = raider.level.getGameTime() + raider.level.random.nextInt(1000);
+        walkTimer = raider.level.getGameTime() + raider.level.random.nextInt(1000);
         targetBlock = BlockPosUtil.getRandomPosition(raider.level,
           campFire,
           BlockPos.ZERO,
