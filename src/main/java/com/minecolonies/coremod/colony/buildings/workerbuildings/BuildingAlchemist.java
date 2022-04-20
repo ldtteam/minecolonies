@@ -48,6 +48,11 @@ public class BuildingAlchemist extends AbstractBuilding
     private final List<BlockPos> leaves = new ArrayList<>();
 
     /**
+     * List of brewing stands.
+     */
+    private final List<BlockPos> brewingStands = new ArrayList<>();
+
+    /**
      * Instantiates a new plantation building.
      *
      * @param c the colony.
@@ -84,6 +89,10 @@ public class BuildingAlchemist extends AbstractBuilding
         {
             leaves.add(pos);
         }
+        else if (block == Blocks.BREWING_STAND)
+        {
+            brewingStands.add(pos);
+        }
     }
 
     @Override
@@ -99,7 +108,13 @@ public class BuildingAlchemist extends AbstractBuilding
         final ListNBT leavesPos = compound.getList(TAG_LEAVES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < leavesPos.size(); ++i)
         {
-            soulsand.add(NBTUtil.readBlockPos(leavesPos.getCompound(i).getCompound(TAG_POS)));
+            leaves.add(NBTUtil.readBlockPos(leavesPos.getCompound(i).getCompound(TAG_POS)));
+        }
+
+        final ListNBT brewingStandPos = compound.getList(TAG_BREWING_STAND, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < brewingStandPos.size(); ++i)
+        {
+            brewingStands.add(NBTUtil.readBlockPos(brewingStandPos.getCompound(i).getCompound(TAG_POS)));
         }
     }
 
@@ -119,11 +134,20 @@ public class BuildingAlchemist extends AbstractBuilding
         @NotNull final ListNBT leavesCompoundList = new ListNBT();
         for (@NotNull final BlockPos entry : leaves)
         {
-            @NotNull final CompoundNBT sandCompound = new CompoundNBT();
-            sandCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
-            leavesCompoundList.add(sandCompound);
+            @NotNull final CompoundNBT leaveCompound = new CompoundNBT();
+            leaveCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            leavesCompoundList.add(leaveCompound);
         }
         compound.put(TAG_LEAVES, leavesCompoundList);
+
+        @NotNull final ListNBT brewingStandCompoundList = new ListNBT();
+        for (@NotNull final BlockPos entry : brewingStands)
+        {
+            @NotNull final CompoundNBT brewingStandCompound = new CompoundNBT();
+            brewingStandCompound.put(TAG_POS, NBTUtil.writeBlockPos(entry));
+            brewingStandCompoundList.add(brewingStandCompound);
+        }
+        compound.put(TAG_BREWING_STAND, brewingStandCompoundList);
 
         return compound;
     }
@@ -131,11 +155,40 @@ public class BuildingAlchemist extends AbstractBuilding
     /**
      * Get a list of all the available working positions.
      *
-     * @return the list of positions.
+     * @return copy of the list of positions.
      */
     public List<BlockPos> getAllSoilPositions()
     {
-        return soulsand;
+        return new ArrayList<>(soulsand);
+    }
+
+    /**
+     * Get a list of all leave positions.
+     *
+     * @return copy of the list of positions.
+     */
+    public List<BlockPos> getAllLeavePositions()
+    {
+        return new ArrayList<>(leaves);
+    }
+
+    /**
+     * Get a list of all brewing stand positions.
+     *
+     * @return copy of the list of positions.
+     */
+    public List<BlockPos> getAllBrewingStandPositions()
+    {
+        return new ArrayList<>(brewingStands);
+    }
+
+    /**
+     * Remove a vanished brewing stand.
+     * @param pos the position of it.
+     */
+    public void removeBrewingStand(final BlockPos pos)
+    {
+        brewingStands.remove(pos);
     }
 
     public static class BrewingModule extends AbstractCraftingBuildingModule.Brewing
