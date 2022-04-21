@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.coremod.recipes.ArchitectsCutterCraftingType;
 import com.minecolonies.coremod.recipes.BrewingCraftingType;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.event.RegistryEvent;
@@ -34,5 +35,8 @@ public final class ModCraftingTypesInitializer
 
         ModCraftingTypes.BREWING = new BrewingCraftingType();
         reg.register(ModCraftingTypes.BREWING);
+
+        ModCraftingTypes.ARCHITECTS_CUTTER = new ArchitectsCutterCraftingType();
+        reg.register(ModCraftingTypes.ARCHITECTS_CUTTER);
     }
 }

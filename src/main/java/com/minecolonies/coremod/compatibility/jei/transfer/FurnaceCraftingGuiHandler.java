@@ -9,6 +9,7 @@ import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTe
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

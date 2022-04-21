@@ -9,9 +9,9 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.OptionalPredicate;
-
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

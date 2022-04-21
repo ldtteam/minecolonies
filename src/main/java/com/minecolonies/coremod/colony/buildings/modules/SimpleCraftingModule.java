@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
@@ -52,6 +51,6 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     @Override
     public Set<CraftingType> getSupportedCraftingTypes()
     {
-        return ImmutableSet.of(ModCraftingTypes.SMALL_CRAFTING);
+        return Set.of(ModCraftingTypes.SMALL_CRAFTING);
     }
 }

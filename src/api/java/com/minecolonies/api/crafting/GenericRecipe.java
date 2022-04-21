@@ -35,6 +35,7 @@ public class GenericRecipe implements IGenericRecipe
     public static IGenericRecipe of(@Nullable final Recipe<?> recipe, @Nullable final Level world)
     {
         if (recipe == null) return null;
+
         final List<List<ItemStack>> inputs = compactInputs(recipe.getIngredients().stream()
                 .map(ingredient -> Arrays.asList(ingredient.getItems()))
                 .collect(Collectors.toList()));

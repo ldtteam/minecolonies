@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -31,20 +30,19 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -930,7 +928,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public Set<CraftingType> getSupportedCraftingTypes()
         {
-            return ImmutableSet.of(ModCraftingTypes.SMALL_CRAFTING, ModCraftingTypes.LARGE_CRAFTING);
+            return Set.of(ModCraftingTypes.SMALL_CRAFTING, ModCraftingTypes.LARGE_CRAFTING);
         }
 
         @Override
@@ -967,7 +965,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public Set<CraftingType> getSupportedCraftingTypes()
         {
-            return ImmutableSet.of(ModCraftingTypes.SMELTING);
+            return Set.of(ModCraftingTypes.SMELTING);
         }
 
         @Override
@@ -1004,7 +1002,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public Set<CraftingType> getSupportedCraftingTypes()
         {
-            return ImmutableSet.of();
+            return Set.of();
         }
 
         @Override

@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.modules.SimpleCraftingModule;
@@ -17,7 +18,6 @@ import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +53,7 @@ public class CraftingTagAuditor
     {
         createFile("tag audit", server, "tag_audit.csv", writer -> doTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
+        createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
     }
 
     private static boolean createFile(@NotNull final String description,
@@ -161,6 +162,55 @@ public class CraftingTagAuditor
         }
     }
 
+    private static void doDomumAudit(@NotNull final BufferedWriter writer,
+                                     @NotNull final MinecraftServer server) throws IOException
+    {
+        final List<IGenericRecipe> cutterRecipes = new ArrayList<>(ModCraftingTypes.ARCHITECTS_CUTTER.findRecipes(server.getRecipeManager(), server.overworld()));
+        cutterRecipes.sort(Comparator.comparing(r -> r.getPrimaryOutput().getItem().getRegistryName().toString()));
+        final List<ICraftingBuildingModule> crafters = getCraftingModules()
+                .stream()
+                .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER))
+                .collect(Collectors.toList());
+
+        writer.write("type,");
+        writeItemHeaders(writer);
+        for (final ICraftingBuildingModule crafter : crafters)
+        {
+            writer.write(',');
+            writer.write(crafter.getCustomRecipeKey());
+        }
+        writer.newLine();
+
+        for (final IGenericRecipe recipe : cutterRecipes)
+        {
+            boolean first = true;
+
+            final List<ItemStack> allSkins = recipe.getInputs().stream()
+                    .flatMap(Collection::stream)
+                    .distinct()
+                    .sorted(Comparator.comparing(s -> s.getItem().getRegistryName().toString()))
+                    .collect(Collectors.toList());
+            for (final ItemStack skin : allSkins)
+            {
+                if (first)
+                {
+                    writeItemStack(writer, recipe.getPrimaryOutput());
+                    first = false;
+                }
+                writer.write(',');
+
+                writeItemData(writer, skin);
+
+                for (final ICraftingBuildingModule crafter : crafters)
+                {
+                    writer.write(crafter.getIngredientValidator().test(skin).orElse(false) ? ",1" : ",");
+                }
+
+                writer.newLine();
+            }
+        }
+    }
+
     private static void writeItemHeaders(@NotNull final BufferedWriter writer) throws IOException
     {
         writer.write("item,name");
@@ -169,14 +219,21 @@ public class CraftingTagAuditor
     private static void writeItemData(@NotNull final BufferedWriter writer,
                                       @NotNull final ItemStack stack) throws IOException
     {
+        writeItemStack(writer, stack);
+        writer.write(",\"");
+        writer.write(stack.getDisplayName().getString().replace("\"", "\"\""));
+        writer.write('"');
+    }
+
+    private static void writeItemStack(@NotNull final BufferedWriter writer,
+                                       @NotNull final ItemStack stack) throws IOException
+    {
         writer.write('"');
         writer.write(stack.getItem().getRegistryName().toString());
         if (stack.hasTag() && !stack.isDamageableItem())
         {
             writer.write(stack.getTag().toString().replace("\"", "\"\""));
         }
-        writer.write("\",\"");
-        writer.write(stack.getDisplayName().getString().replace("\"", "\"\""));
         writer.write('"');
     }
 
