@@ -5,7 +5,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -62,7 +61,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   Math.round(citizen.getZ()),
                   new TranslationTextComponent(damageSource.msgId));
             }
-            citizen.getCitizenColonyHandler().getColony().notifyColonyManagers(contentComponent.setStyle(Style.EMPTY.withColor(TextFormatting.RED)));
+            citizen.getCitizenColonyHandler().getColony().notifyColonyManagers(contentComponent, TextFormatting.RED);
         }
     }
 }
