@@ -5,8 +5,9 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
+
+import java.util.Objects;
 
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).
@@ -62,6 +63,41 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   new TranslationTextComponent(damageSource.msgId));
             }
             citizen.getCitizenColonyHandler().getColony().notifyColonyManagers(contentComponent, TextFormatting.RED);
+        }
+    }
+
+    @Override
+    public void sendLocalizedChat(final String keyIn, final Object... msg)
+    {
+        sendLocalizedChat(new TranslationTextComponent(keyIn, msg));
+    }
+
+    @Override
+    public void sendLocalizedChat(ITextComponent component)
+    {
+        if (citizen.getCitizenColonyHandler().getColony() != null)
+        {
+            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+
+            IFormattableTextComponent fullComponent;
+            if (job != null)
+            {
+                fullComponent = new StringTextComponent("")
+                                  .append(new TranslationTextComponent(job.getJobRegistryEntry().getTranslationKey()))
+                                  .append(" ")
+                                  .append(Objects.requireNonNull(citizen.getCustomName()))
+                                  .append(": ")
+                                  .append(component);
+            }
+            else
+            {
+                fullComponent = new StringTextComponent("")
+                                  .append(Objects.requireNonNull(citizen.getCustomName()))
+                                  .append(": ")
+                                  .append(component);
+            }
+
+            citizen.getCitizenColonyHandler().getColony().notifyColonyMembers(fullComponent);
         }
     }
 }
