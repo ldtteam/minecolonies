@@ -59,7 +59,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
     /**
      * Average delay to switch to netherwart harvesting.
      */
-    private static final int DELAY_TO_HARVEST_NETHERWART = 60;
+    private static final int DELAY_TO_HARVEST_NETHERWART = 30;
 
     /**
      * Average delay to switch to mistletoe harvesting.

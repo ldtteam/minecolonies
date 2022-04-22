@@ -64,6 +64,7 @@ public class BuildingAlchemist extends AbstractBuilding
         super(c, l);
         keepX.put(itemStack ->  itemStack.getItem() instanceof ShearsItem, new Tuple<>(1, true));
         keepX.put(itemStack ->  itemStack.getItem() == Items.NETHER_WART, new Tuple<>(16, false));
+        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
     }
 
     @NotNull
