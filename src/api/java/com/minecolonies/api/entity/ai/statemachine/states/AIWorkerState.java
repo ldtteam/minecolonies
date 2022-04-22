@@ -613,7 +613,31 @@ public enum AIWorkerState implements IAIState
     /*
 ### Beekeeper ###
      */
-    BEEKEEPER_HARVEST(true);
+    BEEKEEPER_HARVEST(true),
+
+        /*
+###Alchemist users###
+     */
+
+    /**
+     * brews potions until.
+     */
+    START_USING_BREWINGSTAND(true),
+
+    /**
+     * Retrieve the ore from the brewingStand.
+     */
+    RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD(true),
+
+    /**
+     * Retrieve used fuel from the brewingStand.
+     */
+    RETRIEVING_USED_FUEL_FROM_BREWINGSTAND(true),
+
+    /**
+     * Fuel the brewingStand.
+     */
+    ADD_FUEL_TO_BREWINGSTAND(true);
 
     /**
      * Is it okay to eat.

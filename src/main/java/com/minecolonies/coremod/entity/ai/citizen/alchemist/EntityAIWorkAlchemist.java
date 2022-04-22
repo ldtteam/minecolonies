@@ -53,7 +53,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
     private static final double BASE_XP_GAIN = 5;
 
     /**
-     * Furnace to fuel
+     * BrewingStand to fuel
      */
     private BlockPos fuelPos = null;
 
@@ -76,10 +76,10 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
            */
           new AIEventTarget(AIBlockingEventType.EVENT, this::isFuelNeeded, this::checkBrewingStandFuel, TICKS_SECOND * 10),
           new AIEventTarget(AIBlockingEventType.EVENT, this::accelerateBrewingStand, this::getState, TICKS_SECOND),
-          new AITarget(START_USING_FURNACE, this::fillUpBrewingStand, TICKS_SECOND),
-          new AITarget(RETRIEVING_END_PRODUCT_FROM_FURNACE, this::retrieveBrewableFromBrewingStand, TICKS_SECOND),
-          new AITarget(RETRIEVING_USED_FUEL_FROM_FURNACE, this::retrieveUsedFuel, TICKS_SECOND),
-          new AITarget(ADD_FUEL_TO_FURNACE, this::addFuelToBrewingStand, TICKS_SECOND)
+          new AITarget(START_USING_BREWINGSTAND, this::fillUpBrewingStand, TICKS_SECOND),
+          new AITarget(RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD, this::retrieveBrewableFromBrewingStand, TICKS_SECOND),
+          new AITarget(RETRIEVING_USED_FUEL_FROM_BREWINGSTAND, this::retrieveUsedFuel, TICKS_SECOND),
+          new AITarget(ADD_FUEL_TO_BREWINGSTAND, this::addFuelToBrewingStand, TICKS_SECOND)
         );
     }
 
@@ -105,12 +105,8 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         return getNextCraftingState();
     }
 
-    //todo list: We want the workermodel, the AI
-
-    //todo craft on demand (RS), and harvest/plant netherwart randomly && harvest mistletoe randomly (small chance for mistletoe).
-
-    //todo we need special fuel handling here.
-
+    // and harvest/plant netherwart randomly && harvest mistletoe randomly (small chance for mistletoe).
+    
     @Override
     public Class<BuildingAlchemist> getExpectedBuildingClass()
     {
@@ -172,7 +168,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         {
             currentRequest = currentTask;
             walkTo = brewingStandPos;
-            return RETRIEVING_END_PRODUCT_FROM_FURNACE;
+            return RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD;
         }
 
         if(currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.BREWING_STAND)
@@ -198,7 +194,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
     }
 
     /**
-     * Check to see how many furnaces are still processing
+     * Check to see how many brewingStands are still processing
      * @return the count.
      */
     private int countOfBubblingBrewingStands()
@@ -333,7 +329,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                         {
                             preFuelState = getState();
                         }
-                        return ADD_FUEL_TO_FURNACE;
+                        return ADD_FUEL_TO_BREWINGSTAND;
                     }
                 }
                 else
@@ -383,7 +379,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                         worker.getInventoryCitizen(), item -> item.getItem() == Items.BLAZE_POWDER, BREWING_MIN_FUEL_COUNT,
                         new InvWrapper(brewingStand), BREWING_FUEL_SLOT);
 
-                    if(preFuelState != null && preFuelState != ADD_FUEL_TO_FURNACE)
+                    if(preFuelState != null && preFuelState != ADD_FUEL_TO_BREWINGSTAND)
                     {
                         IAIState returnState = preFuelState;
                         preFuelState = null;
@@ -605,7 +601,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
     /**
      * Checks if the brewingStand are ready to start smelting.
      *
-     * @return START_USING_FURNACE if enough, else check for additional worker specific jobs.
+     * @return START_USING_BREWINGSTAND if enough, else check for additional worker specific jobs.
      */
     private IAIState checkIfAbleToSmelt()
     {
@@ -626,7 +622,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                 if (isEmpty(((BrewingStandTileEntity) entity).getItem(INGREDIENT_SLOT)))
                 {
                     walkTo = pos;
-                    return START_USING_FURNACE;
+                    return START_USING_BREWINGSTAND;
                 }
             }
             else
@@ -672,7 +668,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         if (entity instanceof BrewingStandTileEntity && currentRecipeStorage != null)
         {
             final BrewingStandTileEntity brewingStand = (BrewingStandTileEntity) entity;
-            final int maxFurnaces = getMaxUsableBrewingStands();
+            final int maxBrewingStands = getMaxUsableBrewingStands();
             final int resultInBrewingStand = getExtendedCount(currentRecipeStorage.getPrimaryOutput());
             final int resultInCitizenInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, currentRecipeStorage.getPrimaryOutput()));
 
@@ -708,7 +704,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                             }
 
                             int toTransfer = 0;
-                            if (burningCount < maxFurnaces)
+                            if (burningCount < maxBrewingStands)
                             {
                                 toTransfer = 1;
                             }
@@ -765,7 +761,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
                     if (hasFuelAndNoBrewable(brewingStand) || hasNeitherFuelNorBrewable(brewingStand))
                     {
                         int toTransfer = 0;
-                        if (burningCount < maxFurnaces)
+                        if (burningCount < maxBrewingStands)
                         {
                             toTransfer = 1;
                         }
@@ -843,7 +839,7 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         {
             walkTo = posOfOven;
             worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.retrieving"));
-            return RETRIEVING_END_PRODUCT_FROM_FURNACE;
+            return RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD;
         }
 
         // Safety net, should get caught removing things from the brewingStand.

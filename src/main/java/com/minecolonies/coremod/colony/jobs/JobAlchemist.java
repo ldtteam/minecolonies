@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.coremod.entity.ai.citizen.alchemist.EntityAIWorkAlchemist;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,5 +26,12 @@ public class JobAlchemist extends AbstractJobCrafter<EntityAIWorkAlchemist, JobA
     public EntityAIWorkAlchemist generateAI()
     {
         return new EntityAIWorkAlchemist(this);
+    }
+
+    @NotNull
+    @Override
+    public ResourceLocation getModel()
+    {
+        return ModModelTypes.ALCHEMIST_ID;
     }
 }
