@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -9,7 +8,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.TranslationTextComponent;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_CITIZEN_SPAWN_SUCCESS;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -30,12 +32,12 @@ public class CommandCitizenSpawnNew implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         context.getSource()
-          .sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenspawn.success",
+          .sendSuccess(new TranslationTextComponent(COMMAND_CITIZEN_SPAWN_SUCCESS,
             colony.getCitizenManager().spawnOrCreateCivilian(null, colony.getWorld(), null, true).getName()), true);
         return 1;
     }

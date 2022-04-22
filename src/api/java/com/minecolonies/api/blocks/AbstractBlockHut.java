@@ -196,7 +196,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
             if (!building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                MessageUtils.sendPlayerMessage(player, NO_PERMISSION_IN_COLONY);
+                MessageUtils.sendPlayerMessage(player, PERMISSION_DENIED);
                 return ActionResultType.FAIL;
             }
 

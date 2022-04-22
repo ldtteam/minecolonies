@@ -5,7 +5,6 @@ import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.AbstractTextBuilder;
 import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.views.DropDownList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -180,22 +179,22 @@ public class WindowSettingsPage extends AbstractWindowTownHall
 
         if (building.getColony().isManualHiring())
         {
-            findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            findPaneOfTypeByID(BUTTON_TOGGLE_JOB, Button.class).setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
 
         if (!building.getColony().isPrintingProgress())
         {
-            findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setText(LanguageHandler.format(OFF_STRING));
+            findPaneOfTypeByID(BUTTON_TOGGLE_PRINT_PROGRESS, Button.class).setText(new TranslationTextComponent(OFF_STRING));
         }
 
         if (building.getColony().isManualHousing())
         {
-            findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            findPaneOfTypeByID(BUTTON_TOGGLE_HOUSING, Button.class).setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
 
         if (building.getColony().canMoveIn())
         {
-            findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setText(LanguageHandler.format(ON_STRING));
+            findPaneOfTypeByID(BUTTON_TOGGLE_MOVE_IN, Button.class).setText(new TranslationTextComponent(ON_STRING));
         }
     }
 
@@ -206,15 +205,21 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHiring(@NotNull final Button button)
     {
-        final boolean toggle;
-        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
+        String key = button.getTextAsString();
+        if (button.getText() instanceof TranslationTextComponent)
         {
-            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            key = ((TranslationTextComponent) button.getText()).getKey();
+        }
+
+        final boolean toggle;
+        if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
+        {
+            button.setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
         }
         else
         {
-            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+            button.setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             toggle = false;
         }
         Network.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(), toggle));
@@ -227,15 +232,21 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHousing(@NotNull final Button button)
     {
-        final boolean toggle;
-        if (button.getTextAsString().equals(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF)))
+        String key = button.getTextAsString();
+        if (button.getText() instanceof TranslationTextComponent)
         {
-            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            key = ((TranslationTextComponent) button.getText()).getKey();
+        }
+
+        final boolean toggle;
+        if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
+        {
+            button.setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
         }
         else
         {
-            button.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+            button.setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             toggle = false;
         }
         Network.getNetwork().sendToServer(new ToggleHousingMessage(this.building.getColony(), toggle));
@@ -248,15 +259,21 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleMoveIn(@NotNull final Button button)
     {
-        final boolean toggle;
-        if (button.getTextAsString().equals(LanguageHandler.format(OFF_STRING)))
+        String key = button.getTextAsString();
+        if (button.getText() instanceof TranslationTextComponent)
         {
-            button.setText(LanguageHandler.format(ON_STRING));
+            key = ((TranslationTextComponent) button.getText()).getKey();
+        }
+
+        final boolean toggle;
+        if (key.equals(OFF_STRING))
+        {
+            button.setText(new TranslationTextComponent(ON_STRING));
             toggle = true;
         }
         else
         {
-            button.setText(LanguageHandler.format(OFF_STRING));
+            button.setText(new TranslationTextComponent(OFF_STRING));
             toggle = false;
         }
         Network.getNetwork().sendToServer(new ToggleMoveInMessage(this.building.getColony(), toggle));
@@ -269,13 +286,19 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void togglePrintProgress(@NotNull final Button button)
     {
-        if (button.getTextAsString().equals(LanguageHandler.format(OFF_STRING)))
+        String key = button.getTextAsString();
+        if (button.getText() instanceof TranslationTextComponent)
         {
-            button.setText(LanguageHandler.format(ON_STRING));
+            key = ((TranslationTextComponent) button.getText()).getKey();
+        }
+
+        if (key.equals(OFF_STRING))
+        {
+            button.setText(new TranslationTextComponent(ON_STRING));
         }
         else
         {
-            button.setText(LanguageHandler.format(OFF_STRING));
+            button.setText(new TranslationTextComponent(OFF_STRING));
         }
         Network.getNetwork().sendToServer(new ToggleHelpMessage(this.building.getColony()));
     }

@@ -1,11 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
+import com.minecolonies.api.util.constant.translation.ToolTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,22 +65,21 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
             final BlockPos pos = useContext.getClickedPos();
             if (positions.contains(pos))
             {
-                LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.removehive");
+                MessageUtils.sendPlayerMessage(useContext.getPlayer(), ToolTranslationConstants.TOOL_BEEHIVE_SCEPTER_REMOVE_HIVE);
                 building.removeHive(pos);
-                SoundUtils.playSoundForPlayer((ServerPlayerEntity) player, SoundEvents.NOTE_BLOCK_BELL,
-                        (float) SoundUtils.VOLUME * 2, 0.5f);
+                SoundUtils.playSoundForPlayer((ServerPlayerEntity) player, SoundEvents.NOTE_BLOCK_BELL, (float) SoundUtils.VOLUME * 2, 0.5f);
             }
             else
             {
                 if (positions.size() < building.getMaximumHives())
                 {
-                    LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.addhive");
+                    MessageUtils.sendPlayerMessage(useContext.getPlayer(), ToolTranslationConstants.TOOL_BEEHIVE_SCEPTER_ADD_HIVE);
                     building.addHive(pos);
                     SoundUtils.playSuccessSound(player, player.blockPosition());
                 }
                 if (positions.size() >= building.getMaximumHives())
                 {
-                    LanguageHandler.sendPlayerMessage(useContext.getPlayer(), "item.minecolonies.scepterbeekeeper.maxhives");
+                    MessageUtils.sendPlayerMessage(useContext.getPlayer(), ToolTranslationConstants.TOOL_BEEHIVE_SCEPTER_MAX_HIVES);
                     player.inventory.removeItemNoUpdate(player.inventory.selected);
                 }
             }

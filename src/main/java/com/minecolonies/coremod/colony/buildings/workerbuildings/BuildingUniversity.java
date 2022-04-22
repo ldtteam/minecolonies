@@ -1,17 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.ILocalResearch;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,6 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BOOKCASES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RESEARCHERS_MORE_KNOWLEDGE;
 import static com.minecolonies.api.util.constant.TranslationConstants.RESEARCH_CONCLUDED;
 
 /**
@@ -163,6 +160,7 @@ public class BuildingUniversity extends AbstractBuilding
 
     /**
      * Called on successfully concluding a research.
+     *
      * @param research the concluded research.
      */
     public void onSuccess(final ILocalResearch research)
@@ -173,12 +171,9 @@ public class BuildingUniversity extends AbstractBuilding
         }
 
         final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
-         IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
+          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
 
-        for(PlayerEntity player : colony.getMessagePlayerEntities())
-        {
-            player.sendMessage(message, player.getUUID());
-        }
+        colony.notifyColonyManagers(message);
         colony.getResearchManager().checkAutoStartResearch();
         this.markDirty();
     }
@@ -188,8 +183,7 @@ public class BuildingUniversity extends AbstractBuilding
     {
         if (getBuildingLevel() >= OFFLINE_PROCESSING_LEVEL_CAP && time > 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-              "entity.researcher.moreknowledge");
+            colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RESEARCHERS_MORE_KNOWLEDGE));
             for (final ICitizenData citizenData : getAllAssignedCitizen())
             {
                 if (citizenData.getJob() != null)

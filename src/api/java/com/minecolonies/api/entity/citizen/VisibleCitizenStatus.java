@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
 /**
  * Enum for citizen status icons, resource location and translation
  */
@@ -22,21 +24,21 @@ public class VisibleCitizenStatus
      * General public Icons
      */
     public final static VisibleCitizenStatus EAT         =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry.png"), "com.minecolonies.gui.visiblestatus.eat");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/hungry.png"), MESSAGE_INFO_CITIZEN_STATUS_HUNGRY);
     public final static VisibleCitizenStatus HOUSE       =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/house_big.png"), "com.minecolonies.gui.visiblestatus.idle");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/house_big.png"), MESSAGE_INFO_CITIZEN_STATUS_IDLE);
     public final static VisibleCitizenStatus RAIDED      =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/raid_icon.png"), "com.minecolonies.gui.visiblestatus.raid");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/raid_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_RAID);
     public final static VisibleCitizenStatus MOURNING    =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/mourning.png"), "com.minecolonies.gui.visiblestatus.mourn");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/mourning.png"), MESSAGE_INFO_CITIZEN_STATUS_MOURNING);
     public final static VisibleCitizenStatus BAD_WEATHER =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bad_weather.png"), "com.minecolonies.gui.visiblestatus.rain");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bad_weather.png"), MESSAGE_INFO_CITIZEN_STATUS_RAINING);
     public final static VisibleCitizenStatus SLEEP       =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bed_icon.png"), "com.minecolonies.gui.visiblestatus.sleep");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/bed_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SLEEPING);
     public final static VisibleCitizenStatus SICK        =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/sick_icon.png"), "com.minecolonies.gui.visiblestatus.sick");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/sick_icon.png"), MESSAGE_INFO_CITIZEN_STATUS_SICK);
     public final static VisibleCitizenStatus WORKING     =
-      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/working.png"), "com.minecolonies.gui.visiblestatus.working");
+      new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/working.png"), MESSAGE_INFO_CITIZEN_STATUS_WORKING);
 
     /**
      * The status ID

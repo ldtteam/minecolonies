@@ -10,6 +10,8 @@ import com.minecolonies.coremod.colony.jobs.JobDruid;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import static com.minecolonies.api.util.constant.translation.JobTranslationConstants.*;
+
 public final class ModGuardTypesInitializer
 {
 
@@ -24,8 +26,8 @@ public final class ModGuardTypesInitializer
         final IForgeRegistry<GuardType> reg = event.getRegistry();
 
         ModGuardTypes.knight = new GuardType.Builder()
-                                 .setJobTranslationKey("com.minecolonies.job.knight")
-                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.knight")
+                                 .setJobTranslationKey(JOB_KNIGHT)
+                                 .setButtonTranslationKey(JOB_KNIGHT_BUTTON)
                                  .setPrimarySkill(Skill.Adaptability)
                                  .setSecondarySkill(Skill.Stamina)
                                  .setWorkerSoundName("archer")
@@ -35,8 +37,8 @@ public final class ModGuardTypesInitializer
                                  .createGuardType();
 
         ModGuardTypes.ranger = new GuardType.Builder()
-                                 .setJobTranslationKey("com.minecolonies.job.ranger")
-                                 .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.ranger")
+                                 .setJobTranslationKey(JOB_RANGER)
+                                 .setButtonTranslationKey(JOB_RANGER_BUTTON)
                                  .setPrimarySkill(Skill.Agility)
                                  .setSecondarySkill(Skill.Adaptability)
                                  .setWorkerSoundName("archer")
@@ -46,8 +48,8 @@ public final class ModGuardTypesInitializer
                                  .createGuardType();
 
         ModGuardTypes.druid = new GuardType.Builder()
-          .setJobTranslationKey("com.minecolonies.job.druid")
-          .setButtonTranslationKey("com.minecolonies.coremod.gui.workerhuts.druid")
+          .setJobTranslationKey(JOB_DRUID)
+          .setButtonTranslationKey(JOB_DRUID_BUTTON)
           .setPrimarySkill(Skill.Mana)
           .setSecondarySkill(Skill.Focus)
           .setWorkerSoundName("druid")

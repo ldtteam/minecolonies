@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JOURNEY_MAP_INFO;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class JourneymapOptions
@@ -25,7 +25,7 @@ public class JourneymapOptions
 
     public JourneymapOptions()
     {
-        final String prefix = COM_MINECOLONIES_JMAP_PREFIX + "options.";
+        final String prefix = PARTIAL_JOURNEY_MAP_INFO + "options.";
         final OptionCategory category = new OptionCategory(MOD_ID, prefix + "category");
 
         this.borderFullscreenStyle = new EnumOption<>(category, "borderFullscreenStyle", prefix + "borderfullscreenstyle", BorderStyle.FILLED).setSortOrder(100);
@@ -98,9 +98,9 @@ public class JourneymapOptions
 
     public enum BorderStyle implements KeyedEnum
     {
-        HIDDEN(COM_MINECOLONIES_JMAP_PREFIX + "borderstyle.hidden"),
-        FRAMED(COM_MINECOLONIES_JMAP_PREFIX + "borderstyle.framed"),
-        FILLED(COM_MINECOLONIES_JMAP_PREFIX + "borderstyle.filled");
+        HIDDEN(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.hidden"),
+        FRAMED(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.framed"),
+        FILLED(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.filled");
 
         private final String key;
 

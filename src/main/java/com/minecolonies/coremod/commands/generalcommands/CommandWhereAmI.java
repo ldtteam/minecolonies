@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -28,7 +29,7 @@ public class CommandWhereAmI implements IMCCommand
 
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.nocolony");
+            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_WHERE_AM_I_NO_COLONY);
             return 0;
         }
         final BlockPos center = colony.getCenter();
@@ -36,14 +37,14 @@ public class CommandWhereAmI implements IMCCommand
 
         if (!IColonyManager.getInstance().isCoordinateInAnyColony(sender.getCommandSenderWorld(), playerPos))
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.colonyclose", distance);
+            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_WHERE_AM_I_COLONY_CLOSE, distance);
             return 0;
         }
 
         final String colonyName = colony.getName();
         final String id = Integer.toString(colony.getID());
 
-        LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.whereami.incolony", colonyName, id, distance);
+        MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_WHERE_AM_I_IN_COLONY, colonyName, id, distance);
 
         return 0;
     }

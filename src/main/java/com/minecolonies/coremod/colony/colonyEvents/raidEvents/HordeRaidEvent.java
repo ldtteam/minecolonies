@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
@@ -34,6 +33,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
 import org.jetbrains.annotations.NotNull;
@@ -282,7 +282,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (horde.hordeSize > 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE, colony.getName());
+            colony.notifyColonyManagers(new TranslationTextComponent(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()));
         }
     }
 
@@ -351,9 +351,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         updateRaidBar();
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getImportantMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
+        colony.notifyColonyManagers(new TranslationTextComponent(RAID_EVENT_MESSAGE + horde.getMessageID(),
+          BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint),
+          colony.getName()));
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundCategory.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);
@@ -469,7 +469,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (total == 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE), colony.getName());
+            colony.notifyColonyManagers(new TranslationTextComponent(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()));
 
             PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
             PlayAudioMessage.sendToAll(getColony(), false, true, audio);
@@ -481,7 +481,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         }
         else if (total > 0 && total <= SMALL_HORDE_SIZE)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), ONLY_X_BARBARIANS_LEFT_MESSAGE, total);
+            colony.notifyColonyManagers(new TranslationTextComponent(ONLY_X_BARBARIANS_LEFT_MESSAGE, total));
         }
     }
 

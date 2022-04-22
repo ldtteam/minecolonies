@@ -1,23 +1,28 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.CompactColonyReference;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
-import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.DO_REALLY_WANNA_TP;
+import static com.minecolonies.api.util.constant.TranslationConstants.TH_TOO_LOW;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -63,13 +68,13 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
-        final ITextComponent teleport = new StringTextComponent(LanguageHandler.format(DO_REALLY_WANNA_TP, ally.name))
+        final ITextComponent teleport = new TranslationTextComponent(DO_REALLY_WANNA_TP, ally.name)
                                           .setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
                                             new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
                                               () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(
                                                 ally.dimension, ally.id)))));
 
-        Minecraft.getInstance().player.sendMessage(teleport, Minecraft.getInstance().player.getUUID());
+        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, teleport);
         this.close();
     }
 
@@ -112,7 +117,7 @@ public class WindowMainPage extends AbstractWindowTownHall
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
                 if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
                 {
-                    button.setText(LanguageHandler.format(TH_TOO_LOW));
+                    button.setText(new TranslationTextComponent(TH_TOO_LOW));
                     button.disable();
                 }
                 else

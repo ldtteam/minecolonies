@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -20,6 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.research.util.ResearchConstants.GROWTH;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_CHILD_GREW_UP;
 
 /**
  * AI which controls child behaviour and growing.
@@ -304,11 +305,11 @@ public class EntityAICitizenChild extends Goal
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
             if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier)
             {
-                child.getCitizenColonyHandler().getColony().getEventDescriptionManager().addEventDescription(new CitizenGrownUpEvent(child.blockPosition(),
-                      child.getCitizenData().getName()));
-                LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntities(),
-                  "com.minecolonies.coremod.progress.childGrow",
-                  child.getName().getString());
+                child.getCitizenColonyHandler()
+                  .getColony()
+                  .getEventDescriptionManager()
+                  .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
+                child.getCitizenColonyHandler().getColony().notifyColonyMembers(new TranslationTextComponent(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()));
                 // Grow up
                 child.setIsChild(false);
                 child.setTextureDirty();

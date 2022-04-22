@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.authlib.GameProfile;
@@ -61,7 +62,7 @@ public class CommandRTP implements IMCCommand
         if (profile == null || context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
         {
             // could not find player with given name.
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.playernotfound", profile != null ? profile.getName() : "null");
+            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile != null ? profile.getName() : "null");
             return 0;
         }
 
@@ -80,12 +81,12 @@ public class CommandRTP implements IMCCommand
 
         if (!MineColonies.getConfig().getServer().canPlayerUseRTPCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.notallowed");
+            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_RTP_NOT_ALLOWED);
             return false;
         }
         else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getLevel().dimension() != World.OVERWORLD)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.rtp.wrongdim");
+            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_RTP_WRONG_DIMENSION);
             return false;
         }
         return true;
@@ -136,14 +137,14 @@ public class CommandRTP implements IMCCommand
                 player.teleportTo(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
                 player.setHealth(player.getMaxHealth());
 
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.rtp.success");
+                MessageUtils.sendPlayerMessage(player, CommandTranslationConstants.COMMAND_RTP_SUCCESS);
 
                 //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
                 player.fallDistance = -FALL_DISTANCE;
                 return;
             }
         }
-        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.rtp.nopositionfound");
+        MessageUtils.sendPlayerMessage(player, CommandTranslationConstants.COMMAND_RTP_NO_POSITION);
     }
 
     /**

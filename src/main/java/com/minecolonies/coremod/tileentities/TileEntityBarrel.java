@@ -8,6 +8,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -148,7 +149,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
 
         if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"), playerIn.getUUID());
+            MessageUtils.sendPlayerMessage(playerIn, new TranslationTextComponent("entity.barrel.working"));
             return false;
         }
         else

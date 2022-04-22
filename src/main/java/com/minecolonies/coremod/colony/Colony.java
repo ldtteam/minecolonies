@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.ICitizenData;
@@ -21,6 +20,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -53,6 +53,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerChunkProvider;
@@ -65,6 +66,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -453,7 +455,7 @@ public class Colony implements IColony
             {
                 for (final IBuilding building : buildingManager.getBuildings().values())
                 {
-                    building.processOfflineTime(pastTime/1000);
+                    building.processOfflineTime(pastTime / 1000);
                 }
             }
         }
@@ -608,7 +610,7 @@ public class Colony implements IColony
                 player.refreshList(this);
                 if (player.getGuards().isEmpty())
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName().getString());
+                    notifyColonyManagers(new TranslationTextComponent(COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName()));
                 }
             }
         }
@@ -1245,7 +1247,7 @@ public class Colony implements IColony
                 else
                 {
                     sum += building.getBuildingLevel();
-                    if(sum >= level)
+                    if (sum >= level)
                     {
                         return true;
                     }
@@ -1602,8 +1604,8 @@ public class Colony implements IColony
         if (!rank.isColonyManager() && !visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
-            LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
+            MessageUtils.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getName());
+            notifyColonyManagers(new TranslationTextComponent(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()));
         }
     }
 
@@ -1613,8 +1615,8 @@ public class Colony implements IColony
         if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
-            LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
+            MessageUtils.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getName());
+            notifyColonyManagers(new TranslationTextComponent(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()));
         }
     }
 
@@ -1697,8 +1699,9 @@ public class Colony implements IColony
             {
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE,
-                            attackingPlayer.getPlayer().getName().getString(), attackingPlayer.getGuards().size());
+                    notifyColonyManagers(new TranslationTextComponent(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE,
+                      attackingPlayer.getPlayer().getName(),
+                      attackingPlayer.getGuards().size()));
                 }
                 return;
             }
@@ -1711,7 +1714,7 @@ public class Colony implements IColony
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName().getString());
+                notifyColonyManagers(new TranslationTextComponent(COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName()));
             }
         }
     }
@@ -1742,7 +1745,7 @@ public class Colony implements IColony
      * @return the list of pattern-color pairs
      */
     @Override
-    public ListNBT getColonyFlag() { return colonyFlag; }
+    public ListNBT getColonyFlag() {return colonyFlag;}
 
     /**
      * Set the colony to be active.
@@ -1870,20 +1873,62 @@ public class Colony implements IColony
     }
 
     @Override
-    public void notifyPlayers(final ITextComponent component)
+    public void notifyColonyMembers(final ITextComponent component)
     {
-        for (final PlayerEntity player : getMessagePlayerEntities())
-        {
-            player.sendMessage(component, player.getUUID());
-        }
+        notifyPlayers(getMessagePlayerEntities(), null, component);
+    }
+
+    @Override
+    public void notifyColonyMembers(final ITextComponent component, TextFormatting color)
+    {
+        notifyPlayers(getMessagePlayerEntities(), null, component, color);
+    }
+
+    @Override
+    public void notifyColonyMembers(final ITextComponent component, TextFormatting color, Consumer<PlayerEntity> action)
+    {
+        notifyPlayers(getMessagePlayerEntities(), action, component, color);
     }
 
     @Override
     public void notifyColonyManagers(final ITextComponent component)
     {
-        for (final PlayerEntity player : getImportantMessageEntityPlayers())
+        notifyPlayers(getImportantMessageEntityPlayers(), null, component);
+    }
+
+    @Override
+    public void notifyColonyManagers(final ITextComponent component, TextFormatting color)
+    {
+        notifyPlayers(getImportantMessageEntityPlayers(), null, component, color);
+    }
+
+    @Override
+    public void notifyColonyManagers(final ITextComponent component, TextFormatting color, Consumer<PlayerEntity> action)
+    {
+        notifyPlayers(getImportantMessageEntityPlayers(), action, component, color);
+    }
+
+    private void notifyPlayers(List<PlayerEntity> players, Consumer<PlayerEntity> action, ITextComponent component)
+    {
+        for (final PlayerEntity player : players)
         {
-            player.sendMessage(component, player.getUUID());
+            MessageUtils.sendPlayerColonyMessage(player, this, component);
+            if (action != null)
+            {
+                action.accept(player);
+            }
+        }
+    }
+
+    private void notifyPlayers(List<PlayerEntity> players, Consumer<PlayerEntity> action, ITextComponent component, TextFormatting color)
+    {
+        for (final PlayerEntity player : players)
+        {
+            MessageUtils.sendPlayerColonyMessageWithColor(player, this, color, component);
+            if (action != null)
+            {
+                action.accept(player);
+            }
         }
     }
 

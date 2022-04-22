@@ -2,7 +2,6 @@ package com.minecolonies.coremod.event;
 
 import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.items.ModItems;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
 import com.minecolonies.api.colony.*;
@@ -15,9 +14,12 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants;
+import com.minecolonies.api.util.constant.translation.DebugTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -43,7 +45,10 @@ import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMes
 import com.minecolonies.coremod.network.messages.client.UpdateChunkRangeCapabilityMessage;
 import com.minecolonies.coremod.util.ChunkClientDataHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
-import net.minecraft.block.*;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.SpawnerBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -98,10 +103,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
-import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
@@ -166,7 +171,7 @@ public class EventHandler
             {
                 if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.noCloseColony"));
+                    event.getLeft().add(new TranslationTextComponent(DebugTranslationConstants.DEBUG_NO_CLOSE_COLONY).getString());
                     return;
                 }
                 colony = IColonyManager.getInstance().getClosestIColony(world, pos);
@@ -176,14 +181,14 @@ public class EventHandler
                     return;
                 }
 
-                event.getLeft().add(LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.nextColony",
-                  (int) Math.sqrt(colony.getDistanceSquared(pos)), IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()));
+                event.getLeft()
+                  .add(new TranslationTextComponent(DebugTranslationConstants.DEBUG_NEXT_COLONY,
+                    (int) Math.sqrt(colony.getDistanceSquared(pos)),
+                    IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
             }
 
-            event.getLeft().add(colony.getName() + " : "
-                                  + LanguageHandler.format("com.minecolonies.coremod.gui.debugScreen.blocksFromCenter",
-              (int) Math.sqrt(colony.getDistanceSquared(pos))));
+            event.getLeft().add(colony.getName() + " : " + new TranslationTextComponent(DebugTranslationConstants.DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
         }
     }
 
@@ -589,17 +594,11 @@ public class EventHandler
 
             return;
         }
-        else if ("pmardle".equalsIgnoreCase(event.getPlayer().getName().getString())
-                   && Block.byItem(event.getItemStack().getItem()) instanceof SilverfishBlock)
-        {
-            LanguageHandler.sendPlayerMessage(event.getPlayer(), "Stop that you twat!!!");
-            event.setCanceled(true);
-        }
 
         if (world.getBlockState(event.getPos()).getBlock().isBed(world.getBlockState(event.getPos()), world, event.getPos(), player))
         {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, bedBlockPos);
-            //Checks to see if player tries to sleep in a bed belonging to a Citizen, ancels the event, and Notifies Player that bed is occuppied
+            //Checks to see if player tries to sleep in a bed belonging to a Citizen, cancels the event, and Notifies Player that bed is occupied
             if (colony != null && world.getBlockState(event.getPos()).hasProperty(BedBlock.PART))
             {
                 final List<ICitizenData> citizenList = colony.getCitizenManager().getCitizens();
@@ -615,7 +614,7 @@ public class EventHandler
                     if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
                     {
                         event.setCanceled(true);
-                        LanguageHandler.sendPlayerMessage(player, "block.minecraft.bed.occupied");
+                        MessageUtils.sendPlayerMessage(player, BaseGameTranslationConstants.BASE_BED_OCCUPIED);
                     }
                 }
             }
@@ -753,7 +752,7 @@ public class EventHandler
     {
         if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(world))
         {
-            LanguageHandler.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
+            MessageUtils.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
             return false;
         }
 
@@ -774,23 +773,19 @@ public class EventHandler
             //  Not in a colony
             if (IColonyManager.getInstance().getIColonyByOwner(world, player) == null)
             {
-                LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagenotownhall");
+                MessageUtils.sendPlayerMessage(player, MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT);
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagetoofarfromtownhall");
+                MessageUtils.sendPlayerMessage(player, MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY);
             }
 
-            if (player.isCreative())
-            {
-                return true;
-            }
-            return false;
+            return player.isCreative();
         }
         else if (!colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             //  No permission to place hut in colony
-            LanguageHandler.sendPlayerMessage(player, "tile.blockhut.messagenopermission", colony.getName());
+            MessageUtils.sendPlayerMessage(player, PERMISSION_OPEN_HUT, colony.getName());
             return false;
         }
         else
@@ -844,7 +839,7 @@ public class EventHandler
 
 /**
  * Gets called when farmland is trampled
- * 
+ *
  * @param event the event to handle
  */
     @SubscribeEvent
@@ -862,7 +857,7 @@ public class EventHandler
 
     /**
      * Gets called when a Hoglin, Pig, Piglin, Villager, or ZombieVillager gets converted to something else.
-     * 
+     *
      * @param event the event to handle.
      */
     @SubscribeEvent

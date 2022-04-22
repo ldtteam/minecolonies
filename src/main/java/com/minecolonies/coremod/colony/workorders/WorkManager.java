@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
@@ -19,6 +18,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
@@ -257,11 +257,10 @@ public class WorkManager implements IWorkManager
             }
             if (!readingFromNbt && !isWorkOrderWithinColony(order))
             {
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  OUT_OF_COLONY,
+                colony.notifyColonyMembers(new TranslationTextComponent(OUT_OF_COLONY,
                   order.getDisplayName(),
                   order.getLocation().getX(),
-                  order.getLocation().getZ());
+                  order.getLocation().getZ()));
                 return;
             }
         }

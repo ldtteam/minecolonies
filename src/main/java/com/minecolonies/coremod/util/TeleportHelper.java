@@ -16,8 +16,8 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
-import static com.minecolonies.api.util.constant.TranslationConstants.COMMAND_TELEPORT_SUCCESS;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_TELEPORT_SUCCESS;
 
 /**
  * Helper class for server-side teleporting.

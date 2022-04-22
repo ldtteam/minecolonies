@@ -441,7 +441,7 @@
   "com.minecolonies.command.citizenspawn.success": "Spawned new citizen (%s).",
 
   "com.minecolonies.command.colonyidnotfound": "Colony with ID %s could not be found in this dimension!",
-  "com.minecolonies.command.nocolony": "%s could not find any colony.",
+  "com.minecolonies.coremod.colony.notfound": "Could not find colony.",
   "com.minecolonies.command.playernotfound": "Player %s could not be found.",
   "com.minecolonies.command.notenabledinconfig": "This command is disabled in the config.",
   "com.minecolonies.command.resetsupply": "Successfully reset the Supply Camp and Ship placement.",
@@ -721,6 +721,8 @@
   "item.minecolonies.spear": "Spear",
 
   "com.minecolonies.coremod.item.permissionscepter.setmode": "Set to mode %s.",
+  "com.minecolonies.coremod.item.permissionscepter.mode.block": "block",
+  "com.minecolonies.coremod.item.permissionscepter.mode.location": "location",
   "com.minecolonies.coremod.item.permissionscepter.permission.deny": "You do not have permission to edit blocks with this tool!",
   "com.minecolonies.coremod.item.permissionscepter.addblock.success": "Added block type %s.",
   "com.minecolonies.coremod.item.permissionscepter.addposition.success": "Added location %d %d %d.",
@@ -867,10 +869,10 @@
 
   "com.minecolonies.coremod.request.smeltableore": "Smeltable Ore",
 
-  "com.minecolonies.coremod.enteringcolony": "Beware, you're entering %s's colony.",
-  "com.minecolonies.coremod.leavingcolony": "Farewell, you're leaving %s's colony.",
-  "com.minecolonies.coremod.enteringcolonynotify": "Beware, %s just entered %s.",
-  "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left %s.",
+  "com.minecolonies.coremod.enteringcolony": "Beware, you're entering %s's.",
+  "com.minecolonies.coremod.leavingcolony": "Farewell, you're leaving %s's.",
+  "com.minecolonies.coremod.enteringcolonynotify": "Beware, %s just entered the colony.",
+  "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left the colony.",
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
 
   "com.minecolonies.coremod.mourning": "There has been a death in %s. The citizens will mourn %s tomorrow out of respect.",
@@ -976,7 +978,7 @@
   "com.minecolonies.coremod.progress.twenty_building_levels": "§6 A barbarian spy had been caught next to your colony, and he seems to be from a bigger group! You should consider building Barracks to defend your colony.",
   "com.minecolonies.coremod.progress.citizen_cap_met": "§6 Your colony's population has grown to the limits of current management techniques. To accept more citizens, complete the research at the University.",
   "com.minecolonies.coremod.progress.not_enough_jobs": "§6 Building more Houses than available jobs has a bad influence on your citizens' happiness.",
-  "com.minecolonies.coremod.progress.newchild": "§6 A new child, %s, is now happily living in %s!",
+  "com.minecolonies.coremod.progress.newchild": "A new child, %s, is now happily living in %s!",
   "com.minecolonies.coremod.progress.childgrow": "%s grew up and wants a job now.",
   "com.minecolonies.coremod.progress.hirecitizen": "§6 Your recruitment package was accepted and a new citizen arrived!",
 

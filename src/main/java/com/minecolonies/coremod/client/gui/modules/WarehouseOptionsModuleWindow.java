@@ -174,8 +174,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             resourceMissingLabel.clearText();
         }
 
-        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
-        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(new StringTextComponent(resource.getAvailable() + " / " + resource.getAmount()));
+        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(new StringTextComponent(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
         if(buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel())
         {

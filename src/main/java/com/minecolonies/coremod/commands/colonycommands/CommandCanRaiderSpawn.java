@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -10,7 +9,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.TranslationTextComponent;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_CAN_RAIDER_SPAWN_SUCCESS;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 public class CommandCanRaiderSpawn implements IMCOPCommand
@@ -30,7 +32,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -38,7 +40,7 @@ public class CommandCanRaiderSpawn implements IMCOPCommand
 
         colony.getRaiderManager().setCanHaveRaiderEvents(canHaveBarbEvents);
         colony.markDirty();
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.canspawnraider.success", colony.getName(), canHaveBarbEvents), true);
+        context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_CAN_RAIDER_SPAWN_SUCCESS, colony.getName(), canHaveBarbEvents), true);
         return 1;
     }
 

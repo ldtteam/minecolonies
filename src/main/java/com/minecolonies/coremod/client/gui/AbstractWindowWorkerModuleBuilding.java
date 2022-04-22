@@ -59,11 +59,6 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
     private static final String LABEL_WORKERNAME = "workerName";
 
     /**
-     * Name string of the builder hut.
-     */
-    private static final String BUILDER_HUT_NAME = "com.minecolonies.coremod.gui.workerhuts.buildersHut";
-
-    /**
      * Button to increase delivery prio.
      */
     private static final String BUTTON_DP_UP = "deliveryPrioUp";

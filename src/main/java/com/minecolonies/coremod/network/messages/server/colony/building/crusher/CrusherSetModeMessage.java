@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.crusher
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCrusher;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
@@ -78,7 +79,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
         if (qty > building.getMaxDailyQuantity())
         {
             qty = building.getMaxDailyQuantity();
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty), player.getUUID());
+            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty));
         }
         building.setCrusherMode(new ItemStorage(crusherMode), qty);
     }

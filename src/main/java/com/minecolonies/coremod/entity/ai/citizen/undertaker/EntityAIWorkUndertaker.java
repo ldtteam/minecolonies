@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.undertaker;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
@@ -14,10 +13,7 @@ import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
-import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.GraveyardManagementModule;
-import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
@@ -39,6 +35,7 @@ import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*
 import static com.minecolonies.api.research.util.ResearchConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.UndertakerConstants.*;
 
 /**
@@ -338,7 +335,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             if (chance >= random.nextDouble())
             {
                 final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).getLastGraveData().getCitizenDataNBT(), true, world, gravePos);
-                LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(), "com.minecolonies.coremod.resurrect", citizenData.getName());
+                buildingGraveyard.getColony().notifyColonyManagers(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()));
                 worker.getCitizenColonyHandler().getColony().getCitizenManager().updateCitizenMourn(citizenData, false);
                 AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
                 buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData(null);
@@ -414,18 +411,18 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.burying"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_BURYING));
 
         if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
         {
             burialPos = getOwnBuilding().getRandomFreeVisualGravePos();
         }
 
-        if(burialPos == null || burialPos.getA() == null)
+        if (burialPos == null || burialPos.getA() == null)
         {
-            //coudn't find a place to dig a grave
-            LanguageHandler.sendPlayersMessage(buildingGraveyard.getColony().getImportantMessageEntityPlayers(),
-                    "com.minecolonies.coremod.nospaceforgrave", module.getLastGraveData().getCitizenName());
+            // couldn't find a place to dig a grave
+            buildingGraveyard.getColony()
+              .notifyColonyManagers(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
             return IDLE;
         }
 

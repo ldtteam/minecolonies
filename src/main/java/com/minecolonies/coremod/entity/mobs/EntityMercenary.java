@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.mobs;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
@@ -37,6 +36,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
@@ -53,6 +53,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
 import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
@@ -418,10 +419,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             if (!ItemStackUtils.isEmpty(stack))
             {
                 this.swing(Hand.OFF_HAND);
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
-                  entityIn.getName().getString(),
-                  stack.getHoverName().getString());
+                colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN, entityIn.getName().getString(), stack.getHoverName().getString()));
             }
         }
     }

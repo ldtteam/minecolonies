@@ -10,6 +10,7 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
@@ -129,7 +130,7 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
           citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
         InteractionValidatorRegistry.registerPosBasedPredicate(
-          new TranslationTextComponent(BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
+          new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
           {
               final IBuilding workBuilding = citizen.getWorkBuilding();
               if (workBuilding != null)
@@ -146,7 +147,7 @@ public class InteractionValidatorInitializer
               }
               return false;
           });
-        InteractionValidatorRegistry.registerTokenBasedPredicate(new TranslationTextComponent(NORMAL_REQUEST),
+        InteractionValidatorRegistry.registerTokenBasedPredicate(new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL),
           (citizen, token) -> {
 
               final IColony colony = citizen.getColony();

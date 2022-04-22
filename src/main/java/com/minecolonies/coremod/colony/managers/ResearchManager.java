@@ -20,6 +20,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -147,11 +149,9 @@ public class ResearchManager implements IResearchManager
             // if research has item requirements, only notify player; we don't want to have items disappearing from inventories.
             if (!research.getCostList().isEmpty())
             {
-                for (PlayerEntity player : colony.getMessagePlayerEntities())
-                {
-                    player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()), player.getUUID());
-                    SoundUtils.playSuccessSound(player, player.blockPosition());
-                }
+                colony.notifyColonyMembers(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()),
+                  TextFormatting.WHITE,
+                  player -> SoundUtils.playSuccessSound(player, player.blockPosition()));
             }
             // Otherwise, we can start the research without user intervention.
             else
@@ -159,7 +159,7 @@ public class ResearchManager implements IResearchManager
                 startCostlessResearch(research);
             }
             //  If we've successfully done all those things, now we can remove the object from the list.
-            //  This will reannounce on world reload, but that's probably ideal, in case someone missed the message once.
+            //  This will re-announce on world reload, but that's probably ideal, in case someone missed the message once.
             removes.add(research);
         }
         autoStartResearch.removeAll(removes);
@@ -196,22 +196,19 @@ public class ResearchManager implements IResearchManager
             }
             final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
               IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
-            for (PlayerEntity player : colony.getMessagePlayerEntities())
-            {
-                player.sendMessage(message, player.getUUID());
-                SoundUtils.playSuccessSound(player, player.blockPosition());
-            }
+
+            colony.notifyColonyMembers(message,
+              TextFormatting.WHITE,
+              player -> SoundUtils.playSuccessSound(player, player.blockPosition()));
         }
         else
         {
-            for (PlayerEntity player : colony.getMessagePlayerEntities())
-            {
-                player.sendMessage(new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName())
-                                     .append(new TranslationTextComponent("com.minecolonies.coremod.research.started",
-                                      research.getName())),
-                  player.getUUID());
-                SoundUtils.playSuccessSound(player, player.blockPosition());
-            }
+            final ITextComponent message = new TranslationTextComponent(TranslationConstants.RESEARCH_AVAILABLE, research.getName()).append(new TranslationTextComponent(
+              "com.minecolonies.coremod.research.started",
+              research.getName()));
+            colony.notifyColonyMembers(message,
+              TextFormatting.WHITE,
+              player -> SoundUtils.playSuccessSound(player, player.blockPosition()));
         }
     }
 }

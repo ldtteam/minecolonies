@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
@@ -10,9 +9,11 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NEW_DECORATION_REQUEST;
 
 /**
  * A work order that the build can take to build decorations.
@@ -123,9 +124,7 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
-            LanguageHandler.sendPlayersMessage(
-              colony.getImportantMessageEntityPlayers(),
-              "com.minecolonies.coremod.decoorderadded", colony.getName());
+            colony.notifyColonyManagers(new TranslationTextComponent(MESSAGE_NEW_DECORATION_REQUEST, colony.getName()));
         }
     }
 

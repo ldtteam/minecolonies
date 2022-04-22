@@ -52,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -631,15 +632,39 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void notifyPlayers(final ITextComponent component)
+    public void notifyColonyMembers(final ITextComponent component)
     {
         //noop
+    }
+
+    @Override
+    public void notifyColonyMembers(final ITextComponent component, final TextFormatting color)
+    {
+
+    }
+
+    @Override
+    public void notifyColonyMembers(final ITextComponent component, final TextFormatting color, final Consumer<PlayerEntity> action)
+    {
+
     }
 
     @Override
     public void notifyColonyManagers(final ITextComponent component)
     {
         //noop
+    }
+
+    @Override
+    public void notifyColonyManagers(final ITextComponent component, final TextFormatting color)
+    {
+
+    }
+
+    @Override
+    public void notifyColonyManagers(final ITextComponent component, final TextFormatting color, final Consumer<PlayerEntity> action)
+    {
+
     }
 
     /**

@@ -31,6 +31,7 @@ import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,9 +121,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return IDLE;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
-                  job.getWorkOrder().getDisplayName());
+                job.getColony().notifyColonyMembers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName()));
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -132,9 +131,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if (!(wo instanceof WorkOrderMiner))
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
-                  job.getWorkOrder().getDisplayName());
+                job.getColony().notifyColonyMembers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName()));
             }
             return getState();
         }

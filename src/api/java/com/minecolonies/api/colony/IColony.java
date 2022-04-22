@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.ColonyConstants.TEAM_COLONY_NAME;
 
@@ -107,6 +108,7 @@ public interface IColony
 
     /**
      * Check if the colony has a building type at a specific level or higher.
+     *
      * @param building       The string identifier for the building, based on schematic name.
      * @param level          The level requirement.
      * @param singleBuilding If true, requires that a single building meet the minimum requirement.
@@ -427,25 +429,63 @@ public interface IColony
 
     /**
      * Set the texture style of the colony.
+     *
      * @param style the style to set.
      */
     void setTextureStyle(String style);
 
     /**
      * Get the colony style.
+     *
      * @return the string id of the style.
      */
     String getTextureStyleId();
 
     /**
      * Notify the players in the colony.
+     *
      * @param component the message.
      */
-    void notifyPlayers(ITextComponent component);
+    void notifyColonyMembers(ITextComponent component);
+
+    /**
+     * Notify the players in the colony.
+     *
+     * @param component the message.
+     * @param color     the color for the message.
+     */
+    void notifyColonyMembers(ITextComponent component, TextFormatting color);
+
+    /**
+     * Notify the players in the colony.
+     *
+     * @param component the message.
+     * @param color     the color for the message.
+     * @param action    an additional action to execute for every player.
+     */
+    void notifyColonyMembers(ITextComponent component, TextFormatting color, Consumer<PlayerEntity> action);
 
     /**
      * Notify the managing players in the colony.
+     *
      * @param component the message.
      */
     void notifyColonyManagers(ITextComponent component);
+
+    /**
+     * Notify the managing players in the colony.
+     *
+     * @param component the message.
+     * @param color     the color for the message.
+     */
+    void notifyColonyManagers(ITextComponent component, TextFormatting color);
+
+    /**
+     * Notify the managing players in the colony.
+     *
+     * @param component the message.
+     * @param color     the color for the message.
+     * @param action    an additional action to execute for every player.
+     */
+    void notifyColonyManagers(ITextComponent component, TextFormatting color, Consumer<PlayerEntity> action);
 }

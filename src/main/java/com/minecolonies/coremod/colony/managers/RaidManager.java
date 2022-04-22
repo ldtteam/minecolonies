@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -37,6 +36,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -313,9 +313,7 @@ public class RaidManager implements IRaiderManager
         {
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Horde Spawn Point: " + targetSpawnPoint);
+                colony.notifyColonyMembers(new StringTextComponent("Horde Spawn Point: " + targetSpawnPoint));
             }
 
             if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
@@ -706,9 +704,7 @@ public class RaidManager implements IRaiderManager
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            LanguageHandler.sendPlayersMessage(
-              colony.getImportantMessageEntityPlayers(),
-              "Will raid tomorrow: " + raid);
+            colony.notifyColonyMembers(new StringTextComponent("Will raid tomorrow: " + raid));
         }
 
         setRaidNextNight(raid);

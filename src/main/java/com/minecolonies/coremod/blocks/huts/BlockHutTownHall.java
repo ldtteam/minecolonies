@@ -66,19 +66,19 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
                 if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
                 {
-                    building.getColony().notifyPlayers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 90));
+                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 90));
                 }
                 if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
                 {
-                    building.getColony().notifyPlayers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 75));
+                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 75));
                 }
                 else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
                 {
-                    building.getColony().notifyPlayers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 50));
+                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 50));
                 }
                 else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
                 {
-                    building.getColony().notifyPlayers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 25));
+                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 25));
                 }
 
                 if (localProgress >= hardness - 1)
@@ -92,7 +92,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 }
                 else
                 {
-                    building.getColony().notifyPlayers(new TranslationTextComponent(TOWNHALL_BREAKING_START_MESSAGE, player.getName(), 100));
+                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_START_MESSAGE, player.getName(), 100));
                     breakProgressOnTownHall = 0;
                     validTownHallBreak = false;
                 }

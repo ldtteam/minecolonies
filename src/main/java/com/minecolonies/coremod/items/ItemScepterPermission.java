@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.translation.ToolTranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
@@ -17,6 +18,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -151,14 +153,12 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         {
             case TAG_VALUE_MODE_BLOCK:
                 compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
-                LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "location");
+                MessageUtils.sendPlayerMessage(playerIn, ToolTranslationConstants.TOOL_PERMISSION_SCEPTER_SET_MODE, new TranslationTextComponent(ToolTranslationConstants.TOOL_PERMISSION_SCEPTER_MODE_LOCATION));
                 break;
-
             case TAG_VALUE_MODE_LOCATION:
             default:
                 compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
-                LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "block");
-
+                MessageUtils.sendPlayerMessage(playerIn, ToolTranslationConstants.TOOL_PERMISSION_SCEPTER_SET_MODE, new TranslationTextComponent(ToolTranslationConstants.TOOL_PERMISSION_SCEPTER_MODE_BLOCK));
                 break;
         }
     }

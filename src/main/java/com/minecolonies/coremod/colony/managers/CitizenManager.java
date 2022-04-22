@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataManager;
@@ -33,6 +32,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -46,8 +46,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_CAP;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CITIZENS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.ALL_CITIZENS_ARE_SLEEPING;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_MOURN;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class CitizenManager implements ICitizenManager
 {
@@ -255,11 +254,7 @@ public class CitizenManager implements ICitizenManager
                     }
                 }
 
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  "com.minecolonies.coremod.citizens.nospace",
-                  spawnLocation.getX(),
-                  spawnLocation.getY(),
-                  spawnLocation.getZ());
+                colony.notifyColonyMembers(new TranslationTextComponent(WARNING_COLONY_NO_ARRIVAL_SPACE, spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()));
             }
         }
 
@@ -282,17 +277,11 @@ public class CitizenManager implements ICitizenManager
             {
                 if (maxCitizensFromResearch() <= getCurrentCitizenCount())
                 {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessagePlayerEntities(),
-                      "block.blockhuttownhall.messagemaxsize.research",
-                      colony.getName());
+                    colony.notifyColonyMembers(new TranslationTextComponent(WARNING_MAX_CITIZENS_RESEARCH, colony.getName()));
                 }
                 else
                 {
-                    LanguageHandler.sendPlayersMessage(
-                      colony.getMessagePlayerEntities(),
-                      "block.blockhuttownhall.messagemaxsize.config",
-                      colony.getName());
+                    colony.notifyColonyMembers(new TranslationTextComponent(WARNING_MAX_CITIZENS_CONFIG, colony.getName()));
                 }
             }
 
@@ -605,7 +594,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (mourn)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName());
+            colony.notifyColonyManagers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName()));
         }
 
         for (final ICitizenData citizen : getCitizens())
@@ -649,7 +638,7 @@ public class CitizenManager implements ICitizenManager
 
         if (!this.areCitizensSleeping)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), ALL_CITIZENS_ARE_SLEEPING);
+            colony.notifyColonyMembers(new TranslationTextComponent(ALL_CITIZENS_ARE_SLEEPING));
         }
 
         this.areCitizensSleeping = true;

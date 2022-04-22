@@ -302,7 +302,7 @@ public final class WindowConstants
     /**
      * Key to get readable permission values.
      */
-    public static final String KEY_TO_PERMISSIONS = "com.minecolonies.coremod.permission.";
+    public static final String KEY_TO_PERMISSIONS = PARTIAL_PERMISSION_NAME;
 
     /**
      * Button clicked to add a block to the colony to be freely interacted with.
@@ -1111,7 +1111,7 @@ public final class WindowConstants
     /**
      * String describing switch for the gui.
      */
-    public static final String SWITCH = "com.minecolonies.coremod.gui.workerhuts.switch";
+    public static final String SWITCH = LABEL_SWITCH;
 
     /**
      * Settings list ID.

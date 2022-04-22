@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
@@ -14,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,11 +133,11 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                     lastNotification = level.getGameTime();
                     if(getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
                     {
-                        LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE);
+                        getColony().notifyColonyMembers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE));
                     }
                     else
                     {
-                        LanguageHandler.sendPlayersMessage(getColony().getMessagePlayerEntities(), COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL);
+                        getColony().notifyColonyMembers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL));
                     }
                 }
                 return;

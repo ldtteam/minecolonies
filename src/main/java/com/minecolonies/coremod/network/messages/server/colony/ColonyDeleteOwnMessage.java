@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.network.messages.server.colony;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Message for deleting an owned colony
@@ -47,14 +49,11 @@ public class ColonyDeleteOwnMessage implements IMessage
         if (colony != null)
         {
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.colony.delete.success");
+            MessageUtils.sendPlayerMessage(player, MESSAGE_INFO_COLONY_DELETE_SUCCESS);
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(
-              player,
-              "com.minecolonies.command.nocolony", this.getClass().getSimpleName()
-            );
+            MessageUtils.sendPlayerMessage(player, MESSAGE_INFO_COLONY_NOT_FOUND);
         }
     }
 }

@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -3012,9 +3013,9 @@ public class InventoryUtils
 
         if (!result)
         {
-            player.sendMessage(itemStack.getHoverName()
+            MessageUtils.sendPlayerMessage(player, itemStack.getDisplayName()
                 .copy()
-                .append(new TranslationTextComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUUID());
+                .append(new TranslationTextComponent(MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT)));
         }
         return result;
     }

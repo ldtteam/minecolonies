@@ -6,12 +6,12 @@ import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.Box;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -29,6 +29,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.CHAT_LABEL_ID;
 import static com.minecolonies.api.util.constant.WindowConstants.RESPONSE_BOX_ID;
 import static com.minecolonies.coremod.client.gui.WindowInteraction.BUTTON_RESPONSE_ID;
@@ -133,7 +134,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.chat.notenoughitems");
+                MessageUtils.sendPlayerMessage(player, WARNING_RECRUITMENT_INSUFFICIENT_ITEMS);
             }
         }
         return true;
@@ -159,7 +160,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     if (colony.getWorld().random.nextInt(100) <= MineColonies.getConfig().getServer().badVisitorsChance.get())
                     {
-                        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.runaway", data.getName());
+                        colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RECRUITMENT_RAN_OFF, data.getName()));
                         return;
                     }
 
@@ -174,17 +175,17 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     if (data.hasCustomTexture())
                     {
-                        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.message.custom", data.getName());
+                        colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RECRUITMENT_SUCCESS_CUSTOM, data.getName()));
                     }
                     else
                     {
-                        LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.recruit.message", data.getName());
+                        colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RECRUITMENT_SUCCESS, data.getName()));
                     }
                 }
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.chat.nospace");
+                MessageUtils.sendPlayerMessage(player, WARNING_NO_COLONY_SPACE);
             }
         }
     }

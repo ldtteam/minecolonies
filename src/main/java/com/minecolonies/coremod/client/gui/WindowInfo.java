@@ -13,7 +13,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_INFO_TEXT;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
 
 public class WindowInfo extends AbstractWindowSkeleton
@@ -34,7 +34,7 @@ public class WindowInfo extends AbstractWindowSkeleton
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
 
-        final String translationPrefix = COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".";
+        final String translationPrefix = PARTIAL_INFO_TEXT + building.getSchematicName() + ".";
         final Supplier<TextBuilder> nameBuilder = () -> PaneBuilders.textBuilder().colorName("red");
         final Supplier<TextBuilder> textBuilder = () -> PaneBuilders.textBuilder().colorName("black");
         final Supplier<View> pageBuilder = () -> {

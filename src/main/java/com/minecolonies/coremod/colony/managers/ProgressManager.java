@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyProgressType;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -15,6 +14,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.colony.ColonyProgressType.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_PROGRESSION_NAME;
 
 /**
  * The Progress manager which tracks the colony progress to send help messages to the player.
@@ -176,7 +177,7 @@ public class ProgressManager implements IProgressManager
         if (!notifiedProgress.contains(type))
         {
             notifiedProgress.add(type);
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), "com.minecolonies.coremod.progress." + type.name().toLowerCase(Locale.US));
+            colony.notifyColonyMembers(new TranslationTextComponent(PARTIAL_PROGRESSION_NAME + type.name().toLowerCase(Locale.US)));
             colony.markDirty();
         }
     }

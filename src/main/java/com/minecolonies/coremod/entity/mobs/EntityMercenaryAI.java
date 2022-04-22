@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.mobs;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -8,15 +7,24 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.MercenarySounds;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING;
 
 public class EntityMercenaryAI extends Goal
 {
@@ -163,9 +171,7 @@ public class EntityMercenaryAI extends Goal
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         entity.swing(Hand.OFF_HAND);
-                        LanguageHandler.sendPlayersMessage(entity.getColony().getMessagePlayerEntities(),
-                          "com.minecolonies.coremod.mercenary.stealBuilding",
-                          stack.getHoverName().getString());
+                        entity.getColony().notifyColonyMembers(new TranslationTextComponent(MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING, stack.getHoverName().getString()));
                     }
                 }
             }

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
@@ -34,6 +33,7 @@ import java.util.Map;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.research.util.ResearchConstants.GRAVE_DECAY_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class GraveManager implements IGraveManager
 {
@@ -252,7 +252,7 @@ public class GraveManager implements IGraveManager
         final BlockState here = world.getBlockState(pos);
         if (here.getBlock() == Blocks.LAVA)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.lava");
+            colony.notifyColonyManagers(new TranslationTextComponent(WARNING_GRAVE_LAVA));
             return;
         }
 
@@ -270,7 +270,7 @@ public class GraveManager implements IGraveManager
 
             if (firstValidPosition == null)
             {
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.water");
+                colony.notifyColonyManagers(new TranslationTextComponent(WARNING_GRAVE_WATER));
             }
         }
         else
@@ -305,7 +305,7 @@ public class GraveManager implements IGraveManager
             graveEntity.setGraveData(graveData);
 
             colony.getGraveManager().addNewGrave(firstValidPosition);
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gravespawned");
+            colony.notifyColonyManagers(new TranslationTextComponent(WARNING_GRAVE_SPAWNED));
         }
         else
         {

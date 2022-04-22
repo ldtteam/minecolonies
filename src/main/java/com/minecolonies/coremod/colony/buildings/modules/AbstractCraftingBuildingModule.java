@@ -572,7 +572,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
                 for(PlayerEntity player : building.getColony().getMessagePlayerEntities())
                 {
-                    player.sendMessage(message, player.getUUID());
+                    MessageUtils.sendPlayerMessage(player, message);
                 }
             }
         }

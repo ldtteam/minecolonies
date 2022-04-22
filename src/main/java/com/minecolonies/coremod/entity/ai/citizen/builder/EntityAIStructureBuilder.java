@@ -322,6 +322,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             message.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
-        worker.getCitizenChatHandler().sendLocalizedChat(message);
+        worker.getCitizenColonyHandler().getColony().notifyColonyMembers(message);
     }
 }

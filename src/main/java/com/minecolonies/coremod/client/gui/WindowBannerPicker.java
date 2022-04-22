@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.BASE_GUI_DONE;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * A custom rendered Screen (i.e. not BlockOut) that renders a picker for the banners,

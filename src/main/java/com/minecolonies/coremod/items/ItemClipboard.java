@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.entity.player.PlayerEntity;
@@ -58,7 +59,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
             {
                 final TranslationTextComponent component =
                   new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColony().getName());
-                ctx.getPlayer().sendMessage(component, ctx.getPlayer().getUUID());
+                MessageUtils.sendPlayerMessage(ctx.getPlayer(), component);
             }
         }
         else if (ctx.getLevel().isClientSide)

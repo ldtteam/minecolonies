@@ -7,6 +7,7 @@ import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -26,6 +27,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_LOCATING_ITEMS;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -114,7 +116,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         containerList.add(building.getID());
         HighlightManager.clearCategory("inventoryHighlight");
 
-        Minecraft.getInstance().player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.locating"), Minecraft.getInstance().player.getUUID());
+        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, new TranslationTextComponent(MESSAGE_LOCATING_ITEMS));
         close();
 
         for (BlockPos blockPos : containerList)

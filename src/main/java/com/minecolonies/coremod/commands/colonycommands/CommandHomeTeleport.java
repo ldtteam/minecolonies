@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.util.TeleportHelper;
@@ -9,6 +9,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 
 public class CommandHomeTeleport implements IMCCommand
 {
@@ -24,7 +26,7 @@ public class CommandHomeTeleport implements IMCCommand
 
         if (!MineColonies.getConfig().getServer().canPlayerUseHomeTPCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_DISABLED_IN_CONFIG);
             return 0;
         }
 

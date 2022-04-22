@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Deliver
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesModuleView;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_RESOURCE_SCROLL_ERROR;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_RESOURCE_SCROLL_NO_BUILDER;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
@@ -169,7 +172,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ClientPlayerEntity player =Minecraft.getInstance().player;
         if (this.builder == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.nobuilder"), player.getUUID());
+            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent(TOOL_RESOURCE_SCROLL_NO_BUILDER));
             close();
             return;
         }
@@ -180,7 +183,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.null"), player.getUUID());
+            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent(TOOL_RESOURCE_SCROLL_ERROR));
             close();
             return;
         }
