@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -95,13 +94,13 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
+        if (!module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING))
         {
             doneButton.active = false;
         }
@@ -112,7 +111,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
+            if (module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING))
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));

@@ -311,12 +311,12 @@ public class BuildingCook extends AbstractBuilding
         }
 
         @Override
-        public Set<CrafingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedRecipeTypes()
         {
             if (building == null)
-                return ImmutableSet.of(CrafingType.SMELTING);  // because it can learn at *some* level
+                return ImmutableSet.of(CraftingType.SMELTING);  // because it can learn at *some* level
 
-            return building.getBuildingLevel() >= 3 ? ImmutableSet.of(CrafingType.CRAFTING) : Collections.emptySet();
+            return building.getBuildingLevel() >= 3 ? ImmutableSet.of(CraftingType.SMALL_CRAFTING) : Collections.emptySet();
         }
 
 

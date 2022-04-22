@@ -43,7 +43,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     /**
      * Different flags.
      */
-    private Set<ICraftingBuildingModule.CrafingType> recipeTypeSet = new HashSet<>();
+    private Set<ICraftingBuildingModule.CraftingType> recipeTypeSet = new HashSet<>();
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -81,7 +81,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            recipeTypeSet.add(ICraftingBuildingModule.CrafingType.values()[buf.readInt()]);
+            recipeTypeSet.add(new ICraftingBuildingModule.CraftingType(buf.readUtf(32767)));
         }
 
         recipes.clear();
@@ -128,8 +128,8 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      */
     public boolean isRecipeAlterationAllowed()
     {
-        return canLearnRecipe(ICraftingBuildingModule.CrafingType.CRAFTING) || canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING) || canLearnRecipe(
-          ICraftingBuildingModule.CrafingType.BREWING);
+        return canLearnRecipe(ICraftingBuildingModule.CraftingType.SMALL_CRAFTING) || canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING) || canLearnRecipe(
+          ICraftingBuildingModule.CraftingType.BREWING);
     }
 
     /**
@@ -137,7 +137,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      * @param type the type to check for.
      * @return true if so.
      */
-    public boolean canLearnRecipe(final ICraftingBuildingModule.CrafingType type)
+    public boolean canLearnRecipe(final ICraftingBuildingModule.CraftingType type)
     {
         return getSupportedRecipeTypes().contains(type);
     }
@@ -146,7 +146,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      * Get the supported recipe types.
      * @return a set of types.
      */
-    public Set<ICraftingBuildingModule.CrafingType> getSupportedRecipeTypes()
+    public Set<ICraftingBuildingModule.CraftingType> getSupportedRecipeTypes()
     {
         return recipeTypeSet;
     }

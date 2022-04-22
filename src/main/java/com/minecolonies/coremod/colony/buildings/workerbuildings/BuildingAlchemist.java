@@ -258,7 +258,7 @@ public class BuildingAlchemist extends AbstractBuilding
         }
 
         @Override
-        public Set<CrafingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedRecipeTypes()
         {
             return Collections.emptySet();
         }

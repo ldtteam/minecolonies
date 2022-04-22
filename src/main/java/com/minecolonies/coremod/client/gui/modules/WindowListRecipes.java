@@ -193,7 +193,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!module.canLearnRecipe(ICraftingBuildingModule.CrafingType.CRAFTING) && !module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
+                if (!module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMALL_CRAFTING) && !module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING))
                 {
                     final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
                     if (removeButton != null)

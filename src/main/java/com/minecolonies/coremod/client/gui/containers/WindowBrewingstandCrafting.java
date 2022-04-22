@@ -94,13 +94,13 @@ public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftin
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING))
+        if (!module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING))
         {
             doneButton.active = false;
         }
@@ -111,7 +111,7 @@ public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftin
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING))
+            if (module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING))
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));

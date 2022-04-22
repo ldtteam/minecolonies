@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -38,13 +39,51 @@ import java.util.function.Predicate;
  */
 public interface ICraftingBuildingModule extends IBuildingModule
 {
-    public enum CrafingType
+    public static class CraftingType
     {
-        CRAFTING,
-        SMELTING,
-        LARGE,
-        BREWING
+        public static final CraftingType SMALL_CRAFTING = new CraftingType("com.minecolonies.smallcrafting");
+        public static final CraftingType SMELTING       = new CraftingType("com.minecolonies.smelting");
+        public static final CraftingType LARGE_CRAFTING = new CraftingType("com.minecolonies.largecrafting");
+        public static final CraftingType BREWING        = new CraftingType("com.minecolonies.brewing");
+
+        private final String id;
+
+        public CraftingType(final String id)
+        {
+            this.id = id;
+        }
+
+        /**
+         * Get the matching id.
+         * @return the id.
+         */
+        public String getId()
+        {
+            return this.id;
+        }
+
+        @Override
+        public boolean equals(final Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+            final CraftingType that = (CraftingType) o;
+            return Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(id);
+        }
     }
+
     /**
      * Gets the crafting job associated with this building type.
      * This might not be the primary job of the building.
@@ -90,7 +129,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param type the type to check for.
      * @return true if so.
      */
-    default boolean canLearnRecipe(final CrafingType type)
+    default boolean canLearnRecipe(final CraftingType type)
     {
         return getSupportedRecipeTypes().contains(type);
     }
@@ -99,7 +138,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * Get the supported recipe types.
      * @return a set of types.
      */
-    Set<CrafingType> getSupportedRecipeTypes();
+    Set<CraftingType> getSupportedRecipeTypes();
 
     /**
      * Checks if this particular recipe is *possible* to be learned by

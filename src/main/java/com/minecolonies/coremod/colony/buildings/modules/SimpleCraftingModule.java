@@ -42,8 +42,8 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     }
 
     @Override
-    public Set<CrafingType> getSupportedRecipeTypes()
+    public Set<CraftingType> getSupportedRecipeTypes()
     {
-        return ImmutableSet.of(CrafingType.CRAFTING);
+        return ImmutableSet.of(CraftingType.SMALL_CRAFTING);
     }
 }

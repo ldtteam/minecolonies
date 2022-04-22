@@ -72,7 +72,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
 
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
-        if (module.canLearnRecipe(ICraftingBuildingModule.CrafingType.SMELTING))
+        if (module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING))
         {
             NetworkHooks.openGui(player, new INamedContainerProvider()
             {
@@ -91,7 +91,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 }
             }, buffer -> new PacketBuffer(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }
-        else if (module.canLearnRecipe(ICraftingBuildingModule.CrafingType.BREWING))
+        else if (module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING))
         {
             NetworkHooks.openGui(player, new INamedContainerProvider()
             {
@@ -125,9 +125,9 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
                 {
-                    return new ContainerCrafting(id, inv, module.canLearnRecipe(ICraftingBuildingModule.CrafingType.LARGE), building.getID(), module.getId());
+                    return new ContainerCrafting(id, inv, module.canLearnRecipe(ICraftingBuildingModule.CraftingType.LARGE_CRAFTING), building.getID(), module.getId());
                 }
-            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearnRecipe(ICraftingBuildingModule.CrafingType.LARGE))).writeBlockPos(building.getID()).writeUtf(module.getId()));
+            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearnRecipe(ICraftingBuildingModule.CraftingType.LARGE_CRAFTING))).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }
