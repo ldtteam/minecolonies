@@ -104,7 +104,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
-        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Watter Bottles and Mistletoes to unlock new Abilities"));
+        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Magic Potions to unlock new Abilities"));
         effects.add(new ResearchEffect(CRUSHING_11).setTranslatedName("Crusher Recipes Cost -50%"));
         effects.add(new ResearchEffect(KNIGHT_TAUNT).setTranslatedName("Knights Force Mobs to Target Them"));
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));

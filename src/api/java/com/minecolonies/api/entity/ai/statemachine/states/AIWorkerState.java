@@ -637,7 +637,17 @@ public enum AIWorkerState implements IAIState
     /**
      * Fuel the brewingStand.
      */
-    ADD_FUEL_TO_BREWINGSTAND(true);
+    ADD_FUEL_TO_BREWINGSTAND(true),
+
+    /**
+     * Harvest the mistletoes.
+     */
+    HARVEST_MISTLETOE(true),
+
+    /**
+     * Harvest the netherwart.
+     */
+    HARVEST_NETHERWART(true);
 
     /**
      * Is it okay to eat.

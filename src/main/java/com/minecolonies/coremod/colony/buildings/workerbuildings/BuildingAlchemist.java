@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
+import net.minecraft.item.ShearsItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -61,7 +62,8 @@ public class BuildingAlchemist extends AbstractBuilding
     public BuildingAlchemist(final IColony c, final BlockPos l)
     {
         super(c, l);
-        keepX.put(itemStack -> ItemStackUtils.hasToolLevel(itemStack, ToolType.AXE, TOOL_LEVEL_WOOD_OR_GOLD, getMaxToolLevel()), new Tuple<>(1, true));
+        keepX.put(itemStack ->  itemStack.getItem() instanceof ShearsItem, new Tuple<>(1, true));
+        keepX.put(itemStack ->  itemStack.getItem() == Items.NETHER_WART, new Tuple<>(16, false));
     }
 
     @NotNull
@@ -189,6 +191,24 @@ public class BuildingAlchemist extends AbstractBuilding
     public void removeBrewingStand(final BlockPos pos)
     {
         brewingStands.remove(pos);
+    }
+
+    /**
+     * Remove soil position.
+     * @param pos the position of it.
+     */
+    public void removeSoilPosition(final BlockPos pos)
+    {
+        soulsand.remove(pos);
+    }
+
+    /**
+     * Remove leaf position.
+     * @param pos the position of it.
+     */
+    public void removeLeafPosition(final BlockPos pos)
+    {
+        leaves.remove(pos);
     }
 
     public static class BrewingModule extends AbstractCraftingBuildingModule.Brewing

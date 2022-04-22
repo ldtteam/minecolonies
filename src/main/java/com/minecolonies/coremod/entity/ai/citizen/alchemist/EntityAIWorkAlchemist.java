@@ -13,21 +13,25 @@ import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingAlchemist;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobAlchemist;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.BrewingStandBlock;
+import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.ShearsItem;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -50,7 +54,17 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
     /**
      * Base xp gain for the smelter.
      */
-    private static final double BASE_XP_GAIN = 5;
+    private static final double BASE_XP_GAIN      = 5;
+
+    /**
+     * Average delay to switch to netherwart harvesting.
+     */
+    private static final int DELAY_TO_HARVEST_NETHERWART = 60;
+
+    /**
+     * Average delay to switch to mistletoe harvesting.
+     */
+    private static final int DELAY_TO_HARVEST_MISTLETOE = 30;
 
     /**
      * BrewingStand to fuel
@@ -61,6 +75,11 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
      * State before we decided to fuel
      */
     private IAIState preFuelState = null;
+
+    /**
+     * Walking position.
+     */
+    private BlockPos walkTo;
 
     /**
      * Initialize the stone smeltery and add all his tasks.
@@ -79,15 +98,202 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
           new AITarget(START_USING_BREWINGSTAND, this::fillUpBrewingStand, TICKS_SECOND),
           new AITarget(RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD, this::retrieveBrewableFromBrewingStand, TICKS_SECOND),
           new AITarget(RETRIEVING_USED_FUEL_FROM_BREWINGSTAND, this::retrieveUsedFuel, TICKS_SECOND),
-          new AITarget(ADD_FUEL_TO_BREWINGSTAND, this::addFuelToBrewingStand, TICKS_SECOND)
+          new AITarget(ADD_FUEL_TO_BREWINGSTAND, this::addFuelToBrewingStand, TICKS_SECOND),
+          new AITarget(HARVEST_MISTLETOE, this::harvestMistleToe, TICKS_SECOND),
+          new AITarget(HARVEST_NETHERWART, this::harvestNetherWart, TICKS_SECOND)
         );
+    }
+
+    private IAIState harvestNetherWart()
+    {
+        if (walkTo == null)
+        {
+            final List<BlockPos> soilList = getOwnBuilding().getAllSoilPositions();
+
+            if (soilList.isEmpty())
+            {
+                return IDLE;
+            }
+
+            final BlockPos randomSoil = soilList.get(worker.getRandom().nextInt(soilList.size()));
+
+            if (WorldUtil.isBlockLoaded(world, randomSoil))
+            {
+                if (world.getBlockState(randomSoil).getBlock() == Blocks.SOUL_SAND)
+                {
+                    if (world.getBlockState(randomSoil.above()).getBlock() == Blocks.NETHER_WART)
+                    {
+                        walkTo = randomSoil;
+                        return HARVEST_NETHERWART;
+                    }
+                    else if (world.isEmptyBlock(randomSoil.above()))
+                    {
+                        if (!checkIfRequestForItemExistOrCreateAsync(new ItemStack(Items.NETHER_WART, 1), 16, 1))
+                        {
+                            return IDLE;
+                        }
+                    }
+                    walkTo = randomSoil;
+                }
+                else
+                {
+                    getOwnBuilding().removeSoilPosition(randomSoil);
+                }
+            }
+            return HARVEST_NETHERWART;
+        }
+
+        if (WorldUtil.isBlockLoaded(world, walkTo) && world.getBlockState(walkTo).getBlock() == Blocks.SOUL_SAND)
+        {
+            if (walkToBlock(walkTo))
+            {
+                return HARVEST_NETHERWART;
+            }
+
+            final BlockState aboveState = world.getBlockState(walkTo.above());
+            if (!(aboveState.getBlock() instanceof AirBlock))
+            {
+                if (aboveState.getBlock() == Blocks.NETHER_WART && aboveState.getValue(NetherWartBlock.AGE) < 2)
+                {
+                    walkTo = null;
+                    return IDLE;
+                }
+
+                if (mineBlock(walkTo.above()))
+                {
+                    walkTo = null;
+                    worker.decreaseSaturationForContinuousAction();
+                    return IDLE;
+                }
+            }
+            else
+            {
+                if (!checkIfRequestForItemExistOrCreateAsync(new ItemStack(Items.NETHER_WART, 1), 16, 1))
+                {
+                    walkTo = null;
+                    return IDLE;
+                }
+
+                final int slot = worker.getCitizenInventoryHandler().findFirstSlotInInventoryWith(Items.NETHER_WART);
+                if (slot == -1)
+                {
+                    walkTo = null;
+                    return IDLE;
+                }
+
+                world.setBlockAndUpdate(walkTo.above(), Blocks.NETHER_WART.defaultBlockState());
+                worker.decreaseSaturationForContinuousAction();
+                getInventory().extractItem(slot, 1, false);
+                walkTo = null;
+                return IDLE;
+            }
+        }
+        else
+        {
+            walkTo = null;
+            return IDLE;
+        }
+
+        return HARVEST_NETHERWART;
+    }
+
+    private IAIState harvestMistleToe()
+    {
+        if (checkForToolOrWeapon(ToolType.SHEARS))
+        {
+            return IDLE;
+        }
+
+        if (walkTo == null)
+        {
+            final List<BlockPos> leaveList = getOwnBuilding().getAllLeavePositions();
+
+            if (leaveList.isEmpty())
+            {
+                return IDLE;
+            }
+
+            final BlockPos randomLeaf = leaveList.get(worker.getRandom().nextInt(leaveList.size()));
+            if (WorldUtil.isBlockLoaded(world, randomLeaf))
+            {
+                if (world.getBlockState(randomLeaf).getBlock() instanceof LeavesBlock)
+                {
+                    walkTo = randomLeaf;
+                }
+                else
+                {
+                    getOwnBuilding().removeLeafPosition(randomLeaf);
+                }
+            }
+            return HARVEST_MISTLETOE;
+        }
+
+        if (WorldUtil.isBlockLoaded(world, walkTo) && world.getBlockState(walkTo).getBlock() instanceof LeavesBlock)
+        {
+            if (walkToBlock(walkTo))
+            {
+                return HARVEST_MISTLETOE;
+            }
+
+            final BlockState state = world.getBlockState(walkTo);
+
+            final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> stack.getItem() instanceof ShearsItem);
+            worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, slot);
+
+            worker.swing(Hand.MAIN_HAND);
+            world.playSound(null,
+              walkTo,
+              state.getSoundType(world, walkTo, worker).getBreakSound(),
+              SoundCategory.BLOCKS,
+              state.getSoundType(world, walkTo, worker).getVolume(),
+              state.getSoundType(world, walkTo, worker).getPitch());
+            Network.getNetwork().sendToTrackingEntity(new BlockParticleEffectMessage(walkTo, state, worker.getRandom().nextInt(7)-1), worker);
+
+            if (worker.getRandom().nextInt(120) < 1)
+            {
+                worker.decreaseSaturationForContinuousAction();
+                InventoryUtils.addItemStackToItemHandler(worker.getInventoryCitizen(), new ItemStack(ModItems.mistletoe, 1));
+                walkTo = null;
+                worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
+                return INVENTORY_FULL;
+            }
+        }
+        else
+        {
+            walkTo = null;
+            return IDLE;
+        }
+
+        return HARVEST_MISTLETOE;
     }
 
     @Override
     protected IAIState decide()
     {
-        if (job.getCurrentTask() == null)
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
+        if (job.getTaskQueue().isEmpty() || job.getCurrentTask() == null)
         {
+            if (worker.getNavigation().isDone())
+            {
+                if (worker.getRandom().nextInt(DELAY_TO_HARVEST_NETHERWART) < 1)
+                {
+                    return HARVEST_NETHERWART;
+                }
+
+                if (worker.getRandom().nextInt(DELAY_TO_HARVEST_MISTLETOE) < 1)
+                {
+                    return HARVEST_MISTLETOE;
+                }
+
+                if (getOwnBuilding().isInBuilding(worker.blockPosition()))
+                {
+                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                }
+                else
+                {
+                    walkToBuilding();
+                }
+            }
             return IDLE;
         }
 
