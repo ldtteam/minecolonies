@@ -84,16 +84,16 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param type the type to check for.
      * @return true if so.
      */
-    default boolean canLearnRecipe(final CraftingType type)
+    default boolean canLearn(final CraftingType type)
     {
-        return getSupportedRecipeTypes().contains(type);
+        return getSupportedCraftingTypes().contains(type);
     }
 
     /**
-     * Get the supported recipe types.
+     * Get the supported crafting types.
      * @return a set of types.
      */
-    Set<CraftingType> getSupportedRecipeTypes();
+    Set<CraftingType> getSupportedCraftingTypes();
 
     /**
      * Checks if this particular recipe is *possible* to be learned by

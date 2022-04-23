@@ -57,7 +57,7 @@ public final class RecipeAnalyzer
         // all vanilla teachable recipes
         for (final Map.Entry<CraftingType, List<IGenericRecipe>> entry : vanilla.entrySet())
         {
-            if (crafting.canLearnRecipe(entry.getKey()))
+            if (crafting.canLearn(entry.getKey()))
             {
                 for (final IGenericRecipe recipe : entry.getValue())
                 {

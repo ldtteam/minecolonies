@@ -50,7 +50,7 @@ public class CraftingGuiHandler extends AbstractTeachingGuiHandler<WindowCraftin
     @Override
     protected boolean isSupportedCraftingModule(@NotNull final CraftingModuleView moduleView)
     {
-        return moduleView.canLearnRecipe(ModCraftingTypes.SMALL_CRAFTING);
+        return moduleView.canLearn(ModCraftingTypes.SMALL_CRAFTING);
     }
 
     @Override

@@ -141,16 +141,16 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      * @param type the type to check for.
      * @return true if so.
      */
-    public boolean canLearnRecipe(final CraftingType type)
+    public boolean canLearn(final CraftingType type)
     {
-        return getSupportedRecipeTypes().contains(type);
+        return getSupportedCraftingTypes().contains(type);
     }
 
     /**
-     * Get the supported recipe types.
+     * Get the supported crafting types.
      * @return a set of types.
      */
-    public Set<CraftingType> getSupportedRecipeTypes()
+    public Set<CraftingType> getSupportedCraftingTypes()
     {
         return recipeTypeSet;
     }

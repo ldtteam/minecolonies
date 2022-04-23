@@ -258,7 +258,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             buf.writeBoolean(false);
         }
 
-        final Set<CraftingType> craftingTypes = this.getSupportedRecipeTypes();
+        final Set<CraftingType> craftingTypes = this.getSupportedCraftingTypes();
         buf.writeVarInt(craftingTypes.size());
         for (final CraftingType type : craftingTypes)
         {
@@ -910,7 +910,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
             return ImmutableSet.of(ModCraftingTypes.SMALL_CRAFTING, ModCraftingTypes.LARGE_CRAFTING);
         }
@@ -918,7 +918,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearnRecipe(ModCraftingTypes.SMALL_CRAFTING) &&
+            return canLearn(ModCraftingTypes.SMALL_CRAFTING) &&
                     recipe.getIntermediate() == Blocks.AIR;
         }
 
@@ -947,7 +947,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
             return ImmutableSet.of(ModCraftingTypes.SMELTING);
         }
@@ -955,7 +955,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearnRecipe(ModCraftingTypes.SMELTING) &&
+            return canLearn(ModCraftingTypes.SMELTING) &&
                     recipe.getIntermediate() == Blocks.FURNACE;
         }
 
@@ -984,7 +984,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
             return ImmutableSet.of();
         }

@@ -94,13 +94,13 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnRecipe(ModCraftingTypes.SMELTING) ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final String buttonDisplay = module.canLearn(ModCraftingTypes.SMELTING) ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnRecipe(ModCraftingTypes.SMELTING))
+        if (!module.canLearn(ModCraftingTypes.SMELTING))
         {
             doneButton.active = false;
         }
@@ -111,7 +111,7 @@ public class WindowFurnaceCrafting extends ContainerScreen<ContainerCraftingFurn
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (module.canLearnRecipe(ModCraftingTypes.SMELTING))
+            if (module.canLearn(ModCraftingTypes.SMELTING))
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));

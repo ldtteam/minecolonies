@@ -71,7 +71,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
 
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
-        if (module.canLearnRecipe(ModCraftingTypes.SMELTING))
+        if (module.canLearn(ModCraftingTypes.SMELTING))
         {
             NetworkHooks.openGui(player, new INamedContainerProvider()
             {
@@ -105,9 +105,9 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
                 {
-                    return new ContainerCrafting(id, inv, module.canLearnRecipe(ModCraftingTypes.LARGE_CRAFTING), building.getID(), module.getId());
+                    return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING), building.getID(), module.getId());
                 }
-            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearnRecipe(ModCraftingTypes.LARGE_CRAFTING))).writeBlockPos(building.getID()).writeUtf(module.getId()));
+            }, buffer -> new PacketBuffer(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING))).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }

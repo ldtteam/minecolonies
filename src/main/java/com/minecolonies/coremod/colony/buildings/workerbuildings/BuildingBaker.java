@@ -125,10 +125,10 @@ public class BuildingBaker extends AbstractBuilding
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
             return (building == null || building.getBuildingLevel() >= 3)
-                    ? super.getSupportedRecipeTypes()
+                    ? super.getSupportedCraftingTypes()
                     : ImmutableSet.of();
         }
 
@@ -181,10 +181,10 @@ public class BuildingBaker extends AbstractBuilding
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
             return (building == null || building.getBuildingLevel() >= 3)
-                    ? super.getSupportedRecipeTypes()
+                    ? super.getSupportedCraftingTypes()
                     : ImmutableSet.of();
         }
     }
