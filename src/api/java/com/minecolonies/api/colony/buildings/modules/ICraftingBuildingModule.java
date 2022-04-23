@@ -9,6 +9,7 @@ import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +41,9 @@ import java.util.function.Predicate;
  */
 public interface ICraftingBuildingModule extends IBuildingModule
 {
+    /**
+     * Class to differentiate the different crafting types.
+     */
     class CraftingType
     {
         public static final CraftingType SMALL_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID, "smallcrafting"));
@@ -47,20 +51,36 @@ public interface ICraftingBuildingModule extends IBuildingModule
         public static final CraftingType LARGE_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID,"largecrafting"));
         public static final CraftingType BREWING        = new CraftingType(new ResourceLocation(Constants.MOD_ID,"brewing"));
 
+        /**
+         * Unique id of each type.
+         */
         private final ResourceLocation id;
 
+        /**
+         * Create a new type.
+         * @param id the uniqye id.
+         */
         public CraftingType(final ResourceLocation id)
         {
             this.id = id;
         }
 
         /**
-         * Get the matching id.
-         * @return the id.
+         * Create a type from a packet buffer.
+         * @param packetBuffer the buffer to read the data from.
          */
-        public ResourceLocation getId()
+        public CraftingType(final PacketBuffer packetBuffer)
         {
-            return this.id;
+            this.id = packetBuffer.readResourceLocation();
+        }
+
+        /**
+         * Write to a byte stream.
+         * @param packetBuffer the buffer to write it to.
+         */
+        public void write(final PacketBuffer packetBuffer)
+        {
+            packetBuffer.writeResourceLocation(this.id);
         }
 
         @Override
