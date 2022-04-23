@@ -62,7 +62,7 @@ public class CommandRTP implements IMCCommand
         if (profile == null || context.getSource().getServer().getPlayerList().getPlayer(profile.getId()) == null)
         {
             // could not find player with given name.
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile != null ? profile.getName() : "null");
+            MessageUtils.format(CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND, profile != null ? profile.getName() : "null").sendTo((PlayerEntity) sender);
             return 0;
         }
 
@@ -81,12 +81,12 @@ public class CommandRTP implements IMCCommand
 
         if (!MineColonies.getConfig().getServer().canPlayerUseRTPCommand.get())
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_RTP_NOT_ALLOWED);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_NOT_ALLOWED).sendTo((PlayerEntity) sender);
             return false;
         }
         else if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && context.getSource().getLevel().dimension() != World.OVERWORLD)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_RTP_WRONG_DIMENSION);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_WRONG_DIMENSION).sendTo((PlayerEntity) sender);
             return false;
         }
         return true;
@@ -137,14 +137,14 @@ public class CommandRTP implements IMCCommand
                 player.teleportTo(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
                 player.setHealth(player.getMaxHealth());
 
-                MessageUtils.sendPlayerMessage(player, CommandTranslationConstants.COMMAND_RTP_SUCCESS);
+                MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_SUCCESS).sendTo(player);
 
                 //.fallDistance is used to cancel out fall damage  basically if you have -5 it will reduce fall damage by 2.5 hearts
                 player.fallDistance = -FALL_DISTANCE;
                 return;
             }
         }
-        MessageUtils.sendPlayerMessage(player, CommandTranslationConstants.COMMAND_RTP_NO_POSITION);
+        MessageUtils.format(CommandTranslationConstants.COMMAND_RTP_NO_POSITION).sendTo(player);
     }
 
     /**

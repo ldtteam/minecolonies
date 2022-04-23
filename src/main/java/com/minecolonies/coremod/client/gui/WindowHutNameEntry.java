@@ -61,7 +61,7 @@ public class WindowHutNameEntry extends Window implements ButtonHandler
             if (name.length() > MAX_NAME_LENGTH)
             {
                 name = name.substring(0, MAX_NAME_LENGTH);
-                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_NAME_TOO_LONG, name);
+                MessageUtils.format(WARNING_NAME_TOO_LONG, name).sendTo(Minecraft.getInstance().player);
             }
 
             building.setCustomName(name);

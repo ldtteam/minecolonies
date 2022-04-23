@@ -15,14 +15,14 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Message for trying to create a new colony.
@@ -84,7 +84,7 @@ public class CreateColonyMessage implements IMessage
 
         if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative())
         {
-            MessageUtils.sendPlayerMessage(sender, "com.minecolonies.coremod.supplyneed");
+            MessageUtils.format(MESSAGE_COLONY_START_SUPPLY_NEED).sendTo(sender);
             return;
         }
 
@@ -95,7 +95,7 @@ public class CreateColonyMessage implements IMessage
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
-            MessageUtils.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.create.notileentity");
+            MessageUtils.format(WARNING_TOWN_HALL_NO_TILE_ENTITY).with(TextFormatting.BOLD, TextFormatting.DARK_RED).sendTo(sender);
             return;
         }
 
@@ -111,7 +111,7 @@ public class CreateColonyMessage implements IMessage
             {
                 if (!world.isClientSide)
                 {
-                    MessageUtils.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get());
+                    MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()).sendTo(sender);
                 }
                 return;
             }
@@ -119,7 +119,7 @@ public class CreateColonyMessage implements IMessage
             {
                 if (!world.isClientSide)
                 {
-                    MessageUtils.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get());
+                    MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
                 }
                 return;
             }
@@ -127,20 +127,20 @@ public class CreateColonyMessage implements IMessage
 
         if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
         {
-            MessageUtils.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.denied.tooclose", colony.getName());
+            MessageUtils.format( MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
             return;
         }
 
-            final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
+        final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
 
-            if (ownedColony == null)
-            {
-                IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
-                IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-                MessageUtils.sendPlayerMessage(sender, "com.minecolonies.coremod.progress.colony_founded");
-                return;
-            }
+        if (ownedColony == null)
+        {
+            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
+            IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+            MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(TextFormatting.GOLD).sendTo(sender);
+            return;
+        }
 
-        MessageUtils.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.create.failed");
+        MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED).with(TextFormatting.BOLD, TextFormatting.DARK_RED).sendTo(sender);
     }
 }

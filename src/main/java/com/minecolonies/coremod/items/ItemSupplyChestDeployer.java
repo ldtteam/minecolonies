@@ -106,7 +106,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
-                MessageUtils.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
+                MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
             placeSupplyShip(worldIn, null, playerIn.getDirection());

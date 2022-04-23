@@ -123,11 +123,11 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
             {
                 case LOCATION:
                     colony.addFreePosition(pos);
-                    MessageUtils.sendPlayerMessage(player, MESSAGE_PERMISSION_SCEPTER_ADD_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ());
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ()).sendTo(player);
                     break;
                 case BLOCK:
                     colony.addFreeBlock(block.getBlock());
-                    MessageUtils.sendPlayerMessage(player, MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, block.getBlock().getRegistryName());
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, block.getBlock().getRegistryName()).sendTo(player);
                     break;
                 default:
                     // Error!
@@ -139,11 +139,11 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
             {
                 case LOCATION:
                     colony.removeFreePosition(pos);
-                    MessageUtils.sendPlayerMessage(player, MESSAGE_PERMISSION_SCEPTER_REMOVE_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ());
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ()).sendTo(player);
                     break;
                 case BLOCK:
                     colony.removeFreeBlock(block.getBlock());
-                    MessageUtils.sendPlayerMessage(player, MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, block.getBlock().getRegistryName());
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, block.getBlock().getRegistryName()).sendTo(player);
                     break;
                 default:
                     // Error!

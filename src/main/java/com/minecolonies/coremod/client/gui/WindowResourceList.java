@@ -172,7 +172,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ClientPlayerEntity player =Minecraft.getInstance().player;
         if (this.builder == null)
         {
-            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent(TOOL_RESOURCE_SCROLL_NO_BUILDER));
+            MessageUtils.format(TOOL_RESOURCE_SCROLL_NO_BUILDER).sendTo(player);
             close();
             return;
         }
@@ -183,7 +183,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
-            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent(TOOL_RESOURCE_SCROLL_ERROR));
+            MessageUtils.format(TOOL_RESOURCE_SCROLL_ERROR).sendTo(player);
             close();
             return;
         }

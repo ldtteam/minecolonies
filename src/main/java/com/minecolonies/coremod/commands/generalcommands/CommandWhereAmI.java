@@ -29,7 +29,7 @@ public class CommandWhereAmI implements IMCCommand
 
         if (colony == null)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_WHERE_AM_I_NO_COLONY);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_NO_COLONY).sendTo((PlayerEntity) sender);
             return 0;
         }
         final BlockPos center = colony.getCenter();
@@ -37,14 +37,14 @@ public class CommandWhereAmI implements IMCCommand
 
         if (!IColonyManager.getInstance().isCoordinateInAnyColony(sender.getCommandSenderWorld(), playerPos))
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_WHERE_AM_I_COLONY_CLOSE, distance);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_COLONY_CLOSE, distance).sendTo((PlayerEntity) sender);
             return 0;
         }
 
         final String colonyName = colony.getName();
         final String id = Integer.toString(colony.getID());
 
-        MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_WHERE_AM_I_IN_COLONY, colonyName, id, distance);
+        MessageUtils.format(CommandTranslationConstants.COMMAND_WHERE_AM_I_IN_COLONY, colonyName, id, distance).sendTo((PlayerEntity) sender);
 
         return 0;
     }

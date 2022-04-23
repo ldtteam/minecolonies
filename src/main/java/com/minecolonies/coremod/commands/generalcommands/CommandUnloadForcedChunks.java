@@ -34,7 +34,7 @@ public class CommandUnloadForcedChunks implements IMCCommand
             {
                 ((ServerWorld) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, new StringTextComponent("Successfully removed forceload flag!"));
+            MessageUtils.format(new StringTextComponent("Successfully removed forceload flag!")).sendTo((PlayerEntity) sender);
             return 1;
         }
         return 0;

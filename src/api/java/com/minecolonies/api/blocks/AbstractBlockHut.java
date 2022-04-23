@@ -108,7 +108,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         if (building != null && !building.getChildren().isEmpty() && (player.level.getGameTime() - lastBreakTickWarn) < 100)
         {
             lastBreakTickWarn = player.level.getGameTime();
-            MessageUtils.sendPlayerMessage(player, HUT_BREAK_WARNING_CHILD_BUILDINGS);
+            MessageUtils.format(HUT_BREAK_WARNING_CHILD_BUILDINGS).sendTo(player);
         }
 
         return (MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1 / (HARDNESS * HARDNESS_PVP_FACTOR) : 1 / HARDNESS) / 30;
@@ -184,19 +184,19 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
             if (building == null)
             {
-                MessageUtils.sendPlayerMessage(player, HUT_BLOCK_MISSING_BUILDING);
+                MessageUtils.format(HUT_BLOCK_MISSING_BUILDING).sendTo(player);
                 return ActionResultType.FAIL;
             }
 
             if (building.getColony() == null)
             {
-                MessageUtils.sendPlayerMessage(player, HUT_BLOCK_MISSING_COLONY);
+                MessageUtils.format(HUT_BLOCK_MISSING_COLONY).sendTo(player);
                 return ActionResultType.FAIL;
             }
 
             if (!building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                MessageUtils.sendPlayerMessage(player, PERMISSION_DENIED);
+                MessageUtils.format(PERMISSION_DENIED).sendTo(player);
                 return ActionResultType.FAIL;
             }
 

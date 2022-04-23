@@ -64,7 +64,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
         if (!(building instanceof AbstractBuildingGuards))
         {
-            MessageUtils.sendPlayerMessage(player, TOOL_GUARD_SCROLL_NO_GUARD_BUILDING);
+            MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(player);
             return itemStack;
         }
 
@@ -169,7 +169,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
             final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getClickedPos());
             if (!(building instanceof AbstractBuildingGuards))
             {
-                MessageUtils.sendPlayerMessage(ctx.getPlayer(), TOOL_GUARD_SCROLL_NO_GUARD_BUILDING);
+                MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(ctx.getPlayer());
             }
         }
 

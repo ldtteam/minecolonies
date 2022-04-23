@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
@@ -32,7 +33,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -254,7 +254,7 @@ public class CitizenManager implements ICitizenManager
                     }
                 }
 
-                colony.notifyColonyMembers(new TranslationTextComponent(WARNING_COLONY_NO_ARRIVAL_SPACE, spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()));
+                MessageUtils.format(WARNING_COLONY_NO_ARRIVAL_SPACE, spawnLocation.getX(), spawnLocation.getY(), spawnLocation.getZ()).sendTo(colony).forAllPlayers();
             }
         }
 
@@ -277,11 +277,11 @@ public class CitizenManager implements ICitizenManager
             {
                 if (maxCitizensFromResearch() <= getCurrentCitizenCount())
                 {
-                    colony.notifyColonyMembers(new TranslationTextComponent(WARNING_MAX_CITIZENS_RESEARCH, colony.getName()));
+                    MessageUtils.format(WARNING_MAX_CITIZENS_RESEARCH, colony.getName()).sendTo(colony).forAllPlayers();
                 }
                 else
                 {
-                    colony.notifyColonyMembers(new TranslationTextComponent(WARNING_MAX_CITIZENS_CONFIG, colony.getName()));
+                    MessageUtils.format(WARNING_MAX_CITIZENS_CONFIG, colony.getName()).sendTo(colony).forAllPlayers();
                 }
             }
 
@@ -594,7 +594,7 @@ public class CitizenManager implements ICitizenManager
     {
         if (mourn)
         {
-            colony.notifyColonyManagers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName()));
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_MOURN, colony.getName(), data.getName()).sendTo(colony).forManagers();
         }
 
         for (final ICitizenData citizen : getCitizens())
@@ -638,7 +638,7 @@ public class CitizenManager implements ICitizenManager
 
         if (!this.areCitizensSleeping)
         {
-            colony.notifyColonyMembers(new TranslationTextComponent(ALL_CITIZENS_ARE_SLEEPING));
+            MessageUtils.format(ALL_CITIZENS_ARE_SLEEPING).sendTo(colony).forAllPlayers();
         }
 
         this.areCitizensSleeping = true;

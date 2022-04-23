@@ -49,11 +49,11 @@ public class ColonyDeleteOwnMessage implements IMessage
         if (colony != null)
         {
             IColonyManager.getInstance().deleteColonyByDimension(colony.getID(), false, colony.getDimension());
-            MessageUtils.sendPlayerMessage(player, MESSAGE_INFO_COLONY_DELETE_SUCCESS);
+            MessageUtils.format(MESSAGE_INFO_COLONY_DELETE_SUCCESS).sendTo(player);
         }
         else
         {
-            MessageUtils.sendPlayerMessage(player, MESSAGE_INFO_COLONY_NOT_FOUND);
+            MessageUtils.format(MESSAGE_INFO_COLONY_NOT_FOUND).sendTo(player);
         }
     }
 }

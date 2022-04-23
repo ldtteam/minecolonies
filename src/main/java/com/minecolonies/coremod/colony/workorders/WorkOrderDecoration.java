@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Suppression.UNUSED_METHOD_PARAMETERS_SHOULD_BE_REMOVED;
@@ -124,7 +124,7 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         if (!readingFromNbt && colony != null && colony.getWorld() != null)
         {
             ConstructionTapeHelper.placeConstructionTape(this, colony.getWorld());
-            colony.notifyColonyManagers(new TranslationTextComponent(MESSAGE_NEW_DECORATION_REQUEST, colony.getName()));
+            MessageUtils.format(MESSAGE_NEW_DECORATION_REQUEST, colony.getName()).sendTo(colony).forManagers();
         }
     }
 

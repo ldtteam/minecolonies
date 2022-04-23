@@ -113,7 +113,7 @@ public class DirectPlaceMessage implements IMessage
             final CompoundNBT compound = stack.getTag();
             if (colony != null && compound != null && compound.contains(TAG_COLONY_ID) && colony.getID() != compound.getInt(TAG_COLONY_ID))
             {
-                MessageUtils.sendPlayerMessage(player, WRONG_COLONY, compound.getInt(TAG_COLONY_ID));
+                MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
                 return;
             }
 

@@ -1046,7 +1046,7 @@ public class CitizenData implements ICitizenData
     public void restartDone()
     {
         restartScheduled = false;
-        MessageUtils.sendPlayerMessage(originPlayerRestart, MESSAGE_CITIZEN_RESTARTED, getName());
+        MessageUtils.format(MESSAGE_CITIZEN_RESTARTED, getName()).sendTo(originPlayerRestart);
     }
 
     @Override

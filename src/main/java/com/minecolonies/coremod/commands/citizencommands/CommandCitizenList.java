@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_CITIZEN_INFO;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 import static com.minecolonies.coremod.commands.colonycommands.CommandListColonies.START_PAGE_ARG;
 
@@ -26,8 +27,8 @@ import static com.minecolonies.coremod.commands.colonycommands.CommandListColoni
  */
 public class CommandCitizenList implements IMCColonyOfficerCommand
 {
-    private static final String LIST_COMMAND_SUGGESTED = "/minecolonies citizens list %d %d";
-    private static final String COMMAND_CITIZEN_INFO   = "/minecolonies citizens info %d %d";
+    private static final String LIST_COMMAND_SUGGESTED         = "/minecolonies citizens list %d %d";
+    private static final String COMMAND_CITIZEN_INFO_SUGGESTED = "/minecolonies citizens info %d %d";
 
     private static final int CITIZENS_ON_PAGE = 9;
 
@@ -109,7 +110,7 @@ public class CommandCitizenList implements IMCColonyOfficerCommand
         {
             context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_CITIZEN_INFO, citizen.getId(), citizen.getName())
                                               .setStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))), true);
+                                                String.format(COMMAND_CITIZEN_INFO_SUGGESTED, citizen.getColony().getID(), citizen.getId())))), true);
 
             citizen.getEntity().ifPresent(entityCitizen ->
             {

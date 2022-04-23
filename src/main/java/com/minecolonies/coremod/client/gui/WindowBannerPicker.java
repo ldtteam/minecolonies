@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
@@ -279,7 +278,7 @@ public class WindowBannerPicker extends Screen
         // Render the instructions
         this.drawCenteredString(stack,
                 this.font,
-                I18n.get("com.minecolonies.coremod.gui.flag.choose"),
+                new TranslationTextComponent("com.minecolonies.coremod.gui.flag.choose").getString(),
                 this.width /2,
                 16,
                 0xFFFFFF /* white */

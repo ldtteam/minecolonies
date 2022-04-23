@@ -3013,9 +3013,9 @@ public class InventoryUtils
 
         if (!result)
         {
-            MessageUtils.sendPlayerMessage(player, itemStack.getDisplayName()
-                .copy()
-                .append(new TranslationTextComponent(MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT)));
+            MessageUtils.format(itemStack.getDisplayName().copy())
+              .append(MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT)
+              .sendTo(player);
         }
         return result;
     }

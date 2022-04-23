@@ -90,11 +90,8 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void buildClicked()
     {
-        String buttonLabel = buttonBuild.getTextAsString();
-        if (buttonBuild.getText() instanceof TranslationTextComponent)
-        {
-            buttonLabel = ((TranslationTextComponent) buttonBuild.getText()).getKey();
-        }
+        String buttonLabel =
+          buttonBuild.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) buttonBuild.getText()).getKey() : buttonBuild.getTextAsString();
 
         if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE))
         {

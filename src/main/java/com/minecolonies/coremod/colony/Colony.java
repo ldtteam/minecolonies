@@ -50,10 +50,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerChunkProvider;
@@ -66,7 +64,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
@@ -610,7 +607,7 @@ public class Colony implements IColony
                 player.refreshList(this);
                 if (player.getGuards().isEmpty())
                 {
-                    notifyColonyManagers(new TranslationTextComponent(COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName()));
+                    MessageUtils.format(COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName()).sendTo(this).forManagers();
                 }
             }
         }
@@ -1604,8 +1601,8 @@ public class Colony implements IColony
         if (!rank.isColonyManager() && !visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
-            MessageUtils.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getName());
-            notifyColonyManagers(new TranslationTextComponent(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()));
+            MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
+            MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, this.getName()).sendTo(this).forManagers();
         }
     }
 
@@ -1615,8 +1612,8 @@ public class Colony implements IColony
         if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
-            MessageUtils.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getName());
-            notifyColonyManagers(new TranslationTextComponent(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()));
+            MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
+            MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, this.getName()).sendTo(this).forManagers();
         }
     }
 
@@ -1699,9 +1696,9 @@ public class Colony implements IColony
             {
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
-                    notifyColonyManagers(new TranslationTextComponent(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE,
-                      attackingPlayer.getPlayer().getName(),
-                      attackingPlayer.getGuards().size()));
+                    MessageUtils.format(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE, attackingPlayer.getPlayer().getName(), attackingPlayer.getGuards().size())
+                      .sendTo(this)
+                      .forManagers();
                 }
                 return;
             }
@@ -1714,7 +1711,7 @@ public class Colony implements IColony
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                notifyColonyManagers(new TranslationTextComponent(COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName()));
+                MessageUtils.format(COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName()).sendTo(this).forManagers();
             }
         }
     }
@@ -1870,66 +1867,6 @@ public class Colony implements IColony
     public String getTextureStyleId()
     {
         return this.textureStyle;
-    }
-
-    @Override
-    public void notifyColonyMembers(final ITextComponent component)
-    {
-        notifyPlayers(getMessagePlayerEntities(), null, component);
-    }
-
-    @Override
-    public void notifyColonyMembers(final ITextComponent component, TextFormatting color)
-    {
-        notifyPlayers(getMessagePlayerEntities(), null, component, color);
-    }
-
-    @Override
-    public void notifyColonyMembers(final ITextComponent component, TextFormatting color, Consumer<PlayerEntity> action)
-    {
-        notifyPlayers(getMessagePlayerEntities(), action, component, color);
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component)
-    {
-        notifyPlayers(getImportantMessageEntityPlayers(), null, component);
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component, TextFormatting color)
-    {
-        notifyPlayers(getImportantMessageEntityPlayers(), null, component, color);
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component, TextFormatting color, Consumer<PlayerEntity> action)
-    {
-        notifyPlayers(getImportantMessageEntityPlayers(), action, component, color);
-    }
-
-    private void notifyPlayers(List<PlayerEntity> players, Consumer<PlayerEntity> action, ITextComponent component)
-    {
-        for (final PlayerEntity player : players)
-        {
-            MessageUtils.sendPlayerColonyMessage(player, this, component);
-            if (action != null)
-            {
-                action.accept(player);
-            }
-        }
-    }
-
-    private void notifyPlayers(List<PlayerEntity> players, Consumer<PlayerEntity> action, ITextComponent component, TextFormatting color)
-    {
-        for (final PlayerEntity player : players)
-        {
-            MessageUtils.sendPlayerColonyMessageWithColor(player, this, color, component);
-            if (action != null)
-            {
-                action.accept(player);
-            }
-        }
     }
 
     /**

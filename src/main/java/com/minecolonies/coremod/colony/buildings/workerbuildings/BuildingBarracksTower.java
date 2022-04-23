@@ -13,8 +13,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_UPGRADE_BARRACKS;
 
 /**
  * Building class for the Barracks Tower.
@@ -80,7 +81,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent("com.minecolonies.coremod.worker.needbarracks"));
+            MessageUtils.format(WARNING_UPGRADE_BARRACKS).sendTo(player);
         }
     }
 

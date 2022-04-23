@@ -72,7 +72,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(ctx.getLevel()))
             {
-                MessageUtils.sendPlayerMessage(ctx.getPlayer(), CANT_PLACE_COLONY_IN_OTHER_DIM);
+                MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(ctx.getPlayer());
                 return ActionResultType.FAIL;
             }
             placeSupplyCamp(ctx.getClickedPos().relative(ctx.getClickedFace()), ctx.getPlayer().getDirection());
@@ -90,7 +90,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
         {
             if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(worldIn))
             {
-                MessageUtils.sendPlayerMessage(playerIn, CANT_PLACE_COLONY_IN_OTHER_DIM);
+                MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(playerIn);
                 return new ActionResult<>(ActionResultType.FAIL, stack);
             }
             placeSupplyCamp(null, playerIn.getDirection());

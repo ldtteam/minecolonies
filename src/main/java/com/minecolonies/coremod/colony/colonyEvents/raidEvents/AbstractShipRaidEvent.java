@@ -10,10 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CreativeBuildingStructureHandler;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -214,9 +211,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         updateRaidBar();
 
-        colony.notifyColonyManagers(new TranslationTextComponent(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID,
-          BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint),
-          colony.getName()));
+        MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
         colony.markDirty();
     }
 
@@ -307,10 +303,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void onFinish()
     {
-        colony.notifyColonyManagers(new TranslationTextComponent(PIRATES_SAILING_OFF_MESSAGE,
-          BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint),
-          colony.getName(),
-          colony.getName()));
+        MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
         for (final Entity entity : raiders.keySet())
         {
             entity.remove();
@@ -332,7 +326,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawners.isEmpty())
             {
                 daysToGo = 2;
-                colony.notifyColonyManagers(new TranslationTextComponent(ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName()));
+                MessageUtils.format(ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
             }
         }
     }
@@ -354,7 +348,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         if (raiders.isEmpty() && spawners.isEmpty())
         {
             status = EventStatus.WAITING;
-            colony.notifyColonyManagers(new TranslationTextComponent(ALL_PIRATES_KILLED_MESSAGE, colony.getName()));
+            MessageUtils.format(ALL_PIRATES_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
         }
     }
 

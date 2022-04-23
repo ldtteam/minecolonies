@@ -179,7 +179,7 @@ public class ColonyPermissionEventHandler
                   || lastPlayerNotificationTick.get(entity.getUUID()) + (Constants.TICKS_SECOND * MineColonies.getConfig().getServer().secondsBetweenPermissionMessages.get())
                        < worldTime)
             {
-                MessageUtils.sendPlayerMessage((PlayerEntity) entity, PERMISSION_DENIED);
+                MessageUtils.format(PERMISSION_DENIED).sendTo((PlayerEntity) entity);
                 lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
             }
         }

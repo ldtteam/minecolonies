@@ -24,7 +24,6 @@ import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
@@ -42,7 +41,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
-import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUILD;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowBuildDecoration extends AbstractWindowSkeleton
@@ -128,14 +127,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             if (structureName.getStyle().equals("supplycamp") || structureName.getStyle().equals("supplyship"))
             {
-                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.NO_COLONY_YET);
+                MessageUtils.format(NO_COLONY_YET).sendTo(Minecraft.getInstance().player);
             }
             else
             {
-                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.OUT_OF_COLONY,
-                  structureName.getSchematic(),
-                  structurePos.getX(),
-                  structurePos.getZ());
+                MessageUtils.format(OUT_OF_COLONY, structureName.getSchematic(), structurePos.getX(), structurePos.getZ()).sendTo(Minecraft.getInstance().player);
             }
 
             close();

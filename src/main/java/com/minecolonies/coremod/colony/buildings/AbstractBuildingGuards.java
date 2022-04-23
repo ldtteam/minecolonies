@@ -566,7 +566,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
             if (outOfRange)
             {
-                MessageUtils.sendPlayerMessage(player, WARNING_RALLYING_POINT_OUT_OF_RANGE);
+                MessageUtils.format(WARNING_RALLYING_POINT_OUT_OF_RANGE).sendTo(player);
                 setRallyLocation(null);
                 return null;
             }

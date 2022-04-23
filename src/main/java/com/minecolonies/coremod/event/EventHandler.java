@@ -18,8 +18,6 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants;
-import com.minecolonies.api.util.constant.translation.DebugTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
@@ -107,6 +105,8 @@ import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_BED_OCCUPIED;
+import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
 import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
@@ -171,7 +171,7 @@ public class EventHandler
             {
                 if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    event.getLeft().add(new TranslationTextComponent(DebugTranslationConstants.DEBUG_NO_CLOSE_COLONY).getString());
+                    event.getLeft().add(new TranslationTextComponent(DEBUG_NO_CLOSE_COLONY).getString());
                     return;
                 }
                 colony = IColonyManager.getInstance().getClosestIColony(world, pos);
@@ -182,13 +182,13 @@ public class EventHandler
                 }
 
                 event.getLeft()
-                  .add(new TranslationTextComponent(DebugTranslationConstants.DEBUG_NEXT_COLONY,
+                  .add(new TranslationTextComponent(DEBUG_NEXT_COLONY,
                     (int) Math.sqrt(colony.getDistanceSquared(pos)),
                     IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
             }
 
-            event.getLeft().add(colony.getName() + " : " + new TranslationTextComponent(DebugTranslationConstants.DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
+            event.getLeft().add(colony.getName() + " : " + new TranslationTextComponent(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
         }
     }
 
@@ -614,7 +614,7 @@ public class EventHandler
                     if (citizen.getBedPos().equals(bedBlockPos) && citizen.isAsleep())
                     {
                         event.setCanceled(true);
-                        MessageUtils.sendPlayerMessage(player, BaseGameTranslationConstants.BASE_BED_OCCUPIED);
+                        MessageUtils.format(BASE_BED_OCCUPIED).sendTo(player);
                     }
                 }
             }
@@ -752,7 +752,7 @@ public class EventHandler
     {
         if (!MineColonies.getConfig().getServer().allowOtherDimColonies.get() && !WorldUtil.isOverworldType(world))
         {
-            MessageUtils.sendPlayerMessage(player, CANT_PLACE_COLONY_IN_OTHER_DIM);
+            MessageUtils.format(CANT_PLACE_COLONY_IN_OTHER_DIM).sendTo(player);
             return false;
         }
 
@@ -773,11 +773,11 @@ public class EventHandler
             //  Not in a colony
             if (IColonyManager.getInstance().getIColonyByOwner(world, player) == null)
             {
-                MessageUtils.sendPlayerMessage(player, MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT);
+                MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT).sendTo(player);
             }
             else
             {
-                MessageUtils.sendPlayerMessage(player, MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY);
+                MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY).sendTo(player);
             }
 
             return player.isCreative();
@@ -785,7 +785,7 @@ public class EventHandler
         else if (!colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
         {
             //  No permission to place hut in colony
-            MessageUtils.sendPlayerMessage(player, PERMISSION_OPEN_HUT, colony.getName());
+            MessageUtils.format(PERMISSION_OPEN_HUT, colony.getName()).sendTo(player);
             return false;
         }
         else

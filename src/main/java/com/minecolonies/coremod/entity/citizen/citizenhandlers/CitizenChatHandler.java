@@ -3,9 +3,13 @@ package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Objects;
 
@@ -62,7 +66,10 @@ public class CitizenChatHandler implements ICitizenChatHandler
                   Math.round(citizen.getZ()),
                   new TranslationTextComponent(damageSource.msgId));
             }
-            citizen.getCitizenColonyHandler().getColony().notifyColonyManagers(contentComponent, TextFormatting.RED);
+
+            MessageUtils.format(contentComponent)
+              .with(TextFormatting.RED)
+              .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
     }
 
@@ -79,25 +86,23 @@ public class CitizenChatHandler implements ICitizenChatHandler
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
 
-            IFormattableTextComponent fullComponent;
+            MessageUtils.MessageBuilder builder;
             if (job != null)
             {
-                fullComponent = new StringTextComponent("")
-                                  .append(new TranslationTextComponent(job.getJobRegistryEntry().getTranslationKey()))
-                                  .append(" ")
-                                  .append(Objects.requireNonNull(citizen.getCustomName()))
-                                  .append(": ")
-                                  .append(component);
+                builder = MessageUtils.format(job.getJobRegistryEntry().getTranslationKey())
+                            .append(new StringTextComponent(" "))
+                            .append(Objects.requireNonNull(citizen.getCustomName()))
+                            .append(new StringTextComponent(": "))
+                            .append(component);
             }
             else
             {
-                fullComponent = new StringTextComponent("")
-                                  .append(Objects.requireNonNull(citizen.getCustomName()))
-                                  .append(": ")
-                                  .append(component);
+                builder = MessageUtils.format(Objects.requireNonNull(citizen.getCustomName()))
+                            .append(new StringTextComponent(": "))
+                            .append(component);
             }
 
-            citizen.getCitizenColonyHandler().getColony().notifyColonyMembers(fullComponent);
+            builder.sendTo(citizen.getCitizenColonyHandler().getColony()).forAllPlayers();
         }
     }
 }

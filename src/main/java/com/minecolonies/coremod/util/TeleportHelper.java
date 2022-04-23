@@ -82,7 +82,7 @@ public final class TeleportHelper
         final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.getCommandSenderWorld(), player);
         if (colony == null)
         {
-            MessageUtils.sendPlayerMessage(player, COMMAND_COLONY_ID_NOT_FOUND);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND).sendTo(player);
             return;
         }
 
@@ -122,7 +122,7 @@ public final class TeleportHelper
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, dimension);
         if (colony == null)
         {
-            MessageUtils.sendPlayerMessage(player, COMMAND_COLONY_ID_NOT_FOUND);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND).sendTo(player);
             return;
         }
 
@@ -170,6 +170,6 @@ public final class TeleportHelper
         }
 
         player.teleportTo(world, position.getX(), position.getY(), position.getZ(), player.yRot, player.xRot);
-        MessageUtils.sendPlayerMessage(player, COMMAND_TELEPORT_SUCCESS, colony.getName());
+        MessageUtils.format(COMMAND_TELEPORT_SUCCESS, colony.getName()).sendTo(player);
     }
 }

@@ -120,7 +120,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
     {
         if (building.getBuildingLevel() == 0)
         {
-            MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }
 

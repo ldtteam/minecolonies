@@ -134,7 +134,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
             }
             else
             {
-                MessageUtils.sendPlayerMessage(player, WARNING_RECRUITMENT_INSUFFICIENT_ITEMS);
+                MessageUtils.format(WARNING_RECRUITMENT_INSUFFICIENT_ITEMS).sendTo(player);
             }
         }
         return true;
@@ -160,7 +160,7 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     if (colony.getWorld().random.nextInt(100) <= MineColonies.getConfig().getServer().badVisitorsChance.get())
                     {
-                        colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RECRUITMENT_RAN_OFF, data.getName()));
+                        MessageUtils.format(MESSAGE_RECRUITMENT_RAN_OFF, data.getName()).sendTo(colony).forAllPlayers();
                         return;
                     }
 
@@ -175,17 +175,17 @@ public class RecruitmentInteraction extends ServerCitizenInteraction
 
                     if (data.hasCustomTexture())
                     {
-                        colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RECRUITMENT_SUCCESS_CUSTOM, data.getName()));
+                        MessageUtils.format(MESSAGE_RECRUITMENT_SUCCESS_CUSTOM, data.getName()).sendTo(colony).forAllPlayers();
                     }
                     else
                     {
-                        colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RECRUITMENT_SUCCESS, data.getName()));
+                        MessageUtils.format(MESSAGE_RECRUITMENT_SUCCESS, data.getName()).sendTo(colony).forAllPlayers();
                     }
                 }
             }
             else
             {
-                MessageUtils.sendPlayerMessage(player, WARNING_NO_COLONY_SPACE);
+                MessageUtils.format(WARNING_NO_COLONY_SPACE).sendTo(player);
             }
         }
     }

@@ -3,10 +3,9 @@ package com.minecolonies.api.util;
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.*;
-import org.apache.logging.log4j.Level;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Simple class for containing reusable player messaging logic.
@@ -14,140 +13,259 @@ import java.util.Collections;
 public class MessageUtils
 {
     /**
-     * Send a message to the given player.
+     * Starts a new message builder.
      *
-     * @param player the player.
-     * @param key    the translation component key.
-     * @param args   the additional args to send in the translation component.
+     * @param key  the translation key.
+     * @param args the arguments for the translation component.
+     * @return the message builder instance.
      */
-    public static void sendPlayerMessage(PlayerEntity player, String key, Object... args)
+    public static MessageBuilder format(String key, Object... args)
     {
-        sendPlayerMessageWithColor(player, TextFormatting.WHITE, new TranslationTextComponent(key, args));
+        return format(new TranslationTextComponent(key, args));
     }
 
     /**
-     * Send a message to the given player.
+     * Starts a new message builder.
      *
-     * @param player    the player.
-     * @param component the message component.
+     * @param component the component to send.
+     * @return the message builder instance.
      */
-    public static void sendPlayerMessage(PlayerEntity player, ITextComponent component)
+    public static MessageBuilder format(ITextComponent component)
     {
-        sendPlayerMessageWithColor(player, TextFormatting.WHITE, component);
+        return new MessageBuilder(component);
     }
 
     /**
-     * Send a message to the given player.
-     *
-     * @param player the player.
-     * @param color  the colour of the message.
-     * @param key    the translation component key.
-     * @param args   the additional args to send in the translation component.
+     * Starting class for the message building. Contains primary logic for sending the messages.
      */
-    public static void sendPlayerMessageWithColor(PlayerEntity player, TextFormatting color, String key, Object... args)
+    public static class MessageBuilder
     {
-        sendPlayerMessageWithColor(player, color, new TranslationTextComponent(key, args));
-    }
+        /**
+         * The stored text component to use when sending the message.
+         */
+        private final IFormattableTextComponent rootComponent;
 
-    /**
-     * Send a message to the given player.
-     *
-     * @param player    the player.
-     * @param color     the colour of the message.
-     * @param component the message component.
-     */
-    public static void sendPlayerMessageWithColor(PlayerEntity player, TextFormatting color, ITextComponent component)
-    {
-        sendMessageInternal(player, component, Collections.singletonList(color));
-    }
+        /**
+         * The current working component.
+         */
+        private IFormattableTextComponent currentComponent;
 
-    /**
-     * Send a message to the given player.
-     *
-     * @param player the player.
-     * @param colony the colony which sent the message.
-     * @param key    the translation component key.
-     * @param args   the additional args to send in the translation component.
-     */
-    public static void sendPlayerColonyMessage(PlayerEntity player, IColony colony, String key, Object... args)
-    {
-        sendPlayerColonyMessageWithColor(player, colony, TextFormatting.WHITE, new TranslationTextComponent(key, args));
-    }
-
-    /**
-     * Send a message to the given player.
-     *
-     * @param player    the player.
-     * @param colony    the colony which sent the message.
-     * @param component the message component.
-     */
-    public static void sendPlayerColonyMessage(PlayerEntity player, IColony colony, ITextComponent component)
-    {
-        sendPlayerColonyMessageWithColor(player, colony, TextFormatting.WHITE, component);
-    }
-
-    /**
-     * Send a message to the given player.
-     *
-     * @param player the player.
-     * @param colony the colony which sent the message.
-     * @param key    the translation component key.
-     * @param args   the additional args to send in the translation component.
-     */
-    public static void sendPlayerColonyMessageWithColor(PlayerEntity player, IColony colony, TextFormatting color, String key, Object... args)
-    {
-        sendPlayerColonyMessageWithColor(player, colony, color, new TranslationTextComponent(key, args));
-    }
-
-    /**
-     * Send a message to the given player.
-     *
-     * @param player    the player.
-     * @param colony    the colony which sent the message.
-     * @param component the message component.
-     */
-    public static void sendPlayerColonyMessageWithColor(PlayerEntity player, IColony colony, TextFormatting color, ITextComponent component)
-    {
-        ITextComponent fullComponent = component;
-
-        if (colony != null && !colony.isCoordInColony(player.level, player.blockPosition()))
+        /**
+         * Default constructor.
+         *
+         * @param component the component to begin with.
+         */
+        MessageBuilder(ITextComponent component)
         {
-            fullComponent = new StringTextComponent("[" + colony.getName() + "] ")
-                              .withStyle(TextFormatting.WHITE)
-                              .append(component);
+            this.rootComponent = getFormattableComponent(component);
         }
 
-        sendMessageInternal(player, fullComponent, Collections.singletonList(color));
-    }
-
-    /**
-     * Internal message sending handler.
-     *
-     * @param player     the player to send to.
-     * @param component  the text component to send.
-     * @param formatters a collection of formatter to apply to the root component.
-     */
-    private static void sendMessageInternal(PlayerEntity player, ITextComponent component, Collection<TextFormatting> formatters)
-    {
-        if (player == null)
+        /**
+         * Applies a style to the text component. Can be used to color a message, make it bold, italic, etc.
+         *
+         * @param style the style to use.
+         * @return the original message builder object.
+         */
+        public MessageBuilder with(Style style)
         {
-            Log.getLogger().log(Level.ERROR, "Attempting to send player message without passing a player, please report this to the developers!");
-            return;
-        }
-        if (component == null)
-        {
-            Log.getLogger().log(Level.ERROR, "Attempting to send player message without passing a message component, please report this to the developers!");
-            return;
+            currentComponent.setStyle(style.applyTo(currentComponent.getStyle()));
+            return this;
         }
 
-        if (component instanceof IFormattableTextComponent)
+        /**
+         * Applies formatting to the text component. Can be used to color a message, make it bold, italic, etc.
+         *
+         * @param formatting the text formatting to use.
+         * @return the original message builder object.
+         */
+        public MessageBuilder with(TextFormatting... formatting)
         {
-            for (TextFormatting formatter : formatters)
+            currentComponent.setStyle(currentComponent.getStyle().applyFormats(formatting));
+            return this;
+        }
+
+        /**
+         * Starts a new builder object to append an additional component to the original one.
+         *
+         * @param key  the translation key.
+         * @param args the arguments for the translation component.
+         * @return the new message builder object.
+         */
+        public MessageBuilder append(String key, Object... args)
+        {
+            return append(new TranslationTextComponent(key, args));
+        }
+
+        /**
+         * Appends a new component to the
+         *
+         * @param component the component to send.
+         * @return the new message builder object.
+         */
+        public MessageBuilder append(ITextComponent component)
+        {
+            mergeComponents();
+            currentComponent = getFormattableComponent(component);
+            return this;
+        }
+
+        /**
+         * Creates a text component that can be used as an argument to other components.
+         *
+         * @return the text component.
+         */
+        public IFormattableTextComponent create()
+        {
+            mergeComponents();
+            return rootComponent;
+        }
+
+        /**
+         * Send the message to one (or more) players.
+         *
+         * @param players the players to send the message to.
+         */
+        public void sendTo(PlayerEntity... players)
+        {
+            sendTo(Arrays.asList(players));
+        }
+
+        /**
+         * Send the message to a collection of players.
+         *
+         * @param players the players to send the message to.
+         */
+        public void sendTo(Collection<PlayerEntity> players)
+        {
+            mergeComponents();
+            for (PlayerEntity player : players)
             {
-                ((IFormattableTextComponent) component).withStyle(formatter);
+                player.sendMessage(rootComponent, player.getUUID());
             }
         }
 
-        player.sendMessage(component, player.getUUID());
+        /**
+         * Send a message to a given colony, this method returns a class from which you will need
+         * to select which kind of members of the colony to send the message to.
+         *
+         * @param colony the reference to the colony.
+         * @return the message builder colony player selector.
+         */
+        public MessageBuilderColonyPlayerSelector sendTo(IColony colony)
+        {
+            return sendTo(colony, false);
+        }
+
+        /**
+         * Send a message to a given colony, this method returns a class from which you will need
+         * to select which kind of members of the colony to send the message to.
+         *
+         * @param colony           the reference to the colony.
+         * @param alwaysShowColony whether we always want to include the colony name in front of the message.
+         * @return the message builder colony player selector.
+         */
+        public MessageBuilderColonyPlayerSelector sendTo(IColony colony, boolean alwaysShowColony)
+        {
+            mergeComponents();
+            return new MessageBuilderColonyPlayerSelector(rootComponent, colony, alwaysShowColony);
+        }
+
+        /**
+         * Merges the current working component back into the root component,
+         * allowing for a new component to be worked on.
+         */
+        private void mergeComponents()
+        {
+            if (currentComponent != null)
+            {
+                rootComponent.append(currentComponent);
+                currentComponent = null;
+            }
+        }
+    }
+
+    public static class MessageBuilderColonyPlayerSelector
+    {
+        /**
+         * The stored text component to use when sending the message.
+         */
+        private final IFormattableTextComponent rootComponent;
+
+        /**
+         * The colony this message originated from.
+         */
+        private final IColony colony;
+
+        /**
+         * Determines whether we always want to include the colony name in front of the message.
+         */
+        private final boolean alwaysShowColony;
+
+        /**
+         * Default constructor.
+         *
+         * @param rootComponent    the completed component to send.
+         * @param colony           the reference to the colony.
+         * @param alwaysShowColony whether we always want to include the colony name in front of the message.
+         */
+        public MessageBuilderColonyPlayerSelector(final IFormattableTextComponent rootComponent, final IColony colony, final boolean alwaysShowColony)
+        {
+            this.rootComponent = rootComponent;
+            this.colony = colony;
+            this.alwaysShowColony = alwaysShowColony;
+        }
+
+        /**
+         * Sends the message to all players inside the colony.
+         */
+        public void forAllPlayers()
+        {
+            sendInternal(colony.getMessagePlayerEntities());
+        }
+
+        /**
+         * Sends the message to all colony manager.
+         */
+        public void forManagers()
+        {
+            sendInternal(colony.getImportantMessageEntityPlayers());
+        }
+
+        /**
+         * Internal helper method to send the message correctly.
+         *
+         * @param players the collection of players to send the message to.
+         */
+        private void sendInternal(Collection<PlayerEntity> players)
+        {
+            for (PlayerEntity player : players)
+            {
+                IFormattableTextComponent fullComponent = rootComponent.copy();
+                if (alwaysShowColony || !colony.isCoordInColony(player.level, player.blockPosition()))
+                {
+                    fullComponent = new StringTextComponent("[" + colony.getName() + "] ").append(rootComponent);
+                }
+
+                player.sendMessage(fullComponent, player.getUUID());
+            }
+        }
+    }
+
+    /**
+     * Turns any possible text component into a formattable component.
+     *
+     * @param component the input component.
+     * @return the formattable component.
+     */
+    private static IFormattableTextComponent getFormattableComponent(ITextComponent component)
+    {
+        if (component instanceof IFormattableTextComponent)
+        {
+            return (IFormattableTextComponent) component;
+        }
+        else
+        {
+            return new StringTextComponent("").append(component);
+        }
     }
 }

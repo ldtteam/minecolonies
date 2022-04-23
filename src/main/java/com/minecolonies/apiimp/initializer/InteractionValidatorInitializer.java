@@ -10,7 +10,6 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
@@ -31,6 +30,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.HappinessConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL;
+import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
@@ -130,7 +131,7 @@ public class InteractionValidatorInitializer
         InteractionValidatorRegistry.registerStandardPredicate(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_WORKER_INVENTORYFULLCHEST),
           citizen -> citizen.getWorkBuilding() != null && InventoryUtils.isProviderFull(citizen.getWorkBuilding()));
         InteractionValidatorRegistry.registerPosBasedPredicate(
-          new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
+          new TranslationTextComponent(REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW), (citizen, pos) ->
           {
               final IBuilding workBuilding = citizen.getWorkBuilding();
               if (workBuilding != null)
@@ -147,7 +148,7 @@ public class InteractionValidatorInitializer
               }
               return false;
           });
-        InteractionValidatorRegistry.registerTokenBasedPredicate(new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL),
+        InteractionValidatorRegistry.registerTokenBasedPredicate(new TranslationTextComponent(REQUEST_RESOLVER_NORMAL),
           (citizen, token) -> {
 
               final IColony colony = citizen.getColony();

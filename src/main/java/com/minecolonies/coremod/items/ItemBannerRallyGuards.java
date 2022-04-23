@@ -10,7 +10,6 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import com.minecolonies.api.util.constant.translation.ToolTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
@@ -40,6 +39,7 @@ import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
@@ -87,25 +87,20 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 final IGuardBuilding building = getGuardBuilding(context.getLevel(), context.getClickedPos());
                 if (!building.getColony().getPermissions().hasPermission(player, Action.RALLY_GUARDS))
                 {
-                    MessageUtils.sendPlayerMessage(player, PERMISSION_DENIED);
+                    MessageUtils.format(PERMISSION_DENIED).sendTo(player);
                     return ActionResultType.FAIL;
                 }
 
                 final ILocation location = building.getLocation();
                 if (removeGuardTowerAtLocation(banner, location))
                 {
-                    MessageUtils.sendPlayerMessage(context.getPlayer(),
-                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED,
-                      building.getSchematicName(), location.toString());
+                    MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED, building.getSchematicName(), location.toString()).sendTo(player);
                 }
                 else
                 {
                     final ListNBT guardTowers = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
                     guardTowers.add(StandardFactoryController.getInstance().serialize(location));
-                    MessageUtils.sendPlayerMessage(context.getPlayer(),
-                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED,
-                      building.getSchematicName(),
-                      location.toString());
+                    MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED, building.getSchematicName(), location.toString()).sendTo(player);
                 }
             }
         }
@@ -155,7 +150,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         {
             if (getGuardTowerLocations(banner).isEmpty())
             {
-                MessageUtils.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+                MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY).sendTo(playerIn);
             }
             else
             {
@@ -188,13 +183,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (guardTowers.isEmpty())
         {
             compound.putBoolean(TAG_IS_ACTIVE, false);
-            MessageUtils.sendPlayerMessage(playerIn, TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY).sendTo(playerIn);
         }
         else if (compound.getBoolean(TAG_IS_ACTIVE))
         {
             compound.putBoolean(TAG_IS_ACTIVE, false);
             broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), null);
-            MessageUtils.sendPlayerMessage(playerIn, ToolTranslationConstants.TOOL_RALLY_BANNER_DEACTIVATED);
+            MessageUtils.format(TOOL_RALLY_BANNER_DEACTIVATED).sendTo(playerIn);
         }
         else
         {
@@ -203,11 +198,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
             if (numGuards > 0)
             {
-                MessageUtils.sendPlayerMessage(playerIn, ToolTranslationConstants.TOOL_RALLY_BANNER_ACTIVATED, numGuards);
+                MessageUtils.format(TOOL_RALLY_BANNER_ACTIVATED, numGuards).sendTo(playerIn);
             }
             else
             {
-                MessageUtils.sendPlayerMessage(playerIn, ToolTranslationConstants.TOOL_RALLY_BANNER_NO_GUARDS);
+                MessageUtils.format(TOOL_RALLY_BANNER_NO_GUARDS).sendTo(playerIn);
             }
         }
     }

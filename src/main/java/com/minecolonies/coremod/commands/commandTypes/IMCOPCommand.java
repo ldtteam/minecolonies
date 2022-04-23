@@ -32,7 +32,7 @@ public interface IMCOPCommand extends IMCCommand
 
         if (!IMCCommand.isPlayerOped((PlayerEntity) sender))
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_REQUIRES_OP);
+            MessageUtils.format(COMMAND_REQUIRES_OP).sendTo((PlayerEntity) sender);
             return false;
         }
         return true;

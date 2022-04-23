@@ -16,10 +16,7 @@ import com.minecolonies.coremod.network.messages.server.colony.citizen.TransferI
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -152,10 +149,10 @@ public class RequestWindowCitizen extends AbstractWindowCitizen
 
             if (slot == -1)
             {
-                final ITextComponent chatMessage = new TranslationTextComponent("<%s> ")
-                                                     .append(new TranslationTextComponent(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName()))
-                                                     .setStyle(Style.EMPTY.withBold(false).withColor(TextFormatting.WHITE));
-                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, chatMessage);
+                MessageUtils.format("<%s> ")
+                  .with(TextFormatting.BOLD, TextFormatting.WHITE)
+                  .append(COM_MINECOLONIES_CANT_TAKE_EQUIPPED, citizen.getName())
+                  .sendTo(Minecraft.getInstance().player);
 
                 return; // We don't have one that isn't in our armour slot
             }

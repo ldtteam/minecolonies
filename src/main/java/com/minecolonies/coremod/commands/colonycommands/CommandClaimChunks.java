@@ -46,7 +46,7 @@ public class CommandClaimChunks implements IMCOPCommand
         final int range = IntegerArgumentType.getInteger(context, RANGE_ARG);
         if (range > MineColonies.getConfig().getServer().maxColonySize.get())
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_CLAIM_TOO_LARGE, colonyID);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_TOO_LARGE, colonyID).sendTo((PlayerEntity) sender);
             return 0;
         }
 
@@ -62,18 +62,18 @@ public class CommandClaimChunks implements IMCOPCommand
 
         if (chunkManager.getAllChunkStorages().size() > CHUNKS_TO_CLAIM_THRESHOLD)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_CLAIM_MAX_CHUNKS);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_MAX_CHUNKS).sendTo((PlayerEntity) sender);
             return 0;
         }
 
         ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getLevel().dimension(), add, new BlockPos(sender.position()), range, 0, sender.level);
         if (add)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_CLAIM_SUCCESS);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((PlayerEntity) sender);
         }
         else
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, CommandTranslationConstants.COMMAND_CLAIM_REMOVE_CLAIM);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_REMOVE_CLAIM).sendTo((PlayerEntity) sender);
         }
         return 1;
     }

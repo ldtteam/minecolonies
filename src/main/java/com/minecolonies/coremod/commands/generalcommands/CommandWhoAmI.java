@@ -33,7 +33,7 @@ public class CommandWhoAmI implements IMCCommand
 
         if (colony == null)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_WHO_AM_I_NO_COLONY);
+            MessageUtils.format(COMMAND_WHO_AM_I_NO_COLONY).sendTo((PlayerEntity) sender);
             return 0;
         }
 
@@ -41,7 +41,7 @@ public class CommandWhoAmI implements IMCCommand
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getString();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_WHO_AM_I_HAS_COLONY, playerName, colonyName, colony.getID(), posString);
+        MessageUtils.format(COMMAND_WHO_AM_I_HAS_COLONY, playerName, colonyName, colony.getID(), posString).sendTo((PlayerEntity) sender);
         return 1;
     }
 

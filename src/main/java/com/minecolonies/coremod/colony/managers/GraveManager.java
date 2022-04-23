@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.Colony;
@@ -252,7 +253,7 @@ public class GraveManager implements IGraveManager
         final BlockState here = world.getBlockState(pos);
         if (here.getBlock() == Blocks.LAVA)
         {
-            colony.notifyColonyManagers(new TranslationTextComponent(WARNING_GRAVE_LAVA));
+            MessageUtils.format(WARNING_GRAVE_LAVA).sendTo(colony).forManagers();
             return;
         }
 
@@ -270,7 +271,7 @@ public class GraveManager implements IGraveManager
 
             if (firstValidPosition == null)
             {
-                colony.notifyColonyManagers(new TranslationTextComponent(WARNING_GRAVE_WATER));
+                MessageUtils.format(WARNING_GRAVE_WATER).sendTo(colony).forManagers();
             }
         }
         else
@@ -305,7 +306,7 @@ public class GraveManager implements IGraveManager
             graveEntity.setGraveData(graveData);
 
             colony.getGraveManager().addNewGrave(firstValidPosition);
-            colony.notifyColonyManagers(new TranslationTextComponent(WARNING_GRAVE_SPAWNED));
+            MessageUtils.format(WARNING_GRAVE_SPAWNED).sendTo(colony).forManagers();
         }
         else
         {

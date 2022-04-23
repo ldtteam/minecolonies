@@ -42,7 +42,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -52,7 +51,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BANNER_PATTERNS;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -629,42 +627,6 @@ public final class ColonyView implements IColonyView
     public String getTextureStyleId()
     {
         return this.textureStyle;
-    }
-
-    @Override
-    public void notifyColonyMembers(final ITextComponent component)
-    {
-        //noop
-    }
-
-    @Override
-    public void notifyColonyMembers(final ITextComponent component, final TextFormatting color)
-    {
-
-    }
-
-    @Override
-    public void notifyColonyMembers(final ITextComponent component, final TextFormatting color, final Consumer<PlayerEntity> action)
-    {
-
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component)
-    {
-        //noop
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component, final TextFormatting color)
-    {
-
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component, final TextFormatting color, final Consumer<PlayerEntity> action)
-    {
-
     }
 
     /**

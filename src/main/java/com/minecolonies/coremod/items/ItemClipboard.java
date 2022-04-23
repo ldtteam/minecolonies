@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
 
 /**
  * Class describing the clipboard item.
@@ -57,9 +58,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             if (!ctx.getLevel().isClientSide)
             {
-                final TranslationTextComponent component =
-                  new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColony().getName());
-                MessageUtils.sendPlayerMessage(ctx.getPlayer(), component);
+                MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)

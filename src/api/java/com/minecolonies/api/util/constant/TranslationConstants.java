@@ -138,6 +138,8 @@ public final class TranslationConstants
     @NonNls
     public static final String ENTERING_COLONY_MESSAGE_NOTIFY                                       = "com.minecolonies.coremod.enteringcolonynotify";
     @NonNls
+    public static final String LEAVING_COLONY_MESSAGE_NOTIFY                                        = "com.minecolonies.coremod.leavingcolonynotify";
+    @NonNls
     public static final String COLONY_SIZE_CHANGE                                                   = "com.minecolonies.coremod.colonysizechange";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_STATUS_WORKER_GOINGTOHUT                    = "com.minecolonies.coremod.status.worker.goingtohut";
@@ -567,6 +569,32 @@ public final class TranslationConstants
     public static final String MESSAGE_LOCATING_ITEMS                                               = "com.minecolonies.coremod.locating";
     @NonNls
     public static final String WARNING_NO_COLONY_SPACE                                              = "com.minecolonies.coremod.gui.chat.nospace";
+    @NonNls
+    public static final String WARNING_BUILDING_REQUIRES_RESEARCH                                   = "com.minecolonies.coremod.research.havetounlock";
+    @NonNls
+    public static final String WARNING_NO_UPGRADE                                                   = "com.minecolonies.coremod.worker.noupgrade";
+    @NonNls
+    public static final String WARNING_INTERACTION_CANT_DO_NOW                                      = "com.minecolonies.coremod.interaction.notnow";
+    @NonNls
+    public static final String MESSAGE_INTERACTION_OUCH                                             = "com.minecolonies.coremod.interaction.ouch";
+    @NonNls
+    public static final String MESSAGE_INTERACTION_COOKIE                                           = "com.minecolonies.coremod.interaction.nocookie";
+    @NonNls
+    public static final String MESSAGE_INTERACTION_VISITOR_FOOD                                     = "com.minecolonies.coremod.interaction.visitor.food";
+    @NonNls
+    public static final String WARNING_UPGRADE_BARRACKS                                             = "com.minecolonies.coremod.worker.needbarracks";
+    @NonNls
+    public static final String MESSAGE_COLONY_START_SUPPLY_NEED                                     = "com.minecolonies.coremod.supplyneed";
+    @NonNls
+    public static final String WARNING_TOWN_HALL_NO_TILE_ENTITY                                     = "com.minecolonies.coremod.gui.colony.create.notileentity";
+    @NonNls
+    public static final String MESSAGE_COLONY_FOUNDED                                               = "com.minecolonies.coremod.progress.colony_founded";
+    @NonNls
+    public static final String WARNING_COLONY_FOUNDING_FAILED                                       = "com.minecolonies.coremod.gui.colony.create.failed";
+    @NonNls
+    public static final String WARNING_CRUSHER_DAILY_LIMIT                                          = "com.minecolonies.coremod.crusher.toomuch";
+    @NonNls
+    public static final String MESSAGE_RESEARCH_STARTED                                             = "com.minecolonies.coremod.research.started";
 
     //<editor-fold desc="Partial keys">
 

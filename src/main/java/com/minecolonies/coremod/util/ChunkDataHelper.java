@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -15,7 +16,6 @@ import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMes
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
@@ -273,7 +273,7 @@ public final class ChunkDataHelper
         if (areAllChunksAdded && add && range > 0)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(center);
-            colony.notifyColonyManagers(new TranslationTextComponent(COLONY_SIZE_CHANGE, range, building.getSchematicName()));
+            MessageUtils.format(COLONY_SIZE_CHANGE, range, building.getSchematicName()).sendTo(colony).forManagers();
         }
     }
 

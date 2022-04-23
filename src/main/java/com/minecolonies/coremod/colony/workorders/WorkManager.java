@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ColonyUtils;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import org.jetbrains.annotations.NotNull;
@@ -257,10 +257,7 @@ public class WorkManager implements IWorkManager
             }
             if (!readingFromNbt && !isWorkOrderWithinColony(order))
             {
-                colony.notifyColonyMembers(new TranslationTextComponent(OUT_OF_COLONY,
-                  order.getDisplayName(),
-                  order.getLocation().getX(),
-                  order.getLocation().getZ()));
+                MessageUtils.format(OUT_OF_COLONY, order.getDisplayName(), order.getLocation().getX(), order.getLocation().getZ()).sendTo(colony).forAllPlayers();
                 return;
             }
         }

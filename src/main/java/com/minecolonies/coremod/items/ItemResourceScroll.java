@@ -22,10 +22,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -80,22 +77,15 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
                 if (!ctx.getLevel().isClientSide)
                 {
-                    MessageUtils.sendPlayerMessage(ctx.getPlayer(),
-                            COM_MINECOLONIES_SCROLL_BUILDING_SET,
-                            buildingEntity.getColony().getName());
+                    MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
             else
             {
                 if (!ctx.getLevel().isClientSide)
                 {
-                    String buildingTypeKey = buildingEntity.getBuilding().getBuildingType().getTranslationKey();
-                    ITextComponent buildingTypeComponent = new TranslationTextComponent(buildingTypeKey);
-                    ITextComponent mainComponent = new TranslationTextComponent(
-                            COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
-                            buildingTypeComponent,
-                            buildingEntity.getColony().getName());
-                    MessageUtils.sendPlayerMessage(ctx.getPlayer(), mainComponent);
+                    final IFormattableTextComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
+                    MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
         }

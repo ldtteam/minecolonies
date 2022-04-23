@@ -33,7 +33,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * Empty standard constructor.
      */
-    public AbstractColonyServerMessage() { }
+    public AbstractColonyServerMessage() {}
 
     /**
      * Network message for executing things on colonies on the server
@@ -126,7 +126,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                     return;
                 }
 
-                MessageUtils.sendPlayerMessage(player, TOOL_PERMISSION_SCEPTER_PERMISSION_DENY);
+                MessageUtils.format(TOOL_PERMISSION_SCEPTER_PERMISSION_DENY).sendTo(player);
                 return;
             }
             else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.getUUID())))
@@ -136,7 +136,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                     return;
                 }
 
-                MessageUtils.sendPlayerMessage(player, TOOL_PERMISSION_SCEPTER_PERMISSION_DENY);
+                MessageUtils.format(TOOL_PERMISSION_SCEPTER_PERMISSION_DENY).sendTo(player);
                 return;
             }
 
@@ -144,7 +144,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
         }
         else
         {
-            MessageUtils.sendPlayerMessage(player, HUT_BLOCK_MISSING_COLONY, this.getClass().getSimpleName());
+            MessageUtils.format(HUT_BLOCK_MISSING_COLONY, this.getClass().getSimpleName()).sendTo(player);
         }
     }
 }

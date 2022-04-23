@@ -153,13 +153,13 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             if (!module.addRecipe(token))
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
-                MessageUtils.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, new TranslationTextComponent(building.getBuildingDisplayName()));
+                MessageUtils.format(UNABLE_TO_ADD_RECIPE_MESSAGE, new TranslationTextComponent(building.getBuildingDisplayName())).sendTo(player);
             }
             else
             {
                 SoundUtils.playSuccessSound(player, player.blockPosition());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
-                MessageUtils.sendPlayerMessage(player, MESSAGE_RECIPE_SAVED);
+                MessageUtils.format(MESSAGE_RECIPE_SAVED).sendTo(player);
             }
         }
 

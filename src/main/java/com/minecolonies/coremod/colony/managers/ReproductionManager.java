@@ -9,13 +9,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IReproductionManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -196,7 +196,7 @@ public class ReproductionManager implements IReproductionManager
             final int populationCount = colony.getCitizenManager().getCurrentCitizenCount();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
 
-            colony.notifyColonyManagers(new TranslationTextComponent(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()), TextFormatting.GOLD);
+            MessageUtils.format(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()).with(TextFormatting.GOLD).sendTo(colony).forManagers();
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));

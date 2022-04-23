@@ -79,6 +79,6 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
 
         // Restart also worker building and AI
         citizen.scheduleRestart(player);
-        MessageUtils.sendPlayerMessage(player, MESSAGE_CITIZEN_RESTART_SCHEDULED, citizen.getName());
+        MessageUtils.format(MESSAGE_CITIZEN_RESTART_SCHEDULED, citizen.getName()).sendTo(player);
     }
 }

@@ -164,7 +164,7 @@ public class BuildToolPasteMessage implements IMessage
         final ServerPlayerEntity player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            MessageUtils.sendPlayerMessage(player, new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
+            MessageUtils.format(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
 
@@ -194,7 +194,7 @@ public class BuildToolPasteMessage implements IMessage
             if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                     && !isFreeInstantPlacementMH(player))
             {
-                MessageUtils.sendPlayerMessage(player, WARNING_SUPPLY_CHEST_ALREADY_PLACED);
+                MessageUtils.format(WARNING_SUPPLY_CHEST_ALREADY_PLACED).sendTo(player);
                 return;
             }
 
@@ -221,7 +221,7 @@ public class BuildToolPasteMessage implements IMessage
             {
                 if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
                 {
-                    MessageUtils.sendPlayerMessage(player, PROGRESS_SUPPLY_CHEST_PLACED);
+                    MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
                     player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
                     AdvancementTriggers.PLACE_SUPPLY.trigger(player);
                 }
@@ -231,7 +231,7 @@ public class BuildToolPasteMessage implements IMessage
             }
             else
             {
-                MessageUtils.sendPlayerMessage(player, WARNING_REMOVING_SUPPLY_CHEST);
+                MessageUtils.format(WARNING_REMOVING_SUPPLY_CHEST).sendTo(player);
             }
         }
     }

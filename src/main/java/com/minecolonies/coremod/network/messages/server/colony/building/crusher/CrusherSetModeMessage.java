@@ -8,9 +8,10 @@ import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMe
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_CRUSHER_DAILY_LIMIT;
 
 /**
  * Message to set the crusher mode from the GUI.
@@ -66,8 +67,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
     }
 
     @Override
-    protected void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingCrusher building)
+    protected void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingCrusher building)
     {
         final PlayerEntity player = ctxIn.getSender();
         if (player == null)
@@ -79,7 +79,7 @@ public class CrusherSetModeMessage extends AbstractBuildingServerMessage<Buildin
         if (qty > building.getMaxDailyQuantity())
         {
             qty = building.getMaxDailyQuantity();
-            MessageUtils.sendPlayerMessage(player, new TranslationTextComponent("com.minecolonies.coremod.crusher.toomuch", qty));
+            MessageUtils.format(WARNING_CRUSHER_DAILY_LIMIT, qty).sendTo(player);
         }
         building.setCrusherMode(new ItemStorage(crusherMode), qty);
     }

@@ -88,7 +88,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
                 return;
             }
 
-            MessageUtils.sendPlayerMessage(player, WARNING_CITIZEN_RECALL_FAILED);
+            MessageUtils.format(WARNING_CITIZEN_RECALL_FAILED).sendTo(player);
         }
     }
 }

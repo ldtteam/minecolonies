@@ -912,7 +912,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (colony.getWorld() != null && !colony.getWorld().isClientSide)
                 {
-                    MessageUtils.sendPlayerMessage(player, WARNING_DUPLICATE_TOWN_HALL);
+                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL).sendTo(player);
                 }
                 return false;
             }
@@ -924,7 +924,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.hasModule(TavernBuildingModule.class))
                 {
-                    MessageUtils.sendPlayerMessage(player, WARNING_DUPLICATE_TAVERN);
+                    MessageUtils.format(WARNING_DUPLICATE_TAVERN).sendTo(player);
                     return false;
                 }
             }

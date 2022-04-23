@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowTownHallColonyManage;
 import net.minecraft.block.BlockState;
@@ -16,7 +17,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_DONE_MESSAGE;
-import static com.minecolonies.api.util.constant.TranslationConstants.TOWNHALL_BREAKING_START_MESSAGE;
 
 /**
  * Hut for the town hall. Sets the working range for the town hall in the constructor
@@ -66,19 +65,19 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
 
                 if (localProgress >= hardness / 10.0 * 9.0 && localProgress <= hardness / 10.0 * 9.0 + 1)
                 {
-                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 90));
+                    MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 90).sendTo(building.getColony()).forAllPlayers();
                 }
                 if (localProgress >= hardness / 4.0 * 3.0 && localProgress <= hardness / 4.0 * 3.0 + 1)
                 {
-                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 75));
+                    MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 75).sendTo(building.getColony()).forAllPlayers();
                 }
                 else if (localProgress >= hardness / 2.0 && localProgress <= hardness / 2.0 + 1)
                 {
-                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 50));
+                    MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 50).sendTo(building.getColony()).forAllPlayers();
                 }
                 else if (localProgress >= hardness / 4.0 && localProgress <= hardness / 4.0 + 1)
                 {
-                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 25));
+                    MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 25).sendTo(building.getColony()).forAllPlayers();
                 }
 
                 if (localProgress >= hardness - 1)
@@ -92,7 +91,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
                 }
                 else
                 {
-                    building.getColony().notifyColonyMembers(new TranslationTextComponent(TOWNHALL_BREAKING_START_MESSAGE, player.getName(), 100));
+                    MessageUtils.format(TOWNHALL_BREAKING_DONE_MESSAGE, player.getName(), 100).sendTo(building.getColony()).forAllPlayers();
                     breakProgressOnTownHall = 0;
                     validTownHallBreak = false;
                 }

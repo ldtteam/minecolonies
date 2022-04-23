@@ -80,7 +80,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
 
         if (!colony.getPermissions().hasPermission(player, Action.RIGHTCLICK_BLOCK))
         {
-            MessageUtils.sendPlayerMessage(player, MESSAGE_SCROLL_NO_PERMISSION);
+            MessageUtils.format(MESSAGE_SCROLL_NO_PERMISSION).sendTo(player);
             return itemStack;
         }
 
@@ -125,7 +125,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) te).getColonyId());
             compound.putString(TAG_COLONY_DIM, ((AbstractTileEntityColonyBuilding) te).getColony().getWorld().dimension().location().toString());
             BlockPosUtil.write(compound, TAG_BUILDING_POS, ctx.getClickedPos());
-            MessageUtils.sendPlayerMessage(ctx.getPlayer(), MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName());
+            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
         }
 
         return ActionResultType.SUCCESS;

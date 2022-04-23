@@ -16,6 +16,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR;
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.removeGuardTowerAtLocation;
 
 /**
@@ -84,7 +85,7 @@ public class RemoveFromRallyingListMessage implements IMessage
 
         if (slot == -1)
         {
-            MessageUtils.sendPlayerMessage(player, TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR);
+            MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR).sendTo(player);
             return;
         }
 

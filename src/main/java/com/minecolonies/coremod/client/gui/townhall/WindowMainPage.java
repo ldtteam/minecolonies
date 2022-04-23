@@ -13,7 +13,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -68,13 +67,13 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         final int row = alliesList.getListElementIndexByPane(button);
         final CompactColonyReference ally = building.getColony().getAllies().get(row);
-        final ITextComponent teleport = new TranslationTextComponent(DO_REALLY_WANNA_TP, ally.name)
-                                          .setStyle(Style.EMPTY.withBold(true).withColor(TextFormatting.GOLD).withClickEvent(
-                                            new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND, "",
-                                              () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(
-                                                ally.dimension, ally.id)))));
 
-        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, teleport);
+        MessageUtils.format(DO_REALLY_WANNA_TP, ally.name)
+          .with(Style.EMPTY.withClickEvent(new ClickEventWithExecutable(ClickEvent.Action.RUN_COMMAND,
+            "",
+            () -> Network.getNetwork().sendToServer(new TeleportToColonyMessage(ally.dimension, ally.id)))))
+          .with(TextFormatting.BOLD, TextFormatting.GOLD)
+          .sendTo(Minecraft.getInstance().player);
         this.close();
     }
 

@@ -63,7 +63,7 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
                 return;
             }
 
-            MessageUtils.sendPlayerMessage(player, COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED);
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED).sendTo(player);
         }
     }
 }

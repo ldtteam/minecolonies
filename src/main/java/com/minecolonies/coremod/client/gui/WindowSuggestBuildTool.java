@@ -79,7 +79,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
             new WindowMinecoloniesBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
             return;
         }
-        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_MISSING_BUILD_TOOL);
+        MessageUtils.format(WARNING_MISSING_BUILD_TOOL).sendTo(Minecraft.getInstance().player);
         close();
     }
 

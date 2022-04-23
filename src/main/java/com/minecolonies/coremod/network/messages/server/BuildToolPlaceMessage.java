@@ -163,7 +163,7 @@ public class BuildToolPlaceMessage implements IMessage
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            MessageUtils.sendPlayerMessage(player, new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"));
+            MessageUtils.format(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
         if (isHut)
@@ -199,7 +199,7 @@ public class BuildToolPlaceMessage implements IMessage
         final Block blockAtPos = world.getBlockState(buildPos).getBlock();
         if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
         {
-            MessageUtils.sendPlayerMessage(player, INDESTRUCTIBLE_BLOCK_AT_POS);
+            MessageUtils.format(INDESTRUCTIBLE_BLOCK_AT_POS).sendTo(player);
             SoundUtils.playErrorSound(player, buildPos);
             return;
         }
@@ -227,7 +227,7 @@ public class BuildToolPlaceMessage implements IMessage
         final CompoundNBT compound = stack.getTag();
         if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
         {
-            MessageUtils.sendPlayerMessage(player, WRONG_COLONY, compound.getInt(TAG_COLONY_ID));
+            MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
             return;
         }
 
@@ -274,7 +274,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            MessageUtils.sendPlayerMessage(player, NO_HUT_IN_INVENTORY);
+            MessageUtils.format(NO_HUT_IN_INVENTORY).sendTo(player);
         }
     }
 

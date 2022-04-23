@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IProgressManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -14,7 +15,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -177,7 +177,7 @@ public class ProgressManager implements IProgressManager
         if (!notifiedProgress.contains(type))
         {
             notifiedProgress.add(type);
-            colony.notifyColonyMembers(new TranslationTextComponent(PARTIAL_PROGRESSION_NAME + type.name().toLowerCase(Locale.US)));
+            MessageUtils.format(PARTIAL_PROGRESSION_NAME + type.name().toLowerCase(Locale.US)).sendTo(colony).forAllPlayers();
             colony.markDirty();
         }
     }

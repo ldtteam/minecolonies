@@ -5,15 +5,11 @@ import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.tileentities.AbstractTileEntityWareHouse;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityRack;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,13 +127,13 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
                 if(level.getGameTime() - lastNotification > TICKS_FIVE_MIN)
                 {
                     lastNotification = level.getGameTime();
-                    if(getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
+                    if (getBuilding().getBuildingLevel() == getBuilding().getMaxBuildingLevel())
                     {
-                        getColony().notifyColonyMembers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE));
+                        MessageUtils.format(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL_MAX_UPGRADE).sendTo(getColony()).forAllPlayers();
                     }
                     else
                     {
-                        getColony().notifyColonyMembers(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL));
+                        MessageUtils.format(COM_MINECOLONIES_COREMOD_WAREHOUSE_FULL).sendTo(getColony()).forAllPlayers();
                     }
                 }
                 return;

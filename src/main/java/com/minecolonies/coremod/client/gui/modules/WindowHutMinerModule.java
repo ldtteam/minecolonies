@@ -61,7 +61,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
     {
         final int row = levelList.getListElementIndexByPane(button);
         Network.getNetwork().sendToServer(new MinerRepairLevelMessage(buildingView, row));
-        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, MINER_REPAIR_ENQUEUED);
+        MessageUtils.format(MINER_REPAIR_ENQUEUED).sendTo(Minecraft.getInstance().player);
     }
 
     private void currentLevelClicked(final Button button)

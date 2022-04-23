@@ -18,7 +18,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -116,7 +115,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         containerList.add(building.getID());
         HighlightManager.clearCategory("inventoryHighlight");
 
-        MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, new TranslationTextComponent(MESSAGE_LOCATING_ITEMS));
+        MessageUtils.format(MESSAGE_LOCATING_ITEMS).sendTo(Minecraft.getInstance().player);
         close();
 
         for (BlockPos blockPos : containerList)

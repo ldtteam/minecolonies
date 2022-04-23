@@ -40,16 +40,11 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_COLONY_ID_NOT_FOUND, colonyID);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((PlayerEntity) sender);
             return false;
         }
 
         // Check colony permissions
-        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager())
-        {
-            return true;
-        }
-
-        return false;
+        return IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager();
     }
 }

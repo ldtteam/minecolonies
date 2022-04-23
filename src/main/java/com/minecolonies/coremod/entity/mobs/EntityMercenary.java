@@ -13,6 +13,7 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
@@ -36,7 +37,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.Heightmap;
@@ -419,7 +419,7 @@ public class EntityMercenary extends CreatureEntity implements INPC, IColonyRela
             if (!ItemStackUtils.isEmpty(stack))
             {
                 this.swing(Hand.OFF_HAND);
-                colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN, entityIn.getName().getString(), stack.getHoverName().getString()));
+                MessageUtils.format(MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN, entityIn.getName().getString(), stack.getHoverName().getString()).sendTo(colony).forAllPlayers();
             }
         }
     }

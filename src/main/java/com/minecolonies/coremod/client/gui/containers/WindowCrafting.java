@@ -13,7 +13,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -24,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * AbstractCrafting gui.
@@ -174,7 +173,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     @Override
     protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
-        this.font.draw(stack, I18n.get("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.font.draw(stack, new TranslationTextComponent("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

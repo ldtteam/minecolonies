@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -173,7 +172,7 @@ public class BuildingUniversity extends AbstractBuilding
         final TranslationTextComponent message = new TranslationTextComponent(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
           IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName());
 
-        colony.notifyColonyManagers(message);
+        MessageUtils.format(message).sendTo(colony).forManagers();
         colony.getResearchManager().checkAutoStartResearch();
         this.markDirty();
     }
@@ -183,7 +182,7 @@ public class BuildingUniversity extends AbstractBuilding
     {
         if (getBuildingLevel() >= OFFLINE_PROCESSING_LEVEL_CAP && time > 0)
         {
-            colony.notifyColonyMembers(new TranslationTextComponent(MESSAGE_RESEARCHERS_MORE_KNOWLEDGE));
+            MessageUtils.format(MESSAGE_RESEARCHERS_MORE_KNOWLEDGE).sendTo(colony).forAllPlayers();
             for (final ICitizenData citizenData : getAllAssignedCitizen())
             {
                 if (citizenData.getJob() != null)

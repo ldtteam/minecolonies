@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
@@ -19,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
@@ -309,7 +309,7 @@ public class EntityAICitizenChild extends Goal
                   .getColony()
                   .getEventDescriptionManager()
                   .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
-                child.getCitizenColonyHandler().getColony().notifyColonyMembers(new TranslationTextComponent(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()));
+                MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColony()).forAllPlayers();
                 // Grow up
                 child.setIsChild(false);
                 child.setTextureDirty();

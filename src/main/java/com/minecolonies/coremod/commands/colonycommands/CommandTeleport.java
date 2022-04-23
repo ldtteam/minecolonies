@@ -36,7 +36,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
 
         if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getServer().canPlayerUseColonyTPCommand.get())
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_DISABLED_IN_CONFIG);
+            MessageUtils.format(COMMAND_DISABLED_IN_CONFIG).sendTo((PlayerEntity) sender);
             return 0;
         }
 
@@ -45,7 +45,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            MessageUtils.sendPlayerMessage((PlayerEntity) sender, COMMAND_COLONY_ID_NOT_FOUND, colonyID);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((PlayerEntity) sender);
             return 0;
         }
 

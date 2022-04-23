@@ -42,7 +42,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +52,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 /**
@@ -601,7 +601,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
                     getRotationYaw(),
                     getEyeHeight()), this);
 
-                MessageUtils.sendPlayerMessage(player, new TranslationTextComponent("com.minecolonies.coremod.interaction.visitor.food", getCitizenData().getName()));
+                citizenChatHandler.sendLocalizedChat(MESSAGE_INTERACTION_VISITOR_FOOD);
             }
             return ActionResultType.CONSUME;
         }
@@ -721,7 +721,7 @@ public class VisitorCitizen extends AbstractEntityCitizen
 
                 final String deathLocation = BlockPosUtil.getString(blockPosition());
 
-                colony.notifyColonyManagers(new TranslationTextComponent(MESSAGE_INFO_COLONY_VISITOR_DIED, getCitizenData().getName(), cause.getMsgId(), deathLocation));
+                MessageUtils.format(MESSAGE_INFO_COLONY_VISITOR_DIED, getCitizenData().getName(), cause.getMsgId(), deathLocation).sendTo(colony).forManagers();
             }
         }
     }

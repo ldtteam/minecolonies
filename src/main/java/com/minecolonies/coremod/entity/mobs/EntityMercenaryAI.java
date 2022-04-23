@@ -7,16 +7,12 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.MercenarySounds;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
@@ -171,7 +167,7 @@ public class EntityMercenaryAI extends Goal
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         entity.swing(Hand.OFF_HAND);
-                        entity.getColony().notifyColonyMembers(new TranslationTextComponent(MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING, stack.getHoverName().getString()));
+                        MessageUtils.format(MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING, stack.getHoverName().getString()).sendTo(entity.getColony()).forAllPlayers();
                     }
                 }
             }

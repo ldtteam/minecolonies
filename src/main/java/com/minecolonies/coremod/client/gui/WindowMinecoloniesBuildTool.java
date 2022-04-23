@@ -136,7 +136,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             }
             else
             {
-                MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_SUPPLY_SHIP_IN_WATER);
+                MessageUtils.format(WARNING_SUPPLY_SHIP_IN_WATER).sendTo(Minecraft.getInstance().player);
             }
         }
         else if (schemName.contains("supplycamp"))
@@ -152,7 +152,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
-            MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WARNING_SUPPLY_BUILDING_BAD_BLOCKS);
+            MessageUtils.format(WARNING_SUPPLY_BUILDING_BAD_BLOCKS).sendTo(Minecraft.getInstance().player);
 
             for (final PlacementError error : placementErrorList)
             {

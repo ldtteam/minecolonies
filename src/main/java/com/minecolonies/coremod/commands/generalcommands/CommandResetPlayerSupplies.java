@@ -33,7 +33,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             if (context.getSource().getEntity() instanceof PlayerEntity)
             {
                 // could not find player with given name.
-                MessageUtils.sendPlayerMessage((PlayerEntity) context.getSource().getEntity(), COMMAND_PLAYER_NOT_FOUND, username);
+                MessageUtils.format(COMMAND_PLAYER_NOT_FOUND, username).sendTo((PlayerEntity) context.getSource().getEntity());
             }
             else
             {
@@ -44,7 +44,7 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
 
         player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
         context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_RESET_SUPPLY_SUCCESS), true);
-        MessageUtils.sendPlayerMessage(player, COMMAND_RESET_SUPPLY_SUCCESS);
+        MessageUtils.format(COMMAND_RESET_SUPPLY_SUCCESS).sendTo(player);
         return 1;
     }
 

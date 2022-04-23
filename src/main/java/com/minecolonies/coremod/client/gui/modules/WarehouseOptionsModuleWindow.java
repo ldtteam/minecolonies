@@ -204,7 +204,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
         if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
         {
             Network.getNetwork().sendToServer(new SortWarehouseMessage(this.buildingView));
-            MessageUtils.sendPlayerMessage(Minecraft.getInstance().player, WAREHOUSE_SORTED);
+            MessageUtils.format(WAREHOUSE_SORTED).sendTo(Minecraft.getInstance().player);
         }
     }
 }

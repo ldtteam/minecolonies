@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.GraveyardManagementModule;
@@ -165,7 +166,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.emptying"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_EMPTYING));
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
         unequip();
 
@@ -223,7 +224,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent("com.minecolonies.coremod.status.digging"));
+        worker.getCitizenStatusHandler().setLatestStatus(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_DIGGING));
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
@@ -335,7 +336,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             if (chance >= random.nextDouble())
             {
                 final ICitizenData citizenData = buildingGraveyard.getColony().getCitizenManager().resurrectCivilianData(buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).getLastGraveData().getCitizenDataNBT(), true, world, gravePos);
-                buildingGraveyard.getColony().notifyColonyManagers(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()));
+                MessageUtils.format(MESSAGE_INFO_CITIZEN_UNDERTAKER_RESURRECTED_SUCCESS, citizenData.getName()).sendTo(buildingGraveyard.getColony()).forManagers();
                 worker.getCitizenColonyHandler().getColony().getCitizenManager().updateCitizenMourn(citizenData, false);
                 AdvancementUtils.TriggerAdvancementPlayersForColony(worker.getCitizenColonyHandler().getColony(), playerMP -> AdvancementTriggers.CITIZEN_RESURRECT.trigger(playerMP));
                 buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData(null);
@@ -421,8 +422,8 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         if (burialPos == null || burialPos.getA() == null)
         {
             // couldn't find a place to dig a grave
-            buildingGraveyard.getColony()
-              .notifyColonyManagers(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
+            worker.getCitizenChatHandler()
+              .sendLocalizedChat(new TranslationTextComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
             return IDLE;
         }
 
