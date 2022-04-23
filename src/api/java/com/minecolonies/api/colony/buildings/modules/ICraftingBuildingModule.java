@@ -42,10 +42,10 @@ public interface ICraftingBuildingModule extends IBuildingModule
 {
     class CraftingType
     {
-        public static final CraftingType SMALL_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID, "com.minecolonies.smallcrafting"));
-        public static final CraftingType SMELTING       = new CraftingType(new ResourceLocation(Constants.MOD_ID,"com.minecolonies.smelting"));
-        public static final CraftingType LARGE_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID,"com.minecolonies.largecrafting"));
-        public static final CraftingType BREWING        = new CraftingType(new ResourceLocation(Constants.MOD_ID,"com.minecolonies.brewing"));
+        public static final CraftingType SMALL_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID, "smallcrafting"));
+        public static final CraftingType SMELTING       = new CraftingType(new ResourceLocation(Constants.MOD_ID,"smelting"));
+        public static final CraftingType LARGE_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID,"largecrafting"));
+        public static final CraftingType BREWING        = new CraftingType(new ResourceLocation(Constants.MOD_ID,"brewing"));
 
         private final ResourceLocation id;
 
