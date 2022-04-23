@@ -263,7 +263,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         buf.writeInt(this.getSupportedRecipeTypes().size());
         for (final CraftingType type : this.getSupportedRecipeTypes())
         {
-            buf.writeUtf(type.getId());
+            buf.writeResourceLocation(type.getId());
         }
 
         final List<IRecipeStorage> storages = new ArrayList<>();

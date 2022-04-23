@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.util.OptionalPredicate;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -39,16 +40,16 @@ import java.util.function.Predicate;
  */
 public interface ICraftingBuildingModule extends IBuildingModule
 {
-    public static class CraftingType
+    class CraftingType
     {
-        public static final CraftingType SMALL_CRAFTING = new CraftingType("com.minecolonies.smallcrafting");
-        public static final CraftingType SMELTING       = new CraftingType("com.minecolonies.smelting");
-        public static final CraftingType LARGE_CRAFTING = new CraftingType("com.minecolonies.largecrafting");
-        public static final CraftingType BREWING        = new CraftingType("com.minecolonies.brewing");
+        public static final CraftingType SMALL_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID, "com.minecolonies.smallcrafting"));
+        public static final CraftingType SMELTING       = new CraftingType(new ResourceLocation(Constants.MOD_ID,"com.minecolonies.smelting"));
+        public static final CraftingType LARGE_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID,"com.minecolonies.largecrafting"));
+        public static final CraftingType BREWING        = new CraftingType(new ResourceLocation(Constants.MOD_ID,"com.minecolonies.brewing"));
 
-        private final String id;
+        private final ResourceLocation id;
 
-        public CraftingType(final String id)
+        public CraftingType(final ResourceLocation id)
         {
             this.id = id;
         }
@@ -57,7 +58,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
          * Get the matching id.
          * @return the id.
          */
-        public String getId()
+        public ResourceLocation getId()
         {
             return this.id;
         }

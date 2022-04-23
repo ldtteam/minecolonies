@@ -81,7 +81,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         final int size = buf.readInt();
         for (int i = 0; i < size; i++)
         {
-            recipeTypeSet.add(new ICraftingBuildingModule.CraftingType(buf.readUtf(32767)));
+            recipeTypeSet.add(new ICraftingBuildingModule.CraftingType(buf.readResourceLocation()));
         }
 
         recipes.clear();
