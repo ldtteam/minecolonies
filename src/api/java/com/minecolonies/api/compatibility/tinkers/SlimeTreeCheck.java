@@ -3,6 +3,9 @@ package com.minecolonies.api.compatibility.tinkers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import slimeknights.tconstruct.common.TinkerTags;
+import slimeknights.tconstruct.world.block.SlimeDirtBlock;
+import slimeknights.tconstruct.world.block.SlimeLeavesBlock;
 
 /**
  * This class is to store a check to see if a tree is a slime tree.
@@ -29,8 +32,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
-        return false;
-        //return block.is(TinkerTags.Blocks.SLIMY_LOGS);
+        return block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_LOGS);
     }
 
     /**
@@ -42,8 +44,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
-        return false;
-        //return block.is(TinkerTags.Blocks.SLIMY_LEAVES);
+        return block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_LEAVES);
     }
 
     /**
@@ -55,8 +56,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
-        return false;
-        //return block.is(TinkerTags.Blocks.SLIMY_SAPLINGS);
+        return block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_SAPLINGS);
     }
 
     /**
@@ -68,8 +68,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
-        return false;
-        //return block instanceof SlimeDirtBlock || block.is(TinkerTags.Blocks.SLIMY_GRASS);
+        return block instanceof SlimeDirtBlock || block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_GRASS);
     }
 
     /**
@@ -81,8 +80,7 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Override
     public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
-        return 0;
-        //return ((SlimeLeavesBlock) leaf.getBlock()).getFoliageType().ordinal();
+        return ((SlimeLeavesBlock) leaf.getBlock()).getFoliageType().ordinal();
     }
 
     /**
