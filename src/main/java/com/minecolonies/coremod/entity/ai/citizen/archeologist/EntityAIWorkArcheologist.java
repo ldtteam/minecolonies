@@ -10,6 +10,7 @@ import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
@@ -534,9 +535,19 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
 
         final Vec3i facingVector = structurePos.subtract(targetPos);
 
+        @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(getServerLevel(), targetPos, WORKSPACE_STRUCTURE.getPath(), new PlacementSettings(Mirror.NONE, RotationUtils.fromVector(facingVector)), true);
+        structure.getBluePrint().rotateWithMirror(RotationUtils.fromVector(facingVector), Mirror.NONE, getServerLevel());
+
+        final BlockPos startAreaPosition = structure.getWorldPos().subtract(structure.getBluePrint().getPrimaryBlockOffset());
+        final BlockPos endAreaPosition = startAreaPosition.offset(
+          structure.getBluePrint().getSizeX(),
+          structure.getBluePrint().getSizeY(),
+          structure.getBluePrint().getSizeZ()
+        );
+
         if (!ItemScanTool.saveStructureOnServer(world,
-          targetPos.subtract(new Vec3i(-1, 3, 1)),
-          targetPos.subtract(new Vec3i(-1, 3, 1)).offset(5, 5, 10),
+          startAreaPosition,
+          endAreaPosition,
          Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + getColony().getID() + "/" + getColony().getDimension().location().getNamespace() + getColony().getDimension().location().getPath() + "/" + targetPos,
           false))
         {
@@ -546,12 +557,10 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         }
 
         if (worker.level instanceof ServerLevel serverLevel) {
-            CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotationImmediatly(serverLevel, WORKSPACE_STRUCTURE.getPath(),
-              targetPos,
-              RotationUtils.fromVector(facingVector),
-              Mirror.NONE,
-              true,
-              null);
+            @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
+            final TickedWorldOperation operation = new TickedWorldOperation(instantPlacer, null);
+            while(!operation.apply(getServerLevel())) {
+            }
 
             final BlockPos newSafePos = EntityUtils.getSpawnPoint(serverLevel, worker.blockPosition());
             if (newSafePos != null)
@@ -576,13 +585,24 @@ public class EntityAIWorkArcheologist extends AbstractEntityAIInteract<JobArcheo
         if (targetPos == null)
             return INIT;
 
+        final BlockPos structurePos = getOwnBuilding().getFirstModuleOccurance(ArcheologistsModule.class).getTarget().structureCenter();
+        if (structurePos == null)
+            return INIT;
+
+        final Vec3i facingVector = structurePos.subtract(targetPos);
+
         String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
                             getColony().getID() + "/" + getColony().getDimension().location().getNamespace() + getColony().getDimension().location().getPath() + "/" + targetPos;
+
+        @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(getServerLevel(), targetPos, WORKSPACE_STRUCTURE.getPath(), new PlacementSettings(Mirror.NONE, RotationUtils.fromVector(facingVector)), true);
+        structure.getBluePrint().rotateWithMirror(RotationUtils.fromVector(facingVector), Mirror.NONE, getServerLevel());
+
+        final BlockPos startAreaPosition = structure.getWorldPos().subtract(structure.getBluePrint().getPrimaryBlockOffset());
 
         // TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
         CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(getColony().getWorld(),
           fileName,
-          targetPos.subtract(new Vec3i(-1, 3, 1)),
+          startAreaPosition,
           Rotation.NONE,
           Mirror.NONE,
           true, null);
