@@ -289,14 +289,15 @@ public final class ItemStackUtils
         {
             return -1;
         }
-        if (Compatibility.isTinkersTool(stack, toolType))
-        {
-            return Compatibility.getToolLevel(stack);
-        }
         if (!isTool(stack, toolType))
         {
             return -1;
         }
+        if (Compatibility.isTinkersTool(stack, toolType))
+        {
+            return Compatibility.getToolLevel(stack);
+        }
+
         if (ToolType.HOE.equals(toolType))
         {
             if (stack.getItem() instanceof HoeItem)
