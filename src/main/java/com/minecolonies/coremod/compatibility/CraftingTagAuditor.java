@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -111,7 +112,7 @@ public class CraftingTagAuditor
                                       @NotNull final MinecraftServer server,
                                       @NotNull final CustomRecipeManager customRecipeManager) throws IOException
     {
-        final Map<RecipeType<?>, List<IGenericRecipe>> vanillaRecipesMap =
+        final Map<CraftingType, List<IGenericRecipe>> vanillaRecipesMap =
                 RecipeAnalyzer.buildVanillaRecipesMap(server.getRecipeManager(), server.overworld());
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()

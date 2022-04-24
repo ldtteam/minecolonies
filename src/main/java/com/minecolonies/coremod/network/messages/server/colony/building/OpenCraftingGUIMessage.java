@@ -2,6 +2,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -70,7 +71,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
 
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
-        if (module.canLearnFurnaceRecipes())
+        if (module.canLearn(ModCraftingTypes.SMELTING))
         {
             NetworkHooks.openGui(player, new MenuProvider()
             {
@@ -104,9 +105,9 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
                 {
-                    return new ContainerCrafting(id, inv, module.canLearnLargeRecipes(), building.getID(), module.getId());
+                    return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING), building.getID(), module.getId());
                 }
-            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearnLargeRecipes())).writeBlockPos(building.getID()).writeUtf(module.getId()));
+            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING))).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }

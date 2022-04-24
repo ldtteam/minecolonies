@@ -4,6 +4,8 @@ import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.ModCraftingTypes;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -15,6 +17,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_STONEMASON;
@@ -114,12 +118,9 @@ public class BuildingStonemason extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return true; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return false; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return true; }
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return Set.of(ModCraftingTypes.SMALL_CRAFTING, ModCraftingTypes.LARGE_CRAFTING);
+        }
     }
 }

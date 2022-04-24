@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -167,7 +168,7 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private void populateRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla,
+    private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
                                  @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
     {
         registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
