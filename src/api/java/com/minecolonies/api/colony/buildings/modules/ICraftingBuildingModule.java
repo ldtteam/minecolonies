@@ -6,16 +6,14 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.OptionalPredicate;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -41,70 +39,6 @@ import java.util.function.Predicate;
  */
 public interface ICraftingBuildingModule extends IBuildingModule
 {
-    /**
-     * Class to differentiate the different crafting types.
-     */
-    class CraftingType
-    {
-        public static final CraftingType SMALL_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID, "smallcrafting"));
-        public static final CraftingType SMELTING       = new CraftingType(new ResourceLocation(Constants.MOD_ID,"smelting"));
-        public static final CraftingType LARGE_CRAFTING = new CraftingType(new ResourceLocation(Constants.MOD_ID,"largecrafting"));
-        public static final CraftingType BREWING        = new CraftingType(new ResourceLocation(Constants.MOD_ID,"brewing"));
-
-        /**
-         * Unique id of each type.
-         */
-        private final ResourceLocation id;
-
-        /**
-         * Create a new type.
-         * @param id the uniqye id.
-         */
-        public CraftingType(final ResourceLocation id)
-        {
-            this.id = id;
-        }
-
-        /**
-         * Create a type from a packet buffer.
-         * @param packetBuffer the buffer to read the data from.
-         */
-        public CraftingType(final PacketBuffer packetBuffer)
-        {
-            this.id = packetBuffer.readResourceLocation();
-        }
-
-        /**
-         * Write to a byte stream.
-         * @param packetBuffer the buffer to write it to.
-         */
-        public void write(final PacketBuffer packetBuffer)
-        {
-            packetBuffer.writeResourceLocation(this.id);
-        }
-
-        @Override
-        public boolean equals(final Object o)
-        {
-            if (this == o)
-            {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass())
-            {
-                return false;
-            }
-            final CraftingType that = (CraftingType) o;
-            return Objects.equals(id, that.id);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hash(id);
-        }
-    }
-
     /**
      * Gets the crafting job associated with this building type.
      * This might not be the primary job of the building.
@@ -150,16 +84,16 @@ public interface ICraftingBuildingModule extends IBuildingModule
      * @param type the type to check for.
      * @return true if so.
      */
-    default boolean canLearnRecipe(final CraftingType type)
+    default boolean canLearn(final CraftingType type)
     {
-        return getSupportedRecipeTypes().contains(type);
+        return getSupportedCraftingTypes().contains(type);
     }
 
     /**
-     * Get the supported recipe types.
+     * Get the supported crafting types.
      * @return a set of types.
      */
-    Set<CraftingType> getSupportedRecipeTypes();
+    Set<CraftingType> getSupportedCraftingTypes();
 
     /**
      * Checks if this particular recipe is *possible* to be learned by
@@ -185,6 +119,12 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     @NotNull
     OptionalPredicate<ItemStack> getIngredientValidator();
+
+    /**
+     * Check if the module should have a large limit for learnable recipes.
+     * @return true if so.
+     */
+    boolean canLearnManyRecipes();
 
     /**
      * Check if the module on the client side should be displayed.

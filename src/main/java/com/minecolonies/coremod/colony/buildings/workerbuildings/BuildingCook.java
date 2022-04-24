@@ -11,6 +11,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -311,12 +312,11 @@ public class BuildingCook extends AbstractBuilding
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
-            if (building == null)
-                return ImmutableSet.of(CraftingType.SMELTING);  // because it can learn at *some* level
-
-            return building.getBuildingLevel() >= 3 ? ImmutableSet.of(CraftingType.SMALL_CRAFTING) : Collections.emptySet();
+            return (building == null || building.getBuildingLevel() >= 3)
+                    ? super.getSupportedCraftingTypes()
+                    : ImmutableSet.of();
         }
 
 

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.gui.containers;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
@@ -94,13 +95,13 @@ public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftin
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final String buttonDisplay = module.canLearn(ModCraftingTypes.BREWING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING))
+        if (!module.canLearn(ModCraftingTypes.BREWING))
         {
             doneButton.active = false;
         }
@@ -111,7 +112,7 @@ public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftin
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (module.canLearnRecipe(ICraftingBuildingModule.CraftingType.BREWING))
+            if (module.canLearn(ModCraftingTypes.BREWING))
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));

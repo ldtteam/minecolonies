@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockout.views.Window;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.WindowListRecipes;
@@ -43,7 +45,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     /**
      * Different flags.
      */
-    private Set<ICraftingBuildingModule.CraftingType> recipeTypeSet = new HashSet<>();
+    private Set<CraftingType> recipeTypeSet = new HashSet<>();
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -78,10 +80,14 @@ public class CraftingModuleView extends AbstractBuildingModuleView
         }
 
         recipeTypeSet.clear();
-        final int size = buf.readInt();
-        for (int i = 0; i < size; i++)
+        final int size = buf.readVarInt();
+        for (int i = 0; i < size; ++i)
         {
-            recipeTypeSet.add(new ICraftingBuildingModule.CraftingType(buf));
+            final CraftingType type = buf.readRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry());
+            if (type != null)
+            {
+                recipeTypeSet.add(type);
+            }
         }
 
         recipes.clear();
@@ -128,8 +134,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      */
     public boolean isRecipeAlterationAllowed()
     {
-        return canLearnRecipe(ICraftingBuildingModule.CraftingType.SMALL_CRAFTING) || canLearnRecipe(ICraftingBuildingModule.CraftingType.SMELTING) || canLearnRecipe(
-          ICraftingBuildingModule.CraftingType.BREWING);
+        return !recipeTypeSet.isEmpty();
     }
 
     /**
@@ -137,16 +142,16 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      * @param type the type to check for.
      * @return true if so.
      */
-    public boolean canLearnRecipe(final ICraftingBuildingModule.CraftingType type)
+    public boolean canLearn(final CraftingType type)
     {
-        return getSupportedRecipeTypes().contains(type);
+        return getSupportedCraftingTypes().contains(type);
     }
 
     /**
-     * Get the supported recipe types.
+     * Get the supported crafting types.
      * @return a set of types.
      */
-    public Set<ICraftingBuildingModule.CraftingType> getSupportedRecipeTypes()
+    public Set<CraftingType> getSupportedCraftingTypes()
     {
         return recipeTypeSet;
     }

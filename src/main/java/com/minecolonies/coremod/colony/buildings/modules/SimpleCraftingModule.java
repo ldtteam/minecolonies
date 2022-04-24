@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.crafting.ModCraftingTypes;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -42,8 +44,14 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     }
 
     @Override
-    public Set<CraftingType> getSupportedRecipeTypes()
+    public boolean canLearnManyRecipes()
     {
-        return ImmutableSet.of(CraftingType.SMALL_CRAFTING);
+        return false;
+    }
+
+    @Override
+    public Set<CraftingType> getSupportedCraftingTypes()
+    {
+        return ImmutableSet.of(ModCraftingTypes.SMALL_CRAFTING);
     }
 }

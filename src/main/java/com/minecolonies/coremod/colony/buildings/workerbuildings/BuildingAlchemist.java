@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
@@ -258,7 +259,7 @@ public class BuildingAlchemist extends AbstractBuilding
         }
 
         @Override
-        public Set<CraftingType> getSupportedRecipeTypes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
             return Collections.emptySet();
         }

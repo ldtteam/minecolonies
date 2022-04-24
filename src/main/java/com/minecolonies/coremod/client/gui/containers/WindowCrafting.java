@@ -1,8 +1,10 @@
 package com.minecolonies.coremod.client.gui.containers;
 
+import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -107,7 +109,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
-        completeCrafting = module.canLearnRecipe(ICraftingBuildingModule.CraftingType.LARGE_CRAFTING);
+        completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING);
     }
 
     @NotNull
@@ -125,13 +127,13 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMALL_CRAFTING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final String buttonDisplay = module.canLearn(ModCraftingTypes.SMALL_CRAFTING) ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMALL_CRAFTING))
+        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
         {
             doneButton.active = false;
         }
@@ -142,7 +144,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         @Override
         public void onPress(final Button button)
         {
-            if (module.canLearnRecipe(ICraftingBuildingModule.CraftingType.SMALL_CRAFTING))
+            if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
             {
                 final List<ItemStorage> input = new LinkedList<>();
 
