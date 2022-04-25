@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extends CraftingType
 {
     private final RecipeType<T> recipeType;
-    private final Predicate<Recipe<C>> predicate;
+    private final Predicate<T> predicate;
 
     /**
      * Create a new instance
@@ -33,7 +33,7 @@ public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extend
      */
     public RecipeCraftingType(@NotNull final ResourceLocation id,
                               @NotNull final RecipeType<T> recipeType,
-                              @Nullable final Predicate<Recipe<C>> predicate)
+                              @Nullable final Predicate<T> predicate)
     {
         super(id);
         this.recipeType = recipeType;
@@ -46,7 +46,7 @@ public class RecipeCraftingType<C extends Container, T extends Recipe<C>> extend
                                             @Nullable final Level world)
     {
         final List<IGenericRecipe> recipes = new ArrayList<>();
-        for (final Recipe<C> recipe : recipeManager.byType(recipeType).values())
+        for (final T recipe : recipeManager.getAllRecipesFor(recipeType))
         {
             if (predicate != null && !predicate.test(recipe)) continue;
 

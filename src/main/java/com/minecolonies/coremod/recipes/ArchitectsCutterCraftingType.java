@@ -7,8 +7,9 @@ import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecip
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
-import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.crafting.RecipeCraftingType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -24,16 +25,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class ArchitectsCutterCraftingType extends CraftingType
+public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, ArchitectsCutterRecipe>
 {
     public ArchitectsCutterCraftingType()
     {
-        super(ModCraftingTypes.ARCHITECTS_CUTTER_ID);
+        super(ModCraftingTypes.ARCHITECTS_CUTTER_ID, ModRecipeTypes.ARCHITECTS_CUTTER, null);
     }
 
     @Override
     public @NotNull List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world)
     {
+        final Random rnd = world == null ? new Random() : world.getRandom();
         final List<IGenericRecipe> recipes = new ArrayList<>();
         for (final ArchitectsCutterRecipe recipe : recipeManager.getAllRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER))
         {
@@ -43,7 +45,6 @@ public class ArchitectsCutterCraftingType extends CraftingType
             if (!(generatedBlock instanceof final IMateriallyTexturedBlock materiallyTexturedBlock))
                 continue;
 
-            final Random rnd = world == null ? new Random() : world.getRandom();
             final List<List<ItemStack>> inputs = new ArrayList<>();
             for (final IMateriallyTexturedBlockComponent component : materiallyTexturedBlock.getComponents())
             {
