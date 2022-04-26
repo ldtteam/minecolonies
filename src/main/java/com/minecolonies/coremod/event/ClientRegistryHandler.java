@@ -123,6 +123,8 @@ public class ClientRegistryHandler
     public static final ModelLayerLocation FEMALE_KNIGHT = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_knight"), "female_knight");
     public static final ModelLayerLocation MALE_ARCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_archer"), "male_archer");
     public static final ModelLayerLocation FEMALE_ARCHER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_archer"), "female_archer");
+    public static final ModelLayerLocation FEMALE_CARPENTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "female_carpenter"), "female_carpenter");
+    public static final ModelLayerLocation MALE_CARPENTER = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "male_carpenter"), "male_carpenter");
 
     public static final ModelLayerLocation MUMMY        = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "mummy"), "mummy");
     public static final ModelLayerLocation ARCHER_MUMMY = new ModelLayerLocation(new ResourceLocation(Constants.MOD_ID, "archer_mummy"), "archer_mummy");
@@ -236,6 +238,8 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(FEMALE_KNIGHT, FemaleKnightModel::createMesh);
         event.registerLayerDefinition(MALE_ARCHER, MaleArcherModel::createMesh);
         event.registerLayerDefinition(FEMALE_ARCHER, FemaleArcherModel::createMesh);
+        event.registerLayerDefinition(MALE_CARPENTER, MaleCarpenterModel::createMesh);
+        event.registerLayerDefinition(FEMALE_CARPENTER, FemaleCarpenterModel::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }

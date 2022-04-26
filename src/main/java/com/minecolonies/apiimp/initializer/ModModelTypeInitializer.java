@@ -139,5 +139,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.FLORIST = new SimpleModelType(ModModelTypes.FLORIST_ID, 1, new MaleFloristModel(context.bakeLayer(ClientRegistryHandler.MALE_FLORIST)), new FemaleFloristModel(context.bakeLayer(ClientRegistryHandler.FEMALE_FLORIST)));
         reg.register(ModModelTypes.FLORIST);
+
+        ModModelTypes.CARPENTER = new SimpleModelType(ModModelTypes.CARPENTER_ID, 1, new MaleCarpenterModel(context.bakeLayer(ClientRegistryHandler.MALE_CARPENTER)), new FemaleCarpenterModel(context.bakeLayer(ClientRegistryHandler.FEMALE_CARPENTER)));
+        reg.register(ModModelTypes.CARPENTER);
     }
 }

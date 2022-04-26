@@ -1,9 +1,11 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,5 +33,11 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
     public EntityAIWorkSawmill generateAI()
     {
         return new EntityAIWorkSawmill(this);
+    }
+
+    @Override
+    public @NotNull ResourceLocation getModel()
+    {
+        return ModModelTypes.CARPENTER_ID;
     }
 }

@@ -46,6 +46,7 @@ public final class ModModelTypes
     public static final ResourceLocation ENCHANTER_ID      = new ResourceLocation(Constants.MOD_ID, "enchanter");
     public static final ResourceLocation FLORIST_ID        = new ResourceLocation(Constants.MOD_ID, "florist");
     public static final ResourceLocation KNIGHT_ID         = new ResourceLocation(Constants.MOD_ID, "knight");
+    public static final ResourceLocation CARPENTER_ID      = new ResourceLocation(Constants.MOD_ID, "carpenter");
 
     public static IModelType SETTLER;
     public static IModelType CITIZEN;
@@ -88,6 +89,7 @@ public final class ModModelTypes
     public static IModelType ENCHANTER;
     public static IModelType FLORIST;
     public static IModelType KNIGHT;
+    public static IModelType CARPENTER;
 
     private ModModelTypes()
     {

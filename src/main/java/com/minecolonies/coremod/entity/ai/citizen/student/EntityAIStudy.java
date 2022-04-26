@@ -12,6 +12,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,12 +20,18 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 /**
  * The Entity AI study class.
  */
 public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLibrary>
 {
+    /**
+     * Render the book.
+     */
+    public static final String RENDER_META_BOOK = "book";
+
     /**
      * Delay for each subject study.
      */
@@ -59,7 +66,12 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     @Override
     protected void updateRenderMetaData()
     {
-
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER))
+        {
+            renderMeta += RENDER_META_BOOK;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override
