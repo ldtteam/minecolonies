@@ -190,7 +190,7 @@ public class RequestHandler implements IRequestHandler
             }
             else
             {
-                return resolve(request, previousResolver, resolverTokenBlackList, attemptResult);
+                break;
             }
         }
 

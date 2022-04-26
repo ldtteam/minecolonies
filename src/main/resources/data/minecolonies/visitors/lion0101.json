@@ -1,0 +1,10 @@
+{
+  "texture": "b375c3cb-74f2-42c8-9c0a-cca99b4ef765",
+  "citizensuffix": "_w",
+  "name": "Lion Girl",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.lion0101",
+  "recruitcost": "minecraft:enchanting_table",
+  "recruitcostcount": 1,
+  "gender": "female"
+}

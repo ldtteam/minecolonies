@@ -7,13 +7,12 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
-import com.minecolonies.coremod.recipes.FoodIngredient;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,7 +75,6 @@ public class FurnaceRecipes implements IFurnaceRecipes
      */
     private static void loadUtilityPredicates()
     {
-        ItemStackUtils.ISFOOD = FoodIngredient.ISFOOD;
         ItemStackUtils.IS_SMELTABLE = itemStack -> !ItemStackUtils.isEmpty(instance.getSmeltingResult(itemStack));
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         ItemStackUtils.CAN_EAT =
