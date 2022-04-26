@@ -2,7 +2,7 @@
   "texture": "82f605d2-a3b0-4f2b-bcb9-54b90f2763ae",
   "citizensuffix": "_d",
   "name": "Tobi Carnage Arruda",
-  "chance": 0.5,
+  "chance": 0.001,
   "storylangkey": "com.minecolonies.coremod.gui.chat.tobidoes",
   "recruitcost": "minecraft:diamond_pickaxe",
   "recruitcostcount": 1,
