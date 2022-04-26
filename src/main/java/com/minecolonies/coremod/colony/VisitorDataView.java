@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class VisitorDataView extends CitizenDataView implements IVisitorViewData
 {
     /**
-     * Two atomics to avoid semaphores.
+     * Two variables to avoid semaphores.
      */
     private boolean startedDownloading = false;
     private AtomicBoolean finishedDownloading = new AtomicBoolean(false);
