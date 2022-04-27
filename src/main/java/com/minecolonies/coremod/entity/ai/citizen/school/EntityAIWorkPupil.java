@@ -141,7 +141,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return DECIDE;
         }
 
-        if (walkToBlock(studyPos))
+        if (walkToBlock(studyPos, 1))
         {
             return getState();
         }

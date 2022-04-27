@@ -227,7 +227,9 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
                 if (permissionEvents)
                 {
-                    final PermissionEvent event = building.getPermissionEvents().get(index);
+                    final List<PermissionEvent> permissionEvents = building.getPermissionEvents();
+                    Collections.reverse(permissionEvents);
+                    final PermissionEvent event = permissionEvents.get(index);
 
                     nameLabel.setText(event.getName() + (event.getId() == null ? " <fake>" : ""));
                     rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
@@ -248,7 +250,9 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 }
                 else
                 {
-                    final IColonyEventDescription event = building.getColonyEvents().get(index);
+                    final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
+                    Collections.reverse(colonyEvents);
+                    final IColonyEventDescription event = colonyEvents.get(index);
                     if (event instanceof CitizenDiedEvent)
                     {
                         actionLabel.setText(((CitizenDiedEvent) event).getDeathCause());
@@ -290,7 +294,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
     /**
      * Switching between permission and colony events.
-     * 
+     *
      * @param button the clicked button.
      */
     public void permissionEventsClicked(@NotNull final Button button)

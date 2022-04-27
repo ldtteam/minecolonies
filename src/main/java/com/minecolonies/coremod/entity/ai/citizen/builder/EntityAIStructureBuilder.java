@@ -3,15 +3,18 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BuilderModeSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.*;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import net.minecraft.block.Block;
@@ -19,13 +22,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * AI class for the builder. Manages building and repairing buildings.
@@ -119,7 +120,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final WorkOrderBuildDecoration wo = job.getWorkOrder();
+        final IWorkOrder wo = job.getWorkOrder();
 
         if (wo == null)
         {
@@ -128,8 +129,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getSchematicLocation());
-        if (building == null && wo instanceof WorkOrderBuild && !(wo instanceof WorkOrderBuildRemoval))
+        final IBuilding building = job.getColony().getBuildingManager().getBuilding(wo.getLocation());
+        if (building == null && wo instanceof WorkOrderBuilding && wo.getWorkOrderType() != WorkOrderType.REMOVE)
         {
             job.complete();
             return false;
@@ -141,10 +142,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public void setStructurePlacer(final BuildingStructureHandler<JobBuilder, BuildingBuilder> structure)
     {
-        if (job.getWorkOrder().getIteratorType().isEmpty() && getOwnBuilding().hasModule(ISettingsModule.class) && getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE) != null)
+        if (job.getWorkOrder().getIteratorType().isEmpty())
         {
-            job.getWorkOrder().setIteratorType(getOwnBuilding().getSetting(BuildingBuilder.BUILDING_MODE).getValue());
+            final String mode = BuilderModeSetting.getActualValue(getOwnBuilding());
+            job.getWorkOrder().setIteratorType(mode);
         }
+
         structurePlacer = new Tuple<>(new StructurePlacer(structure, job.getWorkOrder().getIteratorType()), structure);
     }
 
@@ -168,9 +171,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      */
     private void killMobs()
     {
-        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder() instanceof WorkOrderBuildBuilding)
+        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
         {
-            final BlockPos buildingPos = job.getWorkOrder().getSchematicLocation();
+            final BlockPos buildingPos = job.getWorkOrder().getLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
             if (building != null)
             {
@@ -207,7 +210,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             return false;
         }
 
-        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5 + 5 * pathBackupFactor)
+        if (BlockPosUtil.getDistance2D(worker.blockPosition(), currentBlock) > 5L + (pathBackupFactor * 5L))
         {
             workFrom = null;
             return false;
@@ -256,7 +259,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     /**
-     * Calculates after how many actions the ai should dump it's inventory.
+     * Calculates after how many actions the AI should dump its inventory.
      *
      * @return the number of actions done before item dump.
      */
@@ -267,58 +270,58 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     }
 
     @Override
-    protected void sendCompletionMessage(final WorkOrderBuildDecoration wo)
+    protected void sendCompletionMessage(final IWorkOrder wo)
     {
         super.sendCompletionMessage(wo);
 
-        final BlockPos position = wo.getSchematicLocation();
+        final BlockPos position = wo.getLocation();
+        boolean showManualSuffix = false;
         if (getOwnBuilding().getManualMode())
         {
-            boolean hasInQueue = false;
+            showManualSuffix = true;
             for (final IWorkOrder workorder : getOwnBuilding().getColony().getWorkManager().getWorkOrders().values())
             {
                 if (workorder.getID() != wo.getID() && workorder.isClaimedBy(worker.getCitizenData()))
                 {
-                    hasInQueue = true;
+                    showManualSuffix = false;
                 }
-            }
-
-            if (!hasInQueue)
-            {
-                if (wo instanceof WorkOrderBuildBuilding)
-                {
-                    worker.getCitizenChatHandler().sendLocalizedChat(
-                      COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE_MANUAL,
-                      wo.getDisplayName(),
-                      position.getX(),
-                      position.getY(),
-                      position.getZ());
-                }
-                else
-                {
-                    worker.getCitizenChatHandler().sendLocalizedChat(
-                      COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE_MANUAL,
-                      wo.getDisplayName(),
-                      position.getX(),
-                      position.getY(),
-                      position.getZ());
-                }
-                return;
             }
         }
 
-        if (wo instanceof WorkOrderBuildBuilding)
+        TranslationTextComponent message;
+        switch (wo.getWorkOrderType())
         {
-            worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILDCOMPLETE, wo.getDisplayName(), position.getX(), position.getY(), position.getZ());
+            case REPAIR:
+                message = new TranslationTextComponent(
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
+                  wo.getDisplayName(),
+                  position.getX(),
+                  position.getY(),
+                  position.getZ());
+                break;
+            case REMOVE:
+                message = new TranslationTextComponent(
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
+                  wo.getDisplayName(),
+                  position.getX(),
+                  position.getY(),
+                  position.getZ());
+                break;
+            default:
+                message = new TranslationTextComponent(
+                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
+                  wo.getDisplayName(),
+                  position.getX(),
+                  position.getY(),
+                  position.getZ());
+                break;
         }
-        else
+
+        if (showManualSuffix)
         {
-            worker.getCitizenChatHandler().sendLocalizedChat(
-              COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECOCOMPLETE,
-              wo.getDisplayName(),
-              position.getX(),
-              position.getY(),
-              position.getZ());
+            message.append(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
+
+        worker.getCitizenChatHandler().sendLocalizedChat(message);
     }
 }

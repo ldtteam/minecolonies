@@ -170,7 +170,7 @@ public final class ModBuildingsInitializer
                               .setBuildingProducer(BuildingCook::new)
                               .setBuildingViewProducer(() -> EmptyView::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
-                              .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.cook, Skill.Adaptability, Skill.Knowledge, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
+                              .addBuildingModuleProducer(() -> new NoPrivateCrafterWorkerModule(ModJobs.cook, Skill.Adaptability, Skill.Knowledge, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
                               .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.cookassistant, Skill.Creativity, Skill.Knowledge, false, (b) -> b.getBuildingLevel() >= 3 ? 1 : 0, Skill.Knowledge, Skill.Creativity), () -> WorkerBuildingModuleView::new)
                               .addBuildingModuleProducer(() -> new BuildingCook.CraftingModule(ModJobs.cookassistant), () -> CraftingModuleView::new)
                               .addBuildingModuleProducer(() -> new BuildingCook.SmeltingModule(ModJobs.cookassistant), () -> CraftingModuleView::new)
@@ -215,7 +215,6 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DELIVERYMAN_ID))
                                      .addBuildingModuleProducer(() -> new DeliverymanAssignmentModule(ModJobs.delivery, Skill.Agility, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
-                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                      .createBuildingEntry();
 
         ModBuildings.farmer = new BuildingEntry.Builder()
@@ -556,7 +555,13 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new BuildingPlantation.CraftingModule(ModJobs.planter), () -> CraftingModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule()
-                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(Items.SUGAR_CANE.getDescriptionId(), Items.CACTUS.getDescriptionId(), Items.BAMBOO.getDescriptionId()))
+                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(
+                                                                         Items.SUGAR_CANE.getDescriptionId(),
+                                                                         Items.CACTUS.getDescriptionId(),
+                                                                         Items.BAMBOO.getDescriptionId(),
+                                                                         PlantationSetting.SUGAR_CANE_AND_CACTUS,
+                                                                         PlantationSetting.CACTUS_AND_BAMBOO,
+                                                                         PlantationSetting.BAMBOO_AND_SUGAR_CANE))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry();
 
@@ -593,7 +598,7 @@ public final class ModBuildingsInitializer
                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.beekeeper, Skill.Dexterity, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                    .addBuildingModuleProducer(() -> new SettingsModule()
                                                                       .with(AbstractBuilding.BREEDING, new BoolSetting(true))
-                                                                      .with(BuildingBeekeeper.MODE, new StringSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
+                                                                      .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
                                    .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, false,
                                      (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
                                    .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterBeekeeper))

@@ -77,7 +77,7 @@ public interface IColonyManagerCapability
     /**
      * The implementation of the colonyTagCapability.
      */
-    public class Impl implements IColonyManagerCapability
+    class Impl implements IColonyManagerCapability
     {
         /**
          * The list of all colonies.
@@ -125,7 +125,7 @@ public interface IColonyManagerCapability
     /**
      * The storage class of the capability.
      */
-    public class Storage implements Capability.IStorage<IColonyManagerCapability>
+    class Storage implements Capability.IStorage<IColonyManagerCapability>
     {
 
         @Override

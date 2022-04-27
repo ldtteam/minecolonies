@@ -777,6 +777,11 @@ public final class BlockPosUtil
             return null;
         }
 
+        if (predicate.test(world, start))
+        {
+            return start;
+        }
+
         BlockPos temp;
         int y = 0;
         int y_offset = 1;

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.citizen;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -15,20 +14,17 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.*;
 import com.minecolonies.api.inventory.InventoryCitizen;
 import com.minecolonies.api.inventory.container.ContainerCitizenInventory;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CompatibilityUtils;
-import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIVisitor;
 import com.minecolonies.coremod.entity.citizen.citizenhandlers.*;
 import com.minecolonies.coremod.entity.pathfinding.EntityCitizenWalkToProxy;
 import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
+import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -45,12 +41,15 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -237,6 +236,12 @@ public class VisitorCitizen extends AbstractEntityCitizen
     @Nullable
     @Override
     public ICitizenData getCitizenData()
+    {
+        return citizenData;
+    }
+
+    @Override
+    public ICivilianData getCivilianData()
     {
         return citizenData;
     }
@@ -542,6 +547,12 @@ public class VisitorCitizen extends AbstractEntityCitizen
             return super.checkAndHandleImportantInteractions(player, hand);
         }
 
+        final ActionResultType result = directPlayerInteraction(player, hand);
+        if (result != null)
+        {
+            return result;
+        }
+
         if (CompatibilityUtils.getWorldFromCitizen(this).isClientSide)
         {
             if (player.isShiftKeyDown())
@@ -558,6 +569,43 @@ public class VisitorCitizen extends AbstractEntityCitizen
             }
         }
         return ActionResultType.SUCCESS;
+    }
+
+    /**
+     * Direct interaction on right click
+     *
+     * @param player
+     * @param hand
+     * @return
+     */
+    private ActionResultType directPlayerInteraction(final PlayerEntity player, final Hand hand)
+    {
+        final ItemStack usedStack = player.getItemInHand(hand);
+        if (ISFOOD.test(usedStack))
+        {
+            usedStack.setCount(usedStack.getCount() - 1);
+            player.setItemInHand(hand, usedStack);
+
+            if (!level.isClientSide())
+            {
+                getCitizenData().increaseSaturation(usedStack.getItem().getFoodProperties().getNutrition());
+
+                playSound(SoundEvents.GENERIC_EAT, 1.5f, (float) SoundUtils.getRandomPitch(getRandom()));
+                // Position needs to be centered on citizen, Eat AI wrong too?
+                Network.getNetwork()
+                  .sendToTrackingEntity(new ItemParticleEffectMessage(usedStack,
+                    getX(),
+                    getY(),
+                    getZ(),
+                    getRotationPitch(),
+                    getRotationYaw(),
+                    getEyeHeight()), this);
+
+                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.visitor.food", getCitizenData().getName()), player.getUUID());
+            }
+            return ActionResultType.CONSUME;
+        }
+        return null;
     }
 
     @Override

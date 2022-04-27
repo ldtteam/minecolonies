@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.NBTUtils;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -163,7 +164,7 @@ public class StandardRequestResolversIdentitiesDataStore implements IRequestReso
         @Override
         public short getSerializationId()
         {
-            return 33;
+            return SerializationIdentifierConstants.STANDARD_REQUEST_RESOLVERS_IDENTITIES_DATASTORE_ID;
         }
     }
 }

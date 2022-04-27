@@ -178,7 +178,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
-        if (spawnPathResult.isDone())
+        if (spawnPathResult != null && spawnPathResult.isDone())
         {
             final Path path = spawnPathResult.getPath();
             if (path != null && path.canReach())

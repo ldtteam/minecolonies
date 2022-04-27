@@ -10,13 +10,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipe;
 import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,12 +33,12 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class GenericRecipe implements IGenericRecipe
 {
     @Nullable
-    public static IGenericRecipe of(@Nullable final IRecipe<?> recipe)
+    public static IGenericRecipe of(@Nullable final IRecipe<?> recipe, @Nullable final World world)
     {
         if (recipe == null) return null;
-        final List<List<ItemStack>> inputs = recipe.getIngredients().stream()
+        final List<List<ItemStack>> inputs = compactInputs(recipe.getIngredients().stream()
                 .map(ingredient -> Arrays.asList(ingredient.getItems()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
         final int size;
         final Block intermediate;
         if (recipe instanceof FurnaceRecipe)
@@ -48,7 +51,7 @@ public class GenericRecipe implements IGenericRecipe
             size = recipe.canCraftInDimensions(2, 2) ? 2 : 3;
             intermediate = Blocks.AIR;
         }
-        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe), inputs,
+        return new GenericRecipe(recipe.getId(), recipe.getResultItem(), calculateSecondaryOutputs(recipe, world), inputs,
                 size, intermediate, null, new ArrayList<>(), -1);
     }
 
@@ -232,7 +235,8 @@ public class GenericRecipe implements IGenericRecipe
     }
 
     @NotNull
-    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final IRecipe<?> recipe)
+    private static List<ItemStack> calculateSecondaryOutputs(@NotNull final IRecipe<?> recipe,
+                                                             @Nullable final World world)
     {
         if (recipe instanceof ICraftingRecipe)
         {
@@ -253,7 +257,7 @@ public class GenericRecipe implements IGenericRecipe
                     inv.setItem(slot, stacks[0]);
                 }
             }
-            if (((ICraftingRecipe) recipe).matches(inv, null))
+            if (((ICraftingRecipe) recipe).matches(inv, world))
             {
                 return ((ICraftingRecipe) recipe).getRemainingItems(inv).stream()
                         .filter(ItemStackUtils::isNotEmpty)
@@ -262,5 +266,104 @@ public class GenericRecipe implements IGenericRecipe
             }
         }
         return Collections.emptyList();
+    }
+
+    private static List<List<ItemStack>> compactInputs(final List<List<ItemStack>> inputs)
+    {
+        // FYI, this largely does the same job as RecipeStorage.calculateCleanedInput(), but we can't re-use
+        // that implementation as we need to operate on Ingredients, which can be a list of stacks.
+        final Map<IngredientStacks, IngredientStacks> ingredients = new HashMap<>();
+
+        for (final List<ItemStack> ingredient : inputs)
+        {
+            final IngredientStacks newIngredient = new IngredientStacks(ingredient);
+            // also ignore the build tool as an ingredient, since colony crafters don't require it.
+            //   (see RecipeStorage.calculateCleanedInput() for why)
+            if (!newIngredient.getStacks().isEmpty() && newIngredient.getStacks().get(0).getItem() == buildTool.get()) continue;
+
+            final IngredientStacks existing = ingredients.get(newIngredient);
+            if (existing == null)
+            {
+                ingredients.put(newIngredient, newIngredient);
+            }
+            else
+            {
+                existing.merge(newIngredient);
+            }
+        }
+
+        return ingredients.values().stream()
+                .sorted(Comparator.reverseOrder())
+                .map(IngredientStacks::getStacks)
+                .collect(Collectors.toCollection(NonNullList::create));
+    }
+
+    private static class IngredientStacks implements Comparable<IngredientStacks>
+    {
+        private final List<ItemStack> stacks;
+        private final Set<Item> items;
+
+        public IngredientStacks(final List<ItemStack> ingredient)
+        {
+            this.stacks = ingredient.stream()
+                    .filter(stack -> !stack.isEmpty())
+                    .map(ItemStack::copy)
+                    .collect(Collectors.toList());
+
+            this.items = this.stacks.stream()
+                    .map(ItemStack::getItem)
+                    .collect(Collectors.toSet());
+        }
+
+        @NotNull
+        public List<ItemStack> getStacks() { return this.stacks; }
+
+        public int getCount() { return this.stacks.isEmpty() ? 0 : this.stacks.get(0).getCount(); }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final IngredientStacks that = (IngredientStacks) o;
+            return this.items.equals(that.items);
+            // note that this does not compare the counts to maintain key-stability
+        }
+
+        @Override
+        public int hashCode()
+        {
+            return this.items.hashCode();
+        }
+
+        @Override
+        public int compareTo(@NotNull IngredientStacks o)
+        {
+            int diff = this.getCount() - o.getCount();
+            if (diff != 0) return diff;
+
+            diff = this.stacks.size() - o.stacks.size();
+            if (diff != 0) return diff;
+
+            return this.hashCode() - o.hashCode();
+        }
+
+        public void merge(@NotNull final IngredientStacks other)
+        {
+            // assumes equals(other)
+            for (int i = 0; i < this.stacks.size(); i++)
+            {
+                this.stacks.get(i).grow(other.stacks.get(i).getCount());
+            }
+        }
+
+        @Override
+        public String toString()
+        {
+            return "IngredientStacks{" +
+                    "stacks=" + stacks +
+                    ", items=" + items +
+                    '}';
+        }
     }
 }
