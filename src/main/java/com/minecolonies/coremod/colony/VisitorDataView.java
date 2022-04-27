@@ -38,7 +38,7 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     /**
      * Cached player info for custom texture.
      */
-    private ResourceLocation cachedTexture;
+    private volatile ResourceLocation cachedTexture;
 
     /**
      * Create a CitizenData given an ID. Used as a super-constructor or during loading.
