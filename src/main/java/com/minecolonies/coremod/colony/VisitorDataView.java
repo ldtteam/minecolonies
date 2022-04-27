@@ -36,11 +36,6 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
     private UUID textureUUID;
 
     /**
-     * Cached minecraft name.
-     */
-    private String cachedMinecraftName;
-
-    /**
      * Cached player info for custom texture.
      */
     private ResourceLocation cachedTexture;
