@@ -15,8 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDER;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAREHOUSE_SNAPSHOT;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
  * Message sent to the server when the client saves a new snapshot by clicking on a warehouse.
@@ -36,6 +35,12 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
     private Map<String, Integer> snapshot = new HashMap<>();
 
     /**
+     * The hash of the current work order (if any).
+     */
+    @NotNull
+    private String workOrderHash = "";
+
+    /**
      * Empty constructor used when registering the message.
      */
     public ResourceScrollSaveWarehouseSnapshotMessage()
@@ -46,11 +51,12 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
     /**
      * Empty constructor used when registering the message.
      */
-    public ResourceScrollSaveWarehouseSnapshotMessage(@NotNull BlockPos builderPos, @NotNull Map<String, Integer> snapshot)
+    public ResourceScrollSaveWarehouseSnapshotMessage(@NotNull BlockPos builderPos, @NotNull Map<String, Integer> snapshot, @NotNull String workOrderHash)
     {
         super();
         this.builderPos = builderPos;
         this.snapshot = snapshot;
+        this.workOrderHash = workOrderHash;
     }
 
     @Override
@@ -65,6 +71,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
             int itemAmount = buf.readInt();
             snapshot.put(itemName, itemAmount);
         }
+        workOrderHash = buf.readUtf(32767);
     }
 
     @Override
@@ -76,6 +83,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
             buf.writeUtf(key);
             buf.writeInt(value);
         });
+        buf.writeUtf(workOrderHash);
     }
 
     @Nullable
@@ -97,6 +105,7 @@ public class ResourceScrollSaveWarehouseSnapshotMessage implements IMessage
               CompoundNBT newData = new CompoundNBT();
               snapshot.keySet().forEach(f -> newData.putInt(f, snapshot.getOrDefault(f, 0)));
               data.put(TAG_WAREHOUSE_SNAPSHOT, newData);
+              data.putString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH, workOrderHash);
           });
     }
 }

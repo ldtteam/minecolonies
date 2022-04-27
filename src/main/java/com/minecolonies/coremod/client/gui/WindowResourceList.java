@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
@@ -42,11 +43,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAREHOUSE_SNAPSHOT;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAREHOUSE_SNAPSHOT_WO_HASH;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
-
-// TODO: Introduce a work order "hash" so we can notice changes in the work order of the builder and reset the warehouse snapshot when that happens
 
 /**
  * Window for the resource list item.
@@ -84,6 +84,12 @@ public class WindowResourceList extends AbstractWindowSkeleton
     private final CompoundNBT compound;
 
     /**
+     * The hash of the current work order (if any).
+     */
+    @NotNull
+    private String workOrderHash;
+
+    /**
      * The snapshot of the previously clicked on warehouse.
      */
     @NotNull
@@ -108,7 +114,9 @@ public class WindowResourceList extends AbstractWindowSkeleton
         this.buildingPos = buildingPos;
         this.warehousePos = warehousePos;
         this.compound = compound;
-        this.warehouseSnapshot = loadWarehouseSnapshot(compound);
+        this.warehouseSnapshot = new HashMap<>();
+        this.workOrderHash = "";
+        loadWarehouseSnapshotData(compound);
 
         final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colonyId, Minecraft.getInstance().level.dimension());
         if (colonyView != null)
@@ -130,35 +138,40 @@ public class WindowResourceList extends AbstractWindowSkeleton
      */
     private void pullResourcesFromWarehouse()
     {
-        if (warehousePos == null)
+        String currentWorkOrderHash = createWorkOrderHash();
+        if (!currentWorkOrderHash.equals(workOrderHash))
         {
-            return;
+            workOrderHash = currentWorkOrderHash;
+            warehouseSnapshot = new HashMap<>();
         }
 
-        Map<Item, BuildingBuilderResource> resourceMap = resources.stream().collect(Collectors.toMap(ItemStorage::getItem, v -> v));
-
-        warehouseSnapshot = new HashMap<>();
-
-        List<BlockPos> containers = builder.getColony().getBuilding(warehousePos).getContainerList();
-        for (BlockPos container : containers)
+        if (warehousePos != null)
         {
-            final TileEntity rack = Minecraft.getInstance().level.getBlockEntity(container);
-            if (rack instanceof TileEntityRack)
-            {
-                ((TileEntityRack) rack).getAllContent()
-                  .forEach((item, amount) -> {
-                      if (!resourceMap.containsKey(item.getItem()))
-                      {
-                          return;
-                      }
+            Map<Item, BuildingBuilderResource> resourceMap = resources.stream().collect(Collectors.toMap(ItemStorage::getItem, v -> v));
 
-                      int oldAmount = warehouseSnapshot.getOrDefault(item.getItem().getDescriptionId(), 0);
-                      warehouseSnapshot.put(item.getItem().getDescriptionId(), oldAmount + amount);
-                  });
+            warehouseSnapshot = new HashMap<>();
+
+            List<BlockPos> containers = builder.getColony().getBuilding(warehousePos).getContainerList();
+            for (BlockPos container : containers)
+            {
+                final TileEntity rack = Minecraft.getInstance().level.getBlockEntity(container);
+                if (rack instanceof TileEntityRack)
+                {
+                    ((TileEntityRack) rack).getAllContent()
+                      .forEach((item, amount) -> {
+                          if (!resourceMap.containsKey(item.getItem()))
+                          {
+                              return;
+                          }
+
+                          int oldAmount = warehouseSnapshot.getOrDefault(item.getItem().getDescriptionId(), 0);
+                          warehouseSnapshot.put(item.getItem().getDescriptionId(), oldAmount + amount);
+                      });
+                }
             }
         }
 
-        saveWarehouseSnapshot();
+        saveWarehouseSnapshotData();
     }
 
     /**
@@ -251,38 +264,56 @@ public class WindowResourceList extends AbstractWindowSkeleton
     }
 
     /**
-     * Load the snapshot of the compound data.
+     * Load the snapshot data of the compound data.
      *
      * @param compound the compound data.
-     * @return the snapshot.
      */
-    private Map<String, Integer> loadWarehouseSnapshot(@Nullable CompoundNBT compound)
+    private void loadWarehouseSnapshotData(@Nullable CompoundNBT compound)
     {
         if (compound != null)
         {
             final CompoundNBT warehouseSnapshotCompound = compound.getCompound(TAG_WAREHOUSE_SNAPSHOT);
-            return warehouseSnapshotCompound.getAllKeys().stream()
-              .collect(Collectors.toMap(k -> k, warehouseSnapshotCompound::getInt));
-        }
-        else
-        {
-            return new HashMap<>();
+            this.warehouseSnapshot = warehouseSnapshotCompound.getAllKeys().stream()
+                                       .collect(Collectors.toMap(k -> k, warehouseSnapshotCompound::getInt));
+            this.workOrderHash = compound.getString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH);
         }
     }
 
     /**
-     * Save the snapshot to the compound data.
+     * Save the snapshot data to the compound data.
      */
-    private void saveWarehouseSnapshot()
+    private void saveWarehouseSnapshotData()
     {
         if (compound != null)
         {
             CompoundNBT newData = new CompoundNBT();
             warehouseSnapshot.keySet().forEach(f -> newData.putInt(f, warehouseSnapshot.getOrDefault(f, 0)));
             compound.put(TAG_WAREHOUSE_SNAPSHOT, newData);
+            compound.putString(TAG_WAREHOUSE_SNAPSHOT_WO_HASH, workOrderHash);
 
-            Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(buildingPos, warehouseSnapshot));
+            Network.getNetwork().sendToServer(new ResourceScrollSaveWarehouseSnapshotMessage(buildingPos, warehouseSnapshot, workOrderHash));
         }
+    }
+
+    /**
+     * Creates a work order hash from the builder it's next work order.
+     *
+     * @return the work order hash or an empty string if there's no work order.
+     */
+    @NotNull
+    private String createWorkOrderHash()
+    {
+        if (builder != null)
+        {
+            final Optional<IWorkOrderView> currentWorkOrder =
+              builder.getColony().getWorkOrders().stream().filter(o -> o.getClaimedBy().equals(buildingPos)).max(Comparator.comparingInt(IWorkOrderView::getPriority));
+            if (currentWorkOrder.isPresent())
+            {
+                long location = currentWorkOrder.get().getLocation().asLong();
+                return location + "__" + currentWorkOrder.get().getStructureName();
+            }
+        }
+        return "";
     }
 
     @Override
