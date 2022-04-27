@@ -1,43 +1,25 @@
 package com.minecolonies.coremod.colony;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorViewData;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.tileentity.SkullTileEntityRenderer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.SkullTileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.UsernameCache;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * View data for visitors
  */
 public class VisitorDataView extends CitizenDataView implements IVisitorViewData
 {
-    /**
-     * Two variables to avoid semaphores.
-     */
-    private boolean startedDownloading = false;
-    private AtomicBoolean finishedDownloading = new AtomicBoolean(false);
-
     /**
      * The related colony view
      */
@@ -108,55 +90,19 @@ public class VisitorDataView extends CitizenDataView implements IVisitorViewData
         }
         if (cachedTexture == null)
         {
-            if (finishedDownloading.get())
+            cachedTexture = DefaultPlayerSkin.getDefaultSkin(textureUUID);
+            Util.backgroundExecutor().execute(() ->
             {
-                final Minecraft minecraft = Minecraft.getInstance();
-                GameProfile profile = new GameProfile(textureUUID, cachedMinecraftName);
-                profile = SkullTileEntity.updateGameprofile(profile);
-                final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
+                Minecraft minecraft = Minecraft.getInstance();
+                final GameProfile profile = new GameProfile(textureUUID, "mcoltexturequery");
+                minecraft.getMinecraftSessionService().fillProfileProperties(profile, true);
+                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraft.getSkinManager().getInsecureSkinInformation(profile);
                 if (!map.isEmpty())
                 {
                     cachedTexture = minecraft.getSkinManager().registerTexture(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
                 }
-            }
-            if (startedDownloading)
-            {
-                return DefaultPlayerSkin.getDefaultSkin(textureUUID);
-            }
-            startedDownloading = true;
-            queryNameFromUUID(textureUUID);
+            });
         }
-        return cachedTexture == null ? DefaultPlayerSkin.getDefaultSkin(textureUUID) : cachedTexture;
-    }
-
-    /**
-     * Query the name from the mojang API.
-     * @param uuid uuid of the user.
-     * @return the name or null.
-     */
-    private void queryNameFromUUID(final UUID uuid)
-    {
-        new Thread(() -> {
-            try
-            {
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                  new URL("https://api.mojang.com/user/profiles/" + uuid.toString()+ "/names")
-                    .openConnection().getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-                while ((inputLine = in.readLine()) != null)
-                {
-                    response.append(inputLine);
-                }
-                in.close();
-                JsonArray json = new Gson().fromJson(response.toString(), JsonArray.class);
-                cachedMinecraftName = json.get(json.size() - 1).getAsJsonObject().get("name").getAsString();
-                finishedDownloading.set(cachedMinecraftName != null);
-            }
-            catch (Exception ignored)
-            {
-
-            }
-        }).start();
+        return cachedTexture;
     }
 }
