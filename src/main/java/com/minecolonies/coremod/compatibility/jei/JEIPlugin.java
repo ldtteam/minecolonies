@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -30,7 +31,6 @@ import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -163,7 +163,7 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private void populateRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla,
+    private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
                                  @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
     {
         registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);

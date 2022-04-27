@@ -318,7 +318,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     @Override
     public void onStart()
     {
-        if (spawnPathResult.isDone())
+        if (spawnPathResult != null && spawnPathResult.isDone())
         {
             final Path path = spawnPathResult.getPath();
             if (path != null && path.canReach())
