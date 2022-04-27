@@ -58,12 +58,12 @@ public class FemaleStudentModel extends CitizenModel<AbstractEntityCitizen>
         PartDefinition Right_Arm = partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(40, 32).addBox(-2.0F, -2.03F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.45F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
 
-        PartDefinition Book = Right_Arm.addOrReplaceChild("Book", CubeListBuilder.create().texOffs(64, 37).mirror().addBox(-7.3F, -14.5F, -3.0F, 2.0F, 4.0F, 6.0F, new CubeDeformation(-0.2F)).mirror(false), PartPose.offset(5.6F, 22.0F, 0.0F));
+        PartDefinition Book = Right_Arm.addOrReplaceChild("book", CubeListBuilder.create().texOffs(64, 37).mirror().addBox(-7.3F, -14.5F, -3.0F, 2.0F, 4.0F, 6.0F, new CubeDeformation(-0.2F)).mirror(false), PartPose.offset(5.6F, 22.0F, 0.0F));
 
         PartDefinition Left_Arm = partdefinition.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(32, 48).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(48, 48).addBox(-1.0F, -2.03F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.45F)), PartPose.offset(5.0F, 2.0F, 0.0F));
 
-        PartDefinition Right_Arm_Folded = partdefinition.addOrReplaceChild("Right_Arm_Folded", CubeListBuilder.create(), PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
+        PartDefinition Right_Arm_Folded = Body.addOrReplaceChild("Right_Arm_Folded", CubeListBuilder.create(), PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
 
         PartDefinition rightShoulder = Right_Arm_Folded.addOrReplaceChild("rightShoulder", CubeListBuilder.create().texOffs(56, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(72, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.0472F, 0.0F, 0.0F));
@@ -71,7 +71,7 @@ public class FemaleStudentModel extends CitizenModel<AbstractEntityCitizen>
         PartDefinition rightForeArm = Right_Arm_Folded.addOrReplaceChild("rightForeArm", CubeListBuilder.create().texOffs(88, 16).addBox(-1.01F, -0.6F, -2.3F, 7.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(88, 24).addBox(-1.01F, -0.6F, -2.3F, 7.0F, 3.0F, 4.0F, new CubeDeformation(0.251F)), PartPose.offsetAndRotation(-1.0F, 2.5F, -3.8F, -1.0472F, 0.0F, 0.0F));
 
-        PartDefinition Left_Arm_Folded = partdefinition.addOrReplaceChild("Left_Arm_Folded", CubeListBuilder.create(), PartPose.offsetAndRotation(5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
+        PartDefinition Left_Arm_Folded = Body.addOrReplaceChild("Left_Arm_Folded", CubeListBuilder.create(), PartPose.offsetAndRotation(5.0F, 2.0F, 0.0F, 0.1745F, 0.0F, 0.0F));
 
         PartDefinition leftShoulder = Left_Arm_Folded.addOrReplaceChild("leftShoulder", CubeListBuilder.create().texOffs(56, 26).mirror().addBox(-1.0F, -2.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)).mirror(false)
           .texOffs(72, 26).addBox(-1.0F, -2.0F, -2.0F, 3.0F, 6.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.0472F, 0.0F, 0.0F));
