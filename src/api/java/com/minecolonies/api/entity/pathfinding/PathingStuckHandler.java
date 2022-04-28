@@ -286,6 +286,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             stuckLevel++;
             delayToNextUnstuckAction = 100;
+            navigator.getOurEntity().stopRiding();
             navigator.stop();
             return;
         }
