@@ -19,6 +19,7 @@ import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -229,7 +230,11 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openResourceScrollWindow(final int colonyId, final BlockPos pos)
+    public void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos pos,
+      final BlockPos warehousePos,
+      final CompoundTag warehouseCompound)
     {
         /*
          * Intentionally left empty.

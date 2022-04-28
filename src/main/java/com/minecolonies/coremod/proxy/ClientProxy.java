@@ -9,6 +9,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.ClientMinecoloniesAPIImpl;
 import com.minecolonies.coremod.client.gui.*;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -127,9 +128,13 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openResourceScrollWindow(final int colonyId, final BlockPos buildingPos)
+    public void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos buildingPos,
+      final @Nullable BlockPos warehousePos,
+      final @Nullable CompoundTag warehouseCompound)
     {
-        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos);
+        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos, warehousePos, warehouseCompound);
         window.open();
     }
 
