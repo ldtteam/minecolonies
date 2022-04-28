@@ -1564,8 +1564,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = count - invCount;
         final int updatedMinCount = Math.min(updatedCount, minCount);
 
-        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT)) >= updatedMinCount &&
+        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
                 updatedCount,
@@ -1601,8 +1600,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = deliverable.getCount() - invCount;
         final int updatedMinCount = Math.min(updatedCount, deliverable.getMinimumCount());
 
-        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          deliverable::matches) >= updatedMinCount &&
+        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
+          deliverable::matches, updatedMinCount) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), deliverable::matches,
                 updatedCount,
@@ -1635,8 +1634,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> itemStack.getItem().is(tag)) >= count &&
+        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
+          itemStack -> itemStack.getItem().is(tag), count) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> itemStack.getItem().is(tag),
                 count,
