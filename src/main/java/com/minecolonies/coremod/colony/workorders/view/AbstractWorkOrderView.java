@@ -33,7 +33,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     private String structureName;
 
     /**
-     * The name of the work order
+     * The name of the work order.
      */
     private String workOrderName;
 
@@ -98,12 +98,6 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     }
 
     @Override
-    public void setId(final int id)
-    {
-        this.id = id;
-    }
-
-    @Override
     public int getPriority()
     {
         return priority;
@@ -130,6 +124,7 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      *
      * @return the value String.
      */
+    @Override
     public String getStructureName()
     {
         return structureName.replaceAll("schematics/(?:decorations/)?", "");
