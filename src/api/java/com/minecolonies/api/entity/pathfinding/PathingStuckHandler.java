@@ -1,6 +1,7 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
+import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -285,6 +286,7 @@ public class PathingStuckHandler implements IStuckHandler
         {
             stuckLevel++;
             delayToNextUnstuckAction = 100;
+            navigator.getOurEntity().stopRiding();
             navigator.stop();
             return;
         }
