@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.ldtteam.blockout.Loader;
-import com.ldtteam.blockout.Log;
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
-import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.View;
 import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.colony.IColonyManager;
@@ -40,8 +38,6 @@ public class CraftingSetting implements ICraftingSetting
      * The specific crafting module.
      */
     private final String craftingModuleId;
-
-    //todo we should probably cache this here, but how do we make sure client/server-side got the same?
 
     /**
      * Create a new crafting setting.
@@ -131,7 +127,26 @@ public class CraftingSetting implements ICraftingSetting
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(input -> {
 
-            //todo getSettings -> get set one, +1 or startover
+            final List<IRecipeStorage> list = building.getModuleView(CraftingModuleView.class).getRecipes();
+            int currentIntIndex = 0;
+
+            int index = 0;
+            for (final IRecipeStorage recipe : list)
+            {
+                index++;
+                if (recipe.getToken().equals(currentIntIndex))
+                {
+                    currentIntIndex = index;
+                    break;
+                }
+            }
+            int newIndex = currentIntIndex + 1;
+            if (newIndex >= list.size())
+            {
+                newIndex = 0;
+            }
+
+            currentIndex = list.get(newIndex).getToken();
             settingsModuleView.trigger(key);
         });
     }
