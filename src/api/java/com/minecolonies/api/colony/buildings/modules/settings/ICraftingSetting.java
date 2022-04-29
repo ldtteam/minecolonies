@@ -3,6 +3,7 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.crafting.IRecipeStorage;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface ICraftingSetting extends ISetting
      * Get the setting value.
      * @return the current value.
      */
-    ItemStack getValue(final IBuildingView building);
+    IRecipeStorage getValue(final IBuildingView building);
 
     /**
      * Get the list of all settings.

@@ -3,13 +3,13 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
-import net.minecraft.item.BlockItem;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Interface for the boolean settings factory which is responsible for creating and maintaining bool setting objects.
+ * Interface for the recipe setting factory.
  */
-public interface IBlockSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T>
+public interface IRecipeSettingFactory<T extends ISetting> extends IFactory<FactoryVoidInput, T>
 {
     @NotNull
     @Override
@@ -20,21 +20,21 @@ public interface IBlockSettingFactory<T extends ISetting> extends IFactory<Facto
             throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 2 are allowed!");
         }
 
-        if (!(context[0] instanceof BlockItem))
+        if (!(context[0] instanceof IToken))
         {
-            throw new IllegalArgumentException("First parameter is supposed to be a BlockItem!");
+            throw new IllegalArgumentException("First parameter is supposed to be an IToken<?>!");
         }
 
-        if (!(context[1] instanceof BlockItem))
+        if (!(context[1] instanceof String))
         {
-            throw new IllegalArgumentException("Second parameter is supposed to be a BlockItem!");
+            throw new IllegalArgumentException("Second parameter is supposed to be a String!");
         }
 
-        final BlockItem def = (BlockItem) context[0];
-        final BlockItem current = (BlockItem) context[1];
-        return getNewInstance(def, current);
+        final IToken<?> index = (IToken<?>) context[0];
+        final String module = (String) context[1];
+        return getNewInstance(index, module);
     }
 
     @NotNull
-    T getNewInstance(final BlockItem def, final BlockItem current);
+    T getNewInstance(final IToken<?> def, final String current);
 }

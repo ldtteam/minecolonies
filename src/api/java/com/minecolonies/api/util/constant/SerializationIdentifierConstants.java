@@ -64,4 +64,5 @@ public class SerializationIdentifierConstants
     public static short BUILDER_MODE_SETTINGS_ID                                           = 56;
     public static short DYNAMIC_TREES_SETTINGS_ID                                          = 57;
     public static short STATION_REQUEST_RESOLVER_ID                                        = 58;
+    public static short CRAFTING_SETTINGS_ID                                               = 59;
 }

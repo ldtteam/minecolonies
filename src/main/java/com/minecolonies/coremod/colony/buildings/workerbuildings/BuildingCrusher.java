@@ -6,7 +6,8 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.PlantationSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.RecipeSetting;
+import com.minecolonies.coremod.colony.buildings.modules.settings.IntSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -23,7 +24,8 @@ public class BuildingCrusher extends AbstractBuilding
     /**
      * Settings key for the building mode.
      */
-    public static final ISettingKey<PlantationSetting> MODE = new SettingKey<>(PlantationSetting.class, new ResourceLocation(Constants.MOD_ID, "mode"));
+    public static final ISettingKey<RecipeSetting> MODE        = new SettingKey<>(RecipeSetting.class, new ResourceLocation(Constants.MOD_ID, "crushermode"));
+    public static final ISettingKey<IntSetting>    DAILY_LIMIT = new SettingKey<>(IntSetting.class, new ResourceLocation(Constants.MOD_ID, "dailylimit"));
 
     /**
      * The multiplier to define the max craft per day.

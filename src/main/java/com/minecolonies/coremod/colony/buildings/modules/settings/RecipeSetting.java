@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.*;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -25,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Stores a string-list setting (Like enum, but easily serializable).
+ * Stores a recipe based setting.
  */
-public class CraftingSetting implements ICraftingSetting
+public class RecipeSetting implements ICraftingSetting
 {
     /**
      * Current index of the setting.
@@ -37,13 +38,13 @@ public class CraftingSetting implements ICraftingSetting
     /**
      * The specific crafting module.
      */
-    private final String craftingModuleId;
+    protected final String craftingModuleId;
 
     /**
      * Create a new crafting setting.
      * @param craftingModuleId the crafting module id.
      */
-    public CraftingSetting(final String craftingModuleId)
+    public RecipeSetting(final String craftingModuleId)
     {
         this.craftingModuleId = craftingModuleId;
     }
@@ -54,7 +55,7 @@ public class CraftingSetting implements ICraftingSetting
      * @param currentIndex the current selected index.
      * @param craftingModuleId the crafting module id.
      */
-    public CraftingSetting(final IToken<?> currentIndex, final String craftingModuleId)
+    public RecipeSetting(final IToken<?> currentIndex, final String craftingModuleId)
     {
         this.currentIndex = currentIndex;
         this.craftingModuleId = craftingModuleId;
@@ -77,7 +78,7 @@ public class CraftingSetting implements ICraftingSetting
     }
 
     @Override
-    public ItemStack getValue(final IBuildingView building)
+    public IRecipeStorage getValue(final IBuildingView building)
     {
         final CraftingModuleView craftingModule = building.getModuleViewMatching(CraftingModuleView.class, m -> m.getId().equals(craftingModuleId));
 
@@ -85,12 +86,12 @@ public class CraftingSetting implements ICraftingSetting
         {
             if (recipe.getToken().equals(currentIndex))
             {
-                return recipe.getPrimaryOutput();
+                return recipe;
             }
         }
 
         currentIndex = craftingModule.getRecipes().get(0).getToken();
-        return craftingModule.getRecipes().get(0).getPrimaryOutput();
+        return craftingModule.getRecipes().get(0);
     }
 
     @Override
@@ -133,12 +134,12 @@ public class CraftingSetting implements ICraftingSetting
             int index = 0;
             for (final IRecipeStorage recipe : list)
             {
-                index++;
-                if (recipe.getToken().equals(currentIntIndex))
+                if (recipe.getToken().equals(currentIndex))
                 {
                     currentIntIndex = index;
                     break;
                 }
+                index++;
             }
             int newIndex = currentIntIndex + 1;
             if (newIndex >= list.size())
@@ -154,9 +155,10 @@ public class CraftingSetting implements ICraftingSetting
     @Override
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final Window window)
     {
-        final ItemStack stack = getValue(building);
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(stack.getDescriptionId()));
-        pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(stack);
+        final IRecipeStorage stack = getValue(building);
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslationTextComponent(stack.getPrimaryOutput().getDescriptionId()));
+        pane.findPaneOfTypeByID("iconto", ItemIcon.class).setItem(stack.getPrimaryOutput());
+        pane.findPaneOfTypeByID("iconfrom", ItemIcon.class).setItem(stack.getCleanedInput().get(0).getItemStack());
     }
 
     @Override
