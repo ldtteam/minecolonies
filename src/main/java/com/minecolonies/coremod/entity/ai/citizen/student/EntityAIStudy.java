@@ -33,6 +33,11 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
     public static final String RENDER_META_BOOK = "book";
 
     /**
+     * Render the book.
+     */
+    public static final String RENDER_META_STUDYING = "study";
+
+    /**
      * Delay for each subject study.
      */
     private static final int STUDY_DELAY = 20 * 60;
@@ -70,6 +75,10 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
         if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER))
         {
             renderMeta += RENDER_META_BOOK;
+        }
+        if (worker.getNavigation().isDone())
+        {
+            renderMeta += RENDER_META_STUDYING;
         }
         worker.setRenderMetadata(renderMeta);
     }

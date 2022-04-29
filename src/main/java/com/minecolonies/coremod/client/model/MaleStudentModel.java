@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 import static com.minecolonies.coremod.entity.ai.citizen.florist.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 import static com.minecolonies.coremod.entity.ai.citizen.student.EntityAIStudy.RENDER_META_BOOK;
+import static com.minecolonies.coremod.entity.ai.citizen.student.EntityAIStudy.RENDER_META_STUDYING;
 
 public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -88,14 +89,14 @@ public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 
         final boolean working = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        final boolean studying = entity.getRenderMetadata().contains(RENDER_META_STUDYING);
 
         rightArm.getChild("book").visible = entity.getRenderMetadata().contains(RENDER_META_BOOK);
         head.getChild("glasses").visible = working;
 
-        body.getChild("Left_Arm_Folded");
-        body.getChild("Right_Arm_Folded");
-        //leftArm;
-        //rightArm;
-
+        body.getChild("Left_Arm_Folded").visible = studying;
+        body.getChild("Right_Arm_Folded").visible = studying;
+        leftArm.visible = !studying;
+        rightArm.visible = !studying;
     }
 }
