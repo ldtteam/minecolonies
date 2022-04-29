@@ -62,6 +62,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
     @Override
     protected IAIState decide()
     {
+        //todo adjust this code, this is meh
         final IAIState nextState = super.decide();
         if (nextState != START_WORKING && nextState != IDLE)
         {
