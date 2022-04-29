@@ -124,7 +124,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         final BuildingCrusher crusherBuilding = getOwnBuilding();
         WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
 
-        final IRecipeStorage recipeMode = IColonyManager.getInstance().getRecipeManager().getRecipe(crusherBuilding.getSetting(BuildingCrusher.MODE).getValue(crusherBuilding));
+        final IRecipeStorage recipeMode = crusherBuilding.getSetting(BuildingCrusher.MODE).getValue(crusherBuilding);
         final int dailyLimit = crusherBuilding.getSetting(BuildingCrusher.DAILY_LIMIT).getValue();
         if (currentRecipeStorage == null)
         {

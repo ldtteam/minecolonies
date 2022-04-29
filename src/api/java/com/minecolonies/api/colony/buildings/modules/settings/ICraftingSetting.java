@@ -2,7 +2,6 @@ package com.minecolonies.api.colony.buildings.modules.settings;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import net.minecraft.item.ItemStack;
 
@@ -17,7 +16,7 @@ public interface ICraftingSetting extends ISetting
      * Get the setting value.
      * @return the current value.
      */
-    IToken<?> getValue(final IBuilding building);
+    IRecipeStorage getValue(final IBuilding building);
 
     /**
      * Get the setting value.
@@ -43,5 +42,5 @@ public interface ICraftingSetting extends ISetting
      * Set the setting to a specific index.
      * @param value the value to set.
      */
-    void set(final IToken<?> value);
+    void set(final IRecipeStorage value);
 }

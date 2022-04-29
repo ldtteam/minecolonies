@@ -62,19 +62,19 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public IToken<?> getValue(final IBuilding building)
+    public IRecipeStorage getValue(final IBuilding building)
     {
         final ICraftingBuildingModule craftingModule = building.getModuleMatching(ICraftingBuildingModule.class, m -> m.getId().equals(craftingModuleId));
         for (final IToken<?> token : craftingModule.getRecipes())
         {
             if (token.equals(currentIndex))
             {
-                return currentIndex;
+                return IColonyManager.getInstance().getRecipeManager().getRecipe(currentIndex);
             }
         }
 
         currentIndex = building.getFirstModuleOccurance(ICraftingBuildingModule.class).getRecipes().get(0);
-        return currentIndex;
+        return IColonyManager.getInstance().getRecipeManager().getRecipe(currentIndex);
     }
 
     @Override
@@ -168,9 +168,9 @@ public class RecipeSetting implements ICraftingSetting
     }
 
     @Override
-    public void set(final IToken<?> value)
+    public void set(final IRecipeStorage value)
     {
-        currentIndex = value;
+        currentIndex = value.getToken();
     }
 
     @Override
