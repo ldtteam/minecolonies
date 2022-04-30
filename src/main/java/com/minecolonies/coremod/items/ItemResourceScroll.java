@@ -11,6 +11,7 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -80,6 +81,13 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
                     MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
+            else if (buildingEntity instanceof TileEntityWareHouse)
+            {
+                if (ctx.getLevel().isClientSide)
+                {
+                    openWindow(compound, ctx.getPlayer(), buildingEntity.getPosition());
+                }
+            }
             else
             {
                 if (!ctx.getLevel().isClientSide)
@@ -91,7 +99,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else if (ctx.getLevel().isClientSide)
         {
-            openWindow(compound, ctx.getPlayer());
+            openWindow(compound, ctx.getPlayer(), null);
         }
 
         return ActionResultType.SUCCESS;
@@ -119,7 +127,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
         }
 
-        openWindow(checkForCompound(clipboard), playerIn);
+        openWindow(checkForCompound(clipboard), playerIn, null);
 
         return new ActionResult<>(ActionResultType.SUCCESS, clipboard);
     }
@@ -130,7 +138,10 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
-        if (worldIn == null) return;
+        if (worldIn == null)
+        {
+            return;
+        }
 
         final CompoundNBT compound = checkForCompound(stack);
         final int colonyId = compound.getInt(TAG_COLONY_ID);
@@ -144,8 +155,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 String name = ((BuildingBuilder.View) buildingView).getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
-                  ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
-                  : new TranslationTextComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
+                              ? new StringTextComponent(TextFormatting.DARK_PURPLE + name)
+                              : new TranslationTextComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }
@@ -167,16 +178,17 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
     /**
      * Opens the scroll window if there is a valid builder linked
+     *
      * @param compound the item compound
-     * @param player the player entity opening the window
+     * @param player   the player entity opening the window
      */
-    private static void openWindow(CompoundNBT compound, PlayerEntity player)
+    private static void openWindow(CompoundNBT compound, PlayerEntity player, BlockPos warehousePos)
     {
         if (compound.getAllKeys().contains(TAG_COLONY_ID) && compound.getAllKeys().contains(TAG_BUILDER))
         {
             final int colonyId = compound.getInt(TAG_COLONY_ID);
             final BlockPos builderPos = BlockPosUtil.read(compound, TAG_BUILDER);
-            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos);
+            MineColonies.proxy.openResourceScrollWindow(colonyId, builderPos, warehousePos, compound);
         }
         else
         {

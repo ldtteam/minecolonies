@@ -236,7 +236,11 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openResourceScrollWindow(final int colonyId, final BlockPos pos)
+    public void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos pos,
+      final BlockPos warehousePos,
+      final CompoundNBT warehouseCompound)
     {
         /*
          * Intentionally left empty.

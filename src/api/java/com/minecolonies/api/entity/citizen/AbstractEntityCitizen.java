@@ -364,6 +364,12 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     @Override
     public void onPlayerCollide(final PlayerEntity player)
     {
+        if (getCitizenData() == null)
+        {
+            super.onPlayerCollide(player);
+            return;
+        }
+        
         final IJob<?> job = getCitizenData().getJob();
         if (job == null || !job.isGuard())
         {

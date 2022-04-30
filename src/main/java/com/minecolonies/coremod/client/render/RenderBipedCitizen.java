@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
+import com.minecolonies.api.client.render.modeltype.CitizenPlayerModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -93,7 +94,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
         if (citizen.getCitizenDataView() != null && citizen.getCitizenDataView().getCustomTexture() != null)
         {
-            model = new CitizenModel<>(false);
+            model = new CitizenPlayerModel(0.0f, false);
         }
 
         model.young = citizen.isBaby();
