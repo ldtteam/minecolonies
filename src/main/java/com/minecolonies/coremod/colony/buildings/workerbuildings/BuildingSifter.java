@@ -133,11 +133,5 @@ public class BuildingSifter extends AbstractBuilding
         {
             super(jobEntry);
         }
-
-        @Override
-        public boolean isVisible()
-        {
-            return !recipes.isEmpty();
-        }
     }
 }
