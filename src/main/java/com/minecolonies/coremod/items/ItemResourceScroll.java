@@ -116,9 +116,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> use(
-      final World worldIn,
-      final PlayerEntity playerIn,
-      final Hand hand)
+      final World worldIn, final PlayerEntity playerIn, final Hand hand)
     {
         final ItemStack clipboard = playerIn.getItemInHand(hand);
 
