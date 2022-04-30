@@ -50,7 +50,7 @@ public class JobArcheologist extends AbstractJob<EntityAIWorkArcheologist, JobAr
     @Override
     public ResourceLocation getModel()
     {
-        return ModModelTypes.COMPOSTER_ID;
+        return ModModelTypes.ARCHEOLOGIST_ID;
     }
 
     @Override

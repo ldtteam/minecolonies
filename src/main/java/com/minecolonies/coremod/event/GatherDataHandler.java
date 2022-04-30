@@ -19,6 +19,7 @@ public class GatherDataHandler
         final DataGenerator generator = event.getGenerator();
         final LootTables lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator, event.getExistingFileHelper());
+
         generator.addProvider(new DefaultBlockLootTableProvider(generator));
         generator.addProvider(new DefaultAdvancementsProvider(generator, event.getExistingFileHelper()));
         generator.addProvider(new DefaultSoundProvider(generator));
@@ -32,5 +33,8 @@ public class GatherDataHandler
         generator.addProvider(new DefaultFishermanLootProvider(generator));
         generator.addProvider(new DefaultConcreteMixerCraftingProvider(generator));
         generator.addProvider(new DefaultNetherWorkerLootProvider(generator, lootTableManager));
+        generator.addProvider(new DefaultStructureTagProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(new DefaultItemModelProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(new DefaultArcheologistsLootTableProvider(generator));
     }
 }

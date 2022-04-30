@@ -2280,5 +2280,20 @@
   "com.minecolonies.coremod.gui.buildingassignmentmode": "Building Assignment Mode:",
   "com.minecolonies.coremod.gui.home.homeless": "Homeless",
   "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
-  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here"
+  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here",
+
+  "itemGroup.com.minecolonies.creative.tabs.archeologist.loot": "Archeologist's Loot",
+  "com.minecolonies.coremod.item.architectloot.name": "%2$s damaged %1$s",
+  "com.minecolonies.coremod.item.architectloot.damage.none": "Not",
+  "com.minecolonies.coremod.item.architectloot.damage.slightly": "Slightly",
+  "com.minecolonies.coremod.item.architectloot.damage.moderately": "Moderately",
+  "com.minecolonies.coremod.item.architectloot.damage.severely": "Severely",
+  "com.minecolonies.coremod.item.architectloot.damage.extremely": "Extremely",
+  "com.minecolonies.coremod.item.architectloot.type.small.minecraft.jungle.pyramid": "crown of the Jungle",
+  "com.minecolonies.coremod.item.architectloot.type.large.minecraft.jungle.pyramid": "statue of the Jungle",
+  "com.minecolonies.coremod.item.architectloot.type.tablet.minecraft.jungle.pyramid": "tablet of the Jungle",
+  "com.minecolonies.coremod.item.architectloot.type.small.minecraft.desert.pyramid": "desert's goggles",
+  "com.minecolonies.coremod.item.architectloot.type.large.minecraft.desert.pyramid": "desert's eye",
+  "com.minecolonies.coremod.item.architectloot.type.tablet.minecraft.desert.pyramid": "tablet of the desert"
+
 }

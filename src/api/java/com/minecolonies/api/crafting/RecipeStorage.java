@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.InteractionHand;
@@ -108,18 +107,6 @@ public class RecipeStorage implements IRecipeStorage
      * The cached loot table for possible outputs
      */
     private LootTable loot;
-
-    /**
-     * The loot parameter set definition
-     */
-    public static final LootContextParamSet recipeLootParameters = (new LootContextParamSet.Builder())
-                .required(LootContextParams.ORIGIN)
-                .required(LootContextParams.THIS_ENTITY)
-                .required(LootContextParams.TOOL)
-                .optional(LootContextParams.DAMAGE_SOURCE)
-                .optional(LootContextParams.KILLER_ENTITY)
-                .optional(LootContextParams.DIRECT_KILLER_ENTITY)
-                .build();
 
     /**
      * Create an instance of the recipe storage.
@@ -629,7 +616,7 @@ public class RecipeStorage implements IRecipeStorage
             secondaryStacks.addAll(loot.getRandomItems(context));
         }
 
-        resultStacks.addAll(secondaryStacks.stream().map(ItemStack::copy).collect(Collectors.toList()));
+        resultStacks.addAll(secondaryStacks.stream().map(ItemStack::copy).toList());
         if(doInsert)
         {
             for (final ItemStack stack : secondaryStacks)

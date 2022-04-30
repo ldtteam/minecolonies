@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -17,7 +16,7 @@ import java.util.List;
  * Currently this module is only used to provide some metadata for JEI, but
  * in the future it could be accessed by animal herding AI too.
  */
-public class AnimalHerdingModule extends AbstractBuildingModule
+public class AnimalHerdingModule extends AbstractBuildingWithLootTableModule
 {
     private final JobEntry jobEntry;
     private final EntityType<?> animalType;
@@ -70,6 +69,7 @@ public class AnimalHerdingModule extends AbstractBuildingModule
      *
      * @return The resource location of the loot table.
      */
+    @Override
     @NotNull
     public ResourceLocation getDefaultLootTable()
     {

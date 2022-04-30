@@ -5,11 +5,11 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.IJobView;
+import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,6 +21,13 @@ import java.util.function.Supplier;
 public final class JobEntry extends ForgeRegistryEntry<JobEntry>
 {
 
+    /**
+     * Job specific skills.
+     */
+    private final Skill primarySkill;
+    private final Skill secondarySkill;
+
+
     private final Function<ICitizenData, IJob<?>> jobProducer;
 
     /**
@@ -28,9 +35,24 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
      */
     public static final class Builder
     {
+        private Skill                           primarySkill   = null;
+        private Skill                           secondarySkill = null;
         private Function<ICitizenData, IJob<?>> jobProducer;
         private ResourceLocation                registryName;
         private Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer;
+
+        /**
+         * Setter for configuring the jobs skill set.
+         *
+         * @param primary The primary skill.
+         * @param secondary The secondary skill.
+         * @return The builder.
+         */
+        public Builder withSkill(final Skill primary, final Skill secondary) {
+            this.primarySkill = primary;
+            this.secondarySkill = secondary;
+            return this;
+        }
 
         /**
          * Setter the for the producer.
@@ -79,8 +101,10 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
             Validate.notNull(jobProducer);
             Validate.notNull(registryName);
             Validate.notNull(jobViewProducer);
+            Validate.notNull(primarySkill);
+            Validate.notNull(secondarySkill);
 
-            return new JobEntry(jobProducer, jobViewProducer, registryName).setRegistryName(registryName);
+            return new JobEntry(primarySkill, secondarySkill, jobProducer, jobViewProducer, registryName).setRegistryName(registryName);
         }
     }
 
@@ -113,12 +137,25 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
         return job;
     }
 
+    public Skill getPrimarySkill()
+    {
+        return primarySkill;
+    }
+
+    public Skill getSecondarySkill()
+    {
+        return secondarySkill;
+    }
+
     private JobEntry(
+      final Skill primarySkill, final Skill secondarySkill,
       final Function<ICitizenData, IJob<?>> jobProducer,
       final Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> jobViewProducer,
       final ResourceLocation key)
     {
         super();
+        this.primarySkill = primarySkill;
+        this.secondarySkill = secondarySkill;
         this.jobProducer = jobProducer;
         this.jobViewProducer = jobViewProducer;
         this.key = key;
@@ -142,18 +179,39 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof final JobEntry jobEntry))
         {
             return false;
         }
-        final JobEntry jobEntry = (JobEntry) o;
-        return Objects.equals(key, jobEntry.key);
+
+        if (primarySkill != jobEntry.primarySkill)
+        {
+            return false;
+        }
+        if (secondarySkill != jobEntry.secondarySkill)
+        {
+            return false;
+        }
+        if (!jobProducer.equals(jobEntry.jobProducer))
+        {
+            return false;
+        }
+        if (!getJobViewProducer().equals(jobEntry.getJobViewProducer()))
+        {
+            return false;
+        }
+        return getKey().equals(jobEntry.getKey());
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(key);
+        int result = primarySkill.hashCode();
+        result = 31 * result + secondarySkill.hashCode();
+        result = 31 * result + jobProducer.hashCode();
+        result = 31 * result + getJobViewProducer().hashCode();
+        result = 31 * result + getKey().hashCode();
+        return result;
     }
 
     public Supplier<BiFunction<IColonyView, ICitizenDataView, IJobView>> getJobViewProducer()

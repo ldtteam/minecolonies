@@ -21,14 +21,12 @@ import static com.minecolonies.api.util.constant.CitizenConstants.SKILL_BONUS_AD
 public class LumberjackAssignmentModule extends CraftingWorkerBuildingModule implements IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     public LumberjackAssignmentModule(final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
       final boolean canWorkingDuringRain,
       final Function<IBuilding, Integer> sizeLimit,
       final Skill craftingSpeedSkill,
       final Skill recipeImprovementSkill)
     {
-        super(entry, primary, secondary, canWorkingDuringRain, sizeLimit, craftingSpeedSkill, recipeImprovementSkill);
+        super(entry, canWorkingDuringRain, sizeLimit, craftingSpeedSkill, recipeImprovementSkill);
     }
 
     @Override

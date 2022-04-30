@@ -29,16 +29,6 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     private final String buttonTranslationKey;
 
     /**
-     * Primary skill.
-     */
-    private final Skill primarySkill;
-
-    /**
-     * Secondary skill.
-     */
-    private final Skill secondarySkill;
-
-    /**
      * Worker sound name.
      */
     private final String workerSoundName;
@@ -54,8 +44,6 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      * @param jobEntry             the job entry..
      * @param jobTranslationKey    job translation key.
      * @param buttonTranslationKey button translation ky.
-     * @param primarySkill         primary skill.
-     * @param secondarySkill       secondary skill.
      * @param workerSoundName      worker sound name.
      * @param clazz                  the class of the job.
      */
@@ -63,8 +51,6 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
       final Supplier<JobEntry> jobEntry,
       final String jobTranslationKey,
       final String buttonTranslationKey,
-      final Skill primarySkill,
-      final Skill secondarySkill,
       final String workerSoundName,
       final Class<IJob<?>> clazz)
     {
@@ -72,8 +58,6 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         this.jobEntry = jobEntry;
         this.jobTranslationKey = jobTranslationKey;
         this.buttonTranslationKey = buttonTranslationKey;
-        this.primarySkill = primarySkill;
-        this.secondarySkill = secondarySkill;
         this.workerSoundName = workerSoundName;
         this.clazz = clazz;
     }
@@ -115,7 +99,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      */
     public Skill getPrimarySkill()
     {
-        return primarySkill;
+        return jobEntry.get().getPrimarySkill();
     }
 
     /**
@@ -125,7 +109,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
      */
     public Skill getSecondarySkill()
     {
-        return secondarySkill;
+        return jobEntry.get().getSecondarySkill();
     }
 
     /**
@@ -156,8 +140,6 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         private Supplier<JobEntry> jobEntry;
         private String             jobTranslationKey;
         private String                          buttonTranslationKey;
-        private Skill                           primarySkill;
-        private Skill                           secondarySkill;
         private String                          workerSoundName;
         private ResourceLocation                registryName;
         private Class<IJob<?>>                  clazz;
@@ -177,18 +159,6 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         public Builder setButtonTranslationKey(final String buttonTranslationKey)
         {
             this.buttonTranslationKey = buttonTranslationKey;
-            return this;
-        }
-
-        public Builder setPrimarySkill(final Skill primarySkill)
-        {
-            this.primarySkill = primarySkill;
-            return this;
-        }
-
-        public Builder setSecondarySkill(final Skill secondarySkill)
-        {
-            this.secondarySkill = secondarySkill;
             return this;
         }
 
@@ -212,7 +182,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
         public GuardType createGuardType()
         {
-            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz).setRegistryName(registryName);
+            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, workerSoundName, clazz).setRegistryName(registryName);
         }
     }
 }

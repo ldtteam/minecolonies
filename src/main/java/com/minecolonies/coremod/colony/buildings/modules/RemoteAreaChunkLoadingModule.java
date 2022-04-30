@@ -60,6 +60,7 @@ public class RemoteAreaChunkLoadingModule extends AbstractBuildingModule impleme
         this.chunksToKeepLoaded.remove(chunkPos);
 
         final IChunkmanagerCapability chunkManager = building.getColony().getWorld().getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        ((ServerChunkCache) building.getColony().getWorld().getChunkSource()).removeRegionTicket(KEEP_LOADED_TYPE, chunkPos, 2, chunkPos);
         ChunkDataHelper.loadChunkAndAddData(building.getColony().getWorld(), chunkPos.getBlockAt(0,0,0), false, building.getColony().getID(), chunkManager);
     }
 }

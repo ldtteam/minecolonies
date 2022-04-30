@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -17,18 +18,16 @@ import java.util.function.Function;
 public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IAssignsCitizen, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     public WorkAtHomeBuildingModule(final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
       final boolean canWorkingDuringRain,
       final Function<IBuilding, Integer> sizeLimit)
     {
-        super(entry, primary, secondary, canWorkingDuringRain, sizeLimit);
+        super(entry, canWorkingDuringRain, sizeLimit);
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
+    public boolean assignCitizen(@Nullable final ICitizenData citizen)
     {
-        if (super.assignCitizen(citizen) && citizen != null)
+        if (citizen != null && super.assignCitizen(citizen))
         {
             // Set new home, since guards are housed at their workerbuilding.
             final IBuilding oldHome = citizen.getHomeBuilding();
@@ -48,6 +47,7 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
             citizen.setHomeBuilding(building);
             return true;
         }
+
         return false;
     }
 

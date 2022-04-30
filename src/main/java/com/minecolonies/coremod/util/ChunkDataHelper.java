@@ -416,6 +416,11 @@ public final class ChunkDataHelper
         }
         else
         {
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, world.dimension());
+            if (colony != null)
+            {
+                colony.removeLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z));
+            }
             cap.removeColony(id, chunk);
         }
 

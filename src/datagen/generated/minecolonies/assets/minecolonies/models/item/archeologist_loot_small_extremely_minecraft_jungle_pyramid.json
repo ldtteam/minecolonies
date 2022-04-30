@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecolonies:items/archeologist_loot_small_extremely_minecraft_jungle_pyramid"
+  }
+}

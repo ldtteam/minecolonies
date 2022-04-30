@@ -134,5 +134,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.DRUID = new SimpleModelType(ModModelTypes.DRUID_ID, 1, new ModelEntityDruidMale(context.bakeLayer(ClientRegistryHandler.MALE_DRUID)), new ModelEntityDruidFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_DRUID)));
         reg.register(ModModelTypes.DRUID);
+
+        ModModelTypes.ARCHEOLOGIST = new SimpleModelType(ModModelTypes.ARCHEOLOGIST_ID, 1, new ModelEntityArcheologistMale(context.bakeLayer(ClientRegistryHandler.MALE_ARCHEOLOGIST)), new ModelEntityArcheologistFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_ARCHEOLOGIST)));
+        reg.register(ModModelTypes.ARCHEOLOGIST);
     }
 }

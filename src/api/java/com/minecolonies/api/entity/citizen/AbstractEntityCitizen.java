@@ -6,6 +6,7 @@ import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.MinecoloniesMinecart;
 import com.minecolonies.api.entity.ai.DesiredActivity;
@@ -806,5 +807,76 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     public void onInsideBubbleColumn(boolean down)
     {
 
+    }
+
+    /**
+     * Indicates the primary skill of this citizen.
+     * If the citizen job is not retrieveable the primary placeholder skill is returned.
+     * 
+     * @return The primary skill of the citizen
+     */
+    public Skill getPrimarySkill() {
+        if (getCitizenJobHandler().getColonyJob() != null) {
+            return getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getPrimarySkill();
+        }
+        
+        return ModJobs.placeHolder.getPrimarySkill();
+    }
+
+    /**
+     * Indicates the secondary skill of this citizen.
+     * If the citizen job is not retrieveable the secondary placeholder skill is returned.
+     *
+     * @return The secondary skill of the citizen
+     */
+    public Skill getSecondarySkill() {
+        if (getCitizenJobHandler().getColonyJob() != null) {
+            return getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getSecondarySkill();
+        }
+
+        return ModJobs.placeHolder.getSecondarySkill();
+    }
+
+    /**
+     * Get the primary skill level of this citizen.
+     *
+     * @return The primary skill level.
+     */
+    public int getPrimarySkillLevel()
+    {
+        return getCitizenData().getCitizenSkillHandler().getLevel(getPrimarySkill());
+    }
+
+    /**
+     * Get the secondary skill level of this citizen.
+     *
+     * @return The secondary skill level.
+     */
+    public int getSecondarySkillLevel()
+    {
+        return getCitizenData().getCitizenSkillHandler().getLevel(getSecondarySkill());
+    }
+
+    /**
+     * Return the effective luckiness factor of the citizen.
+     * Equates to the effective skill level of the primary skill for now.
+     *
+     * @return The effective luckiness factor.
+     */
+    public float getLuckiness()
+    {
+        return getEffectiveSkillLevel(getPrimarySkillLevel());
+    }
+
+    /**
+     * Apply an early bonus curve to a skill level
+     * note: This adjusts the range from 0-99 to be 1-100
+     *
+     * @param rawSkillLevel to apply the curve to
+     * @return effective skill level to use in linear bonus functions
+     */
+    public int getEffectiveSkillLevel(int rawSkillLevel)
+    {
+        return (int)(((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1 ) / 10.0, 2));
     }
 }

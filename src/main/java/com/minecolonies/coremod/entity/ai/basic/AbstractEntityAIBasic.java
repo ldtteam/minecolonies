@@ -710,7 +710,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected int getEffectiveSkillLevel(int rawSkillLevel)
     {
-        return (int)(((rawSkillLevel + 1) * 2) - Math.pow((rawSkillLevel + 1 ) / 10.0, 2));
+        return worker.getEffectiveSkillLevel(rawSkillLevel);
     }
 
     /**

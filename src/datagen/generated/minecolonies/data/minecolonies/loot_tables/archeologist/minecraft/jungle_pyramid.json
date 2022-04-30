@@ -1,0 +1,101 @@
+{
+  "type": "minecolonies:citizen_performs_looting",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 0.0,
+        "max": 2.0
+      },
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "min": -1.0,
+        "max": 1.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "quality": 25,
+          "name": "minecolonies:archeologist_loot_small_none_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "quality": 10,
+          "name": "minecolonies:archeologist_loot_small_slightly_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "name": "minecolonies:archeologist_loot_small_moderately_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "quality": -10,
+          "name": "minecolonies:archeologist_loot_small_severely_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 25,
+          "quality": -25,
+          "name": "minecolonies:archeologist_loot_small_extremely_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "quality": 25,
+          "name": "minecolonies:archeologist_loot_large_none_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "quality": 10,
+          "name": "minecolonies:archeologist_loot_large_slightly_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "name": "minecolonies:archeologist_loot_large_moderately_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "quality": -10,
+          "name": "minecolonies:archeologist_loot_large_severely_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "weight": 10,
+          "quality": -25,
+          "name": "minecolonies:archeologist_loot_large_extremely_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "quality": 25,
+          "name": "minecolonies:archeologist_loot_tablet_none_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "quality": 10,
+          "name": "minecolonies:archeologist_loot_tablet_slightly_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecolonies:archeologist_loot_tablet_moderately_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "quality": -10,
+          "name": "minecolonies:archeologist_loot_tablet_severely_minecraft_jungle_pyramid"
+        },
+        {
+          "type": "minecraft:item",
+          "quality": -25,
+          "name": "minecolonies:archeologist_loot_tablet_extremely_minecraft_jungle_pyramid"
+        }
+      ]
+    }
+  ]
+}

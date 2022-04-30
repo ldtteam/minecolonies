@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractBuildingWithLootTableModule;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
@@ -265,9 +266,9 @@ public class CustomRecipeManager
         {
             building.getModuleProducers().stream()
                     .map(Supplier::get)
-                    .filter(m -> m instanceof AnimalHerdingModule)
-                    .map(m -> (AnimalHerdingModule) m)
-                    .forEach(herding -> lootIds.add(herding.getDefaultLootTable()));
+                    .filter(AbstractBuildingWithLootTableModule.class::isInstance)
+                    .map(AbstractBuildingWithLootTableModule.class::cast)
+                    .forEach(module -> lootIds.add(module.getDefaultLootTable()));
         }
 
         lootIds.add(ModLootTables.FISHING);

@@ -681,7 +681,10 @@ public final class NbtTagConstants
     public static final String TAG_ARCHEOLOGISTS_MODULE = "archaeologistsModule";
     public static final String TAG_STRUCTURE_TARGET = "structureTarget";
     public static final String TAG_SPAWN_TARGET  = "spawnTarget";
-    public static final String TAG_STRUCTURE_POS = "structurePos";
+    public static final String TAG_STRUCTURE_TYPE = "structureType";
+    public static final String TAG_STRUCTURE_POS              = "structurePos";
+    public static final String TAG_PREVIOUSLY_VISITED_STRUCTURES = "previouslyVisitedStructures";
+
     /**
      * Private constructor to hide the implicit one.
      */

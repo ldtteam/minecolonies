@@ -490,7 +490,11 @@ public final class TranslationConstants
     @NonNls
     public static final String BUILDER_BUILDING_TOO_HIGH                                            = "entity.builder.messagebuildtoohigh";
     @NonNls
-    public static final String BUILDER_BUILDING_TOO_LOW                                             = "entity.builder.messagebuildtoolow";
+    public static final String BUILDER_BUILDING_TOO_LOW                       = "entity.builder.messagebuildtoolow";
+    public static final String COM_MINECOLONIES_CREATIVE_TABS_ARCHEOGLOGIST_LOOT = "com.minecolonies.creative.tabs.archeologist.loot";
+    public static final String COM_MINECOLONIES_COREMOD_ITEM_ARCHEOLOGIST_LOOT_NAME     = "com.minecolonies.coremod.item.architectloot.name";
+    public static final String COM_MINECOLONIES_COREMOD_ITEM_ARCHEOLOGIST_LOOT_TYPE_FOR_STRUCTURE_FORMAT   = "com.minecolonies.coremod.item.architectloot.type.%s.%s";
+    public static final String COM_MINECOLONIES_COREMOD_ITEM_ARCHEOLOGIST_LOOT_DAMAGE_PREFIX = "com.minecolonies.coremod.item.architectloot.damage.";
 
     private TranslationConstants()
     {

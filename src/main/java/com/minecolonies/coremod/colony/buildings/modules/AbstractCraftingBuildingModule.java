@@ -18,6 +18,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
+import com.minecolonies.api.loot.ModLootContextProviders;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -32,15 +33,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerLevel;
 
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -713,21 +711,14 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final List<IItemHandler> handlers = building.getHandlers();
         final ICitizenData data = building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == jobEntry).getFirstCitizen();
 
-        if (data == null || !data.getEntity().isPresent())
+        if (data == null || data.getEntity().isEmpty())
         {
             // we shouldn't hit this case, but just in case...
             return storage.fullfillRecipe(building.getColony().getWorld(), handlers);
         }
+
         final AbstractEntityCitizen worker = data.getEntity().get();
-
-        LootContext.Builder builder =  (new LootContext.Builder((ServerLevel) building.getColony().getWorld())
-                                          .withParameter(LootContextParams.ORIGIN, worker.position())
-                                          .withParameter(LootContextParams.THIS_ENTITY, worker)
-                                          .withParameter(LootContextParams.TOOL, getCraftingTool(worker))
-                                          .withRandom(worker.getRandom())
-                                          .withLuck(getCraftingLuck(worker)));
-
-        return storage.fullfillRecipe(builder.create(RecipeStorage.recipeLootParameters), handlers);
+        return storage.fullfillRecipe(ModLootContextProviders.getCitizenLootContext(worker).get(), handlers);
     }
 
     @Override 

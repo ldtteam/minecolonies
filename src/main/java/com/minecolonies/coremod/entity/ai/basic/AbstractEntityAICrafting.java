@@ -8,16 +8,18 @@ import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
+import com.minecolonies.api.loot.ModLootContextParamSets;
+import com.minecolonies.api.loot.ModLootContextParams;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -497,6 +499,14 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         .withParameter(LootContextParams.ORIGIN, worker.position())
         .withParameter(LootContextParams.THIS_ENTITY, worker)
         .withParameter(LootContextParams.TOOL, worker.getMainHandItem())
+        .withParameter(ModLootContextParams.CITIZEN_PRIMARY_SKILL,
+          worker.getCitizenData().getCitizenSkillHandler().getLevel(
+            getOwnBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).getPrimarySkill()
+          ))
+        .withParameter(ModLootContextParams.CITIZEN_SECONDARY_SKILL,
+          worker.getCitizenData().getCitizenSkillHandler().getLevel(
+            getOwnBuilding().getFirstModuleOccurance(WorkerBuildingModule.class).getSecondarySkill()
+          ))
         .withRandom(worker.getRandom())
         .withLuck((float) getEffectiveSkillLevel(getPrimarySkillLevel()));
 
@@ -504,10 +514,10 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             builder = builder
                 .withParameter(LootContextParams.DAMAGE_SOURCE, playerDamageSource)
-                .withParameter(LootContextParams.KILLER_ENTITY, playerDamageSource.getEntity())
-                .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
+                .withOptionalParameter(LootContextParams.KILLER_ENTITY, playerDamageSource.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_KILLER_ENTITY, playerDamageSource.getDirectEntity());
             }
         
-        return builder.create(RecipeStorage.recipeLootParameters);
+        return builder.create(ModLootContextParamSets.CITIZEN_PERFORMS_LOOTING);
     }
 }

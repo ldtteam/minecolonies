@@ -9,6 +9,7 @@ import com.minecolonies.coremod.items.*;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -123,6 +124,28 @@ public final class ModItemsInitializer
         ModItems.sifterMeshFlint = new ItemSifterMesh("sifter_mesh_flint", new Item.Properties().durability(1000).setNoRepair());
         ModItems.sifterMeshIron = new ItemSifterMesh("sifter_mesh_iron", new Item.Properties().durability(1500).setNoRepair());
         ModItems.sifterMeshDiamond = new ItemSifterMesh("sifter_mesh_diamond", new Item.Properties().durability(2000).setNoRepair());
+
+        for (final ItemArcheologistLoot.Type type : ItemArcheologistLoot.Type.values())
+        {
+            for (final ItemArcheologistLoot.DegradationLevel degradationLevel : ItemArcheologistLoot.DegradationLevel.values())
+            {
+                ModItems.archeologistLootItems.add(new ItemArcheologistLoot(
+                  new Item.Properties().tab(ModCreativeTabs.MINECOLONIES_ARCHEOLOGIST_LOOT),
+                  type,
+                  degradationLevel,
+                  StructureFeature.JUNGLE_TEMPLE
+                  )
+                );
+
+                ModItems.archeologistLootItems.add(new ItemArcheologistLoot(
+                    new Item.Properties().tab(ModCreativeTabs.MINECOLONIES_ARCHEOLOGIST_LOOT),
+                    type,
+                    degradationLevel,
+                    StructureFeature.DESERT_PYRAMID
+                  )
+                );
+            }
+        }
 
         registry.register(ModItems.supplyChest);
         registry.register(ModItems.permTool);
@@ -244,5 +267,7 @@ public final class ModItemsInitializer
           PRIMARY_COLOR_MERC,
           SECONDARY_COLOR_MERC,
           (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("mercegg"));
+
+        ModItems.archeologistLootItems.forEach(registry::register);
     }
 }

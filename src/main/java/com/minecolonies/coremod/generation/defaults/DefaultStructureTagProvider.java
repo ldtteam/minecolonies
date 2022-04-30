@@ -10,16 +10,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StructureTagProvider extends ForgeRegistryTagsProvider<StructureFeature<?>>
+public class DefaultStructureTagProvider extends ForgeRegistryTagsProvider<StructureFeature<?>>
 {
-    public StructureTagProvider(
+    public DefaultStructureTagProvider(
       final DataGenerator generatorIn,
       @Nullable final ExistingFileHelper existingFileHelper)
     {
         super(generatorIn, ForgeRegistries.STRUCTURE_FEATURES, Constants.MOD_ID, existingFileHelper);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void addTags()
     {

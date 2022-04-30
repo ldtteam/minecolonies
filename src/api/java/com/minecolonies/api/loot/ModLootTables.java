@@ -1,5 +1,6 @@
 package com.minecolonies.api.loot;
 
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
@@ -26,6 +27,11 @@ public final class ModLootTables
 
     /** Ids for the fisherman bonus loot tables */
     public static final Map<Integer, ResourceLocation> FISHERMAN_BONUS = createFishermanBonusMap();
+
+    /**
+     * Default loot table of the archeologist if no structure specific one is found.
+      */
+    public static final ResourceLocation ARCHEOLOGISTS_DEFAULT_LOOT_TABLE = new ResourceLocation(Constants.MOD_ID, "archeologist/default");
 
     private static Map<Integer, ResourceLocation> createFishermanBonusMap()
     {

@@ -1,24 +1,19 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
+import com.google.common.collect.Sets;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
-import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.coremod.client.gui.modules.ArcheologistsWindow;
-import com.minecolonies.coremod.client.gui.modules.GraveyardManagementWindow;
 import com.minecolonies.coremod.entity.ai.citizen.archeologist.StructureTarget;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class ArcheologistsModuleView extends AbstractBuildingModuleView
 {
@@ -28,14 +23,23 @@ public class ArcheologistsModuleView extends AbstractBuildingModuleView
     @Nullable
     private StructureTarget target;
 
+    @NotNull
+    private final Set<BlockPos> previouslyVisitedStructures = Sets.newHashSet();
+
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
         if (buf.readBoolean()) {
             target = new StructureTarget(
               buf.readBlockPos(),
-              buf.readBlockPos()
+              buf.readBlockPos(),
+              buf.readResourceLocation()
             );
+        }
+        previouslyVisitedStructures.clear();
+        final int size = buf.readInt();
+        for (int i = 0; i < size; i++) {
+            previouslyVisitedStructures.add(buf.readBlockPos());
         }
     }
 
@@ -66,5 +70,10 @@ public class ArcheologistsModuleView extends AbstractBuildingModuleView
 
     public boolean hasTarget() {
         return target != null;
+    }
+
+    public List<BlockPos> getPreviouslyVisitedStructures()
+    {
+        return List.copyOf(previouslyVisitedStructures);
     }
 }

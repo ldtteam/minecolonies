@@ -32,7 +32,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOW
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards.HOSTILE_LIST;
-import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker.FOOD_EXCLUSION_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.composter.EntityAIWorkComposter.COMPOSTABLE_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack.SAPLINGS_LIST;
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
@@ -56,7 +56,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHERY_ID))
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-          .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.archer, Skill.Agility, Skill.Adaptability, false, ISchematicProvider::getBuildingLevel),
+          .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.archer,false, ISchematicProvider::getBuildingLevel),
             () -> ArcherSquireModuleView::new)
           .addBuildingModuleProducer(BedHandlingModule::new)
           .createBuildingEntry();
@@ -70,7 +70,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(() -> new BuildingBaker.SmeltingModule(ModJobs.baker), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(FurnaceUserModule::new)
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.baker, Skill.Knowledge, Skill.Dexterity, false, (b) -> 1, Skill.Dexterity, Skill.Knowledge),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.baker, false, (b) -> 1, Skill.Dexterity, Skill.Knowledge),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
             (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
@@ -95,7 +95,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(BedHandlingModule::new)
           .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
           .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
-                                       .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
+          .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, ISchematicProvider::getBuildingLevel), () -> CombinedHiringLimitModuleView::new)
           .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))
           .addBuildingModuleProducer(() -> new EntityListModule(HOSTILE_LIST), () -> () -> new EntityListModuleView(HOSTILE_LIST, COM_MINECOLONIES_HOSTILES, true))
           .addBuildingModuleProducer(() -> new SettingsModule()
@@ -111,7 +111,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingBlacksmith::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BLACKSMITH_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.blacksmith, Skill.Strength, Skill.Focus, false, (b) -> 1, Skill.Strength, Skill.Focus),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.blacksmith, false, (b) -> 1, Skill.Strength, Skill.Focus),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingBlacksmith.CraftingModule(ModJobs.blacksmith), () -> CraftingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
@@ -123,7 +123,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingBuilder::new)
           .setBuildingViewProducer(() -> BuildingBuilder.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BUILDER_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.builder, Skill.Adaptability, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.builder, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule()
             .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
@@ -140,10 +140,10 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingChickenHerder::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CHICKENHERDER_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.chickenHerder, Skill.Adaptability, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.chickenHerder, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-                                                                                            .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+            .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
           .addBuildingModuleProducer(BuildingChickenHerder.HerdingModule::new)
           .createBuildingEntry();
 
@@ -152,7 +152,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingCombatAcademy::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMBAT_ACADEMY_ID))
-          .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.combat, Skill.Adaptability, Skill.Stamina, false, ISchematicProvider::getBuildingLevel),
+          .addBuildingModuleProducer(() -> new WorkAtHomeBuildingModule(ModJobs.combat, false, ISchematicProvider::getBuildingLevel),
             () -> KnightSquireBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(BedHandlingModule::new)
@@ -163,7 +163,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingComposter::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COMPOSTER_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.composter, Skill.Stamina, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.composter, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
 
           .addBuildingModuleProducer(() -> new ItemListModule(COMPOSTABLE_LIST),
             () -> () -> new ItemListModuleView(COMPOSTABLE_LIST, COM_MINECOLONIES_REQUESTS_COMPOSTABLE_UI, false,
@@ -177,10 +177,8 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingCook::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COOK_ID))
-          .addBuildingModuleProducer(() -> new NoPrivateCrafterWorkerModule(ModJobs.cook, Skill.Adaptability, Skill.Knowledge, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new NoPrivateCrafterWorkerModule(ModJobs.cook, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.cookassistant,
-            Skill.Creativity,
-            Skill.Knowledge,
             false,
             (b) -> b.getBuildingLevel() >= 3 ? 1 : 0,
             Skill.Knowledge,
@@ -202,11 +200,11 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingCowboy::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.COWBOY_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.cowboy, Skill.Athletics, Skill.Stamina, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.cowboy, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
             .with(AbstractBuilding.FEEDING, new BoolSetting(true))
-                                                                                     .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
+            .with(BuildingCowboy.MILKING, new BoolSetting(false)), () -> SettingsModuleView::new)
           .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.cowboy, EntityType.COW, new ItemStack(Items.WHEAT, 2)))
           .addBuildingModuleProducer(BuildingCowboy.MilkingModule::new)
           .createBuildingEntry();
@@ -216,7 +214,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingCrusher::new)
           .setBuildingViewProducer(() -> BuildingCrusher.View::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CRUSHER_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.crusher, Skill.Stamina, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.crusher, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingCrusher.CraftingModule(ModJobs.crusher), () -> CraftingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
@@ -227,7 +225,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingDeliveryman::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DELIVERYMAN_ID))
-          .addBuildingModuleProducer(() -> new DeliverymanAssignmentModule(ModJobs.delivery, Skill.Agility, Skill.Adaptability, false, (b) -> 1),
+          .addBuildingModuleProducer(() -> new DeliverymanAssignmentModule(ModJobs.delivery, false, (b) -> 1),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
           .createBuildingEntry();
@@ -238,7 +236,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FARMER_ID))
           .addBuildingModuleProducer(() -> new BuildingFarmer.CraftingModule(ModJobs.farmer), () -> CraftingModuleView::new)
-          .addBuildingModuleProducer(() -> new FarmerAssignmentModule(ModJobs.farmer, Skill.Stamina, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new FarmerAssignmentModule(ModJobs.farmer,false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule()
             .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
@@ -253,7 +251,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FISHERMAN_ID))
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.fisherman, Skill.Focus, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.fisherman, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .createBuildingEntry();
 
         ModBuildings.guardTower = new BuildingEntry.Builder()
@@ -263,7 +261,7 @@ public final class ModBuildingsInitializer
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GUARD_TOWER_ID))
           .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.knight, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
           .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.ranger, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
-                                    .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+          .addBuildingModuleProducer(() -> new GuardBuildingModule(ModGuardTypes.druid, true, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(BedHandlingModule::new)
           .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterGuard))
@@ -291,7 +289,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingLibrary::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.LIBRARY_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.student, Skill.Intelligence, Skill.Intelligence, true, (b) -> 2 * b.getBuildingLevel()),
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.student, true, (b) -> 2 * b.getBuildingLevel()),
             () -> StudentBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .createBuildingEntry();
@@ -305,7 +303,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(() -> new ItemListModule(SAPLINGS_LIST), () -> () -> new ItemListModuleView(SAPLINGS_LIST, COM_MINECOLONIES_REQUESTS_SAPLINGS, true,
             (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getCopyOfSaplings()))
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
-          .addBuildingModuleProducer(() -> new LumberjackAssignmentModule(ModJobs.lumberjack, Skill.Strength, Skill.Focus, false, (b) -> 1, Skill.Focus, Skill.Strength),
+          .addBuildingModuleProducer(() -> new LumberjackAssignmentModule(ModJobs.lumberjack, false, (b) -> 1, Skill.Focus, Skill.Strength),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule()
             .with(BuildingLumberjack.REPLANT, new BoolSetting(true))
@@ -321,8 +319,8 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingMiner::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MINER_ID))
-          .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.miner, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
-                               .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.quarrier, Skill.Strength, Skill.Stamina, false, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+          .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.miner, false, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
+          .addBuildingModuleProducer(() -> new MinerBuildingModule(ModJobs.quarrier, false, (b) -> 1), () -> CombinedHiringLimitModuleView::new)
           .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.miner), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
@@ -339,7 +337,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingSawmill::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.sawmill, Skill.Knowledge, Skill.Dexterity, false, (b) -> 1),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.sawmill, false, (b) -> 1),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingSawmill.CraftingModule(ModJobs.sawmill), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingSawmill.DOCraftingModule(ModJobs.sawmill), () -> DOCraftingModuleView::new)
@@ -353,11 +351,11 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingShepherd::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SHEPHERD_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.shepherd, Skill.Focus, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.shepherd, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
             .with(AbstractBuilding.FEEDING, new BoolSetting(true))
-                                                                                       .with(BuildingShepherd.DYEING, new BoolSetting(true))
+            .with(BuildingShepherd.DYEING, new BoolSetting(true))
             .with(BuildingShepherd.SHEARING, new BoolSetting(true)), () -> SettingsModuleView::new)
           .addBuildingModuleProducer(BuildingShepherd.HerdingModule::new)
           .createBuildingEntry();
@@ -366,7 +364,7 @@ public final class ModBuildingsInitializer
           .setBuildingBlock(ModBlocks.blockHutSifter)
           .setBuildingProducer(BuildingSifter::new)
           .setBuildingViewProducer(() -> BuildingSifter.View::new)
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.sifter, Skill.Focus, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.sifter, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingSifter.CraftingModule(ModJobs.sifter), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIFTER_ID))
@@ -377,7 +375,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingSmeltery::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SMELTERY_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.smelter, Skill.Athletics, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.smelter, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingSmeltery.SmeltingModule(ModJobs.smelter), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(FurnaceUserModule::new)
           .addBuildingModuleProducer(() -> new BuildingSmeltery.OreBreakingModule(ModJobs.smelter), () -> CraftingModuleView::new)
@@ -393,7 +391,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingStonemason::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.stoneMason, Skill.Creativity, Skill.Dexterity, false, (b) -> 1),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.stoneMason, false, (b) -> 1),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingStonemason.CraftingModule(ModJobs.stoneMason), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingStonemason.DOCraftingModule(ModJobs.stoneMason), () -> DOCraftingModuleView::new)
@@ -407,8 +405,6 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_SMELTERY_ID))
           .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.stoneSmeltery,
-            Skill.Athletics,
-            Skill.Dexterity,
             false,
             (b) -> 1,
             Skill.Dexterity,
@@ -426,10 +422,10 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingSwineHerder::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SWINE_HERDER_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.swineHerder, Skill.Strength, Skill.Athletics, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.swineHerder, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-                                                                                          .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+            .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
           .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.swineHerder, EntityType.PIG, new ItemStack(Items.CARROT, 2)))
           .createBuildingEntry();
 
@@ -462,7 +458,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingFlorist::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLORIST_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.florist, Skill.Dexterity, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.florist, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST), () -> FloristFlowerListModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .createBuildingEntry();
@@ -472,7 +468,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingEnchanter::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ENCHANTER_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.enchanter, Skill.Mana, Skill.Knowledge, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.enchanter, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingEnchanter.CraftingModule(ModJobs.enchanter), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(EnchanterStationsModule::new, () -> EnchanterStationsModuleView::new)
@@ -482,7 +478,7 @@ public final class ModBuildingsInitializer
           .setBuildingBlock(ModBlocks.blockHutUniversity)
           .setBuildingProducer(BuildingUniversity::new)
           .setBuildingViewProducer(() -> EmptyView::new)
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.researcher, Skill.Knowledge, Skill.Mana, true, ISchematicProvider::getBuildingLevel),
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.researcher, true, ISchematicProvider::getBuildingLevel),
             () -> WorkerBuildingModuleView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.UNIVERSITY_ID))
           .addBuildingModuleViewProducer(() -> UniversityResearchModuleView::new)
@@ -493,7 +489,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingHospital::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOSPITAL_ID))
-          .addBuildingModuleProducer(() -> new HospitalAssignmentModule(ModJobs.healer, Skill.Mana, Skill.Knowledge, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new HospitalAssignmentModule(ModJobs.healer, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .createBuildingEntry();
 
@@ -509,8 +505,8 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingSchool::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SCHOOL_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.teacher, Skill.Knowledge, Skill.Mana, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
-          .addBuildingModuleProducer(() -> new ChildrenBuildingModule(ModJobs.pupil, Skill.Knowledge, Skill.Mana, true, (b) -> 2 * b.getBuildingLevel()),
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.teacher, true, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new ChildrenBuildingModule(ModJobs.pupil, true, (b) -> 2 * b.getBuildingLevel()),
             () -> PupilBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .createBuildingEntry();
@@ -524,7 +520,7 @@ public final class ModBuildingsInitializer
           .addBuildingModuleProducer(() -> new BuildingGlassblower.SmeltingModule(ModJobs.glassblower), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingGlassblower.DOCraftingModule(ModJobs.glassblower), () -> DOCraftingModuleView::new)
           .addBuildingModuleProducer(FurnaceUserModule::new)
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.glassblower, Skill.Creativity, Skill.Focus, false, (b) -> 1, Skill.Focus, Skill.Creativity),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.glassblower, false, (b) -> 1, Skill.Focus, Skill.Creativity),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, COM_MINECOLONIES_REQUESTS_BURNABLE, false,
             (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getFuel()))
@@ -537,7 +533,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingDyer::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.DYER_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.dyer, Skill.Creativity, Skill.Dexterity, false, (b) -> 1, Skill.Dexterity, Skill.Creativity),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.dyer, false, (b) -> 1, Skill.Dexterity, Skill.Creativity),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingDyer.CraftingModule(ModJobs.dyer), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingDyer.SmeltingModule(ModJobs.dyer), () -> CraftingModuleView::new)
@@ -554,7 +550,7 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
           .addBuildingModuleProducer(() -> new BuildingFletcher.CraftingModule(ModJobs.fletcher), () -> CraftingModuleView::new)
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.fletcher, Skill.Dexterity, Skill.Creativity, true, (b) -> 1, Skill.Creativity, Skill.Dexterity),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.fletcher, true, (b) -> 1, Skill.Creativity, Skill.Dexterity),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingFletcher.DOCraftingModule(ModJobs.fletcher), () -> DOCraftingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
@@ -576,7 +572,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingMechanic::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.mechanic, Skill.Knowledge, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.mechanic, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingMechanic.CraftingModule(ModJobs.mechanic), () -> CraftingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingMechanic.DOCraftingModule(ModJobs.mechanic), () -> DOCraftingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
@@ -584,33 +580,33 @@ public final class ModBuildingsInitializer
           .createBuildingEntry();
 
         ModBuildings.plantation = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutPlantation)
-                                    .setBuildingProducer(BuildingPlantation::new)
-                                    .setBuildingViewProducer(() -> EmptyView::new)
-                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
-                                    .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.planter, Skill.Agility, Skill.Dexterity, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                                    .addBuildingModuleProducer(() -> new BuildingPlantation.CraftingModule(ModJobs.planter), () -> CraftingModuleView::new)
-                                    .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
-                                    .addBuildingModuleProducer(() -> new SettingsModule()
-                                                                       .with(BuildingPlantation.MODE, new PlantationSetting(
-                                                                         Items.SUGAR_CANE.getDescriptionId(),
-                                                                         Items.CACTUS.getDescriptionId(),
-                                                                         Items.BAMBOO.getDescriptionId(),
-                                                                         PlantationSetting.SUGAR_CANE_AND_CACTUS,
-                                                                         PlantationSetting.CACTUS_AND_BAMBOO,
-                                                                         PlantationSetting.BAMBOO_AND_SUGAR_CANE))
-                                                                       .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
-                                    .createBuildingEntry();
+          .setBuildingBlock(ModBlocks.blockHutPlantation)
+          .setBuildingProducer(BuildingPlantation::new)
+          .setBuildingViewProducer(() -> EmptyView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.planter, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new BuildingPlantation.CraftingModule(ModJobs.planter), () -> CraftingModuleView::new)
+          .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+          .addBuildingModuleProducer(() -> new SettingsModule()
+            .with(BuildingPlantation.MODE, new PlantationSetting(
+              Items.SUGAR_CANE.getDescriptionId(),
+              Items.CACTUS.getDescriptionId(),
+              Items.BAMBOO.getDescriptionId(),
+              PlantationSetting.SUGAR_CANE_AND_CACTUS,
+              PlantationSetting.CACTUS_AND_BAMBOO,
+              PlantationSetting.BAMBOO_AND_SUGAR_CANE))
+            .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
+          .createBuildingEntry();
 
         ModBuildings.rabbitHutch = new BuildingEntry.Builder()
           .setBuildingBlock(ModBlocks.blockHutRabbitHutch)
           .setBuildingProducer(BuildingRabbitHutch::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.RABBIT_ID))
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.rabbitHerder, Skill.Agility, Skill.Athletics, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.rabbitHerder, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractBuilding.BREEDING, new BoolSetting(true))
-                                                                                          .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
+            .with(AbstractBuilding.FEEDING, new BoolSetting(true)), () -> SettingsModuleView::new)
           .addBuildingModuleProducer(() -> new AnimalHerdingModule(ModJobs.rabbitHerder, EntityType.RABBIT, new ItemStack(Items.CARROT, 2)))
           .createBuildingEntry();
 
@@ -620,7 +616,7 @@ public final class ModBuildingsInitializer
           .setBuildingProducer(BuildingConcreteMixer::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.CONCRETE_ID))
-          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.concreteMixer, Skill.Stamina, Skill.Dexterity, false, (b) -> 1),
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.concreteMixer, false, (b) -> 1),
             () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new BuildingConcreteMixer.CraftingModule(ModJobs.concreteMixer), () -> CraftingModuleView::new)
           .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
@@ -633,10 +629,11 @@ public final class ModBuildingsInitializer
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.BEEKEEPER_ID))
           .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.beekeeper, Skill.Dexterity, Skill.Adaptability, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.beekeeper, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
           .addBuildingModuleProducer(() -> new SettingsModule()
-            .with(AbstractBuilding.BREEDING, new BoolSetting(true))
-            .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
+              .with(AbstractBuilding.BREEDING, new BoolSetting(true))
+              .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)),
+            () -> SettingsModuleView::new)
           .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),
             () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, false,
               (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
@@ -653,52 +650,56 @@ public final class ModBuildingsInitializer
 
 
         ModBuildings.graveyard = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutGraveyard)
-                                    .setBuildingProducer(BuildingGraveyard::new)
-                                    .setBuildingViewProducer(() -> EmptyView::new)
-                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
-                                    .addBuildingModuleProducer(GraveyardManagementModule::new, () -> GraveyardManagementModuleView::new)
-                                    .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, Skill.Strength, Skill.Mana, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                                    .createBuildingEntry();ModBuildings.archeologist = new BuildingEntry.Builder()
+          .setBuildingBlock(ModBlocks.blockHutGraveyard)
+          .setBuildingProducer(BuildingGraveyard::new)
+          .setBuildingViewProducer(() -> EmptyView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GRAVEYARD_ID))
+          .addBuildingModuleProducer(GraveyardManagementModule::new, () -> GraveyardManagementModuleView::new)
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.undertaker, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
+          .createBuildingEntry();
+
+        ModBuildings.archeologist = new BuildingEntry.Builder()
           .setBuildingBlock(ModBlocks.blockHutArcheologist)
           .setBuildingProducer(BuildingArcheologist::new)
           .setBuildingViewProducer(() -> EmptyView::new)
           .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.ARCHEOLOGIST_ID))
           .addBuildingModuleProducer(ArcheologistsModule::new, () -> ArcheologistsModuleView::new)
           .addBuildingModuleProducer(RemoteAreaChunkLoadingModule::new)
-          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.archeologist, Skill.Knowledge, Skill.Intelligence, false, (b) -> 1),
+          .addBuildingModuleProducer(() -> new WorkerBuildingModule(ModJobs.archeologist, false, (b) -> 1),
             () -> WorkerBuildingModuleView::new)
           .createBuildingEntry();
 
         ModBuildings.simpleQuarry = new BuildingEntry.Builder()
-                                   .setBuildingBlock(ModBlocks.blockSimpleQuarry)
-                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
-                                   .addBuildingModuleProducer(() -> new QuarryModule(32), () -> MinerAssignmentModuleView::new)
-                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
-                                   .createBuildingEntry();
+          .setBuildingBlock(ModBlocks.blockSimpleQuarry)
+          .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.SIMPLE_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
+          .addBuildingModuleProducer(() -> new QuarryModule(32), () -> MinerAssignmentModuleView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SIMPLE_QUARRY_ID))
+          .createBuildingEntry();
 
         ModBuildings.netherWorker = new BuildingEntry.Builder()
-                                    .setBuildingBlock(ModBlocks.blockHutNetherWorker)
-                                    .setBuildingProducer(BuildingNetherWorker::new)
-                                    .setBuildingViewProducer(() -> EmptyView::new)
-                                    .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.NETHERWORKER_ID))
-                                    .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.netherworker, Skill.Adaptability, Skill.Strength, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
-                                    .addBuildingModuleProducer(() -> new BuildingNetherWorker.CraftingModule(ModJobs.netherworker), () -> CraftingModuleView::new)
-                                    .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
-                                    .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
-                                                                        .with(BuildingNetherWorker.CLOSE_PORTAL, new BoolSetting(true))
-                                                                        , () -> SettingsModuleView::new)
-                                    .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingNetherWorker::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
-                                        (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
-                                    .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
-                                    .createBuildingEntry();
+          .setBuildingBlock(ModBlocks.blockHutNetherWorker)
+          .setBuildingProducer(BuildingNetherWorker::new)
+          .setBuildingViewProducer(() -> EmptyView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.NETHERWORKER_ID))
+          .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.netherworker, false, (b) -> 1),
+            () -> WorkerBuildingModuleView::new)
+          .addBuildingModuleProducer(() -> new BuildingNetherWorker.CraftingModule(ModJobs.netherworker), () -> CraftingModuleView::new)
+          .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
+          .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
+              .with(BuildingNetherWorker.CLOSE_PORTAL, new BoolSetting(true))
+            , () -> SettingsModuleView::new)
+          .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingNetherWorker::onResetFoodExclusionList),
+            () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, COM_MINECOLONIES_REQUESTS_FOOD, true,
+              (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
+          .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+          .createBuildingEntry();
 
         ModBuildings.mediumQuarry = new BuildingEntry.Builder()
-                                   .setBuildingBlock(ModBlocks.blockMediumQuarry)
-                                   .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
-                                   .addBuildingModuleProducer(() -> new QuarryModule(64), () -> MinerAssignmentModuleView::new)
-                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))
-                                   .createBuildingEntry();
+          .setBuildingBlock(ModBlocks.blockMediumQuarry)
+          .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, ModBuildings.MEDIUM_QUARRY_ID, 1)).setBuildingViewProducer(() -> EmptyView::new)
+          .addBuildingModuleProducer(() -> new QuarryModule(64), () -> MinerAssignmentModuleView::new)
+          .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MEDIUM_QUARRY_ID))
+          .createBuildingEntry();
 
         /*ModBuildings.largeQuarry = new BuildingEntry.Builder()
                                    .setBuildingBlock(ModBlocks.blockLargeQuarry)

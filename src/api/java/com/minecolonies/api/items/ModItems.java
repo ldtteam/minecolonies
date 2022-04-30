@@ -2,6 +2,9 @@ package com.minecolonies.api.items;
 
 import net.minecraft.world.item.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class handling the registering of the mod items.
  * <p>
@@ -72,6 +75,8 @@ public final class ModItems
     public static Item sifterMeshFlint;
     public static Item sifterMeshIron;
     public static Item sifterMeshDiamond;
+
+    public static List<Item> archeologistLootItems = new ArrayList<>();
 
     /**
      * Private constructor to hide the implicit public one.

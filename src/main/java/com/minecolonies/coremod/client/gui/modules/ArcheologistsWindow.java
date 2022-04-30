@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.client.gui.modules;
 
+import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -8,6 +10,7 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ArcheologistsModuleView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -25,6 +28,16 @@ public class ArcheologistsWindow extends AbstractModuleWindow
      * Id of the target location inside the GUI.
      */
     private static final String TARGET = "target";
+
+    /**
+     * Id of the previous targets list inside the GUI.
+     */
+    private static final String PREVIOUS_TARGETS = "previousTargets";
+
+    /**
+     * Id of the previous target location inside the previous targets list.
+     */
+    private static final String PREVIOUS_TARGET = "previousTarget";
 
     /**
      * The world.
@@ -59,6 +72,7 @@ public class ArcheologistsWindow extends AbstractModuleWindow
     {
         super.onUpdate();
         updateTargetLocation();
+        updatePreviousTargets();
     }
 
     private void updateTargetLocation()
@@ -77,6 +91,24 @@ public class ArcheologistsWindow extends AbstractModuleWindow
         {
             targetLocationTextField.setText(new TranslatableComponent(TranslationConstants.NO_TARGET));
         }
+    }
+
+    private void updatePreviousTargets()
+    {
+        final ScrollingList previousTargetsList = findPaneOfTypeByID(ArcheologistsWindow.PREVIOUS_TARGETS, ScrollingList.class);
+        previousTargetsList.setDataProvider(
+          this.moduleView.getPreviouslyVisitedStructures()::size,
+          (index, rowPane) -> {
+              final Text text = rowPane.findPaneOfTypeByID(ArcheologistsWindow.PREVIOUS_TARGET, Text.class);
+              final BlockPos location = moduleView.getPreviouslyVisitedStructures().get(index);
+              text.setText(
+                ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("chat.coordinates",
+                  location.getX(),
+                  location.getY(),
+                  location.getZ()))
+              );
+          }
+        );
     }
 
 }

@@ -39,12 +39,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class WorkerBuildingModule extends AbstractAssignedCitizenModule implements IAssignsJob, IBuildingEventsModule, ITickingModule, IPersistentModule, IBuildingWorkerModule, ICreatesResolversModule
 {
     /**
-     * Module specific skills.
-     */
-    private final Skill primary;
-    private final Skill secondary;
-
-    /**
      * Job creator function.
      */
     private final JobEntry jobEntry;
@@ -61,20 +55,16 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
 
     public WorkerBuildingModule(
       final JobEntry entry,
-      final Skill primary,
-      final Skill secondary,
       final boolean canWorkingDuringRain,
       final Function<IBuilding, Integer> sizeLimit)
     {
         this.jobEntry = entry;
-        this.primary = primary;
-        this.secondary = secondary;
         this.canWorkingDuringRain = canWorkingDuringRain;
         this.sizeLimit = sizeLimit;
     }
 
     @Override
-    public boolean assignCitizen(final ICitizenData citizen)
+    public boolean assignCitizen(@NotNull final ICitizenData citizen)
     {
         if (citizen.getWorkBuilding() != null)
         {
@@ -234,14 +224,14 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public Skill getPrimarySkill()
     {
-        return primary;
+        return jobEntry.getPrimarySkill();
     }
 
     @NotNull
     @Override
     public Skill getSecondarySkill()
     {
-        return secondary;
+        return jobEntry.getSecondarySkill();
     }
 
     @Override

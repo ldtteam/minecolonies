@@ -212,8 +212,8 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(FEMALE_DRUID, ModelEntityDruidFemale::createMesh);
         event.registerLayerDefinition(MALE_NETHERWORKER, ModelEntityNetherWorkerMale::createMesh);
         event.registerLayerDefinition(FEMALE_NETHERWORKER, ModelEntityNetherWorkerFemale::createMesh);
-        event.registerLayerDefinition(MALE_ARCHEOLOGIST, ModelEntityCrafterMale::createMesh);
-        event.registerLayerDefinition(FEMALE_ARCHEOLOGIST, ModelEntityCrafterFemale::createMesh);
+        event.registerLayerDefinition(MALE_ARCHEOLOGIST, ModelEntityArcheologistMale::createMesh);
+        event.registerLayerDefinition(FEMALE_ARCHEOLOGIST, ModelEntityArcheologistFemale::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }
