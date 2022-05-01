@@ -14,16 +14,16 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.ldtteam.structurize.items.ModItems.buildTool;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 
 /**
@@ -67,15 +67,6 @@ public final class GenericRecipeUtils
     {
         final List<Component> restrictions = calculateRestrictions(customRecipe);
         return Objects.requireNonNull(GenericRecipe.of(storage, restrictions, customRecipe.getMinBuildingLevel()));
-    }
-
-    @NotNull
-    public static IGenericRecipe create(@NotNull final Recipe<?> recipe, @Nullable final Level world)
-    {
-        final IGenericRecipe original = Objects.requireNonNull(GenericRecipe.of(recipe, world));
-        final List<List<ItemStack>> inputs = compact(recipe.getIngredients());
-        return new GenericRecipe(original.getRecipeId(), original.getPrimaryOutput(), original.getAdditionalOutputs(), inputs,
-                original.getGridSize(), original.getIntermediate(), original.getLootTable(), new ArrayList<>(), -1);
     }
 
     /**
@@ -150,106 +141,5 @@ public final class GenericRecipeUtils
 
         // otherwise it may be an effect with no research (perhaps disabled via datapack)
         return new TextComponent("???");
-    }
-
-    private static List<List<ItemStack>> compact(final NonNullList<Ingredient> inputs)
-    {
-        // FYI, this largely does the same job as RecipeStorage.calculateCleanedInput(), but we can't re-use
-        // that implementation as we need to operate on Ingredients, which can be a list of stacks.
-        final Map<IngredientStacks, IngredientStacks> ingredients = new HashMap<>();
-
-        for (final Ingredient ingredient : inputs)
-        {
-            if (ingredient == Ingredient.EMPTY) continue;
-
-            final IngredientStacks newIngredient = new IngredientStacks(ingredient);
-            // also ignore the build tool as an ingredient, since colony crafters don't require it.
-            //   (see RecipeStorage.calculateCleanedInput() for why)
-            if (!newIngredient.getStacks().isEmpty() && newIngredient.getStacks().get(0).getItem() == buildTool.get()) continue;
-
-            final IngredientStacks existing = ingredients.get(newIngredient);
-            if (existing == null)
-            {
-                ingredients.put(newIngredient, newIngredient);
-            }
-            else
-            {
-                existing.merge(newIngredient);
-            }
-        }
-
-        return ingredients.values().stream()
-                .sorted(Comparator.reverseOrder())
-                .map(IngredientStacks::getStacks)
-                .collect(Collectors.toCollection(NonNullList::create));
-    }
-
-    private static class IngredientStacks implements Comparable<IngredientStacks>
-    {
-        private final List<ItemStack> stacks;
-        private final Set<Item> items;
-
-        public IngredientStacks(final Ingredient ingredient)
-        {
-            this.stacks = Collections.unmodifiableList(Arrays.stream(ingredient.getItems())
-                    .filter(stack -> !stack.isEmpty())
-                    .map(ItemStack::copy)
-                    .collect(Collectors.toList()));
-
-            this.items = this.stacks.stream()
-                    .map(ItemStack::getItem)
-                    .collect(Collectors.toSet());
-        }
-
-        @NotNull
-        public List<ItemStack> getStacks() { return this.stacks; }
-
-        public int getCount() { return this.stacks.isEmpty() ? 0 : this.stacks.get(0).getCount(); }
-
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            final IngredientStacks that = (IngredientStacks) o;
-            return this.items.equals(that.items);
-            // note that this does not compare the counts to maintain key-stability
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return this.items.hashCode();
-        }
-
-        @Override
-        public int compareTo(@NotNull IngredientStacks o)
-        {
-            int diff = this.getCount() - o.getCount();
-            if (diff != 0) return diff;
-
-            diff = this.stacks.size() - o.stacks.size();
-            if (diff != 0) return diff;
-
-            return this.hashCode() - o.hashCode();
-        }
-
-        public void merge(@NotNull final IngredientStacks other)
-        {
-            // assumes equals(other)
-            for (int i = 0; i < this.stacks.size(); i++)
-            {
-                this.stacks.get(i).grow(other.stacks.get(i).getCount());
-            }
-        }
-
-        @Override
-        public String toString()
-        {
-            return "IngredientStacks{" +
-                    "stacks=" + stacks +
-                    ", items=" + items +
-                    '}';
-        }
     }
 }

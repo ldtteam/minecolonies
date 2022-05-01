@@ -15,6 +15,7 @@ import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -161,5 +162,11 @@ public final class MinecoloniesAPIProxy implements IMinecoloniesAPI
     public IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry()
     {
         return apiInstance.getRecipeTypeRegistry();
+    }
+
+    @Override
+    public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
+    {
+        return apiInstance.getCraftingTypeRegistry();
     }
 }

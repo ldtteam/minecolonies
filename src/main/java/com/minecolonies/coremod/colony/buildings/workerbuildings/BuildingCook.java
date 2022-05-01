@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -10,6 +11,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -26,6 +28,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -310,10 +313,11 @@ public class BuildingCook extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnCraftingRecipes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
-            if (building == null) return true;  // because it can learn at *some* level
-            return building.getBuildingLevel() >= 3;
+            return (building == null || building.getBuildingLevel() >= 3)
+                    ? super.getSupportedCraftingTypes()
+                    : ImmutableSet.of();
         }
 
         @Override

@@ -3,10 +3,13 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
+import com.minecolonies.api.crafting.ModCraftingTypes;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This module is used for the buildings that only support simple
@@ -40,8 +43,14 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     }
 
     @Override
-    public boolean canLearnLargeRecipes()
+    public boolean canLearnManyRecipes()
     {
         return false;
+    }
+
+    @Override
+    public Set<CraftingType> getSupportedCraftingTypes()
+    {
+        return Set.of(ModCraftingTypes.SMALL_CRAFTING);
     }
 }

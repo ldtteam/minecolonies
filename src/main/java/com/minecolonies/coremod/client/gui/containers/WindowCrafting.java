@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -10,18 +10,19 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -108,7 +109,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
-        completeCrafting = module.canLearnLargeRecipes();
+        completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING);
     }
 
     @NotNull
@@ -126,14 +127,14 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.get("gui.done") : new TranslatableComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final String buttonDisplay = module.canLearn(ModCraftingTypes.SMALL_CRAFTING) ? I18n.get("gui.done") : new TranslatableComponent("com.minecolonies.coremod.gui.recipe.full").getString();
         /*
          * The button to click done after finishing the recipe.
          */
         final Button
           doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
         this.addRenderableWidget(doneButton);
-        if (!module.canLearnCraftingRecipes())
+        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
         {
             doneButton.active = false;
         }
@@ -145,7 +146,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         @Override
         public void onPress(final Button button)
         {
-            if (module.canLearnCraftingRecipes())
+            if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
             {
                 final List<ItemStorage> input = new LinkedList<>();
 

@@ -12,13 +12,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -193,6 +195,15 @@ public final class LootTableAnalyzer
                     {
                         float damage = 1.0F - processNumber(function.get("damage"), 0F);
                         stack.setDamageValue(Mth.floor(damage * stack.getMaxDamage()));
+                    }
+                    break;
+
+                case "minecraft:set_potion":
+                    final String id = GsonHelper.getAsString(function, "id");
+                    final Potion potion = ForgeRegistries.POTIONS.getValue(ResourceLocation.tryParse(id));
+                    if (potion != null)
+                    {
+                        PotionUtils.setPotion(stack, potion);
                     }
                     break;
 

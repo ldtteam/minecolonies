@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -144,7 +145,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return this.icon;
     }
 
-    public Collection<?> findRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla)
+    public Collection<?> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
         return Collections.emptyList();
     }
