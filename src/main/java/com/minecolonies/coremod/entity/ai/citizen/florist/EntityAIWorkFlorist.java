@@ -147,7 +147,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST);
         if (amountOfCompostInInv <= 0)
         {
-            final int amountOfCompostInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), IS_COMPOST);
+            final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), IS_COMPOST, 1);
             if (amountOfCompostInBuilding > 0)
             {
                 needsCurrently = new Tuple<>(IS_COMPOST, STACKSIZE);
