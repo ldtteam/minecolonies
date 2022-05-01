@@ -14,7 +14,6 @@ import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -26,14 +25,13 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.network.messages.server.ResourceScrollSaveWarehouseSnapshotMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -147,26 +145,32 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
         if (warehousePos != null)
         {
-            Map<Item, BuildingBuilderResource> resourceMap = resources.stream().collect(Collectors.toMap(ItemStorage::getItem, v -> v));
-
             warehouseSnapshot = new HashMap<>();
 
-            List<BlockPos> containers = builder.getColony().getBuilding(warehousePos).getContainerList();
-            for (BlockPos container : containers)
+            final IBuildingView newView = builder.getColony().getBuilding(builder.getID());
+            if (newView instanceof BuildingBuilder.View)
             {
-                final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(container);
-                if (rack instanceof TileEntityRack)
-                {
-                    ((TileEntityRack) rack).getAllContent()
-                      .forEach((item, amount) -> {
-                          if (!resourceMap.containsKey(item.getItem()))
-                          {
-                              return;
-                          }
+                final BuildingResourcesModuleView moduleView = newView.getModuleView(BuildingResourcesModuleView.class);
 
-                          int oldAmount = warehouseSnapshot.getOrDefault(item.getItem().getDescriptionId(), 0);
-                          warehouseSnapshot.put(item.getItem().getDescriptionId(), oldAmount + amount);
-                      });
+                List<BlockPos> containers = builder.getColony().getBuilding(warehousePos).getContainerList();
+                for (BlockPos container : containers)
+                {
+                    final BlockEntity rack = Minecraft.getInstance().level.getBlockEntity(container);
+                    if (rack instanceof TileEntityRack)
+                    {
+                        ((TileEntityRack) rack).getAllContent()
+                          .forEach((item, amount) -> {
+                              final int hashCode = item.getItemStack().hasTag() ? item.getItemStack().getTag().hashCode() : 0;
+                              final String key = item.getItemStack().getDescriptionId() + "-" + hashCode;
+                              if (!moduleView.getResources().containsKey(key))
+                              {
+                                  return;
+                              }
+
+                              int oldAmount = warehouseSnapshot.getOrDefault(key, 0);
+                              warehouseSnapshot.put(key, oldAmount + amount);
+                          });
+                    }
                 }
             }
         }
@@ -380,7 +384,8 @@ public class WindowResourceList extends AbstractWindowSkeleton
         rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(false);
         rowPane.findPaneOfTypeByID(IN_WAREHOUSE_AMOUNT, Text.class).clearText();
 
-        int warehouseAmount = warehouseSnapshot.getOrDefault(resource.getItem().getDescriptionId(), 0);
+        int resourceHashcode = resource.getItemStack().hasTag() ? resource.getItemStack().getTag().hashCode() : 0;
+        int warehouseAmount = warehouseSnapshot.getOrDefault(resource.getItem().getDescriptionId() + "-" + resourceHashcode, 0);
 
         if (resource.getAmountInDelivery() > 0)
         {
