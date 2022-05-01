@@ -31,6 +31,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,6 +167,11 @@ public final class WorkerUtil
     public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
     {
         final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
+
+        if (state.getBlock() instanceof IForgeShearable)
+        {
+            return ToolType.SHEARS;
+        }
 
         String toolName = "";
         if (forgeTool == null)
