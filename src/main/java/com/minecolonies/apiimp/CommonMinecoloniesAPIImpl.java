@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.jobs.registry.IJobDataManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.compatibility.IFurnaceRecipes;
 import com.minecolonies.api.configuration.Configuration;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.entity.ai.registry.IMobAIRegistry;
 import com.minecolonies.api.entity.pathfinding.registry.IPathNavigateRegistry;
@@ -63,6 +64,7 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     private        IForgeRegistry<ResearchRequirementEntry>                researchRequirementRegistry;
     private        IForgeRegistry<ResearchEffectEntry>                     researchEffectRegistry;
     private        IForgeRegistry<RecipeTypeEntry>                         recipeTypeEntryRegistry;
+    private        IForgeRegistry<CraftingType>                            craftingTypeRegistry;
 
     @Override
     @NotNull
@@ -219,7 +221,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                 .disableSaving().allowModification().setType(ColonyEventDescriptionTypeRegistryEntry.class)
                 .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventDescriptionRegistry = b);
 
-        event.create(new RegistryBuilder<RecipeTypeEntry>()
+        craftingTypeRegistry = new RegistryBuilder<CraftingType>()
+                .setName(new ResourceLocation(Constants.MOD_ID, "craftingtypes"))
+                .disableSaving().allowModification().setType(CraftingType.class)
+                .setIDRange(0, Integer.MAX_VALUE - 1).create();
+
+        recipeTypeEntryRegistry = new RegistryBuilder<RecipeTypeEntry>()
                                     .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
                                     .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
                                     .disableSaving().allowModification().setType(RecipeTypeEntry.class)
@@ -254,6 +261,12 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
     public IForgeRegistry<RecipeTypeEntry> getRecipeTypeRegistry()
     {
         return recipeTypeEntryRegistry;
+    }
+
+    @Override
+    public IForgeRegistry<CraftingType> getCraftingTypeRegistry()
+    {
+        return craftingTypeRegistry;
     }
 }
 

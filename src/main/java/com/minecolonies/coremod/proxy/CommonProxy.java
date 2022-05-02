@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.CountedIngredient;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -155,6 +156,12 @@ public abstract class CommonProxy implements IProxy
     public static void registerRecipeTypes(final RegistryEvent.Register<RecipeTypeEntry> event)
     {
         ModRecipeTypesInitializer.init(event);
+    }
+
+    @SubscribeEvent
+    public static void registerCraftingTypes(final RegistryEvent.Register<CraftingType> event)
+    {
+        ModCraftingTypesInitializer.init(event);
     }
 
     @SubscribeEvent

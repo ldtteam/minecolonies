@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.IRecipeStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.WindowListRecipes;
@@ -12,16 +14,20 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.OpenCraftingGUIMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Client side representation of the crafting module.
@@ -41,9 +47,7 @@ public class CraftingModuleView extends AbstractBuildingModuleView
     /**
      * Different flags.
      */
-    private boolean canLearnCraftingRecipes;
-    private boolean canLearnFurnaceRecipes;
-    private boolean canLearnLargeRecipes;
+    private Set<CraftingType> recipeTypeSet = new HashSet<>();
 
     /**
      * The list of recipes the worker knows, correspond to a subset of the recipes in the colony.
@@ -77,9 +81,16 @@ public class CraftingModuleView extends AbstractBuildingModuleView
             this.jobEntry = null;
         }
 
-        this.canLearnCraftingRecipes = buf.readBoolean();
-        this.canLearnFurnaceRecipes = buf.readBoolean();
-        this.canLearnLargeRecipes = buf.readBoolean();
+        recipeTypeSet.clear();
+        final int size = buf.readVarInt();
+        for (int i = 0; i < size; ++i)
+        {
+            final CraftingType type = buf.readRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry());
+            if (type != null)
+            {
+                recipeTypeSet.add(type);
+            }
+        }
 
         recipes.clear();
         disabledRecipes.clear();
@@ -125,15 +136,27 @@ public class CraftingModuleView extends AbstractBuildingModuleView
      */
     public boolean isRecipeAlterationAllowed()
     {
-        return canLearnCraftingRecipes || canLearnFurnaceRecipes;
+        return !recipeTypeSet.isEmpty();
     }
 
-    /** True if this module can be taught crafting recipes. */
-    public boolean canLearnCraftingRecipes() { return this.canLearnCraftingRecipes; }
-    /** True if this module can be taught smelting recipes. */
-    public boolean canLearnFurnaceRecipes() { return this.canLearnFurnaceRecipes; }
-    /** True if this module can be taught 3x3 crafting recipes. */
-    public boolean canLearnLargeRecipes() { return this.canLearnLargeRecipes; }
+    /**
+     * Check if the worker can learn a certain type of recipe.
+     * @param type the type to check for.
+     * @return true if so.
+     */
+    public boolean canLearn(final CraftingType type)
+    {
+        return getSupportedCraftingTypes().contains(type);
+    }
+
+    /**
+     * Get the supported crafting types.
+     * @return a set of types.
+     */
+    public Set<CraftingType> getSupportedCraftingTypes()
+    {
+        return recipeTypeSet;
+    }
 
     /**
      * Unique id of the crafting module view.

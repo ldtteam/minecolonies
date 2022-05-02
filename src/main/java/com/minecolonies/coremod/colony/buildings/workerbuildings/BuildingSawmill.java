@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -9,13 +8,13 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.AbstractDOCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -121,7 +120,7 @@ public class BuildingSawmill extends AbstractBuilding
         }
     }
 
-    public static class DOCraftingModule extends AbstractCraftingBuildingModule.Custom
+    public static class DOCraftingModule extends AbstractDOCraftingBuildingModule
     {
         /**
          * Create a new module.
@@ -134,32 +133,9 @@ public class BuildingSawmill extends AbstractBuilding
         }
 
         @Override
-        public boolean isRecipeCompatible(final @NotNull IGenericRecipe recipe)
+        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            final ItemStack stack = recipe.getPrimaryOutput().copy();
-            if (stack.getItem().getRegistryName().getNamespace().equals("domum_ornamentum"))
-            {
-                final CompoundTag dataNbt = stack.getOrCreateTagElement("textureData");
-                final MaterialTextureData textureData = MaterialTextureData.deserializeFromNBT(dataNbt);
-                for (final Block block : textureData.getTexturedComponents().values())
-                {
-                    final ItemStack ingredientStack = new ItemStack(block);
-                    if (!ItemStackUtils.isEmpty(ingredientStack) && (ingredientStack.is(ItemTags.PLANKS) || ingredientStack.is(ItemTags.LOGS)))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return stack -> Optional.of(ItemTags.PLANKS.contains(stack.getItem()) || ItemTags.LOGS.contains(stack.getItem()));
         }
-
-        @Override
-        public boolean canLearnCraftingRecipes() { return true; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return false; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return true; }
     }
 }

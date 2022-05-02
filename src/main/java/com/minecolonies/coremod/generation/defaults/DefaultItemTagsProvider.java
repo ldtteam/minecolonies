@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.generation.defaults;
 
+import com.ldtteam.domumornamentum.block.types.ExtraBlockType;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
@@ -12,10 +13,15 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -153,6 +159,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RAW_IRON)
                 .add(Items.RAW_COPPER)
                 .add(Items.RAW_GOLD);
+
+        final Item[] paperExtras = getDomumExtra(ExtraBlockType.BASE_PAPER, ExtraBlockType.LIGHT_PAPER);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BAKER))
                 .addTag(Tags.Items.CROPS_WHEAT);
@@ -299,13 +307,15 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.LEAD);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_PLANTATION))
-                .add(Items.BAMBOO);
+                .add(Items.BAMBOO)
+                .add(paperExtras);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_PLANTATION));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_PLANTATION))
                 .add(Items.BOOK)
                 .add(Items.PAPER)
                 .add(Items.SUGAR)
-                .add(Items.WRITABLE_BOOK);
+                .add(Items.WRITABLE_BOOK)
+                .add(paperExtras);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_PLANTATION));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_SAWMILL))
@@ -368,7 +378,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(ItemTags.WOODEN_SLABS)
                 .addTag(ItemTags.WOODEN_STAIRS)
-                .add(Items.LECTERN, Items.PISTON);
+                .add(Items.LECTERN, Items.PISTON)
+                .add(paperExtras);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONE_SMELTERY))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON));
@@ -426,5 +437,15 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(ModItems.rawPumpkinPie)
                 .add(ModItems.cakeBatter);
 
+    }
+
+    @NotNull
+    private static Item[] getDomumExtra(@NotNull final ExtraBlockType... types)
+    {
+        final Set<ExtraBlockType> typesSet = new HashSet<>(Arrays.asList(types));
+        return com.ldtteam.domumornamentum.block.ModBlocks.getInstance().getExtraTopBlocks().stream()
+                .filter(extra -> typesSet.contains(extra.getType()))
+                .map(Block::asItem)
+                .toArray(Item[]::new);
     }
 }

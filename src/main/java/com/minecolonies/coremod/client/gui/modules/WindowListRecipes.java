@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.gui.modules;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -15,7 +14,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.A
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ChangeRecipePriorityMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ToggleRecipeMessage;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -187,7 +185,7 @@ public class WindowListRecipes extends AbstractModuleWindow
                 List<ItemStack> displayStacks = recipe.getRecipeType().getOutputDisplayStacks();
                 icon.setItem(displayStacks.get((lifeCount / LIFE_COUNT_DIVIDER) % (displayStacks.size())));
 
-                if (!module.canLearnCraftingRecipes() && !module.canLearnFurnaceRecipes())
+                if (!module.isRecipeAlterationAllowed())
                 {
                     final Button removeButton = rowPane.findPaneOfTypeByID(BUTTON_REMOVE, Button.class);
                     if (removeButton != null)

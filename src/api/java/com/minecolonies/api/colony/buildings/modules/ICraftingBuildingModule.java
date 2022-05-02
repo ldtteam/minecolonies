@@ -7,14 +7,16 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.OptionalPredicate;
-
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -80,28 +82,20 @@ public interface ICraftingBuildingModule extends IBuildingModule
     String getCustomRecipeKey();
 
     /**
-     * Check if this building type can learn (or otherwise process)
-     * vanilla crafting recipes of some kind.
-     *
-     * @return True if so; false otherwise.
+     * Check if the worker can learn a certain type of recipe.
+     * @param type the type to check for.
+     * @return true if so.
      */
-    boolean canLearnCraftingRecipes();
+    default boolean canLearn(final CraftingType type)
+    {
+        return getSupportedCraftingTypes().contains(type);
+    }
 
     /**
-     * Check if this building type can learn (or otherwise process)
-     * vanilla smelting recipes of some kind.
-     *
-     * @return True if so; false otherwise.
+     * Get the supported crafting types.
+     * @return a set of types.
      */
-    boolean canLearnFurnaceRecipes();
-
-    /**
-     * Check if it is possible for this building type to learn
-     * recipes that will only fit in a 3x3 crafting grid.
-     *
-     * @return True if 3x3 recipes can be taught.
-     */
-    boolean canLearnLargeRecipes();
+    Set<CraftingType> getSupportedCraftingTypes();
 
     /**
      * Checks if this particular recipe is *possible* to be learned by
@@ -127,6 +121,12 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     @NotNull
     OptionalPredicate<ItemStack> getIngredientValidator();
+
+    /**
+     * Check if the module should have a large limit for learnable recipes.
+     * @return true if so.
+     */
+    boolean canLearnManyRecipes();
 
     /**
      * Check if the module on the client side should be displayed.
