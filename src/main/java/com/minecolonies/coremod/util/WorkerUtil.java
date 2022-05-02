@@ -35,6 +35,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
+import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
@@ -171,6 +172,11 @@ public final class WorkerUtil
      */
     public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
     {
+        if (state.getBlock() instanceof IForgeShearable)
+        {
+            return ToolType.SHEARS;
+        }
+
         String toolName = "";
 
             if (blockHardness > 0f)

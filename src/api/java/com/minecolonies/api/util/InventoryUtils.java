@@ -767,13 +767,13 @@ public class InventoryUtils
     public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
     {
         int totalCount = 0;
-        final World world = provider.getColony().getWorld();
+        final Level world = provider.getColony().getWorld();
 
         for (final BlockPos pos : provider.getContainers())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
-                final TileEntity entity = world.getBlockEntity(pos);
+                final BlockEntity entity = world.getBlockEntity(pos);
                 if (entity instanceof TileEntityRack)
                 {
                     totalCount += ((TileEntityRack) entity).getItemCount(stack);

@@ -1638,7 +1638,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         }
 
         if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
-          itemStack -> itemStack.getItem().is(tag), count) >= count &&
+          itemStack -> itemStack.is(tag), count) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> itemStack.is(tag),
                 count,
