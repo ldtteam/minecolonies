@@ -36,4 +36,10 @@ public abstract class AbstractBuildingModuleView implements IBuildingModuleView
     {
         return false;
     }
+
+    @Override
+    public IBuildingView getBuildingView()
+    {
+        return buildingView;
+    }
 }

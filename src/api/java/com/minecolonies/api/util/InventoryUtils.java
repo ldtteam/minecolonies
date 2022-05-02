@@ -759,6 +759,38 @@ public class InventoryUtils
     }
 
     /**
+     * Check if a building has more than a count in stack. Return the count it has if it has less.
+     *
+     * @param provider building to check in.
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given predicate.
+     */
+    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getItemCount(stack);
+                }
+
+                if (totalCount > count)
+                {
+                    return Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
      * Count the number of items of different types a building has.
      * 
      * @param provider the building to check.

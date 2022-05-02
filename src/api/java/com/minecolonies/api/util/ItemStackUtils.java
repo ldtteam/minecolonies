@@ -329,7 +329,7 @@ public final class ItemStackUtils
         else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
-            return 1;
+            return stack.getItem() instanceof ShearsItem ? 1 : -1;
         }
         else
         {

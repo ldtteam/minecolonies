@@ -2262,5 +2262,8 @@
   "com.minecolonies.coremod.gui.buildingassignmentmode": "Building Assignment Mode:",
   "com.minecolonies.coremod.gui.home.homeless": "Homeless",
   "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
-  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here"
+  "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here",
+  "com.minecolonies.coremod.setting.minecolonies:crushermode": "Crusher Mode:",
+  "com.minecolonies.coremod.setting.minecolonies:dailylimit": "Daily Limit:"
+
 }
