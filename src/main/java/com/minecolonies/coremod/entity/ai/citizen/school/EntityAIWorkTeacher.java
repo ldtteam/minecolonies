@@ -84,7 +84,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private IAIState decide()
     {
-        final int paperInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), PAPER);
+        final int paperInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), PAPER, 1);
         final int paperInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), PAPER);
         if (paperInBuilding + paperInInv <= 0)
         {

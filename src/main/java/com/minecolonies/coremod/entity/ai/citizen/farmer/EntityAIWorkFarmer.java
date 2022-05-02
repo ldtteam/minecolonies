@@ -226,7 +226,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
         }
 
-        final int amountOfCompostInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), this::isCompost);
+        final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), this::isCompost, 1);
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
