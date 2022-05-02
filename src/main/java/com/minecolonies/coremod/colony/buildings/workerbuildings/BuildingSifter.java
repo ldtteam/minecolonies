@@ -1,16 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.coremod.client.gui.huts.WindowHutSifterModule;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -125,74 +120,6 @@ public class BuildingSifter extends AbstractBuilding
         compound.putInt(TAG_CURRENT_DAILY, currentDailyQuantity);
 
         return compound;
-    }
-
-    @Override
-    public void serializeToView(@NotNull final FriendlyByteBuf buf)
-    {
-        super.serializeToView(buf);
-        buf.writeInt(getMaxDailyQuantity());
-        buf.writeInt(getCurrentDailyQuantity());
-    }
-
-    /**
-     * BuildingSifter View.
-     */
-    public static class View extends AbstractBuildingView
-    {
-        /**
-         * Maximum possible daily quantity
-         */
-        private int maxDailyQuantity = 0;
-
-        /**
-         * Current daily quantity
-         */
-        private int currentDailyQuantity = 0;
-
-        /**
-         * Instantiate the sifter view.
-         *
-         * @param c the colonyview to put it in
-         * @param l the positon
-         */
-        public View(final IColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @Override
-        public void deserialize(@NotNull final FriendlyByteBuf buf)
-        {
-            super.deserialize(buf);
-            maxDailyQuantity = buf.readInt();
-            currentDailyQuantity = buf.readInt();
-        }
-
-        /**
-         * Getter for the current maximum settable daily quantity
-         * @return the maximum
-         */
-        public int getMaxDailyQuantity()
-        {
-            return maxDailyQuantity;
-        }
-
-        /**
-         * Getter for the current daily quantity
-         * @return the current quantity
-         */
-        public int getCurrentDailyQuantity()
-        {
-            return currentDailyQuantity;
-        }
-
-        @NotNull
-        @Override
-        public BOWindow getWindow()
-        {
-            return new WindowHutSifterModule(this);
-        }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Custom

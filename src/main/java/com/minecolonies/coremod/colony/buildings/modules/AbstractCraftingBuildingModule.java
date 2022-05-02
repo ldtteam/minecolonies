@@ -382,7 +382,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public boolean isVisible()
     {
-        return true;
+        return !getSupportedCraftingTypes().isEmpty() || !recipes.isEmpty();
     }
 
     @Override
