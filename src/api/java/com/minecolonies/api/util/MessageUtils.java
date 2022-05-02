@@ -44,7 +44,7 @@ public class MessageUtils
         /**
          * The stored text component to use when sending the message.
          */
-        private final MutableComponent rootComponent;
+        private MutableComponent rootComponent;
 
         /**
          * The current working component.
@@ -58,7 +58,7 @@ public class MessageUtils
          */
         MessageBuilder(Component component)
         {
-            this.rootComponent = getFormattableComponent(component);
+            this.currentComponent = getFormattableComponent(component);
         }
 
         /**
@@ -177,11 +177,15 @@ public class MessageUtils
          */
         private void mergeComponents()
         {
-            if (currentComponent != null)
+            if (rootComponent == null)
+            {
+                rootComponent = currentComponent;
+            }
+            else
             {
                 rootComponent.append(currentComponent);
-                currentComponent = null;
             }
+            currentComponent = null;
         }
     }
 
