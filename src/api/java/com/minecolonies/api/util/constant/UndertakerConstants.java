@@ -3,6 +3,8 @@ package com.minecolonies.api.util.constant;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import net.minecraft.resources.ResourceLocation;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+
 /**
  * Constants used by the Undertaker AIs.
  */
@@ -71,18 +73,18 @@ public class UndertakerConstants
      * Undertaker emptying icon
      */
     public final static VisibleCitizenStatus EMPTYING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.emptying");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_EMPTYING);
 
     /**
      * Undertaker digging icon
      */
     public final static VisibleCitizenStatus DIGGING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.digging");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_DIGGING);
 
     /**
      * Undertaker bury icon
      */
     public final static VisibleCitizenStatus BURYING_ICON =
-            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), "com.minecolonies.gui.visiblestatus.burying");
+            new VisibleCitizenStatus(new ResourceLocation(Constants.MOD_ID, "textures/icons/work/undertaker.png"), MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_BURYING);
 
 }

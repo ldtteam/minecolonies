@@ -5,9 +5,9 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -27,6 +27,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;
 import static com.minecolonies.api.util.constant.TranslationConstants.WAREHOUSE_SORTED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
@@ -117,7 +118,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
-        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.xofz",
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(new TranslatableComponent(LABEL_X_OF_Z,
           module.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
@@ -173,8 +174,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             resourceMissingLabel.clearText();
         }
 
-        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
-        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(new TextComponent(resource.getAvailable() + " / " + resource.getAmount()));
+        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(new TextComponent(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
         if(buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel())
         {
@@ -203,7 +204,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
         if (buildingView.getBuildingLevel() >= BUILDING_LEVEL_FOR_SORTING)
         {
             Network.getNetwork().sendToServer(new SortWarehouseMessage(this.buildingView));
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, WAREHOUSE_SORTED);
+            MessageUtils.format(WAREHOUSE_SORTED).sendTo(Minecraft.getInstance().player);
         }
     }
 }

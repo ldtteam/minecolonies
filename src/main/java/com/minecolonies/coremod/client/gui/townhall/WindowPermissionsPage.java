@@ -7,13 +7,11 @@ import com.ldtteam.blockui.controls.TextField;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.SwitchView;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
@@ -22,6 +20,7 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -96,9 +95,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         super(building, "layoutpermissions.xml");
         actions.addAll(Arrays.asList(Action.values()));
 
-        rankTypes.put(0, RANKTYPE_COLONY_MANAGER);
-        rankTypes.put(1, RANKTYPE_HOSTILE);
-        rankTypes.put(2, RANKTYPE_NONE);
+        rankTypes.put(0, RANK_TYPE_COLONY_MANAGER);
+        rankTypes.put(1, RANK_TYPE_HOSTILE);
+        rankTypes.put(2, RANK_TYPE_NONE);
 
         actionsRank = building.getColony().getPermissions().getRankOfficer();
         findPaneOfTypeByID(BUTTON_REMOVE_RANK, Button.class).setEnabled(false);
@@ -445,7 +444,10 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         final IPermissions permissions = building.getColony().getPermissions();
         final Player playerEntity = Minecraft.getInstance().player;
-        final boolean enable = !LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON).equals(button.getTextAsString());
+        
+        String key = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
+        final boolean enable = !COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON.equals(key);
         button.disable();
         if (!permissions.alterPermission(permissions.getRank(playerEntity), actionsRank, action, enable))
         {
@@ -480,15 +482,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Action action = actions.get(index);
-                final String name = new TranslatableComponent(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US)).getString();
-
-                if (name.contains(KEY_TO_PERMISSIONS))
-                {
-                    Log.getLogger().warn("Didn't work for:" + name);
-                    return;
-                }
-
+                final Component name =new TranslatableComponent(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
+
                 final boolean isTriggered = building.getColony().getPermissions().hasPermission(actionsRank, action);
                 final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
                 onOffButton.setText(isTriggered ? new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)

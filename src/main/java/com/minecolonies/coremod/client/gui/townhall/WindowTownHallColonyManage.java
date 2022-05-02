@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -14,6 +13,7 @@ import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.network.messages.client.CreateColonyMessage;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,8 +26,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_MANAGEMENT_GUI;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
@@ -59,23 +58,23 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         if (existingColony != null)
         {
             // Colony here
-            findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.here",
+            findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_INSIDE,
               existingColony.getName(),
               existingColony.getPermissions().getOwnerName()));
         }
         else
         {
             // Close colony
-            int closeClonyID = findNextNearbyColony(world, pos, MineColonies.getConfig().getServer().minColonyDistance.get());
+            int closeColonyID = findNextNearbyColony(world, pos, MineColonies.getConfig().getServer().minColonyDistance.get());
 
-            if (closeClonyID != 0)
+            if (closeColonyID != 0)
             {
-                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.near", closeClonyID));
+                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_NEARBY, closeColonyID));
             }
             else
             {
                 // No close colony
-                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.nonenearby"));
+                findPaneOfTypeByID(TEXT_NEARBY, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_NO_NEARBY));
             }
         }
 
@@ -83,20 +82,20 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         if (ownerColony != null)
         {
             findPaneOfTypeByID(BUTTON_DELETE, ButtonImage.class).enable();
-            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.own", ownerColony.getCenter()));
+            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_OWN, ownerColony.getCenter()));
 
             if (MineColonies.getConfig().getServer().allowInfiniteColonies.get())
             {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.denied.existingandabandon"));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_CREATE_DENIED_EXISTING_ABANDON));
             }
             else
             {
-                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.denied.existing"));
+                findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_CREATE_DENIED_EXISTING));
             }
         }
         else
         {
-            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.none"));
+            findPaneOfTypeByID(TEXT_OWN, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_NONE));
 
             if (existingColony != null || !IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
             {
@@ -112,8 +111,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
                 if (colony != null)
                 {
-                    findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(LanguageHandler.buildChatComponent("com.minecolonies.coremod.gui.colony.denied.tooclose",
-                      colony.getName()));
+                    findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()));
                 }
             }
         }
@@ -136,11 +134,11 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         if (findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).isTextEmpty())
         {
             findPaneOfTypeByID(BUTTON_CREATE, ButtonImage.class).enable();
-            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.colony.allowed.create"));
+            findPaneOfTypeByID(TEXT_FEEDBACK, Text.class).setText(new TranslatableComponent(MESSAGE_COLONY_CREATE_ALLOWED));
         }
 
-        registerButton(BUTTON_CLOSE, () -> close());
-        registerButton(BUTTON_CREATE, () -> onCreate());
+        registerButton(BUTTON_CLOSE, this::close);
+        registerButton(BUTTON_CREATE, this::onCreate);
         registerButton(BUTTON_DELETE, () -> new WindowTownHallColonyDelete().open());
     }
 
@@ -149,6 +147,9 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
      */
     public void onCreate()
     {
+        final Player player = Minecraft.getInstance().player;
+        final Component colonyName = new TranslatableComponent(DEFAULT_COLONY_NAME, player.getName());
+
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
         Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
           SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
@@ -158,7 +159,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         {
             reactivate = hut.getPositionedTags().containsKey(BlockPos.ZERO) && hut.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED);
         }
-        Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactivate));
+        Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactivate, colonyName.getString()));
         close();
     }
 

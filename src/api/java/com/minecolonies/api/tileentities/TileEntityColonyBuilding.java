@@ -316,11 +316,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public Component getDisplayName()
     {
-        if (getBlockState() == null)
-        {
-            return super.getDisplayName();
-        }
-        return new TranslatableComponent(getBlockState().getBlock().getDescriptionId() + ".name");
+        return getBlockState().getBlock().getName();
     }
 
     /**

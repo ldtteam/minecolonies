@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.commands.colonycommands.requestsystem;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS;
 
 public class CommandRSResetAll implements IMCOPCommand
 {
@@ -21,7 +23,7 @@ public class CommandRSResetAll implements IMCOPCommand
         {
             colony.getRequestManager().reset();
         }
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.rsresetall.success"), true);
+        context.getSource().sendSuccess(new TranslatableComponent(COMMAND_REQUEST_SYSTEM_RESET_ALL_SUCCESS), true);
 
         return 1;
     }

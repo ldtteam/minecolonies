@@ -11,6 +11,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBeekeeper;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
@@ -452,7 +453,7 @@ public class EntityAIWorkBeekeeper extends AbstractEntityAIInteract<JobBeekeeper
                 worker.getCitizenData().createRequestAsync(new StackList(flowersModule.getList().stream()
                   .map(ItemStorage::getItemStack)
                   .peek((stack) -> stack.setCount(NUM_OF_WANTED_FLOWERS))
-                  .collect(Collectors.toList()), COM_MINECOLONIES_COREMOD_REQUEST_FLOWERS, NUM_OF_WANTED_FLOWERS, NUM_OF_FLOWERS_TO_BREED));
+                  .collect(Collectors.toList()), RequestSystemTranslationConstants.REQUEST_TYPE_FLOWERS, NUM_OF_WANTED_FLOWERS, NUM_OF_FLOWERS_TO_BREED));
                 return false;
             }
 

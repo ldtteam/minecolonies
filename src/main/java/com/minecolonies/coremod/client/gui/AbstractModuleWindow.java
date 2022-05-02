@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Locale;
 import java.util.Random;
 
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.LABEL_MAIN_TAB_NAME;
+
 /**
  * Generic module window class. This creates the navigational menu.
  */
@@ -56,7 +58,7 @@ public abstract class AbstractModuleWindow extends AbstractWindowSkeleton implem
             this.addChild(image);
             this.addChild(iconImage);
 
-            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(new TranslatableComponent("com.minecolonies.coremod.gui.maintab"));
+            PaneBuilders.tooltipBuilder().hoverPane(iconImage).build().setText(new TranslatableComponent(LABEL_MAIN_TAB_NAME));
         }
 
         for (IBuildingModuleView view : building.getAllModuleViews())

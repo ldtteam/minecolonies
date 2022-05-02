@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages.client;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
@@ -8,8 +7,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN;
-import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Message for trying to create a new colony.
@@ -35,21 +35,30 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
 public class CreateColonyMessage implements IMessage
 {
     /**
-     * Townhall position to create building on
+     * Town hall position to create building on.
      */
     BlockPos townHall;
 
+    /**
+     * If claim action.
+     */
     boolean claim;
+
+    /**
+     * The colony name.
+     */
+    String colonyName;
 
     public CreateColonyMessage()
     {
         super();
     }
 
-    public CreateColonyMessage(final BlockPos townHall, boolean claim)
+    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName)
     {
         this.townHall = townHall;
         this.claim = claim;
+        this.colonyName = colonyName;
     }
 
     @Override
@@ -57,6 +66,7 @@ public class CreateColonyMessage implements IMessage
     {
         buf.writeBlockPos(townHall);
         buf.writeBoolean(claim);
+        buf.writeUtf(colonyName);
     }
 
     @Override
@@ -64,6 +74,7 @@ public class CreateColonyMessage implements IMessage
     {
         townHall = buf.readBlockPos();
         claim = buf.readBoolean();
+        colonyName = buf.readUtf(32767);
     }
 
     @Nullable
@@ -86,7 +97,7 @@ public class CreateColonyMessage implements IMessage
 
         if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative() && !claim)
         {
-            LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.supplyneed");
+            MessageUtils.format(MESSAGE_COLONY_START_SUPPLY_NEED).sendTo(sender);
             return;
         }
 
@@ -97,7 +108,7 @@ public class CreateColonyMessage implements IMessage
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
         {
-            LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.create.notileentity");
+            MessageUtils.format(WARNING_TOWN_HALL_NO_TILE_ENTITY).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
             return;
         }
 
@@ -119,7 +130,7 @@ public class CreateColonyMessage implements IMessage
             {
                 if (!world.isClientSide)
                 {
-                    LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get());
+                    MessageUtils.format(CANT_PLACE_COLONY_TOO_CLOSE_TO_SPAWN, MineColonies.getConfig().getServer().minDistanceFromWorldSpawn.get()).sendTo(sender);
                 }
                 return;
             }
@@ -127,7 +138,7 @@ public class CreateColonyMessage implements IMessage
             {
                 if (!world.isClientSide)
                 {
-                    LanguageHandler.sendPlayerMessage(sender, CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get());
+                    MessageUtils.format(CANT_PLACE_COLONY_TOO_FAR_FROM_SPAWN, MineColonies.getConfig().getServer().maxDistanceFromWorldSpawn.get()).sendTo(sender);
                 }
                 return;
             }
@@ -135,20 +146,20 @@ public class CreateColonyMessage implements IMessage
 
         if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
         {
-            LanguageHandler.sendPlayerMessage(sender, "com.minecolonies.coremod.gui.colony.denied.tooclose", colony.getName());
+            MessageUtils.format( MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
             return;
         }
 
-            final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
+        final IColony ownedColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
 
-            if (ownedColony == null)
-            {
-                IColonyManager.getInstance().createColony(world, townHall, sender, style);
-                IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding(hut, world);
-                LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.coremod.progress.colony_founded");
-                return;
-            }
+        if (ownedColony == null)
+        {
+            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
+            IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+            MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
+            return;
+        }
 
-        LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.coremod.gui.colony.create.failed");
+        MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
     }
 }

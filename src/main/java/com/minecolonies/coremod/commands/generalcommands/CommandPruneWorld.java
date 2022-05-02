@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -11,6 +10,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelResource;
@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_PRUNE_WORLD_WARNING;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 /**
@@ -68,7 +69,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         if (arg < 3)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.prune.next", arg + 1), true);
+            context.getSource().sendSuccess(new TranslatableComponent(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
             return 0;
         }
 

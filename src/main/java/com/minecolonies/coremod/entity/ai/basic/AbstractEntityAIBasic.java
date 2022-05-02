@@ -28,6 +28,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
@@ -1231,9 +1232,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
-              new TranslatableComponent(BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
+              new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
               ChatPriority.IMPORTANT,
-              new TranslatableComponent(BUILDING_LEVEL_TOO_LOW),
+              new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW),
               pos));
         }
         updateToolFlag(toolType, required);

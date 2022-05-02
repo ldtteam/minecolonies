@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,6 +11,7 @@ import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -34,6 +34,7 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
@@ -313,9 +314,7 @@ public class RaidManager implements IRaiderManager
         {
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Horde Spawn Point: " + targetSpawnPoint);
+                MessageUtils.format(new TextComponent("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
             if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
@@ -699,9 +698,7 @@ public class RaidManager implements IRaiderManager
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            LanguageHandler.sendPlayersMessage(
-              colony.getImportantMessageEntityPlayers(),
-              "Will raid tomorrow: " + raid);
+            MessageUtils.format(new TextComponent("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
         }
 
         setRaidNextNight(raid);

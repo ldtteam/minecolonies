@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -8,6 +7,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -82,9 +82,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
                 if (!ctx.getLevel().isClientSide)
                 {
-                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-                      COM_MINECOLONIES_SCROLL_BUILDING_SET,
-                      buildingEntity.getColony().getName());
+                    MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
             else if (buildingEntity instanceof TileEntityWareHouse)
@@ -98,13 +96,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 if (!ctx.getLevel().isClientSide)
                 {
-                    String buildingTypeKey = buildingEntity.getBuilding().getBuildingType().getTranslationKey();
-                    Component buildingTypeComponent = new TranslatableComponent(buildingTypeKey);
-                    Component mainComponent = new TranslatableComponent(
-                      COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
-                      buildingTypeComponent,
-                      buildingEntity.getColony().getName());
-                    ctx.getPlayer().sendMessage(mainComponent, ctx.getPlayer().getUUID());
+                    final MutableComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
+                    MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
         }

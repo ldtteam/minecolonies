@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
@@ -11,10 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CreativeBuildingStructureHandler;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -23,6 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerBossEvent;
@@ -213,10 +210,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         updateRaidBar();
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getImportantMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
-
+        MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
         colony.markDirty();
     }
 
@@ -225,8 +220,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      */
     protected void updateRaidBar()
     {
-        final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(getDisplayName().append(new TextComponent(" - " + directionName)));
+        final Component directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
+        raidBar.setName(getDisplayName().append(" - ").append(directionName));
         for (final Player player : colony.getPackageManager().getCloseSubscribers())
         {
             raidBar.addPlayer((ServerPlayer) player);
@@ -307,11 +302,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void onFinish()
     {
-        LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
-          PIRATES_SAILING_OFF_MESSAGE,
-          BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint),
-          colony.getName(),
-          colony.getName());
+        MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
         for (final Entity entity : raiders.keySet())
         {
             entity.remove(Entity.RemovalReason.DISCARDED);
@@ -333,7 +325,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawners.isEmpty())
             {
                 daysToGo = 2;
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName());
+                MessageUtils.format(ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
             }
         }
     }
@@ -355,7 +347,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         if (raiders.isEmpty() && spawners.isEmpty())
         {
             status = EventStatus.WAITING;
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE, colony.getName());
+            MessageUtils.format(ALL_PIRATES_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
         }
     }
 

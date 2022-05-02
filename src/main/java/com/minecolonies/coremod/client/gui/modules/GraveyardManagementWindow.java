@@ -12,6 +12,8 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.GraveyardManagement
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingGraveyard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +104,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
             {
                 final BlockPos grave = moduleView.getGraves().get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, buildingView.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
+                final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
                 final BlockEntity entity = world.getBlockEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {

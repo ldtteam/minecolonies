@@ -3,14 +3,15 @@ package com.minecolonies.coremod.client.gui.townhall;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 
@@ -67,7 +68,7 @@ public class WindowHappinessPage extends AbstractWindowTownHall
             label.setSize(136, 11);
             label.setPosition(25, yPos);
             label.setColors(BLACK);
-            label.setText(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness." + entry.getKey()));
+            label.setText(new TranslatableComponent(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
 
             if (value > 1.0)
             {

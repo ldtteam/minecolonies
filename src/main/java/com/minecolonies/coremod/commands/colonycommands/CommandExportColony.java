@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -10,7 +9,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_EXPORT_SUCCESS;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -26,11 +28,11 @@ public class CommandExportColony implements IMCOPCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyId), true);
+            context.getSource().sendSuccess(new TranslatableComponent(COMMAND_COLONY_ID_NOT_FOUND, colonyId), true);
             return 0;
         }
 
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.export.success", BackUpHelper.exportColony(colony)), true);
+        context.getSource().sendSuccess(new TranslatableComponent(COMMAND_COLONY_EXPORT_SUCCESS, BackUpHelper.exportColony(colony)), true);
         return 1;
     }
 

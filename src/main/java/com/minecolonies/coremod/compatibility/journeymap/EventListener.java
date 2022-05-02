@@ -37,7 +37,7 @@ import java.util.Set;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_JOB;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JOURNEY_MAP_INFO;
 
 public class EventListener
 {
@@ -109,7 +109,7 @@ public class EventListener
                     return;
                 }
 
-                jobName = new TranslatableComponent(COM_MINECOLONIES_JMAP_PREFIX + "visitor");
+                jobName = new TranslatableComponent(PARTIAL_JOURNEY_MAP_INFO + "visitor");
             }
             else
             {
@@ -126,7 +126,7 @@ public class EventListener
                 }
 
                 jobName = new TranslatableComponent(jobEntry == null
-                        ? COM_MINECOLONIES_JMAP_PREFIX + "unemployed"
+                        ? PARTIAL_JOURNEY_MAP_INFO + "unemployed"
                         : jobEntry.getTranslationKey());
             }
 

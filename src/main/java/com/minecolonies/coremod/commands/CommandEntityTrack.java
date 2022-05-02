@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.commands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -12,6 +12,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -44,20 +45,20 @@ public class CommandEntityTrack implements IMCColonyOfficerCommand
             final Collection<? extends Entity> entities = EntityArgument.getEntities(context, "entity");
             if (entities.isEmpty())
             {
-                context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.noentityfound"), true);
+                context.getSource().sendSuccess(new TranslatableComponent(CommandTranslationConstants.COMMAND_ENTITY_NOT_FOUND), true);
                 return 0;
             }
 
             final Entity entity = entities.iterator().next();
             if (AbstractPathJob.trackingMap.getOrDefault((Player) sender, UUID.randomUUID()).equals(entity.getUUID()))
             {
-                context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizentrack.success.disable"), true);
+                context.getSource().sendSuccess(new TranslatableComponent(CommandTranslationConstants.COMMAND_ENTITY_TRACK_DISABLED), true);
                 AbstractPathJob.trackingMap.remove((Player) sender);
                 Network.getNetwork().sendToPlayer(new SyncPathMessage(new HashSet<>(), new HashSet<>(), new HashSet<>()), (ServerPlayer) sender);
             }
             else
             {
-                context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizentrack.success.enable"), true);
+                context.getSource().sendSuccess(new TranslatableComponent(CommandTranslationConstants.COMMAND_ENTITY_TRACK_ENABLED), true);
                 AbstractPathJob.trackingMap.put((Player) sender, entity.getUUID());
             }
             return 1;

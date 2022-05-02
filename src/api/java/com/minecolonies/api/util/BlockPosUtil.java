@@ -6,6 +6,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -702,39 +704,49 @@ public final class BlockPosUtil
      *
      * @param building the building.
      * @param pos      the position.
-     * @return a string describing the direction.
+     * @return a text component describing the direction.
      */
-    public static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
+    public static Component calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
     {
-        final StringBuilder dist = new StringBuilder();
+        MutableComponent compoment = null;
 
-        if (pos.getZ() > building.getZ() + 1)
+        if (pos.getZ() > building.getZ() + 1 && pos.getX() > building.getX() + 1)
         {
-            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_SOUTH).getString());
+            compoment = new TranslatableComponent(DIRECTION_SOUTH);
         }
         else if (pos.getZ() < building.getZ() - 1)
         {
-            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_NORTH).getString());
+            compoment = new TranslatableComponent(DIRECTION_NORTH);
         }
 
         if (pos.getX() > building.getX() + 1)
         {
-            if (!dist.toString().isEmpty())
+            if (compoment != null)
             {
-                dist.append('/');
+                compoment
+                  .append("/")
+                  .append(new TranslatableComponent(DIRECTION_EAST));
             }
-            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_EAST).getString());
+            else
+            {
+                compoment = new TranslatableComponent(DIRECTION_EAST);
+            }
         }
         else if (pos.getX() < building.getX() - 1)
         {
-            if (!dist.toString().isEmpty())
+            if (compoment != null)
             {
-                dist.append('/');
+                compoment
+                  .append("/")
+                  .append(new TranslatableComponent(DIRECTION_WEST));
             }
-            dist.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_WEST).getString());
+            else
+            {
+                compoment = new TranslatableComponent(DIRECTION_WEST);
+            }
         }
 
-        return dist.toString();
+        return compoment;
     }
 
     /**
