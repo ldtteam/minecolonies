@@ -43,7 +43,7 @@ public class MessageUtils
         /**
          * The stored text component to use when sending the message.
          */
-        private final IFormattableTextComponent rootComponent;
+        private IFormattableTextComponent rootComponent;
 
         /**
          * The current working component.
