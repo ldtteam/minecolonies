@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.LIST_REQUEST_DISPLAY_STRING;
+import static com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants.REQUEST_SYSTEM_STACK_LIST;
 
 /**
  * Deliverable that can only be fulfilled by a single stack with a given minimal amount of items matching one of a list of stacks.
@@ -226,7 +226,7 @@ public class StackList implements IConcreteDeliverable, INonExhaustiveDeliverabl
         final boolean matchNBT = compound.getBoolean(NBT_MATCHNBT);
         final boolean matchOreDic = compound.getBoolean(NBT_MATCHOREDIC);
         final ItemStack result = compound.getAllKeys().contains(NBT_RESULT) ? ItemStackUtils.deserializeFromNBT(compound.getCompound(NBT_RESULT)) : ItemStackUtils.EMPTY;
-        final String desc = compound.getAllKeys().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : LIST_REQUEST_DISPLAY_STRING;
+        final String desc = compound.getAllKeys().contains(TAG_DESCRIPTION) ? compound.getString(TAG_DESCRIPTION) : REQUEST_SYSTEM_STACK_LIST;
         int count = stacks.isEmpty() ? 0 : stacks.get(0).getCount();
         int minCount = count;
         if (compound.getAllKeys().contains(NBT_COUNT))

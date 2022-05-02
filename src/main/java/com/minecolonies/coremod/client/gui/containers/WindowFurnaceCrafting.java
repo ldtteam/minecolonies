@@ -29,6 +29,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+
 /**
  * Furnace crafting gui.
  */
@@ -96,11 +99,11 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearn(ModCraftingTypes.SMELTING) ? I18n.get("gui.done") : new TranslatableComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final Component buttonDisplay = new TranslatableComponent(module.canLearn(ModCraftingTypes.SMELTING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new TextComponent(buttonDisplay), new OnButtonPress());
+        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
         this.addRenderableWidget(doneButton);
         if (!module.canLearn(ModCraftingTypes.SMELTING))
         {

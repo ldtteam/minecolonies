@@ -1,20 +1,18 @@
 package com.minecolonies.coremod.entity.citizen.citizenhandlers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenChatHandler;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.util.ServerUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).
@@ -47,78 +45,65 @@ public class CitizenChatHandler implements ICitizenChatHandler
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
+            TranslatableComponent contentComponent;
             if (job != null)
             {
-                final Component component = new TranslatableComponent(
-                        "block.blockhuttownhall.messageworkerdead",
-                        new TranslatableComponent(job.getJobRegistryEntry().getTranslationKey()),
-                        citizen.getCitizenData().getName(),
-                        (int) citizen.getX(), (int) citizen.getY(),
-                        (int) citizen.getZ(), new TranslatableComponent(damageSource.msgId));
-                LanguageHandler.sendPlayersMessage(citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "", component);
+                contentComponent = new TranslatableComponent(
+                  TranslationConstants.WORKER_DIED,
+                  new TranslatableComponent(job.getJobRegistryEntry().getTranslationKey()),
+                  citizen.getCitizenData().getName(),
+                  Math.round(citizen.getX()),
+                  Math.round(citizen.getY()),
+                  Math.round(citizen.getZ()),
+                  new TranslatableComponent(damageSource.msgId));
             }
             else
             {
-                LanguageHandler.sendPlayersMessage(
-                        citizen.getCitizenColonyHandler().getColony().getImportantMessageEntityPlayers(), "",
-                        new TranslatableComponent("block.blockhuttownhall.messagecolonistdead",
-                                citizen.getCitizenData().getName(), (int) citizen.getX(), (int) citizen.getY(),
-                                (int) citizen.getZ(), new TranslatableComponent(damageSource.msgId)));
+                contentComponent = new TranslatableComponent(
+                  TranslationConstants.COLONIST_DIED,
+                  citizen.getCitizenData().getName(),
+                  Math.round(citizen.getX()),
+                  Math.round(citizen.getY()),
+                  Math.round(citizen.getZ()),
+                  new TranslatableComponent(damageSource.msgId));
             }
+
+            MessageUtils.format(contentComponent)
+              .with(ChatFormatting.RED)
+              .sendTo(citizen.getCitizenColonyHandler().getColony()).forManagers();
         }
     }
 
     @Override
     public void sendLocalizedChat(final String keyIn, final Object... msg)
     {
-        final String key = keyIn.toLowerCase(Locale.US);
-        if (msg == null)
-        {
-            return;
-        }
-
-        final TranslatableComponent requiredItem;
-
-        if (msg.length == 0)
-        {
-            requiredItem = new TranslatableComponent(key);
-        }
-        else
-        {
-            requiredItem = new TranslatableComponent(key, msg);
-        }
-
-        sendLocalizedChat(requiredItem);
+        sendLocalizedChat(new TranslatableComponent(keyIn, msg));
     }
 
     @Override
     public void sendLocalizedChat(Component component)
     {
-        final TextComponent citizenDescription = new TextComponent(citizen.getCustomName().getString());
         if (citizen.getCitizenColonyHandler().getColony() != null)
         {
-            final TextComponent colonyDescription = new TextComponent(" at " + citizen.getCitizenColonyHandler().getColony().getName() + ": ");
-            final List<Player> players = new ArrayList<>(citizen.getCitizenColonyHandler().getColony().getMessagePlayerEntities());
-            final Player owner = ServerUtils.getPlayerFromUUID(
-                    CompatibilityUtils.getWorldFromCitizen(citizen),
-                    citizen.getCitizenColonyHandler().getColony().getPermissions().getOwner());
+            final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
 
-            if (owner != null)
+            MessageUtils.MessageBuilder builder;
+            if (job != null)
             {
-                players.remove(owner);
-                LanguageHandler.sendPlayerMessage(owner,
-                        citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
-                        new TextComponent(" "),
-                        citizenDescription,
-                        component);
+                builder = MessageUtils.format(job.getJobRegistryEntry().getTranslationKey())
+                            .append(new TextComponent(" "))
+                            .append(citizen.getCustomName())
+                            .append(new TextComponent(": "))
+                            .append(component);
+            }
+            else
+            {
+                builder = MessageUtils.format(citizen.getCustomName())
+                            .append(new TextComponent(": "))
+                            .append(component);
             }
 
-            LanguageHandler.sendPlayersMessage(players,
-                    citizen.getCitizenJobHandler().getColonyJob() == null ? "" : citizen.getCitizenJobHandler().getColonyJob().getJobRegistryEntry().getTranslationKey(),
-                    new TextComponent(" "),
-                    citizenDescription,
-                    colonyDescription,
-                    component);
+            builder.sendTo(citizen.getCitizenColonyHandler().getColony()).forAllPlayers();
         }
     }
 }

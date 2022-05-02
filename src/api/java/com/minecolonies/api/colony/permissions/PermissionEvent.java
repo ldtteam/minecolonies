@@ -35,7 +35,7 @@ public class PermissionEvent
     private final BlockPos position;
 
     /**
-     * Constructor for permissionevents.
+     * Constructor for permission events.
      *
      * @param id       the player UUID.
      * @param name     the player name.
@@ -51,7 +51,7 @@ public class PermissionEvent
     }
 
     /**
-     * Constructor for permissionevents. to load them from a ByteBuf.
+     * Constructor for permission events. to load them from a ByteBuf.
      *
      * @param buf the ByteBuf.
      */
@@ -113,7 +113,7 @@ public class PermissionEvent
     }
 
     /**
-     * Serialize the PermissioNEvent to a ByteBuf.
+     * Serialize the permission event to a ByteBuf.
      *
      * @param buf the buffer.
      */

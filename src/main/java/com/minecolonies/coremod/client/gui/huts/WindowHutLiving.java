@@ -5,6 +5,7 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
+import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_HOUSE_ASSIGNED_CITIZENS;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_RECALL;
 
 /**
@@ -108,7 +110,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void refreshView()
     {
-        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.home.assigned", building.getResidents().size(), building.getMax()));
+        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(new TranslatableComponent(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
         citizen.refreshElementPanes();
     }
 
@@ -119,7 +121,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
     {
         if (building.getBuildingLevel() == 0)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0);
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }
 

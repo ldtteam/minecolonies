@@ -5,8 +5,8 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -14,11 +14,15 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.MinerLevelManagemen
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerRepairLevelMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.miner.MinerSetLevelMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_NODES;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_REPAIR_ENQUEUED;
 
 /**
  * BOWindow for the miner hut.
@@ -57,7 +61,7 @@ public class WindowHutMinerModule extends AbstractModuleWindow
     {
         final int row = levelList.getListElementIndexByPane(button);
         Network.getNetwork().sendToServer(new MinerRepairLevelMessage(buildingView, row));
-        LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued");
+        MessageUtils.format(MINER_REPAIR_ENQUEUED).sendTo(Minecraft.getInstance().player);
     }
 
     private void currentLevelClicked(final Button button)
@@ -111,9 +115,11 @@ public class WindowHutMinerModule extends AbstractModuleWindow
                     rowPane.findPaneOfTypeByID("repair", Button.class).disable();
                 }
 
-                rowPane.findPaneOfTypeByID("lvl", Text.class).setText(Integer.toString(index));
+                rowPane.findPaneOfTypeByID("lvl", Text.class).setText(new TextComponent(Integer.toString(index)));
                 rowPane.findPaneOfTypeByID("nONodes", Text.class)
-                  .setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minernode").getString() + ": " + levelsInfo.get(index).getA());
+                  .setText(new TranslatableComponent(MINER_NODES)
+                             .append(": ")
+                             .append(String.valueOf(levelsInfo.get(index).getA())));
                 rowPane.findPaneOfTypeByID("yLevel", Text.class)
                   .setText("Y: " + (levelsInfo.get(index).getB() + 1));
                 // ^^ 1 is for Y depth fix

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.moduleviews;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import net.minecraft.client.Minecraft;
 
@@ -32,7 +32,7 @@ public class FloristFlowerListModuleView extends ItemListModuleView
     {
         if (buildingView.getBuildingLevel() <= 1)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_LOW_LEVEL_TO_FILTER_FLORIST);
+            MessageUtils.format(TOO_LOW_LEVEL_TO_FILTER_FLORIST).sendTo(Minecraft.getInstance().player);
             return;
         }
 
@@ -44,20 +44,20 @@ public class FloristFlowerListModuleView extends ItemListModuleView
     {
         if (buildingView.getBuildingLevel() <= 1)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_LOW_LEVEL_TO_FILTER_FLORIST);
+            MessageUtils.format(TOO_LOW_LEVEL_TO_FILTER_FLORIST).sendTo(Minecraft.getInstance().player);
             return;
         }
 
         final int size = getSize();
         if (buildingView.getBuildingLevel() <= MAX_LEVEL_BEFORE_SORTING && size >= 1)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_BELOW_LVL4_FLORIST);
+            MessageUtils.format(TOO_MANY_FILTERED_BELOW_LVL4_FLORIST).sendTo(Minecraft.getInstance().player);
             return;
         }
 
         if (buildingView.getBuildingLevel() < MAX_BUILDING_LEVEL && size >= MAX_BUILDING_LEVEL)
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TOO_MANY_FILTERED_FLORIST);
+            MessageUtils.format(TOO_MANY_FILTERED_FLORIST).sendTo(Minecraft.getInstance().player);
             return;
         }
 

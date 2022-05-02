@@ -34,6 +34,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -566,16 +568,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
-                final TranslatableComponent message = new TranslatableComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                  new TranslatableComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase()),
-                  recipe.getPrimaryOutput().getHoverName(),
-                  reducedItem.getItemStack().getHoverName(),
-                  citizen.getName());
-
-                for(Player player : building.getColony().getMessagePlayerEntities())
-                {
-                    player.sendMessage(message, player.getUUID());
-                }
+                Component jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
+                MessageUtils.format(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                    jobComponent,
+                    recipe.getPrimaryOutput().getHoverName(),
+                    reducedItem.getItemStack().getHoverName(),
+                    citizen.getName()
+                ).sendTo(building.getColony()).forAllPlayers();
             }
         }
     }

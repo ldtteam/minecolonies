@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
+
 /**
  * A custom rendered Screen (i.e. not blockui) that renders a picker for the banners,
  * similar to a loom. The resulting banner cannot be extracted.
@@ -201,7 +203,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
-                new TranslatableComponent("gui.done"),
+                new TranslatableComponent(BASE_GUI_DONE),
                 pressed -> {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
@@ -280,7 +282,7 @@ public class WindowBannerPicker extends Screen
         // Render the instructions
         this.drawCenteredString(stack,
                 this.font,
-                I18n.get("com.minecolonies.coremod.gui.flag.choose"),
+                new TranslatableComponent("com.minecolonies.coremod.gui.flag.choose").getString(),
                 this.width /2,
                 16,
                 0xFFFFFF /* white */

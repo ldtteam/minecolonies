@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.util;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.EntityUtils;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceKey;
@@ -15,6 +15,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_TELEPORT_SUCCESS;
 
 /**
  * Helper class for server-side teleporting.
@@ -79,7 +82,7 @@ public final class TeleportHelper
         final IColony colony = IColonyManager.getInstance().getIColonyByOwner(player.getCommandSenderWorld(), player);
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.colonyidnotfound");
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND).sendTo(player);
             return;
         }
 
@@ -119,7 +122,7 @@ public final class TeleportHelper
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, dimension);
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.colonyidnotfound");
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND).sendTo(player);
             return;
         }
 
@@ -167,6 +170,6 @@ public final class TeleportHelper
         }
 
         player.teleportTo(world, position.getX(), position.getY(), position.getZ(), player.getYRot(), player.getXRot());
-        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.teleport.success", colony.getName());
+        MessageUtils.format(COMMAND_TELEPORT_SUCCESS, colony.getName()).sendTo(player);
     }
 }

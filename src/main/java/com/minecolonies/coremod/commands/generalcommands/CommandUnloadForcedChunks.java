@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -33,7 +34,7 @@ public class CommandUnloadForcedChunks implements IMCCommand
             {
                 ((ServerLevel) world).setChunkForced(ChunkPos.getX(chunk), ChunkPos.getZ(chunk), false);
             }
-            sender.sendMessage(new TextComponent("Successfully removed forceload flag!"), sender.getUUID());
+            MessageUtils.format(new TextComponent("Successfully removed forceload flag!")).sendTo((Player) sender);
             return 1;
         }
         return 0;

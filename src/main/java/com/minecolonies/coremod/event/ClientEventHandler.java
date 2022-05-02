@@ -51,6 +51,7 @@ import java.util.function.Supplier;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_AVAILABLE_TOOLTIP_GUI;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_BUILDLEVEL_TOOLTIP_GUI;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI;
+import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 
 /**
  * Used to handle client events.
@@ -292,7 +293,7 @@ public class ClientEventHandler
             {
                 if (IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
                 {
-                    event.getLeft().add(new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.noclosecolony").getString());
+                    event.getLeft().add(new TranslatableComponent(DEBUG_NO_CLOSE_COLONY).getString());
                     return;
                 }
                 colony = IColonyManager.getInstance().getClosestIColony(world, pos);
@@ -303,15 +304,13 @@ public class ClientEventHandler
                 }
 
                 event.getLeft()
-                    .add(new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.nextcolony",
-                        (int) Math.sqrt(colony.getDistanceSquared(pos)),
-                        IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
+                  .add(new TranslatableComponent(DEBUG_NEXT_COLONY,
+                    (int) Math.sqrt(colony.getDistanceSquared(pos)),
+                    IColonyManager.getInstance().getMinimumDistanceBetweenTownHalls()).getString());
                 return;
             }
 
-            event.getLeft()
-                .add(colony.getName() + " : " + new TranslatableComponent("com.minecolonies.coremod.gui.debugscreen.blocksfromcenter",
-                    (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
+            event.getLeft().add(colony.getName() + " : " + new TranslatableComponent(DEBUG_BLOCKS_FROM_CENTER, (int) Math.sqrt(colony.getDistanceSquared(pos))).getString());
         }
     }
 }

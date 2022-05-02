@@ -18,6 +18,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.ToolLevelConstants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
@@ -241,7 +242,7 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_DELIVERY).append(new TextComponent(
+            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY).append(new TextComponent(
               getRequest().getStack().getCount() + " ")).append(getRequest().getStack().getDisplayName()));
             return result;
         }
@@ -313,7 +314,7 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_PICKUP));
+            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_PICKUP));
             return result;
         }
 
@@ -357,7 +358,7 @@ public final class StandardRequests
         @Override
         public final Component getShortDisplayString()
         {
-            return new TranslatableComponent(TranslationConstants.REQUEST_CRAFTING_DISPLAY, new TextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getDisplayName());
+            return new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, new TextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getDisplayName());
         }
 
         protected abstract String getTranslationKey();
@@ -434,7 +435,7 @@ public final class StandardRequests
         @Override
         protected String getTranslationKey()
         {
-            return TranslationConstants.COM_MINECOLONIES_REQUESTS_CRAFTING;
+            return RequestSystemTranslationConstants.REQUESTS_TYPE_CRAFTING;
         }
 
         @Override
@@ -469,7 +470,7 @@ public final class StandardRequests
         @Override
         protected String getTranslationKey()
         {
-            return TranslationConstants.COM_MINECOLONIES_REQUESTS_CRAFTING;
+            return RequestSystemTranslationConstants.REQUESTS_TYPE_CRAFTING;
         }
 
         @Override
@@ -499,7 +500,7 @@ public final class StandardRequests
         public Component getLongDisplayString()
         {
             final MutableComponent result = new NonSiblingFormattingTextComponent();
-            final MutableComponent preType = new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PRETYPE);
+            final MutableComponent preType = new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_TYPE_PREFIX);
 
             result.append(preType);
 
@@ -508,7 +509,7 @@ public final class StandardRequests
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
                 result.append(new TextComponent(" "));
-                result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMINLEVEL));
+                result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
                 result.append(new TextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
             }
 
@@ -521,7 +522,7 @@ public final class StandardRequests
                 }
 
                 result.append(new TextComponent(" "));
-                result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_TOOL_PREMAXLEVEL));
+                result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MAXIMUM_LEVEL_PREFIX));
                 result.append(new TextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
             }
 
@@ -567,7 +568,7 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_FOOD));
+            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD));
             return result;
         }
 
@@ -624,7 +625,7 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            return new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE);
+            return new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE);
         }
 
         @NotNull
@@ -673,7 +674,7 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_REQUESTS_BURNABLE));
+            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE));
             return result;
         }
 

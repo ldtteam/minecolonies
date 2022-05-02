@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages.server.colony;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,6 +14,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Message to execute the renaiming of the townHall.
@@ -121,21 +123,11 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
             {
                 case LOCATION:
                     colony.addFreePosition(pos);
-                    LanguageHandler.sendPlayerMessage(
-                      player,
-                      "com.minecolonies.coremod.item.permissionscepter.addposition.success",
-                      pos.getX(),
-                      pos.getY(),
-                      pos.getZ()
-                    );
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ()).sendTo(player);
                     break;
                 case BLOCK:
                     colony.addFreeBlock(block.getBlock());
-                    LanguageHandler.sendPlayerMessage(
-                      player,
-                      "com.minecolonies.coremod.item.permissionscepter.addblock.success",
-                      block.getBlock().getRegistryName()
-                    );
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_ADD_BLOCK_SUCCESS, block.getBlock().getRegistryName()).sendTo(player);
                     break;
                 default:
                     // Error!
@@ -147,20 +139,11 @@ public class ChangeFreeToInteractBlockMessage extends AbstractColonyServerMessag
             {
                 case LOCATION:
                     colony.removeFreePosition(pos);
-                    LanguageHandler.sendPlayerMessage(
-                      player,
-                      "com.minecolonies.coremod.item.permissionscepter.removelocation.success",
-                      pos.getX(),
-                      pos.getY(),
-                      pos.getZ());
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_POSITION_SUCCESS, pos.getX(), pos.getY(), pos.getZ()).sendTo(player);
                     break;
                 case BLOCK:
                     colony.removeFreeBlock(block.getBlock());
-                    LanguageHandler.sendPlayerMessage(
-                      player,
-                      "com.minecolonies.coremod.item.permissionscepter.removeblock.success",
-                      block.getBlock().getRegistryName()
-                    );
+                    MessageUtils.format(MESSAGE_PERMISSION_SCEPTER_REMOVE_BLOCK_SUCCESS, block.getBlock().getRegistryName()).sendTo(player);
                     break;
                 default:
                     // Error!

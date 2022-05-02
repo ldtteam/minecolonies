@@ -12,10 +12,11 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FarmerFieldModuleView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
@@ -167,7 +168,9 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
      */
     private void assignmentModeClicked(@NotNull final Button button)
     {
-        if (button.getTextAsString().equals(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF).getString()))
+        String buttonText = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
+        if (buttonText.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
         {
             button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             moduleView.setAssignFieldManually(true);
@@ -187,7 +190,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 
         if (moduleView.assignFieldManually())
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON) {});
         }
         else
         {
@@ -208,14 +211,16 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
             {
                 final BlockPos field = fields.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field, buildingView.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field);
+                final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field);
                 final BlockEntity entity = world.getBlockEntity(field);
                 if (entity instanceof ScarecrowTileEntity)
                 {
-                    @NotNull final String owner =
-                      ((ScarecrowTileEntity) entity).getOwner().isEmpty()
-                        ? ("<" + new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED).getString() + ">")
-                        : ((ScarecrowTileEntity) entity).getOwner();
+                    final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) entity;
+                    @NotNull final Component owner = scarecrowTileEntity.getOwner().isEmpty()
+                                                            ? new TextComponent("<")
+                                                                .append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED))
+                                                                .append(">")
+                                                            : new TextComponent(scarecrowTileEntity.getOwner());
 
                     rowPane.findPaneOfTypeByID(TAG_WORKER, Text.class).setText(owner);
                     rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");

@@ -53,16 +53,6 @@ public interface IHappinessModifier
     void reset();
 
     /**
-     * Get the lang string of the happiness factor.
-     *
-     * @return the lang string.
-     */
-    default String getLangString()
-    {
-        return "com.minecolonies.coremod.happiness.factor." + getId();
-    }
-
-    /**
      * Get the days this is active.
      *
      * @return the days.
