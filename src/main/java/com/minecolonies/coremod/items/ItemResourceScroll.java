@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -8,6 +7,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
@@ -23,10 +23,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -81,9 +78,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
 
                 if (!ctx.getLevel().isClientSide)
                 {
-                    LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-                      COM_MINECOLONIES_SCROLL_BUILDING_SET,
-                      buildingEntity.getColony().getName());
+                    MessageUtils.format(COM_MINECOLONIES_SCROLL_BUILDING_SET, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
             else if (buildingEntity instanceof TileEntityWareHouse)
@@ -97,13 +92,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 if (!ctx.getLevel().isClientSide)
                 {
-                    String buildingTypeKey = buildingEntity.getBuilding().getBuildingType().getTranslationKey();
-                    ITextComponent buildingTypeComponent = new TranslationTextComponent(buildingTypeKey);
-                    ITextComponent mainComponent = new TranslationTextComponent(
-                      COM_MINECOLONIES_SCROLL_WRONG_BUILDING,
-                      buildingTypeComponent,
-                      buildingEntity.getColony().getName());
-                    ctx.getPlayer().sendMessage(mainComponent, ctx.getPlayer().getUUID());
+                    final IFormattableTextComponent buildingTypeComponent = MessageUtils.format(buildingEntity.getBuilding().getBuildingType().getTranslationKey()).create();
+                    MessageUtils.format(COM_MINECOLONIES_SCROLL_WRONG_BUILDING, buildingTypeComponent, buildingEntity.getColony().getName()).sendTo(ctx.getPlayer());
                 }
             }
         }
@@ -126,9 +116,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
     @Override
     @NotNull
     public ActionResult<ItemStack> use(
-      final World worldIn,
-      final PlayerEntity playerIn,
-      final Hand hand)
+      final World worldIn, final PlayerEntity playerIn, final Hand hand)
     {
         final ItemStack clipboard = playerIn.getItemInHand(hand);
 

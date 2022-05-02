@@ -42,7 +42,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -628,18 +627,6 @@ public final class ColonyView implements IColonyView
     public String getTextureStyleId()
     {
         return this.textureStyle;
-    }
-
-    @Override
-    public void notifyPlayers(final ITextComponent component)
-    {
-        //noop
-    }
-
-    @Override
-    public void notifyColonyManagers(final ITextComponent component)
-    {
-        //noop
     }
 
     /**

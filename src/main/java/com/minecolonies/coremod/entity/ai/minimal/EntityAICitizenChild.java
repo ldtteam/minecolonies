@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -11,6 +10,7 @@ import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRate
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenGrownUpEvent;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.research.util.ResearchConstants.GROWTH;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_CHILD_GREW_UP;
 
 /**
  * AI which controls child behaviour and growing.
@@ -304,11 +305,11 @@ public class EntityAICitizenChild extends Goal
             // 1/144 Chance to grow up, every 25 seconds = avg 1h. Set to half since this AI isnt always active, e.g. sleeping.  At 2h they directly grow
             if (rand.nextInt((int) (70 / growthModifier) + 1) == 0 || aiActiveTime > 70000 / growthModifier)
             {
-                child.getCitizenColonyHandler().getColony().getEventDescriptionManager().addEventDescription(new CitizenGrownUpEvent(child.blockPosition(),
-                      child.getCitizenData().getName()));
-                LanguageHandler.sendPlayersMessage(child.getCitizenColonyHandler().getColony().getMessagePlayerEntities(),
-                  "com.minecolonies.coremod.progress.childGrow",
-                  child.getName().getString());
+                child.getCitizenColonyHandler()
+                  .getColony()
+                  .getEventDescriptionManager()
+                  .addEventDescription(new CitizenGrownUpEvent(child.blockPosition(), child.getCitizenData().getName()));
+                MessageUtils.format(MESSAGE_INFO_COLONY_CHILD_GREW_UP, child.getName().getString()).sendTo(child.getCitizenColonyHandler().getColony()).forAllPlayers();
                 // Grow up
                 child.setIsChild(false);
                 child.setTextureDirty();

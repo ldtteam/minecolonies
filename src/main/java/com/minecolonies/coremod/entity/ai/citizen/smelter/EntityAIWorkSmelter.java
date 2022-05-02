@@ -8,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingSmeltery;
@@ -125,7 +126,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     {
         if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(getSmeltAbleClass().getClass())) &&
               !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-                req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE))))
+                req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE))))
         {
             final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
             if (allowedItems.isEmpty())
@@ -149,7 +150,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, COM_MINECOLONIES_REQUESTS_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
                 }
             }
         }

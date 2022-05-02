@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -164,7 +163,7 @@ public class BuildToolPlaceMessage implements IMessage
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
+            MessageUtils.format(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
         if (isHut)
@@ -200,7 +199,7 @@ public class BuildToolPlaceMessage implements IMessage
         final Block blockAtPos = world.getBlockState(buildPos).getBlock();
         if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
         {
-            LanguageHandler.sendPlayerMessage(player, INDESTRUCTIBLE_BLOCK_AT_POS);
+            MessageUtils.format(INDESTRUCTIBLE_BLOCK_AT_POS).sendTo(player);
             SoundUtils.playErrorSound(player, buildPos);
             return;
         }
@@ -228,7 +227,7 @@ public class BuildToolPlaceMessage implements IMessage
         final CompoundNBT compound = stack.getTag();
         if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
         {
-            LanguageHandler.sendPlayerMessage(player, WRONG_COLONY, compound.getInt(TAG_COLONY_ID));
+            MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
             return;
         }
 
@@ -275,7 +274,7 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(player, NO_HUT_IN_INVENTORY);
+            MessageUtils.format(NO_HUT_IN_INVENTORY).sendTo(player);
         }
     }
 

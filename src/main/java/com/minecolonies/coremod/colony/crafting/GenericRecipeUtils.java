@@ -35,24 +35,24 @@ public final class GenericRecipeUtils
         final List<ITextComponent> restrictions = new ArrayList<>();
         if (customRecipe.getMinBuildingLevel() == customRecipe.getMaxBuildingLevel())
         {
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "onelevelrestriction",
+            restrictions.add(new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction",
                     customRecipe.getMinBuildingLevel()));
         }
         else if (customRecipe.getMinBuildingLevel() > 1 || customRecipe.getMaxBuildingLevel() < CONST_DEFAULT_MAX_BUILDING_LEVEL)
         {
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "levelrestriction",
+            restrictions.add(new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
                     customRecipe.getMinBuildingLevel(), customRecipe.getMaxBuildingLevel()));
         }
         if (customRecipe.getRequiredResearchId() != null)
         {
             final ITextComponent researchName = getResearchDisplayName(customRecipe.getRequiredResearchId());
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "minresearch",
+            restrictions.add(new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
                     researchName));
         }
         if (customRecipe.getExcludedResearchId() != null)
         {
             final ITextComponent researchName = getResearchDisplayName(customRecipe.getExcludedResearchId());
-            restrictions.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "maxresearch",
+            restrictions.add(new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
                     researchName));
         }
         return restrictions;

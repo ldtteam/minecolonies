@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -102,7 +103,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
             {
                 final BlockPos grave = moduleView.getGraves().get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(grave, buildingView.getPosition())));
-                final String direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
+                final ITextComponent direction = BlockPosUtil.calcDirection(buildingView.getPosition(), grave);
                 final TileEntity entity = world.getBlockEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {

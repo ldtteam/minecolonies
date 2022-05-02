@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.network.messages.server.colony.citizen;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.AbstractColonyServerMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_CITIZEN_RESTART_SCHEDULED;
 
 /**
  * Message class which manages the messages hiring or firing of citizens.
@@ -77,6 +79,6 @@ public class RestartCitizenMessage extends AbstractColonyServerMessage
 
         // Restart also worker building and AI
         citizen.scheduleRestart(player);
-        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.hiring.restartMessage", citizen.getName());
+        MessageUtils.format(MESSAGE_CITIZEN_RESTART_SCHEDULED, citizen.getName()).sendTo(player);
     }
 }

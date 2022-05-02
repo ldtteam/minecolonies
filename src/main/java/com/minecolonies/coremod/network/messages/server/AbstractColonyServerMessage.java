@@ -1,10 +1,10 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.RegistryKey;
@@ -14,6 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.HUT_BLOCK_MISSING_COLONY;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_PERMISSION_SCEPTER_PERMISSION_DENY;
 
 public abstract class AbstractColonyServerMessage implements IMessage
 {
@@ -30,7 +33,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     /**
      * Empty standard constructor.
      */
-    public AbstractColonyServerMessage() { }
+    public AbstractColonyServerMessage() {}
 
     /**
      * Network message for executing things on colonies on the server
@@ -123,7 +126,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                     return;
                 }
 
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
+                MessageUtils.format(TOOL_PERMISSION_SCEPTER_PERMISSION_DENY).sendTo(player);
                 return;
             }
             else if (ownerOnly() && (player == null || colony.getPermissions().getOwner().equals(player.getUUID())))
@@ -133,7 +136,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
                     return;
                 }
 
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.item.permissionscepter.permission.deny");
+                MessageUtils.format(TOOL_PERMISSION_SCEPTER_PERMISSION_DENY).sendTo(player);
                 return;
             }
 
@@ -141,7 +144,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.nocolony", this.getClass().getSimpleName());
+            MessageUtils.format(HUT_BLOCK_MISSING_COLONY, this.getClass().getSimpleName()).sendTo(player);
         }
     }
 }

@@ -9,8 +9,10 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
@@ -18,7 +20,6 @@ import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -180,7 +181,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE * getOwnBuilding().getBarrels().size(), 1, getOwnBuilding().getSetting(BuildingComposter.MIN).getValue()));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, RequestSystemTranslationConstants.REQUESTS_TYPE_COMPOSTABLE, Constants.STACKSIZE * getOwnBuilding().getBarrels().size(), 1, getOwnBuilding().getSetting(BuildingComposter.MIN).getValue()));
             }
         }
 
@@ -376,10 +377,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
-            for (final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntities())
-            {
-                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST), player.getUUID());
-            }
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST)
+              .sendTo(getOwnBuilding().getColony()).forAllPlayers();
         }
         else
         {

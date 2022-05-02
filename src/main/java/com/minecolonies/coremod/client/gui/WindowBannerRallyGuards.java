@@ -6,7 +6,6 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
@@ -17,6 +16,8 @@ import com.minecolonies.coremod.network.messages.server.ToggleBannerRallyGuardsM
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -95,11 +96,11 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
 
         if (isActive(banner))
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(new TranslationTextComponent(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_DISMISS));
         }
         else
         {
-            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
+            findPaneOfTypeByID(BUTTON_RALLY, ButtonImage.class).setText(new TranslationTextComponent(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_RALLY));
         }
 
         guardTowerList.setDataProvider(() -> getGuardTowerViews(banner).size(), (index, rowPane) ->
@@ -120,18 +121,19 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
             if (guardTowerView != null)
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(LanguageHandler.format(ModGuardTypes.knight.getJobTranslationKey())
-                                                                                  + "|"
-                                                                                  + LanguageHandler.format(ModGuardTypes.ranger.getJobTranslationKey())
-                                                                                  + ": " + guardTowerView.getGuards().size());
-                rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(new TranslationTextComponent(ModGuardTypes.knight.getJobTranslationKey())
+                  .append("|")
+                  .append(new TranslationTextComponent(ModGuardTypes.ranger.getJobTranslationKey()))
+                  .append(": ")
+                  .append(String.valueOf(guardTowerView.getGuards().size())));
+                rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(new StringTextComponent(guardTower.getFirst().toString()));
             }
             else
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.COOKIE));
 
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class)
-                  .setText(LanguageHandler.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
+                  .setText(new TranslationTextComponent(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_TOWERMISSING));
                 rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setColors(Color.rgbaToInt(255, 0, 0, 1));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
             }

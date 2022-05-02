@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -39,6 +38,7 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.TypeConstants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractAssignedCitizenModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
@@ -445,7 +445,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         WorkOrderBuilding workOrder = WorkOrderBuilding.create(type, this);
         if (type == WorkOrderType.REMOVE && !canDeconstruct())
         {
-            colony.notifyPlayers(new TranslationTextComponent(BUILDER_CANNOT_DECONSTRUCT));
+            MessageUtils.format(BUILDER_CANNOT_DECONSTRUCT).sendTo(colony).forAllPlayers();
             return;
         }
 
@@ -453,26 +453,26 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               !canBeBuiltByBuilder(workOrder.getTargetLevel()) &&
               !workOrder.canBeResolved(colony, workOrder.getTargetLevel()))
         {
-            colony.notifyPlayers(new TranslationTextComponent(BUILDER_NECESSARY, Integer.toString(workOrder.getTargetLevel())));
+            MessageUtils.format(BUILDER_NECESSARY, Integer.toString(workOrder.getTargetLevel())).sendTo(colony).forAllPlayers();
             return;
         }
 
         if (workOrder.tooFarFromAnyBuilder(colony, workOrder.getTargetLevel()) &&
               builder.equals(BlockPos.ZERO))
         {
-            colony.notifyPlayers(new TranslationTextComponent(BUILDER_TOO_FAR_AWAY));
+            MessageUtils.format(BUILDER_TOO_FAR_AWAY).sendTo(colony).forAllPlayers();
             return;
         }
 
         if (getCorners().getA().getY() >= MAX_BUILD_HEIGHT ||
               getCorners().getB().getY() >= MAX_BUILD_HEIGHT)
         {
-            colony.notifyPlayers(new TranslationTextComponent(BUILDER_BUILDING_TOO_HIGH));
+            MessageUtils.format(BUILDER_BUILDING_TOO_HIGH).sendTo(colony).forAllPlayers();
             return;
         }
         else if (getPosition().getY() <= MIN_BUILD_HEIGHT)
         {
-            colony.notifyPlayers(new TranslationTextComponent(BUILDER_BUILDING_TOO_LOW));
+            MessageUtils.format(BUILDER_BUILDING_TOO_LOW).sendTo(colony).forAllPlayers();
             return;
         }
 
@@ -486,7 +486,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             }
             else
             {
-                colony.notifyPlayers(new TranslationTextComponent(BUILDER_NECESSARY, Integer.toString(workOrder.getTargetLevel())));
+                MessageUtils.format(BUILDER_NECESSARY, Integer.toString(workOrder.getTargetLevel())).sendTo(colony).forAllPlayers();
                 return;
             }
         }
@@ -496,12 +496,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         if (workOrder.getID() != 0)
         {
-            colony.notifyColonyManagers(new TranslationTextComponent(WORK_ORDER_CREATED,
-              workOrder.getDisplayName(),
-              colony.getName(),
-              workOrder.getLocation().getX(),
-              workOrder.getLocation().getY(),
-              workOrder.getLocation().getZ()));
+            MessageUtils.format(WORK_ORDER_CREATED,
+                workOrder.getDisplayName(),
+                colony.getName(),
+                workOrder.getLocation().getX(),
+                workOrder.getLocation().getY(),
+                workOrder.getLocation().getZ())
+              .sendTo(colony).forAllPlayers();
         }
         markDirty();
     }
@@ -780,13 +781,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) &&
               colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.havetounlock"), player.getUUID());
+            MessageUtils.format(WARNING_BUILDING_REQUIRES_RESEARCH_UNLOCK).sendTo(player);
             return;
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) &&
               (colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) <= getBuildingLevel()))
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.research.unlocktoupgrade"), player.getUUID());
+            MessageUtils.format(WARNING_BUILDING_REQUIRES_RESEARCH_UPGRADE).sendTo(player);
             return;
         }
 
@@ -802,7 +803,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.noupgrade"), player.getUUID());
+            MessageUtils.format(WARNING_NO_UPGRADE).sendTo(player);
         }
     }
 
@@ -824,7 +825,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (hasParent())
         {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.workerhuts.pickup.denied");
+            MessageUtils.format(WARNING_BUILDING_PICKUP_DENIED).sendTo(player);
             return;
         }
 
@@ -840,7 +841,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.playerinvfull");
+            MessageUtils.format(WARNING_BUILDING_PICKUP_PLAYER_INVENTORY_FULL).sendTo(player);
         }
     }
 
@@ -1322,13 +1323,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
-            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(ASYNC_REQUEST,
-              request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
+              request.getShortDisplayString()), ChatPriority.PENDING, new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
         else
         {
-            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(NORMAL_REQUEST,
-              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(NORMAL_REQUEST), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
+              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslationTextComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
 
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));

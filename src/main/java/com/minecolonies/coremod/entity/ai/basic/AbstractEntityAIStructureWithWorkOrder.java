@@ -120,9 +120,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                     return IDLE;
                 }
 
-                worker.getCitizenChatHandler().sendLocalizedChat(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
-                  job.getWorkOrder().getDisplayName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -132,9 +130,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             else if (!(wo instanceof WorkOrderMiner))
             {
-                worker.getCitizenChatHandler().sendLocalizedChat(
-                  COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START,
-                  job.getWorkOrder().getDisplayName());
+                worker.getCitizenChatHandler().sendLocalizedChat(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START, job.getWorkOrder().getDisplayName());
             }
             return getState();
         }
@@ -235,9 +231,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
-                      .getState()
-                      .getBlock()))),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
+                                                                                                                                                             .getState()
+                                                                                                                                                             .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -257,9 +253,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
-                      .getState()
-                      .getBlock()))),
+                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                                                                                                                                                             .getState()
+                                                                                                                                                             .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -347,6 +343,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         }
         else
         {
+            // TODO: Preferably want to use the display name of the building (in order to respect custom name) however this will require an event rework so it stores text components rather than strings
             String workOrderName = wo.getWorkOrderName();
             sendCompletionMessage(wo);
 

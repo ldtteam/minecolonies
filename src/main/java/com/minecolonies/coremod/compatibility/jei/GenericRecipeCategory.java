@@ -282,7 +282,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             if (new Rectangle2d(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "intermediate.tip", recipe.getIntermediate().getName()));
+                tooltips.add(new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + "intermediate.tip", recipe.getIntermediate().getName()));
             }
         }
 

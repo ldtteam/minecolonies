@@ -15,10 +15,10 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     public CompostRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        this.title = I18n.get(ModBlocks.blockBarrel.getDescriptionId());
+        this.title = new TranslationTextComponent(ModBlocks.blockBarrel.getDescriptionId()).getString();
 
         this.background = guiHelper.createBlankDrawable(80, 50);
         this.icon = guiHelper.createDrawableIngredient(new ItemStack(ModBlocks.blockBarrel));

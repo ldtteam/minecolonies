@@ -1,6 +1,5 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -27,7 +26,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -309,11 +307,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public ITextComponent getDisplayName()
     {
-        if (getBlockState() == null)
-        {
-            return super.getDisplayName();
-        }
-        return new StringTextComponent(LanguageHandler.format(getBlockState().getBlock().getDescriptionId() + ".name"));
+        return getBlockState().getBlock().getName();
     }
 
     /**

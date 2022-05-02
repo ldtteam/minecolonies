@@ -6,7 +6,6 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.modules.IMinimumStockModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -19,6 +18,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.AddMinim
 import com.minecolonies.coremod.network.messages.server.colony.building.RemoveMinimumStockFromBuildingModuleMessage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -67,7 +67,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
         if (moduleView.hasReachedLimit())
         {
             final ButtonImage button = findPaneOfTypeByID(STOCK_ADD, ButtonImage.class);
-            button.setText(LanguageHandler.format(LABEL_LIMIT_REACHED));
+            button.setText(new TranslationTextComponent(LABEL_LIMIT_REACHED));
             button.setImage(new ResourceLocation(Constants.MOD_ID, "textures/gui/builderhut/builder_button_medium_dark.png"));
         }
 

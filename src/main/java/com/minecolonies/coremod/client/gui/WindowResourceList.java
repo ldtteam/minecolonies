@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.BuildingResourcesModuleView;
@@ -44,6 +45,8 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAREHOUSE_SNAPSHOT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_WAREHOUSE_SNAPSHOT_WO_HASH;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_RESOURCE_SCROLL_ERROR;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_RESOURCE_SCROLL_NO_BUILDER;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.*;
 import static com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource.RessourceAvailability.*;
 
@@ -327,7 +330,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ClientPlayerEntity player = Minecraft.getInstance().player;
         if (this.builder == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.nobuilder"), player.getUUID());
+            MessageUtils.format(TOOL_RESOURCE_SCROLL_NO_BUILDER).sendTo(player);
             close();
             return;
         }
@@ -339,7 +342,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         if (resourceList == null)
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.resourcescroll.null"), player.getUUID());
+            MessageUtils.format(TOOL_RESOURCE_SCROLL_ERROR).sendTo(player);
             close();
             return;
         }

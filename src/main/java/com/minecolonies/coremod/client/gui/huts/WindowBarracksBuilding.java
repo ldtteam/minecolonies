@@ -6,7 +6,6 @@ import com.ldtteam.blockout.controls.ButtonImage;
 import com.ldtteam.blockout.controls.ItemIcon;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -15,6 +14,8 @@ import com.minecolonies.coremod.client.gui.WindowsBarracksSpies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -152,25 +153,27 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      * Mount the distance string for the barracks and the position.
      *
      * @param pos the position.
-     * @return the nice human readable string.
+     * @return the component containing the nice human-readable string.
      */
-    private String mountDistanceString(final BlockPos pos)
+    private ITextComponent mountDistanceString(final BlockPos pos)
     {
         final long distance = BlockPosUtil.getDistance2D(pos, building.getPosition());
         final String distanceDesc;
         if (distance < QUITE_CLOSE)
         {
-            distanceDesc = LanguageHandler.format(QUITE_CLOSE_DESC);
+            distanceDesc = QUITE_CLOSE_DESC;
         }
         else if (distance < QUITE_FAR)
         {
-            distanceDesc = LanguageHandler.format(QUITE_FAR_DESC);
+            distanceDesc = QUITE_FAR_DESC;
         }
         else
         {
-            distanceDesc = LanguageHandler.format(REALLY_FAR_DESC);
+            distanceDesc = REALLY_FAR_DESC;
         }
-        final String directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
-        return distanceDesc + " " + directionDest;
+        final ITextComponent directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
+        return new TranslationTextComponent(distanceDesc)
+                 .append(" ")
+                 .append(directionDest);
     }
 }

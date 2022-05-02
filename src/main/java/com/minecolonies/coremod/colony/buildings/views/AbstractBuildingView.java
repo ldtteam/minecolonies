@@ -632,7 +632,6 @@ public abstract class AbstractBuildingView implements IBuildingView
         return null;
     }
 
-    @NotNull
     @Override
     public <T extends IBuildingModuleView> T getModuleViewMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
@@ -15,6 +15,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -34,7 +36,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
 
         if (!IMCCommand.isPlayerOped((PlayerEntity) sender) && !MineColonies.getConfig().getServer().canPlayerUseColonyTPCommand.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notenabledinconfig");
+            MessageUtils.format(COMMAND_DISABLED_IN_CONFIG).sendTo((PlayerEntity) sender);
             return 0;
         }
 
@@ -43,7 +45,7 @@ public class CommandTeleport implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((PlayerEntity) sender);
             return 0;
         }
 

@@ -1,7 +1,6 @@
 package com.minecolonies.api.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -14,6 +13,7 @@ import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -26,7 +26,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -37,6 +40,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -103,7 +108,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         if (building != null && !building.getChildren().isEmpty() && (player.level.getGameTime() - lastBreakTickWarn) < 100)
         {
             lastBreakTickWarn = player.level.getGameTime();
-            LanguageHandler.sendPlayerMessage(player, "block.minecolonies.blockhut.breakwarn.children");
+            MessageUtils.format(HUT_BREAK_WARNING_CHILD_BUILDINGS).sendTo(player);
         }
 
         return (MinecoloniesAPIProxy.getInstance().getConfig().getServer().pvp_mode.get() ? 1 / (HARDNESS * HARDNESS_PVP_FACTOR) : 1 / HARDNESS) / 30;
@@ -179,19 +184,19 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
             if (building == null)
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.nobuilding");
+                MessageUtils.format(HUT_BLOCK_MISSING_BUILDING).sendTo(player);
                 return ActionResultType.FAIL;
             }
 
             if (building.getColony() == null)
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.nocolony");
+                MessageUtils.format(HUT_BLOCK_MISSING_COLONY).sendTo(player);
                 return ActionResultType.FAIL;
             }
 
             if (!building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS))
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
+                MessageUtils.format(PERMISSION_DENIED).sendTo(player);
                 return ActionResultType.FAIL;
             }
 

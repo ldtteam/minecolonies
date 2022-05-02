@@ -3,7 +3,6 @@ package com.minecolonies.coremod.network.messages.server;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -42,6 +41,9 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
 import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_REMOVING_SUPPLY_CHEST;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_CHEST_ALREADY_PLACED;
+import static com.minecolonies.api.util.constant.translation.ProgressTranslationConstants.PROGRESS_SUPPLY_CHEST_PLACED;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -162,7 +164,7 @@ public class BuildToolPasteMessage implements IMessage
         final ServerPlayerEntity player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
+            MessageUtils.format(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
 
@@ -192,7 +194,7 @@ public class BuildToolPasteMessage implements IMessage
             if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
                     && !isFreeInstantPlacementMH(player))
             {
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
+                MessageUtils.format(WARNING_SUPPLY_CHEST_ALREADY_PLACED).sendTo(player);
                 return;
             }
 
@@ -219,7 +221,7 @@ public class BuildToolPasteMessage implements IMessage
             {
                 if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
                 {
-                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.progress.supplies_placed");
+                    MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
                     player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
                     AdvancementTriggers.PLACE_SUPPLY.trigger(player);
                 }
@@ -229,7 +231,7 @@ public class BuildToolPasteMessage implements IMessage
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(player, "item.supplyChestDeployer.missing");
+                MessageUtils.format(WARNING_REMOVING_SUPPLY_CHEST).sendTo(player);
             }
         }
     }
