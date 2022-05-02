@@ -1567,8 +1567,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = count - invCount;
         final int updatedMinCount = Math.min(updatedCount, minCount);
 
-        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT)) >= updatedMinCount &&
+        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
                 updatedCount,
@@ -1590,6 +1589,42 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     /**
+     * Check if a request exists for a given deliverable.
+     * @param deliverable the deliverable to check of request.
+     * @return true if available or transfered.
+     */
+    public boolean checkIfRequestForItemExistOrCreate(@NotNull final IDeliverable deliverable)
+    {
+        final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), deliverable::matches);
+        if (invCount >= deliverable.getCount())
+        {
+            return true;
+        }
+        final int updatedCount = deliverable.getCount() - invCount;
+        final int updatedMinCount = Math.min(updatedCount, deliverable.getMinimumCount());
+
+        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
+          deliverable::matches, updatedMinCount) >= updatedMinCount &&
+              InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
+                getOwnBuilding(), deliverable::matches,
+                updatedCount,
+                worker.getInventoryCitizen()))
+        {
+            return true;
+        }
+
+        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+          (IRequest<? extends IDeliverable> r) -> r.getRequest().getClass().equals(deliverable.getClass())).isEmpty()
+              && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+          (IRequest<? extends IDeliverable> r) -> r.getRequest().getClass().equals(deliverable.getClass())).isEmpty())
+        {
+            worker.getCitizenData().createRequestAsync(deliverable);
+        }
+
+        return false;
+    }
+
+    /**
      * Check if a tag has been requested already or is in the inventory. If not in the inventory and not requested already, create request
      *
      * @param tag the requested tag.
@@ -1602,8 +1637,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.getCountFromBuilding(getOwnBuilding(),
-          itemStack -> itemStack.is(tag)) >= count &&
+        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
+          itemStack -> itemStack.getItem().is(tag), count) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
                 getOwnBuilding(), itemStack -> itemStack.is(tag),
                 count,
