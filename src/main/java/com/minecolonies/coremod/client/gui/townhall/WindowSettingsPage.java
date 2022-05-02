@@ -205,11 +205,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHiring(@NotNull final Button button)
     {
-        String key = button.getTextAsString();
-        if (button.getText() instanceof TranslationTextComponent)
-        {
-            key = ((TranslationTextComponent) button.getText()).getKey();
-        }
+        String key = button.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) button.getText()).getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
@@ -232,11 +228,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHousing(@NotNull final Button button)
     {
-        String key = button.getTextAsString();
-        if (button.getText() instanceof TranslationTextComponent)
-        {
-            key = ((TranslationTextComponent) button.getText()).getKey();
-        }
+        String key = button.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) button.getText()).getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
@@ -259,11 +251,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleMoveIn(@NotNull final Button button)
     {
-        String key = button.getTextAsString();
-        if (button.getText() instanceof TranslationTextComponent)
-        {
-            key = ((TranslationTextComponent) button.getText()).getKey();
-        }
+        String key = button.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) button.getText()).getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(OFF_STRING))
@@ -286,11 +274,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void togglePrintProgress(@NotNull final Button button)
     {
-        String key = button.getTextAsString();
-        if (button.getText() instanceof TranslationTextComponent)
-        {
-            key = ((TranslationTextComponent) button.getText()).getKey();
-        }
+        String key = button.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) button.getText()).getKey() : button.getTextAsString();
 
         if (key.equals(OFF_STRING))
         {

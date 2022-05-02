@@ -1357,7 +1357,7 @@
   "com.minecolonies.coremod.research.undo": "Researchers have torn up their notes about '%s'.",
   "com.minecolonies.coremod.research.undo.haschilds": "You can't reset a research with completed offshoots.",
   "com.minecolonies.coremod.research.havetounlock": "Build a University and research this hut to unlock it!",
-  "com.minecolonies.coremod.research.unlocktougprade": "Upgrading to level %s requires you to complete a research at the University!",
+  "com.minecolonies.coremod.research.unlocktoupgrade": "Upgrading to level %s requires you to complete a research at the University!",
   "com.minecolonies.coremod.research.item1": "§cThe %s §crequires research",
   "com.minecolonies.coremod.research.item2": "§cat the University to be built.",
   "com.minecolonies.coremod.research.available": "Your colonists have found the precursors to '%s' research.",

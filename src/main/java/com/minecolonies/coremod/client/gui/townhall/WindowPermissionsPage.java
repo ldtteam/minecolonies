@@ -450,11 +450,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         final IPermissions permissions = building.getColony().getPermissions();
         final PlayerEntity playerEntity = Minecraft.getInstance().player;
-        String key = button.getTextAsString();
-        if (button.getText() instanceof TranslationTextComponent)
-        {
-            key = ((TranslationTextComponent) button.getText()).getKey();
-        }
+        
+        String key = button.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) button.getText()).getKey() : button.getTextAsString();
+
         final boolean enable = !COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON.equals(key);
         button.disable();
         if (!permissions.alterPermission(permissions.getRank(playerEntity), actionsRank, action, enable))

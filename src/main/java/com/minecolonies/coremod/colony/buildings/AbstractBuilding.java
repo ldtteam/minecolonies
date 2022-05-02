@@ -781,14 +781,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) &&
               colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) < 1)
         {
-            MessageUtils.format(WARNING_BUILDING_REQUIRES_RESEARCH).sendTo(player);
+            MessageUtils.format(WARNING_BUILDING_REQUIRES_RESEARCH_UNLOCK).sendTo(player);
             return;
         }
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearchEffect(hutResearch) &&
               (colony.getResearchManager().getResearchEffects().getEffectStrength(hutResearch) <= getBuildingLevel()))
         {
-            // TODO: Translation key does not exist, is this still needed?
-            MessageUtils.format("com.minecolonies.coremod.research.unlocktoupgrade").sendTo(player);
+            MessageUtils.format(WARNING_BUILDING_REQUIRES_RESEARCH_UPGRADE).sendTo(player);
             return;
         }
 

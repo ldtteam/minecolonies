@@ -166,11 +166,7 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
      */
     private void assignmentModeClicked(@NotNull final Button button)
     {
-        String buttonText = button.getTextAsString();
-        if (button.getText() instanceof TranslationTextComponent)
-        {
-            buttonText = ((TranslationTextComponent) button.getText()).getKey();
-        }
+        String buttonText = button.getText() instanceof TranslationTextComponent ? ((TranslationTextComponent) button.getText()).getKey() : button.getTextAsString();
 
         if (buttonText.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
         {

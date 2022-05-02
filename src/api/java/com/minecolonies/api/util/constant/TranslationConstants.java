@@ -570,7 +570,9 @@ public final class TranslationConstants
     @NonNls
     public static final String WARNING_NO_COLONY_SPACE                                              = "com.minecolonies.coremod.gui.chat.nospace";
     @NonNls
-    public static final String WARNING_BUILDING_REQUIRES_RESEARCH                                   = "com.minecolonies.coremod.research.havetounlock";
+    public static final String WARNING_BUILDING_REQUIRES_RESEARCH_UNLOCK                            = "com.minecolonies.coremod.research.havetounlock";
+    @NonNls
+    public static final String WARNING_BUILDING_REQUIRES_RESEARCH_UPGRADE                           = "com.minecolonies.coremod.research.unlocktoupgrade";
     @NonNls
     public static final String WARNING_NO_UPGRADE                                                   = "com.minecolonies.coremod.worker.noupgrade";
     @NonNls

@@ -11,8 +11,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.util.Objects;
-
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).
  */
@@ -91,13 +89,13 @@ public class CitizenChatHandler implements ICitizenChatHandler
             {
                 builder = MessageUtils.format(job.getJobRegistryEntry().getTranslationKey())
                             .append(new StringTextComponent(" "))
-                            .append(Objects.requireNonNull(citizen.getCustomName()))
+                            .append(citizen.getCustomName())
                             .append(new StringTextComponent(": "))
                             .append(component);
             }
             else
             {
-                builder = MessageUtils.format(Objects.requireNonNull(citizen.getCustomName()))
+                builder = MessageUtils.format(citizen.getCustomName())
                             .append(new StringTextComponent(": "))
                             .append(component);
             }
