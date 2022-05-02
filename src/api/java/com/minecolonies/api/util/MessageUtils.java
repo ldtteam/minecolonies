@@ -57,7 +57,7 @@ public class MessageUtils
          */
         MessageBuilder(ITextComponent component)
         {
-            this.rootComponent = getFormattableComponent(component);
+            this.currentComponent = getFormattableComponent(component);
         }
 
         /**
@@ -176,11 +176,15 @@ public class MessageUtils
          */
         private void mergeComponents()
         {
-            if (currentComponent != null)
+            if (rootComponent == null)
+            {
+                rootComponent = currentComponent;
+            }
+            else
             {
                 rootComponent.append(currentComponent);
-                currentComponent = null;
             }
+            currentComponent = null;
         }
     }
 
