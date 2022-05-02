@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -19,6 +18,7 @@ import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -57,6 +57,8 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class RegisteredStructureManager implements IRegisteredStructureManager
@@ -911,7 +913,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (colony.getWorld() != null && !colony.getWorld().isClientSide)
                 {
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockhuttownhall.messageplacedalready");
+                    MessageUtils.format(WARNING_DUPLICATE_TOWN_HALL).sendTo(player);
                 }
                 return false;
             }
@@ -923,7 +925,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (building.hasModule(TavernBuildingModule.class))
                 {
-                    LanguageHandler.sendPlayerMessage(player, "tile.blockhut.tavern.limit");
+                    MessageUtils.format(WARNING_DUPLICATE_TAVERN).sendTo(player);
                     return false;
                 }
             }

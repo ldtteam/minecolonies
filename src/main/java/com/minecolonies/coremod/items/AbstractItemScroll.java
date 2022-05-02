@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -80,13 +81,13 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
         final IColony colony = getColony(itemStack);
         if (colony == null)
         {
-            player.displayClientMessage(new TranslatableComponent("minecolonies.scroll.needcolony"), true);
+            player.displayClientMessage(new TranslatableComponent(MESSAGE_SCROLL_NEED_COLONY), true);
             return itemStack;
         }
 
         if (!colony.getPermissions().hasPermission(player, Action.RIGHTCLICK_BLOCK))
         {
-            LanguageHandler.sendPlayerMessage(player, "minecolonies.scroll.nopermission");
+            MessageUtils.format(MESSAGE_SCROLL_NO_PERMISSION).sendTo(player);
             return itemStack;
         }
 
@@ -131,9 +132,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY_ID, ((AbstractTileEntityColonyBuilding) te).getColonyId());
             compound.putString(TAG_COLONY_DIM, ((AbstractTileEntityColonyBuilding) te).getColony().getWorld().dimension().location().toString());
             BlockPosUtil.write(compound, TAG_BUILDING_POS, ctx.getClickedPos());
-            LanguageHandler.sendPlayerMessage(ctx.getPlayer(),
-              "minecolonies.scroll.registered",
-              ((AbstractTileEntityColonyBuilding) te).getColony().getName());
+            MessageUtils.format(MESSAGE_SCROLL_REGISTERED, ((AbstractTileEntityColonyBuilding) te).getColony().getName()).sendTo(ctx.getPlayer());
         }
 
         return InteractionResult.SUCCESS;

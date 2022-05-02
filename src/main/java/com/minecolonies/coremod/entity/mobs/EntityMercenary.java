@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.mobs;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyRelated;
@@ -14,6 +13,7 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.sounds.MercenarySounds;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.GeneralEntityWalkToProxy;
@@ -52,6 +52,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_FOURTY_MIN;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TIME;
 import static com.minecolonies.api.util.constant.RaiderConstants.FOLLOW_RANGE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
 import net.minecraft.sounds.SoundEvent;
@@ -426,10 +427,7 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
             if (!ItemStackUtils.isEmpty(stack))
             {
                 this.swing(InteractionHand.OFF_HAND);
-                LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(),
-                  "com.minecolonies.coremod.mercenary.mercenaryStealCitizen",
-                  entityIn.getName().getString(),
-                  stack.getHoverName().getString());
+                MessageUtils.format(MESSAGE_INFO_COLONY_MERCENARY_STEAL_CITIZEN, entityIn.getName().getString(), stack.getHoverName().getString()).sendTo(colony).forAllPlayers();
             }
         }
     }

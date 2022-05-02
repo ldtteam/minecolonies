@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.items;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
@@ -9,11 +8,13 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,6 +42,8 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
@@ -88,24 +91,20 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 final IGuardBuilding building = getGuardBuilding(context.getLevel(), context.getClickedPos());
                 if (!building.getColony().getPermissions().hasPermission(player, Action.RALLY_GUARDS))
                 {
-                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
+                    MessageUtils.format(PERMISSION_DENIED).sendTo(player);
                     return InteractionResult.FAIL;
                 }
 
                 final ILocation location = building.getLocation();
                 if (removeGuardTowerAtLocation(banner, location))
                 {
-                    LanguageHandler.sendPlayerMessage(context.getPlayer(),
-                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED,
-                      building.getSchematicName(), location.toString());
+                    MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_DESELECTED, building.getSchematicName(), location.toString()).sendTo(player);
                 }
                 else
                 {
                     final ListTag guardTowers = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
                     guardTowers.add(StandardFactoryController.getInstance().serialize(location));
-                    LanguageHandler.sendPlayerMessage(context.getPlayer(),
-                      TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED,
-                      building.getSchematicName(), location.toString());
+                    MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_SELECTED, building.getSchematicName(), location.toString()).sendTo(player);
                 }
             }
         }
@@ -155,8 +154,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         {
             if (getGuardTowerLocations(banner).isEmpty())
             {
-                LanguageHandler.sendPlayerMessage(playerIn,
-                  TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+                MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY).sendTo(playerIn);
             }
             else
             {
@@ -189,14 +187,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         if (guardTowers.isEmpty())
         {
             compound.putBoolean(TAG_IS_ACTIVE, false);
-            LanguageHandler.sendPlayerMessage(playerIn,
-              TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY).sendTo(playerIn);
         }
         else if (compound.getBoolean(TAG_IS_ACTIVE))
         {
             compound.putBoolean(TAG_IS_ACTIVE, false);
             broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), null);
-            LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.deactivated");
+            MessageUtils.format(TOOL_RALLY_BANNER_DEACTIVATED).sendTo(playerIn);
         }
         else
         {
@@ -205,11 +202,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
             if (numGuards > 0)
             {
-                LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.activated", numGuards);
+                MessageUtils.format(TOOL_RALLY_BANNER_ACTIVATED, numGuards).sendTo(playerIn);
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(playerIn, "item.minecolonies.banner_rally_guards.activated.noguards");
+                MessageUtils.format(TOOL_RALLY_BANNER_NO_GUARDS).sendTo(playerIn);
             }
         }
     }
@@ -460,11 +457,11 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
+        final MutableComponent guiHint = new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_GUI);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
         tooltip.add(guiHint);
 
-        final MutableComponent rallyHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
+        final MutableComponent rallyHint = new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_RALLY);
         rallyHint.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
         tooltip.add(rallyHint);
 
@@ -472,13 +469,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
         if (guardTowerPositions.isEmpty())
         {
-            final MutableComponent emptyTooltip = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
+            final MutableComponent emptyTooltip = new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP_EMPTY);
             emptyTooltip.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
             tooltip.add(emptyTooltip);
         }
         else
         {
-            final MutableComponent numGuardTowers = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
+            final MutableComponent numGuardTowers = new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_TOOLTIP, guardTowerPositions.size());
             numGuardTowers.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA));
             tooltip.add(numGuardTowers);
         }

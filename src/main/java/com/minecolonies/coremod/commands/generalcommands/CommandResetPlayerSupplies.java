@@ -1,16 +1,19 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.stats.Stats;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_PLAYER_NOT_FOUND;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_RESET_SUPPLY_SUCCESS;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.PLAYERNAME_ARG;
 
 public class CommandResetPlayerSupplies implements IMCOPCommand
@@ -30,18 +33,18 @@ public class CommandResetPlayerSupplies implements IMCOPCommand
             if (context.getSource().getEntity() instanceof Player)
             {
                 // could not find player with given name.
-                LanguageHandler.sendPlayerMessage((Player) context.getSource().getEntity(), "com.minecolonies.command.playernotfound", username);
+                MessageUtils.format(COMMAND_PLAYER_NOT_FOUND, username).sendTo((Player) context.getSource().getEntity());
             }
             else
             {
-                context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.playernotfound", username), true);
+                context.getSource().sendSuccess(new TranslatableComponent(COMMAND_PLAYER_NOT_FOUND, username), true);
             }
             return 0;
         }
 
         player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), -1);
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.resetsupply"), true);
-        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.command.resetsupply");
+        context.getSource().sendSuccess(new TranslatableComponent(COMMAND_RESET_SUPPLY_SUCCESS), true);
+        MessageUtils.format(COMMAND_RESET_SUPPLY_SUCCESS).sendTo(player);
         return 1;
     }
 

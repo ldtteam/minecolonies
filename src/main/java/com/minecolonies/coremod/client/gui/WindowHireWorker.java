@@ -7,11 +7,9 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.ToggleButton;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.HiringMode;
-import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.modules.IAssignmentModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -22,9 +20,9 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.PupilBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -165,7 +163,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setText(LanguageHandler.format("com.minecolonies.coremod.gui.hiringmode." + selectedModule.getHiringMode().name().toLowerCase(Locale.ENGLISH)));
+        settingsButton.setText(new TranslatableComponent(selectedModule.getHiringMode().getTranslationKey()));
     }
 
     /**
@@ -408,11 +406,15 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 }
                 textBuilder.newLine(); // finish the current line
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class)
-                  .setText((citizen.getJob().isEmpty() ? "" : new TranslatableComponent(citizen.getJob().toLowerCase(Locale.ROOT)).getString() + ": ") + citizen.getName());
+                Component citizenLabelComponent =
+                  citizen.getJob().isEmpty() ? new TextComponent(citizen.getName()) : new TranslatableComponent(citizen.getJob()).append(": ").append(citizen.getName());
+                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class).setText(citizenLabelComponent);
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
                 final JobEntry entry = selectedModule.getJobEntry();
-                PaneBuilders.tooltipBuilder().hoverPane(rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class)).build().setText(new TranslatableComponent(entry.getKey().toString() + ".skills.desc"));
+                PaneBuilders.tooltipBuilder()
+                  .hoverPane(rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class))
+                  .build()
+                  .setText(new TranslatableComponent(entry.getKey().toString() + ".skills.desc"));
             }
         });
 

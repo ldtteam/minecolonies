@@ -5,7 +5,6 @@ import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.views.DropDownList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
@@ -206,8 +205,10 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHiring(@NotNull final Button button)
     {
+        String key = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
         final boolean toggle;
-        if (button.getTextAsString().equals(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF).getString()))
+        if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
         {
             button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
@@ -227,8 +228,10 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHousing(@NotNull final Button button)
     {
+        String key = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
         final boolean toggle;
-        if (button.getTextAsString().equals(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF).getString()))
+        if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
         {
             button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             toggle = true;
@@ -248,8 +251,10 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleMoveIn(@NotNull final Button button)
     {
+        String key = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
         final boolean toggle;
-        if (button.getTextAsString().equals(new TranslatableComponent(OFF_STRING).getString()))
+        if (key.equals(OFF_STRING))
         {
             button.setText(new TranslatableComponent(ON_STRING));
             toggle = true;
@@ -269,7 +274,9 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void togglePrintProgress(@NotNull final Button button)
     {
-        if (button.getTextAsString().equals(new TranslatableComponent(OFF_STRING).getString()))
+        String key = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
+        if (key.equals(OFF_STRING))
         {
             button.setText(new TranslatableComponent(ON_STRING));
         }

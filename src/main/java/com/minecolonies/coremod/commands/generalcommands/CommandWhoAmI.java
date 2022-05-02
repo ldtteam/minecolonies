@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_WHO_AM_I_HAS_COLONY;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_WHO_AM_I_NO_COLONY;
 
 public class CommandWhoAmI implements IMCCommand
 {
@@ -30,7 +33,7 @@ public class CommandWhoAmI implements IMCCommand
 
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.whoami.nocolony");
+            MessageUtils.format(COMMAND_WHO_AM_I_NO_COLONY).sendTo((Player) sender);
             return 0;
         }
 
@@ -38,7 +41,7 @@ public class CommandWhoAmI implements IMCCommand
         final String colonyName = colony.getName();
         final String playerName = sender.getDisplayName().getString();
         final String posString = "x: " + pos.getX() + " y: " + pos.getY() + " z: " + pos.getZ();
-        LanguageHandler.sendPlayerMessage((Player) sender, "com.minecolonies.command.whoami.hascolony", playerName, colonyName, colony.getID(), posString);
+        MessageUtils.format(COMMAND_WHO_AM_I_HAS_COLONY, playerName, colonyName, colony.getID(), posString).sendTo((Player) sender);
         return 1;
     }
 

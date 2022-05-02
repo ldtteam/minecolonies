@@ -4,7 +4,6 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -100,14 +99,12 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                     rowPane.findPaneOfTypeByID(PARENT, Text.class).clearText();
                 }
 
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class)
-                  .setText(request.getShortDisplayString().getString().replace("§f", ""));
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(request.getShortDisplayString().getString().replace("§f", ""));
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class)
-                      .setText(
-                        new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY).getString() + ((IDeliverymanRequestable) (request.getRequest())).getPriority());
+                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
+                                                                                       .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
                 }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);

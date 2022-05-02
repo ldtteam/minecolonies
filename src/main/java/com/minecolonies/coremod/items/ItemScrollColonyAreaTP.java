@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,12 +23,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item.Properties;
 
 /**
@@ -58,7 +55,8 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
         if (world.random.nextInt(10) == 0)
         {
             // Fail chance
-            player.displayClientMessage(new TranslatableComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+            player.displayClientMessage(new TranslatableComponent(
+              "minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               ChatFormatting.GOLD)), true);
 
             itemStack.shrink(1);
@@ -135,27 +133,27 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_area_tp.tip");
+        final MutableComponent guiHint = new TranslatableComponent(TOOL_COLONY_TELEPORT_AREA_SCROLL_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        String colonyDesc = new TranslatableComponent("item.minecolonies.scroll.colony.none").getString();
+        MutableComponent colonyDesc = new TranslatableComponent(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
         if (stack.getOrCreateTag().contains(TAG_DESC))
         {
-            colonyDesc = stack.getOrCreateTag().getString(TAG_DESC);
+            colonyDesc = new TextComponent(stack.getOrCreateTag().getString(TAG_DESC));
         }
         else
         {
             final IColony colony = getColonyView(stack);
             if (colony != null)
             {
-                colonyDesc = colony.getName();
-                stack.getOrCreateTag().putString(TAG_DESC, colonyDesc);
+                colonyDesc = new TextComponent(colony.getName());
+                stack.getOrCreateTag().putString(TAG_DESC, colony.getName());
             }
         }
 
-        final MutableComponent guiHint2 = new TranslatableComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
+        final MutableComponent guiHint2 = new TranslatableComponent(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }

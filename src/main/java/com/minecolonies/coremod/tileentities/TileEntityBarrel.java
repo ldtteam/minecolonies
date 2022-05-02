@@ -9,6 +9,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.ITickable;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -149,7 +150,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
 
         if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TranslatableComponent("entity.barrel.working"), playerIn.getUUID());
+            MessageUtils.format("entity.barrel.working").sendTo(playerIn);
             return false;
         }
         else

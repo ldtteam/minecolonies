@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.worker;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -10,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_RECIPE_SAVED;
 import static com.minecolonies.api.util.constant.TranslationConstants.UNABLE_TO_ADD_RECIPE_MESSAGE;
 
 /**
@@ -152,13 +153,13 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
             if (!module.addRecipe(token))
             {
                 SoundUtils.playErrorSound(player, player.blockPosition());
-                LanguageHandler.sendPlayerMessage(player, UNABLE_TO_ADD_RECIPE_MESSAGE, new TranslatableComponent(building.getBuildingDisplayName()));
+                MessageUtils.format(UNABLE_TO_ADD_RECIPE_MESSAGE, new TranslatableComponent(building.getBuildingDisplayName())).sendTo(player);
             }
             else
             {
                 SoundUtils.playSuccessSound(player, player.blockPosition());
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.BUILDING_ADD_RECIPE.trigger(playerMP, this.storage));
-                LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.recipe.done");
+                MessageUtils.format(MESSAGE_RECIPE_SAVED).sendTo(player);
             }
         }
 

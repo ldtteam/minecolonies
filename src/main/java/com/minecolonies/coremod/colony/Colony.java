@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.ICitizenData;
@@ -21,6 +20,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -448,7 +448,7 @@ public class Colony implements IColony
             {
                 for (final IBuilding building : buildingManager.getBuildings().values())
                 {
-                    building.processOfflineTime(pastTime/1000);
+                    building.processOfflineTime(pastTime / 1000);
                 }
             }
         }
@@ -603,7 +603,7 @@ public class Colony implements IColony
                 player.refreshList(this);
                 if (player.getGuards().isEmpty())
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName().getString());
+                    MessageUtils.format(COLONY_DEFENDED_SUCCESS_MESSAGE, player.getPlayer().getName()).sendTo(this).forManagers();
                 }
             }
         }
@@ -1235,7 +1235,7 @@ public class Colony implements IColony
                 else
                 {
                     sum += building.getBuildingLevel();
-                    if(sum >= level)
+                    if (sum >= level)
                     {
                         return true;
                     }
@@ -1592,8 +1592,8 @@ public class Colony implements IColony
         if (!rank.isColonyManager() && !visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
-            LanguageHandler.sendPlayerMessage(player, ENTERING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), ENTERING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
+            MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
+            MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, this.getName()).sendTo(this).forManagers();
         }
     }
 
@@ -1603,8 +1603,8 @@ public class Colony implements IColony
         if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
-            LanguageHandler.sendPlayerMessage(player, LEAVING_COLONY_MESSAGE, this.getPermissions().getOwnerName());
-            LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), LEAVING_COLONY_MESSAGE_NOTIFY, player.getName().getString(), this.getName());
+            MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
+            MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, this.getName()).sendTo(this).forManagers();
         }
     }
 
@@ -1687,8 +1687,9 @@ public class Colony implements IColony
             {
                 if (attackingPlayer.addGuard(IEntityCitizen))
                 {
-                    LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE,
-                            attackingPlayer.getPlayer().getName().getString(), attackingPlayer.getGuards().size());
+                    MessageUtils.format(COLONY_ATTACK_GUARD_GROUP_SIZE_MESSAGE, attackingPlayer.getPlayer().getName(), attackingPlayer.getGuards().size())
+                      .sendTo(this)
+                      .forManagers();
                 }
                 return;
             }
@@ -1701,7 +1702,7 @@ public class Colony implements IColony
                 final AttackingPlayer attackingPlayer = new AttackingPlayer(visitingPlayer);
                 attackingPlayer.addGuard(IEntityCitizen);
                 attackingPlayers.add(attackingPlayer);
-                LanguageHandler.sendPlayersMessage(getImportantMessageEntityPlayers(), COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName().getString());
+                MessageUtils.format(COLONY_ATTACK_START_MESSAGE, visitingPlayer.getName()).sendTo(this).forManagers();
             }
         }
     }
@@ -1719,7 +1720,7 @@ public class Colony implements IColony
     /**
      * Getter for the colony team color.
      *
-     * @return the TextFormatting enum color.
+     * @return the ChatFormatting enum color.
      */
     public ChatFormatting getTeamColonyColor()
     {
@@ -1857,24 +1858,6 @@ public class Colony implements IColony
     public String getTextureStyleId()
     {
         return this.textureStyle;
-    }
-
-    @Override
-    public void notifyPlayers(final Component component)
-    {
-        for (final Player player : getMessagePlayerEntities())
-        {
-            player.sendMessage(component, player.getUUID());
-        }
-    }
-
-    @Override
-    public void notifyColonyManagers(final Component component)
-    {
-        for (final Player player : getImportantMessageEntityPlayers())
-        {
-            player.sendMessage(component, player.getUUID());
-        }
     }
 
     /**

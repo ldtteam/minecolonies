@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.GraveData;
 import com.minecolonies.api.colony.ICitizenData;
@@ -9,6 +8,7 @@ import com.minecolonies.api.colony.managers.interfaces.IGraveManager;
 import com.minecolonies.api.tileentities.TileEntityGrave;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesGrave;
 import com.minecolonies.coremod.colony.Colony;
@@ -38,6 +38,7 @@ import java.util.Map;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.research.util.ResearchConstants.GRAVE_DECAY_BONUS;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 public class GraveManager implements IGraveManager
 {
@@ -257,7 +258,7 @@ public class GraveManager implements IGraveManager
         final BlockState here = world.getBlockState(pos);
         if (here.getBlock() == Blocks.LAVA)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.lava");
+            MessageUtils.format(WARNING_GRAVE_LAVA).sendTo(colony).forManagers();
             return;
         }
 
@@ -275,7 +276,7 @@ public class GraveManager implements IGraveManager
 
             if (firstValidPosition == null)
             {
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.grave.water");
+                MessageUtils.format(WARNING_GRAVE_WATER).sendTo(colony).forManagers();
             }
         }
         else
@@ -310,7 +311,7 @@ public class GraveManager implements IGraveManager
             graveEntity.setGraveData(graveData);
 
             colony.getGraveManager().addNewGrave(firstValidPosition);
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.gravespawned");
+            MessageUtils.format(WARNING_GRAVE_SPAWNED).sendTo(colony).forManagers();
         }
         else
         {
