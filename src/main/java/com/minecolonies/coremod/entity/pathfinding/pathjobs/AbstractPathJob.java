@@ -1116,7 +1116,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Now check the block we want to move to
         final BlockState target = world.getBlockState(pos);
-        if (!isPassable(target, pos, parent))
+        if (!isPassable(target, pos, parent, false))
         {
             return handleTargetNotPassable(parent, pos, target);
         }
@@ -1259,6 +1259,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             localPos = pos.above();
         }
 
+        if (!canLeaveBlock(pos.above(), parent, true))
+        {
+            return true;
+        }
+
         if (!isPassable(pos.above(), true, parent))
         {
             final VoxelShape bb1 = world.getBlockState(pos.below()).getCollisionShape(world, pos.below());
@@ -1318,25 +1323,15 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Is the space passable.
      *
      * @param block the block we are checking.
+     * @param parent the parent node.
+     * @param head the head position.
      * @return true if the block does not block movement.
      */
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent, final boolean head)
     {
-        final BlockPos parentPos = parent == null ? start : parent.pos;
-        final BlockState parentBlock = world.getBlockState(parentPos);
-        if (parentBlock.getBlock() instanceof TrapDoorBlock || parentBlock.getBlock() instanceof PanelBlock)
+        if (!canLeaveBlock(pos, parent, head))
         {
-            final BlockPos dir = pos.subtract(parentPos);
-            if (dir.getX() != 0 || dir.getZ() != 0)
-            {
-                // Check if we can leave the current block, there might be a trapdoor or panel blocking us.
-                final Direction direction = BlockPosUtil.getXZFacing(parentPos, pos);
-                final Direction facing = parentBlock.getValue(TrapDoorBlock.FACING);
-                if (direction == facing.getOpposite())
-                {
-                    return false;
-                }
-            }
+            return false;
         }
 
         if (block.getMaterial() != Material.AIR)
@@ -1346,6 +1341,11 @@ public abstract class AbstractPathJob implements Callable<Path>
             {
                 if (block.getBlock() instanceof TrapDoorBlock || block.getBlock() instanceof PanelBlock)
                 {
+                    BlockPos parentPos = parent == null ? start : parent.pos;
+                    if (head)
+                    {
+                        parentPos = parentPos.above();
+                    }
                     final BlockPos dir = pos.subtract(parentPos);
                     if (dir.getY() != 0 && dir.getX() == 0 && dir.getZ() == 0)
                     {
@@ -1421,7 +1421,38 @@ public abstract class AbstractPathJob implements Callable<Path>
                      || !(state.getBlock() instanceof WoolCarpetBlock || state.getBlock() instanceof FloatingCarpetBlock)
                      || isLadder(state.getBlock(), pos);
         }
-        return isPassable(state, pos, parent);
+        return isPassable(state, pos, parent, head);
+    }
+
+    /**
+     * Check if we can leave the block at this pos.
+     * @param pos the pos to go to.
+     * @param parent the parent pos (to check if we can leave)
+     * @return true if so.
+     */
+    private boolean canLeaveBlock(final BlockPos pos, final MNode parent, final boolean head)
+    {
+        BlockPos parentPos = parent == null ? start : parent.pos;
+        if (head)
+        {
+            parentPos = parentPos.above();
+        }
+        final BlockState parentBlock = world.getBlockState(parentPos);
+        if (parentBlock.getBlock() instanceof TrapDoorBlock || parentBlock.getBlock() instanceof PanelBlock)
+        {
+            final BlockPos dir = pos.subtract(parentPos);
+            if (dir.getX() != 0 || dir.getZ() != 0)
+            {
+                // Check if we can leave the current block, there might be a trapdoor or panel blocking us.
+                final Direction direction = BlockPosUtil.getXZFacing(parentPos, pos);
+                final Direction facing = parentBlock.getValue(TrapDoorBlock.FACING);
+                if (direction == facing.getOpposite())
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
