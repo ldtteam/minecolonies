@@ -641,7 +641,10 @@ public class SettingsFactories
         public CompoundNBT serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting storage)
         {
             final CompoundNBT compound = new CompoundNBT();
-            compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.currentIndex));
+            if (storage.currentIndex != null)
+            {
+                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.currentIndex));
+            }
             compound.putString(TAG_MODULE, storage.craftingModuleId);
             return compound;
         }
@@ -650,7 +653,11 @@ public class SettingsFactories
         @Override
         public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundNBT nbt)
         {
-            final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+            IToken<?> token = null;
+            if (nbt.contains(TAG_TOKEN))
+            {
+                token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+            }
             final String moduleId = nbt.getString(TAG_MODULE);
             return this.getNewInstance(token, moduleId);
         }
@@ -658,7 +665,11 @@ public class SettingsFactories
         @Override
         public void serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting input, @NotNull final PacketBuffer packetBuffer)
         {
-            StandardFactoryController.getInstance().serialize(packetBuffer, input.currentIndex);
+            packetBuffer.writeBoolean(input.currentIndex != null);
+            if (input.currentIndex != null)
+            {
+                StandardFactoryController.getInstance().serialize(packetBuffer, input.currentIndex);
+            }
             packetBuffer.writeUtf(input.craftingModuleId);
         }
 
@@ -666,7 +677,11 @@ public class SettingsFactories
         @Override
         public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final PacketBuffer buffer) throws Throwable
         {
-            final IToken<?> token = StandardFactoryController.getInstance().deserialize(buffer);
+            IToken<?> token = null;
+            if (buffer.readBoolean())
+            {
+                token = StandardFactoryController.getInstance().deserialize(buffer);
+            }
             final String moduleId = buffer.readUtf(32767);
             return this.getNewInstance(token, moduleId);
         }
