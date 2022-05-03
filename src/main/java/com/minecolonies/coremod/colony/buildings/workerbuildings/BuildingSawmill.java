@@ -135,7 +135,7 @@ public class BuildingSawmill extends AbstractBuilding
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return stack -> Optional.of(ItemTags.PLANKS.contains(stack.getItem()) || ItemTags.LOGS.contains(stack.getItem()));
+            return stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS));
         }
     }
 }

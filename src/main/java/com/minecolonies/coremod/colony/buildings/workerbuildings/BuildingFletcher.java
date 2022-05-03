@@ -102,7 +102,7 @@ public class BuildingFletcher extends AbstractBuilding
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return stack -> Optional.of(ModTags.crafterIngredient.get(FLETCHER).contains(stack.getItem()));
+            return stack -> Optional.of(stack.is(ModTags.crafterIngredient.get(FLETCHER)));
         }
     }
 }

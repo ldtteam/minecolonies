@@ -109,10 +109,10 @@ public class BuildingMechanic extends AbstractBuilding
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
             return stack -> Optional.of(
-                       !ModTags.crafterIngredient.get(BuildingFletcher.FLETCHER).contains(stack.getItem())
-                    && !ModTags.crafterIngredient.get(BuildingSawmill.SAWMILL).contains(stack.getItem())
-                    && !ModTags.crafterIngredient.get(BuildingStonemason.STONEMASON).contains(stack.getItem())
-                    && !ModTags.crafterIngredient.get(BuildingGlassblower.GLASS_BLOWER).contains(stack.getItem()));
+                       !stack.is(ModTags.crafterIngredient.get(BuildingFletcher.FLETCHER))
+                    && !stack.is(ModTags.crafterIngredient.get(BuildingSawmill.SAWMILL))
+                    && !stack.is(ModTags.crafterIngredient.get(BuildingStonemason.STONEMASON))
+                    && !stack.is(ModTags.crafterIngredient.get(BuildingGlassblower.GLASS_BLOWER)));
         }
     }
 }

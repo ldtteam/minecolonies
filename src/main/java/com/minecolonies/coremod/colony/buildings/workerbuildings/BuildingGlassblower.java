@@ -131,7 +131,7 @@ public class BuildingGlassblower extends AbstractBuilding
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return stack -> Optional.of(ModTags.crafterIngredient.get(GLASS_BLOWER).contains(stack.getItem()));
+            return stack -> Optional.of(stack.is(ModTags.crafterIngredient.get(GLASS_BLOWER)));
         }
     }
 }

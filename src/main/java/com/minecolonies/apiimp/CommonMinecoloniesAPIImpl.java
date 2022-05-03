@@ -221,12 +221,13 @@ public class CommonMinecoloniesAPIImpl implements IMinecoloniesAPI
                 .disableSaving().allowModification().setType(ColonyEventDescriptionTypeRegistryEntry.class)
                 .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> colonyEventDescriptionRegistry = b);
 
-        craftingTypeRegistry = new RegistryBuilder<CraftingType>()
+
+        event.create(new RegistryBuilder<CraftingType>()
                 .setName(new ResourceLocation(Constants.MOD_ID, "craftingtypes"))
                 .disableSaving().allowModification().setType(CraftingType.class)
-                .setIDRange(0, Integer.MAX_VALUE - 1).create();
+                .setIDRange(0, Integer.MAX_VALUE - 1), (b) -> craftingTypeRegistry = b);
 
-        recipeTypeEntryRegistry = new RegistryBuilder<RecipeTypeEntry>()
+        event.create(new RegistryBuilder<RecipeTypeEntry>()
                                     .setName(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"))
                                     .setDefaultKey(new ResourceLocation(Constants.MOD_ID, "classic"))
                                     .disableSaving().allowModification().setType(RecipeTypeEntry.class)

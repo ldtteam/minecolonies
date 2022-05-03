@@ -95,7 +95,7 @@ public class BuildingStonemason extends AbstractBuilding
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return stack -> Optional.of(ModTags.crafterIngredient.get(STONEMASON).contains(stack.getItem()));
+            return stack -> Optional.of(stack.is(ModTags.crafterIngredient.get(STONEMASON)));
         }
     }
 }
