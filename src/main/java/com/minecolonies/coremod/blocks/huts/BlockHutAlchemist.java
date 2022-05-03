@@ -5,6 +5,9 @@ import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Alchemist hut block.
+ */
 public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist>
 {
     @NotNull

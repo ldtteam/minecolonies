@@ -104,6 +104,10 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         );
     }
 
+    /**
+     * Pick a random soil position and try to harvest/plant netherwart on it.
+     * @return next state to go to.
+     */
     private IAIState harvestNetherWart()
     {
         if (walkTo == null)
@@ -197,6 +201,10 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
         return HARVEST_NETHERWART;
     }
 
+    /**
+     * Go to a random position with leaves and hit the leaves until getting a mistletoe.
+     * @return next state to go to.
+     */
     private IAIState harvestMistleToe()
     {
         if (checkForToolOrWeapon(ToolType.SHEARS))
@@ -310,8 +318,6 @@ public class EntityAIWorkAlchemist extends AbstractEntityAICrafting<JobAlchemist
 
         return getNextCraftingState();
     }
-
-    // and harvest/plant netherwart randomly && harvest mistletoe randomly (small chance for mistletoe).
     
     @Override
     public Class<BuildingAlchemist> getExpectedBuildingClass()

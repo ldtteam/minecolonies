@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Furnace crafting gui.
+ * BrewingStand crafting gui.
  */
 public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftingBrewingstand>
 {
