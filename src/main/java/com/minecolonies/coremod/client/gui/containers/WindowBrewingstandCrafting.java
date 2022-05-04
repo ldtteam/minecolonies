@@ -28,6 +28,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
+
 /**
  * BrewingStand crafting gui.
  */
@@ -95,11 +98,11 @@ public class WindowBrewingstandCrafting extends ContainerScreen<ContainerCraftin
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearn(ModCraftingTypes.BREWING) ? I18n.get("gui.done") : new TranslationTextComponent("com.minecolonies.coremod.gui.recipe.full").getString();
+        final ITextComponent buttonDisplay = new TranslationTextComponent(module.canLearn(ModCraftingTypes.BREWING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new OnButtonPress());
+        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowBrewingstandCrafting.OnButtonPress());
         this.addButton(doneButton);
         if (!module.canLearn(ModCraftingTypes.BREWING))
         {
