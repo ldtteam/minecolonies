@@ -104,7 +104,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
-        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Watter Bottles and Mistletoes to unlock new Abilities"));
+        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Magic Potions to unlock new Abilities"));
         effects.add(new ResearchEffect(CRUSHING_11).setTranslatedName("Crusher Recipes Cost -50%"));
         effects.add(new ResearchEffect(KNIGHT_TAUNT).setTranslatedName("Knights Force Mobs to Target Them"));
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
@@ -149,6 +149,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
         effects.add(new ResearchEffect(ModBuildings.netherWorker.getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
+        effects.add(new ResearchEffect(ModBuildings.alchemist.getBuildingBlock()).setTranslatedName("Unlocks Alchemist"));
+
 
         // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
         // Assigning them for now to handle text cleanly, and to allow researches with both recipe and non-recipe effects.
@@ -1271,13 +1273,21 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(new ResourceLocation("minecolonies:effects/morescrollsunlock"), 1)
           .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
+        final Research netherminer = new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
                                     .setTranslatedName("Open the Nether")
                                     .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
                                     .setIcon(ModBlocks.blockHutNetherWorker.asItem())
                                     .addItemCost(Items.GILDED_BLACKSTONE, 3)
                                     .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
                                     .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/alchemist"), TECH).setParentResearch(netherminer)
+          .setTranslatedName("Magic Potions")
+          .setTranslatedSubtitle("These Romans are crazy")
+          .setIcon(ModBlocks.blockHutAlchemist.asItem())
+          .addItemCost(Items.NETHER_WART, 16)
+          .addEffect(ModBuildings.alchemist.getBuildingBlock(), 1)
+          .addToList(r);
 
         // Primary Research #4
         final Research stoneCake = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stonecake"), TECH).setTranslatedName("Stone Cake")

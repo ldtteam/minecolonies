@@ -22,6 +22,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -35,8 +36,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.items.ModTags.fungi;
-import static com.minecolonies.api.util.constant.Constants.FUEL_SLOT;
-import static com.minecolonies.api.util.constant.Constants.SMELTABLE_SLOT;
+import static com.minecolonies.api.util.constant.Constants.*;
 
 /**
  * Utility methods for the inventories.
@@ -925,6 +925,42 @@ public final class ItemStackUtils
     {
         return ItemStackUtils.isEmpty(entity.getItem(SMELTABLE_SLOT))
                  && !ItemStackUtils.isEmpty(entity.getItem(FUEL_SLOT));
+    }
+
+    /**
+     * Check if the brewingStand has smeltable in it and fuel empty.
+     *
+     * @param entity the brewingStand.
+     * @return true if so.
+     */
+    public static boolean hasBrewableAndNoFuel(final BrewingStandTileEntity entity)
+    {
+        return !ItemStackUtils.isEmpty(entity.getItem(INGREDIENT_SLOT))
+                 && ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
+    }
+
+    /**
+     * Check if the brewingStand has smeltable in it and fuel empty.
+     *
+     * @param entity the brewingStand.
+     * @return true if so.
+     */
+    public static boolean hasNeitherFuelNorBrewable(final BrewingStandTileEntity entity)
+    {
+        return ItemStackUtils.isEmpty(entity.getItem(INGREDIENT_SLOT))
+                 && ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
+    }
+
+    /**
+     * Check if the brewingStand has fuel in it and smeltable empty.
+     *
+     * @param entity the brewingStand.
+     * @return true if so.
+     */
+    public static boolean hasFuelAndNoBrewable(final BrewingStandTileEntity entity)
+    {
+        return ItemStackUtils.isEmpty(entity.getItem(INGREDIENT_SLOT))
+                 && !ItemStackUtils.isEmpty(entity.getItem(BREWING_FUEL_SLOT));
     }
 
     /**

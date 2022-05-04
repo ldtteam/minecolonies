@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -87,6 +88,25 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
                 {
                     return new ContainerCraftingFurnace(id, inv, building.getID(), module.getId());
+                }
+            }, buffer -> new PacketBuffer(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
+        }
+        else if (module.canLearn(ModCraftingTypes.BREWING))
+        {
+            NetworkHooks.openGui(player, new INamedContainerProvider()
+            {
+                @NotNull
+                @Override
+                public ITextComponent getDisplayName()
+                {
+                    return new StringTextComponent("Brewing Crafting GUI");
+                }
+
+                @NotNull
+                @Override
+                public Container createMenu(final int id, @NotNull final PlayerInventory inv, @NotNull final PlayerEntity player)
+                {
+                    return new ContainerCraftingBrewingstand(id, inv, building.getID(), module.getId());
                 }
             }, buffer -> new PacketBuffer(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }

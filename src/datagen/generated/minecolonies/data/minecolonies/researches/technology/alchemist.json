@@ -1,0 +1,18 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/opennether",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.alchemist.subtitle",
+  "icon": "minecolonies:blockhutalchemist",
+  "requirements": [
+    {
+      "item": "minecraft:nether_wart",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/blockhutalchemist": 1
+    }
+  ]
+}
