@@ -8,8 +8,6 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.RecipeCraftingType;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, ArchitectsCutterRecipe>
 {
@@ -51,8 +48,8 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
             final List<List<ItemStack>> inputs = new ArrayList<>();
             for (final IMateriallyTexturedBlockComponent component : materiallyTexturedBlock.getComponents())
             {
-
-                final List<Block> blocks = StreamSupport.stream(Registry.BLOCK.getTagOrEmpty(component.getValidSkins()).spliterator(), false).map(Holder::value).toList();
+                final List<Block> blocks = ForgeRegistries.BLOCKS.tags().getTag(component.getValidSkins()).stream()
+                        .collect(Collectors.toCollection(ArrayList::new));
                 Collections.shuffle(blocks, rnd);
                 inputs.add(blocks.stream().map(ItemStack::new).collect(Collectors.toList()));
             }
