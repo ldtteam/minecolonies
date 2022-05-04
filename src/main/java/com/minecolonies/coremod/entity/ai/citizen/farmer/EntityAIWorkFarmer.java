@@ -19,6 +19,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
 import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
@@ -49,7 +50,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.state.properties.BlockStateProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -224,7 +224,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
         }
 
-        final int amountOfCompostInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), this::isCompost);
+        final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), this::isCompost, 1);
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
@@ -235,7 +235,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
                 compostAbleItems.add(new ItemStack(ModItems.compost, 1));
                 compostAbleItems.add(new ItemStack(Items.BONE_MEAL, 1));
-                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, FERTLIZER, STACKSIZE, 1));
+                worker.getCitizenData().createRequestAsync(new StackList(compostAbleItems, RequestSystemTranslationConstants.REQUEST_TYPE_FERTILIZER, STACKSIZE, 1));
             }
         }
         else if (amountOfCompostInInv <= 0 && amountOfCompostInBuilding > 0)

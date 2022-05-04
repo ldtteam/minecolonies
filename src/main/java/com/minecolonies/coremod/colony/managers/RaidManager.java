@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,6 +11,7 @@ import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -37,6 +37,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -313,9 +314,7 @@ public class RaidManager implements IRaiderManager
         {
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Horde Spawn Point: " + targetSpawnPoint);
+                MessageUtils.format(new StringTextComponent("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
             if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
@@ -699,9 +698,7 @@ public class RaidManager implements IRaiderManager
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            LanguageHandler.sendPlayersMessage(
-              colony.getImportantMessageEntityPlayers(),
-              "Will raid tomorrow: " + raid);
+            MessageUtils.format(new StringTextComponent("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
         }
 
         setRaidNextNight(raid);

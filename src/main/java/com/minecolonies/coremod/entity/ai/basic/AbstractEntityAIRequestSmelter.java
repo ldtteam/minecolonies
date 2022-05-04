@@ -17,6 +17,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
@@ -308,7 +309,7 @@ public abstract class AbstractEntityAIRequestSmelter<J extends AbstractJobCrafte
         final FurnaceUserModule module = getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class);
         if(!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(),  isCorrectFuel(possibleFuels)) && !InventoryUtils.hasItemInProvider(getOwnBuilding(), isCorrectFuel(possibleFuels)) && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)) && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE )
         {
-            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * module.getFurnaces().size(), 1));
+            worker.getCitizenData().createRequestAsync(new StackList(possibleFuels, RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE, STACKSIZE * module.getFurnaces().size(), 1));
             return getState();
         }
 

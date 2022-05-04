@@ -13,6 +13,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.FurnaceUserModule;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
@@ -244,9 +245,9 @@ public abstract class AbstractEntityAIUsesFurnace<J extends AbstractJob<?, J>, B
         }
 
         if (amountOfFuelInBuilding + amountOfFuelInInv <= 0 && !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-          req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(COM_MINECOLONIES_REQUESTS_BURNABLE))))
+          req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE))))
         {
-            worker.getCitizenData().createRequestAsync(new StackList(getAllowedFuel(), COM_MINECOLONIES_REQUESTS_BURNABLE, STACKSIZE * furnaceModule.getFurnaces().size(), 1));
+            worker.getCitizenData().createRequestAsync(new StackList(getAllowedFuel(), RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE, STACKSIZE * furnaceModule.getFurnaces().size(), 1));
         }
 
         if (amountOfSmeltableInBuilding > 0 && amountOfSmeltableInInv == 0)

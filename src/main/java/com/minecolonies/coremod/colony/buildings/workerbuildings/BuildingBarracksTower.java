@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -12,8 +13,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_UPGRADE_BARRACKS;
 
 /**
  * Building class for the Barracks Tower.
@@ -79,7 +81,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.needbarracks"), player.getUUID());
+            MessageUtils.format(WARNING_UPGRADE_BARRACKS).sendTo(player);
         }
     }
 

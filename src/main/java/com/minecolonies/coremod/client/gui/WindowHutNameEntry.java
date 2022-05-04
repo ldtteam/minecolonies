@@ -4,13 +4,14 @@ import com.ldtteam.blockout.controls.Button;
 import com.ldtteam.blockout.controls.ButtonHandler;
 import com.ldtteam.blockout.controls.TextField;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_NAME_TOO_LONG;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -60,7 +61,7 @@ public class WindowHutNameEntry extends Window implements ButtonHandler
             if (name.length() > MAX_NAME_LENGTH)
             {
                 name = name.substring(0, MAX_NAME_LENGTH);
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.name.toolong", name);
+                MessageUtils.format(WARNING_NAME_TOO_LONG, name).sendTo(Minecraft.getInstance().player);
             }
 
             building.setCustomName(name);

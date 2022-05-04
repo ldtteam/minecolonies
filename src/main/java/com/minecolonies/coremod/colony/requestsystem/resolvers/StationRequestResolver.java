@@ -105,6 +105,6 @@ public class StationRequestResolver extends BuildingRequestResolver
             return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
         };
 
-        return InventoryUtils.getCountFromBuilding(building, pred) > 0;
+        return InventoryUtils.hasBuildingEnoughElseCount(building, pred, 1) > 0;
     }
 }

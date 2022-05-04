@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
@@ -19,7 +20,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.NotNull;
 
-import static com.ldtteam.structurize.util.LanguageHandler.sendPlayersMessage;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.DISTANCE_TO_LOAD_IMMEDIATELY;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
@@ -273,7 +273,7 @@ public final class ChunkDataHelper
         if (areAllChunksAdded && add && range > 0)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(center);
-            sendPlayersMessage(colony.getImportantMessageEntityPlayers(), COLONY_SIZE_CHANGE, range, building.getSchematicName());
+            MessageUtils.format(COLONY_SIZE_CHANGE, range, building.getSchematicName()).sendTo(colony).forManagers();
         }
     }
 

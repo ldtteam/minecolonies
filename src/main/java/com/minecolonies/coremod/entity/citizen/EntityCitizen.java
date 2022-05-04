@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.citizen;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
@@ -416,9 +415,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (!level.isClientSide())
             {
                 playSound(SoundEvents.VILLAGER_NO, 0.5f, (float) SoundUtils.getRandomPitch(getRandom()));
-                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.notnow", this.getCitizenData().getName()).setStyle(Style.EMPTY.withColor(
-                    TextFormatting.RED)),
-                  player.getUUID());
+                MessageUtils.format(WARNING_INTERACTION_CANT_DO_NOW, this.getCitizenData().getName())
+                  .with(TextFormatting.RED)
+                  .sendTo(player);
             }
             return null;
         }
@@ -434,9 +433,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 {
                     getCitizenDiseaseHandler().cure();
                     playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
-                    Network.getNetwork()
-                      .sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER),
-                        this);
+                    Network.getNetwork().sendToTrackingEntity(new VanillaParticleMessage(getX(), getY(), getZ(), ParticleTypes.HAPPY_VILLAGER), this);
                 }
             }
 
@@ -483,7 +480,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
             if (!level.isClientSide())
             {
-                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.ouch", getCitizenData().getName()), player.getUUID());
+                MessageUtils.format(MESSAGE_INTERACTION_OUCH, getCitizenData().getName()).sendTo(player);
                 getNavigation().moveAwayFromLivingEntity(player, 5, 1);
                 setJumping(true);
             }
@@ -564,10 +561,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             if (!level.isClientSide())
             {
                 playSound(SoundEvents.VILLAGER_NO, 1.0f, (float) SoundUtils.getRandomPitch(getRandom()));
-                player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.interaction.nocookie",
-                    this.getCitizenData().getName()).setStyle(Style.EMPTY.withColor(
-                    TextFormatting.RED)),
-                  player.getUUID());
+                MessageUtils.format(MESSAGE_INTERACTION_COOKIE, this.getCitizenData().getName())
+                  .with(TextFormatting.RED)
+                  .sendTo(player);
             }
         }
     }
@@ -1920,7 +1916,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                         .stream()
                         .noneMatch(owner -> owner.equals(citizenColonyHandler.getColony().getPermissions().getOwnerName())))
                 {
-                    LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_NOT_ALLOWED);
+                    MessageUtils.format(CITIZEN_RENAME_NOT_ALLOWED).sendTo(citizenColonyHandler.getColony()).forAllPlayers();
                     return;
                 }
 
@@ -1931,7 +1927,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                     {
                         if (citizen.getName().equals(name.getString()))
                         {
-                            LanguageHandler.sendPlayersMessage(citizenColonyHandler.getColony().getMessagePlayerEntities(), CITIZEN_RENAME_SAME);
+                            MessageUtils.format(CITIZEN_RENAME_SAME).sendTo(citizenColonyHandler.getColony()).forAllPlayers();
                             return;
                         }
                     }

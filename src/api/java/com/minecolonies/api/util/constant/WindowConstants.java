@@ -302,7 +302,7 @@ public final class WindowConstants
     /**
      * Key to get readable permission values.
      */
-    public static final String KEY_TO_PERMISSIONS = "com.minecolonies.coremod.permission.";
+    public static final String KEY_TO_PERMISSIONS = PARTIAL_PERMISSION_NAME;
 
     /**
      * Button clicked to add a block to the colony to be freely interacted with.
@@ -387,7 +387,7 @@ public final class WindowConstants
     /**
      * Toggle enable/disable button.
      */
-    public static final String BUTTON_TOGGLE= "toggle";
+    public static final String BUTTON_TOGGLE = "toggle";
 
     /**
      * The builders gui file.
@@ -395,10 +395,10 @@ public final class WindowConstants
     public static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutworkerplaceholder.xml";
     public static final String LIST_RESOURCES              = "resources";
 
-    public static final String LIST_WORK_ORDERS            = "workOrders";
-    public static final String RESOURCE_NAME               = "resourceName";
-    public static final String RESOURCE_AVAILABLE_NEEDED   = "resourceAvailableNeeded";
-    public static final String RESOURCE_MISSING            = "resourceMissing";
+    public static final String LIST_WORK_ORDERS          = "workOrders";
+    public static final String RESOURCE_NAME             = "resourceName";
+    public static final String RESOURCE_AVAILABLE_NEEDED = "resourceAvailableNeeded";
+    public static final String RESOURCE_MISSING          = "resourceMissing";
     public static final String RESOURCE_ADD              = "resourceAdd";
     public static final String RESOURCE_ID               = "resourceId";
     public static final String RESOURCE_QUANTITY_MISSING = "resourceQuantity";
@@ -408,9 +408,11 @@ public final class WindowConstants
     public static final String QUANTITY_LABEL            = "resourceQty";
     public static final String IN_DELIVERY_ICON          = "indeliveryicon";
     public static final String IN_DELIVERY_AMOUNT        = "indeliveryamount";
-    public static final String WORK_ORDER_NAME   = "buildingName";
-    public static final String WORK_ORDER_POS    = "buildingPos";
-    public static final String WORK_ORDER_SELECT = "manage";
+    public static final String IN_WAREHOUSE_ICON         = "inWarehouseIcon";
+    public static final String IN_WAREHOUSE_AMOUNT       = "inWarehouseAmount";
+    public static final String WORK_ORDER_NAME           = "buildingName";
+    public static final String WORK_ORDER_POS            = "buildingPos";
+    public static final String WORK_ORDER_SELECT         = "manage";
 
     public static final String GUIDE_RESOURCE_SUFFIX = ":gui/windowhutguide.xml";
     public static final String GUIDE_CONFIRM         = "confirm";
@@ -472,13 +474,13 @@ public final class WindowConstants
      * The GuardTower GUI file.
      */
     //GUI List Elements
-    public static final String  GUI_LIST_ELEMENT_NAME      = "name";
-    public static final String  GUI_LIST_BUTTON_SWITCH     = "switch";
+    public static final String GUI_LIST_ELEMENT_NAME  = "name";
+    public static final String GUI_LIST_BUTTON_SWITCH = "switch";
 
     /**
      * GuardControl GUI
      */
-    public static final String LEVEL_LABEL    = "level";
+    public static final String LEVEL_LABEL = "level";
 
     /**
      * Id of the done button in the GUI.
@@ -505,7 +507,7 @@ public final class WindowConstants
 
     public static final String LABEL_CONSTRUCTION_NAME = "constructionName";
     public static final String LABEL_PROGRESS          = "progress";
-    public static final String STEP_PROGRESS          = "stepprogress";
+    public static final String STEP_PROGRESS           = "stepprogress";
     public static final String LABEL_WORKERNAME        = "workerName";
 
     public static final String LABEL_PAGE_NUMBER = "pageNum";
@@ -1011,7 +1013,7 @@ public final class WindowConstants
     /**
      * The resource string.
      */
-    public static final String RESOURCE_STRING   = ":gui/layouthuts/layoutuniversity.xml";
+    public static final String RESOURCE_STRING = ":gui/layouthuts/layoutuniversity.xml";
 
     /**
      * The job modifier page.
@@ -1025,12 +1027,12 @@ public final class WindowConstants
     public static final String SECONDARY_SKILL_COM   = "comp2";
     public static final String SECONDARY_SKILL_ADV   = "adverse2";
     public static final String IMAGE_APPENDIX        = "img";
-    public static final String BASE_IMG_SRC = "minecolonies:textures/entity/skills/small/";
+    public static final String BASE_IMG_SRC          = "minecolonies:textures/entity/skills/small/";
 
     /**
      * Button prefixes.
      */
-    public static final String PLUS_PREFIX = "plus_";
+    public static final String PLUS_PREFIX  = "plus_";
     public static final String MINUS_PREFIX = "minus_";
 
     public static final String LOCATE = "locate";
@@ -1062,21 +1064,21 @@ public final class WindowConstants
      */
     public static final String UPGRADE_PROGRESS_LABEL = "upgradeProgress";
 
-    public static final String TOWNHALL_RANK_BUTTON_LIST = "rankButtonList";
-    public static final String TOWNHALL_RANK_BUTTON      = "rankButton";
-    public static final String BUTTON_ADD_RANK = "buttonAddRank";
-    public static final String INPUT_ADDRANK_NAME = "addRankName";
-    public static final String BUTTON_REMOVE_RANK = "removeRank";
-    public static final String TOWNHALL_RANK_LIST = "rankList";
-    public static final String TOWNHALL_ADD_RANK_ERROR = "rankNameError";
-    public static final String TOWNHALL_RANK_PICKER = "rankPicker";
-    public static final String TOWNHALL_PERM_MANAGEMENT = "permissionsManagement";
-    public static final String TOWNHALL_PERM_LIST = "permissionsList";
-    public static final String TOWNHALL_PERM_SETTINGS = "permissionsSettings";
-    public static final String TOWNHALL_PERM_MODE_TOGGLE = "permissionsModeToggle";
+    public static final String TOWNHALL_RANK_BUTTON_LIST  = "rankButtonList";
+    public static final String TOWNHALL_RANK_BUTTON       = "rankButton";
+    public static final String BUTTON_ADD_RANK            = "buttonAddRank";
+    public static final String INPUT_ADDRANK_NAME         = "addRankName";
+    public static final String BUTTON_REMOVE_RANK         = "removeRank";
+    public static final String TOWNHALL_RANK_LIST         = "rankList";
+    public static final String TOWNHALL_ADD_RANK_ERROR    = "rankNameError";
+    public static final String TOWNHALL_RANK_PICKER       = "rankPicker";
+    public static final String TOWNHALL_PERM_MANAGEMENT   = "permissionsManagement";
+    public static final String TOWNHALL_PERM_LIST         = "permissionsList";
+    public static final String TOWNHALL_PERM_SETTINGS     = "permissionsSettings";
+    public static final String TOWNHALL_PERM_MODE_TOGGLE  = "permissionsModeToggle";
     public static final String TOWNHALL_BUTTON_SUBSCRIBER = "setSubscriber";
-    public static final String TOWNHALL_RANK_TYPE_PICKER = "rankTypePicker";
-    public static final String TOWNHALL_PERMISSION_ERROR = "permissionError";
+    public static final String TOWNHALL_RANK_TYPE_PICKER  = "rankTypePicker";
+    public static final String TOWNHALL_PERMISSION_ERROR  = "permissionError";
 
     /**
      * Input filter id.
@@ -1111,7 +1113,7 @@ public final class WindowConstants
     /**
      * String describing switch for the gui.
      */
-    public static final String SWITCH = "com.minecolonies.coremod.gui.workerhuts.switch";
+    public static final String SWITCH = LABEL_SWITCH;
 
     /**
      * Settings list ID.

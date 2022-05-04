@@ -1,14 +1,15 @@
 package com.minecolonies.coremod.commands.commandTypes;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.MessageUtils;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 /**
@@ -39,16 +40,11 @@ public interface IMCColonyOfficerCommand extends IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.colonyidnotfound", colonyID);
+            MessageUtils.format(COMMAND_COLONY_ID_NOT_FOUND, colonyID).sendTo((PlayerEntity) sender);
             return false;
         }
 
         // Check colony permissions
-        if (IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager())
-        {
-            return true;
-        }
-
-        return false;
+        return IMCCommand.isPlayerOped((PlayerEntity) sender) || colony.getPermissions().getRank((PlayerEntity) sender).isColonyManager();
     }
 }

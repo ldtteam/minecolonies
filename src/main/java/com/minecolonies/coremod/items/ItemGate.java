@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.block.Block;
@@ -8,10 +7,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +35,7 @@ public class ItemGate extends BlockItem
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint2 = LanguageHandler.buildChatComponent(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
+        final IFormattableTextComponent guiHint2 = new TranslationTextComponent(TranslationConstants.GATE_PLACEMENT_TOOLTIP);
         guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_AQUA));
         tooltip.add(guiHint2);
     }

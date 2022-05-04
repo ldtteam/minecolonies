@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_LOAD_BACKUP_SUCCESS;
 
 public class CommandLoadAllBackups implements IMCOPCommand
 {
@@ -17,7 +19,7 @@ public class CommandLoadAllBackups implements IMCOPCommand
     public int onExecute(final CommandContext<CommandSource> context)
     {
         BackUpHelper.loadAllBackups();
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.loadbackup.success"), true);
+        context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
         return 1;
     }
 

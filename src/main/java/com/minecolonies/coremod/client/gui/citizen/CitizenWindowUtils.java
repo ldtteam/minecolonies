@@ -6,7 +6,6 @@ import com.ldtteam.blockout.PaneBuilders;
 import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.View;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
@@ -17,12 +16,12 @@ import com.minecolonies.api.util.constant.HappinessConstants;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenExperienceHandler.PRIMARY_DEPENDENCY_SHARE;
@@ -294,7 +294,7 @@ public class CitizenWindowUtils
      */
     public static void updateHappiness(final ICitizenDataView citizen, final AbstractWindowSkeleton window)
     {
-        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.happiness.happinessmodifier"));
+        window.findPaneOfTypeByID("happinessModifier", Text.class).setText(new TranslationTextComponent(LABEL_HAPPINESS_MODIFIER));
         int yPos = 62;
         for (final String name : citizen.getHappinessHandler().getModifiers())
         {
@@ -309,15 +309,15 @@ public class CitizenWindowUtils
             label.setSize(136, 11);
             label.setPosition(70, yPos);
             label.setColors(BLACK);
-            label.setText(LanguageHandler.format("com.minecolonies.coremod.gui.townhall.happiness." + name));
+            label.setText(new TranslationTextComponent(PARTIAL_HAPPINESS_MODIFIER_NAME + name));
             window.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + name)).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslationTextComponent(PARTIAL_HAPPINESS_MODIFIER_DESCRIPTION + name)).build();
 
             if (value > 1.0)
             {
                 image.setImage(GREEN_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.positive"))
+                    .append(new TranslationTextComponent(LABEL_HAPPINESS_POSITIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -325,7 +325,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(BLUE_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.neutral"))
+                    .append(new TranslationTextComponent(LABEL_HAPPINESS_NEUTRAL))
                     .hoverPane(image)
                     .build();
             }
@@ -333,7 +333,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(YELLOW_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.slightlynegative"))
+                    .append(new TranslationTextComponent(LABEL_HAPPINESS_SLIGHTLY_NEGATIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -341,7 +341,7 @@ public class CitizenWindowUtils
             {
                 image.setImage(RED_ICON);
                 PaneBuilders.tooltipBuilder()
-                    .append(new TranslationTextComponent("com.minecolonies.coremod.gui.happiness.negative"))
+                    .append(new TranslationTextComponent(LABEL_HAPPINESS_NEGATIVE))
                     .hoverPane(image)
                     .build();
             }
@@ -369,48 +369,47 @@ public class CitizenWindowUtils
                 return;
             }
 
-            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.label",
-              LanguageHandler.format(citizen.getJob())));
-            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.desc"));
+            windowCitizen.findPaneOfTypeByID(JOB_TITLE_LABEL, Text.class).setText(new TranslationTextComponent(LABEL_CITIZEN_JOB, new TranslationTextComponent(citizen.getJob())));
+            windowCitizen.findPaneOfTypeByID(JOB_DESC_LABEL, Text.class).setText(new TranslationTextComponent(DESCRIPTION_CITIZEN_JOB));
 
             final Skill primary = moduleView.getPrimarySkill();
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL, Text.class)
-              .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.name().toLowerCase(Locale.US)) + " (100% XP)");
+              .setText(new TranslationTextComponent(PARTIAL_SKILL_NAME + primary.name().toLowerCase(Locale.US)).append(" (100% XP)"));
             windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
               .setImage(BASE_IMG_SRC + primary.name().toLowerCase(Locale.US) + ".png");
 
             if (primary.getComplimentary() != null && primary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
-                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                  .setText(new TranslationTextComponent(PARTIAL_SKILL_NAME + primary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
+                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
                   .setImage(BASE_IMG_SRC + primary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
 
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + primary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
-                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)");
+                  .setText(new TranslationTextComponent(PARTIAL_SKILL_NAME + primary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
+                                  + PRIMARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(PRIMARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(BASE_IMG_SRC + primary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }
 
             final Skill secondary = moduleView.getSecondarySkill();
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL, Text.class)
-              .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.name().toLowerCase(Locale.US)) + " (50% XP)");
+              .setText(new TranslationTextComponent(PARTIAL_SKILL_NAME + secondary.name().toLowerCase(Locale.US)).append(" (50% XP)"));
             windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_LABEL + IMAGE_APPENDIX, Image.class)
               .setImage(BASE_IMG_SRC + secondary.name().toLowerCase(Locale.US) + ".png");
 
             if (secondary.getComplimentary() != null && secondary.getAdverse() != null)
             {
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getComplimentary().name().toLowerCase(Locale.US)) + " ("
-                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                  .setText(new TranslationTextComponent(PARTIAL_SKILL_NAME + secondary.getComplimentary().name().toLowerCase(Locale.US)).append(" ("
+                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_COM + IMAGE_APPENDIX, Image.class)
                   .setImage(BASE_IMG_SRC + secondary.getComplimentary().name().toLowerCase(Locale.US) + ".png");
 
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV, Text.class)
-                  .setText(LanguageHandler.format("com.minecolonies.coremod.gui.citizen.job.skills." + secondary.getAdverse().name().toLowerCase(Locale.US)) + " (-"
-                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)");
+                  .setText(new TranslationTextComponent(PARTIAL_SKILL_NAME + secondary.getAdverse().name().toLowerCase(Locale.US)).append(" (-"
+                                  + SECONDARY_DEPENDENCY_SHARE + "% XP)"));
                 windowCitizen.findPaneOfTypeByID(SECONDARY_SKILL_ADV + IMAGE_APPENDIX, Image.class)
                   .setImage(BASE_IMG_SRC + secondary.getAdverse().name().toLowerCase(Locale.US) + ".png");
             }

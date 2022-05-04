@@ -111,7 +111,7 @@ public class JEIPlugin implements IModPlugin
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM,
-                new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath()));
+                new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         if (!recipesLoaded && !Minecraft.getInstance().isLocalServer())
         {

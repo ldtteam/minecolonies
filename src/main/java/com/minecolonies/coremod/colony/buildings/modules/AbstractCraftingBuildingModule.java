@@ -32,7 +32,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
@@ -41,7 +40,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
@@ -383,7 +382,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public boolean isVisible()
     {
-        return true;
+        return !getSupportedCraftingTypes().isEmpty() || !recipes.isEmpty();
     }
 
     @Override
@@ -567,16 +566,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
-                final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                  new TranslationTextComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase()),
-                  recipe.getPrimaryOutput().getHoverName(),
-                  reducedItem.getItemStack().getHoverName(),
-                  citizen.getName());
-
-                for(PlayerEntity player : building.getColony().getMessagePlayerEntities())
-                {
-                    player.sendMessage(message, player.getUUID());
-                }
+                IFormattableTextComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
+                MessageUtils.format(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                    jobComponent,
+                    recipe.getPrimaryOutput().getHoverName(),
+                    reducedItem.getItemStack().getHoverName(),
+                    citizen.getName())
+                  .sendTo(building.getColony()).forAllPlayers();
             }
         }
     }

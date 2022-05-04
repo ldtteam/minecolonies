@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.commands.commandTypes;
 
-import com.ldtteam.structurize.util.LanguageHandler;
+import com.minecolonies.api.util.MessageUtils;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_REQUIRES_OP;
 
 /**
  * Interface for commands requiring OP rights to execute.
@@ -30,7 +32,7 @@ public interface IMCOPCommand extends IMCCommand
 
         if (!IMCCommand.isPlayerOped((PlayerEntity) sender))
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.notop");
+            MessageUtils.format(COMMAND_REQUIRES_OP).sendTo((PlayerEntity) sender);
             return false;
         }
         return true;

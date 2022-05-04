@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -79,7 +78,7 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String style)
+    public void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String colonyName, @NotNull final String style)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
@@ -91,7 +90,6 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString());
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);
 

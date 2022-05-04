@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCOPCommand;
@@ -45,7 +46,7 @@ public class CommandClaimChunks implements IMCOPCommand
         final int range = IntegerArgumentType.getInteger(context, RANGE_ARG);
         if (range > MineColonies.getConfig().getServer().maxColonySize.get())
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.toolarge", colonyID);
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_TOO_LARGE, colonyID).sendTo((PlayerEntity) sender);
             return 0;
         }
 
@@ -61,18 +62,18 @@ public class CommandClaimChunks implements IMCOPCommand
 
         if (chunkManager.getAllChunkStorages().size() > CHUNKS_TO_CLAIM_THRESHOLD)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.maxchunks");
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_MAX_CHUNKS).sendTo((PlayerEntity) sender);
             return 0;
         }
 
         ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getLevel().dimension(), add, new BlockPos(sender.position()), range, 0, sender.level);
-        if(add)
+        if (add)
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.success");
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((PlayerEntity) sender);
         }
         else
         {
-            LanguageHandler.sendPlayerMessage((PlayerEntity) sender, "com.minecolonies.command.claim.unclaim");
+            MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_REMOVE_CLAIM).sendTo((PlayerEntity) sender);
         }
         return 1;
     }
