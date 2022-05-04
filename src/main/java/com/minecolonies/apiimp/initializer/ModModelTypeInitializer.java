@@ -134,5 +134,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.DRUID = new SimpleModelType(ModModelTypes.DRUID_ID, 1, new ModelEntityDruidMale(context.bakeLayer(ClientRegistryHandler.MALE_DRUID)), new ModelEntityDruidFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_DRUID)));
         reg.register(ModModelTypes.DRUID);
+
+        ModModelTypes.ALCHEMIST = new SimpleModelType(ModModelTypes.ALCHEMIST_ID, 1, new ModelEntityAlchemistMale(context.bakeLayer(ClientRegistryHandler.MALE_ALCHEMIST)), new ModelEntityAlchemistFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_ALCHEMIST)));
+        reg.register(ModModelTypes.ALCHEMIST);
     }
 }

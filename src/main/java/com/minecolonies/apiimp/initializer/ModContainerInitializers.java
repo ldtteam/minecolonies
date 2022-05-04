@@ -25,9 +25,10 @@ public class ModContainerInitializers
         ModContainers.rackInv = (MenuType<ContainerRack>) IForgeMenuType.create(ContainerRack::fromFriendlyByteBuf).setRegistryName("rack_inv");
         ModContainers.graveInv = (MenuType<ContainerGrave>) IForgeMenuType.create(ContainerGrave::fromFriendlyByteBuf).setRegistryName("grave_inv");
         ModContainers.field = (MenuType<ContainerField>) IForgeMenuType.create(ContainerField::fromFriendlyByteBuf).setRegistryName("field");
+        ModContainers.craftingBrewingstand = (MenuType<ContainerCraftingBrewingstand>) IForgeMenuType.create(ContainerCraftingBrewingstand::fromFriendlyByteBuf).setRegistryName("crafting_brewingstand");
 
         event.getRegistry()
-          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.graveInv, ModContainers.craftingGrid, ModContainers.field);
+          .registerAll(ModContainers.craftingFurnace, ModContainers.buildingInv, ModContainers.citizenInv, ModContainers.rackInv, ModContainers.graveInv, ModContainers.craftingGrid, ModContainers.field, ModContainers.craftingBrewingstand);
     }
 
     @SubscribeEvent
@@ -35,6 +36,7 @@ public class ModContainerInitializers
     {
         MenuScreens.register(ModContainers.craftingFurnace, WindowFurnaceCrafting::new);
         MenuScreens.register(ModContainers.craftingGrid, WindowCrafting::new);
+        MenuScreens.register(ModContainers.craftingBrewingstand, WindowBrewingstandCrafting::new);
 
         MenuScreens.register(ModContainers.buildingInv, WindowBuildingInventory::new);
         MenuScreens.register(ModContainers.citizenInv, WindowCitizenInventory::new);

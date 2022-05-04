@@ -43,6 +43,7 @@ public final class ModModelTypes
     public static final ResourceLocation CUSTOM_ID         = new ResourceLocation(Constants.MOD_ID, "custom");
     public static final ResourceLocation NETHERWORKER_ID   = new ResourceLocation(Constants.MOD_ID, "netherworker");
     public static final ResourceLocation DRUID_ID          = new ResourceLocation(Constants.MOD_ID, "druid");
+    public static final ResourceLocation ALCHEMIST_ID      = new ResourceLocation(Constants.MOD_ID, "alchemist");
 
     public static IModelType SETTLER;
     public static IModelType CITIZEN;
@@ -82,6 +83,7 @@ public final class ModModelTypes
     public static IModelType CUSTOM;
     public static IModelType NETHERWORKER;
     public static IModelType DRUID;
+    public static IModelType ALCHEMIST;
 
     private ModModelTypes()
     {

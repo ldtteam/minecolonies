@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -16,7 +17,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -88,6 +88,25 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
                 {
                     return new ContainerCraftingFurnace(id, inv, building.getID(), module.getId());
+                }
+            }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
+        }
+        else if (module.canLearn(ModCraftingTypes.BREWING))
+        {
+            NetworkHooks.openGui(player, new MenuProvider()
+            {
+                @NotNull
+                @Override
+                public Component getDisplayName()
+                {
+                    return new TextComponent("Brewing Crafting GUI");
+                }
+
+                @NotNull
+                @Override
+                public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
+                {
+                    return new ContainerCraftingBrewingstand(id, inv, building.getID(), module.getId());
                 }
             }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }

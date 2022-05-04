@@ -76,6 +76,7 @@ public final class NbtTagConstants
     public static final String TAG_PURGED_MOBS            = "purgedMobs";
     public static final String TAG_RESERVED               = "reserved";
     public static final String TAG_DESC                   = "desc";
+    public static final String TAG_BREWING_STAND          = "brewingStand";
 
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";
