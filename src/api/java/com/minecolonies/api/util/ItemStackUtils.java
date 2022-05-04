@@ -332,10 +332,14 @@ public final class ItemStackUtils
         {
             return getFishingRodLevel(stack);
         }
+        else if (toolType.equals(ToolType.SHEARS))
+        {
+            return stack.getItem() instanceof ShearsItem ? 1 : -1;
+        }
         else if (!toolType.hasVariableMaterials())
         {
             //We need a hut level 1 minimum
-            return stack.getItem() instanceof ShearsItem ? 1 : -1;
+            return 1;
         }
         else if (stack.getItem() instanceof TieredItem)
         {
