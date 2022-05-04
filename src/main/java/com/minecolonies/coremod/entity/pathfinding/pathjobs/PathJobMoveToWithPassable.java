@@ -39,8 +39,8 @@ public class PathJobMoveToWithPassable extends PathJobMoveToLocation
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final MNode parent, final boolean head)
     {
-        return super.isPassable(block, pos, parent) || isPassable.apply(block);
+        return super.isPassable(block, pos, parent, head) || isPassable.apply(block);
     }
 }

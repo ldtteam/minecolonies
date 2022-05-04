@@ -284,7 +284,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState prepareForWoodcutting()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(ToolType.HOE))
+        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(ToolType.SHEARS))
         {
             // Reset everything, maybe there are new crafting requests
             return START_WORKING;
