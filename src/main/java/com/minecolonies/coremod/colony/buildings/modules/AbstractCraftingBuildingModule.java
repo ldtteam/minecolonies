@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -971,7 +972,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
             return canLearn(ModCraftingTypes.SMELTING) &&
-                    recipe.getIntermediate() == Blocks.FURNACE;
+                     recipe.getIntermediate() == Blocks.FURNACE;
         }
 
         /**
@@ -982,6 +983,43 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public String getId()
         {
             return "smelting";
+        }
+    }
+
+    /** this module is for brewing-only users */
+    public abstract static class Brewing extends AbstractCraftingBuildingModule
+    {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Brewing(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
+        @Override
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return ImmutableSet.of(ModCraftingTypes.BREWING);
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return canLearn(ModCraftingTypes.BREWING) &&
+                     recipe.getIntermediate() == Blocks.BREWING_STAND;
+        }
+
+        /**
+         * Get a string identifier to this.
+         * @return the id.
+         */
+        @NotNull
+        public String getId()
+        {
+            return "brewing";
         }
     }
 

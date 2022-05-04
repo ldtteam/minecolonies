@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -80,6 +81,8 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
      * @param primaryOutput the primary output.
      * @param remove        true if remove.
      * @param building      the building we're executing on.
+     * @param id module id.
+     * @param additionalOutputs the additional outputs.
      */
     public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final List<ItemStack> additionalOutputs, final boolean remove, final String id)
     {
@@ -102,6 +105,33 @@ public class AddRemoveRecipeMessage extends AbstractBuildingServerMessage<IBuild
               input,
               gridSize,
               primaryOutput, Blocks.AIR, null, null, null, additionalOutputs);
+        }
+        this.id = id;
+    }
+
+    /**
+     * Create a message to add or remove recipes. This constructor creates the recipeStorage on its own.
+     *
+     * @param input         the input.
+     * @param gridSize      the gridSize.
+     * @param primaryOutput the primary output.
+     * @param remove        true if remove.
+     * @param building      the building we're executing on.
+     * @param intermediary intermediate block.
+     * @param id the module id.
+     */
+    public AddRemoveRecipeMessage(final IBuildingView building, final List<ItemStorage> input, final int gridSize, final ItemStack primaryOutput, final boolean remove, final Block intermediary, final String id)
+    {
+        super(building);
+        this.remove = remove;
+        if (gridSize == 1)
+        {
+            storage = StandardFactoryController.getInstance().getNewInstance(
+              TypeConstants.RECIPE,
+              StandardFactoryController.getInstance().getNewInstance(TypeConstants.ITOKEN),
+              input,
+              gridSize,
+              primaryOutput, intermediary);
         }
         this.id = id;
     }

@@ -325,6 +325,7 @@ public class BuildingCook extends AbstractBuilding
                     : ImmutableSet.of();
         }
 
+
         @Override
         public boolean isVisible()
         {
