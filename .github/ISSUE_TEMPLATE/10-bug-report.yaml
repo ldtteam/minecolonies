@@ -11,7 +11,7 @@ body:
           required: true
   - type: checkboxes
     attributes:
-      label: Are you using the latest MineColonies Verison?
+      label: Are you using the latest MineColonies Version?
       description: |
         Please check to see if any newer version fixes the issue you're experiencing.
         [List of all MineColonies versions](https://www.curseforge.com/minecraft/mc-mods/minecolonies/files/all)
