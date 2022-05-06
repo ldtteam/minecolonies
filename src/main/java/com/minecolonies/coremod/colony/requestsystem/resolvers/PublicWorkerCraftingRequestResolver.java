@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -13,7 +14,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
-import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -86,6 +86,14 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
             if (moduleView != null)
             {
                 return new TranslationTextComponent(moduleView.getJobEntry().getTranslationKey());
+            }
+        }
+        if (requester instanceof IBuilding)
+        {
+            final ICraftingBuildingModule module = ((IBuilding) requester).getModuleMatching(ICraftingBuildingModule.class, m -> m.getCraftingJob() != null &&  m.getCraftingJob().getJobRegistryEntry() == getJobEntry());
+            if (module != null)
+            {
+                return new TranslationTextComponent(module.getCraftingJob().getJobRegistryEntry().getTranslationKey());
             }
         }
         return super.getRequesterDisplayName(manager, request);

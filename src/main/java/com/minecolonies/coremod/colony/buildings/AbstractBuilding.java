@@ -210,7 +210,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return Optional.empty();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
@@ -1944,12 +1944,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final int citizenId = getCitizensByRequest().get(request.getId());
-        if (!getCitizensByRequest().containsKey(citizenId))
+        if (!getCitizensByRequest().containsKey(request.getId()))
         {
             return new StringTextComponent("<UNKNOWN>");
         }
 
+        final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData.getJob() == null)
         {
