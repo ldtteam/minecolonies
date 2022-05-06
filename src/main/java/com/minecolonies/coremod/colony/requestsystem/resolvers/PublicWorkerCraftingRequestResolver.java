@@ -92,10 +92,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         if (requester instanceof IBuilding)
         {
             final WorkerBuildingModule module = ((IBuilding) requester).getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
-            if (module != null)
-            {
-                return new TranslationTextComponent(module.getJobEntry().getTranslationKey());
-            }
+            return new TranslationTextComponent(module.getJobEntry().getTranslationKey());
         }
         return super.getRequesterDisplayName(manager, request);
     }

@@ -78,9 +78,10 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
      * @param clazz the class of the module.
      * @param modulePredicate the predicate to match.
      * @param <T> the module type.
-     * @return the first matching module (could be null).
+     * @return the first matching module.
+     * @throws IllegalArgumentException if your condition does not match any modules
      */
-    @Nullable
+    @NotNull
     <T extends IBuildingModule> T getModuleMatching(Class<T> clazz, Predicate<? super T> modulePredicate);
 
     /**

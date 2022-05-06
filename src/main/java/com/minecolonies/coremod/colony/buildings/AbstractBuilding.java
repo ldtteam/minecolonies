@@ -210,7 +210,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         return Optional.empty();
     }
 
-    @Nullable
+    @NotNull
     @Override
     public <T extends IBuildingModule> T getModuleMatching(final Class<T> clazz, final Predicate<? super T> modulePredicate)
     {
@@ -221,7 +221,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 return (T) module;
             }
         }
-        return null;
+        throw new IllegalArgumentException("no matching module");
     }
 
     @NotNull
