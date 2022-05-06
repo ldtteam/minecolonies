@@ -16,6 +16,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +41,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     public CompostRecipeCategory(@NotNull final IGuiHelper guiHelper)
     {
-        this.title = I18n.get(ModBlocks.blockBarrel.getDescriptionId());
+        this.title = new TranslatableComponent(ModBlocks.blockBarrel.getDescriptionId()).getString();
 
         this.background = guiHelper.createBlankDrawable(80, 50);
         this.icon = guiHelper.createDrawableIngredient(new ItemStack(ModBlocks.blockBarrel));

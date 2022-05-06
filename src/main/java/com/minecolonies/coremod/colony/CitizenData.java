@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -62,8 +61,7 @@ import static com.minecolonies.api.util.ItemStackUtils.CAN_EAT;
 import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_NOT_GUARD_NEAR_HOME;
-import static com.minecolonies.api.util.constant.TranslationConstants.CITIZEN_NOT_GUARD_NEAR_WORK;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Extra data for Citizens.
@@ -1048,7 +1046,7 @@ public class CitizenData implements ICitizenData
     public void restartDone()
     {
         restartScheduled = false;
-        LanguageHandler.sendPlayerMessage(originPlayerRestart, "com.minecolonies.coremod.gui.hiring.restartMessageDone", getName());
+        MessageUtils.format(MESSAGE_CITIZEN_RESTARTED, getName()).sendTo(originPlayerRestart);
     }
 
     @Override

@@ -126,7 +126,9 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
     private void switchClicked(@NotNull final Button button)
     {
         final int row = workerList.getListElementIndexByPane(button);
-        if (button.getTextAsString().equals(new TranslatableComponent(OFF).getString()))
+        String buttonText = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+
+        if (buttonText.equals(OFF))
         {
             button.setText(new TranslatableComponent(ON));
             module.addWorker(allBuildings.get(row).getID());

@@ -6,7 +6,6 @@ import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.util.constant.Constants;
@@ -15,6 +14,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.network.messages.server.RemoveFromRallyingListMessage;
 import com.minecolonies.coremod.network.messages.server.ToggleBannerRallyGuardsMessage;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -122,11 +122,12 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
             if (guardTowerView != null)
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(LanguageHandler.format(ModGuardTypes.knight.getJobTranslationKey())
-                                                                                  + "|"
-                                                                                  + LanguageHandler.format(ModGuardTypes.ranger.getJobTranslationKey())
-                                                                                  + ": " + guardTowerView.getGuards().size());
-                rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(guardTower.getFirst().toString());
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(new TranslatableComponent(ModGuardTypes.knight.getJobTranslationKey())
+                  .append("|")
+                  .append(new TranslatableComponent(ModGuardTypes.ranger.getJobTranslationKey()))
+                  .append(": ")
+                  .append(String.valueOf(guardTowerView.getGuards().size())));
+                rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(new TextComponent(guardTower.getFirst().toString()));
             }
             else
             {

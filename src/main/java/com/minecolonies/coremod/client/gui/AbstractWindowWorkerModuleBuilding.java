@@ -8,6 +8,7 @@ import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
@@ -16,11 +17,15 @@ import com.minecolonies.coremod.network.messages.server.colony.building.ChangeDe
 import com.minecolonies.coremod.network.messages.server.colony.building.ForcePickupMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Abstract class for window for worker building.
@@ -86,25 +91,28 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
 
         super.registerButton(BUTTON_HIRE, this::hireClicked);
         super.registerButton(BUTTON_RECALL, this::recallClicked);
-        super.registerButton(BUTTON_DP_UP, this::deliveryPrioUp);
-        super.registerButton(BUTTON_DP_DOWN, this::deliveryPrioDown);
+        super.registerButton(BUTTON_DP_UP, this::deliveryPriorityUp);
+        super.registerButton(BUTTON_DP_DOWN, this::deliveryPriorityDown);
         super.registerButton(BUTTON_FORCE_PICKUP, this::forcePickup);
     }
 
     private void updatePriorityLabel()
     {
+        Component component;
         if (prio == 0)
         {
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(
-              new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildprio").getString() + new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.deliveryprio.never").getString());
+            component = new TranslatableComponent(TEXT_PICKUP_PRIORITY)
+              .append(new TranslatableComponent(TEXT_PICKUP_PRIORITY_NEVER));
         }
         else
         {
-            findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildprio").getString() + prio + "/10");
+            component = new TranslatableComponent(TEXT_PICKUP_PRIORITY)
+              .append(new TextComponent(prio + "/10"));
         }
+        findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(component);
     }
 
-    private void deliveryPrioUp()
+    private void deliveryPriorityUp()
     {
         if (prio != 10)
         {
@@ -114,7 +122,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         updatePriorityLabel();
     }
 
-    private void deliveryPrioDown()
+    private void deliveryPriorityDown()
     {
         if (prio != 0)
         {
@@ -138,7 +146,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
     {
         if (building.getBuildingLevel() == 0 && !ModBuildings.builder.equals(building.getBuildingType()))
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "com.minecolonies.coremod.gui.workerhuts.level0");
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;
         }
 

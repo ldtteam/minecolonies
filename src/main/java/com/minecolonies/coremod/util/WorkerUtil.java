@@ -2,7 +2,6 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
@@ -34,6 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
+import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +44,8 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
 import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_MINE_NODE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_NODES;
 
 /**
  * Utility methods for BlockPos.
@@ -170,6 +172,11 @@ public final class WorkerUtil
      */
     public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
     {
+        if (state.getBlock() instanceof IForgeShearable)
+        {
+            return ToolType.SHEARS;
+        }
+
         String toolName = "";
 
             if (blockHardness > 0f)
@@ -301,12 +308,10 @@ public final class WorkerUtil
                 final BlockState BlockState = world.getBlockState(levelSignPos);
                 final SignBlockEntity teLevelSign = (SignBlockEntity) te;
 
-                teLevelSign.setMessage(0, new TextComponent(ChatFormatting.stripFormatting(
-                  new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minerminenode").getString() + ": " + levelId)));
-                teLevelSign.setMessage(1, new TextComponent(ChatFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
-                teLevelSign.setMessage(2, new TextComponent(ChatFormatting.stripFormatting(
-                  new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.minernode").getString() + ": " + level.getNumberOfBuiltNodes())));
-                teLevelSign.setMessage(3, new TextComponent(ChatFormatting.stripFormatting("")));
+                teLevelSign.setMessage(0, new TranslatableComponent(MINER_MINE_NODE).append(": " + levelId));
+                teLevelSign.setMessage(1, new TextComponent("Y: " + (level.getDepth() + 1)));
+                teLevelSign.setMessage(2, new TranslatableComponent(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.setMessage(3, new TextComponent(""));
 
                 teLevelSign.setChanged();
                 world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);

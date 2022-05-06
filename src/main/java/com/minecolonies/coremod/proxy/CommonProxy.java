@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.CountedIngredient;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -19,6 +20,7 @@ import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -156,6 +158,12 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
+    public static void registerCraftingTypes(final RegistryEvent.Register<CraftingType> event)
+    {
+        ModCraftingTypesInitializer.init(event);
+    }
+
+    @SubscribeEvent
     public static void registerRecipeSerializers(final RegistryEvent.Register<RecipeSerializer<?>> event)
     {
         final IForgeRegistry<RecipeSerializer<?>> r = event.getRegistry();
@@ -229,7 +237,11 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openResourceScrollWindow(final int colonyId, final BlockPos pos)
+    public void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos pos,
+      final BlockPos warehousePos,
+      final CompoundTag warehouseCompound)
     {
         /*
          * Intentionally left empty.

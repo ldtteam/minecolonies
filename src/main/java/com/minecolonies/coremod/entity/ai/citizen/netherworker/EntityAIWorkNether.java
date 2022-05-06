@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.netherworker;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
@@ -50,7 +49,6 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
@@ -241,7 +239,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
 
         // Make sure we have a stash of some food 
-        checkAndRequestFood(16);
+        checkIfRequestForItemExistOrCreate(new StackList(getEdiblesList(), "Edible Food", 16));
 
         // Get other adventuring supplies. These are required. 
         // Done this way to get all the requests in parallel
@@ -766,27 +764,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
         netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
         return netherEdible;
-    }
-
-    /**
-     * Check if we need to request food, and do so if necessary.
-     */
-    protected void checkAndRequestFood(int itemCount)
-    {
-        List<ItemStack> edibleList = getEdiblesList();
-        final IDeliverable edible = new StackList(edibleList, "Edible Food", itemCount);
-
-        int count = InventoryUtils.getItemCountInItemHandler(worker.getItemHandlerCitizen(), edible::matches);
-        if (count >= itemCount)
-        {
-            return;
-        }
-
-        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(-1, TypeToken.of(edible.getClass()))
-              && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(edible.getClass())))
-        {
-            getOwnBuilding().createRequest(edible, true);
-        }
     }
 
     /**

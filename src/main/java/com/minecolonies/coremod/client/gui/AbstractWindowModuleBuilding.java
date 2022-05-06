@@ -10,13 +10,15 @@ import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMess
 import com.minecolonies.coremod.network.messages.server.colony.building.BuildRequestMessage;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.CMC_GUI_TOWNHALL_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_INFO_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -55,7 +57,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
         if (buttonInfo != null)
         {
-            buttonInfo.setVisible(I18n.exists(COM_MINECOLONIES_INFO_PREFIX + building.getSchematicName() + ".0"));
+            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getSchematicName() + ".0"));
         }
     }
 
@@ -91,17 +93,18 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     private void buildClicked()
     {
-        final String buttonLabel = buttonBuild.getTextAsString();
-        if (buttonLabel.equalsIgnoreCase(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelbuild").getString())
-              || buttonLabel.equalsIgnoreCase(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelupgrade").getString()))
+        String buttonLabel =
+          buttonBuild.getText() instanceof TranslatableComponent ? ((TranslatableComponent) buttonBuild.getText()).getKey() : buttonBuild.getTextAsString();
+
+        if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_BUILD) || buttonLabel.equalsIgnoreCase(ACTION_CANCEL_UPGRADE))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.BUILD, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelrepair").getString()))
+        else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_REPAIR))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REPAIR, BlockPos.ZERO));
         }
-        else if (buttonLabel.equalsIgnoreCase(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.canceldeconstruction").getString()))
+        else if (buttonLabel.equalsIgnoreCase(ACTION_CANCEL_DECONSTRUCTION))
         {
             Network.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.Mode.REMOVE, BlockPos.ZERO));
         }
@@ -134,7 +137,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
      */
     public String getBuildingName()
     {
-        return  "com." + buildingView.getBuildingType().getRegistryName().getNamespace() + ".building." + buildingView.getBuildingType().getRegistryName().getPath();
+        return "com." + buildingView.getBuildingType().getRegistryName().getNamespace() + ".building." + buildingView.getBuildingType().getRegistryName().getPath();
     }
 
     /**
@@ -153,24 +156,24 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         {
             if (buildingView.getBuildingLevel() == 0)
             {
-                buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelbuild"));
+                buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_BUILD));
             }
             else
             {
-                buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelupgrade"));
+                buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_UPGRADE));
             }
         }
         else if (buildingView.isRepairing())
         {
-            buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.cancelrepair"));
+            buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_REPAIR));
         }
         else if (buildingView.isDeconstructing())
         {
-            buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.canceldeconstruction"));
+            buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_DECONSTRUCTION));
         }
         else
         {
-            buttonBuild.setText(new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.buildrepair"));
+            buttonBuild.setText(new TranslatableComponent(ACTION_BUILD_REPAIR));
         }
     }
 
@@ -180,16 +183,21 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         super.onOpened();
         setPage(false, 0);
 
-        final String name = building.getCustomName().isEmpty() ? new TranslatableComponent(getBuildingName().toLowerCase(Locale.ROOT)).getString() : building.getCustomName();
+        final MutableComponent component =
+          building.getCustomName().isEmpty() ? new TranslatableComponent(getBuildingName()) : new TextComponent(building.getCustomName());
         if (switchView != null && switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
         {
-            // Townhall does not need level in colony name
-            title.setText(name);
-            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(new TranslatableComponent(CMC_GUI_TOWNHALL_BUILDING_LEVEL).getString() + ": " + buildingView.getBuildingLevel());
+            // Town hall does not need level in colony name
+            title.setText(component);
+
+            final Component levelComponent = new TranslatableComponent(CMC_GUI_TOWNHALL_BUILDING_LEVEL)
+                                                    .append(": " + buildingView.getBuildingLevel());
+            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(levelComponent);
         }
         else if (title != null)
         {
-            title.setText(name + " " + buildingView.getBuildingLevel());
+            final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
+            title.setText(componentWithLevel);
         }
     }
 }

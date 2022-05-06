@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 import net.minecraft.world.item.Item.Properties;
 
@@ -50,7 +51,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         }
 
         final ItemStack scepter = context.getPlayer().getItemInHand(context.getHand());
-        LanguageHandler.sendPlayerMessage(context.getPlayer(), "item.minecolonies.scepterlumberjack.usedstart");
+        MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_B_SET).sendTo(context.getPlayer());
         if (setPosition(scepter.getOrCreateTag(), NBT_START_POS, context.getClickedPos(), context.getPlayer()))
         {
             storeRestrictedArea(context.getPlayer(), scepter.getOrCreateTag(), context.getLevel());
@@ -64,7 +65,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
         if (!world.isClientSide)
         {
             final ItemStack tool = player.getMainHandItem();
-            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.usedend");
+            MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_POSITION_A_SET).sendTo(player);
             if (setPosition(tool.getOrCreateTag(), NBT_END_POS, pos, player))
             {
                 storeRestrictedArea(player, tool.getOrCreateTag(), world);
@@ -97,11 +98,11 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
 
         if (area > maxArea)
         {
-            LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictiontoobig", area, maxArea);
+            MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_TOO_BIG, area, maxArea).sendTo(player);
             return;
         }
 
-        LanguageHandler.sendPlayerMessage(player, "item.minecolonies.scepterlumberjack.restrictionset", minX, maxX, minZ, maxZ, area, maxArea);
+        MessageUtils.format(TOOL_LUMBERJACK_SCEPTER_AREA_SET, minX, maxX, minZ, maxZ, area, maxArea).sendTo(player);
         final IColony colony = IColonyManager.getInstance().getColonyByWorld(compound.getInt(TAG_ID), worldIn);
         final BlockPos hutPos = BlockPosUtil.read(compound, TAG_POS);
         final BuildingLumberjack hut = colony.getBuildingManager().getBuilding(hutPos, BuildingLumberjack.class);

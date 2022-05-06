@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
@@ -282,7 +283,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         {
             if (new Rect2i(CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y - 2, 24, 24).contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "intermediate.tip", recipe.getIntermediate().getName()));
+                tooltips.add(new TranslatableComponent(TranslationConstants.PARTIAL_JEI_INFO + "intermediate.tip", recipe.getIntermediate().getName()));
             }
         }
 
@@ -301,7 +302,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull
-    public List<IGenericRecipe> findRecipes(@NotNull final Map<RecipeType<?>, List<IGenericRecipe>> vanilla)
+    public List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
         final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(vanilla, this.crafting);
 

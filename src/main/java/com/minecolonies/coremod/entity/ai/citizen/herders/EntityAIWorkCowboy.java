@@ -128,7 +128,7 @@ public class EntityAIWorkCowboy extends AbstractEntityAIHerder<JobCowboy, Buildi
         worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_STATUS_COWBOY_MILKING));
         worker.getCitizenData().setVisibleStatus(HERD_COW);
 
-        if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && InventoryUtils.getCountFromBuilding(getOwnBuilding(), new ItemStorage(new ItemStack(Items.BUCKET, 1))) > 1)
+        if (!worker.getCitizenInventoryHandler().hasItemInInventory(getBreedingItem().getItem()) && InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), new ItemStorage(new ItemStack(Items.BUCKET, 1)), 2) > 1)
         {
             if (!walkToBuilding())
             {

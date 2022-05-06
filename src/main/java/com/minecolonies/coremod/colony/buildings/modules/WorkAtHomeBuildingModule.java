@@ -7,7 +7,9 @@ import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.BlockPosUtil;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import com.minecolonies.api.util.MessageUtils;
 
 import java.util.function.Function;
 
@@ -36,12 +38,14 @@ public class WorkAtHomeBuildingModule extends WorkerBuildingModule implements IA
             {
                 if (oldHome.hasModule(LivingBuildingModule.class) && !oldHome.hasModule(WorkAtHomeBuildingModule.class))
                 {
-                    oldHome.getColony().notifyPlayers(
-                      new TranslatableComponent("com.minecolonies.coremod.gui.workerhuts.assignedbed",
-                      citizen.getName(),
-                      new TranslatableComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey()),
-                      new TranslatableComponent("block.minecolonies." + oldHome.getBuildingType().getBuildingBlock().getHutName() + ".name"),
-                      BlockPosUtil.getString(oldHome.getID())));
+                    final MutableComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
+                    final MutableComponent buildingComponent = MessageUtils.format(oldHome.getBuildingDisplayName()).create();
+                    MessageUtils.format("com.minecolonies.coremod.gui.workerhuts.assignedbed",
+                        citizen.getName(),
+                        jobComponent,
+                        buildingComponent,
+                        BlockPosUtil.getString(oldHome.getID()))
+                      .sendTo(oldHome.getColony()).forAllPlayers();
                 }
                 oldHome.getFirstModuleOccurance(LivingBuildingModule.class).removeCitizen(citizen);
             }

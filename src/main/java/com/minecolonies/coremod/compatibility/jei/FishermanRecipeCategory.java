@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JEI_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JEI_INFO;
 
 /**
  * The JEI recipe category for the fisherman.
@@ -54,7 +54,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     protected List<Component> generateInfoBlocks(@NotNull FishingRecipe recipe)
     {
         return Collections.singletonList(
-                new TranslatableComponent(COM_MINECOLONIES_JEI_PREFIX + "onelevelrestriction",
+                new TranslatableComponent(PARTIAL_JEI_INFO + "onelevelrestriction",
                         recipe.getLevel()));
     }
 

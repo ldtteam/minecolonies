@@ -16,11 +16,11 @@ public interface IWorkOrderView
     int getId();
 
     /**
-     * Id setter.
+     * Get the structure name for this work order.
      *
-     * @param id the id to set.
+     * @return the structure name.
      */
-    void setId(final int id);
+    String getStructureName();
 
     /**
      * Priority getter.

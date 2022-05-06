@@ -2,6 +2,7 @@ package com.minecolonies.api.colony.buildings.modules;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
@@ -56,4 +57,10 @@ public interface IBuildingModuleView
      * @return the colony view.
      */
     IColonyView getColony();
+
+    /**
+     * Get the building view to this.
+     * @return the building view.
+     */
+    IBuildingView getBuildingView();
 }

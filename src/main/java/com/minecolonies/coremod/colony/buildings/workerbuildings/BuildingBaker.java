@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
@@ -7,6 +8,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -15,10 +17,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_BAKER;
@@ -122,10 +127,11 @@ public class BuildingBaker extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnCraftingRecipes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
-            if (building == null) return true;  // because it can learn at *some* level
-            return building.getBuildingLevel() >= 3;
+            return (building == null || building.getBuildingLevel() >= 3)
+                    ? super.getSupportedCraftingTypes()
+                    : ImmutableSet.of();
         }
 
         @Override
@@ -177,10 +183,11 @@ public class BuildingBaker extends AbstractBuilding
         }
 
         @Override
-        public boolean canLearnFurnaceRecipes()
+        public Set<CraftingType> getSupportedCraftingTypes()
         {
-            if (building == null) return true;  // because it can learn at *some* level
-            return building.getBuildingLevel() >= 3;
+            return (building == null || building.getBuildingLevel() >= 3)
+                    ? super.getSupportedCraftingTypes()
+                    : ImmutableSet.of();
         }
     }
 }

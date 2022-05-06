@@ -216,7 +216,6 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
         }
     }
 
-    @NotNull
     @Override
     public void clicked(final int slotId, final int clickedButton, final ClickType mode, final Player playerIn)
     {

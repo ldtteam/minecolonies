@@ -1,15 +1,16 @@
 package com.minecolonies.coremod.commands.citizencommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.constant.translation.CommandTranslationConstants;
 import com.minecolonies.coremod.commands.commandTypes.IMCColonyOfficerCommand;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import static com.minecolonies.coremod.commands.CommandArgumentNames.CITIZENID_ARG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
@@ -32,7 +33,7 @@ public class CommandCitizenReload implements IMCColonyOfficerCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(new TranslatableComponent(CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
@@ -40,12 +41,12 @@ public class CommandCitizenReload implements IMCColonyOfficerCommand
 
         if (citizenData == null)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizeninfo.notfound"), true);
+            context.getSource().sendSuccess(new TranslatableComponent(CommandTranslationConstants.COMMAND_CITIZEN_NOT_FOUND), true);
             return 0;
         }
 
         citizenData.updateEntityIfNecessary();
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.citizenreload.success", citizenData.getId()), true);
+        context.getSource().sendSuccess(new TranslatableComponent(CommandTranslationConstants.COMMAND_CITIZEN_RELOAD_SUCCESS, citizenData.getId()), true);
         return 1;
     }
 

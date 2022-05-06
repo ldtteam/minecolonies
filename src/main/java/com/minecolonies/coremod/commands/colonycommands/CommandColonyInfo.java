@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.colonycommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.MineColonies;
@@ -13,7 +12,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_ID_NOT_FOUND;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_DISABLED_IN_CONFIG;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
 
 public class CommandColonyInfo implements IMCCommand
@@ -41,13 +43,13 @@ public class CommandColonyInfo implements IMCCommand
         final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, context.getSource().getLevel().dimension());
         if (colony == null)
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.colonyidnotfound", colonyID), true);
+            context.getSource().sendSuccess(new TranslatableComponent(COMMAND_COLONY_ID_NOT_FOUND, colonyID), true);
             return 0;
         }
 
         if (!context.getSource().hasPermission(OP_PERM_LEVEL) && !MineColonies.getConfig().getServer().canPlayerUseShowColonyInfoCommand.get())
         {
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.notenabledinconfig"), true);
+            context.getSource().sendSuccess(new TranslatableComponent(COMMAND_DISABLED_IN_CONFIG), true);
             return 0;
         }
 

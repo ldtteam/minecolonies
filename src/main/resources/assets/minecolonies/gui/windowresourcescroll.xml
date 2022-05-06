@@ -21,10 +21,12 @@
         <box size="100% 30" linewidth="1">
             <itemicon id="resourceIcon" size="16 16" pos="1 1"/>
             <image id="indeliveryicon" source="minecolonies:textures/gui/citizen/delivery_16x16.png" size="16 16" pos="120 12" visible="false"/>
+            <image id="inWarehouseIcon" source="minecolonies:textures/gui/citizen/crate_16x16.png" size="16 16" pos="120 12" visible="false"/>
             <label id="resourceName" size="135 9" pos="18 2" color="black"/>
             <label id="resourceMissing" size="65 9" pos="2 18" textalign="MIDDLE" color="black"/>
             <label id="resourceAvailableNeeded" size="65 9" pos="67 18" textalign="MIDDLE" color="black"/>
             <label id="indeliveryamount" size="30 9" pos="132 18" textalign="MIDDLE" color="green"/>
+            <label id="inWarehouseAmount" size="30 9" pos="132 18" textalign="MIDDLE" color="yellow"/>
 
             <label id="resourceId" size="1 1" pos="100 100"/>
             <label id="resourceQuantity" size="1 1" pos="100 100"/>

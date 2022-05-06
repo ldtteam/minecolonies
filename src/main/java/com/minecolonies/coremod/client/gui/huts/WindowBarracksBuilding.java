@@ -13,6 +13,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowsBarracksSpies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
@@ -153,25 +154,27 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
      * Mount the distance string for the barracks and the position.
      *
      * @param pos the position.
-     * @return the nice human readable string.
+     * @return the component containing the nice human-readable string.
      */
-    private String mountDistanceString(final BlockPos pos)
+    private Component mountDistanceString(final BlockPos pos)
     {
         final long distance = BlockPosUtil.getDistance2D(pos, building.getPosition());
         final String distanceDesc;
         if (distance < QUITE_CLOSE)
         {
-            distanceDesc = new TranslatableComponent(QUITE_CLOSE_DESC).getString();
+            distanceDesc = QUITE_CLOSE_DESC;
         }
         else if (distance < QUITE_FAR)
         {
-            distanceDesc = new TranslatableComponent(QUITE_FAR_DESC).getString();
+            distanceDesc = QUITE_FAR_DESC;
         }
         else
         {
-            distanceDesc = new TranslatableComponent(REALLY_FAR_DESC).getString();
+            distanceDesc = REALLY_FAR_DESC;
         }
-        final String directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
-        return distanceDesc + " " + directionDest;
+        final Component directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
+        return new TranslatableComponent(distanceDesc)
+                 .append(" ")
+                 .append(directionDest);
     }
 }

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.colony.CitizenDataView;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -64,7 +65,8 @@ public interface IProxy
 
     /**
      * Opens a build tool window for a specific structure.
-     *  @param pos           the position.
+     *
+     * @param pos           the position.
      * @param structureName the structure name.
      * @param rotation      the rotation.
      * @param groundstyle   one of the GROUNDSTYLE_ values.
@@ -88,10 +90,16 @@ public interface IProxy
     /**
      * Opens the resource scroll window.
      *
-     * @param colonyId the colony id.
-     * @param pos      the position of the builder.
+     * @param colonyId          the colony id.
+     * @param pos               the position of the builder.
+     * @param warehousePos      the position of the warehouse clicked on (if any).
+     * @param warehouseCompound the compound data to store the warehouse snapshot to.
      */
-    void openResourceScrollWindow(final int colonyId, final BlockPos pos);
+    void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos pos,
+      final @Nullable BlockPos warehousePos,
+      final @Nullable CompoundTag warehouseCompound);
 
     /**
      * Get the file representation of the additional schematics' folder.

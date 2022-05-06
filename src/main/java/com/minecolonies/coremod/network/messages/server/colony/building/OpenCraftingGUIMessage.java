@@ -2,7 +2,9 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -70,7 +72,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
 
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
-        if (module.canLearnFurnaceRecipes())
+        if (module.canLearn(ModCraftingTypes.SMELTING))
         {
             NetworkHooks.openGui(player, new MenuProvider()
             {
@@ -89,6 +91,25 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 }
             }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }
+        else if (module.canLearn(ModCraftingTypes.BREWING))
+        {
+            NetworkHooks.openGui(player, new MenuProvider()
+            {
+                @NotNull
+                @Override
+                public Component getDisplayName()
+                {
+                    return new TextComponent("Brewing Crafting GUI");
+                }
+
+                @NotNull
+                @Override
+                public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
+                {
+                    return new ContainerCraftingBrewingstand(id, inv, building.getID(), module.getId());
+                }
+            }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
+        }
         else
         {
             net.minecraftforge.network.NetworkHooks.openGui(player, new MenuProvider()
@@ -104,9 +125,9 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
                 {
-                    return new ContainerCrafting(id, inv, module.canLearnLargeRecipes(), building.getID(), module.getId());
+                    return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING), building.getID(), module.getId());
                 }
-            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearnLargeRecipes())).writeBlockPos(building.getID()).writeUtf(module.getId()));
+            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING))).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }

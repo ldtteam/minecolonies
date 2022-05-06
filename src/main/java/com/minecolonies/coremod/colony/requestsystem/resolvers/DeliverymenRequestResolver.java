@@ -115,17 +115,35 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return null;
         }
 
-
-        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
-        job.addRequest(request.getId(), bestScore.getB());
-
         return Lists.newArrayList();
     }
 
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request) throws RuntimeException
     {
-        //Noop. The delivery man will resolve it.
+        ICitizenData chosenCourier = null;
+
+        Tuple<Double, Integer> bestScore = null;
+        for (final ICitizenData citizen : getResolveAbleDeliverymen(manager))
+        {
+            if (citizen.isWorking())
+            {
+                Tuple<Double, Integer> localScore = ((JobDeliveryman) citizen.getJob()).getScoreForDelivery(request);
+                if (bestScore == null || localScore.getA() < bestScore.getA())
+                {
+                    bestScore = localScore;
+                    chosenCourier = citizen;
+                }
+            }
+        }
+
+        if (chosenCourier == null)
+        {
+            return;
+        }
+
+        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
+        job.addRequest(request.getId(), bestScore.getB());
     }
 
     @Nullable

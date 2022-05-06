@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET;
 
 /**
  * Class describing the clipboard item.
@@ -57,10 +58,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
             compound.putInt(TAG_COLONY, ((AbstractTileEntityColonyBuilding) entity).getColonyId());
             if (!ctx.getLevel().isClientSide)
             {
-                LanguageHandler.sendPlayerMessage(
-                        ctx.getPlayer(),
-                        TranslationConstants.COM_MINECOLONIES_CLIPBOARD_COLONY_SET,
-                        ((AbstractTileEntityColonyBuilding) entity).getColony().getName());
+                MessageUtils.format(COM_MINECOLONIES_CLIPBOARD_COLONY_SET, ((TileEntityColonyBuilding) entity).getColony().getName()).sendTo(ctx.getPlayer());
             }
         }
         else if (ctx.getLevel().isClientSide)

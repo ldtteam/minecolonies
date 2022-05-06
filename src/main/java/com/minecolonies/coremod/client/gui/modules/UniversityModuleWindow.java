@@ -65,7 +65,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
      * Gets a list describing what requirements must be met to make at least one primary research for a branch visible.
      *
      * @param branch  The identifier for a branch.
-     * @return An empty list if at least one primary research is visible, or a list of IFormattableTextComponents describing the dependencies for each hidden primary research.
+     * @return An empty list if at least one primary research is visible, or a list of MutableComponents describing the dependencies for each hidden primary research.
      */
     public List<MutableComponent> getHidingRequirementDesc(final ResourceLocation branch)
     {

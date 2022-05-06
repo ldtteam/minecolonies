@@ -2,8 +2,10 @@ package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.buildings.modules.settings.*;
+import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.Tag;
@@ -596,6 +598,99 @@ public class SettingsFactories
         public short getSerializationId()
         {
             return SerializationIdentifierConstants.BEEKEEPER_COLLECTION_SETTINGS_ID;
+        }
+    }
+
+    /**
+     * Specific factory for the recipe setting.
+     */
+    public static class RecipeSettingFactory implements IRecipeSettingFactory<RecipeSetting>
+    {
+        /**
+         * Compound tag for the module value..
+         */
+        private static final String TAG_MODULE = "value";
+
+        /**
+         * Compound tag for the token.
+         */
+        private static final String TAG_TOKEN = "token";
+
+        @NotNull
+        @Override
+        public TypeToken<RecipeSetting> getFactoryOutputType()
+        {
+            return TypeToken.of(RecipeSetting.class);
+        }
+
+        @NotNull
+        @Override
+        public TypeToken<FactoryVoidInput> getFactoryInputType()
+        {
+            return TypeConstants.FACTORYVOIDINPUT;
+        }
+
+        @NotNull
+        @Override
+        public RecipeSetting getNewInstance(final IToken<?> index, final String craftingModuleId)
+        {
+            return new RecipeSetting(index, craftingModuleId);
+        }
+
+        @NotNull
+        @Override
+        public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting storage)
+        {
+            final CompoundTag compound = new CompoundTag();
+            if (storage.currentIndex != null)
+            {
+                compound.put(TAG_TOKEN, StandardFactoryController.getInstance().serialize(storage.currentIndex));
+            }
+            compound.putString(TAG_MODULE, storage.craftingModuleId);
+            return compound;
+        }
+
+        @NotNull
+        @Override
+        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final CompoundTag nbt)
+        {
+            IToken<?> token = null;
+            if (nbt.contains(TAG_TOKEN))
+            {
+                token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));
+            }
+            final String moduleId = nbt.getString(TAG_MODULE);
+            return this.getNewInstance(token, moduleId);
+        }
+
+        @Override
+        public void serialize(@NotNull final IFactoryController controller, @NotNull final RecipeSetting input, @NotNull final FriendlyByteBuf packetBuffer)
+        {
+            packetBuffer.writeBoolean(input.currentIndex != null);
+            if (input.currentIndex != null)
+            {
+                StandardFactoryController.getInstance().serialize(packetBuffer, input.currentIndex);
+            }
+            packetBuffer.writeUtf(input.craftingModuleId);
+        }
+
+        @NotNull
+        @Override
+        public RecipeSetting deserialize(@NotNull final IFactoryController controller, @NotNull final FriendlyByteBuf buffer) throws Throwable
+        {
+            IToken<?> token = null;
+            if (buffer.readBoolean())
+            {
+                token = StandardFactoryController.getInstance().deserialize(buffer);
+            }
+            final String moduleId = buffer.readUtf(32767);
+            return this.getNewInstance(token, moduleId);
+        }
+
+        @Override
+        public short getSerializationId()
+        {
+            return SerializationIdentifierConstants.CRAFTING_SETTINGS_ID;
         }
     }
 }

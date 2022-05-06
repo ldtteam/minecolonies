@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.mobs;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
@@ -16,7 +15,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING;
 
 public class EntityMercenaryAI extends Goal
 {
@@ -163,9 +167,7 @@ public class EntityMercenaryAI extends Goal
                     if (!ItemStackUtils.isEmpty(stack))
                     {
                         entity.swing(InteractionHand.OFF_HAND);
-                        LanguageHandler.sendPlayersMessage(entity.getColony().getMessagePlayerEntities(),
-                          "com.minecolonies.coremod.mercenary.stealBuilding",
-                          stack.getHoverName().getString());
+                        MessageUtils.format(MESSAGE_INFO_COLONY_MERCENARY_STEAL_BUILDING, stack.getHoverName().getString()).sendTo(entity.getColony()).forAllPlayers();
                     }
                 }
             }

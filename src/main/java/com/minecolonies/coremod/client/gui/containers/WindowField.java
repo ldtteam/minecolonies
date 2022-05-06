@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui.containers;
 
 import com.google.common.collect.Lists;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.util.constant.Constants;
@@ -18,7 +17,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -31,9 +30,8 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TextComponent;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Class which creates the GUI of our field inventory.
@@ -121,10 +119,10 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            this.font.draw(stack, new TranslatableComponent("com.minecolonies.coremod.gui.field.worker", tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            this.font.draw(stack, new TranslatableComponent(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
         }
 
-        this.font.draw(stack, new TranslatableComponent("block.minecolonies.blockhutfield"), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.font.draw(stack, new TranslatableComponent(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
         for (Widget widget : this.renderables)
         {
@@ -292,10 +290,11 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                 return;
             }
 
-            List<FormattedText> lines = Lists.newArrayList(new TextComponent(
-              new TranslatableComponent("com.minecolonies.coremod.gui.field." + this.direction.getSerializedName()).getString()),
-              new TextComponent(ChatFormatting.GRAY + "" + ChatFormatting.ITALIC + new TranslatableComponent(getDirectionalTranslationKey()).getString()
-            ));
+            List<FormattedText> lines = Lists.newArrayList(
+              new TranslatableComponent(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + this.direction.getSerializedName()),
+              new TranslatableComponent(getDirectionalTranslationKey())
+                .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
+            );
 
             WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
         }
@@ -314,15 +313,15 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             {
                 case 1:
                 case -3:
-                    return "com.minecolonies.coremod.gui.field.to_right";
+                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_RIGHT;
                 case 2:
                 case -2:
-                    return "com.minecolonies.coremod.gui.field.opposite";
+                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_OPPOSITE;
                 case 3:
                 case -1:
-                    return "com.minecolonies.coremod.gui.field.to_left";
+                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_TO_LEFT;
                 default:
-                    return "com.minecolonies.coremod.gui.field.near";
+                    return BLOCK_HUT_FIELD_DIRECTION_RELATIVE_NEAREST;
             }
         }
     }

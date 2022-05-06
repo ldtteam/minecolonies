@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei.transfer;
 
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.containers.WindowFurnaceCrafting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
@@ -8,6 +9,7 @@ import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTe
 import mezz.jei.api.gui.handlers.IGuiClickableArea;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -48,7 +50,7 @@ public class FurnaceCraftingGuiHandler extends AbstractTeachingGuiHandler<Window
     @Override
     protected boolean isSupportedCraftingModule(@NotNull final CraftingModuleView moduleView)
     {
-        return moduleView.canLearnFurnaceRecipes();
+        return moduleView.canLearn(ModCraftingTypes.SMELTING);
     }
 
     @Override
