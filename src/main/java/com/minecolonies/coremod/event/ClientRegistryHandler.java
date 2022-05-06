@@ -242,8 +242,8 @@ public class ClientRegistryHandler
         event.registerLayerDefinition(FEMALE_ARCHER, FemaleArcherModel::createMesh);
         event.registerLayerDefinition(MALE_CARPENTER, MaleCarpenterModel::createMesh);
         event.registerLayerDefinition(FEMALE_CARPENTER, FemaleCarpenterModel::createMesh);
-        event.registerLayerDefinition(MALE_ALCHEMIST, ModelEntityAlchemistMale::createMesh);
-        event.registerLayerDefinition(FEMALE_ALCHEMIST, ModelEntityAlchemistFemale::createMesh);
+        event.registerLayerDefinition(MALE_ALCHEMIST, MaleAlchemistModel::createMesh);
+        event.registerLayerDefinition(FEMALE_ALCHEMIST, FemaleAlchemistModel::createMesh);
 
         event.registerLayerDefinition(CITIZEN, CitizenModel::createMesh);
     }

@@ -9,11 +9,15 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Pose;
+import org.jetbrains.annotations.NotNull;
 
-public class ModelEntityAlchemistMale extends CitizenModel<AbstractEntityCitizen>
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
+
+public class MaleAlchemistModel extends CitizenModel<AbstractEntityCitizen>
 {
 
-    public ModelEntityAlchemistMale(final ModelPart part)
+    public MaleAlchemistModel(final ModelPart part)
     {
         super(part);
         hat.visible = false;
@@ -144,4 +148,13 @@ public class ModelEntityAlchemistMale extends CitizenModel<AbstractEntityCitizen
 
         return LayerDefinition.create(meshdefinition, 128, 64);
     }
+
+    @Override
+    public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    {
+        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        head.getChild("glasses").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("PointHat").visible = entity.getPose() != Pose.SLEEPING;
+        body.getChild("Potion1").visible = entity.getPose() != Pose.SLEEPING;
+        body.getChild("IngredientPouch").visible = entity.getPose() != Pose.SLEEPING;    }
 }

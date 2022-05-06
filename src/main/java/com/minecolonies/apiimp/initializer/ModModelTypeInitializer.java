@@ -143,7 +143,7 @@ public class ModModelTypeInitializer
         ModModelTypes.CARPENTER = new SimpleModelType(ModModelTypes.CARPENTER_ID, 1, new MaleCarpenterModel(context.bakeLayer(ClientRegistryHandler.MALE_CARPENTER)), new FemaleCarpenterModel(context.bakeLayer(ClientRegistryHandler.FEMALE_CARPENTER)));
         reg.register(ModModelTypes.CARPENTER);
 
-        ModModelTypes.ALCHEMIST = new SimpleModelType(ModModelTypes.ALCHEMIST_ID, 1, new ModelEntityAlchemistMale(context.bakeLayer(ClientRegistryHandler.MALE_ALCHEMIST)), new ModelEntityAlchemistFemale(context.bakeLayer(ClientRegistryHandler.FEMALE_ALCHEMIST)));
+        ModModelTypes.ALCHEMIST = new SimpleModelType(ModModelTypes.ALCHEMIST_ID, 1, new MaleAlchemistModel(context.bakeLayer(ClientRegistryHandler.MALE_ALCHEMIST)), new FemaleAlchemistModel(context.bakeLayer(ClientRegistryHandler.FEMALE_ALCHEMIST)));
         reg.register(ModModelTypes.ALCHEMIST);
     }
 }
