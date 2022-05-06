@@ -13,7 +13,8 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -82,7 +83,7 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         final IRequester requester = manager.getColony().getRequesterBuildingForPosition(getLocation().getInDimensionLocation());
         if (requester instanceof IBuildingView)
         {
-            final CraftingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(CraftingModuleView.class, m -> m.getJobEntry() == getJobEntry());
+            final WorkerBuildingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry());
             if (moduleView != null)
             {
                 return new TranslationTextComponent(moduleView.getJobEntry().getTranslationKey());
@@ -90,10 +91,10 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
         }
         if (requester instanceof IBuilding)
         {
-            final ICraftingBuildingModule module = ((IBuilding) requester).getModuleMatching(ICraftingBuildingModule.class, m -> m.getCraftingJob() != null &&  m.getCraftingJob().getJobRegistryEntry() == getJobEntry());
+            final WorkerBuildingModule module = ((IBuilding) requester).getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
             if (module != null)
             {
-                return new TranslationTextComponent(module.getCraftingJob().getJobRegistryEntry().getTranslationKey());
+                return new TranslationTextComponent(module.getJobEntry().getTranslationKey());
             }
         }
         return super.getRequesterDisplayName(manager, request);
