@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -17,11 +19,16 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.util.SoundUtils.PITCH;
+import static com.minecolonies.api.util.SoundUtils.VOLUME;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**
@@ -339,6 +346,34 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
         for (final IToken<?> t : getTaskQueue())
         {
             getColony().getRequestManager().updateRequestState(t, RequestState.FAILED);
+        }
+    }
+
+    /**
+     * Play a job specific work sound at a pos.
+     * @param level the world to play it in.
+     * @param blockPos the pos to play it at.
+     * @param worker the worker to play it for.
+     */
+    public void playSound(final Level level, final BlockPos blockPos, final AbstractEntityCitizen worker)
+    {
+        if (worker.getRandom().nextInt(100) < 1)
+        {
+            worker.level.playSound(null,
+              blockPos,
+              SoundEvents.ANVIL_USE,
+              SoundSource.BLOCKS,
+              (float) VOLUME * 2,
+              (float) PITCH);
+        }
+        else if (worker.getRandom().nextInt(10) < 1)
+        {
+            worker.level.playSound(null,
+              blockPos,
+              SoundEvents.SMITHING_TABLE_USE,
+              SoundSource.BLOCKS,
+              (float) VOLUME * 2,
+              (float) PITCH);
         }
     }
 }

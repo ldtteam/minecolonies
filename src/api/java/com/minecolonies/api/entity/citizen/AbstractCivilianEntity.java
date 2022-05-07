@@ -2,6 +2,8 @@ package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
+import com.minecolonies.api.sounds.SoundManager;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -31,9 +33,23 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
      */
     protected long nextPlayerCollisionTime = 0;
 
+    /**
+     * Sound manager of the civilian.
+     */
+    private SoundManager soundManager;
+
+    /**
+     * Create a new instance.
+     * @param type from type.
+     * @param worldIn the world.
+     */
     protected AbstractCivilianEntity(final EntityType<? extends AgeableMob> type, final Level worldIn)
     {
         super(type, worldIn);
+        if (worldIn.isClientSide)
+        {
+            soundManager = new SoundManager((ClientLevel) worldIn);
+        }
     }
 
     /**
@@ -83,6 +99,13 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public void setCanBeStuck(final boolean canBeStuck)
     {
         this.canBeStuck = canBeStuck;
+    }
+
+    @Override
+    public void tick()
+    {
+        super.tick();
+        soundManager.tick();
     }
 
     @Override
