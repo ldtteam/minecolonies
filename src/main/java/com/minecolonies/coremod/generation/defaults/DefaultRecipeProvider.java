@@ -117,6 +117,7 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe1(consumer, ModBlocks.blockHutTavern, Items.BARREL);
         registerHutRecipe1(consumer, ModBlocks.blockHutTownHall, buildTool.get());
         registerHutRecipe1(consumer, ModBlocks.blockHutWareHouse, Tags.Items.CHESTS);
+        registerHutRecipe1(consumer, ModBlocks.blockHutAlchemist, Items.BREWING_STAND);
 
         ShapedRecipeBuilder.shaped(ModBlocks.blockHutCrusher)
                 .pattern("XTX")
