@@ -334,7 +334,7 @@ public final class ItemStackUtils
         }
         else if (toolType.equals(ToolType.SHEARS))
         {
-            return stack.getItem() instanceof ShearsItem ? 1 : -1;
+            return stack.getItem() instanceof ShearsItem ? 0 : -1;
         }
         else if (!toolType.hasVariableMaterials())
         {
