@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -9,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.entity.ai.citizen.enchanter.EntityAIWorkEnchanter;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TO_DRAIN;
@@ -115,5 +117,11 @@ public class JobEnchanter extends AbstractJobCrafter<EntityAIWorkEnchanter, JobE
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        worker.queueSound(SoundEvents.ENCHANTMENT_TABLE_USE, worker.blockPosition().above(), 10, 0, 0.5f, worker.getRandom().nextFloat());
     }
 }

@@ -5,7 +5,10 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,5 +42,13 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
     public @NotNull ResourceLocation getModel()
     {
         return ModModelTypes.CARPENTER_ID;
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        worker.queueSound(SoundEvents.ARMOR_EQUIP_IRON, blockPos, 1, 0);
+        worker.queueSound(SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, blockPos, 1, 0);
+        worker.queueSound(SoundEvents.IRON_DOOR_OPEN, blockPos, 1, 0);
     }
 }

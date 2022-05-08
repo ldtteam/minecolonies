@@ -357,55 +357,6 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
      */
     public void playSound(final BlockPos blockPos, final EntityCitizen worker)
     {
-        // baker
-        //worker.queueSound(SoundEvents.FIRECHARGE_USE, blockPos, 10, 0, 0.5f, 0.1f);
-
-        // mechanic
-        //worker.queueSound(SoundEvents.ARMOR_EQUIP_IRON, blockPos, 1, 0);
-        //worker.queueSound(SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, blockPos, 1, 0);
-        //worker.queueSound(SoundEvents.IRON_DOOR_OPEN, blockPos, 1, 0);
-
-
-        // fletcher
-        //worker.queueSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, blockPos, 5, 0);
-
-        //cook
-        /*worker.queueSound(SoundEvents.FIRE_AMBIENT, blockPos, 5, 0);
-        if (worker.getRandom().nextBoolean())
-        {
-            worker.queueSound(SoundEvents.COPPER_HIT, blockPos, 5, 0);
-        }*/
-
-        // Stonemason
-        //worker.queueSound(SoundEvents.DEEPSLATE_TILES_HIT, blockPos, 5, 1, 1.0f, 2.0f);
-
-        // stone smelter
-        //worker.queueSound(SoundEvents.LAVA_POP, blockPos, 5, 0);
-        //worker.queueSound(SoundEvents.LAVA_AMBIENT, blockPos, 5, 0);
-
-        // dyer, glassblower, concrete mixer and alchemist
-        //worker.queueSound(SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, blockPos, 5, 0);
-        //worker.queueSound(SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, blockPos, 5, 0);
-
-        //crusher
-        //worker.queueSound(SoundEvents.NETHER_BRICKS_HIT, blockPos, 1, 9);
-
-        //sifter
-        //worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 4);
-        //worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 1, 1.0f, 0.5f);
-
-
-        // Blacksmith:
-        /*if (worker.getRandom().nextInt(8) < 1)
-        {
-            if (worker.getRandom().nextBoolean())
-            {
-                worker.queueSound(SoundEvents.ANVIL_USE, blockPos, 80, 0);
-            }
-            else
-            {
-                worker.queueSound(SoundEvents.SMITHING_TABLE_USE, blockPos, 20, 3);
-            }
-        }*/
+        // Child override if necessary
     }
 }

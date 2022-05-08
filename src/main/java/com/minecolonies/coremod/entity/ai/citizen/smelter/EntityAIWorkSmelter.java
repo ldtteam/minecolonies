@@ -88,8 +88,6 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         this.incrementActionsDoneAndDecSaturation();
     }
 
-
-
     @Override
     protected IRequestable getSmeltAbleClass()
     {

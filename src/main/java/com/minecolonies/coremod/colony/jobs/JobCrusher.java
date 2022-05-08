@@ -1,12 +1,13 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.entity.ai.citizen.crusher.EntityAIWorkCrusher;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,5 +54,12 @@ public class JobCrusher extends AbstractJobCrafter<EntityAIWorkCrusher, JobCrush
     public EntityAIWorkCrusher generateAI()
     {
         return new EntityAIWorkCrusher(this);
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 4);
+        worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 1, 1.0f, 0.5f);
     }
 }

@@ -18,6 +18,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
 import com.minecolonies.coremod.network.messages.client.CircleParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.StreamParticleEffectMessage;
 import com.minecolonies.coremod.util.WorkerUtil;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
@@ -218,6 +219,8 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
                 worker.position().add(0, 1, 0),
                 ParticleTypes.ENCHANT,
                 progressTicks), worker);
+
+            worker.queueSound(SoundEvents.ENCHANTMENT_TABLE_USE, worker.blockPosition().above(), 20, 0, 0.5f, worker.getRandom().nextFloat());
 
             if (worker.getRandom().nextBoolean())
             {
