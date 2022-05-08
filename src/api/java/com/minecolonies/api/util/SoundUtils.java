@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.Network;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.sounds.EventType;
@@ -11,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -286,17 +288,6 @@ public final class SoundUtils
               (float) VOLUME,
               (float) PITCH);
         }
-    }
-
-    public static void queueSoundAtCivilian(
-      @NotNull final Level worldIn,
-      @NotNull final BlockPos position,
-      @NotNull final SoundEvent soundEvent,
-      @NotNull final SoundSource source,
-      final float volume,
-      final float pitch)
-    {
-        ((ClientLevel)worldIn).getEntity()
     }
 
     /**

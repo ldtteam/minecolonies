@@ -1,5 +1,6 @@
 package com.minecolonies.api.sounds;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -37,13 +38,18 @@ public class SoundManager
      */
     public void tick()
     {
+        if (soundQueue.isEmpty())
+        {
+            return;
+        }
+
         final TimedSound instance = soundQueue.peek();
         if (instance.timeout <= 0)
         {
-            level.playSound(null, instance.pos, instance.soundEvent, instance.source, instance.volume, instance.pitch);
+            level.playSound(Minecraft.getInstance().player, instance.pos, instance.soundEvent, instance.source, instance.volume, instance.pitch);
             instance.timeout = instance.length;
             instance.repetitions--;
-            if (instance.repetitions <= 0)
+            if (instance.repetitions < 0)
             {
                 soundQueue.pop();
             }
@@ -66,7 +72,7 @@ public class SoundManager
      */
     public void addToQueue(final SoundEvent soundEvent, final SoundSource source, final int repetitions, final int length, final BlockPos pos, final float volume, final float pitch)
     {
-        soundQueue.addLast(new TimedSound(soundEvent, source, repetitions, length, pos, volume, pitch));
+        soundQueue.add(new TimedSound(soundEvent, source, repetitions, length, pos, volume, pitch));
     }
 
     /**

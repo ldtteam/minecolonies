@@ -27,6 +27,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -811,4 +812,20 @@ public abstract class AbstractEntityCitizen extends AbstractCivilianEntity imple
     {
 
     }
+
+    /**
+     * Queue a sound at the citizen.
+     * @param soundEvent the sound event to play.
+     * @param length the length of the event.
+     * @param repetitions the number of times to play it.
+     */
+    public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions);
+
+    /**
+     * Queue a sound at the citizen.
+     * @param soundEvent the sound event to play.
+     * @param length the length of the event.
+     * @param repetitions the number of times to play it.
+     */
+    public abstract void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch);
 }

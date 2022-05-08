@@ -9,6 +9,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
@@ -164,6 +165,8 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
 
         worker.decreaseSaturationForAction();
         studyPos = null;
+        worker.queueSound(SoundEvents.BOOK_PAGE_TURN, worker.blockPosition().above(), 80, 15, 0.25f, 1.5f);
+
         setDelay(STUDY_DELAY);
         return getState();
     }

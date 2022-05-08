@@ -18,6 +18,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.BlockParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.core.BlockPos;
@@ -367,7 +368,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
         hitBlockWithToolInHand(getOwnBuilding().getPosition());
-        Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(worker.getMainHandItem(), worker.blockPosition()), worker);
+        Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(worker.getMainHandItem(), getOwnBuilding().getPosition().above()), worker);
 
         currentRequest = job.getCurrentTask();
 
@@ -450,8 +451,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
           new BlockParticleEffectMessage(blockPos, blockState, facing.ordinal()),
           new PacketDistributor.TargetPoint(blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE, worker.level.dimension()));
 
-        job.playSound(worker.level, blockPos, worker);
-
+        job.playSound(blockPos, (EntityCitizen) worker);
     }
 
     /**

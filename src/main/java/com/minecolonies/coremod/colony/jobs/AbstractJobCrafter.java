@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
@@ -351,29 +352,60 @@ public abstract class AbstractJobCrafter<AI extends AbstractEntityAIBasic<J, ? e
 
     /**
      * Play a job specific work sound at a pos.
-     * @param level the world to play it in.
      * @param blockPos the pos to play it at.
      * @param worker the worker to play it for.
      */
-    public void playSound(final Level level, final BlockPos blockPos, final AbstractEntityCitizen worker)
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
     {
-        if (worker.getRandom().nextInt(100) < 1)
+        // baker
+        //worker.queueSound(SoundEvents.FIRECHARGE_USE, blockPos, 10, 0, 0.5f, 0.1f);
+
+        // mechanic
+        //worker.queueSound(SoundEvents.ARMOR_EQUIP_IRON, blockPos, 1, 0);
+        //worker.queueSound(SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, blockPos, 1, 0);
+        //worker.queueSound(SoundEvents.IRON_DOOR_OPEN, blockPos, 1, 0);
+
+
+        // fletcher
+        //worker.queueSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, blockPos, 5, 0);
+
+        //cook
+        /*worker.queueSound(SoundEvents.FIRE_AMBIENT, blockPos, 5, 0);
+        if (worker.getRandom().nextBoolean())
         {
-            worker.level.playSound(null,
-              blockPos,
-              SoundEvents.ANVIL_USE,
-              SoundSource.BLOCKS,
-              (float) VOLUME * 2,
-              (float) PITCH);
-        }
-        else if (worker.getRandom().nextInt(10) < 1)
+            worker.queueSound(SoundEvents.COPPER_HIT, blockPos, 5, 0);
+        }*/
+
+        // Stonemason
+        //worker.queueSound(SoundEvents.DEEPSLATE_TILES_HIT, blockPos, 5, 1, 1.0f, 2.0f);
+
+        // stone smelter
+        //worker.queueSound(SoundEvents.LAVA_POP, blockPos, 5, 0);
+        //worker.queueSound(SoundEvents.LAVA_AMBIENT, blockPos, 5, 0);
+
+        // dyer, glassblower, concrete mixer and alchemist
+        //worker.queueSound(SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, blockPos, 5, 0);
+        //worker.queueSound(SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, blockPos, 5, 0);
+
+        //crusher
+        //worker.queueSound(SoundEvents.NETHER_BRICKS_HIT, blockPos, 1, 9);
+
+        //sifter
+        //worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 4);
+        //worker.queueSound(SoundEvents.SAND_BREAK, blockPos, 1, 1, 1.0f, 0.5f);
+
+
+        // Blacksmith:
+        /*if (worker.getRandom().nextInt(8) < 1)
         {
-            worker.level.playSound(null,
-              blockPos,
-              SoundEvents.SMITHING_TABLE_USE,
-              SoundSource.BLOCKS,
-              (float) VOLUME * 2,
-              (float) PITCH);
-        }
+            if (worker.getRandom().nextBoolean())
+            {
+                worker.queueSound(SoundEvents.ANVIL_USE, blockPos, 80, 0);
+            }
+            else
+            {
+                worker.queueSound(SoundEvents.SMITHING_TABLE_USE, blockPos, 20, 3);
+            }
+        }*/
     }
 }

@@ -48,6 +48,7 @@ import com.minecolonies.coremod.entity.pathfinding.MovementHandler;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessage;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
+import com.minecolonies.coremod.network.messages.client.colony.PlaySoundForCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.ChatFormatting;
@@ -60,7 +61,9 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
@@ -2090,6 +2093,18 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 this.move(MoverType.SELF, new Vec3((double) f, 0.0D, (double) f));
             }
         }
+    }
+
+    @Override
+    public void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions)
+    {
+        Network.getNetwork().sendToTrackingEntity(new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level, length, repetitions), this);
+    }
+
+    @Override
+    public void queueSound(@NotNull final SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions, final float volume, final float pitch)
+    {
+        Network.getNetwork().sendToTrackingEntity(new PlaySoundForCitizenMessage(this.getId(), soundEvent, this.getSoundSource(), pos, level, volume, pitch, length, repetitions), this);
     }
 
     /**
