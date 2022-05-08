@@ -195,7 +195,7 @@ public class ResearchManager implements IResearchManager
                 citizen.applyResearchEffects();
             }
 
-            MessageUtils.format(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3), IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()))
+            MessageUtils.format(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3), IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())
               .sendTo(colony)
               .forAllPlayers();
             for (Player player : colony.getMessagePlayerEntities())
