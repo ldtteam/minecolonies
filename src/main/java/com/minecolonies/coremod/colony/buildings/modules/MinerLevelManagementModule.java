@@ -204,9 +204,14 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @return the int id of the active node.
      */
-    @NotNull
+    @Nullable
     public Node getActiveNode()
     {
+        if (levels.isEmpty())
+        {
+            return null;
+        }
+        
         Node calcNode = activeNode;
         if (activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED)
         {
