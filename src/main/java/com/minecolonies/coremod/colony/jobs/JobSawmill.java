@@ -4,6 +4,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.coremod.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
@@ -47,8 +48,13 @@ public class JobSawmill extends AbstractJobCrafter<EntityAIWorkSawmill, JobSawmi
     @Override
     public void playSound(final BlockPos blockPos, final EntityCitizen worker)
     {
-        worker.queueSound(SoundEvents.ARMOR_EQUIP_IRON, blockPos, 1, 0);
-        worker.queueSound(SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, blockPos, 1, 0);
-        worker.queueSound(SoundEvents.IRON_DOOR_OPEN, blockPos, 1, 0);
+        if (worker.getRandom().nextBoolean())
+        {
+            worker.queueSound(ModSoundEvents.SAW, blockPos, 10, 0);
+        }
+        else
+        {
+            worker.queueSound(SoundEvents.BAMBOO_HIT, blockPos, 5, 1);
+        }
     }
 }
