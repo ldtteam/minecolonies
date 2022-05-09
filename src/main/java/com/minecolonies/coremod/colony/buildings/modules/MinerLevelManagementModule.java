@@ -211,7 +211,7 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
         {
             return null;
         }
-        
+
         Node calcNode = activeNode;
         if (activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED)
         {
