@@ -1592,19 +1592,25 @@ public class Colony implements IColony
         if (!rank.isColonyManager() && !visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.add(player);
-            MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
-            MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, this.getName()).sendTo(this).forManagers();
+            if (!this.getImportantMessageEntityPlayers().contains(player))
+            {
+                MessageUtils.format(ENTERING_COLONY_MESSAGE, this.getName()).sendTo(player);
+            }
+            MessageUtils.format(ENTERING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
         }
     }
 
     @Override
     public void removeVisitingPlayer(final Player player)
     {
-        if (!getMessagePlayerEntities().contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
+        if (visitingPlayers.contains(player) && MineColonies.getConfig().getServer().sendEnteringLeavingMessages.get())
         {
             visitingPlayers.remove(player);
-            MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
-            MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, this.getName()).sendTo(this).forManagers();
+            if (!this.getImportantMessageEntityPlayers().contains(player))
+            {
+                MessageUtils.format(LEAVING_COLONY_MESSAGE, this.getName()).sendTo(player);
+            }
+            MessageUtils.format(LEAVING_COLONY_MESSAGE_NOTIFY, player.getName()).sendTo(this, true).forManagers();
         }
     }
 
