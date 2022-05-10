@@ -32,6 +32,18 @@ public interface OptionalPredicate<T>
     }
 
     /**
+     * Creates a non-empty optional predicate.
+     * @param predicate the input predicate
+     * @param <T> the input type
+     * @return a non-empty optional predicate
+     */
+    @NotNull
+    static<T> OptionalPredicate<T> of(@NotNull final Predicate<T> predicate)
+    {
+        return t -> Optional.of(predicate.test(t));
+    }
+
+    /**
      * Turns an OptionalPredicate into a regular {@link Predicate} by
      * providing a default value returned when empty.
      *
@@ -71,5 +83,67 @@ public interface OptionalPredicate<T>
     static<X> Optional<X> combine(@NotNull Optional<X> a, @NotNull Supplier<Optional<X>> b)
     {
         return a.isPresent() ? a : b.get();
+    }
+
+    /**
+     * Negates the predicate -- where the original returns true, this returns false, and vice versa.
+     * The empty result does not change.
+     *
+     * @return the negated predicate.
+     */
+    @NotNull
+    default OptionalPredicate<T> negate()
+    {
+        return t -> test(t).map(b -> !b);
+    }
+
+    /**
+     * Performs the logical AND on two optional predicates, such that:
+     *  - if both sides are empty, the result is empty
+     *  - if one side is empty, the result is the other side
+     *  - if both sides are non-empty, the result is the logical AND
+     *  - if the left side is false, the right side is not evaluated (short circuit)
+     *
+     * @param other the other optional predicate
+     * @return the logical AND of both predicates
+     */
+    @NotNull
+    default OptionalPredicate<T> and(@NotNull final OptionalPredicate<T> other)
+    {
+        return t ->
+        {
+            final Optional<Boolean> lhs = test(t);
+            if (lhs.isPresent() && !lhs.get())
+            {
+                return lhs;
+            }
+            final Optional<Boolean> rhs = other.test(t);
+            return rhs.isPresent() ? rhs : lhs;
+        };
+    }
+
+    /**
+     * Performs the logical OR on two optional predicates, such that:
+     *  - if both sides are empty, the result is empty
+     *  - if one side is empty, the result is the other side
+     *  - if both sides are non-empty, the result is the logical OR
+     *  - if the left side is true, the right side is not evaluated (short circuit)
+     *
+     * @param other the other optional predicate
+     * @return the logical OR of both predicates
+     */
+    @NotNull
+    default OptionalPredicate<T> or(@NotNull final OptionalPredicate<T> other)
+    {
+        return t ->
+        {
+            final Optional<Boolean> lhs = test(t);
+            if (lhs.isPresent() && lhs.get())
+            {
+                return lhs;
+            }
+            final Optional<Boolean> rhs = other.test(t);
+            return rhs.isPresent() ? rhs : lhs;
+        };
     }
 }
