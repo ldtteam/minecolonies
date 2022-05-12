@@ -21,6 +21,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -127,7 +128,7 @@ public class BlockSetting implements ISetting
 
               final Block block = ((BlockItem) item).getBlock();
               final BlockState state = block.defaultBlockState();
-              if (block.hasTileEntity(state) || block instanceof FallingBlock)
+              if (block.hasTileEntity(state) || block instanceof FallingBlock || state.is(BlockTags.LEAVES))
               {
                   return false;
               }
