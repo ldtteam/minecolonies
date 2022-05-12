@@ -238,17 +238,33 @@ public interface IColonyTagCapability
                     }
                     else
                     {
-                        for (final Map.Entry<Integer, Set<BlockPos>> colonyEntry : claimingBuildings.entrySet())
+                        for (final Iterator<Map.Entry<Integer, Set<BlockPos>>> colonyIt = claimingBuildings.entrySet().iterator(); colonyIt.hasNext(); )
                         {
+                            final Map.Entry<Integer, Set<BlockPos>> colonyEntry = colonyIt.next();
                             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyEntry.getKey(), chunk.getLevel().dimension());
-                            for (final BlockPos buildingPos : colonyEntry.getValue())
+                            if (colony == null)
                             {
-                                if (colony != null && colony.getBuildingManager().getBuilding(buildingPos) != null)
+                                continue;
+                            }
+
+                            for (final Iterator<BlockPos> buildingIt = colonyEntry.getValue().iterator(); buildingIt.hasNext(); )
+                            {
+                                final BlockPos buildingPos = buildingIt.next();
+                                if (colony.getBuildingManager().getBuilding(buildingPos) != null)
                                 {
                                     colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
                                     setOwningColony(colonyEntry.getKey(), chunk);
                                     return;
                                 }
+                                else
+                                {
+                                    buildingIt.remove();
+                                }
+                            }
+
+                            if (colonyEntry.getValue().isEmpty())
+                            {
+                                colonyIt.remove();
                             }
                         }
                     }
