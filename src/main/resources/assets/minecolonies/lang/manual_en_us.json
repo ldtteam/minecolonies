@@ -874,8 +874,8 @@
 
   "com.minecolonies.coremod.request.smeltableore": "Smeltable Ore",
 
-  "com.minecolonies.coremod.enteringcolony": "Beware, you're entering %s's.",
-  "com.minecolonies.coremod.leavingcolony": "Farewell, you're leaving %s's.",
+  "com.minecolonies.coremod.enteringcolony": "Beware, you're entering %s.",
+  "com.minecolonies.coremod.leavingcolony": "Farewell, you're leaving %s.",
   "com.minecolonies.coremod.enteringcolonynotify": "Beware, %s just entered the colony.",
   "com.minecolonies.coremod.leavingcolonynotify": "Farewell, %s has just left the colony.",
   "com.minecolonies.coremod.colonysizechange": "All land within %d chunks of %s has been claimed.",
