@@ -220,20 +220,17 @@ public interface IColonyTagCapability
             {
                 claimingBuildings.remove(colonyId);
 
-                if (owningColony == colonyId)
+                if (owningColony == colonyId && !colonies.contains(owningColony))
                 {
                     if (claimingBuildings.isEmpty())
                     {
-                        if (!colonies.contains(owningColony))
+                        if (colonies.isEmpty())
                         {
-                            if (colonies.isEmpty())
-                            {
-                                owningColony = NO_COLONY_ID;
-                            }
-                            else
-                            {
-                                owningColony = colonies.iterator().next();
-                            }
+                            owningColony = NO_COLONY_ID;
+                        }
+                        else
+                        {
+                            owningColony = colonies.iterator().next();
                         }
                     }
                     else
