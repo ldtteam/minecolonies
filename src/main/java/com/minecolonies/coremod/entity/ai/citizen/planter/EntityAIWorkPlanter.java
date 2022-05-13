@@ -4,6 +4,8 @@ import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
+import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 
 /**
  * Planter AI class.
@@ -291,10 +294,21 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     @Override
     protected IAIState decide()
     {
-        final IAIState nextState = super.decide();
-        if (nextState != START_WORKING && nextState != IDLE)
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
+        if (!job.getTaskQueue().isEmpty() && job.getCurrentTask() != null)
         {
-            return nextState;
+            return getNextCraftingState();
+        }
+
+        if (!getOwnBuilding().isInBuilding(worker.blockPosition()) && walkToBuilding())
+        {
+            return START_WORKING;
+        }
+
+        if (job.getActionsDone() >= getActionsDoneUntilDumping())
+        {
+            // Wait to dump before continuing.
+            return getState();
         }
 
         final BuildingPlantation plantation = getOwnBuilding();

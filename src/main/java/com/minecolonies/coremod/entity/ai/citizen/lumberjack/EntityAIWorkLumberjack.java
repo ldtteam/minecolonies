@@ -243,13 +243,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return LUMBERJACK_START_WORKING;
         }
 
-
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
-            return QUERY_ITEMS;
-        }
-
-        return GET_RECIPE;
+        return getNextCraftingState();
     }
 
     /**
