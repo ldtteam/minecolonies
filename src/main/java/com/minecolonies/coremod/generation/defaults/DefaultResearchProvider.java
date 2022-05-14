@@ -123,6 +123,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(RECIPE_MODE).setTranslatedName("Add the option to select recipes based on Warehouse stock"));
         effects.add(new ResearchEffect(BUILDER_MODE).setTranslatedName("Add the option to select different build-modes for your builders"));
         effects.add(new ResearchEffect(SOFT_SHOES).setTranslatedName("Farmers will no longer trample crops"));
+        effects.add(new ResearchEffect(FISH_TREASURE).setTranslatedName("Fishers can find treasure outside the ocean"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -1281,13 +1282,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
                                     .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/alchemist"), TECH).setParentResearch(netherminer)
+        final Research alchemist = new Research(new ResourceLocation(Constants.MOD_ID, "technology/alchemist"), TECH).setParentResearch(netherminer)
           .setTranslatedName("Magic Potions")
           .setTranslatedSubtitle("These Romans are crazy")
           .setIcon(ModBlocks.blockHutAlchemist.asItem())
           .addItemCost(Items.NETHER_WART, 16)
           .addEffect(ModBuildings.alchemist.getBuildingBlock(), 1)
           .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/oceanheart"), TECH).setParentResearch(alchemist)
+                .setTranslatedName("Ocean's Heart")
+                .setTranslatedSubtitle("With great mystic power comes great mystic loot!")
+                .setIcon(Items.FISHING_ROD)
+                .addBuildingRequirement(ModBuildings.FISHERMAN_ID, 4)
+                .addItemCost(Items.HEART_OF_THE_SEA, 1)
+                .addEffect(FISH_TREASURE, 1)
+                .addToList(r);
 
         // Primary Research #4
         final Research stoneCake = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stonecake"), TECH).setTranslatedName("Stone Cake")

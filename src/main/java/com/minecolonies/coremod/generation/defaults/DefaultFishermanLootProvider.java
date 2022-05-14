@@ -4,10 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.loot.EntityInBiomeCategory;
 import com.minecolonies.api.loot.ModLootTables;
+import com.minecolonies.api.loot.ResearchUnlocked;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
 import net.minecraft.loot.*;
+import net.minecraft.loot.conditions.Alternative;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -67,7 +70,10 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                 .withPool(LootPool.lootPool()
                         .add(TableLootEntry.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
                         .add(TableLootEntry.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
-                                .when(EntityInBiomeCategory.of(Biome.Category.OCEAN)))
+                                .when(Alternative.alternative(
+                                        EntityInBiomeCategory.of(Biome.Category.OCEAN),
+                                        ResearchUnlocked.effect(ResearchConstants.FISH_TREASURE)
+                                )))
                         .add(TableLootEntry.lootTableReference(ModLootTables.FISHING_FISH).setWeight(85).setQuality(-1))
                 ));
 
