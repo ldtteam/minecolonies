@@ -1,0 +1,14 @@
+{
+  "type" : "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+        "item" : "minecraft:tuff",
+        "count": "2"
+    }
+  ],
+  "result": "minecraft:cobblestone",
+  "count": "1",
+  "intermediate" : "minecraft:air",
+  "research-id" : "minecolonies:technology/depthknowledge"
+}
