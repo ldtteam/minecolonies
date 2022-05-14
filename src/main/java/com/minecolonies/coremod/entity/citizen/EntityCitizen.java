@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.entity.citizen;
 
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.permissions.Action;
@@ -57,13 +60,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
@@ -80,10 +81,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.NameTagItem;
-import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -100,6 +98,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static com.minecolonies.api.entity.citizen.VisibleCitizenStatus.*;
 import static com.minecolonies.api.research.util.ResearchConstants.*;
@@ -426,7 +425,25 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private InteractionResult directPlayerInteraction(final Player player, final InteractionHand hand)
     {
+        if (player.isShiftKeyDown())
+        {
+            return null;
+        }
+
+        // todo remove before release
         final ItemStack usedStack = player.getItemInHand(hand);
+        if (usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
+        {
+            final BuildingEntry entry = ((AbstractBlockHut<?>) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
+            for (final Supplier<IBuildingModule> module : entry.getModuleProducers())
+            {
+                if (module.get() instanceof WorkerBuildingModule)
+                {
+                    getCitizenJobHandler().setModelDependingOnJob(((WorkerBuildingModule) module.get()).getJobEntry().produceJob(null));
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
 
         if (isInteractionItem(usedStack) && interactionCooldown > 0)
         {
