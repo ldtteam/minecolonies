@@ -71,7 +71,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     protected void extractFromFurnace(final FurnaceTileEntity furnace)
     {
         final ItemStack ingots = new InvWrapper(furnace).extractItem(RESULT_SLOT, STACKSIZE, false);
-        final int multiplier = getOwnBuilding().ingotMultiplier((int) (getSecondarySkillLevel()), worker.getRandom());
+        final int multiplier = building.ingotMultiplier((int) (getSecondarySkillLevel()), worker.getRandom());
         int amount = ingots.getCount() * multiplier;
 
         while (amount > 0)
@@ -102,7 +102,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new SmeltableOre(STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
+        return new SmeltableOre(STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
     }
 
     /**
@@ -118,17 +118,17 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        return !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).isItemInList(new ItemStorage(stack));
+        return !building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).isItemInList(new ItemStorage(stack));
     }
 
     @Override
     public void requestSmeltable()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(getSmeltAbleClass().getClass())) &&
-              !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
+        if (!building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(getSmeltAbleClass().getClass())) &&
+              !building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslationTextComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE))))
         {
-            final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
+            final List<ItemStorage> allowedItems = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
             if (allowedItems.isEmpty())
             {
                 worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
@@ -150,7 +150,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE, STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
                 }
             }
         }

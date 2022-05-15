@@ -73,7 +73,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
 
         if (studyPos == null)
         {
-            studyPos = getOwnBuilding().getRandomBookShelf();
+            studyPos = building.getRandomBookShelf();
         }
 
         if (walkToBlock(studyPos))
@@ -84,7 +84,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
 
         // Search for Items to use to study
         final List<StudyItem> currentItems = new ArrayList<>();
-        for (final StudyItem curItem : getOwnBuilding().getStudyItems())
+        for (final StudyItem curItem : building.getStudyItems())
         {
             final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(worker,
               itemStack -> !ItemStackUtils.isEmpty(itemStack) && itemStack.getItem() == curItem.getItem());
@@ -103,9 +103,9 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
             data.getCitizenSkillHandler().tryLevelUpIntelligence(world.random, ONE_IN_X_CHANCE, data);
             worker.setItemInHand(Hand.MAIN_HAND, ItemStackUtils.EMPTY);
 
-            for (final StudyItem studyItem : getOwnBuilding().getStudyItems())
+            for (final StudyItem studyItem : building.getStudyItems())
             {
-                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(getOwnBuilding(), studyItem.getItem());
+                final int bSlot = InventoryUtils.findFirstSlotInProviderWith(building, studyItem.getItem());
                 if (bSlot > -1)
                 {
                     if (walkToBuilding())
@@ -113,7 +113,7 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
                         setDelay(WALK_DELAY);
                         return getState();
                     }
-                    takeItemStackFromProvider(getOwnBuilding(), bSlot);
+                    takeItemStackFromProvider(building, bSlot);
                 }
                 else
                 {

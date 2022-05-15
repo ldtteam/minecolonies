@@ -127,8 +127,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             }
 
             final String name = Structures.SCHEMATICS_PREFIX + "/" + quarry.getStyle() + "/" + quarry.getSchematicName() + "shaft1";
-            final WorkOrderMiner wo = new WorkOrderMiner(name, name, quarry.getRotation(), quarry.getPosition().below(2), false, getOwnBuilding().getPosition());
-            getOwnBuilding().getColony().getWorkManager().addWorkOrder(wo, false);
+            final WorkOrderMiner wo = new WorkOrderMiner(name, name, quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+            building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
         }
 
@@ -145,7 +145,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
-            getOwnBuilding().setTotalStages(3);
+            building.setTotalStages(3);
 
 
         if (!structure.hasBluePrint())
@@ -279,8 +279,8 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                                                                                  || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    getOwnBuilding().nextStage();
-                    getOwnBuilding().setProgressPos(null, null);
+                    building.nextStage();
+                    building.setProgressPos(null, null);
                     return COMPLETE_BUILD;
                 }
                 else if (progress.getY() != -1 && (result.getIteratorPos().getY() < progress.getY() || result.getBlockResult().getWorldPos().getY() < worldPos.getY()))
@@ -316,7 +316,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
             if (currentWorldPos.getY() < 5)
             {
-                getOwnBuilding().setProgressPos(null, null);
+                building.setProgressPos(null, null);
                 return COMPLETE_BUILD;
             }
 
@@ -346,7 +346,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
         if (requestProgress == null)
         {
-            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+            final AbstractBuildingStructureBuilder buildingWorker = building;
             buildingWorker.resetNeededResources();
             requestProgress = new BlockPos(structurePlacer.getB().getBluePrint().getSizeX(),
               structurePlacer.getB().getBluePrint().getSizeY() - 1,
@@ -371,7 +371,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
                 {
-                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                    building.addNeededResource(stack, stack.getCount());
                 }
 
 
@@ -413,7 +413,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
                 {
-                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                    building.addNeededResource(stack, stack.getCount());
                 }
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
@@ -477,7 +477,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         {
             blockToMine = null;
             job.complete();
-            getOwnBuilding().setProgressPos(null, null);
+            building.setProgressPos(null, null);
             return true;
         }
         return super.checkIfCanceled();
@@ -504,7 +504,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return getOwnBuilding().getBuildingLevel() * MAX_BLOCKS_MINED;
+        return building.getBuildingLevel() * MAX_BLOCKS_MINED;
     }
 
     @Override
@@ -587,7 +587,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
      */
     private Block getMainFillBlock()
     {
-        return getOwnBuilding().getSetting(FILL_BLOCK).getValue().getBlock();
+        return building.getSetting(FILL_BLOCK).getValue().getBlock();
     }
 
     @Override

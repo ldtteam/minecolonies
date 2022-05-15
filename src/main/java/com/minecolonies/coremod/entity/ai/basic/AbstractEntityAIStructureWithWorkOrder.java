@@ -80,13 +80,13 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void storeProgressPos(final BlockPos blockPos, final BuildingStructureHandler.Stage stage)
     {
-        getOwnBuilding().setProgressPos(blockPos, stage);
+        building.setProgressPos(blockPos, stage);
     }
 
     @Override
     public Tuple<BlockPos, BuildingStructureHandler.Stage> getProgressPos()
     {
-        return getOwnBuilding().getProgress();
+        return building.getProgress();
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return;
         }
 
-        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+        final AbstractBuildingStructureBuilder buildingWorker = building;
         if (requestMaterials())
         {
             job.getWorkOrder().setRequested(true);
@@ -208,7 +208,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (job.getWorkOrder().getIteratorType().isEmpty())
         {
-            final String mode = BuilderModeSetting.getActualValue(getOwnBuilding());
+            final String mode = BuilderModeSetting.getActualValue(building);
             job.getWorkOrder().setIteratorType(mode);
         }
 
@@ -216,7 +216,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
         if (requestProgress == null)
         {
-            final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+            final AbstractBuildingStructureBuilder buildingWorker = building;
             buildingWorker.resetNeededResources();
             requestProgress = NULL_POS;
             requestState = RequestStage.SOLID;
@@ -239,7 +239,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
                 {
-                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                    building.addNeededResource(stack, stack.getCount());
                 }
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
@@ -261,7 +261,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
                 {
-                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                    building.addNeededResource(stack, stack.getCount());
                 }
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
@@ -276,7 +276,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
 
                 for (final ItemStack stack : result.getBlockResult().getRequiredItems())
                 {
-                    getOwnBuilding().addNeededResource(stack, stack.getCount());
+                    building.addNeededResource(stack, stack.getCount());
                 }
 
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
@@ -295,9 +295,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public void registerBlockAsNeeded(final ItemStack stack)
     {
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-        if (getOwnBuilding().getNeededResources().get(stack.getDescriptionId() + "-" + hashCode) == null)
+        if (building.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode) == null)
         {
-            getOwnBuilding().addNeededResource(stack, 1);
+            building.addNeededResource(stack, 1);
         }
     }
 
@@ -309,7 +309,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return 0;
         }
         final int hashCode = deliveredItemStack.hasTag() ? deliveredItemStack.getTag().hashCode() : 0;
-        final BuildingBuilderResource resource = getOwnBuilding().getNeededResources().get(deliveredItemStack.getDescriptionId() + "-" + hashCode);
+        final BuildingBuilderResource resource = building.getNeededResources().get(deliveredItemStack.getDescriptionId() + "-" + hashCode);
         if (resource != null)
         {
             return resource.getAmount();
@@ -407,7 +407,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 }
             }
         }
-        getOwnBuilding().resetNeededResources();
+        building.resetNeededResources();
     }
 
     /**
@@ -423,7 +423,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void reduceNeededResources(final ItemStack stack)
     {
-        getOwnBuilding().reduceNeededResource(stack, 1);
+        building.reduceNeededResource(stack, 1);
     }
 
     @Override
@@ -438,8 +438,8 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             }
             job.setWorkOrder(null);
             resetCurrentStructure();
-            getOwnBuilding().cancelAllRequestsOfCitizen(worker.getCitizenData());
-            getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            building.cancelAllRequestsOfCitizen(worker.getCitizenData());
+            building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return true;
         }
         return job.getWorkOrder() != null && (!WorldUtil.isBlockLoaded(world, job.getWorkOrder().getLocation())) && getState() != PICK_UP_RESIDUALS;
@@ -466,7 +466,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
             return null;
         }
         final int hashCode = stack.hasTag() ? stack.getTag().hashCode() : 0;
-        final AbstractBuildingStructureBuilder buildingWorker = getOwnBuilding();
+        final AbstractBuildingStructureBuilder buildingWorker = building;
         BuildingBuilderResource resource = buildingWorker.getNeededResources().get(stack.getDescriptionId() + "-" + hashCode);
 
         if (resource == null)
@@ -488,7 +488,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public void handleSpecificCancelActions()
     {
-        getOwnBuilding().getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
+        building.getColony().getWorkManager().removeWorkOrder(job.getWorkOrderId());
         job.setWorkOrder(null);
     }
 }

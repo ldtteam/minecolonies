@@ -135,12 +135,12 @@ public abstract class AbstractEntityAITraining<J extends AbstractJob<?, J>, B ex
             return null;
         }
 
-        if (getOwnBuilding().isInBuilding(pos))
+        if (building.isInBuilding(pos))
         {
             return pos;
         }
 
-        return getOwnBuilding().getPosition();
+        return building.getPosition();
     }
 
     /**

@@ -107,7 +107,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         worker.getCitizenData().setIdleAtJob(false);
 
-        @Nullable final BlockPos currentGrave = getOwnBuilding().getGraveToWorkOn();
+        @Nullable final BlockPos currentGrave = building.getGraveToWorkOn();
         if (currentGrave != null)
         {
             if (walkToBuilding())
@@ -118,10 +118,10 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             final TileEntity entity = world.getBlockEntity(currentGrave);
             if (entity instanceof TileEntityGrave)
             {
-                getOwnBuilding().getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
+                building.getFirstModuleOccurance(GraveyardManagementModule.class).setLastGraveData((GraveData) ((TileEntityGrave) entity).getGraveData());
                 return EMPTY_GRAVE;
             }
-            getOwnBuilding().ClearCurrentGrave();
+            building.ClearCurrentGrave();
         }
 
         return WANDER;
@@ -137,9 +137,9 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     {
         if (worker.getNavigation().isDone())
         {
-            if (getOwnBuilding().isInBuilding(worker.blockPosition()))
+            if (building.isInBuilding(worker.blockPosition()))
             {
-                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
             }
             else
             {
@@ -158,7 +158,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private IAIState emptyGrave()
     {
-        @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
+        @Nullable final BuildingGraveyard buildingGraveyard = building;
 
         if (buildingGraveyard == null || checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
         {
@@ -216,7 +216,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private IAIState digGrave()
     {
-        @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
+        @Nullable final BuildingGraveyard buildingGraveyard = building;
 
         if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getGraveToWorkOn() == null)
         {
@@ -276,7 +276,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
                 world.setBlockAndUpdate(position, Blocks.AIR.defaultBlockState());
                 worker.getCitizenItemHandler().damageItemInHand(Hand.MAIN_HAND, 1);
                 worker.decreaseSaturationForContinuousAction();
-                getOwnBuilding().ClearCurrentGrave();
+                building.ClearCurrentGrave();
                 return true;
             }
         }
@@ -291,7 +291,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private IAIState tryResurrect()
     {
-        @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
+        @Nullable final BuildingGraveyard buildingGraveyard = building;
 
         if (checkForToolOrWeapon(ToolType.SHOVEL) || buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class).getLastGraveData() == null || buildingGraveyard.getGraveToWorkOn() == null)
         {
@@ -404,7 +404,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private IAIState buryCitizen()
     {
-        @Nullable final BuildingGraveyard buildingGraveyard = getOwnBuilding();
+        @Nullable final BuildingGraveyard buildingGraveyard = building;
         final GraveyardManagementModule module = buildingGraveyard.getFirstModuleOccurance(GraveyardManagementModule.class);
 
         if (checkForToolOrWeapon(ToolType.SHOVEL) || module.getLastGraveData() == null)
@@ -416,7 +416,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
 
         if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
         {
-            burialPos = getOwnBuilding().getRandomFreeVisualGravePos();
+            burialPos = building.getRandomFreeVisualGravePos();
         }
 
         if (burialPos == null || burialPos.getA() == null)
@@ -492,7 +492,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
      */
     private int getShovelSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SHOVEL, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
     }
 
     /**

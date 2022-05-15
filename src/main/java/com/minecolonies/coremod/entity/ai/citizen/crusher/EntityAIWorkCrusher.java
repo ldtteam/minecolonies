@@ -68,16 +68,16 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
         if (job.getTaskQueue().isEmpty())
         {
-            if (getOwnBuilding().getCurrentDailyQuantity() < getOwnBuilding().getSetting(BuildingCrusher.DAILY_LIMIT).getValue())
+            if (building.getCurrentDailyQuantity() < building.getSetting(BuildingCrusher.DAILY_LIMIT).getValue())
             {
                 return CRUSH;
             }
 
             if (worker.getNavigation().isDone())
             {
-                if (getOwnBuilding().isInBuilding(worker.blockPosition()))
+                if (building.isInBuilding(worker.blockPosition()))
                 {
-                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, getOwnBuilding().getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                    worker.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, building.getCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
                 }
                 else
                 {
@@ -121,7 +121,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         worker.getCitizenData().setVisibleStatus(CRUSHING);
         job.setProgress(job.getProgress() + TICK_DELAY);
 
-        final BuildingCrusher crusherBuilding = getOwnBuilding();
+        final BuildingCrusher crusherBuilding = building;
         WorkerUtil.faceBlock(crusherBuilding.getPosition(), worker);
 
         final IRecipeStorage recipeMode = crusherBuilding.getSetting(BuildingCrusher.MODE).getValue(crusherBuilding);
@@ -186,7 +186,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getInput().get(0).getItemStack().copy(), crusherBuilding.getID()), worker);
             Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(currentRecipeStorage.getPrimaryOutput().copy(), crusherBuilding.getID().below()),
               worker);
-            SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.STONE_BREAK);
+            SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.STONE_BREAK);
         }
         return getState();
     }
@@ -219,7 +219,7 @@ public class EntityAIWorkCrusher extends AbstractEntityAICrafting<JobCrusher, Bu
         worker.setItemInHand(Hand.MAIN_HAND,
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setItemInHand(Hand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
-        worker.getCitizenItemHandler().hitBlockWithToolInHand(getOwnBuilding().getPosition());
+        worker.getCitizenItemHandler().hitBlockWithToolInHand(building.getPosition());
 
         currentRequest = job.getCurrentTask();
 

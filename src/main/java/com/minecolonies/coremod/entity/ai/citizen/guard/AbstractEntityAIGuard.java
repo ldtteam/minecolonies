@@ -180,7 +180,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
           new AITarget(CombatAIStates.ATTACKING, this::inCombat, 8)
         );
 
-        buildingGuards = getOwnBuilding();
+        buildingGuards = building;
         lastGuardActionPos = buildingGuards.getPosition();
     }
 
@@ -435,7 +435,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return ACTIONS_UNTIL_DUMPING * getOwnBuilding().getBuildingLevel();
+        return ACTIONS_UNTIL_DUMPING * building.getBuildingLevel();
     }
 
     /**

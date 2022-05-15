@@ -115,8 +115,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (!job.hasWorkOrder())
         {
-            getOwnBuilding().searchWorkOrder();
-            getOwnBuilding().setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
+            building.searchWorkOrder();
+            building.setProgressPos(null, BuildingStructureHandler.Stage.CLEAR);
             return false;
         }
 
@@ -125,7 +125,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
         if (wo == null)
         {
             job.setWorkOrder(null);
-            getOwnBuilding().setProgressPos(null, null);
+            building.setProgressPos(null, null);
             return false;
         }
 
@@ -144,7 +144,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     {
         if (job.getWorkOrder().getIteratorType().isEmpty())
         {
-            final String mode = BuilderModeSetting.getActualValue(getOwnBuilding());
+            final String mode = BuilderModeSetting.getActualValue(building);
             job.getWorkOrder().setIteratorType(mode);
         }
 
@@ -171,7 +171,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
      */
     private void killMobs()
     {
-        if (getOwnBuilding().getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
+        if (building.getBuildingLevel() >= LEVEL_TO_PURGE_MOBS && job.getWorkOrder().getWorkOrderType() == WorkOrderType.BUILD)
         {
             final BlockPos buildingPos = job.getWorkOrder().getLocation();
             final IBuilding building = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(buildingPos);
@@ -185,10 +185,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
     @Override
     public void checkForExtraBuildingActions()
     {
-        if (!getOwnBuilding().hasPurgedMobsToday())
+        if (!building.hasPurgedMobsToday())
         {
             killMobs();
-            getOwnBuilding().setPurgedMobsToday(true);
+            building.setPurgedMobsToday(true);
         }
     }
 
@@ -276,10 +276,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         final BlockPos position = wo.getLocation();
         boolean showManualSuffix = false;
-        if (getOwnBuilding().getManualMode())
+        if (building.getManualMode())
         {
             showManualSuffix = true;
-            for (final IWorkOrder workorder : getOwnBuilding().getColony().getWorkManager().getWorkOrders().values())
+            for (final IWorkOrder workorder : building.getColony().getWorkManager().getWorkOrders().values())
             {
                 if (workorder.getID() != wo.getID() && workorder.isClaimedBy(worker.getCitizenData()))
                 {

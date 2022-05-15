@@ -198,7 +198,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return START_WORKING;
         }
 
-        final BuildingPlantation plantation = getOwnBuilding();
+        final BuildingPlantation plantation = building;
         final List<Item> availablePlants = plantation.getAvailablePlants();
 
         if (isItemPositionAir(plantableSoilPos))
@@ -212,7 +212,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             }
 
             final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
-            final int plantInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), itemStack -> itemStack.sameItem(currentStack));
+            final int plantInBuilding = InventoryUtils.getCountFromBuilding(building, itemStack -> itemStack.sameItem(currentStack));
             if (plantInInv + plantInBuilding <= 0)
             {
                 requestPlantable(currentItem);
@@ -290,7 +290,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getNextCraftingState();
         }
 
-        if (!getOwnBuilding().isInBuilding(worker.blockPosition()) && walkToBuilding())
+        if (!building.isInBuilding(worker.blockPosition()) && walkToBuilding())
         {
             return START_WORKING;
         }
@@ -301,7 +301,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return getState();
         }
 
-        final BuildingPlantation plantation = getOwnBuilding();
+        final BuildingPlantation plantation = building;
         final List<BuildingPlantation.PlantationSoilPosition> soilPositions = plantation.getAllSoilPositions();
 
         if (soilPositions.isEmpty())
@@ -324,7 +324,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
      */
     private void requestPlantable(final Item current)
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
+        if (!building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == current))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(current, PLANT_TO_REQUEST)));
