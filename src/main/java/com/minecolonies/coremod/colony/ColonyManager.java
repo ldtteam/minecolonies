@@ -4,8 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
@@ -19,12 +19,11 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveM
 import com.minecolonies.coremod.util.BackUpHelper;
 import com.minecolonies.coremod.util.ChunkDataHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -41,7 +40,8 @@ import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
-import static com.minecolonies.coremod.MineColonies.*;
+import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
+import static com.minecolonies.coremod.MineColonies.getConfig;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -107,7 +107,7 @@ public final class ColonyManager implements IColonyManager
             return;
         }
 
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
     }
 
     @Override
@@ -147,7 +147,7 @@ public final class ColonyManager implements IColonyManager
 
         try
         {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
+            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
             Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -432,12 +432,12 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyView(cap.getOwningColony(), w.dimension());
         }
-        else if (!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getStaticClaimColonies().isEmpty())
         {
             @Nullable IColonyView closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
-            for (final int cId : cap.getAllCloseColonies())
+            for (final int cId : cap.getStaticClaimColonies())
             {
                 final IColonyView c = getColonyView(cId, w.dimension());
                 if (c != null && c.getDimension() == w.dimension())
@@ -489,12 +489,12 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyByWorld(cap.getOwningColony(), w);
         }
-        else if (!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getStaticClaimColonies().isEmpty())
         {
             @Nullable IColony closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
-            for (final int cId : cap.getAllCloseColonies())
+            for (final int cId : cap.getStaticClaimColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
                 if (c != null && c.getDimension() == w.dimension())

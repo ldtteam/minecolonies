@@ -59,7 +59,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -326,7 +328,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onPlacement()
     {
-        ChunkDataHelper.claimColonyChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
     }
 
     /**
@@ -418,7 +420,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
-        ChunkDataHelper.claimColonyChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
         getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
@@ -931,7 +933,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onUpgradeComplete(final int newLevel)
     {
         cachedRotation = -1;
-        ChunkDataHelper.claimColonyChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());

@@ -62,7 +62,7 @@ public class UpdateChunkRangeCapabilityMessage implements IMessage
                     final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).orElseGet(null);
                     if (cap != null)
                     {
-                        caps.add(new ChunkCapData(chunkX, chunkZ, cap.getOwningColony(), cap.getAllCloseColonies()));
+                        caps.add(new ChunkCapData(chunkX, chunkZ, cap.getOwningColony(), cap.getStaticClaimColonies()));
                     }
                 }
             }
