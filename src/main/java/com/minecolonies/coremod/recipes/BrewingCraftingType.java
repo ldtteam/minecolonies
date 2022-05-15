@@ -60,8 +60,8 @@ public class BrewingCraftingType extends CraftingType
                         actualOutput.setCount(3);
 
                         recipes.add(new GenericRecipe(null, actualOutput, Collections.emptyList(),
-                                Arrays.asList(Collections.singletonList(actualInput), Collections.singletonList(ingredient)),
-                                4, Blocks.BREWING_STAND, null, Collections.emptyList(), -1));
+                                Arrays.asList(Collections.singletonList(ingredient), Collections.singletonList(actualInput)),
+                                1, Blocks.BREWING_STAND, null, Collections.emptyList(), -1));
                     }
                 }
             }

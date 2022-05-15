@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.items.ModItems;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.ShearsItem;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,7 +25,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -262,6 +267,28 @@ public class BuildingAlchemist extends AbstractBuilding
         public Set<CraftingType> getSupportedCraftingTypes()
         {
             return Collections.emptySet();
+        }
+
+        @Override
+        public @NotNull List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+
+            // growing mistletoe
+            recipes.add(new GenericRecipe(null, new ItemStack(ModItems.mistletoe),
+                    Collections.emptyList(),
+                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.SHEARS))),
+                    1, Blocks.OAK_LEAVES,
+                    null, Collections.emptyList(), -1));
+
+            // growing netherwart
+            recipes.add(new GenericRecipe(null, new ItemStack(Items.NETHER_WART, 4),
+                    Collections.emptyList(),
+                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.NETHER_WART))),
+                    1, Blocks.SOUL_SAND,
+                    null, Collections.emptyList(), -1));
+
+            return recipes;
         }
     }
 }
