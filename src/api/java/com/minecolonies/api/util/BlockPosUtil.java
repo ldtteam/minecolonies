@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.BiPredicate;
 
@@ -718,6 +717,9 @@ public final class BlockPosUtil
     {
         IFormattableTextComponent component = null;
 
+        // When the X and Z coordinates are identical to the building its position
+        // then return a component saying that the position is either directly above or directly below
+        // the building
         if (pos.getZ() == building.getZ() && pos.getX() == building.getX())
         {
             if (pos.getY() > building.getY())
@@ -730,6 +732,7 @@ public final class BlockPosUtil
             }
         }
 
+        // If a building is greater or smaller in the Z direction, either return north or south
         if (pos.getZ() > building.getZ())
         {
             component = new TranslationTextComponent(DIRECTION_SOUTH);
@@ -739,6 +742,8 @@ public final class BlockPosUtil
             component = new TranslationTextComponent(DIRECTION_NORTH);
         }
 
+        // If a building is greater or smaller in the X direction, either return west or east
+        // If previously already north or south was selected, create a compound direction (north/east etc)
         if (pos.getX() > building.getX())
         {
             if (component != null)
@@ -766,6 +771,7 @@ public final class BlockPosUtil
             }
         }
 
+        // In case that none of the checks pass (XYZ fully identical to the building), return a component saying the positions are identical
         return component != null ? component : new TranslationTextComponent(DIRECTION_NONE);
     }
 
