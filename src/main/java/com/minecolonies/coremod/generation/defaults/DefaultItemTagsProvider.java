@@ -71,6 +71,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.RED_CONCRETE_POWDER)
                 .add(Items.BLACK_CONCRETE_POWDER);
 
+        final TagKey<Item> concrete = ItemTags.create(new ResourceLocation(MOD_ID, "concrete"));
+        copy(ModTags.concreteBlock, concrete);
+
         final TagKey<Item> glazedTerracotta = ItemTags.create(new ResourceLocation(MOD_ID, "glazed_terracotta"));
         tag(glazedTerracotta)
                 .add(Items.WHITE_GLAZED_TERRACOTTA)
@@ -336,22 +339,26 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_STONEMASON))
                 .addTags(Tags.Items.STONE, Tags.Items.COBBLESTONE, Tags.Items.END_STONES)
+                .addTags(Tags.Items.SANDSTONE, concrete)
                 .addTags(com.ldtteam.domumornamentum.tag.ModTags.BRICK_ITEMS)
                 .addTags(com.ldtteam.domumornamentum.tag.ModTags.EXTRA_BLOCK_ITEMS)
                 .addTags(ItemTags.STAIRS, ItemTags.SLABS, ItemTags.WALLS)
-                .add(Items.NETHER_BRICK, Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS)
-                .add(Items.CRACKED_DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_TILES)
+                .add(Items.NETHERRACK, Items.NETHER_BRICK, Items.NETHER_BRICKS, Items.CHISELED_NETHER_BRICKS, Items.RED_NETHER_BRICKS)
+                .add(Items.DEEPSLATE_BRICKS, Items.DEEPSLATE_TILES, Items.CRACKED_DEEPSLATE_BRICKS, Items.CRACKED_DEEPSLATE_TILES)
                 .add(Items.POPPED_CHORUS_FRUIT)
-                .add(Items.PURPUR_BLOCK, Items.PURPUR_SLAB)
+                .add(Items.PURPUR_BLOCK, Items.PURPUR_SLAB, Items.PURPUR_PILLAR)
                 .add(Items.PRISMARINE_SHARD, Items.PRISMARINE_CRYSTALS)
-                .add(Items.SMOOTH_STONE)
-                .add(Items.BLACKSTONE)
+                .add(Items.SMOOTH_STONE, Items.OBSIDIAN, Items.CRYING_OBSIDIAN)
+                .add(Items.DEEPSLATE, Items.CHISELED_DEEPSLATE, Items.COBBLED_DEEPSLATE, Items.POLISHED_DEEPSLATE)
+                .add(Items.BLACKSTONE, Items.GILDED_BLACKSTONE)
                 .add(Items.POLISHED_BLACKSTONE, Items.POLISHED_BLACKSTONE_BRICKS)
+                .add(Items.EXPOSED_COPPER, Items.OXIDIZED_COPPER, Items.WEATHERED_COPPER)
+                .add(Items.WAXED_COPPER_BLOCK, Items.WAXED_EXPOSED_COPPER, Items.WAXED_OXIDIZED_COPPER, Items.WAXED_WEATHERED_COPPER)
                 .add(Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER)
                 .add(Items.WAXED_CUT_COPPER, Items.WAXED_EXPOSED_CUT_COPPER, Items.WAXED_OXIDIZED_CUT_COPPER, Items.WAXED_WEATHERED_CUT_COPPER)
                 .addTags(ItemTags.TERRACOTTA, glazedTerracotta)
-                .add(Items.BASALT, Items.POLISHED_BASALT)
-                .add(Items.BRICKS, Items.STONE_BRICKS);
+                .add(Items.BASALT, Items.POLISHED_BASALT, Items.SMOOTH_BASALT, Items.TUFF)
+                .add(Items.BRICKS, Items.STONE_BRICKS, Items.CHISELED_STONE_BRICKS, Items.CRACKED_STONE_BRICKS, Items.MOSSY_STONE_BRICKS);
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_STONEMASON))
                 .addTags(ItemTags.LOGS, ItemTags.PLANKS)
                 .add(Items.STICK)

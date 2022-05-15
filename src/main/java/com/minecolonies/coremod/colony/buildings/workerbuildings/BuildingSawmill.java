@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractDOCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_SAWMILL;
@@ -136,7 +134,8 @@ public class BuildingSawmill extends AbstractBuilding
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS));
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
+                    .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
         }
     }
 }
