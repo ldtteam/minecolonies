@@ -278,6 +278,18 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
     }
 
     /**
+     * Sets the container (input potion, intended mostly for crafting teaching).
+     *
+     * @param stack The container stack.
+     */
+    public void setContainer(final ItemStack stack)
+    {
+        handleSlotClick(getSlot(1), stack);
+        handleSlotClick(getSlot(2), stack);
+        handleSlotClick(getSlot(3), stack);
+    }
+
+    /**
      * Handle a slot click.
      *
      * @param slot  the clicked slot.
