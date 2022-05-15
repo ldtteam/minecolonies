@@ -91,7 +91,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     final List<ItemStack> netherEdible = IColonyManager.getInstance()
       .getCompatibilityManager()
-      .getEdibles(getOwnBuilding().getBuildingLevel() - 1)
+      .getEdibles(building.getBuildingLevel() - 1)
       .stream()
       .map(item -> item.getItemStack())
       .collect(Collectors.toList());
@@ -141,7 +141,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     private void goToVault()
     {
         worker.setInvisible(true);
-        BlockPos vaultPos = getOwnBuilding().getVaultLocation();
+        BlockPos vaultPos = building.getVaultLocation();
         if (vaultPos != null)
         {
             worker.moveTo(vaultPos.getX() + 0.5, vaultPos.getY(), vaultPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
@@ -151,8 +151,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     private void returnFromVault()
     {
-        BlockPos vaultPos = getOwnBuilding().getVaultLocation();
-        BlockPos portalPos = getOwnBuilding().getPortalLocation();
+        BlockPos vaultPos = building.getVaultLocation();
+        BlockPos portalPos = building.getPortalLocation();
         if (portalPos != null && vaultPos != null && EntityUtils.isLivingAtSite(worker, vaultPos.getX(), vaultPos.getY(), vaultPos.getZ(), 2))
         {
             worker.moveTo(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
@@ -190,7 +190,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         checkAndRequestArmor();
 
         // Check for materials needed to go to the Nether: 
-        IRecipeStorage rs = getOwnBuilding().getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
+        IRecipeStorage rs = building.getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class).getFirstRecipe(ItemStack::isEmpty);
         boolean hasItemsAvailable = true;
         if (rs != null)
         {
@@ -208,7 +208,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             return IDLE;
         }
 
-        final BlockPos portal = getOwnBuilding().getPortalLocation();
+        final BlockPos portal = building.getPortalLocation();
         if (portal == null)
         {
             Log.getLogger().warn("--- Missing Portal Tag In Nether Worker Building! Aborting Operation! ---");
@@ -233,14 +233,14 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         if (currentRecipeStorage == null)
         {
-            final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class);
+            final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingNetherWorker.CraftingModule.class);
             currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
-            if (getOwnBuilding().isReadyForTrip())
+            if (building.isReadyForTrip())
             {
                 worker.getCitizenData().setIdleAtJob(true);
             }
 
-            if (currentRecipeStorage == null && getOwnBuilding().shallClosePortalOnReturn())
+            if (currentRecipeStorage == null && building.shallClosePortalOnReturn())
             {
                 final BlockState block = world.getBlockState(portal);
                 if (block.is(Blocks.NETHER_PORTAL))
@@ -253,7 +253,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
         else
         {
-            if (!getOwnBuilding().isReadyForTrip())
+            if (!building.isReadyForTrip())
             {
                 worker.getCitizenData().setIdleAtJob(false);
                 return IDLE;
@@ -314,12 +314,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         final Objective secondarySkillLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL);
 
         Score s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), hutLevelObjective);
-        s.setScore(getOwnBuilding().getBuildingLevel());
+        s.setScore(building.getBuildingLevel());
         s = world.getScoreboard().getOrCreatePlayerScore(worker.getScoreboardName(), secondarySkillLevelObjective);
         s.setScore(getSecondarySkillLevel());
 
         // Attempt to light the portal and travel
-        final BlockPos portal = getOwnBuilding().getPortalLocation();
+        final BlockPos portal = building.getPortalLocation();
         if (portal != null && currentRecipeStorage != null)
         {
             final BlockState block = world.getBlockState(portal);
@@ -330,7 +330,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                     return getState();
                 }
                 goToVault();
-                getOwnBuilding().recordTrip();
+                building.recordTrip();
 
                 List<ItemStack> result = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), false);
                 if (result != null)
@@ -352,10 +352,10 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState stayInNether()
     {
-        if (getOwnBuilding().getVaultLocation() == null)
+        if (building.getVaultLocation() == null)
         {
             //Ensure we stay put in the portal
-            final BlockPos portal = getOwnBuilding().getPortalLocation();
+            final BlockPos portal = building.getPortalLocation();
             if (portal != null && walkToBlock(portal, 1))
             {
                 return getState();
@@ -628,7 +628,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         job.setInNether(false);
 
         //Shutdown Portal
-        if (getOwnBuilding().shallClosePortalOnReturn())
+        if (building.shallClosePortalOnReturn())
         {
             return NETHER_CLOSEPORTAL;
         }
@@ -643,7 +643,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     protected IAIState openPortal()
     {
         // Attempt to light the portal and travel
-        final BlockPos portal = getOwnBuilding().getPortalLocation();
+        final BlockPos portal = building.getPortalLocation();
         if (portal != null && currentRecipeStorage != null)
         {
             final BlockState block = world.getBlockState(portal);
@@ -670,12 +670,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState closePortal()
     {
-        final BlockState block = world.getBlockState(getOwnBuilding().getPortalLocation());
+        final BlockState block = world.getBlockState(building.getPortalLocation());
 
         if (block.is(Blocks.NETHER_PORTAL))
         {
             useFlintAndSteel();
-            world.setBlockAndUpdate(getOwnBuilding().getPortalLocation(), Blocks.AIR.defaultBlockState());
+            world.setBlockAndUpdate(building.getPortalLocation(), Blocks.AIR.defaultBlockState());
         }
 
         currentRecipeStorage = null;
@@ -704,8 +704,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     {
         if (equip)
         {
-            final BuildingNetherWorker building = getOwnBuilding();
-
             for (final List<GuardGear> itemList : itemsNeeded)
             {
                 for (final GuardGear item : itemList)
@@ -738,7 +736,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     private List<ItemStack> getEdiblesList()
     {
-        final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
+        final List<ItemStorage> allowedItems = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList();
         netherEdible.removeIf(item -> allowedItems.contains(new ItemStorage(item)));
         return netherEdible;
     }
@@ -789,7 +787,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected void checkAndRequestArmor()
     {
-        final BuildingNetherWorker building = getOwnBuilding();
         for (final List<GuardGear> itemList : itemsNeeded)
         {
             for (final GuardGear item : itemList)
