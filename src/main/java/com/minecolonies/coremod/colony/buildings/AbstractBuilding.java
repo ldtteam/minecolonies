@@ -219,7 +219,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 return (T) module;
             }
         }
-        return null;
+        throw new IllegalArgumentException("no matching module");
     }
 
     @NotNull
@@ -1942,12 +1942,12 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        final int citizenId = getCitizensByRequest().get(request.getId());
-        if (!getCitizensByRequest().containsKey(citizenId))
+        if (!getCitizensByRequest().containsKey(request.getId()))
         {
             return new TextComponent("<UNKNOWN>");
         }
 
+        final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData.getJob() == null)
         {
