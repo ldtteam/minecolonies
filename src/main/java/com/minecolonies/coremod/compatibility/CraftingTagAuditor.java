@@ -187,8 +187,10 @@ public class CraftingTagAuditor
 
             final List<ItemStack> allSkins = recipe.getInputs().stream()
                     .flatMap(Collection::stream)
+                    .map(ItemStorage::new)
                     .distinct()
                     .sorted(Comparator.comparing(s -> s.getItem().getRegistryName().toString()))
+                    .map(ItemStorage::getItemStack)
                     .collect(Collectors.toList());
             for (final ItemStack skin : allSkins)
             {
