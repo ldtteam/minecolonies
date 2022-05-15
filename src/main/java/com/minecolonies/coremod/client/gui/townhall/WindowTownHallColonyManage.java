@@ -22,6 +22,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_MANAGEMENT_GUI;
@@ -181,9 +182,9 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
                         return cap.getOwningColony();
                     }
 
-                    if (!cap.getAllCloseColonies().isEmpty())
+                    if (!cap.getStaticClaimColonies().isEmpty())
                     {
-                        return cap.getAllCloseColonies().get(0);
+                        return cap.getStaticClaimColonies().get(0);
                     }
                 }
             }

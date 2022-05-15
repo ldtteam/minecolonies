@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -38,12 +40,12 @@ public interface IColonyTagCapability
     void addColony(final int id, final Chunk chunk);
 
     /**
-     * Get a list of all close colonies.
+     * Get a list of colonies with a static claim.
      *
      * @return a list of their ids.
      */
     @NotNull
-    List<Integer> getAllCloseColonies();
+    List<Integer> getStaticClaimColonies();
 
     /**
      * Set the owning colony.
@@ -113,9 +115,9 @@ public interface IColonyTagCapability
         private Set<Integer> colonies = new HashSet<>();
 
         /**
-         * The colony owning the chunk. 0 If none.
+         * The colony owning the chunk. NO_COLONY_ID If none.
          */
-        private int owningColony = 0;
+        private int owningColony = NO_COLONY_ID;
 
         /**
          * List of buildings claiming this chunk for a certain colony.
@@ -126,6 +128,15 @@ public interface IColonyTagCapability
         public void addColony(final int id, final Chunk chunk)
         {
             colonies.add(id);
+            if (owningColony == NO_COLONY_ID)
+            {
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension());
+                if (colony != null)
+                {
+                    colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
+                }
+                owningColony = id;
+            }
             chunk.markUnsaved();
         }
 
@@ -133,9 +144,21 @@ public interface IColonyTagCapability
         public void removeColony(final int id, final Chunk chunk)
         {
             colonies.remove(id);
+            claimingBuildings.remove(id);
             if (owningColony == id)
             {
-                this.owningColony = 0;
+                if (!claimingBuildings.isEmpty())
+                {
+                    owningColony = claimingBuildings.keySet().iterator().next();
+                }
+                else if (!colonies.isEmpty())
+                {
+                    owningColony = colonies.iterator().next();
+                }
+                else
+                {
+                    owningColony = NO_COLONY_ID;
+                }
             }
             chunk.markUnsaved();
         }
@@ -150,7 +173,7 @@ public interface IColonyTagCapability
         public void reset(final Chunk chunk)
         {
             colonies.clear();
-            owningColony = 0;
+            owningColony = NO_COLONY_ID;
             claimingBuildings.clear();
             chunk.markUnsaved();
         }
@@ -158,9 +181,14 @@ public interface IColonyTagCapability
         @Override
         public void addBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk)
         {
-            if (owningColony == 0)
+            if (owningColony == NO_COLONY_ID)
             {
                 setOwningColony(colonyId, chunk);
+                final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyId, chunk.getLevel().dimension());
+                if (colony != null)
+                {
+                    colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
+                }
             }
 
             if (claimingBuildings.containsKey(colonyId))
@@ -179,33 +207,66 @@ public interface IColonyTagCapability
         @Override
         public void removeBuildingClaim(final int colonyId, final BlockPos pos, final Chunk chunk)
         {
-            if (claimingBuildings.containsKey(colonyId))
+            if (!claimingBuildings.containsKey(colonyId))
             {
-                final Set<BlockPos> buildings = claimingBuildings.get(colonyId);
-                buildings.remove(pos);
+                return;
+            }
 
-                if (buildings.isEmpty())
-                {
-                    claimingBuildings.remove(colonyId);
-                }
+            chunk.setUnsaved(true);
+            final Set<BlockPos> buildings = claimingBuildings.get(colonyId);
+            buildings.remove(pos);
 
-                if (owningColony == colonyId)
+            if (buildings.isEmpty())
+            {
+                claimingBuildings.remove(colonyId);
+
+                if (owningColony == colonyId && !colonies.contains(owningColony))
                 {
                     if (claimingBuildings.isEmpty())
                     {
-                        reset(chunk);
-                    }
-                    else if (claimingBuildings.size() == 1)
-                    {
-                        setOwningColony(claimingBuildings.keySet().iterator().next(), chunk);
+                        if (colonies.isEmpty())
+                        {
+                            owningColony = NO_COLONY_ID;
+                        }
+                        else
+                        {
+                            owningColony = colonies.iterator().next();
+                        }
                     }
                     else
                     {
-                        setOwningColony(claimingBuildings.keySet().toArray(new Integer[0])[new Random().nextInt(claimingBuildings.size())], chunk);
+                        for (final Iterator<Map.Entry<Integer, Set<BlockPos>>> colonyIt = claimingBuildings.entrySet().iterator(); colonyIt.hasNext(); )
+                        {
+                            final Map.Entry<Integer, Set<BlockPos>> colonyEntry = colonyIt.next();
+                            final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyEntry.getKey(), chunk.getLevel().dimension());
+                            if (colony == null)
+                            {
+                                continue;
+                            }
+
+                            for (final Iterator<BlockPos> buildingIt = colonyEntry.getValue().iterator(); buildingIt.hasNext(); )
+                            {
+                                final BlockPos buildingPos = buildingIt.next();
+                                if (colony.getBuildingManager().getBuilding(buildingPos) != null)
+                                {
+                                    colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
+                                    setOwningColony(colonyEntry.getKey(), chunk);
+                                    return;
+                                }
+                                else
+                                {
+                                    buildingIt.remove();
+                                }
+                            }
+
+                            if (colonyEntry.getValue().isEmpty())
+                            {
+                                colonyIt.remove();
+                            }
+                        }
                     }
                 }
             }
-            chunk.markUnsaved();
         }
 
         @Override
@@ -223,7 +284,7 @@ public interface IColonyTagCapability
 
         @NotNull
         @Override
-        public List<Integer> getAllCloseColonies()
+        public List<Integer> getStaticClaimColonies()
         {
             return new ArrayList<>(colonies);
         }
@@ -284,7 +345,7 @@ public interface IColonyTagCapability
         {
             final CompoundNBT compound = new CompoundNBT();
             compound.putInt(TAG_ID, instance.getOwningColony());
-            compound.put(TAG_COLONIES, instance.getAllCloseColonies().stream().map(Storage::write).collect(NBTUtils.toListNBT()));
+            compound.put(TAG_COLONIES, instance.getStaticClaimColonies().stream().map(Storage::write).collect(NBTUtils.toListNBT()));
             compound.put(TAG_BUILDINGS_CLAIM, instance.getAllClaimingBuildings().entrySet().stream().map(Storage::writeClaims).collect(NBTUtils.toListNBT()));
 
 

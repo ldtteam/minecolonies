@@ -104,7 +104,7 @@ public final class ColonyManager implements IColonyManager
             return;
         }
 
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
     }
 
     @Override
@@ -144,7 +144,7 @@ public final class ColonyManager implements IColonyManager
 
         try
         {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
+            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
             Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -423,12 +423,12 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyView(cap.getOwningColony(), w.dimension());
         }
-        else if (!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getStaticClaimColonies().isEmpty())
         {
             @Nullable IColonyView closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
-            for (final int cId : cap.getAllCloseColonies())
+            for (final int cId : cap.getStaticClaimColonies())
             {
                 final IColonyView c = getColonyView(cId, w.dimension());
                 if (c != null && c.getDimension() == w.dimension())
@@ -480,12 +480,12 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyByWorld(cap.getOwningColony(), w);
         }
-        else if (!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getStaticClaimColonies().isEmpty())
         {
             @Nullable IColony closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
-            for (final int cId : cap.getAllCloseColonies())
+            for (final int cId : cap.getStaticClaimColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
                 if (c != null && c.getDimension() == w.dimension())
