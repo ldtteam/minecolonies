@@ -202,7 +202,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @NotNull
     private IAIState prepareForFarming()
     {
-        @Nullable final BuildingFarmer building = getOwnBuilding();
         if (building == null || building.getBuildingLevel() < 1)
         {
             return PREPARING;
@@ -217,22 +216,22 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         final FarmerFieldModule module = building.getFirstModuleOccurance(FarmerFieldModule.class);
 
         module.syncWithColony(world);
-        if (module.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !module.assignManually())
+        if (module.getFarmerFields().size() < building.getBuildingLevel() && !module.assignManually())
         {
             searchAndAddFields();
         }
 
-        if (module.getFarmerFields().size() == getOwnBuilding().getMaxBuildingLevel())
+        if (module.getFarmerFields().size() == building.getMaxBuildingLevel())
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
         }
 
-        final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), this::isCompost, 1);
+        final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, this::isCompost, 1);
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), this::isCompost);
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (getOwnBuilding().requestFertilizer() && !getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(),
+            if (building.requestFertilizer() && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(),
               TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
@@ -321,7 +320,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 newField.setOwner(worker.getCitizenData().getId());
                 newField.setTaken(true);
                 newField.setChanged();
-                final FarmerFieldModule module = getOwnBuilding().getFirstModuleOccurance(FarmerFieldModule.class);
+                final FarmerFieldModule module = building.getFirstModuleOccurance(FarmerFieldModule.class);
                 module.addFarmerFields(newField.getPosition());
             }
         }
@@ -541,7 +540,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private IAIState workAtField()
     {
-        @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
+        @Nullable final BuildingFarmer buildingFarmer = building;
 
         final FarmerFieldModule module = buildingFarmer.getFirstModuleOccurance(FarmerFieldModule.class);
         if (checkForToolOrWeapon(ToolType.HOE) || module.getCurrentField() == null)
@@ -899,7 +898,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+        return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.HOE, TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
     }
 
     /**

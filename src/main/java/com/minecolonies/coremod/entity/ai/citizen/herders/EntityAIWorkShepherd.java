@@ -59,7 +59,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     public List<ToolType> getExtraToolsNeeded()
     {
         final List<ToolType> toolsNeeded = super.getExtraToolsNeeded();
-        if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue())
+        if (building.getSetting(BuildingShepherd.SHEARING).getValue())
         {
             toolsNeeded.add(ToolType.SHEARS);
         }
@@ -95,7 +95,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         final List<Sheep> animals = new ArrayList<>(searchForAnimals());
         final Sheep shearingSheep = animals.stream().filter(sheepie -> !sheepie.isSheared() && !sheepie.isBaby()).findFirst().orElse(null);
 
-        if (getOwnBuilding().getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
+        if (building.getSetting(BuildingShepherd.SHEARING).getValue() && result.equals(START_WORKING) && shearingSheep != null)
         {
             return SHEPHERD_SHEAR;
         }
@@ -186,7 +186,7 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private void dyeSheepChance(final Sheep sheep)
     {
-        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && getOwnBuilding().getSetting(BuildingShepherd.DYEING).getValue())
+        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && building.getSetting(BuildingShepherd.DYEING).getValue())
         {
             final int chanceToDye = worker.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
 

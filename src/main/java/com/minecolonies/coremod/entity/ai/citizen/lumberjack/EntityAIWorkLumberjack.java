@@ -330,7 +330,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState findTree()
     {
-        final BuildingLumberjack building = getOwnBuilding();
         worker.getCitizenData().setVisibleStatus(SEARCH);
 
         if (pathResult != null && pathResult.isComputing())
@@ -388,12 +387,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else
         {
-            job.setTree(new Tree(world, pathResult.treeLocation, getOwnBuilding().getColony()));
+            job.setTree(new Tree(world, pathResult.treeLocation, building.getColony()));
 
             // Check if tree creation was successful
             if (job.getTree().isTree())
             {
-                job.getTree().findLogs(world, getOwnBuilding().getColony());
+                job.getTree().findLogs(world, building.getColony());
                 return LUMBERJACK_CHOP_TREE;
             }
             else
@@ -453,7 +452,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 return getState();
             }
 
-            final BuildingLumberjack building = getOwnBuilding();
             if (building.shouldReplant())
             {
                 plantSapling();
@@ -859,7 +857,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 if (world.getBlockState(pos.below()).getBlock() instanceof NetherrackBlock)
                 {
                     world.setBlockAndUpdate(pos.below(), new_block.defaultBlockState());
-                    getOwnBuilding().addNetherTree(pos);
+                    building.addNetherTree(pos);
                 }
             }
 
