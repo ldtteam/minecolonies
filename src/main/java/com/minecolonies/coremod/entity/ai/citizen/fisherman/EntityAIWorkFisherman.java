@@ -566,7 +566,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getMainHandItem() == null || (worker.getMainHandItem().getItem() != worker.getItemHandlerCitizen().getStackInSlot(rodSlot).getItem()))
+        if (worker.getMainHandItem() == null || !ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), worker.getItemHandlerCitizen().getStackInSlot(rodSlot), false, true))
         {
             equipRod();
             return getState();
