@@ -1,0 +1,10 @@
+{
+  "texture": "4efc884a-23f4-4f97-b17a-b0adf30d1996",
+  "citizensuffix": "_b",
+  "name": "Zarlios",
+  "chance": 0.001,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.zarlios",
+  "recruitcost": "minecraft:baked_potato",
+  "recruitcostcount": 64,
+  "gender": "female"
+}
