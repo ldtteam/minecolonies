@@ -713,7 +713,7 @@ public final class BlockPosUtil
     {
         IFormattableTextComponent compoment = null;
 
-        if (pos.getZ() > building.getZ() + 1 && pos.getX() > building.getX() + 1)
+        if (pos.getZ() > building.getZ() + 1)
         {
             compoment = new TranslationTextComponent(DIRECTION_SOUTH);
         }
