@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/alchemist",
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.technology.oceanheart.subtitle",
+  "icon": "minecraft:fishing_rod",
+  "requirements": [
+    {
+      "building": "fisherman",
+      "level": 4
+    },
+    {
+      "item": "minecraft:heart_of_the_sea",
+      "quantity": 1
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/fishingtreasure": 1
+    }
+  ]
+}
