@@ -1,10 +1,10 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.IColonyTagCapability;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.NO_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -42,7 +43,7 @@ public class ChunkLoadStorage
     /**
      * The colony id.
      */
-    private final List<Short> colonyId = new ArrayList<>();
+    private final List<Short> owningChanges = new ArrayList<>();
 
     /**
      * The list of colonies to be added to this loc.
@@ -83,14 +84,14 @@ public class ChunkLoadStorage
     {
         if (compound.contains(TAG_ID))
         {
-            this.colonyId.add((short) compound.getShort(TAG_ID));
+            this.owningChanges.add(compound.getShort(TAG_ID));
         }
 
         this.xz = compound.getLong(TAG_POS);
         this.dimension = new ResourceLocation(compound.getString(TAG_DIMENSION));
 
-        colonyId.addAll(NBTUtils.streamCompound(compound.getList(TAG_CLAIM_LIST, Tag.TAG_COMPOUND))
-                          .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
+        owningChanges.addAll(NBTUtils.streamCompound(compound.getList(TAG_CLAIM_LIST, Tag.TAG_COMPOUND))
+          .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
         coloniesToAdd.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_ADD, Tag.TAG_COMPOUND))
                                .map(tempCompound -> tempCompound.getShort(TAG_COLONY_ID)).collect(Collectors.toList()));
         coloniesToRemove.addAll(NBTUtils.streamCompound(compound.getList(TAG_COLONIES_TO_REMOVE, Tag.TAG_COMPOUND))
@@ -105,26 +106,24 @@ public class ChunkLoadStorage
     /**
      * Create a new chunkload storage.
      *
-     * @param colonyId  the id of the colony.
-     * @param xz        the chunk xz.
-     * @param add       the operation type.
-     * @param dimension the dimension.
-     * @param owning    if the colony should own the chunk.
+     * @param colonyId       the id of the colony.
+     * @param xz             the chunk xz.
+     * @param add            the operation type.
+     * @param dimension      the dimension.
+     * @param forceOwnership if the colony should own the chunk.
      */
-    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final ResourceLocation dimension, final boolean owning)
+    public ChunkLoadStorage(final int colonyId, final long xz, final boolean add, final ResourceLocation dimension, final boolean forceOwnership)
     {
-        this.colonyId.add((short) (owning && add ? colonyId : 0));
+        this.owningChanges.add((short) (forceOwnership && add ? colonyId : NO_COLONY_ID));
         this.xz = xz;
         this.dimension = dimension;
 
         if (add)
         {
             coloniesToAdd.add((short) colonyId);
-            coloniesToRemove.add((short) 0);
         }
         else
         {
-            coloniesToAdd.add((short) 0);
             coloniesToRemove.add((short) colonyId);
         }
     }
@@ -137,11 +136,18 @@ public class ChunkLoadStorage
      * @param dimension the dimension.
      * @param building  the building claiming this chunk.
      */
-    public ChunkLoadStorage(final int colonyId, final long xz, final ResourceLocation dimension, final BlockPos building)
+    public ChunkLoadStorage(final int colonyId, final long xz, final ResourceLocation dimension, final BlockPos building, final boolean add)
     {
         this.xz = xz;
         this.dimension = dimension;
-        this.claimingBuilding.add(new Tuple<>((short) colonyId, building));
+        if (add)
+        {
+            claimingBuilding.add(new Tuple<>((short) colonyId, building));
+        }
+        else
+        {
+            unClaimingBuilding.add(new Tuple<>((short) colonyId, building));
+        }
     }
 
     /**
@@ -155,7 +161,7 @@ public class ChunkLoadStorage
         compound.putLong(TAG_POS, xz);
         compound.putString(TAG_DIMENSION, dimension.toString());
 
-        compound.put(TAG_CLAIM_LIST, colonyId.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
+        compound.put(TAG_CLAIM_LIST, owningChanges.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
         compound.put(TAG_COLONIES_TO_ADD, coloniesToAdd.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
         compound.put(TAG_COLONIES_TO_REMOVE, coloniesToRemove.stream().map(ChunkLoadStorage::getCompoundOfColonyId).collect(NBTUtils.toListNBT()));
         compound.put(TAG_BUILDINGS, claimingBuilding.stream().map(ChunkLoadStorage::writeTupleToNBT).collect(NBTUtils.toListNBT()));
@@ -205,7 +211,7 @@ public class ChunkLoadStorage
         final ChunkLoadStorage storage = (ChunkLoadStorage) o;
         return xz == storage.xz &&
                  dimension == storage.dimension &&
-                 Objects.equals(colonyId, storage.colonyId) &&
+                 Objects.equals(owningChanges, storage.owningChanges) &&
                  Objects.equals(coloniesToRemove, storage.coloniesToRemove) &&
                  Objects.equals(coloniesToAdd, storage.coloniesToAdd) &&
                  Objects.equals(claimingBuilding, storage.claimingBuilding) &&
@@ -215,7 +221,7 @@ public class ChunkLoadStorage
     @Override
     public int hashCode()
     {
-        return Objects.hash(colonyId, coloniesToRemove, coloniesToAdd, xz, dimension, claimingBuilding, unClaimingBuilding);
+        return Objects.hash(owningChanges, coloniesToRemove, coloniesToAdd, xz, dimension, claimingBuilding, unClaimingBuilding);
     }
 
     /**
@@ -228,25 +234,25 @@ public class ChunkLoadStorage
     {
         if (this.claimingBuilding.isEmpty() && unClaimingBuilding.isEmpty())
         {
-            final int amountOfOperations = Math.max(Math.max(colonyId.size(), coloniesToAdd.size()), coloniesToRemove.size());
+            final int amountOfOperations = Math.max(Math.max(owningChanges.size(), coloniesToAdd.size()), coloniesToRemove.size());
 
             for (int i = 0; i < amountOfOperations; i++)
             {
-                if (i < colonyId.size())
+                if (i < owningChanges.size())
                 {
-                    final int claimID = colonyId.get(i);
-                    if (claimID > 0)
+                    final int claimID = owningChanges.get(i);
+                    if (claimID > NO_COLONY_ID)
                     {
                         cap.setOwningColony(claimID, chunk);
                     }
                 }
 
-                if (i < coloniesToAdd.size() && coloniesToAdd.get(i) > 0)
+                if (i < coloniesToAdd.size() && coloniesToAdd.get(i) > NO_COLONY_ID)
                 {
                     cap.addColony(coloniesToAdd.get(i), chunk);
                 }
 
-                if (i < coloniesToRemove.size() && coloniesToRemove.get(i) > 0)
+                if (i < coloniesToRemove.size() && coloniesToRemove.get(i) > NO_COLONY_ID)
                 {
                     cap.removeColony(coloniesToRemove.get(i), chunk);
                 }
@@ -286,13 +292,13 @@ public class ChunkLoadStorage
     {
         if (this.claimingBuilding.isEmpty() && unClaimingBuilding.isEmpty())
         {
-            colonyId.addAll(newStorage.colonyId);
+            owningChanges.addAll(newStorage.owningChanges);
             coloniesToAdd.addAll(newStorage.coloniesToAdd);
             coloniesToRemove.addAll(newStorage.coloniesToRemove);
 
             if (coloniesToAdd.size() > MAX_CHUNK_CLAIMS)
             {
-                colonyId.clear();
+                owningChanges.clear();
                 coloniesToAdd.clear();
                 coloniesToRemove.clear();
             }
