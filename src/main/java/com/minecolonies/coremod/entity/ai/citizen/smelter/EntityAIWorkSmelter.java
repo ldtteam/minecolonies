@@ -93,7 +93,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
     @Override
     protected IRequestable getSmeltAbleClass()
     {
-        return new SmeltableOre(STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
+        return new SmeltableOre(STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             return INVENTORY_FULL;
         }
 
-        final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
+        final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSmeltery.OreBreakingModule.class);
 
         final IRecipeStorage currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
 
@@ -122,7 +122,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
             return getState();
         }
 
-        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
+        WorkerUtil.faceBlock(building.getPosition(), worker);
 
         if(!module.fullFillRecipe(currentRecipeStorage))
         {
@@ -135,12 +135,12 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         }
 
         Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, getOwnBuilding().getID()), worker);
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID()), worker);
         Network.getNetwork()
-            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, getOwnBuilding().getID().below()), worker);
+            .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, building.getID().below()), worker);
         
         worker.swing(InteractionHand.MAIN_HAND);
-        SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.LEASH_KNOT_BREAK);
+        SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
 
         return IDLE;
     }
@@ -162,17 +162,17 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
         {
             return false;
         }
-        return !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).isItemInList(new ItemStorage(stack));
+        return !building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).isItemInList(new ItemStorage(stack));
     }
 
     @Override
     public void requestSmeltable()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(getSmeltAbleClass().getClass())) &&
-              !getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
+        if (!building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(getSmeltAbleClass().getClass())) &&
+              !building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
                 req -> req.getShortDisplayString().getSiblings().contains(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE))))
         {
-            final List<ItemStorage> allowedItems = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
+            final List<ItemStorage> allowedItems = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(ORE_LIST)).getList();
             if (allowedItems.isEmpty())
             {
                 worker.getCitizenData().createRequestAsync(getSmeltAbleClass());
@@ -194,7 +194,7 @@ public class EntityAIWorkSmelter extends AbstractEntityAIUsesFurnace<JobSmelter,
                 }
                 else
                 {
-                    worker.getCitizenData().createRequestAsync(new StackList(requests, RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE, STACKSIZE * getOwnBuilding().getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
+                    worker.getCitizenData().createRequestAsync(new StackList(requests, RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE, STACKSIZE * building.getFirstModuleOccurance(FurnaceUserModule.class).getFurnaces().size(),1));
                 }
             }
         }

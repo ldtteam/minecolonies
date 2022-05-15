@@ -155,6 +155,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     private int pickUpCounter = 0;
 
     /**
+     * The building of the citizen.
+     */
+    public final B building;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -162,6 +167,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected AbstractEntityAIBasic(@NotNull final J job)
     {
         super(job);
+        if (!getExpectedBuildingClass().isInstance(worker.getCitizenData().getWorkBuilding()))
+        {
+            building = null;
+            worker.getCitizenData().setJob(null);
+            Log.getLogger().error("Citizen: " + worker.getCitizenData().getId() + " got the wrong job for this building. Abort", new Exception());
+            return;
+        }
+        building = (B) worker.getCitizenData().getWorkBuilding();
+
         super.registerTargets(
           /*
             Init safety checks and transition to IDLE
@@ -195,13 +209,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             and wait for new items.
            */
           new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getState() != INVENTORY_FULL &&
-                                                                     this.getOwnBuilding().hasOpenSyncRequest(worker.getCitizenData()) || this.getOwnBuilding()
+                                                                     this.building.hasOpenSyncRequest(worker.getCitizenData()) || this.building
                                                                                                                                             .hasCitizenCompletedRequestsToPickup(
                                                                                                                                               worker.getCitizenData()),
             NEEDS_ITEM,
             20),
 
-          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()) && this.cleanAsync(), NEEDS_ITEM, 200),
+          new AIEventTarget(AIBlockingEventType.AI_BLOCKING, () -> building.hasCitizenCompletedRequests(worker.getCitizenData()) && this.cleanAsync(), NEEDS_ITEM, 200),
 
           new AITarget(NEEDS_ITEM, this::waitForRequests, 40),
           /*
@@ -279,7 +293,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             if (walkTo == null)
             {
-                final BlockPos pos = getOwnBuilding().getTileEntity().getPositionOfChestWithItemStack(needsCurrently.getA());
+                final BlockPos pos = building.getTileEntity().getPositionOfChestWithItemStack(needsCurrently.getA());
                 if (pos == null)
                 {
                     return getStateAfterPickUp();
@@ -313,12 +327,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     public IAIState getStateAfterPickUp()
     {
         return START_WORKING;
-    }
-
-    @NotNull
-    public B getOwnBuilding()
-    {
-        return getOwnBuilding(getExpectedBuildingClass());
     }
 
     /**
@@ -437,17 +445,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @Nullable
     private IAIState initSafetyChecks()
     {
-        if (null == worker.getCitizenJobHandler().getColonyJob() || worker.getCitizenColonyHandler().getWorkBuilding() == null || worker.getCitizenData() == null)
+        if (null == job || worker.getCitizenData() == null || building == null)
         {
             return INIT;
         }
 
-        if (!getExpectedBuildingClass().isInstance(worker.getCitizenColonyHandler().getWorkBuilding()))
+        if (worker.getCitizenData().getJob() != job || building != worker.getCitizenData().getWorkBuilding())
         {
-            if (worker.getCitizenData() != null)
-            {
-                worker.getCitizenData().setJob(null);
-            }
+            worker.getCitizenData().setJob(null);
             return INIT;
         }
 
@@ -535,16 +540,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
     private void updateWorkerStatusFromRequests()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData().getId()) && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!building.hasWorkerOpenRequests(worker.getCitizenData().getId()) && !building.hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             worker.getCitizenStatusHandler().setLatestStatus();
             return;
         }
 
-        Collection<IRequest<?>> requests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+        Collection<IRequest<?>> requests = building.getCompletedRequests(worker.getCitizenData());
         if (requests.isEmpty())
         {
-            requests = getOwnBuilding().getOpenRequests(worker.getCitizenData().getId());
+            requests = building.getOpenRequests(worker.getCitizenData().getId());
         }
 
         if (!requests.isEmpty())
@@ -562,20 +567,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     @NotNull
     private IAIState lookForRequests()
     {
-        if (!this.getOwnBuilding().hasOpenSyncRequest(worker.getCitizenData())
-              && !getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (!this.building.hasOpenSyncRequest(worker.getCitizenData())
+              && !building.hasCitizenCompletedRequests(worker.getCitizenData()))
         {
             return afterRequestPickUp();
         }
-        if (getOwnBuilding().hasCitizenCompletedRequests(worker.getCitizenData()))
+        if (building.hasCitizenCompletedRequests(worker.getCitizenData()))
         {
-            final Collection<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+            final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
             final List<IRequest<?>> deliverableRequests = new ArrayList<>();
             for (final IRequest<?> req : completedRequests)
             {
                 if (!req.canBeDelivered())
                 {
-                    getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), req.getId());
+                    building.markRequestAsAccepted(worker.getCitizenData(), req.getId());
                 }
                 else
                 {
@@ -586,8 +591,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (!deliverableRequests.isEmpty())
             {
                 final IRequest<?> firstDeliverableRequest = deliverableRequests.get(0);
-                final IRequestResolver<?> resolver = getOwnBuilding().getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
-                final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : getOwnBuilding().getLocation();
+                final IRequestResolver<?> resolver = building.getColony().getRequestManager().getResolverForRequest(firstDeliverableRequest.getId());
+                final ILocation pickupLocation = resolver instanceof StationRequestResolver ? resolver.getLocation() : building.getLocation();
 
                 if (walkToBlock(pickupLocation.getInDimensionLocation()) || !WorldUtil.isBlockLoaded(world, pickupLocation.getInDimensionLocation()))
                 {
@@ -606,7 +611,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                     job.getAsyncRequests().remove(firstDeliverableRequest.getId());
                 }
 
-                getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
+                building.markRequestAsAccepted(worker.getCitizenData(), firstDeliverableRequest.getId());
 
                 final List<IItemHandler> validHandlers = Lists.newArrayList();
                 validHandlers.add(worker.getItemHandlerCitizen());
@@ -675,7 +680,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected WorkerBuildingModule getModuleForJob()
     {
-        return getOwnBuilding().getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == job.getJobRegistryEntry());
+        return building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == job.getJobRegistryEntry());
     }
 
     /**
@@ -696,13 +701,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean cleanAsync()
     {
-        final Collection<IRequest<?>> completedRequests = getOwnBuilding().getCompletedRequests(worker.getCitizenData());
+        final Collection<IRequest<?>> completedRequests = building.getCompletedRequests(worker.getCitizenData());
 
         for (IRequest<?> request : completedRequests)
         {
             if (worker.getCitizenData().isRequestAsync(request.getId()))
             {
-                getOwnBuilding().markRequestAsAccepted(worker.getCitizenData(), request.getId());
+                building.markRequestAsAccepted(worker.getCitizenData(), request.getId());
             }
         }
 
@@ -750,7 +755,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected final boolean walkToBuilding()
     {
-        @Nullable final IBuilding ownBuilding = getOwnBuilding();
+        @Nullable final IBuilding ownBuilding = building;
         //Return true if the building is null to stall the worker
         return ownBuilding == null
                  || walkToBlock(ownBuilding.getPosition());
@@ -765,7 +770,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean checkAndTransferFromHut(@Nullable final ItemStack is)
     {
-        @Nullable final IBuilding building = getOwnBuilding();
         for (final BlockPos pos : building.getContainers())
         {
             final BlockEntity entity = world.getBlockEntity(pos);
@@ -874,12 +878,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected boolean checkForToolOrWeapon(@NotNull final IToolType toolType, final int minimalLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
-          getOwnBuilding().getOpenRequestsOfTypeFiltered(
+          building.getOpenRequestsOfTypeFiltered(
             worker.getCitizenData(),
             TypeToken.of(Tool.class),
             r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
         final ImmutableList<IRequest<? extends Tool>> completedToolRequests =
-          getOwnBuilding().getCompletedRequestsOfTypeFiltered(
+          building.getCompletedRequestsOfTypeFiltered(
             worker.getCitizenData(),
             TypeToken.of(Tool.class),
             r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
@@ -888,7 +892,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         {
             if (openToolRequests.isEmpty() && completedToolRequests.isEmpty())
             {
-                final Tool request = new Tool(toolType, minimalLevel, getOwnBuilding().getMaxToolLevel() < minimalLevel ? minimalLevel : getOwnBuilding().getMaxToolLevel());
+                final Tool request = new Tool(toolType, minimalLevel, building.getMaxToolLevel() < minimalLevel ? minimalLevel : building.getMaxToolLevel());
                 worker.getCitizenData().createRequest(request);
             }
             delay = 0;
@@ -908,12 +912,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected void checkForToolorWeaponASync(@NotNull final IToolType toolType, final int minimalLevel, final int maximalLevel)
     {
         final ImmutableList<IRequest<? extends Tool>> openToolRequests =
-          getOwnBuilding().getOpenRequestsOfTypeFiltered(
+          building.getOpenRequestsOfTypeFiltered(
             worker.getCitizenData(),
             TypeToken.of(Tool.class),
             r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
         final ImmutableList<IRequest<? extends Tool>> completedToolRequests =
-          getOwnBuilding().getCompletedRequestsOfTypeFiltered(
+          building.getCompletedRequestsOfTypeFiltered(
             worker.getCitizenData(),
             TypeToken.of(Tool.class),
             r -> r.getRequest().getToolClass().equals(toolType) && r.getRequest().getMinLevel() >= minimalLevel);
@@ -933,7 +937,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     protected void cancelAsynchRequestForArmor(final IToolType armorType)
     {
         final List<IRequest<? extends Tool>> openRequests =
-          getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
+          building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TOOL, iRequest -> iRequest.getRequest().getToolClass() == armorType);
         for (final IRequest<?> token : openRequests)
         {
             worker.getCitizenColonyHandler().getColony().getRequestManager().updateRequestState(token.getId(), RequestState.CANCELLED);
@@ -948,7 +952,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private boolean hasOpenToolRequest(final IToolType key)
     {
-        return getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
+        return building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           iRequest -> iRequest.getRequest() instanceof Tool && ((Tool) iRequest.getRequest()).getToolClass() == key);
     }
 
@@ -983,11 +987,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     public boolean retrieveToolInHut(final IToolType toolType, final int minimalLevel)
     {
-        @Nullable final IBuilding building = getOwnBuilding();
-
         if (building != null)
         {
-            final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, getOwnBuilding().getMaxToolLevel());
+            final Predicate<ItemStack> toolPredicate = stack -> ItemStackUtils.hasToolLevel(stack, toolType, minimalLevel, building.getMaxToolLevel());
             for (final BlockPos pos : building.getContainers())
             {
                 final BlockEntity entity = world.getBlockEntity(pos);
@@ -1008,7 +1010,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
                 }
                 else if (entity instanceof ChestBlockEntity)
                 {
-                    if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, getOwnBuilding().getMaxToolLevel()))
+                    if (retrieveToolInTileEntity(building.getTileEntity(), toolType, minimalLevel, building.getMaxToolLevel()))
                     {
                         return true;
                     }
@@ -1025,7 +1027,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     protected IBuilding getBuildingToDump()
     {
-        return getOwnBuilding();
+        return building;
     }
 
     /**
@@ -1100,7 +1102,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         if (isPaused())
         {
             // perform a cleanUp before going to PAUSED
-            this.getOwnBuilding().onCleanUp(worker.getCitizenData());
+            this.building.onCleanUp(worker.getCitizenData());
             return PAUSED;
         }
         return IDLE;
@@ -1119,7 +1121,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        @Nullable final IBuilding buildingWorker = getOwnBuilding();
+        @Nullable final IBuilding buildingWorker = building;
 
         ItemStack stackToDump = worker.getInventoryCitizen().getStackInSlot(slotAt);
         final int totalSize = worker.getInventoryCitizen().getSlots();
@@ -1229,7 +1231,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     {
         final IToolType toolType = WorkerUtil.getBestToolForBlock(target, target.getDestroySpeed(world, pos));
         final int required = WorkerUtil.getCorrectHarvestLevelForBlock(target);
-        if (getOwnBuilding().getMaxToolLevel() < required && worker.getCitizenData() != null)
+        if (building.getMaxToolLevel() < required && worker.getCitizenData() != null)
         {
             worker.getCitizenData().triggerInteraction(new PosBasedInteraction(
               new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_BUILDING_LEVEL_TOO_LOW, new ItemStack(target.getBlock()).getHoverName(), pos.getX(), pos.getY(), pos.getZ()),
@@ -1485,9 +1487,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+        if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty()
-              && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack, count, minCount);
@@ -1567,18 +1569,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = count - invCount;
         final int updatedMinCount = Math.min(updatedCount, minCount);
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
+        if (InventoryUtils.hasBuildingEnoughElseCount(building, new ItemStorage(stack, true, matchNBT), updatedMinCount) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(), itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
+                building, itemStack -> ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, matchNBT),
                 updatedCount,
                 worker.getInventoryCitizen()))
         {
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+        if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty()
-            && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+            && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack)).isEmpty())
         {
             final Stack stackRequest = new Stack(stack, updatedCount, updatedMinCount, matchNBT);
@@ -1603,19 +1605,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int updatedCount = deliverable.getCount() - invCount;
         final int updatedMinCount = Math.min(updatedCount, deliverable.getMinimumCount());
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
+        if (InventoryUtils.hasBuildingEnoughElseCount(building,
           deliverable::matches, updatedMinCount) >= updatedMinCount &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(), deliverable::matches,
+                building, deliverable::matches,
                 updatedCount,
                 worker.getInventoryCitizen()))
         {
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+        if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().getClass().equals(deliverable.getClass())).isEmpty()
-              && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
+              && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.DELIVERABLE,
           (IRequest<? extends IDeliverable> r) -> r.getRequest().getClass().equals(deliverable.getClass())).isEmpty())
         {
             worker.getCitizenData().createRequestAsync(deliverable);
@@ -1637,19 +1639,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             return true;
         }
 
-        if (InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(),
+        if (InventoryUtils.hasBuildingEnoughElseCount(building,
           itemStack -> itemStack.is(tag), count) >= count &&
               InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(
-                getOwnBuilding(), itemStack -> itemStack.is(tag),
+                building, itemStack -> itemStack.is(tag),
                 count,
                 worker.getInventoryCitizen()))
         {
             return true;
         }
 
-        if (getOwnBuilding().getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
+        if (building.getOpenRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
           (IRequest<? extends RequestTag> r) -> r.getRequest().getTag().equals(tag)).isEmpty()
-            && getOwnBuilding().getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
+            && building.getCompletedRequestsOfTypeFiltered(worker.getCitizenData(), TypeConstants.TAG_REQUEST,
           (IRequest<? extends RequestTag> r) -> r.getRequest().getTag().equals(tag)).isEmpty())
         {
             final IDeliverable tagRequest = new RequestTag(tag, count);
@@ -1728,7 +1730,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
         final int percent = worker.getRandom().nextInt(ONE_HUNDRED_PERCENT);
         if (percent < VISIT_BUILDING_CHANCE)
         {
-            worker.getNavigation().tryMoveToBlockPos(getOwnBuilding().getPosition(), worker.getRandom().nextBoolean() ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D);
+            worker.getNavigation().tryMoveToBlockPos(building.getPosition(), worker.getRandom().nextBoolean() ? DEFAULT_SPEED * 1.5D : DEFAULT_SPEED * 2.2D);
         }
         else if (percent < WANDER_CHANCE)
         {
@@ -1755,8 +1757,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      */
     private IAIState restart()
     {
-        this.getOwnBuilding().onCleanUp(worker.getCitizenData());
-        this.getOwnBuilding().onRestart(worker.getCitizenData());
+        this.building.onCleanUp(worker.getCitizenData());
+        this.building.onRestart(worker.getCitizenData());
         setDelay(WALK_DELAY);
         worker.getCitizenData().restartDone();
         return INIT;

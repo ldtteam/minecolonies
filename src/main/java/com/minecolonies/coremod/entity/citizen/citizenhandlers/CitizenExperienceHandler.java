@@ -155,7 +155,7 @@ public class CitizenExperienceHandler implements ICitizenExperienceHandler
             return;
         }
 
-        final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 8 : 2;
+        final int growSize = counterMovedXp > 0 || citizen.getRandom().nextInt(100) < 20 ? 4 : 2;
 
         final AABB box = citizen.getBoundingBox().inflate(growSize);
         if (!WorldUtil.isAABBLoaded(citizen.level, box))

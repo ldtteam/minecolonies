@@ -288,7 +288,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             }
         }
 
-        return foundTarget && targetsUnderEffect <= parentAI.getOwnBuilding().getBuildingLevel() * 2;
+        return foundTarget && targetsUnderEffect <= parentAI.building.getBuildingLevel() * 2;
     }
 
     /**
