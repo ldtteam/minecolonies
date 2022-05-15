@@ -184,7 +184,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON))
-                .add(Items.FIREWORK_STAR);
+                .add(Items.FIREWORK_STAR)
+                .add(Items.GLISTERING_MELON_SLICE);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_COOK))
                 .addTag(ItemTags.FISHES)
@@ -224,7 +225,9 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.SEEDS)
                 .add(ModBlocks.blockCompostedDirt.asItem())
                 .add(Items.MELON)
-                .add(Items.COARSE_DIRT);
+                .add(Items.COARSE_DIRT)
+                .add(Items.FERMENTED_SPIDER_EYE)
+                .add(Items.GLISTERING_MELON_SLICE);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FARMER));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FLETCHER))
