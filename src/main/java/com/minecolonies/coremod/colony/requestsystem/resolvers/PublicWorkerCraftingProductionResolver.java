@@ -144,7 +144,7 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         if (requester instanceof IBuilding)
         {
             final IBuilding building = (IBuilding) requester;
-            return new TranslationTextComponent(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
+            return new TranslatableComponent(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
     }
