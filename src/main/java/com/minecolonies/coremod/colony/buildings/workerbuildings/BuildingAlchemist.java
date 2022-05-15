@@ -229,17 +229,6 @@ public class BuildingAlchemist extends AbstractBuilding
         {
             super(jobEntry);
         }
-
-        @Override
-        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
-        {
-            if (!super.isRecipeCompatible(recipe))
-            {
-                return false;
-            }
-
-            return recipe.getPrimaryOutput().getItem() == Items.POTION;
-        }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
