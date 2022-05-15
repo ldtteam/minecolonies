@@ -4,8 +4,6 @@ import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.util.ItemStackUtils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.AbstractFurnaceContainer;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
@@ -278,6 +276,18 @@ public class ContainerCraftingBrewingstand extends Container
     public void setInput(final ItemStack stack)
     {
         handleSlotClick(getSlot(0), stack);
+    }
+
+    /**
+     * Sets the container (input potion, intended mostly for crafting teaching).
+     *
+     * @param stack The container stack.
+     */
+    public void setContainer(final ItemStack stack)
+    {
+        handleSlotClick(getSlot(1), stack);
+        handleSlotClick(getSlot(2), stack);
+        handleSlotClick(getSlot(3), stack);
     }
 
     /**

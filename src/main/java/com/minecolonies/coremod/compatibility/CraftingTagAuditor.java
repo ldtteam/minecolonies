@@ -86,6 +86,14 @@ public class CraftingTagAuditor
         void write(@NotNull BufferedWriter writer) throws IOException;
     }
 
+    private static List<ItemStack> getAllItems()
+    {
+        final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
+        final List<ItemStack> items = new ArrayList<>(compatibility.getListOfAllItems());
+        items.sort(Comparator.comparing(stack -> stack.getItem().getRegistryName().toString()));
+        return items;
+    }
+
     private static void doTagAudit(@NotNull final BufferedWriter writer,
                                    @NotNull final MinecraftServer server) throws IOException
     {
@@ -93,8 +101,7 @@ public class CraftingTagAuditor
         writer.write(",tags...");
         writer.newLine();
 
-        final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
-        for (final ItemStack item : compatibility.getListOfAllItems())
+        for (final ItemStack item : getAllItems())
         {
             writeItemData(writer, item);
 
@@ -143,8 +150,7 @@ public class CraftingTagAuditor
         }
         writer.newLine();
 
-        final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
-        for (final ItemStack item : compatibility.getListOfAllItems())
+        for (final ItemStack item : getAllItems())
         {
             writeItemData(writer, item);
 
