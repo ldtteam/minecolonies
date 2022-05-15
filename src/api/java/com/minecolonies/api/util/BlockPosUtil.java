@@ -716,57 +716,57 @@ public final class BlockPosUtil
      */
     public static ITextComponent calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
     {
-        Optional<IFormattableTextComponent> component = Optional.empty();
+        IFormattableTextComponent component = null;
 
         if (pos.getZ() == building.getZ() && pos.getX() == building.getX())
         {
             if (pos.getY() > building.getY())
             {
-                component = Optional.of(new TranslationTextComponent(DIRECTION_UP));
+                component = new TranslationTextComponent(DIRECTION_UP);
             }
             else if (pos.getY() < building.getY())
             {
-                component = Optional.of(new TranslationTextComponent(DIRECTION_DOWN));
+                component = new TranslationTextComponent(DIRECTION_DOWN);
             }
         }
 
         if (pos.getZ() > building.getZ())
         {
-            component = Optional.of(new TranslationTextComponent(DIRECTION_SOUTH));
+            component = new TranslationTextComponent(DIRECTION_SOUTH);
         }
         else if (pos.getZ() < building.getZ())
         {
-            component = Optional.of(new TranslationTextComponent(DIRECTION_NORTH));
+            component = new TranslationTextComponent(DIRECTION_NORTH);
         }
 
         if (pos.getX() > building.getX())
         {
-            if (component.isPresent())
+            if (component != null)
             {
-                component.get()
+                component
                   .append("/")
                   .append(new TranslationTextComponent(DIRECTION_EAST));
             }
             else
             {
-                component = Optional.of(new TranslationTextComponent(DIRECTION_EAST));
+                component = new TranslationTextComponent(DIRECTION_EAST);
             }
         }
         else if (pos.getX() < building.getX())
         {
-            if (component.isPresent())
+            if (component != null)
             {
-                component.get()
+                component
                   .append("/")
                   .append(new TranslationTextComponent(DIRECTION_WEST));
             }
             else
             {
-                component = Optional.of(new TranslationTextComponent(DIRECTION_WEST));
+                component = new TranslationTextComponent(DIRECTION_WEST);
             }
         }
 
-        return component.orElse(new TranslationTextComponent(DIRECTION_NONE));
+        return component != null ? component : new TranslationTextComponent(DIRECTION_NONE);
     }
 
     /**
