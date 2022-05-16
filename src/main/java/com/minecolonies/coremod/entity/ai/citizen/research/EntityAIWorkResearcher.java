@@ -109,7 +109,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
 
         if (studyPos == null)
         {
-            studyPos = getOwnBuilding().getRandomBookShelf();
+            studyPos = building.getRandomBookShelf();
         }
 
         if (walkToBlock(studyPos))

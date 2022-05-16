@@ -367,8 +367,8 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         worker.setItemInHand(InteractionHand.MAIN_HAND,
           currentRecipeStorage.getCleanedInput().get(worker.getRandom().nextInt(currentRecipeStorage.getCleanedInput().size())).getItemStack().copy());
         worker.setItemInHand(InteractionHand.OFF_HAND, currentRecipeStorage.getPrimaryOutput().copy());
-        hitBlockWithToolInHand(getOwnBuilding().getPosition());
-        Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(worker.getMainHandItem(), getOwnBuilding().getPosition().above()), worker);
+        hitBlockWithToolInHand(building.getPosition());
+        Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(worker.getMainHandItem(), building.getPosition().above()), worker);
 
         currentRequest = job.getCurrentTask();
 
