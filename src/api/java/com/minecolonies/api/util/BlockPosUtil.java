@@ -94,14 +94,16 @@ public final class BlockPosUtil
 
     /**
      * Writes a chunk coordinate to a CompoundNBT, but only if not null.
+     *
      * @param compound Compound to write to.
      * @param name     Name of the tag.
      * @param value    Coordinates to write; if null, the tag is not written.
      * @return the resulting compound.
      */
     @NotNull
-    public static CompoundNBT writeOptional(@NotNull final CompoundNBT compound, @NotNull final String name,
-                                            @Nullable final BlockPos value)
+    public static CompoundNBT writeOptional(
+      @NotNull final CompoundNBT compound, @NotNull final String name,
+      @Nullable final BlockPos value)
     {
         if (value != null)
         {
@@ -181,6 +183,7 @@ public final class BlockPosUtil
 
     /**
      * Reads chunk coordinates from a CompoundNBT, but returns null if zero or absent.
+     *
      * @param compound Compound to read data from.
      * @param name     Tag name to read data from.
      * @return Chunk coordinates read from the compound, or null if it was zero or absent.
@@ -481,7 +484,8 @@ public final class BlockPosUtil
      * Returns a radial bounding box aligned to chunk boundaries.  Note that the Y coordinate
      * is also aligned to chunk-like sizes; this does not return full world height.  (It also
      * might return Y coordinates outside the world limits, so clip before using if needed.)
-     * @param pos A position inside the center chunk.
+     *
+     * @param pos         A position inside the center chunk.
      * @param chunkRadius 0 for one chunk, 1 for nine chunks, etc.
      * @return The specified bounding box.
      */
@@ -492,7 +496,7 @@ public final class BlockPosUtil
         final int y1 = pos.getY() & ~15;
         final int z1 = pos.getZ() & ~15;
         return new MutableBoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
-                x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
+          x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
     }
 
     /**
@@ -711,45 +715,64 @@ public final class BlockPosUtil
      */
     public static ITextComponent calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos pos)
     {
-        IFormattableTextComponent compoment = null;
+        IFormattableTextComponent component = null;
 
-        if (pos.getZ() > building.getZ() + 1 && pos.getX() > building.getX() + 1)
+        // When the X and Z coordinates are identical to the building its position
+        // then return a component saying that the position is either directly above or directly below
+        // the building
+        if (pos.getZ() == building.getZ() && pos.getX() == building.getX())
         {
-            compoment = new TranslationTextComponent(DIRECTION_SOUTH);
-        }
-        else if (pos.getZ() < building.getZ() - 1)
-        {
-            compoment = new TranslationTextComponent(DIRECTION_NORTH);
-        }
-
-        if (pos.getX() > building.getX() + 1)
-        {
-            if (compoment != null)
+            if (pos.getY() > building.getY())
             {
-                compoment
+                component = new TranslationTextComponent(DIRECTION_UP);
+            }
+            else if (pos.getY() < building.getY())
+            {
+                component = new TranslationTextComponent(DIRECTION_DOWN);
+            }
+        }
+
+        // If a building is greater or smaller in the Z direction, either return north or south
+        if (pos.getZ() > building.getZ())
+        {
+            component = new TranslationTextComponent(DIRECTION_SOUTH);
+        }
+        else if (pos.getZ() < building.getZ())
+        {
+            component = new TranslationTextComponent(DIRECTION_NORTH);
+        }
+
+        // If a building is greater or smaller in the X direction, either return west or east
+        // If previously already north or south was selected, create a compound direction (north/east etc)
+        if (pos.getX() > building.getX())
+        {
+            if (component != null)
+            {
+                component
                   .append("/")
                   .append(new TranslationTextComponent(DIRECTION_EAST));
             }
             else
             {
-                compoment = new TranslationTextComponent(DIRECTION_EAST);
+                component = new TranslationTextComponent(DIRECTION_EAST);
             }
         }
-        else if (pos.getX() < building.getX() - 1)
+        else if (pos.getX() < building.getX())
         {
-            if (compoment != null)
+            if (component != null)
             {
-                compoment
+                component
                   .append("/")
                   .append(new TranslationTextComponent(DIRECTION_WEST));
             }
             else
             {
-                compoment = new TranslationTextComponent(DIRECTION_WEST);
+                component = new TranslationTextComponent(DIRECTION_WEST);
             }
         }
 
-        return compoment;
+        // In case that none of the checks pass (XYZ fully identical to the building), return a component saying the positions are identical
+        return component != null ? component : new TranslationTextComponent(DIRECTION_NONE);
     }
 
     /**
@@ -878,9 +901,10 @@ public final class BlockPosUtil
 
     /**
      * Get the furthest corner from a pos.
+     *
      * @param startPos the startpos.
      * @param boxStart the box start.
-     * @param boxEnd the box end.
+     * @param boxEnd   the box end.
      * @return the furthest corner.
      */
     public static BlockPos getFurthestCorner(final BlockPos startPos, final BlockPos boxStart, final BlockPos boxEnd)
