@@ -165,7 +165,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return PICKUP;
         }
 
-        final IBuilding pickupBuilding = getOwnBuilding().getColony().getBuildingManager().getBuilding(pickupTarget);
+        final IBuilding pickupBuilding = building.getColony().getBuildingManager().getBuilding(pickupTarget);
         if (pickupBuilding == null)
         {
             job.finishRequest(false);
@@ -258,11 +258,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean cannotHoldMoreItems()
     {
-        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
+        if (building.getBuildingLevel() >= building.getMaxBuildingLevel())
         {
             return false;
         }
-        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D) + 1;
+        return InventoryUtils.getAmountOfStacksInItemHandler(worker.getInventoryCitizen()) >= Math.pow(2, building.getBuildingLevel() - 1.0D) + 1;
     }
 
     /**

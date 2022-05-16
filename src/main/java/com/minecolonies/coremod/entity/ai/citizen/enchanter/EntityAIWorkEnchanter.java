@@ -127,9 +127,9 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return craftState;
         }
 
-        if (getPrimarySkillLevel() < getOwnBuilding().getBuildingLevel() * MANA_REQ_PER_LEVEL)
+        if (getPrimarySkillLevel() < building.getBuildingLevel() * MANA_REQ_PER_LEVEL)
         {
-            final BuildingEnchanter enchanterBuilding = getOwnBuilding();
+            final BuildingEnchanter enchanterBuilding = building;
             final EnchanterStationsModule module = enchanterBuilding.getFirstModuleOccurance(EnchanterStationsModule.class);
             if (module.getBuildingsToGatherFrom().isEmpty())
             {
@@ -144,7 +144,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             final int booksInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_BOOK);
             if (booksInInv <= 0)
             {
-                final int numberOfBooksInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), IS_BOOK, 1);
+                final int numberOfBooksInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, IS_BOOK, 1);
                 if (numberOfBooksInBuilding > 0)
                 {
                     needsCurrently = new Tuple<>(IS_BOOK, 1);
@@ -166,7 +166,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         final int ancientTomesInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_ANCIENT_TOME);
         if (ancientTomesInInv <= 0)
         {
-            final int amountOfAncientTomes = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), IS_ANCIENT_TOME, 1);
+            final int amountOfAncientTomes = InventoryUtils.hasBuildingEnoughElseCount(building, IS_ANCIENT_TOME, 1);
             if (amountOfAncientTomes > 0)
             {
                 needsCurrently = new Tuple<>(IS_ANCIENT_TOME, 1);
@@ -193,14 +193,14 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     private IAIState enchant()
     {
         // this assumes that the only empty-output (pure loot table) recipes are for ancient tome -> enchanted book
-        currentRecipeStorage = getOwnBuilding().getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class).getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
+        currentRecipeStorage = building.getFirstModuleOccurance(BuildingEnchanter.CraftingModule.class).getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
         if (currentRecipeStorage == null)
         {
             progressTicks = 0;
             return DECIDE;
         }
 
-        if (progressTicks++ < MAX_ENCHANTMENT_TICKS / getOwnBuilding().getBuildingLevel())
+        if (progressTicks++ < MAX_ENCHANTMENT_TICKS / building.getBuildingLevel())
         {
             Network.getNetwork().sendToTrackingEntity(
               new CircleParticleEffectMessage(
@@ -236,7 +236,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
         final ICitizenData data = worker.getCitizenData();
         if (data != null)
         {
-            final List<ItemStack> loot = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), getOwnBuilding().getHandlers(), true);
+            final List<ItemStack> loot = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), building.getHandlers(), true);
             if (loot != null)
             {
                 final int enchantmentLevel = loot.stream()
@@ -282,12 +282,12 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
             return getState();
         }
 
-        final AbstractBuilding buildingWorker = getOwnBuilding().getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuilding.class);
+        final AbstractBuilding buildingWorker = building.getColony().getBuildingManager().getBuilding(job.getPosToDrainFrom(), AbstractBuilding.class);
 
         if (buildingWorker == null)
         {
             resetDraining();
-            getOwnBuilding().getFirstModuleOccurance(EnchanterStationsModule.class).removeWorker(job.getPosToDrainFrom());
+            building.getFirstModuleOccurance(EnchanterStationsModule.class).removeWorker(job.getPosToDrainFrom());
             return IDLE;
         }
 
@@ -405,7 +405,7 @@ public class EntityAIWorkEnchanter extends AbstractEntityAICrafting<JobEnchanter
     private void resetDraining()
     {
 
-        getOwnBuilding().getFirstModuleOccurance(EnchanterStationsModule.class).setAsGathered(job.getPosToDrainFrom());
+        building.getFirstModuleOccurance(EnchanterStationsModule.class).setAsGathered(job.getPosToDrainFrom());
         citizenToGatherFrom = null;
         job.setBuildingToDrainFrom(null);
         progressTicks = 0;

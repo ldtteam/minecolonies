@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands.commandTypes;
 
+import com.minecolonies.api.util.Log;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -49,12 +50,21 @@ public interface IMCCommand
      */
     default int checkPreConditionAndExecute(final CommandContext<CommandSourceStack> context)
     {
-        if (!checkPreCondition(context))
+        try
         {
-            return 0;
+            if (!checkPreCondition(context))
+            {
+                return 0;
+            }
+
+            return onExecute(context);
+        }
+        catch (Throwable e)
+        {
+            Log.getLogger().warn("Error during running command:", e);
         }
 
-        return onExecute(context);
+        return 0;
     }
 
     default ICommandCallbackBuilder<CommandSourceStack> executePreConditionCheck()

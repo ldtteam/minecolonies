@@ -91,6 +91,8 @@ public interface IGenericRecipe
 
     /**
      * Checks whether the given predicate matches any input item of this recipe.
+     * Explicitly failing the predicate is considered more important -- if there's
+     * some inputs that pass and others that fail then this will return false.
      *
      * @param predicate The predicate to test.
      * @return True if any input (including alternates) matches the predicate;

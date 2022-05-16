@@ -90,7 +90,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private IAIState decideOnTrainingType()
     {
-        if (getOwnBuilding().hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
+        if (building.hasCombatPartner(worker) || worker.getRandom().nextInt(ONE_HUNDRED_PERCENT) < PARTNER_TRAINING_CHANCE)
         {
             return FIND_TRAINING_PARTNER;
         }
@@ -100,7 +100,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
     @Override
     public IAIState decide()
     {
-        if (getOwnBuilding().hasCombatPartner(worker))
+        if (building.hasCombatPartner(worker))
         {
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
@@ -114,7 +114,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private IAIState findTrainingPartner()
     {
-        final BuildingCombatAcademy academy = getOwnBuilding();
+        final BuildingCombatAcademy academy = building;
         if (academy.hasCombatPartner(worker))
         {
             trainingPartner = academy.getCombatPartner(worker);
@@ -200,9 +200,9 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             worker.getNavigation().moveAwayFromXYZ(trainingPartner.blockPosition(), 4.0, 1.0, true);
             targetCounter++;
 
-            if (targetCounter > getOwnBuilding().getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
+            if (targetCounter > building.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
             {
-                getOwnBuilding().resetPartner(worker);
+                building.resetPartner(worker);
                 targetCounter = 0;
                 return START_WORKING;
             }
@@ -224,7 +224,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
      */
     private IAIState findDummyPartner()
     {
-        final BuildingCombatAcademy academy = getOwnBuilding();
+        final BuildingCombatAcademy academy = building;
         if (targetCounter >= academy.getBuildingLevel() * ACTIONS_PER_BUILDING_LEVEL)
         {
             worker.stopUsingItem();
@@ -232,7 +232,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return DECIDE;
         }
 
-        if (getOwnBuilding().hasCombatPartner(worker))
+        if (building.hasCombatPartner(worker))
         {
             return KNIGHT_TRAIN_WITH_PARTNER;
         }
@@ -313,7 +313,7 @@ public class EntityAICombatTraining extends AbstractEntityAITraining<JobCombatTr
             return false;
         }
 
-        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, getOwnBuilding().getMaxToolLevel());
+        final int weaponSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.SWORD, 0, building.getMaxToolLevel());
         if (weaponSlot != -1)
         {
             worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, weaponSlot);

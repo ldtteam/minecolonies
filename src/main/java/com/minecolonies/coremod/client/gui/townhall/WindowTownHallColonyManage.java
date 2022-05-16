@@ -13,22 +13,22 @@ import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.network.messages.client.CreateColonyMessage;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.TOWNHALL_COLONY_MANAGEMENT_GUI;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 /**
  * TownhallGUI for managing colony creation/deletion
@@ -191,9 +191,9 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
                         return cap.getOwningColony();
                     }
 
-                    if (!cap.getAllCloseColonies().isEmpty())
+                    if (!cap.getStaticClaimColonies().isEmpty())
                     {
-                        return cap.getAllCloseColonies().get(0);
+                        return cap.getStaticClaimColonies().get(0);
                     }
                 }
             }

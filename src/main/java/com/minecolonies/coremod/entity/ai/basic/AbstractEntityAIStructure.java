@@ -192,8 +192,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         final List<Tuple<Predicate<ItemStack>, Integer>> neededItemsList = new ArrayList<>();
 
-        final BuilderBucket neededRessourcesMap = getOwnBuilding().getRequiredResources();
-        final BuildingResourcesModule module = getOwnBuilding().getFirstModuleOccurance(BuildingResourcesModule.class);
+        final BuilderBucket neededRessourcesMap = building.getRequiredResources();
+        final BuildingResourcesModule module = building.getFirstModuleOccurance(BuildingResourcesModule.class);
         if (neededRessourcesMap != null)
         {
             for (final Map.Entry<String, Integer> entry : neededRessourcesMap.getResourceMap().entrySet())
@@ -209,8 +209,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (neededItemsList.size() <= pickUpCount || InventoryUtils.openSlotCount(worker.getInventoryCitizen()) <= MIN_OPEN_SLOTS)
         {
-            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
-            getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getNextBucket(), worker.getCitizenData(), false);
+            building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData(), true);
+            building.checkOrRequestBucket(building.getNextBucket(), worker.getCitizenData(), false);
             pickUpCount = 0;
             return START_WORKING;
         }
@@ -218,7 +218,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
         needsCurrently = neededItemsList.get(pickUpCount);
         pickUpCount++;
 
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding().getTileEntity(), needsCurrently.getA()))
+        if (InventoryUtils.hasItemInProvider(building.getTileEntity(), needsCurrently.getA()))
         {
             return GATHERING_REQUIRED_MATERIALS;
         }
@@ -446,7 +446,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                                                                                  || !handler.getWorld().getBlockState(pos).getFluidState().isEmpty()), false);
                 if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
                 {
-                    getOwnBuilding().checkOrRequestBucket(getOwnBuilding().getRequiredResources(), worker.getCitizenData(), true);
+                    building.checkOrRequestBucket(building.getRequiredResources(), worker.getCitizenData(), true);
                 }
                 break;
         }
@@ -458,10 +458,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.FINISHED)
         {
-            getOwnBuilding().nextStage();
+            building.nextStage();
             if (!structurePlacer.getB().nextStage())
             {
-                getOwnBuilding().setProgressPos(null, null);
+                building.setProgressPos(null, null);
                 return COMPLETE_BUILD;
             }
         }
@@ -571,7 +571,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
               this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
-            getOwnBuilding().setTotalStages(2);
+            building.setTotalStages(2);
         }
         else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
                    (entity instanceof TileEntityDecorationController && ((TileEntityDecorationController) entity).getTier() > 0))
@@ -581,7 +581,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
               this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-            getOwnBuilding().setTotalStages(5);
+            building.setTotalStages(5);
         }
         else
         {
@@ -590,7 +590,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
               name,
               new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
               this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-            getOwnBuilding().setTotalStages(6);
+            building.setTotalStages(6);
         }
 
         if (!structure.hasBluePrint())
@@ -651,7 +651,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
 
         for (final ItemStorage stack : requestedMap.keySet())
         {
-            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 ->  ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), stack1)) && !placer.getOwnBuilding().hasResourceInBucket(stack.getItemStack()))
+            if (!InventoryUtils.hasItemInItemHandler(placer.getInventory(), stack1 ->  ItemStackUtils.compareItemStacksIgnoreStackSize(stack.getItemStack(), stack1)) && !placer.building.hasResourceInBucket(stack.getItemStack()))
             {
                 return RECALC;
             }
@@ -704,13 +704,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 return FAIL;
             }
 
-            final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.getOwnBuilding()
+            final ImmutableList<IRequest<? extends IDeliverable>> requests = placer.building
                                                                                .getOpenRequestsOfTypeFiltered(
                                                                                  placer.getWorker().getCitizenData(),
                                                                                  TypeConstants.DELIVERABLE,
                                                                                  (IRequest<? extends IDeliverable> r) -> r.getRequest().matches(stack));
 
-            final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.getOwnBuilding()
+            final ImmutableList<IRequest<? extends IDeliverable>> completedRequests = placer.building
                                                                                         .getCompletedRequestsOfTypeFiltered(
                                                                                           placer.getWorker().getCitizenData(),
                                                                                           TypeConstants.DELIVERABLE,
@@ -931,7 +931,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     {
         workFrom = null;
         structurePlacer = null;
-        getOwnBuilding().setProgressPos(null, null);
+        building.setProgressPos(null, null);
     }
 
     /**
@@ -968,7 +968,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      */
     public BlockState getSolidSubstitution(final BlockPos ignored)
     {
-        return getOwnBuilding().getSetting(FILL_BLOCK).getValue().getBlock().defaultBlockState();
+        return building.getSetting(FILL_BLOCK).getValue().getBlock().defaultBlockState();
     }
 
     /**

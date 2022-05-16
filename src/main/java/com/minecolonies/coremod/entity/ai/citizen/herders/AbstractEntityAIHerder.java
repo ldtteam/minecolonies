@@ -119,8 +119,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     protected List<ItemStack> itemsNiceToHave()
     {
         final List<ItemStack> list = super.itemsNiceToHave();
-        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue() ||
-                getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue())
+        if (building.getSetting(AbstractBuilding.BREEDING).getValue() ||
+                building.getSetting(AbstractBuilding.FEEDING).getValue())
         {
             list.add(getRequestBreedingItems());
         }
@@ -223,7 +223,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean canBreedChildren()
     {
-        return getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue();
+        return building.getSetting(AbstractBuilding.BREEDING).getValue();
     }
 
     /**
@@ -232,7 +232,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     protected boolean canFeedChildren()
     {
-        return getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue() &&
+        return building.getSetting(AbstractBuilding.FEEDING).getValue() &&
                 getSecondarySkillLevel() >= LIMIT_TO_FEED_CHILDREN;
     }
 
@@ -266,8 +266,8 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             }
         }
 
-        if (getOwnBuilding().getSetting(AbstractBuilding.BREEDING).getValue() ||
-                getOwnBuilding().getSetting(AbstractBuilding.FEEDING).getValue())
+        if (building.getSetting(AbstractBuilding.BREEDING).getValue() ||
+                building.getSetting(AbstractBuilding.FEEDING).getValue())
         {
             final ItemStack breedingItem = getBreedingItem();
             checkIfRequestForItemExistOrCreateAsync(breedingItem, breedingItem.getMaxStackSize(), breedingItem.getCount());
@@ -436,7 +436,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public List<? extends T> searchForAnimals()
     {
-        return WorldUtil.getEntitiesWithinBuilding(world, getAnimalClass(), getOwnBuilding(), null);
+        return WorldUtil.getEntitiesWithinBuilding(world, getAnimalClass(), building, null);
     }
 
     public int getMaxAnimalMultiplier()
@@ -451,7 +451,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
      */
     public List<? extends ItemEntity> searchForItemsInArea()
     {
-        return WorldUtil.getEntitiesWithinBuilding(world, ItemEntity.class, getOwnBuilding(), null);
+        return WorldUtil.getEntitiesWithinBuilding(world, ItemEntity.class, building, null);
     }
 
     /**
@@ -520,7 +520,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
         }
 
         final int numOfAnimals = animals.size();
-        final int maxAnimals = getOwnBuilding().getBuildingLevel() * getMaxAnimalMultiplier();
+        final int maxAnimals = building.getBuildingLevel() * getMaxAnimalMultiplier();
 
         return numOfAnimals > maxAnimals;
     }
@@ -551,7 +551,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
     private int getToolSlot(final ToolType toolType)
     {
         final int slot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), toolType,
-          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+          TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
 
         if (slot == -1)
         {

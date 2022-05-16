@@ -8,15 +8,15 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +31,8 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
+import static com.minecolonies.api.util.constant.ColonyManagerConstants.*;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 
 public final class BackUpHelper
@@ -443,15 +443,14 @@ public final class BackUpHelper
                 final int id = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
                 if (id != colonyId)
                 {
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, loadedColony.getID(), loadedColony.getCenter());
                     for (final IBuilding building : loadedColony.getBuildingManager().getBuildings().values())
                     {
-                        ChunkDataHelper.claimColonyChunks(loadedColony,
+                        ChunkDataHelper.claimBuildingChunks(loadedColony,
                           true,
                           building.getPosition(),
                           building.getClaimRadius(building.getBuildingLevel()));
                     }
-
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, loadedColony.getID(), loadedColony.getCenter(), loadedColony.getDimension());
                 }
             }
         }

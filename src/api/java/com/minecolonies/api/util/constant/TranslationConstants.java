@@ -18,6 +18,12 @@ public final class TranslationConstants
     @NonNls
     public static final String DIRECTION_WEST                                                       = "com.minecolonies.coremod.gui.workerhuts.farmerhut.west";
     @NonNls
+    public static final String DIRECTION_UP                                                         = "com.minecolonies.coremod.gui.workerhuts.farmerhut.up";
+    @NonNls
+    public static final String DIRECTION_DOWN                                                       = "com.minecolonies.coremod.gui.workerhuts.farmerhut.down";
+    @NonNls
+    public static final String DIRECTION_NONE                                                       = "com.minecolonies.coremod.gui.workerhuts.farmerhut.none";
+    @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START                  = "entity.builder.messagebuildstart";
     @NonNls
     public static final String COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE               = "entity.builder.messagebuildcomplete";

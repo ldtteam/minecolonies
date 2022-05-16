@@ -62,7 +62,7 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
      */
     private IAIState study()
     {
-        final IColony colony = getOwnBuilding().getColony();
+        final IColony colony = building.getColony();
         final List<ILocalResearch> inProgress = colony.getResearchManager().getResearchTree().getResearchInProgress();
         if (!inProgress.isEmpty() && job.getCurrentMana() > 0)
         {
@@ -73,9 +73,19 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
                   .getResearch(research.getBranch(), research.getId())
                   .research(colony.getResearchManager().getResearchEffects(), colony.getResearchManager().getResearchTree()))
             {
-                getOwnBuilding().onSuccess(research);
+                building.onSuccess(research);
             }
             job.reduceCurrentMana();
+        }
+
+        if (studyPos == null)
+        {
+            studyPos = building.getRandomBookShelf();
+        }
+
+        if (walkToBlock(studyPos))
+        {
+            return getState();
         }
 
         worker.decreaseSaturationForContinuousAction();

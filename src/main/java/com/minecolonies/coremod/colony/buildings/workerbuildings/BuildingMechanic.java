@@ -3,13 +3,13 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.CraftingUtils;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractDOCraftingBuildingModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,10 +18,10 @@ import net.minecraft.world.level.block.HopperBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
-import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_MECHANIC;
+import static com.minecolonies.api.util.constant.TagConstants.*;
 
 /**
  * Class of the mechanic building.
@@ -109,11 +109,17 @@ public class BuildingMechanic extends AbstractBuilding
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return stack -> Optional.of(
-                       !ModTags.crafterIngredient.get(BuildingFletcher.FLETCHER).contains(stack.getItem())
-                    && !ModTags.crafterIngredient.get(BuildingSawmill.SAWMILL).contains(stack.getItem())
-                    && !ModTags.crafterIngredient.get(BuildingStonemason.STONEMASON).contains(stack.getItem())
-                    && !ModTags.crafterIngredient.get(BuildingGlassblower.GLASS_BLOWER).contains(stack.getItem()));
+            final OptionalPredicate<ItemStack> sawmill = CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
+                    .combine(stack -> Optional.of(ItemTags.PLANKS.contains(stack.getItem()) || ItemTags.LOGS.contains(stack.getItem())));
+
+            final Predicate<ItemStack> handled = sawmill
+                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER))
+                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON))
+                    .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER))
+                    .orElse(false);
+
+            // mechanic accepts every ingredient not otherwise handled
+            return OptionalPredicate.of(handled.negate());
         }
     }
 }
