@@ -29,10 +29,6 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
 import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -70,7 +66,6 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.USE_SHEARS;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
