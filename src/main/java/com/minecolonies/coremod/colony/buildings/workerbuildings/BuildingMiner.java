@@ -43,7 +43,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      * Setting for solid filling block.
      */
     public static final ISettingKey<BlockSetting> FILL_BLOCK = new SettingKey<>(BlockSetting.class, new ResourceLocation(Constants.MOD_ID, "fillblock"));
-    public static final ISettingKey<BoolSetting> USE_SHEARS = new SettingKey<>(BoolSetting.class, new ResourceLocation(Constants.MOD_ID, "useshears"));
 
     /**
      * The job description.

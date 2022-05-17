@@ -29,6 +29,7 @@ import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
@@ -69,6 +70,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.USE_SHEARS;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -1244,20 +1246,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
     }
 
     public boolean canUseShears() {
-        if (building instanceof BuildingBuilder)
-        {
-            return building.getSetting(BuildingBuilder.USE_SHEARS).getValue();
-        }
-        else if (building instanceof BuildingLumberjack)
-        {
-            return building.getSetting(BuildingLumberjack.USE_SHEARS).getValue();
-        }
-        else if (building instanceof BuildingMiner)
-        {
-            return building.getSetting(BuildingMiner.USE_SHEARS).getValue();
-        }
-
-        return false;
+        return building.getOptionalSetting(USE_SHEARS).orElse(new BoolSetting(false)).getValue();
     }
 
     /**
