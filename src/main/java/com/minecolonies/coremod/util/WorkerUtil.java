@@ -172,7 +172,7 @@ public final class WorkerUtil
     {
         final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
 
-        if (building.getOptionalSetting(USE_SHEARS).orElse(new BoolSetting(false)).getValue() && state.getBlock() instanceof IForgeShearable)
+        if (building.getOptionalSetting(USE_SHEARS).orElse(new BoolSetting(true)).getValue() && state.getBlock() instanceof IForgeShearable)
         {
             return ToolType.SHEARS;
         }
