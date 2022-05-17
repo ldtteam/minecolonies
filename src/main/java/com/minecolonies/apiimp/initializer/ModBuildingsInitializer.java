@@ -126,7 +126,8 @@ public final class ModBuildingsInitializer
                                  .addBuildingModuleProducer(() -> new SettingsModule()
                                                                     .with(BuildingBuilder.MODE, new StringSetting(BuildingBuilder.AUTO_SETTING, BuildingBuilder.MANUAL_SETTING))
                                                                     .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
-                                                                    .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting()), () -> SettingsModuleView::new)
+                                                                    .with(BuildingBuilder.BUILDING_MODE, new BuilderModeSetting())
+                                                                    .with(BuildingBuilder.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new)
                                  .addBuildingModuleProducer(() -> new SimpleCraftingModule(ModJobs.builder), () -> CraftingModuleView::new)
                                  .addBuildingModuleViewProducer(() -> WorkOrderListModuleView::new)
                                  .addBuildingModuleProducer(BuildingResourcesModule::new, () -> BuildingResourcesModuleView::new)
@@ -297,7 +298,8 @@ public final class ModBuildingsInitializer
                                                                        .with(BuildingLumberjack.REPLANT, new BoolSetting(true))
                                                                        .with(BuildingLumberjack.RESTRICT, new BoolSetting(false))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
-                                                                       .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting()), () -> SettingsModuleView::new)
+                                                                       .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting())
+                                                                       .with(BuildingLumberjack.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new)
                                     .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterLumberjack))
                                     .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                     .createBuildingEntry();
@@ -315,7 +317,8 @@ public final class ModBuildingsInitializer
                                .addBuildingModuleProducer(MinerLevelManagementModule::new, () -> MinerLevelManagementModuleView::new)
                                .addBuildingModuleProducer(() -> new SettingsModule()
                                                                   .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
-                                                                  .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE)), () -> SettingsModuleView::new)
+                                                                  .with(BuildingMiner.FILL_BLOCK, new BlockSetting((BlockItem) Items.COBBLESTONE))
+                                                                  .with(BuildingMiner.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new)
                                .addBuildingModuleViewProducer(() -> MinerGuardAssignModuleView::new)
                                .createBuildingEntry();
 

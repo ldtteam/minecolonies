@@ -1992,6 +1992,7 @@
   "com.minecolonies.coremod.setting.minecolonies:milking": "Milking:",
   "com.minecolonies.coremod.setting.minecolonies:dyeing": "Dyeing:",
   "com.minecolonies.coremod.setting.minecolonies:shearing": "Shearing:",
+  "com.minecolonies.coremod.setting.minecolonies:useshears": "Use Shears:",
   "com.minecolonies.coremod.gui.workerhuts.switch": "Switch",
   "com.minecolonies.coremod.gui.workerhuts.tools": "Selection Tools",
   "com.minecolonies.coremod.gui.tooldesc.scepterbeekeeper": "Right-click a beehive with the tool to add it to the hut. Right-click any other block to discard the tool.",

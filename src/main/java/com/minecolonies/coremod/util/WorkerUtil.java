@@ -165,11 +165,11 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final boolean canUseShears)
     {
         final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
 
-        if (state.getBlock() instanceof IForgeShearable)
+        if (canUseShears && state.getBlock() instanceof IForgeShearable)
         {
             return ToolType.SHEARS;
         }
