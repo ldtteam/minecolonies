@@ -10,6 +10,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -41,6 +43,7 @@ import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
 import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
 import static com.minecolonies.api.util.constant.TranslationConstants.MINER_MINE_NODE;
 import static com.minecolonies.api.util.constant.TranslationConstants.MINER_NODES;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.USE_SHEARS;
 
 /**
  * Utility methods for BlockPos.
@@ -165,11 +168,11 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final boolean canUseShears)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building)
     {
         final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
 
-        if (canUseShears && state.getBlock() instanceof IForgeShearable)
+        if (building.getOptionalSetting(USE_SHEARS).orElse(new BoolSetting(false)).getValue() && state.getBlock() instanceof IForgeShearable)
         {
             return ToolType.SHEARS;
         }
