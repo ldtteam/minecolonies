@@ -37,6 +37,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.UUIDCodec;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +81,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";
     private static final String NBT_MINE_POS       = "minePos";
+    private static final String NBT_PLAYER_UUID    = "playeruuid";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -228,6 +230,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             minePos = NBTUtil.readBlockPos(compound.getCompound(NBT_MINE_POS));
         }
+
+        if (compound.contains(NBT_PLAYER_UUID))
+        {
+            followPlayerUUID = UUIDCodec.uuidFromIntArray(compound.getIntArray(NBT_PLAYER_UUID));
+        }
+
     }
 
     @Override
@@ -248,6 +256,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         if (minePos != null)
         {
             compound.put(NBT_MINE_POS, NBTUtil.writeBlockPos(minePos));
+        }
+
+        if (followPlayerUUID != null)
+        {
+            compound.putIntArray(NBT_PLAYER_UUID, UUIDCodec.uuidToIntArray(followPlayerUUID));
         }
 
         return compound;
