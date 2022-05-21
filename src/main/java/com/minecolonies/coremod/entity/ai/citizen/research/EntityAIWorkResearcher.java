@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUnivers
 import com.minecolonies.coremod.colony.jobs.JobResearch;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -90,7 +91,8 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         worker.decreaseSaturationForContinuousAction();
         worker.getCitizenExperienceHandler().addExperience(XP_PER_STUDYPOS);
         studyPos = null;
-        return getState();
+        worker.queueSound(SoundEvents.BOOK_PAGE_TURN, worker.blockPosition().above(), 80, 15, 0.25f, 1.5f);
+        return START_WORKING;
     }
 
     /**
@@ -104,6 +106,17 @@ public class EntityAIWorkResearcher extends AbstractEntityAIInteract<JobResearch
         {
             return getState();
         }
+
+        if (studyPos == null)
+        {
+            studyPos = building.getRandomBookShelf();
+        }
+
+        if (walkToBlock(studyPos))
+        {
+            return getState();
+        }
+
         return STUDY;
     }
 }

@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.cook.EntityAIWorkCookAssistant;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -40,5 +43,15 @@ public class JobCookAssistant extends AbstractJobCrafter<EntityAIWorkCookAssista
     public EntityAIWorkCookAssistant generateAI()
     {
         return new EntityAIWorkCookAssistant(this);
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        worker.queueSound(SoundEvents.FIRE_AMBIENT, blockPos, 5, 0);
+        if (worker.getRandom().nextBoolean())
+        {
+            worker.queueSound(SoundEvents.COPPER_HIT, blockPos, 5, 0);
+        }
     }
 }

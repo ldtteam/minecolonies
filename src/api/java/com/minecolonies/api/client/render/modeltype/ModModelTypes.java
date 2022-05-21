@@ -9,10 +9,10 @@ public final class ModModelTypes
     public static final ResourceLocation CITIZEN_ID        = new ResourceLocation(Constants.MOD_ID, "citizen");
     public static final ResourceLocation NOBLE_ID          = new ResourceLocation(Constants.MOD_ID, "noble");
     public static final ResourceLocation ARISTOCRAT_ID     = new ResourceLocation(Constants.MOD_ID, "aristocrat");
-    public static final ResourceLocation BUILDER_ID        = new ResourceLocation(Constants.MOD_ID, "builder");
-    public static final ResourceLocation DELIVERYMAN_ID    = new ResourceLocation(Constants.MOD_ID, "deliveryman");
-    public static final ResourceLocation MINER_ID          = new ResourceLocation(Constants.MOD_ID, "miner");
-    public static final ResourceLocation LUMBERJACK_ID     = new ResourceLocation(Constants.MOD_ID, "lumberjack");
+    public static final ResourceLocation BUILDER_ID = new ResourceLocation(Constants.MOD_ID, "builder");
+    public static final ResourceLocation COURIER_ID = new ResourceLocation(Constants.MOD_ID, "courier");
+    public static final ResourceLocation MINER_ID   = new ResourceLocation(Constants.MOD_ID, "miner");
+    public static final ResourceLocation LUMBERJACK_ID     = new ResourceLocation(Constants.MOD_ID, "forester");
     public static final ResourceLocation FARMER_ID         = new ResourceLocation(Constants.MOD_ID, "farmer");
     public static final ResourceLocation FISHERMAN_ID      = new ResourceLocation(Constants.MOD_ID, "fisherman");
     public static final ResourceLocation UNDERTAKER_ID     = new ResourceLocation(Constants.MOD_ID, "undertaker");
@@ -43,6 +43,10 @@ public final class ModModelTypes
     public static final ResourceLocation CUSTOM_ID         = new ResourceLocation(Constants.MOD_ID, "custom");
     public static final ResourceLocation NETHERWORKER_ID   = new ResourceLocation(Constants.MOD_ID, "netherworker");
     public static final ResourceLocation DRUID_ID          = new ResourceLocation(Constants.MOD_ID, "druid");
+    public static final ResourceLocation ENCHANTER_ID      = new ResourceLocation(Constants.MOD_ID, "enchanter");
+    public static final ResourceLocation FLORIST_ID        = new ResourceLocation(Constants.MOD_ID, "florist");
+    public static final ResourceLocation KNIGHT_ID         = new ResourceLocation(Constants.MOD_ID, "knight");
+    public static final ResourceLocation CARPENTER_ID      = new ResourceLocation(Constants.MOD_ID, "carpenter");
     public static final ResourceLocation ALCHEMIST_ID      = new ResourceLocation(Constants.MOD_ID, "alchemist");
 
     public static IModelType SETTLER;
@@ -83,6 +87,10 @@ public final class ModModelTypes
     public static IModelType CUSTOM;
     public static IModelType NETHERWORKER;
     public static IModelType DRUID;
+    public static IModelType FLORIST;
+    public static IModelType ENCHANTER;
+    public static IModelType KNIGHT;
+    public static IModelType CARPENTER;
     public static IModelType ALCHEMIST;
 
     private ModModelTypes()

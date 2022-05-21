@@ -3,10 +3,13 @@ package com.minecolonies.coremod.entity.ai.citizen.herders;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingShepherd;
 import com.minecolonies.coremod.colony.jobs.JobShepherd;
+import com.minecolonies.coremod.network.messages.client.LocalizedParticleEffectMessage;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -89,7 +92,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
     @Override
     public IAIState decideWhatToDo()
     {
-
         final IAIState result = super.decideWhatToDo();
 
         final List<Sheep> animals = new ArrayList<>(searchForAnimals());
@@ -99,6 +101,8 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
         {
             return SHEPHERD_SHEAR;
         }
+
+        worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
         return result;
     }
@@ -161,8 +165,9 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
                     items.add(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())));
                 }
             }
-            sheep.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
 
+            sheep.playSound(SoundEvents.SHEEP_SHEAR, 1.0F, 1.0F);
+            Network.getNetwork().sendToTrackingEntity(new LocalizedParticleEffectMessage(new ItemStack(ITEM_BY_DYE.get(sheep.getColor())), sheep.getOnPos().above()), worker);
             dyeSheepChance(sheep);
 
             worker.getCitizenItemHandler().damageItemInHand(InteractionHand.MAIN_HAND, 1);

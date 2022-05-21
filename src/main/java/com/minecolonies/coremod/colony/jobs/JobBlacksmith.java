@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.blacksmith.EntityAIWorkBlacksmith;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -39,5 +42,21 @@ public class JobBlacksmith extends AbstractJobCrafter<EntityAIWorkBlacksmith, Jo
     public EntityAIWorkBlacksmith generateAI()
     {
         return new EntityAIWorkBlacksmith(this);
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        if (worker.getRandom().nextInt(8) < 1)
+        {
+            if (worker.getRandom().nextBoolean())
+            {
+                worker.queueSound(SoundEvents.ANVIL_USE, blockPos, 80, 0);
+            }
+            else
+            {
+                worker.queueSound(SoundEvents.SMITHING_TABLE_USE, blockPos, 20, 3);
+            }
+        }
     }
 }

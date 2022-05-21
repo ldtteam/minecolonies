@@ -9,9 +9,11 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
 import com.minecolonies.coremod.colony.jobs.JobStudent;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,12 +21,23 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 /**
  * The Entity AI study class.
  */
 public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLibrary>
 {
+    /**
+     * Render the book.
+     */
+    public static final String RENDER_META_BOOK = "book";
+
+    /**
+     * Render the book.
+     */
+    public static final String RENDER_META_STUDYING = "study";
+
     /**
      * Delay for each subject study.
      */
@@ -54,6 +67,21 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
           new AITarget(STUDY, this::study, STANDARD_DELAY)
         );
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.getItem() == Items.BOOK || itemStack.getItem() == Items.PAPER))
+        {
+            renderMeta += RENDER_META_BOOK;
+        }
+        if (worker.getNavigation().isDone())
+        {
+            renderMeta += RENDER_META_STUDYING;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override
@@ -137,6 +165,8 @@ public class EntityAIStudy extends AbstractEntityAISkill<JobStudent, BuildingLib
 
         worker.decreaseSaturationForAction();
         studyPos = null;
+        worker.queueSound(SoundEvents.BOOK_PAGE_TURN, worker.blockPosition().above(), 80, 15, 0.25f, 1.5f);
+
         setDelay(STUDY_DELAY);
         return getState();
     }

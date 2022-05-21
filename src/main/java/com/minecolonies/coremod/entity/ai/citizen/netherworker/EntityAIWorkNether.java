@@ -44,6 +44,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Score;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +58,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker.FOOD_EXCLUSION_LIST;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_SHOVEL;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
 {
@@ -118,6 +120,27 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_IRON, LEATHER_BUILDING_LEVEL_RANGE, IRON_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_CHAIN, LEATHER_BUILDING_LEVEL_RANGE, CHAIN_BUILDING_LEVEL_RANGE));
         itemsNeeded.add(GuardGearBuilder.buildGearForLevel(ARMOR_LEVEL_LEATHER, ARMOR_LEVEL_GOLD, LEATHER_BUILDING_LEVEL_RANGE, GOLD_BUILDING_LEVEL_RANGE));
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        StringBuilder renderData = new StringBuilder(getState() == CRAFT
+                                                       || getState() == NETHER_LEAVE
+                                                       || getState() == NETHER_RETURN
+                                                       || getState() == NETHER_OPENPORTAL
+                                                       || getState() == NETHER_CLOSEPORTAL? RENDER_META_WORKING : "");
+
+        for (int slot = 0; slot < worker.getInventoryCitizen().getSlots(); slot++)
+        {
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+            if (stack.canPerformAction(ToolActions.SHOVEL_DIG) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
+            {
+                renderData.append(RENDER_META_SHOVEL);
+            }
+        }
+
+        worker.setRenderMetadata(renderData.toString());
     }
 
     @Override

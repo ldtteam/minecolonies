@@ -70,6 +70,17 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata(getState() == CRAFT
+                                   || getState() == PLANTATION_FARM
+                                   || getState() == PLANTATION_PLANT
+                                   || getState() == PLANTATION_CHECK_SOIL
+                                   || getState() == PLANTATION_MOVE_TO_SOIL
+                                   || getState() == PLANTATION_CLEAR_OBSTACLE ? RENDER_META_WORKING : "");
+    }
+
     /**
      * Plant something for the current state.
      *
