@@ -460,7 +460,7 @@ public final class TranslationConstants
     @NonNls
     public static final String LABEL_CITIZEN_JOB                                                    = "com.minecolonies.coremod.gui.citizen.job.label";
     @NonNls
-    public static final String DESCRIPTION_CITIZEN_JOB                                              = "com.minecolonies.coremod.gui.citizen.job.label.desc";
+    public static final String DESCRIPTION_CITIZEN_JOB                                              = "com.minecolonies.coremod.gui.citizen.job.desc";
     @NonNls
     public static final String WARNING_MAXIMUM_NUMBER_RECIPES                                       = "com.minecolonies.coremod.gui.recipe.full";
     @NonNls
