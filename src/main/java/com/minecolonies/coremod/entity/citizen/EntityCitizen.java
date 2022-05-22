@@ -871,7 +871,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void onLivingSoundUpdate()
     {
-        if (WorldUtil.isDayTime(level))
+        if (WorldUtil.isDayTime(level) && !isSilent())
         {
             SoundUtils.playRandomSound(level, this.blockPosition(), citizenData);
         }

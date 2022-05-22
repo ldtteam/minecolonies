@@ -43,6 +43,7 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
@@ -142,7 +143,9 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
     private void goToVault()
     {
+        worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
         worker.setInvisible(true);
+        worker.setSilent(true);
         BlockPos vaultPos = building.getVaultLocation();
         if (vaultPos != null)
         {
@@ -151,7 +154,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         }
     }
 
-    private void returnFromVault()
+    private void returnFromVault(final boolean force)
     {
         BlockPos vaultPos = building.getVaultLocation();
         BlockPos portalPos = building.getPortalLocation();
@@ -159,8 +162,13 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         {
             worker.moveTo(portalPos.getX() + 0.5, portalPos.getY(), portalPos.getZ() + 0.5, worker.getRotationYaw(), worker.getRotationPitch());
             worker.getNavigation().stop();
+            worker.setSilent(false);
+            worker.playSound(SoundEvents.PORTAL_TRIGGER, worker.getRandom().nextFloat() * 0.5F + 0.25F, 0.25F);
+
+            if (!force) return;
         }
         worker.setInvisible(false);
+        worker.setSilent(false);
     }
 
     @Override
@@ -177,7 +185,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         if (worker.isInvisible())
         {
-            returnFromVault();
+            returnFromVault(true);
         }
 
         IAIState crafterState = super.decide();
@@ -297,7 +305,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         if (currentRecipeStorage == null)
         {
-            job.setInNether(true);
+            job.setInNether(false);
             worker.getCitizenData().setIdleAtJob(true);
             return IDLE;
         }
@@ -333,10 +341,14 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 }
                 goToVault();
                 building.recordTrip();
+                job.setInNether(true);
 
                 List<ItemStack> result = currentRecipeStorage.fullfillRecipeAndCopy(getLootContext(), ImmutableList.of(worker.getItemHandlerCitizen()), false);
                 if (result != null)
                 {
+                    // by default all the adventure tokens are at the end (due to loot tables); space them better
+                    result = new ArrayList<>(result);
+                    Collections.shuffle(result, worker.getRandom());
                     job.addCraftedResultsList(result);
                 }
 
@@ -617,20 +629,17 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState returnFromNether()
     {
-
-        if (currentRecipeStorage == null)
-        {
-            if (worker.isInvisible())
-            {
-                returnFromVault();
-            }
-            return IDLE;
-        }
-
         if (worker.isInvisible())
         {
-            returnFromVault();
+            // we deliberately let this loop twice to give the worker time to teleport before becoming visible again
+            returnFromVault(false);
             return getState();
+        }
+
+        //Shutdown Portal
+        if (building.shallClosePortalOnReturn() && world.getBlockState(building.getPortalLocation()).is(Blocks.NETHER_PORTAL))
+        {
+            return NETHER_CLOSEPORTAL;
         }
 
         if (walkToBuilding())
@@ -640,12 +649,6 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         worker.getCitizenData().setIdleAtJob(true);
         job.setInNether(false);
-
-        //Shutdown Portal
-        if (building.shallClosePortalOnReturn())
-        {
-            return NETHER_CLOSEPORTAL;
-        }
 
         currentRecipeStorage = null;
         return INVENTORY_FULL;
@@ -660,6 +663,11 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         final BlockPos portal = building.getPortalLocation();
         if (portal != null && currentRecipeStorage != null)
         {
+            if (walkToBlock(portal, 1))
+            {
+                return getState();
+            }
+
             final BlockState block = world.getBlockState(portal);
             final Optional<PortalSize> ps = PortalSize.findPortalShape(world, portal, p -> p.isValid(), Direction.Axis.X);
 
@@ -684,12 +692,23 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
      */
     protected IAIState closePortal()
     {
-        final BlockState block = world.getBlockState(building.getPortalLocation());
+        final BlockPos portal = building.getPortalLocation();
+        final BlockState block = world.getBlockState(portal);
 
         if (block.is(Blocks.NETHER_PORTAL))
         {
+            if (walkToBlock(portal, 1))
+            {
+                return getState();
+            }
+
             useFlintAndSteel();
             world.setBlockAndUpdate(building.getPortalLocation(), Blocks.AIR.defaultBlockState());
+        }
+
+        if (job.isInNether())
+        {
+            return NETHER_RETURN;
         }
 
         currentRecipeStorage = null;
