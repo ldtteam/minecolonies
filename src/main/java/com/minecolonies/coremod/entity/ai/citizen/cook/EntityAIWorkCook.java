@@ -133,7 +133,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
     protected boolean isSmeltable(final ItemStack stack)
     {
         //Only return true if the item isn't queued for a recipe. 
-        if(!getOwnBuilding().getIsCooking() )
+        if(!getOwnBuilding().getIsCooking())
         {
             return ItemStackUtils.ISCOOKABLE.test(stack) && !isItemStackForAssistant(stack)
                      && !getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).isItemInList(new ItemStorage(MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack)));
@@ -148,7 +148,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             return true;
         }
-        return InventoryUtils.getCountFromBuilding(getOwnBuilding(), ItemStackUtils.CAN_EAT.and(stack -> stack.getItem().getFoodProperties().getNutrition() >= getOwnBuilding().getBuildingLevel() - 1)) > Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
+        final int buildingLimit = Math.max(1, getOwnBuilding().getBuildingLevel() * getOwnBuilding().getBuildingLevel()) * SLOT_PER_LINE;
+        return InventoryUtils.getCountFromBuildingWithLimit(getOwnBuilding(), ItemStackUtils.CAN_EAT.and(stack -> stack.getItem().getFoodProperties().getNutrition() >= getOwnBuilding().getBuildingLevel() - 1), stack -> stack.getMaxStackSize() * 6) > buildingLimit;
     }
 
     @Override
@@ -371,7 +372,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final List<ItemStorage> blockedItems = new ArrayList<>(getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList());
         for (final Map.Entry<ItemStorage, Integer> content: getOwnBuilding().getTileEntity().getAllContent().entrySet())
         {
-            if (content.getValue() > content.getKey().getItem().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
+            if (content.getValue() > content.getKey().getItemStack().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
             {
                 blockedItems.add(content.getKey());
             }

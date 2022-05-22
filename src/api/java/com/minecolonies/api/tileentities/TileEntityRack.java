@@ -201,14 +201,15 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     @Override
     public int getItemCount(final Predicate<ItemStack> predicate)
     {
+        int matched = 0;
         for (final Map.Entry<ItemStorage, Integer> entry : content.entrySet())
         {
             if (predicate.test(entry.getKey().getItemStack()))
             {
-                return entry.getValue();
+                matched += entry.getValue();
             }
         }
-        return 0;
+        return matched;
     }
 
     @Override
