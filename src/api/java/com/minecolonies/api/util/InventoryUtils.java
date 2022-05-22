@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -886,11 +888,48 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getItemCount(predicate);
                 }
-                else if (entity instanceof ChestTileEntity)
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     * Only count up to "limit" of a particular item.
+     *
+     * @param provider  building to check in.
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuildingWithLimit(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate, final Function<ItemStack, Integer> limit)
+    {
+        final World world = provider.getColony().getWorld();
+
+        final Map<ItemStorage, Integer> allMatching = new HashMap<>();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
                 {
-                    totalCount += getItemCountInProvider(entity, predicate);
+                    for (final Map.Entry<ItemStorage, Integer> entry : ((TileEntityRack) entity).getAllContent().entrySet())
+                    {
+                        if (predicate.test(entry.getKey().getItemStack()))
+                        {
+                            allMatching.put(entry.getKey(), allMatching.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                        }
+                    }
                 }
             }
+        }
+
+        int totalCount = 0;
+        for (final Map.Entry<ItemStorage, Integer> entry : allMatching.entrySet())
+        {
+            totalCount += Math.min(limit.apply(entry.getKey().getItemStack()), entry.getValue());
         }
 
         return totalCount;
