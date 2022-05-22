@@ -28,6 +28,7 @@ import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.DeliveryRequest;
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests.PickupRequest;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -40,7 +41,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -345,6 +349,21 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         boolean success = true;
         boolean extracted = false;
         final IItemHandler workerInventory = worker.getInventoryCitizen();
+        final List<ItemStack> itemsToDeliver = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask).stream().map(r -> r.getRequest().getStack()).collect(Collectors.toList());
+        final Map<Item, Integer> itemsCount = new HashMap<>();
+
+        for (ItemStack itemStack : itemsToDeliver)
+        {
+            if (itemsCount.containsKey(itemStack.getItem()))
+            {
+                itemsCount.put(itemStack.getItem(), itemsCount.get(itemStack.getItem()) + itemStack.getCount());
+            }
+            else
+            {
+                itemsCount.put(itemStack.getItem(), itemStack.getCount());
+            }
+        }
+
         for (int i = 0; i < workerInventory.getSlots(); i++)
         {
             if (workerInventory.getStackInSlot(i).isEmpty())
@@ -352,7 +371,22 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 continue;
             }
 
-            final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
+            if (!itemsCount.containsKey(workerInventory.getStackInSlot(i).getItem()))
+            {
+                continue;
+            }
+
+            final ItemStack stack = workerInventory.extractItem(i, itemsCount.get(workerInventory.getStackInSlot(i).getItem()), false);
+
+            if (itemsCount.get(stack.getItem()) - stack.getCount() == 0)
+            {
+                itemsCount.remove(stack.getItem());
+            }
+            else
+            {
+                itemsCount.put(stack.getItem(), itemsCount.get(stack.getItem()) - stack.getCount());
+            }
+
             if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
