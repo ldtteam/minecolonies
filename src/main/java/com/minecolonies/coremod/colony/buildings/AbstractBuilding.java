@@ -37,6 +37,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
@@ -110,6 +111,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * Feeding setting.
      */
     public static final ISettingKey<BoolSetting> FEEDING = new SettingKey<>(BoolSetting.class, new ResourceLocation(MOD_ID, "feeding"));
+
+    public static final ISettingKey<BoolSetting> USE_SHEARS = new SettingKey<>(BoolSetting.class, new ResourceLocation(Constants.MOD_ID, "useshears"));
 
     public static final int MAX_BUILD_HEIGHT = 256;
     public static final int MIN_BUILD_HEIGHT = 1;

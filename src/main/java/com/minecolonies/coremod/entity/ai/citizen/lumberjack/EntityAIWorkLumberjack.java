@@ -10,7 +10,9 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -279,7 +281,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState prepareForWoodcutting()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(ToolType.SHEARS))
+        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(building.getOptionalSetting(AbstractBuilding.USE_SHEARS).orElse(new BoolSetting(true)).getValue() ? ToolType.SHEARS : ToolType.HOE))
         {
             // Reset everything, maybe there are new crafting requests
             return START_WORKING;
