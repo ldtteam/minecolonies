@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
@@ -15,6 +16,7 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
+import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingProductionResolver;
@@ -138,6 +140,11 @@ public class PublicWorkerCraftingProductionResolver extends AbstractCraftingProd
         {
             final IBuildingView bwv = (IBuildingView) requester;
             return new TranslatableComponent(bwv.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
+        }
+        if (requester instanceof IBuilding)
+        {
+            final IBuilding building = (IBuilding) requester;
+            return new TranslatableComponent(building.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry()).getJobDisplayName());
         }
         return super.getRequesterDisplayName(manager, request);
     }

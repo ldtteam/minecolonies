@@ -131,14 +131,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     private IAIState decide()
     {
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if (getOwnBuilding().getPlantGround().isEmpty())
+        if (building.getPlantGround().isEmpty())
         {
             worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_PLANT_GROUND_FLORIST), ChatPriority.BLOCKING));
             return IDLE;
         }
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        final long distance = BlockPosUtil.getDistance2D(worker.blockPosition(), getOwnBuilding().getPosition());
+        final long distance = BlockPosUtil.getDistance2D(worker.blockPosition(), building.getPosition());
         if (distance > MAX_DISTANCE && walkToBuilding())
         {
             return DECIDE;
@@ -147,7 +147,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         final int amountOfCompostInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST);
         if (amountOfCompostInInv <= 0)
         {
-            final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(getOwnBuilding(), IS_COMPOST, 1);
+            final int amountOfCompostInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, IS_COMPOST, 1);
             if (amountOfCompostInBuilding > 0)
             {
                 needsCurrently = new Tuple<>(IS_COMPOST, STACKSIZE);
@@ -167,7 +167,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
 
         if (amountOfCompostInInv <= 0)
         {
-            if (!isThereCompostedLand(getOwnBuilding(), world))
+            if (!isThereCompostedLand(building, world))
             {
                 worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_COMPOST), ChatPriority.BLOCKING));
                 return START_WORKING;
@@ -203,12 +203,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
         final BlockEntity entity = world.getBlockEntity(compostPosition);
         if (entity instanceof TileEntityCompostedDirt)
         {
-            @Nullable final ItemStack stack = getOwnBuilding().getFlowerToGrow();
+            @Nullable final ItemStack stack = building.getFlowerToGrow();
             if (stack != null)
             {
                 if (worker.getRandom().nextInt(200 - getPrimarySkillLevel()) < 0 || InventoryUtils.shrinkItemCountInItemHandler(worker.getInventoryCitizen(), IS_COMPOST))
                 {
-                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH - (getOwnBuilding().getBuildingLevel() * 0.01), getOwnBuilding().getFlowerToGrow());
+                    ((TileEntityCompostedDirt) entity).compost(PERCENT_CHANGE_FOR_GROWTH - (building.getBuildingLevel() * 0.01), building.getFlowerToGrow());
                 }
             }
             else
@@ -259,7 +259,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return HARVEST_ACTIONS_TO_DUMP * getOwnBuilding().getBuildingLevel();
+        return HARVEST_ACTIONS_TO_DUMP * building.getBuildingLevel();
     }
 
     /**
@@ -283,7 +283,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     @Nullable
     private BlockPos areThereFlowersToGather()
     {
-        for (final BlockPos pos : getOwnBuilding().getPlantGround())
+        for (final BlockPos pos : building.getPlantGround())
         {
             if (!world.isEmptyBlock(pos.above()))
             {
@@ -300,7 +300,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
      */
     private BlockPos getFirstNotCompostedLand()
     {
-        for (final BlockPos pos : getOwnBuilding().getPlantGround())
+        for (final BlockPos pos : building.getPlantGround())
         {
             if (WorldUtil.isEntityBlockLoaded(world, pos))
             {
@@ -314,7 +314,7 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
                 }
                 else
                 {
-                    getOwnBuilding().removePlantableGround(pos);
+                    building.removePlantableGround(pos);
                 }
             }
         }

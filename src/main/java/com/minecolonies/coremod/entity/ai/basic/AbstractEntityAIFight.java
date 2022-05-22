@@ -115,14 +115,14 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
             InventoryFunctions.matchFirstInProviderWithSimpleAction(worker,
               stack -> !ItemStackUtils.isEmpty(stack)
                          && ItemStackUtils.doesItemServeAsWeapon(stack)
-                         && ItemStackUtils.hasToolLevel(stack, tool, 0, getOwnBuilding().getMaxToolLevel()),
+                         && ItemStackUtils.hasToolLevel(stack, tool, 0, building.getMaxToolLevel()),
               itemStack -> worker.getCitizenItemHandler().setMainHeldItem(itemStack));
         }
 
         equipInventoryArmor();
 
         // Can only "see" the inventory and check for items if at the building
-        if (worker.blockPosition().distSqr(getOwnBuilding().getID()) > 50)
+        if (worker.blockPosition().distSqr(building.getID()) > 50)
         {
             return DECIDE;
         }
@@ -136,7 +136,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
      */
     protected void atBuildingActions()
     {
-        final IGuardBuilding building = getOwnBuilding();
         for (final List<GuardGear> itemList : itemsNeeded)
         {
             for (final GuardGear item : itemList)
@@ -229,8 +228,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     public void equipInventoryArmor()
     {
         cleanArmor();
-        final IGuardBuilding building = getOwnBuilding();
-
         for (final List<GuardGear> itemList : itemsNeeded)
         {
             for (final GuardGear item : itemList)

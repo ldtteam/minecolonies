@@ -5,6 +5,8 @@
     "#forge:seeds",
     "minecolonies:composted_dirt",
     "minecraft:melon",
-    "minecraft:coarse_dirt"
+    "minecraft:coarse_dirt",
+    "minecraft:fermented_spider_eye",
+    "minecraft:glistering_melon_slice"
   ]
 }

@@ -13,9 +13,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
 
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
 import static com.minecolonies.api.util.constant.Constants.CHUNKS_TO_CLAIM_THRESHOLD;
@@ -66,7 +66,7 @@ public class CommandClaimChunks implements IMCOPCommand
             return 0;
         }
 
-        ChunkDataHelper.claimChunksInRange(colonyID, context.getSource().getLevel().dimension(), add, new BlockPos(sender.position()), range, 0, sender.level);
+        ChunkDataHelper.staticClaimInRange(colonyID, add, new BlockPos(sender.position()), range, sender.level, true);
         if (add)
         {
             MessageUtils.format(CommandTranslationConstants.COMMAND_CLAIM_SUCCESS).sendTo((Player) sender);

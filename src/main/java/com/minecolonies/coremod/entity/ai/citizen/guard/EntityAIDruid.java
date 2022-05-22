@@ -32,7 +32,7 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
         if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
         {
             // Mistletoes and water bottles
-            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
               item ->  item.getItem() == ModItems.magicpotion,
               32,
               worker.getInventoryCitizen());

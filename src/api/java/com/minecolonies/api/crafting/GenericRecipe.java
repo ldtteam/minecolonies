@@ -195,18 +195,26 @@ public class GenericRecipe implements IGenericRecipe
     @Override
     public Optional<Boolean> matchesInput(@NotNull OptionalPredicate<ItemStack> predicate)
     {
+        Optional<Boolean> result = Optional.empty();
+
         for (final List<ItemStack> slot : this.inputs)
         {
             for (final ItemStack stack : slot)
             {
-                final Optional<Boolean> result = predicate.test(stack);
-                if (result.isPresent())
+                final Optional<Boolean> itemResult = predicate.test(stack);
+                if (itemResult.isPresent())
                 {
-                    return result;
+                    if (!itemResult.get())
+                    {
+                        // immediately fail on any predicate failure
+                        return itemResult;
+                    }
+                    // otherwise remember a pass but keep checking
+                    result = itemResult;
                 }
             }
         }
-        return Optional.empty();
+        return result;
     }
 
     @NotNull

@@ -92,7 +92,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
      */
     protected IAIState sift()
     {
-        final BuildingSifter sifterBuilding = getOwnBuilding();
+        final BuildingSifter sifterBuilding = building;
 
         // Go idle if we can't do any more today
         if (sifterBuilding.getCurrentDailyQuantity() >= sifterBuilding.getMaxDailyQuantity())
@@ -112,7 +112,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
 
         if (currentRecipeStorage == null)
         {
-            final ICraftingBuildingModule module = getOwnBuilding().getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
+            final ICraftingBuildingModule module = building.getFirstModuleOccurance(BuildingSifter.CraftingModule.class);
             currentRecipeStorage = module.getFirstFulfillableRecipe(ItemStackUtils::isEmpty, 1, false);
         }
 
@@ -166,7 +166,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             worker.setItemInHand(InteractionHand.OFF_HAND, meshItem);
         }
 
-        WorkerUtil.faceBlock(getOwnBuilding().getPosition(), worker);
+        WorkerUtil.faceBlock(building.getPosition(), worker);
 
         progress++;
        
@@ -194,7 +194,7 @@ public class EntityAIWorkSifter extends AbstractEntityAICrafting<JobSifter, Buil
             .sendToTrackingEntity(new LocalizedParticleEffectMessage(inputItem, sifterBuilding.getID().below()), worker);
         
         worker.swing(InteractionHand.MAIN_HAND);
-        SoundUtils.playSoundAtCitizen(world, getOwnBuilding().getID(), SoundEvents.LEASH_KNOT_BREAK);
+        SoundUtils.playSoundAtCitizen(world, building.getID(), SoundEvents.LEASH_KNOT_BREAK);
         return getState();
     }
 }

@@ -16,10 +16,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipesReloadedEvent;
 import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
-import com.minecolonies.coremod.compatibility.jei.transfer.CraftingGuiHandler;
-import com.minecolonies.coremod.compatibility.jei.transfer.FurnaceCraftingGuiHandler;
-import com.minecolonies.coremod.compatibility.jei.transfer.PrivateCraftingTeachingTransferHandler;
-import com.minecolonies.coremod.compatibility.jei.transfer.PrivateSmeltingTeachingTransferHandler;
+import com.minecolonies.coremod.compatibility.jei.transfer.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
@@ -30,14 +27,9 @@ import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
@@ -153,6 +145,7 @@ public class JEIPlugin implements IModPlugin
     {
         registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.CRAFTING);
         registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.FURNACE);
+        registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.BREWING);
     }
 
     @Override
@@ -160,6 +153,7 @@ public class JEIPlugin implements IModPlugin
     {
         new CraftingGuiHandler(this.categories).register(registration);
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
+        new BrewingCraftingGuiHandler(this.categories).register(registration);
     }
 
     @Override
