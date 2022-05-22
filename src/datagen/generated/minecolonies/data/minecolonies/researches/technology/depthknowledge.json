@@ -1,0 +1,17 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/rockingroll",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.depthknowledge.subtitle",
+  "icon": "minecraft:cobbled_deepslate",
+  "requirements": [
+    {
+      "building": "crusher",
+      "level": 3
+    },
+    {
+      "item": "minecraft:deepslate",
+      "quantity": 64
+    }
+  ]
+}

@@ -148,7 +148,8 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         {
             return true;
         }
-        return InventoryUtils.getCountFromBuilding(building, ItemStackUtils.CAN_EAT.and(stack -> stack.getItem().getFoodProperties().getNutrition() >= building.getBuildingLevel() - 1)) > Math.max(1, building.getBuildingLevel() * building.getBuildingLevel()) * SLOT_PER_LINE;
+        final int buildingLimit = Math.max(1, building.getBuildingLevel() * building.getBuildingLevel()) * SLOT_PER_LINE;
+        return InventoryUtils.getCountFromBuildingWithLimit(building, ItemStackUtils.CAN_EAT.and(stack -> stack.getItem().getFoodProperties().getNutrition() >= building.getBuildingLevel() - 1), stack -> stack.getMaxStackSize() * 6) > buildingLimit;
     }
 
     @Override
@@ -371,7 +372,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
         final List<ItemStorage> blockedItems = new ArrayList<>(building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(FOOD_EXCLUSION_LIST)).getList());
         for (final Map.Entry<ItemStorage, Integer> content: building.getTileEntity().getAllContent().entrySet())
         {
-            if (content.getValue() > content.getKey().getItem().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
+            if (content.getValue() > content.getKey().getItemStack().getMaxStackSize() * 6 && ItemStackUtils.CAN_EAT.test(content.getKey().getItemStack()))
             {
                 blockedItems.add(content.getKey());
             }

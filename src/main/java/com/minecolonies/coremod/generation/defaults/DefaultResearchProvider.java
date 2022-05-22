@@ -1326,6 +1326,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(CRUSHING_11, 1)
           .addToList(r);
 
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/depthknowledge"), TECH).setParentResearch(rockingRoll)
+          .setTranslatedName("Knowledge of the Depth")
+          .setTranslatedSubtitle("Gotta go deep for that one.")
+          .setIcon(Items.COBBLED_DEEPSLATE)
+          .addBuildingRequirement("crusher", 3)
+          .addItemCost(Items.DEEPSLATE, 64)
+          .addToList(r);
+
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/pavetheroad"), TECH).setParentResearch(rockingRoll)
           .setTranslatedName("Pave the Road")
           .setTranslatedSubtitle("Not something you want to get mixed up in.")
