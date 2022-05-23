@@ -350,17 +350,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         boolean extracted = false;
         final IItemHandler workerInventory = worker.getInventoryCitizen();
         final List<ItemStack> itemsToDeliver = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask).stream().map(r -> r.getRequest().getStack()).collect(Collectors.toList());
-        final Map<Item, Integer> itemsCount = new HashMap<>();
+        final Map<ItemStorage, Integer> itemsCount = new HashMap<>();
 
         for (ItemStack itemStack : itemsToDeliver)
         {
-            if (itemsCount.containsKey(itemStack.getItem()))
+            if (itemsCount.containsKey(new ItemStorage(itemStack)))
             {
-                itemsCount.put(itemStack.getItem(), itemsCount.get(itemStack.getItem()) + itemStack.getCount());
+                itemsCount.put(new ItemStorage(itemStack), itemsCount.get(new ItemStorage(itemStack)) + itemStack.getCount());
             }
             else
             {
-                itemsCount.put(itemStack.getItem(), itemStack.getCount());
+                itemsCount.put(new ItemStorage(itemStack), itemStack.getCount());
             }
         }
 
@@ -371,20 +371,20 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 continue;
             }
 
-            if (!itemsCount.containsKey(workerInventory.getStackInSlot(i).getItem()))
+            if (!itemsCount.containsKey(new ItemStorage(workerInventory.getStackInSlot(i))))
             {
                 continue;
             }
 
-            final ItemStack stack = workerInventory.extractItem(i, itemsCount.get(workerInventory.getStackInSlot(i).getItem()), false);
+            final ItemStack stack = workerInventory.extractItem(i, itemsCount.get(new ItemStorage(workerInventory.getStackInSlot(i))), false);
 
-            if (itemsCount.get(stack.getItem()) - stack.getCount() == 0)
+            if (itemsCount.get(new ItemStorage(stack)) - stack.getCount() == 0)
             {
-                itemsCount.remove(stack.getItem());
+                itemsCount.remove(new ItemStorage(stack));
             }
             else
             {
-                itemsCount.put(stack.getItem(), itemsCount.get(stack.getItem()) - stack.getCount());
+                itemsCount.put(new ItemStorage(stack), itemsCount.get(new ItemStorage(stack)) - stack.getCount());
             }
 
             if (ItemStackUtils.isEmpty(stack))
