@@ -1695,7 +1695,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @param target the request to check.
      * @return true if stuck.
      */
-    private boolean isRequestStuck(final IRequest<?> target, final List<IToken<?>> playerResolverRequests, final List<IToken<?>> retryingRequests)
+    protected boolean isRequestStuck(final IRequest<?> target, final List<IToken<?>> playerResolverRequests, final List<IToken<?>> retryingRequests)
     {
         if (playerResolverRequests.contains(target.getId())
               || retryingRequests.contains(target.getId()))
