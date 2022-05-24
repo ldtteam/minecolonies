@@ -7,9 +7,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
-import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.request.RequestState;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -203,21 +200,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
                 {
                     final AttributeModifier healthModBuildingHP = new AttributeModifier(GUARD_HEALTH_MOD_BUILDING_NAME, getBonusHealth(), AttributeModifier.Operation.ADDITION);
                     AttributeModifierUtils.addHealthModifier(optCitizen.getEntity().get(), healthModBuildingHP);
-                }
-            }
-        }
-
-        final List<IToken<?>> playerRequests = colony.getRequestManager().getPlayerResolver().getAllAssignedRequests();
-        final List<IToken<?>> retryingRequests = colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests();
-
-        for (final Collection<IToken<?>> requestList : getOpenRequestsByCitizen().values())
-        {
-            for (final IToken<?> requestToken : requestList)
-            {
-                final IRequest<?> request = colony.getRequestManager().getRequestForToken(requestToken);
-                if (isRequestStuck(request, playerRequests, retryingRequests))
-                {
-                    colony.getRequestManager().updateRequestState(requestToken, RequestState.CANCELLED);
                 }
             }
         }

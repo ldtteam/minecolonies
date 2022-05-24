@@ -50,6 +50,7 @@ import com.minecolonies.coremod.colony.interactionhandling.RequestBasedInteracti
 import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.requesters.BuildingBasedRequester;
+import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.BuildingRequestResolver;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -949,6 +950,21 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         calculateCorners();
         this.isBuilt = true;
 
+        final List<IToken<?>> playerRequests = colony.getRequestManager().getPlayerResolver().getAllAssignedRequests();
+        final List<IToken<?>> retryingRequests = colony.getRequestManager().getRetryingRequestResolver().getAllAssignedRequests();
+
+        for (final Collection<IToken<?>> requestList : new ArrayList<>(getOpenRequestsByCitizen().values()))
+        {
+            for (final IToken<?> requestToken : requestList)
+            {
+                final IRequest<?> request = colony.getRequestManager().getRequestForToken(requestToken);
+                if (request instanceof StandardRequests.ToolRequest && isRequestStuck(request, playerRequests, retryingRequests))
+                {
+                    colony.getRequestManager().updateRequestState(requestToken, RequestState.CANCELLED);
+                }
+            }
+        }
+
         getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
     }
@@ -1695,7 +1711,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
      * @param target the request to check.
      * @return true if stuck.
      */
-    protected boolean isRequestStuck(final IRequest<?> target, final List<IToken<?>> playerResolverRequests, final List<IToken<?>> retryingRequests)
+    private boolean isRequestStuck(final IRequest<?> target, final List<IToken<?>> playerResolverRequests, final List<IToken<?>> retryingRequests)
     {
         if (playerResolverRequests.contains(target.getId())
               || retryingRequests.contains(target.getId()))
