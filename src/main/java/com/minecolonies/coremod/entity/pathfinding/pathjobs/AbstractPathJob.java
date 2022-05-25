@@ -1108,6 +1108,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     protected int getGroundHeight(final MNode parent, @NotNull final BlockPos pos)
     {
+        if (isLiquid(world.getBlockState(pos.above())))
+        {
+            return -100;
+        }
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
         if (checkHeadBlock(parent, pos))
