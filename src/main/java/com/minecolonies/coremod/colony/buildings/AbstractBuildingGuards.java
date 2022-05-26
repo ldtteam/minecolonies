@@ -233,7 +233,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
         if (compound.contains(NBT_PLAYER_UUID))
         {
-            followPlayerUUID = UUIDCodec.uuidFromIntArray(compound.getIntArray(NBT_PLAYER_UUID));
+            followPlayerUUID = compound.getUUID(NBT_PLAYER_UUID);
         }
 
     }
@@ -260,7 +260,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
         if (followPlayerUUID != null)
         {
-            compound.putIntArray(NBT_PLAYER_UUID, UUIDCodec.uuidToIntArray(followPlayerUUID));
+            compound.putUUID(NBT_PLAYER_UUID, followPlayerUUID);
         }
 
         return compound;
