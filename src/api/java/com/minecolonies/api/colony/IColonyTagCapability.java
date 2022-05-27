@@ -126,7 +126,8 @@ public interface IColonyTagCapability
         @Override
         public void addColony(final int id, final LevelChunk chunk)
         {
-            if (IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension()) == null)
+            final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension());
+            if (colony == null)
             {
                 return;
             }
@@ -134,11 +135,7 @@ public interface IColonyTagCapability
             colonies.add(id);
             if (owningColony == NO_COLONY_ID || IColonyManager.getInstance().getColonyByDimension(owningColony, chunk.getLevel().dimension()) == null)
             {
-                final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension());
-                if (colony != null)
-                {
-                    colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
-                }
+                colony.addLoadedChunk(ChunkPos.asLong(chunk.getPos().x, chunk.getPos().z), chunk);
                 owningColony = id;
             }
             chunk.setUnsaved(true);
