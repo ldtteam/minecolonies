@@ -21,18 +21,26 @@ public class Configuration
     private final ServerConfiguration serverConfig;
 
     /**
+     * Loaded serverside, synced on connection
+     */
+    private final CommonConfiguration commonConfiguration;
+
+    /**
      * Builds configuration tree.
      */
     public Configuration()
     {
         final Pair<ClientConfiguration, ForgeConfigSpec> cli = new ForgeConfigSpec.Builder().configure(ClientConfiguration::new);
         final Pair<ServerConfiguration, ForgeConfigSpec> ser = new ForgeConfigSpec.Builder().configure(ServerConfiguration::new);
+        final Pair<CommonConfiguration, ForgeConfigSpec> com = new ForgeConfigSpec.Builder().configure(CommonConfiguration::new);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, cli.getRight());
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ser.getRight());
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, com.getRight());
 
         clientConfig = cli.getLeft();
         serverConfig = ser.getLeft();
+        commonConfiguration = com.getLeft();
     }
 
     public ClientConfiguration getClient()
@@ -43,5 +51,10 @@ public class Configuration
     public ServerConfiguration getServer()
     {
         return serverConfig;
+    }
+
+    public CommonConfiguration getCommon()
+    {
+        return commonConfiguration;
     }
 }
