@@ -4,10 +4,10 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.Log;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 
@@ -51,7 +51,8 @@ public final class SortingUtils
                     {
                         continue;
                     }
-                    final ItemStorage storage = new ItemStorage(inv.extractItem(i, 64, false));
+                    final ItemStorage storage = new ItemStorage(inv.getStackInSlot(i));
+                    inv.setStackInSlot(i, ItemStack.EMPTY);
                     int amount = storage.getAmount();
                     if (map.containsKey(storage))
                     {
@@ -99,14 +100,21 @@ public final class SortingUtils
         int tempSize = entry.getValue();
         while (tempSize > 0)
         {
-            final ItemStack tempStack = stack.copy();
+            ItemStack tempStack = stack.copy();
             tempStack.setCount(Math.min(tempSize, tempStack.getMaxStackSize()));
-            slotLimit = inv.getLastIndex(currentSlot.get());
-            while (!inv.insertItem(currentSlot.getAndIncrement(), tempStack, false).isEmpty())
-            {
-                Log.getLogger().error("Trying to dump into same slot again!", new Exception());
-            }
             tempSize -= tempStack.getCount();
+            slotLimit = inv.getLastIndex(currentSlot.get());
+            for (int i = 0; i < 5; i++)
+            {
+                tempStack = inv.insertItem(currentSlot.getAndIncrement(), tempStack, false);
+                if (tempStack.isEmpty())
+                {
+                    break;
+                }
+
+                Log.getLogger().error("Could not insert full stack into slot, remaining:" + tempStack);
+            }
+
             requiredSlots.decrementAndGet();
             creativeTabs.put(creativeTabId, creativeTabs.get(creativeTabId) - 1);
         }

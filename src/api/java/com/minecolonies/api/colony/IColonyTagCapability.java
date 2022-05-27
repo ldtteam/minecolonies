@@ -126,8 +126,13 @@ public interface IColonyTagCapability
         @Override
         public void addColony(final int id, final LevelChunk chunk)
         {
+            if (IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension()) == null)
+            {
+                return;
+            }
+
             colonies.add(id);
-            if (owningColony == NO_COLONY_ID)
+            if (owningColony == NO_COLONY_ID || IColonyManager.getInstance().getColonyByDimension(owningColony, chunk.getLevel().dimension()) == null)
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(id, chunk.getLevel().dimension());
                 if (colony != null)
