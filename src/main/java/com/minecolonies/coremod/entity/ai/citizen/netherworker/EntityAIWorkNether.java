@@ -59,7 +59,7 @@ import static com.minecolonies.api.util.constant.GuardConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.*;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingNetherWorker.FOOD_EXCLUSION_LIST;
-import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_SHOVEL;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.*;
 
 public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker, BuildingNetherWorker>
 {
@@ -135,7 +135,15 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         for (int slot = 0; slot < worker.getInventoryCitizen().getSlots(); slot++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
-            if (stack.canPerformAction(ToolActions.SHOVEL_DIG) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
+            if (stack.getItem() == Items.TORCH && renderData.indexOf(RENDER_META_TORCH) == -1)
+            {
+                renderData.append(RENDER_META_TORCH);
+            }
+            else if (stack.canPerformAction(ToolActions.PICKAXE_DIG) && renderData.indexOf(RENDER_META_PICKAXE) == -1)
+            {
+                renderData.append(RENDER_META_PICKAXE);
+            }
+            else if (stack.canPerformAction(ToolActions.SHOVEL_DIG) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
             {
                 renderData.append(RENDER_META_SHOVEL);
             }

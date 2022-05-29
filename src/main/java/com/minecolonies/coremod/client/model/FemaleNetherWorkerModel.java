@@ -12,7 +12,7 @@ import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
-import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_SHOVEL;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.*;
 
 public class FemaleNetherWorkerModel extends CitizenModel<AbstractEntityCitizen>
 {
@@ -67,21 +67,34 @@ public class FemaleNetherWorkerModel extends CitizenModel<AbstractEntityCitizen>
           .texOffs(116, 30).addBox(-5.4F, -1.6F, 1.0F, 2.0F, 6.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(104, 30).addBox(3.4F, -1.6F, 1.0F, 2.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 5.9F, 2.3F));
 
+        PartDefinition roll_r1 = backpack.addOrReplaceChild("roll_r1", CubeListBuilder.create().texOffs(102, 24).addBox(-5.0F, -1.0F, -2.1F, 10.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -6.4F, 3.2F, 0.5585F, 0.0F, 0.0F));
+
         PartDefinition lid_r1 = backpack.addOrReplaceChild("lid_r1", CubeListBuilder.create().texOffs(100, 40).addBox(-4.0F, -2.2F, -0.5F, 8.0F, 2.0F, 6.0F, new CubeDeformation(0.4F)), PartPose.offsetAndRotation(0.0F, -2.1F, 0.6F, 0.0436F, 0.0F, 0.0F));
 
-        PartDefinition roll = backpack.addOrReplaceChild("roll", CubeListBuilder.create(), PartPose.offset(0.0F, -6.4F, 3.2F));
-
-        PartDefinition roll_r1 = roll.addOrReplaceChild("roll_r1", CubeListBuilder.create().texOffs(102, 24).addBox(-5.0F, -1.0F, -2.1F, 10.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.5585F, 0.0F, 0.0F));
+        PartDefinition shovel = backpack.addOrReplaceChild("shovel", CubeListBuilder.create().texOffs(124, 17).addBox(-0.5F, -4.825F, -0.495F, 1.0F, 6.0F, 1.0F, new CubeDeformation(-0.1F))
+          .texOffs(120, 13).addBox(-0.5F, -4.825F, -1.495F, 1.0F, 1.0F, 3.0F, new CubeDeformation(-0.11F))
+          .texOffs(116, 18).addBox(-0.5F, 0.575F, -1.495F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
+          .texOffs(114, 15).addBox(-0.5F, 3.575F, -1.015F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.1F, -1.875F, 6.095F, 0.1165F, 0.5925F, 0.1288F));
 
         PartDefinition pick = backpack.addOrReplaceChild("pick", CubeListBuilder.create().texOffs(110, 16).addBox(-1.1F, -2.275F, 1.0F, 1.0F, 7.0F, 1.0F, new CubeDeformation(-0.1F))
           .texOffs(102, 14).addBox(-3.1F, -1.575F, 1.0F, 5.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
           .texOffs(106, 16).addBox(1.9F, -0.575F, 1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F))
           .texOffs(106, 18).addBox(-4.1F, -0.575F, 1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.5F, -2.125F, 4.7F, 0.0532F, 0.613F, 0.1697F));
 
-        PartDefinition shovel = backpack.addOrReplaceChild("shovel", CubeListBuilder.create().texOffs(124, 17).addBox(-0.5F, -4.825F, -0.495F, 1.0F, 6.0F, 1.0F, new CubeDeformation(-0.1F))
-          .texOffs(120, 13).addBox(-0.5F, -4.825F, -1.495F, 1.0F, 1.0F, 3.0F, new CubeDeformation(-0.11F))
-          .texOffs(116, 18).addBox(-0.5F, 0.575F, -1.495F, 1.0F, 3.0F, 3.0F, new CubeDeformation(0.0F))
-          .texOffs(114, 15).addBox(-0.5F, 3.575F, -1.015F, 1.0F, 1.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-5.1F, -1.875F, 6.095F, 0.1165F, 0.5925F, 0.1288F));
+        PartDefinition stones = backpack.addOrReplaceChild("stones", CubeListBuilder.create().texOffs(78, 18).addBox(-0.3F, -4.5F, 0.4F, 3.0F, 3.0F, 3.0F, new CubeDeformation(-0.6F))
+          .texOffs(78, 24).mirror().addBox(-1.7F, -4.2F, 1.2F, 3.0F, 3.0F, 3.0F, new CubeDeformation(-0.6F)).mirror(false), PartPose.offset(0.0F, -0.2F, 1.9F));
+
+        PartDefinition stone5_r1 = stones.addOrReplaceChild("stone5_r1", CubeListBuilder.create().texOffs(90, 12).addBox(-1.8F, -1.5F, -1.6F, 3.0F, 3.0F, 3.0F, new CubeDeformation(-0.7F)), PartPose.offsetAndRotation(-2.6F, -3.0F, 1.5F, 0.0866F, 0.0106F, -0.1217F));
+
+        PartDefinition stone3_r1 = stones.addOrReplaceChild("stone3_r1", CubeListBuilder.create().texOffs(90, 24).mirror().addBox(-1.5F, -1.5F, -1.3F, 3.0F, 3.0F, 3.0F, new CubeDeformation(-0.4F)).mirror(false), PartPose.offsetAndRotation(-1.8F, -3.0F, 2.2F, 0.0F, 0.0F, -0.0873F));
+
+        PartDefinition stone1_r1 = stones.addOrReplaceChild("stone1_r1", CubeListBuilder.create().texOffs(90, 18).addBox(-1.2F, -1.5F, -1.0F, 3.0F, 3.0F, 3.0F, new CubeDeformation(-0.3F)), PartPose.offsetAndRotation(2.2F, -2.8F, 2.2F, 0.0F, 0.0F, 0.1309F));
+
+        PartDefinition torches = backpack.addOrReplaceChild("torches", CubeListBuilder.create(), PartPose.offsetAndRotation(-4.9F, -0.8372F, 3.1844F, 0.3054F, 0.0F, 0.0F));
+
+        PartDefinition torch2_r1 = torches.addOrReplaceChild("torch2_r1", CubeListBuilder.create().texOffs(100, 33).addBox(-0.5F, -2.3F, 0.4F, 1.0F, 6.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.0F, -0.3628F, -0.2844F, -0.0436F, 0.0F, 0.0F));
+
+        PartDefinition torch1_r1 = torches.addOrReplaceChild("torch1_r1", CubeListBuilder.create().texOffs(96, 33).addBox(-0.5F, -3.0F, -0.5F, 1.0F, 6.0F, 1.0F, new CubeDeformation(-0.1F)), PartPose.offsetAndRotation(0.0F, -0.3628F, -0.2844F, 0.0873F, 0.0F, 0.0F));
 
         PartDefinition Right_Arm = partdefinition.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 16).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.0F))
           .texOffs(40, 32).addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F, new CubeDeformation(0.25F)), PartPose.offset(-5.0F, 2.0F, 0.0F));
@@ -103,7 +116,9 @@ public class FemaleNetherWorkerModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         final ModelPart backpack = body.getChild("backpack");
+        backpack.getChild("torches").visible = entity.getRenderMetadata().contains(RENDER_META_TORCH);
         backpack.getChild("shovel").visible = entity.getRenderMetadata().contains(RENDER_META_SHOVEL);
+        backpack.getChild("pick").visible = entity.getRenderMetadata().contains(RENDER_META_PICKAXE);
 
         head.getChild("glasses").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
         backpack.visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
