@@ -16,6 +16,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.BLOCK_BREAK_S
  */
 public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B extends AbstractBuilding> extends AbstractEntityAISkill<J, B>
 {
+    /**
+     * Working render meta.
+     */
+    public static final String RENDER_META_WORKING = "working";
+
     /**
      * The amount of xp the entity gains per block mined.
      */

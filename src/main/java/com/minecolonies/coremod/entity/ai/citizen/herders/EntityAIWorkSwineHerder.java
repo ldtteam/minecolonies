@@ -7,6 +7,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
+import static com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkRabbitHerder.RENDER_META_CARROT;
+
 /**
  * The AI behind the {@link JobSwineHerder} for Breeding and Killing Pigs.
  */
@@ -25,6 +28,17 @@ public class EntityAIWorkSwineHerder extends AbstractEntityAIHerder<JobSwineHerd
     public EntityAIWorkSwineHerder(@NotNull final JobSwineHerder job)
     {
         super(job);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.CARROT))
+        {
+            renderMeta += RENDER_META_CARROT;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override

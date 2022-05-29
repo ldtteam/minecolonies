@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.entity.ai.citizen.florist;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
+import com.minecolonies.api.compatibility.CompatibilityManager;
+import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
@@ -15,6 +17,7 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobFlorist;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -86,7 +89,12 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     /**
      * Xp gained on harvest
      */
-    private static final double XP_PER_FLOWER = 2;
+    private static final double XP_PER_FLOWER    = 2;
+
+    /**
+     * Flower meta data.
+     */
+    public static final String RENDER_META_FLOWERS = "flowers";
 
     /**
      * Position the florist should harvest a flower at now.
@@ -121,6 +129,14 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
           new AITarget(FLORIST_COMPOST, this::compost, TICKS_SECOND)
         );
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata(
+          (InventoryUtils.hasItemInItemHandler(worker.getItemHandlerCitizen(), stack -> stack.is(ItemTags.FLOWERS)) ? RENDER_META_FLOWERS : "")
+          + (getState() == IDLE ? "" : RENDER_META_WORKING));
     }
 
     /**

@@ -221,6 +221,7 @@ public class NetworkChannel
         registerMessage(++idx, SyncPathMessage.class, SyncPathMessage::new);
         registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
+        registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);

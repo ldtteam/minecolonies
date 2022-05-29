@@ -1,11 +1,14 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.baker.EntityAIWorkBaker;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,6 +48,12 @@ public class JobBaker extends AbstractJobCrafter<EntityAIWorkBaker, JobBaker>
     public EntityAIWorkBaker generateAI()
     {
         return new EntityAIWorkBaker(this);
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        worker.queueSound(SoundEvents.FIRECHARGE_USE, blockPos, 10, 0, 0.5f, 0.1f);
     }
 }
 

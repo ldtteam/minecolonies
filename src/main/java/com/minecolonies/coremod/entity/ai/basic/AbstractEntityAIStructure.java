@@ -34,6 +34,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -479,6 +480,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             }
             return NEEDS_ITEM;
         }
+
+        worker.swing(InteractionHand.MAIN_HAND);
+        worker.queueSound(SoundEvents.BAMBOO_HIT, worker.blockPosition(), 10, 0, 0.5f, 0.1f);
 
         if (result.getBlockResult().getResult() == BlockPlacementResult.Result.BREAK_BLOCK)
         {

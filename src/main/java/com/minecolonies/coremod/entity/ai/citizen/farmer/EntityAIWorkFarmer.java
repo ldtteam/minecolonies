@@ -143,6 +143,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     }
 
     @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata((getState() == FARMER_PLANT || getState() == FARMER_HARVEST) ? RENDER_META_WORKING : "");
+    }
+
+    @Override
     public Class<BuildingFarmer> getExpectedBuildingClass()
     {
         return BuildingFarmer.class;

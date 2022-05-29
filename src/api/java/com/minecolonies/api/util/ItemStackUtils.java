@@ -293,7 +293,12 @@ public final class ItemStackUtils
         {
             return -1;
         }
-        if (Compatibility.isTinkersTool(stack, toolType))
+
+        if (toolType == ToolType.SWORD && Compatibility.isTinkersWeapon(stack))
+        {
+            return Compatibility.getToolLevel(stack);
+        }
+        else if (Compatibility.isTinkersTool(stack, toolType))
         {
             return Compatibility.getToolLevel(stack);
         }
@@ -313,10 +318,7 @@ public final class ItemStackUtils
                 final SwordItem SwordItem = (SwordItem) stack.getItem();
                 return SwordItem.getTier().getLevel();
             }
-            else if (Compatibility.isTinkersWeapon(stack))
-            {
-                return Compatibility.getToolLevel(stack);
-            }
+
         }
         else if (ToolType.HELMET.equals(toolType)
                    || ToolType.BOOTS.equals(toolType)
@@ -414,7 +416,7 @@ public final class ItemStackUtils
         }
         if (ToolType.SWORD.equals(toolType))
         {
-            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP);
+            return itemStack.canPerformAction(ToolActions.SWORD_SWEEP) || Compatibility.isTinkersWeapon(itemStack);
         }
         if (ToolType.FISHINGROD.equals(toolType))
         {
