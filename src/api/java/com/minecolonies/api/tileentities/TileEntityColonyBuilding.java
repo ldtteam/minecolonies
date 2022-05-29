@@ -31,7 +31,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +40,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MIN_SLOTS_FOR_RECOGNITION;
+import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 
 /**
@@ -481,13 +481,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                             {
                                 if (te instanceof AbstractTileEntityRack)
                                 {
-                                    final LazyOptional<IItemHandler> cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                                    cap.ifPresent(theCap -> {
-                                        if (theCap instanceof IItemHandlerModifiable && theCap.getSlots() >= MIN_SLOTS_FOR_RECOGNITION)
-                                        {
-                                            handlers.add((IItemHandlerModifiable) theCap);
-                                        }
-                                    });
+                                    handlers.add(((AbstractTileEntityRack) te).getInventory());
                                     ((AbstractTileEntityRack) te).setBuildingPos(this.getBlockPos());
                                 }
                                 else
