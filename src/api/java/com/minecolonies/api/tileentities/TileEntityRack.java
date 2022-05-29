@@ -9,23 +9,23 @@ import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -275,10 +275,10 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
                     {
                         final Direction dirToNeighbour = BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor));
                         typeHere = level.getBlockState(worldPosition)
-                                     .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
-                                     .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
+                          .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
+                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
                         typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                                         .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
+                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
                     }
                     else
                     {
@@ -292,11 +292,11 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
                     {
                         final Direction dirToNeighbour = BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor));
                         typeHere = level.getBlockState(worldPosition)
-                                     .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
-                                     .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
-                        ;
+                          .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
+                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
+
                         typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                                         .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
+                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
                     }
                     else
                     {
@@ -493,7 +493,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
             }
         }
     }
-
 
     @Nonnull
     @Override
