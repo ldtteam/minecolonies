@@ -58,17 +58,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     /**
      * The render name to render fish.
      */
-    private static final String RENDER_META_FISH = "fish";
-
-    /**
-     * The render name to render fish and rod.
-     */
-    private static final String RENDER_META_FISHANDROD = "rodfish";
+    public static final String RENDER_META_FISH = "fish";
 
     /**
      * The render name to render rod.
      */
-    private static final String RENDER_META_ROD = "rod";
+    public static final String RENDER_META_ROD = "rod";
 
     /**
      * The maximum number of ponds to remember at one time.
@@ -227,7 +222,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     {
         if (hasFish() && hasRodButNotEquipped())
         {
-            worker.setRenderMetadata(RENDER_META_FISHANDROD);
+            worker.setRenderMetadata(RENDER_META_ROD + RENDER_META_FISH);
         }
         else if (hasRodButNotEquipped() && !hasFish())
         {

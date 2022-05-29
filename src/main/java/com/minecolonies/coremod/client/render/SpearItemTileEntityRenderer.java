@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.client.render;
 
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.client.model.ModelSpear;
+import com.minecolonies.coremod.client.model.SpearModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -20,20 +20,20 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class SpearItemTileEntityRenderer extends BlockEntityWithoutLevelRenderer
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/entity/spear.png");
-    private ModelSpear model;
-    private final EntityModelSet set;
+    private              SpearModel       model;
+    private final        EntityModelSet   set;
 
     public SpearItemTileEntityRenderer()
     {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
         this.set = Minecraft.getInstance().getEntityModels();
-        this.model = new ModelSpear(this.set.bakeLayer(ModelLayers.TRIDENT));
+        this.model = new SpearModel(this.set.bakeLayer(ModelLayers.TRIDENT));
     }
 
     @Override
     public void onResourceManagerReload(ResourceManager manager)
     {
-        this.model = new ModelSpear(this.set.bakeLayer(ModelLayers.TRIDENT));
+        this.model = new SpearModel(this.set.bakeLayer(ModelLayers.TRIDENT));
     }
 
     @Override

@@ -1,9 +1,10 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.entity.ai.citizen.stonemason.EntityAIWorkStonemason;
+import com.minecolonies.coremod.entity.citizen.EntityCitizen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,5 +32,11 @@ public class JobStonemason extends AbstractJobCrafter<EntityAIWorkStonemason, Jo
     public EntityAIWorkStonemason generateAI()
     {
         return new EntityAIWorkStonemason(this);
+    }
+
+    @Override
+    public void playSound(final BlockPos blockPos, final EntityCitizen worker)
+    {
+        worker.queueSound(SoundEvents.DEEPSLATE_TILES_HIT, blockPos, 5, 1, 1.0f, 2.0f);
     }
 }

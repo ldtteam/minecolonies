@@ -8,8 +8,10 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 
 /**
@@ -18,10 +20,26 @@ import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POT
 @SuppressWarnings("squid:MaximumInheritanceDepth")
 public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuildingGuards>
 {
+    /**
+     * Potion meta data.
+     */
+    public static final String RENDER_META_POTION = "potion";
+
     public EntityAIDruid(@NotNull final JobDruid job)
     {
         super(job);
         new DruidCombatAI((EntityCitizen) worker, getStateAI(), this);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.POTION))
+        {
+            renderMeta += RENDER_META_POTION;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override

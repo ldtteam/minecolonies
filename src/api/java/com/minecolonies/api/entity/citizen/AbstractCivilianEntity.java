@@ -2,8 +2,12 @@ package com.minecolonies.api.entity.citizen;
 
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.entity.pathfinding.IStuckHandlerEntity;
+import com.minecolonies.api.sounds.SoundManager;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -20,7 +24,6 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, IStuckHandlerEntity
 {
-
     /**
      * Whether this entity can be stuck for stuckhandling
      */
@@ -31,9 +34,23 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
      */
     protected long nextPlayerCollisionTime = 0;
 
+    /**
+     * Sound manager of the civilian.
+     */
+    private SoundManager soundManager;
+
+    /**
+     * Create a new instance.
+     * @param type from type.
+     * @param worldIn the world.
+     */
     protected AbstractCivilianEntity(final EntityType<? extends AgeableMob> type, final Level worldIn)
     {
         super(type, worldIn);
+        if (worldIn.isClientSide)
+        {
+            soundManager = new SoundManager((ClientLevel) worldIn);
+        }
     }
 
     /**
@@ -86,6 +103,16 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     }
 
     @Override
+    public void tick()
+    {
+        super.tick();
+        if (level.isClientSide)
+        {
+            soundManager.tick();
+        }
+    }
+
+    @Override
     public void push(@NotNull final Entity entityIn)
     {
         if (entityIn instanceof ServerPlayer)
@@ -110,6 +137,15 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
 
             playSoundAtCivilian(level, blockPosition(), SUCCESS, getCivilianData());
         }
+    }
+
+    /**
+     * Get the sound manager.
+     * @return the sound manager.
+     */
+    public SoundManager getSoundManager()
+    {
+        return soundManager;
     }
 
     /**

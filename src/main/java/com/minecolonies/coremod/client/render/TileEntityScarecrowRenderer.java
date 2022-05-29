@@ -5,7 +5,7 @@ import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
-import com.minecolonies.coremod.client.model.ModelScarecrowBoth;
+import com.minecolonies.coremod.client.model.ScarecrowModel;
 import com.minecolonies.coremod.event.ClientRegistryHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,7 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +68,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
      * The model of the scarecrow.
      */
     @NotNull
-    private ModelScarecrowBoth model;
+    private ScarecrowModel model;
 
     public static final Material SCARECROW_A;
     public static final Material       SCARECROW_B;
@@ -86,7 +85,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
     public TileEntityScarecrowRenderer(final BlockEntityRendererProvider.Context context)
     {
         super();
-        this.model = new ModelScarecrowBoth(context.bakeLayer(ClientRegistryHandler.SCARECROW));
+        this.model = new ScarecrowModel(context.bakeLayer(ClientRegistryHandler.SCARECROW));
     }
 
     @Override

@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -47,6 +48,8 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure.ItemCheckResult.RECALC;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_PICKAXE;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.RENDER_META_SHOVEL;
 import static com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler.Stage.*;
 
 /**
@@ -512,37 +515,31 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     @Override
     protected void updateRenderMetaData()
     {
-        worker.setRenderMetadata(getRenderMetaStone() + getRenderMetaTorch());
-    }
+        StringBuilder renderData = new StringBuilder(getState() == MINER_MINING_SHAFT || getState() == MINE_BLOCK || getState() == BUILDING_STEP ? RENDER_META_WORKING : "");
+        final ItemStack block = new ItemStack(getMainFillBlock());
 
-    /**
-     * Get render data to render torches at the backpack if in inventory.
-     *
-     * @return metaData String if so.
-     */
-    @NotNull
-    private String getRenderMetaTorch()
-    {
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.TORCH))
+        for (int slot = 0; slot < worker.getInventoryCitizen().getSlots(); slot++)
         {
-            return RENDER_META_TORCH;
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
+            if (stack.getItem() == Items.TORCH && renderData.indexOf(RENDER_META_TORCH) == -1)
+            {
+                renderData.append(RENDER_META_TORCH);
+            }
+            else if (stack.getItem() == block.getItem() && renderData.indexOf(RENDER_META_STONE) == -1)
+            {
+                renderData.append(RENDER_META_STONE);
+            }
+            else if (stack.canPerformAction(ToolActions.PICKAXE_DIG) && renderData.indexOf(RENDER_META_PICKAXE) == -1)
+            {
+                renderData.append(RENDER_META_PICKAXE);
+            }
+            else if (stack.canPerformAction(ToolActions.SHOVEL_DIG) && renderData.indexOf(RENDER_META_SHOVEL) == -1)
+            {
+                renderData.append(RENDER_META_SHOVEL);
+            }
         }
-        return "";
-    }
 
-    /**
-     * Get render data to render stone in the backpack if cobble in inventory.
-     *
-     * @return metaData String if so.
-     */
-    @NotNull
-    private String getRenderMetaStone()
-    {
-        if (worker.getCitizenInventoryHandler().hasItemInInventory(getMainFillBlock()))
-        {
-            return RENDER_META_STONE;
-        }
-        return "";
+        worker.setRenderMetadata(renderData.toString());
     }
 
     @Override

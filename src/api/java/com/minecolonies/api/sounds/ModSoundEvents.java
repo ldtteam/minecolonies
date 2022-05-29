@@ -24,6 +24,11 @@ public final class ModSoundEvents
     public static Map<String, Map<EventType, Tuple<SoundEvent, SoundEvent>>> CITIZEN_SOUND_EVENTS = new HashMap<>();
 
     /**
+     * Saw sound event.
+     */
+    public static SoundEvent SAW;
+
+    /**
      * Private constructor to hide the implicit public one.
      */
     private ModSoundEvents()
@@ -103,6 +108,9 @@ public final class ModSoundEvents
 
             RaiderSounds.raiderSounds.put(raiderType, sounds);
         }
+
+        SAW = ModSoundEvents.getSoundID("tile.sawmill.saw");
+        registry.register(SAW);
 
         registry.register(RaidSounds.WARNING);
         registry.register(RaidSounds.WARNING_EARLY);

@@ -9,7 +9,9 @@ import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import slimeknights.tconstruct.common.TinkerTags;
+import slimeknights.tconstruct.gadgets.TinkerGadgets;
 import slimeknights.tconstruct.library.tools.helper.ToolDamageUtil;
+import slimeknights.tconstruct.library.tools.item.ModifiableItem;
 import slimeknights.tconstruct.library.tools.nbt.ToolStack;
 import slimeknights.tconstruct.library.tools.stat.ToolStats;
 
@@ -112,7 +114,7 @@ public final class TinkersToolHelper extends TinkersToolProxy
     @Override
     public boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType)
     {
-        if (ItemStackUtils.isEmpty(stack))
+        if (ItemStackUtils.isEmpty(stack) || !(stack.getItem() instanceof ModifiableItem))
         {
             return false;
         }

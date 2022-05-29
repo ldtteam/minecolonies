@@ -25752,6 +25752,15 @@
       }
     ]
   },
+  "tile.sawmill.saw": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:tile/sawmill/saw",
+        "stream": false
+      }
+    ]
+  },
   "raid.raid_alert": {
     "category": "record",
     "sounds": [

@@ -17,6 +17,7 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 
 /**
@@ -24,6 +25,11 @@ import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
  */
 public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHerder, BuildingRabbitHutch, Rabbit>
 {
+    /**
+     * Carrot render meta data.
+     */
+    public static final String RENDER_META_CARROT = "carrot";
+
     /**
      * Max amount of animals per Hut Level.
      */
@@ -37,6 +43,17 @@ public class EntityAIWorkRabbitHerder extends AbstractEntityAIHerder<JobRabbitHe
     public EntityAIWorkRabbitHerder(@NotNull final JobRabbitHerder job)
     {
         super(job);
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        String renderMeta = getState() == IDLE ? "" : RENDER_META_WORKING;
+        if (worker.getCitizenInventoryHandler().hasItemInInventory(Items.CARROT))
+        {
+            renderMeta += RENDER_META_CARROT;
+        }
+        worker.setRenderMetadata(renderMeta);
     }
 
     @Override
