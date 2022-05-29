@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
+import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
@@ -430,9 +431,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return null;
         }
 
-        // todo remove before release
         final ItemStack usedStack = player.getItemInHand(hand);
-        if (usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
+        if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get() &&
+              usedStack.getItem() instanceof BlockItem && ((BlockItem) usedStack.getItem()).getBlock() instanceof AbstractBlockHut<?>)
         {
             final BuildingEntry entry = ((AbstractBlockHut<?>) ((BlockItem) usedStack.getItem()).getBlock()).getBuildingEntry();
             for (final Supplier<IBuildingModule> module : entry.getModuleProducers())
