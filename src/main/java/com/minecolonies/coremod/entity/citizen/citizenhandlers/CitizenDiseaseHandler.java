@@ -8,7 +8,6 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.citizen.citizenhandlers.ICitizenDiseaseHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCook;
-import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobHealer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
@@ -36,7 +35,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     /**
      * Number of seconds after recovering a citizen is immune against any illness.
      */
-    private static final int IMMUNITY_TIME  = 60 * 10 * 7;
+    private static final int IMMUNITY_TIME = 60 * 10 * 7;
 
     /**
      * The citizen assigned to this manager.
@@ -57,8 +56,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
      * The initial citizen count
      */
     private static final int initialCitizenCount = IMinecoloniesAPI.getInstance()
-                                                     .getConfig()
-                                                     .getServer().initialCitizenAmount.get();
+      .getConfig()
+      .getServer().initialCitizenAmount.get();
 
     /**
      * Constructor for the experience handler.
@@ -95,14 +94,16 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
 
     /**
      * Check if the citizen may become sick.
+     *
      * @return true if so.
      */
     private boolean canBecomeSick()
     {
         return !isSick()
-             && citizen.getCitizenColonyHandler().getColony().isActive()
-             && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
-             && immunityTicks <= 0
+                 && citizen.getCitizenColonyHandler().getColony() != null
+                 && citizen.getCitizenColonyHandler().getColony().isActive()
+                 && !(citizen.getCitizenJobHandler().getColonyJob() instanceof JobHealer)
+                 && immunityTicks <= 0
                  && citizen.getCitizenColonyHandler().getColony().getCitizenManager().getCurrentCitizenCount() > initialCitizenCount;
     }
 
@@ -134,7 +135,7 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
     public void read(final CompoundNBT compound)
     {
         // cure diseases that have been removed from the configuration file.
-        if(IColonyManager.getInstance().getCompatibilityManager().getDisease(compound.getString(TAG_DISEASE)) != null)
+        if (IColonyManager.getInstance().getCompatibilityManager().getDisease(compound.getString(TAG_DISEASE)) != null)
         {
             this.disease = compound.getString(TAG_DISEASE);
         }
