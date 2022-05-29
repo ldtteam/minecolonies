@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
