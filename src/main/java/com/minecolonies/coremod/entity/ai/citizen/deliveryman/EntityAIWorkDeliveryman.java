@@ -40,7 +40,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
@@ -356,6 +359,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         boolean success = true;
         boolean extracted = false;
         final IItemHandler workerInventory = worker.getInventoryCitizen();
+        final List<ItemStorage> itemsToDeliver = job.getTaskListWithSameDestination((IRequest<? extends Delivery>) currentTask).stream().map(r -> new ItemStorage(r.getRequest().getStack())).collect(Collectors.toList());
+
         for (int i = 0; i < workerInventory.getSlots(); i++)
         {
             if (workerInventory.getStackInSlot(i).isEmpty())
@@ -363,7 +368,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 continue;
             }
 
+            if (!itemsToDeliver.contains(new ItemStorage(workerInventory.getStackInSlot(i))))
+            {
+                continue;
+            }
+
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
+
             if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
