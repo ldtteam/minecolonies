@@ -14,6 +14,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Suppression;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
@@ -96,9 +97,15 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public AbstractBlockHut()
     {
         super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
-        setRegistryName(getHutName());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
         this.name = getHutName();
+    }
+
+    @Override
+    public B registerBlock(final IForgeRegistry<Block> registry)
+    {
+        setRegistryName(getHutName());
+        return super.registerBlock(registry);
     }
 
     @Override
@@ -124,7 +131,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public AbstractBlockHut(final Properties properties)
     {
         super(properties.noOcclusion());
-        setRegistryName(getHutName());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
         this.name = getHutName();
     }
