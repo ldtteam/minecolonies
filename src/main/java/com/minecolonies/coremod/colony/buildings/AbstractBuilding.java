@@ -955,7 +955,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         for (final Collection<IToken<?>> requestList : new ArrayList<>(getOpenRequestsByCitizen().values()))
         {
-            for (final IToken<?> requestToken : requestList)
+            for (final IToken<?> requestToken : new ArrayList<>(requestList))
             {
                 final IRequest<?> request = colony.getRequestManager().getRequestForToken(requestToken);
                 if (request instanceof StandardRequests.ToolRequest && isRequestStuck(request, playerRequests, retryingRequests))
