@@ -80,6 +80,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";
     private static final String NBT_MINE_POS       = "minePos";
+    private static final String NBT_PLAYER_UUID    = "playeruuid";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -228,6 +229,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             minePos = NBTUtil.readBlockPos(compound.getCompound(NBT_MINE_POS));
         }
+
+        if (compound.contains(NBT_PLAYER_UUID))
+        {
+            followPlayerUUID = compound.getUUID(NBT_PLAYER_UUID);
+        }
+
     }
 
     @Override
@@ -248,6 +255,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         if (minePos != null)
         {
             compound.put(NBT_MINE_POS, NBTUtil.writeBlockPos(minePos));
+        }
+
+        if (followPlayerUUID != null)
+        {
+            compound.putUUID(NBT_PLAYER_UUID, followPlayerUUID);
         }
 
         return compound;
