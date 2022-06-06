@@ -9,6 +9,7 @@ import com.minecolonies.coremod.client.model.ModelEntityFemaleCitizen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -112,7 +113,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     {
         super.renderNameTag(entityIn, str, matrixStack, buffer, maxDistance);
 
-        if (entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasVisibleInteractions())
+        if (!Minecraft.getInstance().options.hideGui && entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasVisibleInteractions())
         {
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
