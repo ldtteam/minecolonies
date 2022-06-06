@@ -298,6 +298,12 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     }
 
     @Override
+    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final BlockState virtualBlockAbove)
+    {
+        return structureAI.getSolidSubstitution(worldPos);
+    }
+
+    @Override
     public boolean replaceWithSolidBlock(final BlockState blockState)
     {
         return !blockState.getMaterial().isSolid() || structureAI.shallReplaceSolidSubstitutionBlock(blockState.getBlock(), blockState);
