@@ -48,7 +48,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         super(job, createRecipeType(crafting), getCatalyst(building), guiHelper);
 
         this.building = building;
-        this.crafting = crafting;
+        this.crafting.add(crafting);
         this.arrow = guiHelper.createDrawable(TEXTURE, 20, 121, 24, 18);
         this.modIdHelper = modIdHelper;
 
@@ -57,7 +57,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull private final BuildingEntry building;
-    @NotNull private final ICraftingBuildingModule crafting;
+    @NotNull private final List<ICraftingBuildingModule> crafting = new ArrayList<>();
     @NotNull private final IDrawableStatic arrow;
     @NotNull private final IModIdHelper modIdHelper;
 
@@ -67,6 +67,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     private static final int INPUT_SLOT_W = WIDTH - INPUT_SLOT_X;
     private final int outputSlotX;
     private final int outputSlotY;
+
+    public void addModule(@NotNull final ICraftingBuildingModule module)
+    {
+        this.crafting.add(module);
+    }
 
     @NotNull
     private static RecipeType<IGenericRecipe> createRecipeType(@NotNull final ICraftingBuildingModule crafting)
@@ -285,7 +290,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @NotNull
     public List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
-        final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(vanilla, this.crafting);
+        final List<IGenericRecipe> recipes = new ArrayList<>();
+        for (final ICraftingBuildingModule module : this.crafting)
+        {
+            recipes.addAll(RecipeAnalyzer.findRecipes(vanilla, module));
+        }
 
         return recipes.stream()
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)
