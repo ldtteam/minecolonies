@@ -1,0 +1,21 @@
+<window size="190 244" pause="false" lightbox="false">
+    <image source="minecolonies:textures/gui/builderhut/builder_paper.png" size="190 244"/>
+    <label id="desc" size="130 11" pos="30 14" label="$(com.minecolonies.gui.workerhuts.expeditionlog)" color="black" textalign="MIDDLE"/>
+
+    <label id="name" size="164 11" color="black" pos="13 28" textalign="MIDDLE"/>
+    <label id="status" size="164 11" color="black" pos="13 39" textalign="MIDDLE"/>
+    <view id="healthBar" size="120 11" pos="35 48">
+        <label id="healthLabel" size="30 11" color="black" pos="135 10" text="44"/>
+    </view>
+    <view id="saturationBar" size="120 22" pos="35 60"/>
+
+    <view id="equipment" size="164 16" pos="13 90"/>
+    <gradient size="164 36" pos="13 110" gradientstart="4292072403" gradientend="4289309097"/>
+    <gradient size="164 80" pos="13 150" gradientstart="4292072403" gradientend="4289309097"/>
+    <box size="164 36" pos="13 110" linewidth="2">
+        <view id="mobs" size="100% 100%"/>
+    </box>
+    <box size="164 80" pos="13 150" linewidth="2">
+        <view id="resources" size="100% 100%"/>
+    </box>
+</window>
