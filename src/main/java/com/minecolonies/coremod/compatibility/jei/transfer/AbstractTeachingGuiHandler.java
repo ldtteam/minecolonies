@@ -33,7 +33,7 @@ public abstract class AbstractTeachingGuiHandler<W extends AbstractContainerScre
     protected AbstractTeachingGuiHandler(@NotNull final List<JobBasedRecipeCategory<?>> categories)
     {
         this.categories = categories.stream()
-                .collect(Collectors.toMap(JobBasedRecipeCategory::getUid, Function.identity()));
+                .collect(Collectors.toMap(category -> category.getRecipeType().getUid(), Function.identity()));
     }
 
     public void register(@NotNull final IGuiHandlerRegistration registration)

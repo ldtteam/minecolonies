@@ -42,7 +42,7 @@ public class BrewingCraftingGuiHandler extends AbstractTeachingGuiHandler<Window
         final JobBasedRecipeCategory<?> category = getRecipeCategory(containerScreen.getBuildingView());
         if (category != null)
         {
-            areas.add(IGuiClickableArea.createBasic(34, 15, 44, 34, category.getUid()));
+            areas.add(IGuiClickableArea.createBasic(34, 15, 44, 34, category.getRecipeType()));
         }
         return areas;
     }
