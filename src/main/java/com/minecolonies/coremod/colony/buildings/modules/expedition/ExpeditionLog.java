@@ -57,7 +57,7 @@ public class ExpeditionLog
         SATURATION,
     }
 
-    private Status status;
+    private Status status = Status.NONE;
     private int id;
     private String name;
     private Map<StatType, Double> stats = new HashMap<>();

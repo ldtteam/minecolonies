@@ -18,11 +18,13 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.ExpeditionLogModule
 import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuildingDirtyMessage;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -74,7 +76,7 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
     {
         final ExpeditionLog expeditionLog = module.getLog();
 
-        findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(expeditionLog.getName());
+        findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(new StringTextComponent(Optional.ofNullable(expeditionLog.getName()).orElse("")));
         findPaneOfTypeByID("status", Text.class).setText(new TranslationTextComponent(
                 TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.ROOT)));
 
