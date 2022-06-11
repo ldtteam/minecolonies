@@ -823,6 +823,8 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             equipArmor(true);
         }
 
+        final IDeliverable edible = new StackList(getEdiblesList(), "Edible Food", 1);
+
         final List<ItemStack> equipment = new ArrayList<>();
         equipment.add(findTool(ToolType.SWORD));
         equipment.add(worker.getItemBySlot(EquipmentSlotType.HEAD));
@@ -832,6 +834,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         equipment.add(findTool(ToolType.PICKAXE));
         equipment.add(findTool(ToolType.AXE));
         equipment.add(findTool(ToolType.SHOVEL));
+        equipment.add(findItem(edible::matches));
         expeditionLog.setEquipment(equipment);
 
         if (!alreadyEquipped)
