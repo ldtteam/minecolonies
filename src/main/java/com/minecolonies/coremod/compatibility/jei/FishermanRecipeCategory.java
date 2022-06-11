@@ -5,11 +5,10 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JEI_INFO;
 
@@ -59,22 +57,13 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
     }
 
     @Override
-    public void setIngredients(@NotNull final FishingRecipe recipe, @NotNull final IIngredients ingredients)
+    public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
+                          @NotNull final FishingRecipe recipe,
+                          @NotNull final IFocusGroup focuses)
     {
-        ingredients.setInput(VanillaTypes.ITEM, new ItemStack(Items.FISHING_ROD));
-        ingredients.setOutputLists(VanillaTypes.ITEM, new ArrayList<>(recipe.getDrops().stream()
-                .map(LootTableAnalyzer.LootDrop::getItemStacks)
-                .collect(Collectors.toList())));
-    }
-
-    @Override
-    public void setRecipe(@NotNull final IRecipeLayout layout, @NotNull final FishingRecipe recipe, @NotNull final IIngredients ingredients)
-    {
-        final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
-
-        guiItemStacks.init(0, true, WIDTH - 18, CITIZEN_Y - 20);
-        guiItemStacks.setBackground(0, slot);
-        guiItemStacks.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
+        builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, CITIZEN_Y - 20)
+                .setBackground(this.slot, -1, -1)
+                .addItemStack(new ItemStack(Items.FISHING_ROD));
 
         if (!recipe.getDrops().isEmpty())
         {
@@ -85,15 +74,13 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
             int x = startX;
             int y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
             int c = 0;
-            int slot = 1;
 
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops(), recipe.getId()));
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
             {
-                guiItemStacks.init(slot, true, x, y);
-                guiItemStacks.setBackground(slot, this.chanceSlot);
-                guiItemStacks.set(slot, drop.getItemStacks());
-                ++slot;
+                builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                        .setBackground(this.chanceSlot, -1, -1)
+                        .addItemStacks(drop.getItemStacks())
+                        .addTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
                 if (++c >= columns)
                 {
                     c = 0;
