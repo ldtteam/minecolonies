@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Load only structure handler just to get dimensions etc from structures, not for placement specific for worker usage.
@@ -37,7 +38,13 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
     }
 
     @Override
-    public BlockState getSolidBlockForPos(final BlockPos worldPos)
+    public BlockState getSolidBlockForPos(final BlockPos blockPos)
+    {
+        return structureAI.getSolidSubstitution(blockPos);
+    }
+
+    @Override
+    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final BlockState virtualBlockAbove)
     {
         return structureAI.getSolidSubstitution(worldPos);
     }
