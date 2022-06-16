@@ -5,6 +5,7 @@ import com.minecolonies.api.research.IGlobalResearchBranch;
 import com.minecolonies.api.research.ResearchBranchType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 
@@ -46,12 +47,12 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     /**
      * The translation key or human-readable name of the branch.
      */
-    private final MutableComponent name;
+    private final TranslatableContents name;
 
     /**
      * The optional subtitle translation key or human-readable subtitle for the branch.
      */
-    private final MutableComponent subtitle;
+    private final TranslatableContents subtitle;
 
     /**
      * The research branch styling type.
@@ -75,10 +76,10 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
     private final boolean hidden;
 
     @Override
-    public MutableComponent getName(){return this.name;}
+    public TranslatableContents getName(){return this.name;}
 
     @Override
-    public MutableComponent getSubtitle(){return this.subtitle;}
+    public TranslatableContents getSubtitle(){return this.subtitle;}
 
     @Override
     public int getBaseTime(final int depth){return (int)(BASE_RESEARCH_TIME * this.baseTime * Math.pow(2, depth - 1));}
@@ -104,13 +105,13 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         if(id.getPath().isEmpty())
         {
             // yes, technically "/.json" is a valid file name and "" is a valid resource location.
-            this.name = Component.translatable("");
+            this.name = new TranslatableContents("");
         }
         else
         {
-            this.name = Component.translatable(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
+            this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
         }
-        this.subtitle = Component.translatable("");
+        this.subtitle = new TranslatableContents("");
         this.baseTime = 1.0;
         this.type = ResearchBranchType.DEFAULT;
         this.hidden = false;
@@ -129,28 +130,28 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
         if (researchJson.has(RESEARCH_BRANCH_NAME_PROP) && researchJson.get(RESEARCH_BRANCH_NAME_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().isString())
         {
-            this.name = Component.translatable(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString());
+            this.name = new TranslatableContents(researchJson.get(RESEARCH_BRANCH_NAME_PROP).getAsJsonPrimitive().getAsString());
         }
         else
         {
             if(id.getPath().isEmpty())
             {
                 // yes, technically "/.json" is a valid file name.
-                this.name = Component.translatable("");
+                this.name = new TranslatableContents("");
             }
             else
             {
-                this.name = Component.translatable(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
+                this.name = new TranslatableContents(id.getPath().substring(0, 1).toUpperCase() + id.getPath().substring(1));
             }
         }
         if (researchJson.has(RESEARCH_SUBTITLE_PROP) && researchJson.get(RESEARCH_SUBTITLE_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().isString())
         {
-            this.subtitle = Component.translatable(researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().getAsString());
+            this.subtitle = new TranslatableContents(researchJson.get(RESEARCH_SUBTITLE_PROP).getAsJsonPrimitive().getAsString());
         }
         else
         {
-            this.subtitle = Component.translatable("");
+            this.subtitle = new TranslatableContents("");
         }
         if (researchJson.has(RESEARCH_BASE_TIME_PROP) && researchJson.get(RESEARCH_BASE_TIME_PROP).isJsonPrimitive()
               && researchJson.get(RESEARCH_BASE_TIME_PROP).getAsJsonPrimitive().isNumber())
@@ -197,8 +198,8 @@ public class GlobalResearchBranch implements IGlobalResearchBranch
      */
     public GlobalResearchBranch(final CompoundTag nbt)
     {
-        this.name = Component.translatable(nbt.getString(RESEARCH_BRANCH_NAME_PROP));
-        this.subtitle = Component.translatable(nbt.getString(RESEARCH_SUBTITLE_PROP));
+        this.name = new TranslatableContents(nbt.getString(RESEARCH_BRANCH_NAME_PROP));
+        this.subtitle = new TranslatableContents(nbt.getString(RESEARCH_SUBTITLE_PROP));
         this.type = ResearchBranchType.valueOfTag(nbt.getString(RESEARCH_BRANCH_TYPE_PROP));
         this.baseTime = nbt.getDouble(RESEARCH_BASE_TIME_PROP);
         this.sortOrder = nbt.getInt(RESEARCH_SORT_PROP);

@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockMinecoloniesNamedGrave;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedGrave<BlockMinecoloniesNamedGrave>
 {
@@ -48,10 +47,15 @@ public class BlockMinecoloniesNamedGrave extends AbstractBlockMinecoloniesNamedG
 
     public BlockMinecoloniesNamedGrave()
     {
-        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noDrops());
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + BLOCK_NAME);
+        super(Properties.of(Material.STONE).strength(BLOCK_HARDNESS, RESISTANCE).noLootTable());
         final BlockState bs = this.defaultBlockState();
         this.registerDefaultState(bs.setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @Override

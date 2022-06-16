@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.blocks.schematic;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecolonies;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Material;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
@@ -10,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
  */
 public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
 {
-
     /**
      * The hardness this block has.
      */
@@ -32,6 +33,11 @@ public class BlockWaypoint extends AbstractBlockMinecolonies<BlockWaypoint>
     public BlockWaypoint()
     {
         super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
-        setRegistryName(BLOCK_NAME);
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 }

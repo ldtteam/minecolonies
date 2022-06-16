@@ -12,6 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -221,7 +222,7 @@ public final class LootTableAnalyzer
                 case "minecraft:enchant_with_levels":
                     final int levels = processNumber(function.get("levels"), 1);
                     final boolean treasure = GsonHelper.getAsBoolean(function, "treasure", false);
-                    stack = EnchantmentHelper.enchantItem(ThreadLocalRandom.current(), stack, levels, treasure);
+                    stack = EnchantmentHelper.enchantItem(RandomSource.create(), stack, levels, treasure);
                     break;
 
                 case "minecraft:looting_enchant":

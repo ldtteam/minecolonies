@@ -58,7 +58,7 @@ public class ContainerCitizenInventory extends AbstractContainerMenu
      */
     public ContainerCitizenInventory(final int windowId, final Inventory inv, final int colonyId, final int citizenId)
     {
-        super(ModContainers.citizenInv, windowId);
+        super(ModContainers.citizenInv.get(), windowId);
         this.playerInventory = inv;
 
         final IColony colony;

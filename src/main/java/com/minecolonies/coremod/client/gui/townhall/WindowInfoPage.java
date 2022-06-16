@@ -82,7 +82,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         df.setRoundingMode(RoundingMode.CEILING);
         final String roundedHappiness = df.format(building.getColony().getOverallHappiness());
 
-        findPaneOfTypeByID(HAPPINESS_LABEL, Text.class).setText(roundedHappiness);
+        findPaneOfTypeByID(HAPPINESS_LABEL, Text.class).setText(Component.literal(roundedHappiness));
         final int citizensSize = building.getColony().getCitizens().size();
         final int citizensCap;
 
@@ -230,8 +230,8 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     Collections.reverse(permissionEvents);
                     final PermissionEvent event = permissionEvents.get(index);
 
-                    nameLabel.setText(event.getName() + (event.getId() == null ? " <fake>" : ""));
-                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
+                    nameLabel.setText(Component.literal(event.getName() + (event.getId() == null ? " <fake>" : "")));
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ()));
 
                     if (event.getId() == null)
                     {
@@ -247,22 +247,22 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     final IColonyEventDescription event = colonyEvents.get(index);
                     if (event instanceof CitizenDiedEvent)
                     {
-                        actionLabel.setText(((CitizenDiedEvent) event).getDeathCause());
+                        actionLabel.setText(Component.literal(((CitizenDiedEvent) event).getDeathCause()));
                     }
                     else
                     {
-                        actionLabel.setText(event.getName());
+                        actionLabel.setText(Component.literal(event.getName()));
                     }
                     if (event instanceof ICitizenEventDescription)
                     {
-                        nameLabel.setText(((ICitizenEventDescription) event).getCitizenName());
+                        nameLabel.setText(Component.literal(((ICitizenEventDescription) event).getCitizenName()));
                     }
                     else if (event instanceof IBuildingEventDescription)
                     {
                         IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
                         nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(" " + buildEvent.getLevel()).create());
                     }
-                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
+                    rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ()));
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
                 }
             }

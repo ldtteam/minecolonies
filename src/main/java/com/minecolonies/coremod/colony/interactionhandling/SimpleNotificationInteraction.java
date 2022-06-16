@@ -4,6 +4,7 @@ import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Component;
@@ -51,10 +52,10 @@ public class SimpleNotificationInteraction extends StandardInteraction
      */
     private void onResponse(final Component response)
     {
-        if (response instanceof MutableComponent)
+        if (response.getContents() instanceof TranslatableContents)
         {
-            if (((MutableComponent) response).getKey().equals(INTERACTION_R_OKAY)
-                  || ((MutableComponent) response).getKey().equals(INTERACTION_R_IGNORE))
+            if (((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_OKAY)
+                  || ((TranslatableContents) response.getContents()).getKey().equals(INTERACTION_R_IGNORE))
             {
                 active = false;
             }

@@ -2,22 +2,23 @@ package com.minecolonies.api.inventory;
 
 import com.minecolonies.api.inventory.container.*;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ModContainers
 {
-    public static MenuType<ContainerCraftingFurnace> craftingFurnace;
+    public static RegistryObject<MenuType<ContainerCraftingFurnace>> craftingFurnace;
 
-    public static MenuType<ContainerBuildingInventory> buildingInv;
+    public static RegistryObject<MenuType<ContainerBuildingInventory>> buildingInv;
 
-    public static MenuType<ContainerCitizenInventory> citizenInv;
+    public static RegistryObject<MenuType<ContainerCitizenInventory>> citizenInv;
 
-    public static MenuType<ContainerRack> rackInv;
+    public static RegistryObject<MenuType<ContainerRack>> rackInv;
 
-    public static MenuType<ContainerGrave> graveInv;
+    public static RegistryObject<MenuType<ContainerGrave>> graveInv;
 
-    public static MenuType<ContainerCrafting> craftingGrid;
+    public static RegistryObject<MenuType<ContainerCrafting>> craftingGrid;
 
-    public static MenuType<ContainerField> field;
+    public static RegistryObject<MenuType<ContainerField>> field;
 
-    public static MenuType<ContainerCraftingBrewingstand> craftingBrewingstand;
+    public static RegistryObject<MenuType<ContainerCraftingBrewingstand>> craftingBrewingstand;
 }

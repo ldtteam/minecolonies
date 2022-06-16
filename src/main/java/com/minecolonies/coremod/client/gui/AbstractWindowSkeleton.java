@@ -8,6 +8,7 @@ import com.ldtteam.blockui.views.SwitchView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import com.minecolonies.coremod.network.messages.server.OpenGuiWindowTriggerMessage;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,7 +171,7 @@ public abstract class AbstractWindowSkeleton extends BOWindow implements ButtonH
         {
             buttonNextPage.off();
         }
-        pageNum.setText(curPage + "/" + switchPagesSize);
+        pageNum.setText(Component.literal(curPage + "/" + switchPagesSize));
     }
 
     @Override

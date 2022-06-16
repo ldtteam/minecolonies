@@ -19,6 +19,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingCompost
 import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -342,7 +343,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
      * @param random the random number to get the percentages
      * @return the multiplier for the amount of compost (base amount: 6)
      */
-    private double getLootMultiplier(final Random random)
+    private double getLootMultiplier(final RandomSource random)
     {
         final int citizenLevel = (int) (getSecondarySkillLevel() / 2.0);
         final int diceResult = random.nextInt(100);

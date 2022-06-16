@@ -108,9 +108,9 @@ public class WindowMainPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final CompactColonyReference colonyReference = building.getColony().getAllies().get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(colonyReference.name);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(colonyReference.name));
                 final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText((int) distance + "b");
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(Component.literal((int) distance + "b"));
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
                 if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
                 {
@@ -136,9 +136,9 @@ public class WindowMainPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final CompactColonyReference colonyReference = building.getColony().getFeuds().get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(colonyReference.name);
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(colonyReference.name));
                 final long distance = BlockPosUtil.getDistance2D(colonyReference.center, building.getPosition());
-                rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(String.valueOf((int) distance));
+                rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(Component.literal(String.valueOf((int) distance)));
             }
         });
     }

@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -103,7 +104,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
                 {
                     text += bView.getCustomName().isEmpty() ? bView.getSchematicName() : bView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";
-                    rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(text);
+                    rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(Component.literal(text));
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                     if (selectedBuildings.contains(bView.getID()))
                     {
@@ -126,7 +127,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
     private void switchClicked(@NotNull final Button button)
     {
         final int row = workerList.getListElementIndexByPane(button);
-        String buttonText = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
+        String buttonText = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         if (buttonText.equals(OFF))
         {

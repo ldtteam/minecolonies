@@ -16,7 +16,7 @@ public abstract class AbstractRendererPirate<T extends AbstractEntityPirate, M e
     public AbstractRendererPirate(final EntityRendererProvider.Context context, final M modelBipedIn, final float shadowSize)
     {
         super(context, modelBipedIn, shadowSize);
-        this.addLayer(new ItemInHandLayer<>(this));
+        this.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
     }
 }

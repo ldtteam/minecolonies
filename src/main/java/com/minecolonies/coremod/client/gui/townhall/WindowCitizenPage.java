@@ -82,7 +82,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         CitizenWindowUtils.createSkillContent(view, this);
         String jobKey = view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob();
         findPaneOfTypeByID(JOB_LABEL, Text.class).setText(Component.translatable(jobKey).withStyle(ChatFormatting.BOLD));
-        findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(String.valueOf(view.getId()));
+        findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(Component.literal(String.valueOf(view.getId())));
     }
 
     /**
@@ -114,7 +114,7 @@ public class WindowCitizenPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final ICitizenDataView citizen = citizens.get(index);
-                rowPane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class).setText(citizen.getName());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, ButtonImage.class).setText(Component.literal(citizen.getName()));
             }
         });
     }

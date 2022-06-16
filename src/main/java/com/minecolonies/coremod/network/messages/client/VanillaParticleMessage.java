@@ -60,7 +60,7 @@ public class VanillaParticleMessage implements IMessage
         byteBuf.writeDouble(x);
         byteBuf.writeDouble(y);
         byteBuf.writeDouble(z);
-        byteBuf.writeResourceLocation(this.type.getRegistryName());
+        byteBuf.writeResourceLocation(ForgeRegistries.PARTICLE_TYPES.getKey(this.type));
     }
 
     @Nullable

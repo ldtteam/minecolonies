@@ -6,6 +6,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.research.IGlobalResearch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
             throw new IllegalArgumentException("Third parameter is supposed to be the parent (ResourceLocation)!");
         }
 
-        if (!(context[3] instanceof MutableComponent))
+        if (!(context[3] instanceof TranslatableContents))
         {
             throw new IllegalArgumentException("Fourth parameter is supposed to be the description (Translation Text Component)!");
         }
@@ -55,7 +56,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         final ResourceLocation id = (ResourceLocation) context[0];
         final ResourceLocation branch = (ResourceLocation) context[1];
         final ResourceLocation parent = (ResourceLocation) context[2];
-        final MutableComponent desc = (MutableComponent) context[3];
+        final TranslatableContents desc = (TranslatableContents) context[3];
         final int depth = (int) context[4];
         final int sortOrder;
         if(context.length > 5)
@@ -84,14 +85,14 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
         {
             iconStack = ItemStack.EMPTY;
         }
-        final MutableComponent subtitle;
+        final TranslatableContents subtitle;
         if(context.length > 8)
         {
-            subtitle = (MutableComponent) context[8];
+            subtitle = (TranslatableContents) context[8];
         }
         else
         {
-            subtitle = Component.translatable("");
+            subtitle = new TranslatableContents("");
         }
         final boolean onlyChild;
         final boolean hidden;
@@ -137,7 +138,7 @@ public interface IGlobalResearchFactory extends IFactory<FactoryVoidInput, IGlob
      * @return a new Instance of Research.
      */
     @NotNull
-    IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final MutableComponent desc, final int universityLevel, final int sortOrder,
-      final ResourceLocation iconTexture, final ItemStack iconStack, final MutableComponent subtitle, final boolean onlyChild,
+    IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslatableContents desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslatableContents subtitle, final boolean onlyChild,
       final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable);
 }

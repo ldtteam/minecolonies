@@ -11,6 +11,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -128,7 +129,7 @@ public final class GenericRecipeUtils
         final IGlobalResearch research = researchTree.getResearch(researchId);
         if (research != null)
         {
-            return research.getName();
+            return MutableComponent.create(research.getName());
         }
 
         // next, see if it's an effect id
@@ -136,7 +137,7 @@ public final class GenericRecipeUtils
         if (researches != null && !researches.isEmpty())
         {
             // there might be more than one, but this should be sufficient for now
-            return researches.iterator().next().getName();
+            return MutableComponent.create(researches.iterator().next().getName());
         }
 
         // otherwise it may be an effect with no research (perhaps disabled via datapack)

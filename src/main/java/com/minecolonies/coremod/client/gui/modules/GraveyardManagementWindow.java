@@ -108,11 +108,11 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
                 final BlockEntity entity = world.getBlockEntity(grave);
                 if (entity instanceof TileEntityGrave)
                 {
-                    rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText("Grave of " +
+                    rowPane.findPaneOfTypeByID(TAG_NAME, Text.class).setText(Component.literal("Grave of " +
                             ((((TileEntityGrave) entity).getGraveData() != null) ?
                              ((TileEntityGrave) entity).getGraveData().getCitizenName() :
-                             "Unknown Citizen"));
-                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
+                             "Unknown Citizen")));
+                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.literal(distance + "m"));
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
                 }
             }
@@ -134,7 +134,7 @@ public class GraveyardManagementWindow extends AbstractModuleWindow
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final String citizenName = moduleView.getRestingCitizen().get(index);
-                rowPane.findPaneOfTypeByID(TAG_CITIZEN_NAME, Text.class).setText(citizenName);
+                rowPane.findPaneOfTypeByID(TAG_CITIZEN_NAME, Text.class).setText(Component.literal(citizenName));
             }
         });
     }

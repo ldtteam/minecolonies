@@ -76,4 +76,9 @@ public class ResearchEffectEntry
         this.readFromNBT = readFromNBT;
         this.registryName = registryName;
     }
+
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
+    }
 }

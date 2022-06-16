@@ -18,6 +18,7 @@ import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +92,7 @@ public class CraftingTagAuditor
     {
         final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
         final List<ItemStack> items = new ArrayList<>(compatibility.getListOfAllItems());
-        items.sort(Comparator.comparing(stack -> stack.getItem().getRegistryName().toString()));
+        items.sort(Comparator.comparing(stack -> ForgeRegistries.ITEMS.getKey(stack.getItem()).toString()));
         return items;
     }
 
@@ -177,7 +178,7 @@ public class CraftingTagAuditor
                                      @NotNull final MinecraftServer server) throws IOException
     {
         final List<IGenericRecipe> cutterRecipes = new ArrayList<>(ModCraftingTypes.ARCHITECTS_CUTTER.findRecipes(server.getRecipeManager(), server.overworld()));
-        cutterRecipes.sort(Comparator.comparing(r -> r.getPrimaryOutput().getItem().getRegistryName().toString()));
+        cutterRecipes.sort(Comparator.comparing(r -> ForgeRegistries.ITEMS.getKey(r.getPrimaryOutput().getItem()).toString()));
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
                 .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER))
@@ -200,7 +201,7 @@ public class CraftingTagAuditor
                     .flatMap(Collection::stream)
                     .map(ItemStorage::new)
                     .distinct()
-                    .sorted(Comparator.comparing(s -> s.getItem().getRegistryName().toString()))
+                    .sorted(Comparator.comparing(s -> ForgeRegistries.ITEMS.getKey(s.getItem()).toString()))
                     .map(ItemStorage::getItemStack)
                     .collect(Collectors.toList());
             for (final ItemStack skin : allSkins)
@@ -242,7 +243,7 @@ public class CraftingTagAuditor
                                        @NotNull final ItemStack stack) throws IOException
     {
         writer.write('"');
-        writer.write(stack.getItem().getRegistryName().toString());
+        writer.write(ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
         if (stack.hasTag() && !stack.isDamageableItem())
         {
             writer.write(stack.getTag().toString().replace("\"", "\"\""));

@@ -73,7 +73,7 @@ public class ContainerCraftingFurnace extends AbstractContainerMenu
      */
     public ContainerCraftingFurnace(final int windowId, final Inventory inv, final BlockPos pos, final String moduleId)
     {
-        super(ModContainers.craftingFurnace, windowId);
+        super(ModContainers.craftingFurnace.get(), windowId);
         this.moduleId = moduleId;
         this.furnaceInventory = new IItemHandlerModifiable()
         {

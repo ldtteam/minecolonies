@@ -10,6 +10,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
@@ -52,8 +53,8 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
     @Override
     protected void doAttack(final LivingEntity target)
     {
-        double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE).getValue();
-        target.hurt(new NamedDamageSource("death.attack." + ((MutableComponent) user.getName()).getKey(), user), (float) damageToBeDealt);
+        double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue();
+        target.hurt(new NamedDamageSource("death.attack." + ((TranslatableContents) user.getName().getContents()).getKey(), user), (float) damageToBeDealt);
         user.swing(InteractionHand.MAIN_HAND);
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(user.getRandom()));
         target.setLastHurtByMob(user);

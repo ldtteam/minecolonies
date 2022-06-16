@@ -43,6 +43,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
@@ -90,7 +91,7 @@ public final class ColonyView implements IColonyView
      * The colony flag (set to plain white as default)
      */
     private ListTag        colonyFlag      = new BannerPattern.Builder()
-        .addPattern(BannerPattern.BASE, DyeColor.WHITE)
+        .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
         .toListTag();
 
     private BlockPos center = BlockPos.ZERO;
@@ -268,7 +269,7 @@ public final class ColonyView implements IColonyView
         buf.writeInt(freeBlocks.size());
         for (final Block block : freeBlocks)
         {
-            buf.writeUtf(block.getRegistryName().toString());
+            buf.writeUtf(ForgeRegistries.BLOCKS.getKey(block).toString());
         }
 
         buf.writeInt(freePos.size());

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
@@ -163,7 +164,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         super.serializeToView(buf);
-        buf.writeRegistryId(jobEntry);
+        buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         buf.writeInt(getPrimarySkill().ordinal());
         buf.writeInt(getSecondarySkill().ordinal());
     }

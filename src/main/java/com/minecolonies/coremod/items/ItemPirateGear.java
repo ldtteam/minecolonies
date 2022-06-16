@@ -39,6 +39,5 @@ public class ItemPirateGear extends ArmorItem
       final Item.Properties properties)
     {
         super(materialIn, equipmentSlotIn, properties.tab(tab));
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }
 }

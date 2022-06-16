@@ -48,7 +48,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
     @Override
     public @Nullable BlockEntity newBlockEntity(final @NotNull BlockPos blockPos, final @NotNull BlockState blockState)
     {
-        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.create(blockPos, blockState);
+        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.STASH.get().create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }

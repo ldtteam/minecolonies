@@ -49,7 +49,7 @@ public class WorldEventContext
         clientPlayer = Minecraft.getInstance().player;
         mainHandItem = clientPlayer.getMainHandItem();
         nearestColony = IColonyManager.getInstance().getClosestColonyView(clientLevel, clientPlayer.blockPosition());
-        clientRenderDist = Minecraft.getInstance().options.renderDistance;
+        clientRenderDist = Minecraft.getInstance().options.renderDistance().get();
 
         final Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         poseStack.pushPose();

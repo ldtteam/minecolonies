@@ -278,7 +278,7 @@ public class ColonyBorderRenderer
         bufferbuilder.end();
 
         // create bytebuffer copy since buffer builder uses slice
-        final Pair<DrawState, ByteBuffer> preResult = bufferbuilder.popNextBuffer();
+        final Pair<DrawState, ByteBuffer> preResult = BufferBuilder.popNextBuffer();
         final ByteBuffer temp = MemoryTracker.create(preResult.getSecond().capacity());
         preResult.getSecond().clear();
         temp.clear();

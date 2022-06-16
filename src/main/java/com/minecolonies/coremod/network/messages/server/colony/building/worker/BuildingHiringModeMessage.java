@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.worker;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.HiringMode;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -75,7 +76,7 @@ public class BuildingHiringModeMessage extends AbstractBuildingServerMessage<IBu
         buf.writeBoolean(isLivingBuildingModule);
         if (jobId != null)
         {
-            buf.writeRegistryId(jobId);
+            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobId);
         }
     }
 

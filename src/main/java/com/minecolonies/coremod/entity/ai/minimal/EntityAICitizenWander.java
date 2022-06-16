@@ -113,7 +113,7 @@ public class EntityAICitizenWander extends Goal
                 citizen.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                 walkTo = null;
                 leisureSite = null;
-                citizen.getCitizenData().getCitizenSkillHandler().tryLevelUpIntelligence(citizen.getRandom(), EntityAIStudy.ONE_IN_X_CHANCE, citizen.getCitizenData());
+                citizen.getCitizenData().getCitizenSkillHandler().tryLevelUpIntelligence(citizen.getCitizenData().getRandom(), EntityAIStudy.ONE_IN_X_CHANCE, citizen.getCitizenData());
                 return IDLE;
             }
 

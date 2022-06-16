@@ -5,6 +5,7 @@ import com.minecolonies.api.tileentities.TileEntityColonyFlag;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BannerItem;
@@ -37,7 +38,6 @@ public class ItemColonyFlagBanner extends BannerItem
     public ItemColonyFlagBanner(String name, CreativeModeTab tab, Properties properties)
     {
         this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16).tab(tab));
-        setRegistryName(Constants.MOD_ID, name);
     }
 
     public ItemColonyFlagBanner(Block standingBanner, Block wallBanner, Properties builder)
@@ -72,10 +72,10 @@ public class ItemColonyFlagBanner extends BannerItem
 
             // Set the base pattern, if there wasn't one set.
             // This saves us attempting to alter the item itself to change the base color.
-            if (!patternList.getCompound(0).getString(TAG_SINGLE_PATTERN).equals(BannerPattern.BASE.getHashname()))
+            if (!patternList.getCompound(0).getString(TAG_SINGLE_PATTERN).equals(BannerPatterns.BASE.getHashname()))
             {
                 CompoundTag nbt = new CompoundTag();
-                nbt.putString(TAG_SINGLE_PATTERN, BannerPattern.BASE.getHashname());
+                nbt.putString(TAG_SINGLE_PATTERN, BannerPatterns.BASE.getHashname());
                 nbt.putInt(TAG_PATTERN_COLOR, ((AbstractBannerBlock) state.getBlock()).getColor().getId());
                 patternList.add(0, nbt);
             }

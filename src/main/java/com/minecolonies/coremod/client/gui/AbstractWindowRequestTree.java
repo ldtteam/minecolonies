@@ -21,6 +21,7 @@ import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRe
 import com.minecolonies.coremod.colony.requestsystem.requests.StandardRequests;
 import com.minecolonies.coremod.network.messages.server.colony.UpdateRequestStateMessage;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -349,7 +350,7 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(request.getShortDisplayString().getString().replace("§f", ""));
+                    rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")));
                 }
 
                 if (!cancellable(request))

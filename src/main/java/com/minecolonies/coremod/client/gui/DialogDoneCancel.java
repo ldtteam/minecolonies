@@ -8,6 +8,7 @@ import com.ldtteam.blockui.views.OverlayView;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -94,7 +95,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      */
     public void setTitle(final String title)
     {
-        titleLabel.setText(title);
+        titleLabel.setText(Component.literal(title));
     }
 
     /**
@@ -114,7 +115,7 @@ public class DialogDoneCancel extends OverlayView implements ButtonHandler
      */
     public void setTextContent(final String content)
     {
-        contentText.setText(content);
+        contentText.setText(Component.literal(content));
     }
 
     /**

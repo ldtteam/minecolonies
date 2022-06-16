@@ -67,7 +67,7 @@ public class ContainerField extends AbstractContainerMenu
      */
     public ContainerField(final int windowId, final Inventory playerInventory, BlockPos pos)
     {
-        super(ModContainers.field, windowId);
+        super(ModContainers.field.get(), windowId);
 
         final Level world = playerInventory.player.level;
 

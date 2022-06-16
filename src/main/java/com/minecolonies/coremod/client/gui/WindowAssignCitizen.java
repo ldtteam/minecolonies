@@ -229,7 +229,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 }
 
                 final Text citizenLabel = rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class);
-                citizenLabel.setText(citizen.getName());
+                citizenLabel.setText(Component.literal(citizen.getName()));
                 if (assign)
                 {
                     citizenLabel.setColors(YELLOW);
@@ -271,7 +271,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 final Text newLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_JOB, Text.class);
                 if (citizen.getJobView() != null)
                 {
-                    newLivingLabel.setText(Component.translatable(citizen.getJobView().getEntry().getTranslationKey()).getString() + ":" + workString);
+                    newLivingLabel.setText(Component.literal(Component.translatable(citizen.getJobView().getEntry().getTranslationKey()).getString() + ":" + workString));
                     if (better)
                     {
                         newLivingLabel.setColors(DARKGREEN);
@@ -281,7 +281,7 @@ public class WindowAssignCitizen extends AbstractWindowSkeleton implements Butto
                 final Text currentLivingLabel = rowPane.findPaneOfTypeByID(CITIZEN_LIVING, Text.class);
                 if (assign)
                 {
-                    currentLivingLabel.setText(homeString);
+                    currentLivingLabel.setText(Component.literal(homeString));
                     if (badCurrentLiving)
                     {
                         currentLivingLabel.setColors(RED);

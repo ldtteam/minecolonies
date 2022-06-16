@@ -77,4 +77,9 @@ public class ResearchRequirementEntry
         this.readFromNBT = readFromNBT;
         this.registryname = registryName;
     }
+
+    public ResourceLocation getRegistryName()
+    {
+        return registryname;
+    }
 }

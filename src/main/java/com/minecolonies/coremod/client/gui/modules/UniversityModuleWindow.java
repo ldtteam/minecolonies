@@ -157,7 +157,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             button.getParent().setID(branches.get(index).toString());
             if(requirements.get(index).isEmpty())
             {
-                button.setText(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getName());
+                button.setText(MutableComponent.create(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getName()));
             }
             else
             {
@@ -171,7 +171,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
                 AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(button);
                 if (!IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle().getKey().isEmpty())
                 {
-                    hoverText.append(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle()).colorName("GRAY").paragraphBreak();
+                    hoverText.append(MutableComponent.create(IGlobalResearchTree.getInstance().getBranchData(branches.get(index)).getSubtitle())).colorName("GRAY").paragraphBreak();
                 }
                 if (!requirements.get(index).isEmpty())
                 {

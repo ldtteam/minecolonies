@@ -22,6 +22,7 @@ import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -621,10 +622,10 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     private void generateResearchTooltips(final Button tipItem, final IGlobalResearch research, final ResearchButtonState state)
     {
         // have to use a deep copy of getName, or the TranslationText will also retain and apply the formatting in other contexts.
-        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(research.getName().copy()).bold().color(COLOR_TEXT_NAME);
+        final AbstractTextBuilder.TooltipBuilder hoverPaneBuilder = PaneBuilders.tooltipBuilder().hoverPane(tipItem).append(MutableComponent.create(research.getName()).copy()).bold().color(COLOR_TEXT_NAME);
         if (!research.getSubtitle().getKey().isEmpty())
         {
-            hoverPaneBuilder.paragraphBreak().italic().colorName("GRAY").append(research.getSubtitle());
+            hoverPaneBuilder.paragraphBreak().italic().colorName("GRAY").append(MutableComponent.create(research.getSubtitle()));
         }
         for (int txt = 0; txt < research.getEffects().size(); txt++)
         {
@@ -639,11 +640,11 @@ public class WindowResearchTree extends AbstractWindowSkeleton
             }
             else
             {
-                hoverPaneBuilder.paragraphBreak().append(research.getEffects().get(txt).getDesc());
+                hoverPaneBuilder.paragraphBreak().append(MutableComponent.create(research.getEffects().get(txt).getDesc()));
             }
             if (!research.getEffects().get(txt).getSubtitle().getKey().isEmpty())
             {
-                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(research.getEffects().get(txt).getSubtitle()).italic().colorName("GRAY");
+                hoverPaneBuilder.paragraphBreak().append(Component.literal("-")).append(MutableComponent.create(research.getEffects().get(txt).getSubtitle())).italic().colorName("GRAY");
             }
         }
         if (state != ResearchButtonState.FINISHED && state != ResearchButtonState.IN_PROGRESS)
@@ -713,7 +714,7 @@ public class WindowResearchTree extends AbstractWindowSkeleton
     {
         final Text nameText = new Text();
         nameText.setSize(NAME_LABEL_WIDTH, NAME_LABEL_HEIGHT);
-        nameText.setText(research.getName());
+        nameText.setText(MutableComponent.create(research.getName()));
         nameText.setPosition(offsetX + ICON_WIDTH + TEXT_X_OFFSET, offsetY);
         nameText.setColors(COLOR_TEXT_DARK);
         nameText.setTextScale(1.4f);

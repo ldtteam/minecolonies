@@ -35,7 +35,7 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
     @Override
     public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        final TileEntityWareHouse building = (TileEntityWareHouse) MinecoloniesTileEntities.WAREHOUSE.create(blockPos, blockState);
+        final TileEntityWareHouse building = (TileEntityWareHouse) MinecoloniesTileEntities.WAREHOUSE.get().create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }

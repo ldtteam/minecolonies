@@ -27,7 +27,9 @@ import com.minecolonies.coremod.items.ItemAdventureToken;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -376,7 +378,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
                 {
                     // by default all the adventure tokens are at the end (due to loot tables); space them better
                     result = new ArrayList<>(result);
-                    Collections.shuffle(result, worker.getRandom());
+                    Collections.shuffle(result, worker.getCitizenData().getRandom());
                     job.addCraftedResultsList(result);
                 }
 
@@ -613,7 +615,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
     // calculate the XP coming from certain ores
     private int xpOnDrop(Block block)
     {
-        Random rnd = worker.getRandom();
+        RandomSource rnd = worker.getRandom();
         if (block == Blocks.COAL_ORE)
         {
             return rnd.nextInt(0, 2);

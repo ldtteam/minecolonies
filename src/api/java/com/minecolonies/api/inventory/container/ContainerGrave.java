@@ -59,7 +59,7 @@ public class ContainerGrave extends AbstractContainerMenu
      */
     public ContainerGrave(final int windowId, final Inventory inv, final FriendlyByteBuf extra)
     {
-        super(ModContainers.graveInv, windowId);
+        super(ModContainers.graveInv.get(), windowId);
         final BlockPos grave = extra.readBlockPos();
 
         final AbstractTileEntityGrave abstractTileEntityGrave = (AbstractTileEntityGrave) inv.player.level.getBlockEntity(grave);

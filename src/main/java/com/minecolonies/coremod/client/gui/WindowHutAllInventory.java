@@ -166,19 +166,19 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         switch (sortDescriptor)
         {
             case NO_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("v^");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText(Component.literal("v^"));
                 break;
             case ASC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("A^");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText(Component.literal("A^"));
                 break;
             case DESC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("Av");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText(Component.literal("Av"));
                 break;
             case COUNT_ASC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1^");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText(Component.literal("1^"));
                 break;
             case COUNT_DESC_SORT:
-                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText("1v");
+                findPaneOfTypeByID(BUTTON_SORT, ButtonImage.class).setText(Component.literal("1v"));
                 break;
             default:
                 break;
@@ -299,15 +299,15 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
                 final ItemStorage resource = allItems.get(index);
                 final Text resourceLabel = rowPane.findPaneOfTypeByID("ressourceStackName", Text.class);
                 final String name = resource.getItemStack().getHoverName().getString();
-                resourceLabel.setText(name.substring(0, Math.min(17, name.length())));
+                resourceLabel.setText(Component.literal(name.substring(0, Math.min(17, name.length()))));
                 final Text qtys = rowPane.findPaneOfTypeByID("quantities", Text.class);
                 if (!Screen.hasShiftDown())
                 {
-                    qtys.setText(Utils.format(resource.getAmount()));
+                    qtys.setText(Component.literal(Utils.format(resource.getAmount())));
                 }
                 else
                 {
-                    qtys.setText(Integer.toString(resource.getAmount()));
+                    qtys.setText(Component.literal(Integer.toString(resource.getAmount())));
                 }
                 final Item imagesrc = resource.getItemStack().getItem();
                 final ItemStack image = new ItemStack(imagesrc, 1);

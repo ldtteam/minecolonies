@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.requestsystem.resolvers.factory;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
@@ -76,7 +77,7 @@ public class PublicWorkerCraftingRequestResolverFactory implements IRequestResol
     {
         controller.serialize(packetBuffer, input.getId());
         controller.serialize(packetBuffer, input.getLocation());
-        packetBuffer.writeRegistryId(input.getJobEntry());
+        packetBuffer.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), input.getJobEntry());
     }
 
     @Override

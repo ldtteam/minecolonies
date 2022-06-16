@@ -42,7 +42,7 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
                                 @NotNull final AnimalHerdingModule herding,
                                 @NotNull final IGuiHelper guiHelper)
     {
-        super(job, job.getJobRegistryEntry().getRegistryName(), getCatalyst(building), guiHelper);
+        super(job, job.getJobRegistryEntry().getKey(), getCatalyst(building), guiHelper);
 
         this.herding = herding;
         this.animalTimer = guiHelper.createTickTimer(200, 359, false);

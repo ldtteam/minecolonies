@@ -7,6 +7,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.entity.pathfinding.MNode;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.core.Direction;
@@ -39,7 +40,7 @@ public class PathJobRandomPos extends AbstractPathJob
     /**
      * Random pathing rand.
      */
-    private static Random random = new Random();
+    private static RandomSource random = RandomSource.create();
 
     /**
      * Minimum distance to the goal.

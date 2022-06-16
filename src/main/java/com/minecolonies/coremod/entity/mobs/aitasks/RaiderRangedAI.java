@@ -99,7 +99,7 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
         // Setup arrow
         AbstractArrow arrowEntity = CombatUtils.createArrowForShooter(user);
 
-        arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE).getValue());
+        arrowEntity.setBaseDamage(user.getAttribute(MOB_ATTACK_DAMAGE.get()).getValue());
         if (flightCounter > 5)
         {
             ((CustomArrowEntity) arrowEntity).setPlayerArmorPierce();

@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.world.NoteBlockEvent.Note;
@@ -292,7 +293,7 @@ public final class SoundUtils
      * @param random the random method.
      * @return a random double for the pitch.
      */
-    public static double getRandomPitch(final Random random)
+    public static double getRandomPitch(final RandomSource random)
     {
         return PITCH_DIVIDER / (random.nextDouble() * PITCH_MULTIPLIER + BASE_PITCH);
     }
@@ -303,7 +304,7 @@ public final class SoundUtils
      * @param random the RNG instance
      * @return a number representing the pitch to the sound engine
      */
-    public static double getRandomPentatonic(final Random random)
+    public static double getRandomPentatonic(final RandomSource random)
     {
         int index = random.nextInt(PENTATONIC.length);
         int tone = PENTATONIC[index].ordinal() + Math.floorDiv(index, 5) * 12;

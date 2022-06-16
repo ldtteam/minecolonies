@@ -61,7 +61,7 @@ public class ContainerBuildingInventory extends AbstractContainerMenu
      */
     public ContainerBuildingInventory(final int windowId, final Inventory inv, final int colonyId, final BlockPos pos)
     {
-        super(ModContainers.buildingInv, windowId);
+        super(ModContainers.buildingInv.get(), windowId);
 
         tileEntityColonyBuilding = (TileEntityColonyBuilding) inv.player.level.getBlockEntity(pos);
         this.buildingInventory = tileEntityColonyBuilding.getInventory();

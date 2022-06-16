@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server.colony.building.home;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -90,7 +91,7 @@ public class AssignUnassignMessage extends AbstractBuildingServerMessage<Default
         else
         {
             buf.writeBoolean(true);
-            buf.writeRegistryId(jobEntry);
+            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         }
     }
 

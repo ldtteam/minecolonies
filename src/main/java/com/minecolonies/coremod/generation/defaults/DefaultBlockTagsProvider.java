@@ -158,7 +158,7 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
         tag(ModTags.validSpawn)
           .addTags(BlockTags.BUTTONS)
           .addTags(BlockTags.RAILS)
-          .addTags(BlockTags.CARPETS)
+          .addTags(BlockTags.WOOL_CARPETS)
           .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH);
     }
 }

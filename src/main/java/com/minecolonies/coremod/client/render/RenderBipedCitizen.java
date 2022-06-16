@@ -46,7 +46,7 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
     {
         super(context, new CitizenModel<>(context.bakeLayer(ModelLayers.PLAYER)), (float) SHADOW_SIZE);
         this.addLayer(new HumanoidArmorLayer<>(this, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)), new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR))));
-        super.addLayer(new ItemInHandLayer<>(this));
+        super.addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
         ModModelTypeInitializer.init(context);
     }
 

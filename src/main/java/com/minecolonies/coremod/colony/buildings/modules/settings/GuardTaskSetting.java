@@ -68,7 +68,7 @@ public class GuardTaskSetting extends StringSettingWithDesc
       final IBuildingView building, final BOWindow window)
     {
         Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutguardtasksetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }

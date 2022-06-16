@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.generation.defaults;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -21,6 +23,7 @@ import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -243,7 +246,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final HashCache cache) throws IOException
+    public void run(@NotNull final CachedOutput cache) throws IOException
     {
         recipeProvider.run(cache);
         lootTableProvider.run(cache);
@@ -258,7 +261,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
 
         public SifterMeshDetails(@NotNull final Item mesh, final int minBuildingLevel, @NotNull final LootTable.Builder lootTable)
         {
-            this.name = mesh.getRegistryName().getPath().replace("sifter_mesh_", "");
+            this.name = ForgeRegistries.ITEMS.getKey(mesh).getPath().replace("sifter_mesh_", "");
             this.mesh = mesh;
             this.minBuildingLevel = minBuildingLevel;
             this.lootTable = lootTable;
@@ -302,7 +305,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
             {
                 for (final SifterMeshDetails mesh : inputEntry.getValue())
                 {
-                    final String name = mesh.getName() + "/" + inputEntry.getKey().getRegistryName().getPath();
+                    final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
 
                     final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
                     final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
@@ -344,7 +347,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
             {
                 for (final SifterMeshDetails mesh : inputEntry.getValue())
                 {
-                    final String name = mesh.getName() + "/" + inputEntry.getKey().getRegistryName().getPath();
+                    final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
 
                     registrar.register(new ResourceLocation(MOD_ID, "recipes/" + name), LootContextParamSets.ALL_PARAMS, mesh.getLootTable());
                 }

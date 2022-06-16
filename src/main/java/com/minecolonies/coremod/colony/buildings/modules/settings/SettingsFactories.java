@@ -255,8 +255,8 @@ public class SettingsFactories
         public CompoundTag serialize(@NotNull final IFactoryController controller, @NotNull final BlockSetting storage)
         {
             final CompoundTag compound = new CompoundTag();
-            compound.putString(TAG_VALUE, storage.getValue().getRegistryName().toString());
-            compound.putString(TAG_DEF, storage.getDefault().getRegistryName().toString());
+            compound.putString(TAG_VALUE, ForgeRegistries.ITEMS.getKey(storage.getValue()).toString());
+            compound.putString(TAG_DEF, ForgeRegistries.ITEMS.getKey(storage.getDefault()).toString());
             return compound;
         }
 

@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -108,7 +109,7 @@ public class BuildingArchery extends AbstractBuilding
      * @param random the random obj.
      * @return a random shooting stand position.
      */
-    public BlockPos getRandomShootingStandPosition(final Random random)
+    public BlockPos getRandomShootingStandPosition(final RandomSource random)
     {
         final List<BlockPos> tagged = getLocationsFromTag(TAG_WORK);
         if (!tagged.isEmpty())
@@ -128,7 +129,7 @@ public class BuildingArchery extends AbstractBuilding
      * @param random the random obj.
      * @return a random shooting target position.
      */
-    public BlockPos getRandomShootingTarget(final Random random)
+    public BlockPos getRandomShootingTarget(final RandomSource random)
     {
         if (!shootingTargets.isEmpty())
         {

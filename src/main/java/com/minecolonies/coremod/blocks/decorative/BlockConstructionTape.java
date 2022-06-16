@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.blocks.decorative;
 
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -25,8 +27,6 @@ import java.util.List;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.Plane;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 /**
  * This block is used as a border to show the size of the building. It also shows that the building is in the progress of being built.
  */
@@ -42,8 +42,7 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
      */
     public BlockConstructionTape()
     {
-        super(Properties.of(Material.REPLACEABLE_PLANT).strength(0.0f).noCollission().noDrops());
-        setRegistryName(BLOCK_NAME);
+        super(Properties.of(Material.REPLACEABLE_PLANT).strength(0.0f).noCollission().noLootTable());
 
         this.shapes = makeShapes(2, 2, 16, 0, 16);
 
@@ -56,6 +55,12 @@ public class BlockConstructionTape extends AbstractBlockMinecoloniesConstruction
                 .setValue(WATERLOGGED, false)
                 .setValue(CORNER, false)
         );
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return new ResourceLocation(Constants.MOD_ID, BLOCK_NAME);
     }
 
     @NotNull

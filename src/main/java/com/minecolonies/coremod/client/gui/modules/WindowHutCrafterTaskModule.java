@@ -88,7 +88,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                 if (parent != null)
                 {
                     rowPane.findPaneOfTypeByID(REQUESTER, Text.class)
-                      .setText(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request).getString() + " ->");
+                      .setText(Component.literal(request.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), request).getString() + " ->"));
                     rowPane.findPaneOfTypeByID(PARENT, Text.class)
                       .setText(parent.getRequester().getRequesterDisplayName(buildingView.getColony().getRequestManager(), parent));
                 }
@@ -99,7 +99,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                     rowPane.findPaneOfTypeByID(PARENT, Text.class).clearText();
                 }
 
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(request.getShortDisplayString().getString().replace("§f", ""));
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(Component.literal(request.getShortDisplayString().getString().replace("§f", "")));
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {

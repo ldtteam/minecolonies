@@ -14,13 +14,12 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,8 +48,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final MutableComponent desc, final int universityLevel, final int sortOrder,
-      final ResourceLocation iconTexture, final ItemStack iconStack, final MutableComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
+    public IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslatableContents desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslatableContents subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
         return new GlobalResearch(id, branch, parent, desc, universityLevel, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
@@ -68,7 +67,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         compound.putInt(TAG_RESEARCH_SORT, research.getSortOrder());
         compound.putBoolean(TAG_ONLY_CHILD, research.hasOnlyChild());
         compound.putString(TAG_ICON_TEXTURE, research.getIconTextureResourceLocation().toString());
-        compound.putString(TAG_ICON_ITEM_STACK, research.getIconItemStack().getItem().getRegistryName() + ":" + research.getIconItemStack().getCount());
+        compound.putString(TAG_ICON_ITEM_STACK, ForgeRegistries.ITEMS.getKey(research.getIconItemStack().getItem()) + ":" + research.getIconItemStack().getCount());
         compound.putString(TAG_SUBTITLE_NAME, research.getSubtitle().getKey());
         compound.putBoolean(TAG_INSTANT, research.isInstant());
         compound.putBoolean(TAG_AUTOSTART, research.isAutostart());
@@ -77,7 +76,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         @NotNull final ListTag costTagList = research.getCostList().stream().map(is ->
         {
             final CompoundTag costCompound = new CompoundTag();
-            costCompound.putString(TAG_COST_ITEM, Objects.requireNonNull(is.getItem().getRegistryName()).toString() + ":" + is.getItemStack().getCount());
+            costCompound.putString(TAG_COST_ITEM, ForgeRegistries.ITEMS.getKey(Objects.requireNonNull(is.getItem())).toString() + ":" + is.getItemStack().getCount());
             if(is.getItemStack().getTag() != null)
             {
                 costCompound.put(TAG_COST_NBT, is.getItemStack().getTag());
@@ -122,7 +121,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = new ResourceLocation(nbt.getString(TAG_PARENT));
         final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
         final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
-        final MutableComponent desc = Component.translatable(nbt.getString(TAG_NAME));
+        final TranslatableContents desc = new TranslatableContents(nbt.getString(TAG_NAME));
         final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int sortOrder =  nbt.getInt(TAG_RESEARCH_SORT);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
@@ -130,7 +129,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final String[] iconStackParts =  nbt.getString(TAG_ICON_ITEM_STACK).split(":");
         final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
         iconStack.setCount(Integer.parseInt(iconStackParts[2]));
-        final MutableComponent subtitle = Component.translatable(nbt.getString(TAG_SUBTITLE_NAME));
+        final TranslatableContents subtitle = new TranslatableContents(nbt.getString(TAG_SUBTITLE_NAME));
         final boolean instant = nbt.getBoolean(TAG_INSTANT);
         final boolean autostart = nbt.getBoolean(TAG_AUTOSTART);
         final boolean immutable = nbt.getBoolean(TAG_IMMUTABLE);
@@ -213,13 +212,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = buffer.readResourceLocation();
         final ResourceLocation id = buffer.readResourceLocation();
         final ResourceLocation branch = buffer.readResourceLocation();
-        final MutableComponent desc = Component.translatable(buffer.readUtf());
+        final TranslatableContents desc = new TranslatableContents(buffer.readUtf());
         final int depth = buffer.readVarInt();
         final int sortOrder = buffer.readVarInt();
         final boolean hasOnlyChild = buffer.readBoolean();
         final ItemStack iconStack = buffer.readItem();
         final ResourceLocation iconTexture = buffer.readResourceLocation();
-        final MutableComponent subtitle = Component.translatable(buffer.readUtf());
+        final TranslatableContents subtitle = new TranslatableContents(buffer.readUtf());
         final boolean instant = buffer.readBoolean();
         final boolean autostart = buffer.readBoolean();
         final boolean immutable = buffer.readBoolean();

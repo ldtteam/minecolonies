@@ -1403,7 +1403,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
                 if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.1  && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1))
                 {
-                    final BlockPathTypes pathType = block.getBlockPathType(world, pos);
+                    final BlockPathTypes pathType = block.getBlockPathType(world, pos, (Mob) entity.get());
                     if (pathType == null || pathType.getDanger() == null)
                     {
                         return true;

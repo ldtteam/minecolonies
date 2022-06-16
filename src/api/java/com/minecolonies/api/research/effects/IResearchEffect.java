@@ -4,6 +4,7 @@ import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,14 +41,14 @@ public interface IResearchEffect<T>
      *
      * @return the desc.
      */
-    MutableComponent getDesc();
+    TranslatableContents getDesc();
 
     /**
      * Human-readable effect subtitle description, or a translation key.
      *
      * @return the Subtitle desc.
      */
-    MutableComponent getSubtitle();
+    TranslatableContents getSubtitle();
 
     /**
      * Does this effect override another effect with the same id?

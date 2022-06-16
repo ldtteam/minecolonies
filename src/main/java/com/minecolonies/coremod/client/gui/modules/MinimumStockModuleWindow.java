@@ -140,7 +140,7 @@ public class MinimumStockModuleWindow extends AbstractModuleWindow
                 resource.setCount(resource.getMaxStackSize());
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());
-                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(String.valueOf(moduleView.getStock().get(index).getB()));
+                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(Component.literal(String.valueOf(moduleView.getStock().get(index).getB())));
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }
         });

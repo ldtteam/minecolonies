@@ -22,6 +22,5 @@ public abstract class AbstractItemMinecolonies extends Item
     {
         super(properties);
         this.name = name;
-        setRegistryName(this.name);
     }
 }

@@ -7,6 +7,7 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.ToolModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.building.GiveToolMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ToolModuleWindow extends AbstractModuleWindow
 {
@@ -32,7 +33,7 @@ public class ToolModuleWindow extends AbstractModuleWindow
 
         this.moduleView = moduleView;
 
-        findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.tooldesc." + moduleView.getTool().getRegistryName().getPath()));
+        findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.tooldesc." + ForgeRegistries.ITEMS.getKey(moduleView.getTool()).getPath()));
         registerButton(BUTTON_GIVE_TOOL, this::givePlayerScepter);
     }
 

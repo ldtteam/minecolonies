@@ -36,6 +36,5 @@ public class ItemPlateArmor extends ArmorItem
       final Properties properties)
     {
         super(materialIn, equipmentSlotIn, properties.tab(tab));
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }
 }

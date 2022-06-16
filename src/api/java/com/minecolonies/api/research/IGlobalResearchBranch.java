@@ -2,6 +2,7 @@ package com.minecolonies.api.research;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 public interface IGlobalResearchBranch
 {
@@ -9,13 +10,13 @@ public interface IGlobalResearchBranch
      * Get the human-readable name or translation key for the Research Branch
      * @return Human-readable name or translation key.
      */
-    MutableComponent getName();
+    TranslatableContents getName();
 
     /**
      * Get the optional human-readable subtitle or its translation key for the Research Branch
      * @return Human-readable subtitle or translation key.
      */
-    MutableComponent getSubtitle();
+    TranslatableContents getSubtitle();
 
     /**
      * Get the base progress requirements for non-instant research on the branch.

@@ -32,9 +32,6 @@ public class ItemGate extends BlockItem
       final Properties properties)
     {
         super(block, properties.tab(tab));
-
-        // Registry name links to item model json file name
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + name);
     }
 
     @Override

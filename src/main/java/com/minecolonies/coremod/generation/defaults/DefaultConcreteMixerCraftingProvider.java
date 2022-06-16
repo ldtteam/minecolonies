@@ -3,6 +3,7 @@ package com.minecolonies.coremod.generation.defaults;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.DyeColor;
@@ -13,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,12 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
     public String getName()
     {
         return "DefaultConcreteMixerCraftingProvider";
+    }
+
+    @Override
+    public void run(final CachedOutput cache) throws IOException
+    {
+
     }
 
     @Override
@@ -56,12 +64,12 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             final List<ItemStorage> customInput = new ArrayList<>(input);
             customInput.add(new ItemStorage(new ItemStack(dye)));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", powder.getRegistryName().getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(powder).getPath())
                     .inputs(customInput)
                     .result(new ItemStack(powder, 8))
                     .build(consumer);
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", concrete.getRegistryName().getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(concrete).getPath())
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)

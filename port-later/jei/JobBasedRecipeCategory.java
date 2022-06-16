@@ -16,8 +16,7 @@ import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.gui.ingredient.ITooltipCallback;
-import mezz.jei.api.helpers.IGuiHelper;
+\import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
@@ -29,7 +28,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -78,7 +76,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
         this.description = wordWrap(breakLines(translateDescription(
                 TranslationConstants.PARTIAL_JEI_INFO +
-                        this.job.getJobRegistryEntry().getRegistryName().getPath())));
+                        this.job.getJobRegistryEntry().getKey().getPath())));
 
         this.infoBlocksCache = CacheBuilder.newBuilder()
                 .maximumSize(6)

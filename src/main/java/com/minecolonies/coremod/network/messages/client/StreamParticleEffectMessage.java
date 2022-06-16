@@ -116,7 +116,7 @@ public class StreamParticleEffectMessage implements IMessage
 
         buf.writeInt(this.stage);
         buf.writeInt(this.maxStage);
-        buf.writeResourceLocation(this.type.getRegistryName());
+        buf.writeResourceLocation(ForgeRegistries.PARTICLE_TYPES.getKey(this.type));
     }
 
     @Nullable

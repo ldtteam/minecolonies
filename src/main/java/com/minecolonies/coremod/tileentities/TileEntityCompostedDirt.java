@@ -61,7 +61,7 @@ public class TileEntityCompostedDirt extends BlockEntity implements ITickable
      */
     public TileEntityCompostedDirt(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.COMPOSTED_DIRT, pos, state);
+        super(MinecoloniesTileEntities.COMPOSTED_DIRT.get(), pos, state);
     }
 
     @Override

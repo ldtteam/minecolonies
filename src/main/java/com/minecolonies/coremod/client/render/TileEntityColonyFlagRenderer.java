@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -52,7 +53,7 @@ public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEnt
     @Override
     public void render(TileEntityColonyFlag flagIn, float partialTicks, PoseStack transform, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn)
     {
-        List<Pair<BannerPattern, DyeColor>> list = flagIn.getPatternList();
+        List<Pair<Holder<BannerPattern>, DyeColor>> list = flagIn.getPatternList();
 
         boolean noWorld = flagIn.getLevel() == null;
         transform.pushPose();

@@ -8,6 +8,7 @@ import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.generation.DataGeneratorConstants;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
@@ -32,7 +33,7 @@ public class DefaultSoundProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final HashCache cache) throws IOException
+    public void run(@NotNull final CachedOutput cache) throws IOException
     {
         sounds = new JsonObject();
 
@@ -52,13 +53,13 @@ public class DefaultSoundProvider implements DataProvider
 
         for (final JobEntry job : IJobRegistry.getInstance().getValues())
         {
-            if (job.getRegistryName().getNamespace().equals(Constants.MOD_ID) && !job.getRegistryName().getPath().equals("placeholder"))
+            if (job.getKey().getNamespace().equals(Constants.MOD_ID) && !job.getKey().getPath().equals("placeholder"))
             {
                 for (final EventType soundEvents : EventType.values())
                 {
-                    sounds.add("mob." + job.getRegistryName().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US),
+                    sounds.add("mob." + job.getKey().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US),
                       createSoundJson("neutral", getDefaultProperties(), defaultMaleSounds));
-                    sounds.add("mob." + job.getRegistryName().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US),
+                    sounds.add("mob." + job.getKey().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US),
                       createSoundJson("neutral", getDefaultProperties(), defaultFemaleSounds));
                 }
             }
@@ -116,7 +117,7 @@ public class DefaultSoundProvider implements DataProvider
           "raid.amazon.amazon_raid");
 
         final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
-        DataProvider.save(DataGeneratorConstants.GSON, cache, sounds, savePath);
+        DataProvider.saveStable(cache, sounds, savePath);
     }
 
     @NotNull

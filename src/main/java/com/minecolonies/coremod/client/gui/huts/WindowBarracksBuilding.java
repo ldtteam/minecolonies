@@ -143,7 +143,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
                     final BlockPos pos = spawnPoints.get(index);
                     if (!(view.isRaiding() && index == spawnPoints.size() - 1))
                     {
-                        rowPane.findPaneOfTypeByID(LABEL_POS, Text.class).setText((index + 1) + ": " + mountDistanceString(pos));
+                        rowPane.findPaneOfTypeByID(LABEL_POS, Text.class).setText(Component.literal((index + 1) + ": " + mountDistanceString(pos)));
                     }
                 }
             });

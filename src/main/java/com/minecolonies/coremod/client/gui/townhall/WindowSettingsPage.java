@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -205,7 +206,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHiring(@NotNull final Button button)
     {
-        String key = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
@@ -228,7 +229,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleHousing(@NotNull final Button button)
     {
-        String key = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
@@ -251,7 +252,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void toggleMoveIn(@NotNull final Button button)
     {
-        String key = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         final boolean toggle;
         if (key.equals(OFF_STRING))
@@ -274,7 +275,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
      */
     private void togglePrintProgress(@NotNull final Button button)
     {
-        String key = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         if (key.equals(OFF_STRING))
         {

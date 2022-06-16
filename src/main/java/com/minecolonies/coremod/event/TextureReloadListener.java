@@ -34,7 +34,7 @@ public class TextureReloadListener extends SimplePreparableReloadListener<Textur
     protected TexturePacks prepare(@NotNull final ResourceManager manager, @NotNull final ProfilerFiller profiler)
     {
         final Set<String> set = new HashSet<>();
-        final List<ResourceLocation> resLocs = new ArrayList<>(manager.listResources("textures/entity/citizen", f -> true));
+        final List<ResourceLocation> resLocs = new ArrayList<>(manager.listResources("textures/entity/citizen", f -> true).keySet());
         for (final ResourceLocation res : resLocs)
         {
             if (!res.getPath().contains("png") && res.getPath().contains("textures/entity/citizen"))

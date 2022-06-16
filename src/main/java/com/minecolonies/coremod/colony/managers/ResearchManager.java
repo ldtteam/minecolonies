@@ -21,6 +21,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -89,7 +90,7 @@ public class ResearchManager implements IResearchManager
     @Override
     public ResourceLocation getResearchEffectIdFrom(Block block)
     {
-        return new ResourceLocation(block.getRegistryName().getNamespace(), "effects/" + block.getRegistryName().getPath());
+        return new ResourceLocation(ForgeRegistries.BLOCKS.getKey(block).getNamespace(), "effects/" + ForgeRegistries.BLOCKS.getKey(block).getPath());
     }
 
     @Override

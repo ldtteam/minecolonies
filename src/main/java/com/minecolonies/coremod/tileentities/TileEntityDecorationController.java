@@ -61,7 +61,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
 
     public TileEntityDecorationController(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.DECO_CONTROLLER, pos, state);
+        super(MinecoloniesTileEntities.DECO_CONTROLLER.get(), pos, state);
     }
 
     /**

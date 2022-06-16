@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.google.common.collect.ImmutableSet;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -253,7 +254,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         if (jobEntry != null)
         {
             buf.writeBoolean(true);
-            buf.writeRegistryId(jobEntry);
+            buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), jobEntry);
         }
         else
         {
@@ -896,7 +897,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             return "";
         }
-        return jobEntry.getRegistryName().getPath() + "_" + getId();
+        return jobEntry.getKey().getPath() + "_" + getId();
     }
 
     @NotNull

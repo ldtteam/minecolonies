@@ -145,7 +145,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
             compound.put(RECIPE_ALTERNATE_PROP, altOutputs);
         }
 
-        compound.putString(RECIPE_INTERMEDIATE_PROP, recipe.getIntermediate().getRegistryName().toString());
+        compound.putString(RECIPE_INTERMEDIATE_PROP, ForgeRegistries.BLOCKS.getKey(recipe.getIntermediate()).toString());
 
         return compound;
     }
@@ -273,7 +273,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             packetBuffer.writeItem(alts);
         }
-        packetBuffer.writeResourceLocation(recipe.getIntermediate().getRegistryName());
+        packetBuffer.writeResourceLocation(ForgeRegistries.BLOCKS.getKey(recipe.getIntermediate()));
     }
 
     @NotNull

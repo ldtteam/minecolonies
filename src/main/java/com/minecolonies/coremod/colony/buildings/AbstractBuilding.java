@@ -923,7 +923,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 Log.getLogger().error("Somehow the wrong TileEntity is at the location where the building should be!", new Exception());
                 Log.getLogger().error("Trying to restore order!");
 
-                final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING, getPosition(), colony.getWorld().getBlockState(this.getPosition()));
+                final AbstractTileEntityColonyBuilding tileEntityColonyBuilding = new TileEntityColonyBuilding(MinecoloniesTileEntities.BUILDING.get(), getPosition(), colony.getWorld().getBlockState(this.getPosition()));
                 colony.getWorld().setBlockEntity(tileEntityColonyBuilding);
                 this.tileEntity = tileEntityColonyBuilding;
             }

@@ -5,6 +5,7 @@ import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public final class BuildingUtils
 {
@@ -28,8 +29,7 @@ public final class BuildingUtils
     public static ItemStack getItemStackForHutFromInventory(final Inventory inventory, final String hut)
     {
         final int slot = InventoryUtils.findFirstSlotInProviderNotEmptyWith(inventory.player,
-          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ((BlockItem) item.getItem()).getBlock()
-                  .getRegistryName()
+          item -> item.getItem() instanceof BlockItem && ((BlockItem) item.getItem()).getBlock() instanceof AbstractBlockHut && ForgeRegistries.BLOCKS.getKey(((BlockItem) item.getItem()).getBlock())
                   .getPath()
                   .endsWith(hut));
 

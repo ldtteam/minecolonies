@@ -69,7 +69,7 @@ public class ContainerRack extends AbstractContainerMenu
      */
     public ContainerRack(final int windowId, final Inventory inv, final BlockPos rack, final BlockPos neighbor)
     {
-        super(ModContainers.rackInv, windowId);
+        super(ModContainers.rackInv.get(), windowId);
 
         final AbstractTileEntityRack abstractTileEntityRack = (AbstractTileEntityRack) inv.player.level.getBlockEntity(rack);
         // TODO: bug, what if neighbor is actually bp.ZERO? (unlikely to happen)

@@ -12,6 +12,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.postbox.PostBoxRequestMessage;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -139,12 +140,12 @@ public class WindowPostBox extends AbstractWindowRequestTree
 
         if (button.getTextAsString().equals(RED_X))
         {
-            button.setText(APPROVE);
+            button.setText(Component.literal(APPROVE));
             this.deliverAvailable = true;
         }
         else
         {
-            button.setText(RED_X);
+            button.setText(Component.literal(RED_X));
             this.deliverAvailable = false;
         }
     }
@@ -153,7 +154,7 @@ public class WindowPostBox extends AbstractWindowRequestTree
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setText(RED_X);
+        findPaneOfTypeByID(TAG_BUTTON_DELIVER_AVAILABLE, Button.class).setText(Component.literal(RED_X));
 
         updateResources();
     }

@@ -83,7 +83,7 @@ public class CircleParticleEffectMessage implements IMessage
         buf.writeDouble(this.posY);
         buf.writeDouble(this.posZ);
         buf.writeInt(this.stage);
-        buf.writeResourceLocation(this.type.getRegistryName());
+        buf.writeResourceLocation(ForgeRegistries.PARTICLE_TYPES.getKey(this.type));
     }
 
     @Nullable

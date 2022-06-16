@@ -70,7 +70,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
      */
     public ContainerCraftingBrewingstand(final int windowId, final Inventory inv, final BlockPos pos, final String moduleId)
     {
-        super(ModContainers.craftingBrewingstand, windowId);
+        super(ModContainers.craftingBrewingstand.get(), windowId);
         this.moduleId = moduleId;
 
         this.brewingStandInventory = new IItemHandlerModifiable()

@@ -191,20 +191,20 @@ public class WindowBuilderResModule extends AbstractModuleWindow
         final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
         addButton.setPosition(buttonX, buttonY);
 
-        resourceLabel.setText(resource.getName());
+        resourceLabel.setText(Component.literal(resource.getName()));
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
         {
-            resourceMissingLabel.setText(Integer.toString(missing));
+            resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
         }
         else
         {
             resourceMissingLabel.clearText();
         }
 
-        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
-        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(Component.literal(resource.getAvailable() + " / " + resource.getAmount()));
+        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Component.literal(Integer.toString(index)));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1);
         stack.setTag(resource.getItemStack().getTag());

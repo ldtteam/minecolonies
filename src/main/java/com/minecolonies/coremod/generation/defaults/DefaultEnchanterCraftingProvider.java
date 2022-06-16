@@ -7,6 +7,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.enchants.RaiderDamageEnchant;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
@@ -193,7 +194,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.UNBREAKING, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.BLOCK_FORTUNE, 1).setWeight(1))
-                .add(enchantedBook(ModEnchants.raiderDamage, 1).setWeight(15))
+                .add(enchantedBook(ModEnchants.raiderDamage.get(), 1).setWeight(15))
         ));
 
         // building level 4
@@ -246,7 +247,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.UNBREAKING, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.BLOCK_FORTUNE, 1).setWeight(1))
-                .add(enchantedBook(ModEnchants.raiderDamage, 1).setWeight(15))
+                .add(enchantedBook(ModEnchants.raiderDamage.get(), 1).setWeight(15))
                 // plus new level 4 enchants
                 .add(enchantedBook(Enchantments.AQUA_AFFINITY, 4).setWeight(5))
                 .add(enchantedBook(Enchantments.BANE_OF_ARTHROPODS, 4).setWeight(5))
@@ -299,7 +300,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                 .add(enchantedBook(Enchantments.SMITE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 3).setWeight(15))
                 .add(enchantedBook(Enchantments.UNBREAKING, 3).setWeight(15))
-                .add(enchantedBook(ModEnchants.raiderDamage, 1).setWeight(15))
+                .add(enchantedBook(ModEnchants.raiderDamage.get(), 1).setWeight(15))
                 .add(enchantedBook(Enchantments.BLOCK_FORTUNE, 1).setWeight(1))
                 // plus level 4 enchants
                 .add(enchantedBook(Enchantments.AQUA_AFFINITY, 4).setWeight(5))
@@ -353,7 +354,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                 .add(enchantedBook(Enchantments.SWEEPING_EDGE, 5).setWeight(1))
                 .add(enchantedBook(Enchantments.UNBREAKING, 5).setWeight(1))
                 .add(enchantedBook(Enchantments.BLOCK_FORTUNE, 3).setWeight(1))
-                .add(enchantedBook(ModEnchants.raiderDamage, 2).setWeight(1))
+                .add(enchantedBook(ModEnchants.raiderDamage.get(), 2).setWeight(1))
         ));
 
         recipeProvider = new EnchanterRecipeProvider(generatorIn);
@@ -361,7 +362,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     }
 
     @NotNull
-    private LootPoolSingletonContainer.Builder<?> enchantedBook(final RegistryObject<RaiderDamageEnchant> enchantment, final int level)
+    private LootPoolSingletonContainer.Builder<?> enchantedBook(final Enchantment enchantment, final int level)
     {
         final ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
         EnchantedBookItem.addEnchantment(stack, new EnchantmentInstance(enchantment, level));
@@ -376,7 +377,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final HashCache cache) throws IOException
+    public void run(@NotNull final CachedOutput cache) throws IOException
     {
         recipeProvider.run(cache);
         lootTableProvider.run(cache);
@@ -394,6 +395,12 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
         public String getName()
         {
             return "EnchanterRecipeProvider";
+        }
+
+        @Override
+        public void run(final CachedOutput cache) throws IOException
+        {
+
         }
 
         @Override

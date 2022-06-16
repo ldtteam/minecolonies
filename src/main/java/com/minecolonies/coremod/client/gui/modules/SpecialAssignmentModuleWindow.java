@@ -116,7 +116,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName());
+                          .setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
                     }
                 }
             });

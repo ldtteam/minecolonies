@@ -17,6 +17,7 @@ import com.minecolonies.coremod.client.gui.citizen.RequestWindowCitizen;
 import com.minecolonies.coremod.network.messages.server.ClickGuiButtonTriggerMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.ChatFormatting;
@@ -161,7 +162,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
         }
 
         findPaneOfTypeByID(REQUESTER, Text.class).setText(request.getRequester().getRequesterDisplayName(colony.getRequestManager(), request));
-        findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(request.getRequester().getLocation().toString());
+        findPaneOfTypeByID(LIST_ELEMENT_ID_REQUEST_LOCATION, Text.class).setText(Component.literal(request.getRequester().getLocation().toString()));
 
         if (colony == null)
         {
@@ -178,7 +179,7 @@ public class WindowRequestDetail extends BOWindow implements ButtonHandler
                 return;
             }
 
-            findPaneOfTypeByID(RESOLVER, Text.class).setText("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString());
+            findPaneOfTypeByID(RESOLVER, Text.class).setText(Component.literal("Resolver: " + resolver.getRequesterDisplayName(colony.getRequestManager(), request).getString()));
         }
         catch (@SuppressWarnings(EXCEPTION_HANDLERS_SHOULD_PRESERVE_THE_ORIGINAL_EXCEPTIONS) final IllegalArgumentException e)
         {

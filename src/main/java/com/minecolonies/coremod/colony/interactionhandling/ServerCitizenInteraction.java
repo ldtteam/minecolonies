@@ -12,6 +12,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.MainWindowCitizen;
 import com.minecolonies.coremod.network.messages.server.colony.InteractionResponse;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -128,13 +129,13 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @Override
     public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
-        if (response instanceof MutableComponent)
+        if (response.getContents() instanceof TranslatableContents)
         {
-            if (((MutableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((MutableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
@@ -145,7 +146,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (((MutableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
+        if (((TranslatableContents) response.getContents()).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();

@@ -125,7 +125,7 @@ public class RecipeSetting implements ICraftingSetting
       final IBuildingView building, final BOWindow window)
     {
         Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutcraftingsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(input -> {
 
             final List<IRecipeStorage> list = building.getModuleView(CraftingModuleView.class).getRecipes();

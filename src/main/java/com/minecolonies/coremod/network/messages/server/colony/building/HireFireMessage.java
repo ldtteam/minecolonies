@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.server.colony.building;
 
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -77,7 +78,7 @@ public class HireFireMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         buf.writeBoolean(hire);
         buf.writeInt(citizenID);
-        buf.writeRegistryId(entry);
+        buf.writeRegistryId(IMinecoloniesAPI.getInstance().getJobRegistry(), entry);
     }
 
     @Override

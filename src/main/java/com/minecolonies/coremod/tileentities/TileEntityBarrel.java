@@ -59,7 +59,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel implements ITicka
 
     public TileEntityBarrel(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.BARREL, pos, state);
+        super(MinecoloniesTileEntities.BARREL.get(), pos, state);
     }
 
     /**

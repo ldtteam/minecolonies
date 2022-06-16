@@ -92,7 +92,7 @@ public class StringSetting implements IStringSetting
       final IBuildingView building, final BOWindow window)
     {
         Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
+        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 

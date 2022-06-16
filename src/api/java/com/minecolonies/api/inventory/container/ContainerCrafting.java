@@ -101,7 +101,7 @@ public class ContainerCrafting extends AbstractContainerMenu
      */
     public ContainerCrafting(final int windowId, final Inventory inv, final boolean complete, final BlockPos pos, final String moduleId)
     {
-        super(ModContainers.craftingGrid, windowId);
+        super(ModContainers.craftingGrid.get(), windowId);
         this.moduleId = moduleId;
         this.world = inv.player.level;
         this.inv = inv;

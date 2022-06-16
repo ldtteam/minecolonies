@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
@@ -17,6 +18,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +47,7 @@ public abstract class CustomRecipeProvider implements DataProvider
     }
 
     @Override
-    public void run(final HashCache cache) throws IOException
+    public void run(final CachedOutput cache) throws IOException
     {
         final Path path = this.generator.getOutputFolder();
         final Set<ResourceLocation> set = Sets.newHashSet();
@@ -62,7 +64,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         });
     }
 
-    private static void saveRecipe(final HashCache cache, final JsonObject jsonObject, final Path recipeJson)
+    private static void saveRecipe(final CachedOutput cache, final JsonObject jsonObject, final Path recipeJson)
     {
         try
         {
@@ -115,7 +117,7 @@ public abstract class CustomRecipeProvider implements DataProvider
         @NotNull
         public CustomRecipeBuilder result(@NotNull final ItemStack result)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, result.getItem().getRegistryName().toString());
+            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, ForgeRegistries.ITEMS.getKey(result.getItem()).toString());
             if (result.getCount() != 1)
             {
                 this.json.addProperty(COUNT_PROP, result.getCount());
@@ -195,7 +197,7 @@ public abstract class CustomRecipeProvider implements DataProvider
 
         public void build(@NotNull final Consumer<FinishedRecipe> consumer)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, this.intermediate.getRegistryName().toString());
+            this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, ForgeRegistries.BLOCKS.getKey(this.intermediate).toString());
             consumer.accept(new Result(this.json, this.id));
         }
 
@@ -206,7 +208,7 @@ public abstract class CustomRecipeProvider implements DataProvider
             for (final ItemStack itemStack : itemStacks)
             {
                 final JsonObject jsonItemStack = new JsonObject();
-                String name = itemStack.getItem().getRegistryName().toString();
+                String name = ForgeRegistries.ITEMS.getKey(itemStack.getItem()).toString();
                 // this could be incorrect for items with both damage and other NBT,
                 // but that should be rare, and this avoids some annoyance.
                 if (itemStack.hasTag() && !itemStack.isDamageableItem())
@@ -231,7 +233,7 @@ public abstract class CustomRecipeProvider implements DataProvider
             {
                 final ItemStack stack = itemStorage.getItemStack();
                 final JsonObject jsonItemStorage = new JsonObject();
-                String name = stack.getItem().getRegistryName().toString();
+                String name = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
                 // this could be incorrect for items with both damage and other NBT,
                 // but that should be rare, and this avoids some annoyance.
                 if (stack.hasTag() && !stack.isDamageableItem())

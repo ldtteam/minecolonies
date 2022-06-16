@@ -66,7 +66,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         this.buildingView = buildingView;
 
         findPaneOfTypeByID(SPIES_BUTTON_ICON, ItemIcon.class).setItem(Items.GOLD_INGOT.getDefaultInstance());
-        findPaneOfTypeByID(GOLD_COST_LABEL, Text.class).setText("x5");
+        findPaneOfTypeByID(GOLD_COST_LABEL, Text.class).setText(Component.literal("x5"));
 
         final IItemHandler rackInv = ((TileEntityRack) buildingView.getColony().getWorld().getBlockEntity(buildingPos)).getInventory();
         final IItemHandler playerInv = new InvWrapper(Minecraft.getInstance().player.getInventory());

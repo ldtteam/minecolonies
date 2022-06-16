@@ -15,6 +15,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -183,12 +184,12 @@ public class GlobalResearch implements IGlobalResearch
     /**
      * The pre-localized name for the research.
      */
-    private final MutableComponent name;
+    private final TranslatableContents name;
 
     /**
      * Subtitle names for the research.  Optional, and only shows up rarely.
      */
-    private final MutableComponent subtitle;
+    private final TranslatableContents subtitle;
 
     /**
      * The research effects of this research.
@@ -252,8 +253,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = new ResourceLocation(id);
         this.effects.add(effect);
-        this.name = Component.translatable(name);
-        this.subtitle = Component.translatable("");
+        this.name = new TranslatableContents(name);
+        this.subtitle = new TranslatableContents("");
         this.depth = universityLevel;
         this.sortOrder = 1;
         this.branch = new ResourceLocation(branch);
@@ -284,9 +285,9 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = id;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = Component.translatable(autogenKey + ".name");
+        this.name = new TranslatableContents(autogenKey + ".name");
         this.parent = new ResourceLocation("");
-        this.subtitle = Component.translatable("");
+        this.subtitle = new TranslatableContents("");
         this.effects.addAll(effects);
         this.depth = universityLevel;
         this.sortOrder = 1;
@@ -328,8 +329,8 @@ public class GlobalResearch implements IGlobalResearch
      * @param instant         if the research should be completed instantly (ish) from when begun.
      * @param immutable       if the research can not be reset once unlocked.
      */
-    public GlobalResearch(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final MutableComponent desc, final int universityLevel, final int sortOrder,
-      final ResourceLocation iconTexture, final ItemStack iconStack, final MutableComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
+    public GlobalResearch(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslatableContents desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslatableContents subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
         this.id = id;
         this.name = desc;
@@ -416,10 +417,10 @@ public class GlobalResearch implements IGlobalResearch
     }
 
     @Override
-    public MutableComponent getName() { return this.name; }
+    public TranslatableContents getName() { return this.name; }
 
     @Override
-    public MutableComponent getSubtitle()
+    public TranslatableContents getSubtitle()
     {
         return this.subtitle;
     }
@@ -571,8 +572,8 @@ public class GlobalResearch implements IGlobalResearch
     {
         this.id = resourceLocation;
         final String autogenKey = "com." + this.id.getNamespace() + ".research." + this.id.getPath().replaceAll("[ /]",".");
-        this.name = Component.translatable(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"));
-        this.subtitle = Component.translatable(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""));
+        this.name = new TranslatableContents(getStringSafe(researchJson, RESEARCH_NAME_PROP, autogenKey + ".name"));
+        this.subtitle = new TranslatableContents(getStringSafe(researchJson, RESEARCH_SUBTITLE_PROP, ""));
         this.branch = new ResourceLocation(getBranch(researchJson, resourceLocation));
         this.depth = getUniversityLevel(researchJson);
         this.sortOrder = getSortOrder(researchJson);

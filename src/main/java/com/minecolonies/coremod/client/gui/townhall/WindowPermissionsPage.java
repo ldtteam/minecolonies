@@ -22,6 +22,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -314,9 +315,9 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 final Rank rank = allRankList.get(i);
                 final Button button = pane.findPaneOfTypeByID(TOWNHALL_RANK_BUTTON, Button.class);
-                button.setText(rank.getName());
+                button.setText(Component.literal(rank.getName()));
                 button.setEnabled(!rank.equals(actionsRank));
-                pane.findPaneOfTypeByID("rankId", Text.class).setText(Integer.toString(rank.getId()));
+                pane.findPaneOfTypeByID("rankId", Text.class).setText(Component.literal(Integer.toString(rank.getId())));
             }
         });
     }
@@ -386,12 +387,12 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 if (index < freeBlocks.size())
                 {
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(freeBlocks.get(index).getRegistryName().toString());
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(ForgeRegistries.BLOCKS.getKey(freeBlocks.get(index)).toString()));
                 }
                 else
                 {
                     final BlockPos pos = freePositions.get(index - freeBlocks.size());
-                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                    rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(pos.getX() + " " + pos.getY() + " " + pos.getZ()));
                 }
             }
         });
@@ -445,7 +446,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final IPermissions permissions = building.getColony().getPermissions();
         final Player playerEntity = Minecraft.getInstance().player;
         
-        String key = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
+        String key = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         final boolean enable = !COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON.equals(key);
         button.disable();
@@ -489,7 +490,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
                 onOffButton.setText(isTriggered ? Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
                                       : Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
-                rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(index));
+                rowPane.findPaneOfTypeByID("index", Text.class).setText(Component.literal(Integer.toString(index)));
 
                 if (!building.getColony().getPermissions().canAlterPermission(building.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))
                 {
@@ -522,12 +523,12 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             {
                 final ColonyPlayer player = users.get(index);
                 Rank rank = player.getRank();
-                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(player.getName());
+                rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(Component.literal(player.getName()));
                 DropDownList dropdown = rowPane.findPaneOfTypeByID(TOWNHALL_RANK_PICKER, DropDownList.class);
                 if (rank.getId() == building.getColony().getPermissions().OWNER_RANK_ID)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_REMOVE_PLAYER, Button.class).setEnabled(false);
-                    rowPane.findPaneOfTypeByID("rank", Text.class).setText(rank.getName());
+                    rowPane.findPaneOfTypeByID("rank", Text.class).setText(Component.literal(rank.getName()));
                     dropdown.setEnabled(false);
                 }
                 else
