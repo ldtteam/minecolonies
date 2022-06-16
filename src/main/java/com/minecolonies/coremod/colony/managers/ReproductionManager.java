@@ -114,7 +114,7 @@ public class ReproductionManager implements IReproductionManager
                 secondParent = firstParent.getPartner();
                 if (secondParent == null)
                 {
-                    assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()) || cit.isRelatedTo(firstParent));
+                    assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()) || cit.isRelatedTo(firstParent) || cit.isChild());
                     if (assignedCitizens.size() > 0 && random.nextBoolean())
                     {
                         secondParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
