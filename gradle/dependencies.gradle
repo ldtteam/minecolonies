@@ -47,7 +47,7 @@ dependencies {
 
     // optional compat mods (not included in test environment by default)
 
-    implementation fg.deobf("mezz.jei:jei-1.19-forge:${project.jei_version}:jei-1.19-forge-${project.jei_version}")
+    //implementation fg.deobf("mezz.jei:jei-1.19-forge:${project.jei_version}")
 
     compileOnly fg.deobf("info.journeymap:journeymap-api:${project.jmapApiVersion}")
     if (project.hasProperty("runWithJourneymap") && project.runWithJourneymap.toBoolean()) {

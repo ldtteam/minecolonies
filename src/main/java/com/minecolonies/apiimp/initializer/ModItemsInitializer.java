@@ -54,8 +54,6 @@ public final class ModItemsInitializer
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     public static void init(final IForgeRegistry<Item> registry)
     {
-        EntityInitializer.setupEntities();
-
         ModItems.scepterLumberjack = new ItemScepterLumberjack(new Item.Properties());
         ModItems.supplyChest = new ItemSupplyChestDeployer(new Item.Properties());
         ModItems.permTool = new ItemScepterPermission(new Item.Properties());

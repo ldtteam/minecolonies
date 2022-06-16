@@ -116,9 +116,9 @@ public final class ModBlocksInitializer
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public static void registerItems(RegisterEvent event)
     {
-        ModBlocksInitializer.registerBlockItem(event.getRegistry());
+        ModBlocksInitializer.registerBlockItem(event.getForgeRegistry());
     }
 
     /**

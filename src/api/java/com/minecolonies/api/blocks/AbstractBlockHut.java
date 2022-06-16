@@ -2,6 +2,7 @@ package com.minecolonies.api.blocks;
 
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -15,6 +16,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -39,6 +41,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -307,6 +310,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      */
     public ResourceLocation getRegistryName()
     {
-        return ForgeRegistries.BLOCKS.getKey(this);
+        return new ResourceLocation(Constants.MOD_ID, getHutName());
+    }
+
+    @Override
+    public B registerBlock(final IForgeRegistry<Block> registry)
+    {
+        registry.register(getRegistryName(), this);
+        return (B) this;
     }
 }

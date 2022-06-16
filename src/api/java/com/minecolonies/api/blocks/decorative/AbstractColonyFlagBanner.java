@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * Represents the common functions of both the wall and floor colony flag banner blocks
  */
-public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> extends AbstractBannerBlock implements IBlockMinecolonies<AbstractColonyFlagBanner<B>>
+public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> extends AbstractBannerBlock implements IBlockMinecolonies<AbstractColonyFlagBanner<B>>
 {
     public static final String REGISTRY_NAME = "colony_banner";
     public static final String REGISTRY_NAME_WALL = "colony_wall_banner";
@@ -87,5 +88,18 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
             }
         }
         return super.getCloneItemStack(worldIn, pos, state);
+    }
+
+    @Override
+    public AbstractColonyFlagBanner<B> registerBlock(final IForgeRegistry<Block> registry)
+    {
+        registry.register(REGISTRY_NAME, this);
+        return this;
+    }
+
+    @Override
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
+    {
+        // Occurs in ModItems.
     }
 }

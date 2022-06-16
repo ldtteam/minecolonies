@@ -3,7 +3,9 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -29,6 +31,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +56,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public BlockScarecrow()
     {
         super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE));
-        setRegistryName(REGISTRY_NAME);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
@@ -227,5 +229,11 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
     {
         builder.add(HALF, FACING);
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return new ResourceLocation(Constants.MOD_ID, REGISTRY_NAME);
     }
 }

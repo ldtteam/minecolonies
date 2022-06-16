@@ -1,7 +1,12 @@
 package com.minecolonies.api.blocks.decorative;
 
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -25,6 +30,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,11 +68,16 @@ public abstract class AbstractBlockGate extends DoorBlock
     protected static final VoxelShape E_W_SHAPE = Shapes.box(0.3D, 0.0D, 0.0D, 0.7D, 1.0D, 1.0D);
     protected static final VoxelShape N_S_SHAPE = Shapes.box(0.0D, 0.0D, 0.3D, 1.0D, 1.0D, 0.7D);
 
+    /**
+     * Registry name of the block.
+     */
+    private final String name;
+
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
         super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion());
         registerDefaultState(defaultBlockState());
-
+        this.name = name;
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
         this.hardness = hardness;
@@ -471,5 +482,29 @@ public abstract class AbstractBlockGate extends DoorBlock
         {
             return null;
         }
+    }
+
+
+    /**
+     * Registery block at gameregistry.
+     *
+     * @param registry the registry to use.
+     * @return the block itself.
+     */
+    public AbstractBlockGate registerBlock(final IForgeRegistry<Block> registry)
+    {
+        registry.register(new ResourceLocation(Constants.MOD_ID, this.name), this);
+        return this;
+    }
+
+    /**
+     * Registery block at gameregistry.
+     *
+     * @param registry   the registry to use.
+     * @param properties the item properties.
+     */
+    public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
+    {
+        registry.register(new ResourceLocation(Constants.MOD_ID, this.name), new BlockItem(this, properties));
     }
 }
