@@ -11,7 +11,7 @@ import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobPupil;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,13 +118,13 @@ public class CitizenHappinessHandler implements ICitizenHappinessHandler
         for (final IHappinessModifier happinessModifier : happinessFactors.values())
         {
             happinessModifier.dayEnd();
-            if (InteractionValidatorRegistry.hasValidator(new TranslatableComponent(NO + happinessModifier.getId())))
+            if (InteractionValidatorRegistry.hasValidator(Component.translatable(NO + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
-            if (InteractionValidatorRegistry.hasValidator(new TranslatableComponent(DEMANDS + happinessModifier.getId())))
+            if (InteractionValidatorRegistry.hasValidator(Component.translatable(DEMANDS + happinessModifier.getId())))
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(DEMANDS + happinessModifier.getId()), ChatPriority.CHITCHAT));
             }
         }
         cachedHappiness = -1;

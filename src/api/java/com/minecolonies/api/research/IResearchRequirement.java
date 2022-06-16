@@ -3,7 +3,7 @@ package com.minecolonies.api.research;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 /**
  * Interface of research requirements.
@@ -23,7 +23,7 @@ public interface IResearchRequirement
      *
      * @return translation text component.
      */
-    TranslatableComponent getDesc();
+    MutableComponent getDesc();
 
     /**
      * Get the {@link ResearchRequirementEntry} for this Research Requirement.

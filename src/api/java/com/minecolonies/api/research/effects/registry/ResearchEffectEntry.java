@@ -3,7 +3,6 @@ package com.minecolonies.api.research.effects.registry;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Function;
@@ -12,9 +11,10 @@ import java.util.function.Function;
  * Entry for the {@link IResearchEffect} registry. Makes it possible to create a single registry for a {@link IResearchEffect}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
+public class ResearchEffectEntry
 {
     private final Function<CompoundTag, IResearchEffect<?>> readFromNBT;
+    private final ResourceLocation registryName;
 
     /**
      * A builder class for {@link ResearchEffectEntry}.
@@ -61,7 +61,7 @@ public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
             Validate.notNull(readFromNBT);
             Validate.notNull(registryName);
 
-            return new ResearchEffectEntry(readFromNBT).setRegistryName(registryName);
+            return new ResearchEffectEntry(readFromNBT, registryName);
         }
     }
 
@@ -70,10 +70,10 @@ public class ResearchEffectEntry extends ForgeRegistryEntry<ResearchEffectEntry>
         return readFromNBT.apply(nbt);
     }
 
-    private ResearchEffectEntry(
-      final Function<CompoundTag, IResearchEffect<?>> readFromNBT)
+    private ResearchEffectEntry(final Function<CompoundTag, IResearchEffect<?>> readFromNBT, final ResourceLocation registryName)
     {
         super();
         this.readFromNBT = readFromNBT;
+        this.registryName = registryName;
     }
 }

@@ -19,7 +19,7 @@ import com.minecolonies.coremod.network.messages.server.DecorationControllerUpda
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
 import java.util.Optional;
@@ -95,17 +95,17 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 {
                     if (controller.getTier() == 0)
                     {
-                        buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_BUILD));
+                        buttonBuild.setText(Component.translatable(ACTION_CANCEL_BUILD));
                     }
                     else
                     {
-                        buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_UPGRADE));
+                        buttonBuild.setText(Component.translatable(ACTION_CANCEL_UPGRADE));
                     }
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
                 else if (wo.get().getWorkOrderType() == WorkOrderType.BUILD)
                 {
-                    buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_REPAIR));
+                    buttonBuild.setText(Component.translatable(ACTION_CANCEL_REPAIR));
                     findPaneByID(BUTTON_REPAIR).hide();
                 }
             }
@@ -143,7 +143,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         }
         else
         {
-            findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslatableComponent(WARNING_DECORATION_NAME_SCAN));
+            findPaneOfTypeByID("nameLabel", Text.class).setText(Component.translatable(WARNING_DECORATION_NAME_SCAN));
         }
     }
 

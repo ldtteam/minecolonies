@@ -31,7 +31,7 @@ public class TileEntityStash extends TileEntityColonyBuilding
      */
     public TileEntityStash(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.STASH, pos, state);
+        super(MinecoloniesTileEntities.STASH.get(), pos, state);
     }
 
     @Override

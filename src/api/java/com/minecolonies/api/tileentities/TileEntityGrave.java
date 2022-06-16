@@ -23,7 +23,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +55,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
 
     public TileEntityGrave(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.GRAVE, pos, state);
+        super(MinecoloniesTileEntities.GRAVE.get(), pos, state);
     }
 
     /**
@@ -243,7 +242,7 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     @Override
     public Component getDisplayName()
     {
-        return new TextComponent("Grave");
+        return Component.literal("Grave");
     }
 
     /**

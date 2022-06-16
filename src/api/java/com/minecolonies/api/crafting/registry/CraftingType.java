@@ -4,7 +4,6 @@ import com.minecolonies.api.crafting.IGenericRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,11 +13,13 @@ import java.util.Objects;
 /**
  * Class to represent the different types of crafting supported by MineColonies
  */
-public abstract class CraftingType extends ForgeRegistryEntry<CraftingType>
+public abstract class CraftingType
 {
+    private ResourceLocation registryName;
+
     protected CraftingType(@NotNull final ResourceLocation id)
     {
-        setRegistryName(id);
+        this.registryName = id;
     }
 
     /**
@@ -36,7 +37,7 @@ public abstract class CraftingType extends ForgeRegistryEntry<CraftingType>
     {
         if (obj instanceof CraftingType)
         {
-            return Objects.equals(getRegistryName(), ((CraftingType) obj).getRegistryName());
+            return Objects.equals(registryName, ((CraftingType) obj).registryName);
         }
         return false;
     }
@@ -44,6 +45,6 @@ public abstract class CraftingType extends ForgeRegistryEntry<CraftingType>
     @Override
     public int hashCode()
     {
-        return getRegistryName().hashCode();
+        return registryName.hashCode();
     }
 }

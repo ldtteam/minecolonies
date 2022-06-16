@@ -5,8 +5,6 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.blockui.views.SwitchView;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
@@ -16,8 +14,7 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -139,12 +136,12 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
         {
             if (button.getTextAsString().equals(RED_X))
             {
-                button.setText(APPROVE);
+                button.setText(Component.literal(APPROVE));
                 moduleView.changeFields(field, false, (ScarecrowTileEntity) entity);
             }
             else
             {
-                button.setText(RED_X);
+                button.setText(Component.literal(RED_X));
                 moduleView.changeFields(field, true, (ScarecrowTileEntity) entity);
             }
 
@@ -168,16 +165,16 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
      */
     private void assignmentModeClicked(@NotNull final Button button)
     {
-        String buttonText = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+        String buttonText = button.getText().getContents() instanceof TranslatableContents ? ((TranslatableContents) button.getText().getContents()).getKey() : button.getTextAsString();
 
         if (buttonText.equals(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF))
         {
-            button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
+            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
             moduleView.setAssignFieldManually(true);
         }
         else
         {
-            button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
             moduleView.setAssignFieldManually(false);
         }
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
@@ -190,11 +187,11 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 
         if (moduleView.assignFieldManually())
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON) {});
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_ON));
         }
         else
         {
-            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         }
 
         fieldList = findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class);
@@ -217,13 +214,13 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
                 {
                     final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) entity;
                     @NotNull final Component owner = scarecrowTileEntity.getOwner().isEmpty()
-                                                            ? new TextComponent("<")
-                                                                .append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED))
+                                                            ? Component.literal("<")
+                                                                .append(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED))
                                                                 .append(">")
-                                                            : new TextComponent(scarecrowTileEntity.getOwner());
+                                                            : Component.literal(scarecrowTileEntity.getOwner());
 
                     rowPane.findPaneOfTypeByID(TAG_WORKER, Text.class).setText(owner);
-                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(distance + "m");
+                    rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(Component.literal(distance + "m"));
 
                     rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
 
@@ -233,11 +230,11 @@ public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 
                     if (((ScarecrowTileEntity) entity).isTaken())
                     {
-                        assignButton.setText(RED_X);
+                        assignButton.setText(Component.literal(RED_X));
                     }
                     else
                     {
-                        assignButton.setText(APPROVE);
+                        assignButton.setText(Component.literal(APPROVE));
                         if (buildingView.getBuildingLevel() <= moduleView.getAmountOfFields())
                         {
                             assignButton.disable();

@@ -7,7 +7,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_COLONY_LOAD_BACKUP_SUCCESS;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.COLONYID_ARG;
@@ -27,7 +27,7 @@ public class CommandLoadBackup implements IMCOPCommand
     {
         final int colonyId = IntegerArgumentType.getInteger(context, COLONYID_ARG);
         BackUpHelper.loadColonyBackup(colonyId, context.getSource().getLevel().dimension(), true, true);
-        context.getSource().sendSuccess(new TranslatableComponent(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
+        context.getSource().sendSuccess(Component.translatable(COMMAND_COLONY_LOAD_BACKUP_SUCCESS), true);
         return 1;
     }
 

@@ -21,10 +21,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.LABEL_X_OF_Z;
@@ -72,8 +71,8 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
         {
             final ButtonImage sortButton = findPaneOfTypeByID(SORT_WAREHOUSE_BUTTON, ButtonImage.class);
             PaneBuilders.tooltipBuilder()
-                .append(new TranslatableComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
-                .appendNL(new TranslatableComponent("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
+                .append(Component.translatable("com.minecolonies.coremod.gui.warehouse.sort.disabled.1", BUILDING_LEVEL_FOR_SORTING))
+                .appendNL(Component.translatable("com.minecolonies.coremod.gui.warehouse.sort.disabled.2", BUILDING_LEVEL_FOR_SORTING))
                 .hoverPane(sortButton)
                 .build();
             sortButton.disable();
@@ -118,7 +117,7 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
             availability = BuildingBuilderResource.RessourceAvailability.NOT_NEEDED;
         }
 
-        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(new TranslatableComponent(LABEL_X_OF_Z,
+        findPaneOfTypeByID(UPGRADE_PROGRESS_LABEL, Text.class).setText(Component.translatable(LABEL_X_OF_Z,
           module.getStorageUpgradeLevel(),
           BuildingWareHouse.MAX_STORAGE_UPGRADE));
 
@@ -153,29 +152,29 @@ public class WarehouseOptionsModuleWindow extends AbstractModuleWindow
                     resourceLabel.hide();
                     resourceMissingLabel.hide();
                     neededLabel.hide();
-                    addButton.setText(new TextComponent("X").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_RED)));
+                    addButton.setText(Component.literal("X").setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_RED)));
                     PaneBuilders.tooltipBuilder()
-                        .append(new TranslatableComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
-                        .appendNL(new TranslatableComponent("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
+                        .append(Component.translatable("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.1", buildingView.getBuildingMaxLevel()))
+                        .appendNL(Component.translatable("com.minecolonies.coremod.gui.warehouse.upgrade.disabled.2", buildingView.getBuildingMaxLevel()))
                         .hoverPane(addButton)
                         .build();
                 }
                 break;
         }
 
-        resourceLabel.setText(resource.getName());
+        resourceLabel.setText(Component.literal(resource.getName()));
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
         {
-            resourceMissingLabel.setText(Integer.toString(missing));
+            resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
         }
         else
         {
             resourceMissingLabel.clearText();
         }
 
-        neededLabel.setText(new TextComponent(resource.getAvailable() + " / " + resource.getAmount()));
-        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(new TextComponent(Integer.toString(resource.getAmount() - resource.getAvailable())));
+        neededLabel.setText(Component.literal(resource.getAvailable() + " / " + resource.getAmount()));
+        findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
         if(buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel())
         {

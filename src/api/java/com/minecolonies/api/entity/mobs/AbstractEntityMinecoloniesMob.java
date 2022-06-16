@@ -555,7 +555,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
                     source.hurt(DamageSource.thorns(this), damage * 0.5f);
                 }
 
-                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage, ((Player) source).getMainHandItem());
+                final float raiderDamageEnchantLevel = EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.raiderDamage.get(), ((Player) source).getMainHandItem());
 
                 // Up to 7 damage are converted to health scaling damage, 7 is the damage of a diamond sword
                 float baseScalingDamage = Math.min(damage, MAX_SCALED_DAMAGE);
@@ -575,7 +575,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     public static AttributeSupplier.Builder getDefaultAttributes()
     {
         return LivingEntity.createLivingAttributes()
-                 .add(MOB_ATTACK_DAMAGE)
+                 .add(MOB_ATTACK_DAMAGE.get())
                  .add(Attributes.MAX_HEALTH)
                  .add(Attributes.ARMOR)
                  .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
@@ -635,7 +635,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
      */
     public void initStatsFor(final double baseHealth, final double difficulty, final double baseDamage)
     {
-        this.getAttribute(MOB_ATTACK_DAMAGE).setBaseValue(baseDamage);
+        this.getAttribute(MOB_ATTACK_DAMAGE.get()).setBaseValue(baseDamage);
 
         this.difficulty = difficulty;
         final double armor = difficulty * ARMOR;

@@ -8,9 +8,9 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegisterEvent;
 
 /**
  * Initializes the particle type.
@@ -30,9 +30,9 @@ public class ModParticleTypesInitializer
     public static class CommonRegistration
     {
         @SubscribeEvent
-        public static void registerParticles(final RegistryEvent.Register<ParticleType<?>> event)
+        public static void registerParticles(final RegisterEvent event)
         {
-            event.getRegistry().register(SLEEPINGPARTICLE_TYPE.setRegistryName(SLEEPING_TEXTURE));
+            event.getForgeRegistry().register(SLEEPING_TEXTURE, SLEEPINGPARTICLE_TYPE);
         }
     }
 

@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.coremod.enchants.RaiderDamageEnchant;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.DataGenerator;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -359,7 +361,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     }
 
     @NotNull
-    private LootPoolSingletonContainer.Builder<?> enchantedBook(@NotNull final Enchantment enchantment, final int level)
+    private LootPoolSingletonContainer.Builder<?> enchantedBook(final RegistryObject<RaiderDamageEnchant> enchantment, final int level)
     {
         final ItemStack stack = new ItemStack(Items.ENCHANTED_BOOK);
         EnchantedBookItem.addEnchantment(stack, new EnchantmentInstance(enchantment, level));

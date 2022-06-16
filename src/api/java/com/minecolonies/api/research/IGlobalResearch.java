@@ -2,9 +2,9 @@ package com.minecolonies.api.research;
 
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.effects.IResearchEffect;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,13 +57,13 @@ public interface IGlobalResearch
      * Human readable description of research, in human-readable text or as a translation key.
      * @return the description.
      */
-    TranslatableComponent getName();
+    MutableComponent getName();
 
     /**
      * Subtitle description of research, in human-readable text or as a translation key.
      * @return the optional subtitle name.
      */
-    TranslatableComponent getSubtitle();
+    MutableComponent getSubtitle();
 
     /**
      * Getter of the id of the research.

@@ -10,7 +10,6 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.ArrayList;
@@ -23,11 +22,12 @@ import java.util.function.Supplier;
  * IBuildingView}. Also links a given {@link IBuilding} to a given {@link AbstractBlockHut}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
+public class BuildingEntry
 {
     private final AbstractBlockHut<?> buildingBlock;
 
     private final BiFunction<IColony, BlockPos, IBuilding> buildingProducer;
+    private final ResourceLocation registryName;
 
     private List<Supplier<IBuildingModule>>     buildingModuleProducers;
     private List<Supplier<Supplier<IBuildingModuleView>>> buildingModuleViewProducers;
@@ -104,17 +104,9 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
             Validate.notNull(buildingProducer);
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
+            StructureName.HUTS.add(registryName.getPath());
 
-            //todo 1.19: Change citizen to home consistently over all schematics.
-            if (registryName.getPath().equals("home"))
-            {
-                StructureName.HUTS.add("citizen");
-            }
-            else
-            {
-                StructureName.HUTS.add(registryName.getPath());
-            }
-            return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers, buildingModuleViewProducers).setRegistryName(registryName);
+            return new BuildingEntry(registryName, buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers, buildingModuleViewProducers);
         }
 
         /**
@@ -155,7 +147,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
 
     public String getTranslationKey()
     {
-        return "com." + getRegistryName().getNamespace() + ".building." + getRegistryName().getPath();
+        return "com." + registryName.getNamespace() + ".building." + registryName.getPath();
     }
 
     private final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer;
@@ -193,6 +185,7 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
     public List<Supplier<Supplier<IBuildingModuleView>>> getModuleViewProducers() { return buildingModuleViewProducers; }
 
     private BuildingEntry(
+      final ResourceLocation registryName,
       final AbstractBlockHut<?> buildingBlock,
       final BiFunction<IColony, BlockPos, IBuilding> buildingProducer,
       final Supplier<BiFunction<IColonyView, BlockPos, IBuildingView>> buildingViewProducer,
@@ -200,10 +193,20 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
       List<Supplier<Supplier<IBuildingModuleView>>> buildingModuleViewProducers)
     {
         super();
+        this.registryName = registryName;
         this.buildingBlock = buildingBlock;
         this.buildingProducer = buildingProducer;
         this.buildingViewProducer = buildingViewProducer;
         this.buildingModuleProducers = buildingModuleProducers;
         this.buildingModuleViewProducers = buildingModuleViewProducers;
+    }
+
+    /**
+     * Get the assigned registry name.
+     * @return
+     */
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
     }
 }

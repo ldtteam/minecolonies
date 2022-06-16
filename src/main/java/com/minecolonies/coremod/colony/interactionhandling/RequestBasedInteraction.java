@@ -16,7 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -36,17 +36,17 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.cancel"), null),
-      new Tuple<>(new TranslatableComponent("com.minecolonies.coremod.gui.chat.fulfill"), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
+      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.cancel"), null),
+      new Tuple<>(Component.translatable("com.minecolonies.coremod.gui.chat.fulfill"), null)};
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuplesAsync = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_IGNORE), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_SKIP), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), null)};
 
     /**
      * The request this is related to.
@@ -166,7 +166,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (response.equals(new TranslatableComponent("com.minecolonies.coremod.gui.chat.fulfill")))
+        if (response.equals(Component.translatable("com.minecolonies.coremod.gui.chat.fulfill")))
         {
             final IColony colony = IColonyManager.getInstance().getColonyView(data.getColonyId(), player.level.dimension());
 
@@ -197,7 +197,7 @@ public class RequestBasedInteraction extends ServerCitizenInteraction
     public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
         super.onServerResponseTriggered(response, player, data);
-        if (response.equals(new TranslatableComponent("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
+        if (response.equals(Component.translatable("com.minecolonies.coremod.gui.chat.cancel")) && data.getColony() != null)
         {
             data.getColony().getRequestManager().updateRequestState(token, RequestState.CANCELLED);
         }

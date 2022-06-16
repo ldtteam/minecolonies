@@ -107,7 +107,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               centerY - 40 + yFromPolar - 12,
               BUTTON_SIDE_LENGTH,
               BUTTON_SIDE_LENGTH,
-              new TextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
+              Component.literal(String.valueOf(this.radii[dir.get2DDataValue()])),
               dir
             );
             this.addRenderableWidget(db);
@@ -119,10 +119,10 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         if (!tileEntity.getOwner().isEmpty())
         {
-            this.font.draw(stack, new TranslatableComponent(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            this.font.draw(stack, Component.translatable(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
         }
 
-        this.font.draw(stack, new TranslatableComponent(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.font.draw(stack, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
         for (Widget widget : this.renderables)
         {
@@ -205,7 +205,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                 radii[index] = (radii[index] + delta) % (ScarecrowTileEntity.getMaxRange() + 1);
                 if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
 
-                this.setMessage(new TextComponent(String.valueOf(radii[index])));
+                this.setMessage(Component.literal(String.valueOf(radii[index])));
                 Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getBlockPos()));
 
                 return true;
@@ -291,8 +291,8 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             }
 
             List<FormattedText> lines = Lists.newArrayList(
-              new TranslatableComponent(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + this.direction.getSerializedName()),
-              new TranslatableComponent(getDirectionalTranslationKey())
+              Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + this.direction.getSerializedName()),
+              Component.translatable(getDirectionalTranslationKey())
                 .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
             );
 

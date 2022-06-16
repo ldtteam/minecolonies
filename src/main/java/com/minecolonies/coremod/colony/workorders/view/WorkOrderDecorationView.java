@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * The client side representation for a work order that the builder can take to build decorations.
@@ -15,7 +15,7 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        return getOrderTypePrefix(new TranslatableComponent(getWorkOrderName()));
+        return getOrderTypePrefix(Component.translatable(getWorkOrderName()));
     }
 
     private Component getOrderTypePrefix(Component nameComponent)
@@ -23,13 +23,13 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
         switch (this.getWorkOrderType())
         {
             case BUILD:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case UPGRADE:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
             case REPAIR:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
             case REMOVE:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
             default:
                 return nameComponent;
         }

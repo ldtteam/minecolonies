@@ -19,7 +19,8 @@ import com.minecolonies.coremod.colony.buildings.utils.BuilderBucket;
 import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
-import net.minecraft.network.chat.TextComponent;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -103,7 +104,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             }
         }
 
-        buf.writeComponent(new TextComponent(""));
+        buf.writeComponent(Component.literal(""));
         buf.writeDouble(0.0);
         buf.writeInt(0);
         buf.writeInt(0);

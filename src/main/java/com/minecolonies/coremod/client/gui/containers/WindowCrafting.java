@@ -18,8 +18,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -131,7 +130,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final Component buttonDisplay = new TranslatableComponent(module.canLearn(ModCraftingTypes.SMALL_CRAFTING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
+        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.SMALL_CRAFTING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
@@ -180,7 +179,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     @Override
     protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
-        this.font.draw(stack, new TranslatableComponent("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.font.draw(stack, Component.translatable("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
@@ -53,7 +53,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
     protected void doAttack(final LivingEntity target)
     {
         double damageToBeDealt = user.getAttribute(MOB_ATTACK_DAMAGE).getValue();
-        target.hurt(new NamedDamageSource("death.attack." + ((TranslatableComponent) user.getName()).getKey(), user), (float) damageToBeDealt);
+        target.hurt(new NamedDamageSource("death.attack." + ((MutableComponent) user.getName()).getKey(), user), (float) damageToBeDealt);
         user.swing(InteractionHand.MAIN_HAND);
         user.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, (float) 1.0D, (float) SoundUtils.getRandomPitch(user.getRandom()));
         target.setLastHurtByMob(user);

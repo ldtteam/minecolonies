@@ -13,7 +13,6 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -22,6 +21,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -237,7 +237,7 @@ public class DefaultRecipeProvider extends RecipeProvider
     private static ResourceLocation append(@NotNull final ItemLike item,
                                            @NotNull final String text)
     {
-        return append(item.asItem().getRegistryName(), "", text);
+        return append(ForgeRegistries.ITEMS.getKey(item.asItem()), "", text);
     }
 
     private static void registerHutRecipe1(@NotNull final Consumer<FinishedRecipe> consumer,

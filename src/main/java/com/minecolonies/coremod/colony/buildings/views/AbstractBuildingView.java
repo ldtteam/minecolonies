@@ -18,7 +18,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
-import com.minecolonies.coremod.client.gui.WindowReactivateBuilding;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
@@ -27,8 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -563,8 +561,8 @@ public abstract class AbstractBuildingView implements IBuildingView
     {
         try
         {
-            final TextComponent component = new TextComponent("");
-            component.append(new TranslatableComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName()));
+            final MutableComponent component = Component.literal("");
+            component.append(Component.translatable(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName()));
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
             {
                 return component;
@@ -576,14 +574,14 @@ public abstract class AbstractBuildingView implements IBuildingView
                 return component;
             }
 
-            component.append(new TextComponent(": "));
-            component.append(new TextComponent(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
+            component.append(Component.literal(": "));
+            component.append(Component.literal(getColony().getCitizen(getCitizensByRequest().get(request.getId())).getName()));
             return component;
         }
         catch (final Exception ex)
         {
             Log.getLogger().warn(ex);
-            return new TextComponent("");
+            return Component.literal("");
         }
     }
 

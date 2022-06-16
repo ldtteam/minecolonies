@@ -25,7 +25,7 @@ import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -318,7 +318,7 @@ public abstract class AbstractWarehouseRequestResolver extends AbstractRequestRe
     @Override
     public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
-        return new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
+        return Component.translatable(TranslationConstants.COM_MINECOLONIES_BUILDING_WAREHOUSE_NAME);
     }
 
     @Override

@@ -18,7 +18,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraftingRequestResolver;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,13 +86,13 @@ public class PublicWorkerCraftingRequestResolver extends AbstractCraftingRequest
             final WorkerBuildingModuleView moduleView = ((IBuildingView) requester).getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == getJobEntry());
             if (moduleView != null)
             {
-                return new TranslatableComponent(moduleView.getJobEntry().getTranslationKey());
+                return Component.translatable(moduleView.getJobEntry().getTranslationKey());
             }
         }
         if (requester instanceof IBuilding)
         {
             final WorkerBuildingModule module = ((IBuilding) requester).getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == getJobEntry());
-            return new TranslatableComponent(module.getJobEntry().getTranslationKey());
+            return Component.translatable(module.getJobEntry().getTranslationKey());
         }
         return super.getRequesterDisplayName(manager, request);
     }

@@ -9,7 +9,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.SettingsModuleView;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -48,7 +48,7 @@ public class SettingsModuleWindow extends AbstractModuleWindow
     {
         super(building, res);
 
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslatableComponent(moduleView.getDesc().toLowerCase(Locale.US)));
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
         this.building = building;
 
         settingsList = window.findPaneOfTypeByID(LIST_SETTINGS, ScrollingList.class);

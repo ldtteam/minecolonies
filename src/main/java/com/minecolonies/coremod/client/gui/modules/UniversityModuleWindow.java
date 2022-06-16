@@ -26,8 +26,7 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * BOWindow for the university.
@@ -81,22 +80,22 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             {
                 if(requirements.isEmpty())
                 {
-                    requirements.add(new TranslatableComponent("com.minecolonies.coremod.research.locked"));
+                    requirements.add(Component.translatable("com.minecolonies.coremod.research.locked"));
                 }
                 else
                 {
-                    requirements.add(new TranslatableComponent("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
+                    requirements.add(Component.translatable("Or").setStyle((Style.EMPTY).withColor(ChatFormatting.BLUE)));
                 }
                 for(IResearchRequirement req : IGlobalResearchTree.getInstance().getResearch(branch, primary).getResearchRequirement())
                 {
                     // We'll include even completed partial components in the requirement list.
                     if (!req.isFulfilled(buildingView.getColony()))
                     {
-                        requirements.add(new TextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.RED))));
+                        requirements.add(Component.literal("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.RED))));
                     }
                     else
                     {
-                        requirements.add(new TextComponent("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.AQUA))));
+                        requirements.add(Component.literal("-").append(req.getDesc().setStyle((Style.EMPTY).withColor(ChatFormatting.AQUA))));
                     }
                 }
             }
@@ -122,7 +121,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
     public void updateResearchCount(final int offset)
     {
         this.findPaneOfTypeByID("maxresearchwarn", Text.class)
-          .setText(new TranslatableComponent("com.minecolonies.coremod.gui.research.countinprogress",
+          .setText(Component.translatable("com.minecolonies.coremod.gui.research.countinprogress",
             buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset, buildingView.getBuildingLevel()));
         if(buildingView.getBuildingLevel() <= buildingView.getColony().getResearchManager().getResearchTree().getResearchInProgress().size() + offset)
         {
@@ -162,7 +161,7 @@ public class UniversityModuleWindow extends AbstractModuleWindow
             }
             else
             {
-                button.setText(new TranslatableComponent("----------"));
+                button.setText(Component.translatable("----------"));
                 button.disable();
             }
 

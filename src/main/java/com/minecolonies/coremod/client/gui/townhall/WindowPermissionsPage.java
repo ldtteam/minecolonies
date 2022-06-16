@@ -21,7 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -130,7 +130,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
     {
         Network.getNetwork().sendToServer(new PermissionsMessage.SetSubscriber(building.getColony(), actionsRank, !actionsRank.isSubscriber()));
         actionsRank.setSubscriber(!actionsRank.isSubscriber());
-        button.setText(new TranslatableComponent(actionsRank.isSubscriber()
+        button.setText(Component.translatable(actionsRank.isSubscriber()
                                                    ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                    : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
     }
@@ -168,12 +168,12 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
                 @Override
                 public String getLabel(final int i)
                 {
-                    return new TranslatableComponent(rankTypes.get(i)).getString();
+                    return Component.translatable(rankTypes.get(i)).getString();
                 }
             });
             dropdown.setHandler(this::changeRankMode);
             dropdown.setSelectedIndex(actionsRank.isColonyManager() ? 0 : (actionsRank.isHostile() ? 1 : 2));
-            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(new TranslatableComponent(actionsRank.isSubscriber()
+            findPaneOfTypeByID(TOWNHALL_BUTTON_SUBSCRIBER, Button.class).setText(Component.translatable(actionsRank.isSubscriber()
                                                                                                              ? COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON
                                                                                                              : COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
@@ -445,7 +445,7 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
         final IPermissions permissions = building.getColony().getPermissions();
         final Player playerEntity = Minecraft.getInstance().player;
         
-        String key = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+        String key = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
 
         final boolean enable = !COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON.equals(key);
         button.disable();
@@ -457,11 +457,11 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
 
         if (!enable)
         {
-            button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
         }
         else
         {
-            button.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
+            button.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON));
         }
     }
 
@@ -482,13 +482,13 @@ public class WindowPermissionsPage extends AbstractWindowTownHall
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final Action action = actions.get(index);
-                final Component name =new TranslatableComponent(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
+                final Component name =Component.translatable(KEY_TO_PERMISSIONS + action.toString().toLowerCase(Locale.US));
                 rowPane.findPaneOfTypeByID(NAME_LABEL, Text.class).setText(name);
 
                 final boolean isTriggered = building.getColony().getPermissions().hasPermission(actionsRank, action);
                 final Button onOffButton = rowPane.findPaneOfTypeByID("trigger", Button.class);
-                onOffButton.setText(isTriggered ? new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
-                                      : new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
+                onOffButton.setText(isTriggered ? Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON)
+                                      : Component.translatable(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF));
                 rowPane.findPaneOfTypeByID("index", Text.class).setText(Integer.toString(index));
 
                 if (!building.getColony().getPermissions().canAlterPermission(building.getColony().getPermissions().getRank(Minecraft.getInstance().player), actionsRank, action))

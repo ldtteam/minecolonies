@@ -15,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -107,11 +107,11 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
                     if (selectedBuildings.contains(bView.getID()))
                     {
-                        switchButton.setText(new TranslatableComponent(ON));
+                        switchButton.setText(Component.translatable(ON));
                     }
                     else
                     {
-                        switchButton.setText(new TranslatableComponent(OFF));
+                        switchButton.setText(Component.translatable(OFF));
                     }
                 }
             }
@@ -126,16 +126,16 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
     private void switchClicked(@NotNull final Button button)
     {
         final int row = workerList.getListElementIndexByPane(button);
-        String buttonText = button.getText() instanceof TranslatableComponent ? ((TranslatableComponent) button.getText()).getKey() : button.getTextAsString();
+        String buttonText = button.getText() instanceof MutableComponent ? ((MutableComponent) button.getText()).getKey() : button.getTextAsString();
 
         if (buttonText.equals(OFF))
         {
-            button.setText(new TranslatableComponent(ON));
+            button.setText(Component.translatable(ON));
             module.addWorker(allBuildings.get(row).getID());
         }
         else
         {
-            button.setText(new TranslatableComponent(OFF));
+            button.setText(Component.translatable(OFF));
             module.removeWorker(allBuildings.get(row).getID());
         }
         selectedBuildings = module.getBuildingsToGatherFrom();

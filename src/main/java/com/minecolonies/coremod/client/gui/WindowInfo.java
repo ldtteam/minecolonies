@@ -8,8 +8,7 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -54,7 +53,7 @@ public class WindowInfo extends AbstractWindowSkeleton
             final View view = pageBuilder.get();
             switchView.addChild(view);
 
-            final Text name = nameBuilder.get().append(new TranslatableComponent(translationPrefix + i + ".name")).build();
+            final Text name = nameBuilder.get().append(Component.translatable(translationPrefix + i + ".name")).build();
             name.setPosition(30, 0);
             name.setSize(90, 11);
             name.setTextAlignment(Alignment.MIDDLE);
@@ -62,7 +61,7 @@ public class WindowInfo extends AbstractWindowSkeleton
 
             final TextBuilder preText = textBuilder.get();
             Arrays.stream((translationPrefix + i).split("\\n"))
-                .map(TranslatableComponent::new)
+                .map(Component::literal)
                 .forEach(preText::appendNL);
             final Text text = preText.build();
             text.setPosition(0, 16);

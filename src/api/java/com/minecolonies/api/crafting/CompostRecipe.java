@@ -16,7 +16,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,8 +139,7 @@ public class CompostRecipe implements Recipe<Container>
         return new CompostRecipe(recipe.getId(), Ingredient.of(item), recipe.getStrength());
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>>
-            implements RecipeSerializer<CompostRecipe>
+    public static class Serializer implements RecipeSerializer<CompostRecipe>
     {
         private static final Serializer INSTANCE = new Serializer();
 

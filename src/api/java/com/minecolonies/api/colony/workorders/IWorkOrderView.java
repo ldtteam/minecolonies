@@ -3,7 +3,6 @@ package com.minecolonies.api.colony.workorders;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 public interface IWorkOrderView

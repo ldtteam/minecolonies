@@ -26,7 +26,7 @@ import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.entity.ai.util.WorkerLoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -101,14 +101,14 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         if (quarry == null)
         {
             walkToBuilding();
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
         if (quarry.getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
             walkToBuilding();
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             return IDLE;
         }
 
@@ -191,7 +191,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
             return INVENTORY_FULL;
         }
 
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.building"));
+        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.building"));
 
         checkForExtraBuildingActions();
 
@@ -470,12 +470,12 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
     {
         if (job.findQuarry() == null)
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_NO_QUARRY), ChatPriority.BLOCKING));
             return true;
         }
         else if (job.findQuarry().getFirstModuleOccurance(QuarryModule.class).isFinished())
         {
-            worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
+            worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(QUARRY_MINER_FINISHED_QUARRY), ChatPriority.BLOCKING));
             return true;
         }
         else if(job.getWorkOrder() != null && !job.getWorkOrder().getLocation().equals(job.findQuarry().getPosition().below(2)))

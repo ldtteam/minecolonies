@@ -10,8 +10,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Nameable;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -219,7 +217,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     @Override
     public Component getName()
     {
-        return new TranslatableComponent(this.hasCustomName() ? this.customName : "citizen.inventory");
+        return Component.translatable(this.hasCustomName() ? this.customName : "citizen.inventory");
     }
 
     /**
@@ -426,7 +424,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     @Override
     public Component getDisplayName()
     {
-        return this.hasCustomName() ? new TextComponent(customName) : new TextComponent(citizen.getName());
+        return this.hasCustomName() ? Component.literal(customName) : Component.literal(citizen.getName());
     }
 
     /**

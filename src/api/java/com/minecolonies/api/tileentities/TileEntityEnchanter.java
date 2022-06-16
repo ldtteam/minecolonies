@@ -33,7 +33,7 @@ public class TileEntityEnchanter extends TileEntityColonyBuilding
      */
     public TileEntityEnchanter(final BlockPos pos, final BlockState state)
     {
-        this(MinecoloniesTileEntities.ENCHANTER, pos, state);
+        this(MinecoloniesTileEntities.ENCHANTER.get(), pos, state);
     }
 
     /**

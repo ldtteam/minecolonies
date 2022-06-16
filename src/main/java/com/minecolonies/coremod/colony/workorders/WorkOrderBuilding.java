@@ -18,8 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -160,7 +158,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         String customParentName = getCustomParentName();
         String customName = getCustomName();
-        Component buildingComponent = customName.isEmpty() ? new TranslatableComponent(getWorkOrderName()) : new TextComponent(customName);
+        Component buildingComponent = customName.isEmpty() ? Component.translatable(getWorkOrderName()) : Component.literal(customName);
 
         if (parentTranslationKey.isEmpty())
         {
@@ -168,8 +166,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
         }
         else
         {
-            Component parentComponent = customParentName.isEmpty() ? new TranslatableComponent(parentTranslationKey) : new TextComponent(customParentName);
-            return new TranslatableComponent("%s / %s", parentComponent, buildingComponent);
+            Component parentComponent = customParentName.isEmpty() ? Component.translatable(parentTranslationKey) : Component.literal(customParentName);
+            return Component.translatable("%s / %s", parentComponent, buildingComponent);
         }
     }
 

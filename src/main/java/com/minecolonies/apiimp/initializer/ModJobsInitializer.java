@@ -6,8 +6,8 @@ import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DefaultJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 public final class ModJobsInitializer
 {
@@ -18,9 +18,9 @@ public final class ModJobsInitializer
     }
 
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final RegistryEvent.Register<JobEntry> event)
+    public static void init(final RegisterEvent event)
     {
-        final IForgeRegistry<JobEntry> reg = event.getRegistry();
+        final IForgeRegistry<JobEntry> reg = event.getForgeRegistry();
 
         ModJobs.placeHolder = new JobEntry.Builder()
           .setJobProducer(JobPlaceholder::new)
@@ -298,51 +298,61 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.ALCHEMIST_ID)
           .createJobEntry();
 
-        reg.register(ModJobs.placeHolder);
-        reg.register(ModJobs.builder);
-        reg.register(ModJobs.delivery);
-        reg.register(ModJobs.miner);
-        reg.register(ModJobs.lumberjack);
-        reg.register(ModJobs.farmer);
-        reg.register(ModJobs.undertaker);
-        reg.register(ModJobs.fisherman);
-        reg.register(ModJobs.baker);
-        reg.register(ModJobs.cook);
-        reg.register(ModJobs.shepherd);
-        reg.register(ModJobs.cowboy);
-        reg.register(ModJobs.swineHerder);
-        reg.register(ModJobs.chickenHerder);
-        reg.register(ModJobs.smelter);
-        reg.register(ModJobs.ranger);
-        reg.register(ModJobs.knight);
-        reg.register(ModJobs.composter);
-        reg.register(ModJobs.student);
-        reg.register(ModJobs.archer);
-        reg.register(ModJobs.combat);
-        reg.register(ModJobs.sawmill);
-        reg.register(ModJobs.blacksmith);
-        reg.register(ModJobs.stoneMason);
-        reg.register(ModJobs.stoneSmeltery);
-        reg.register(ModJobs.crusher);
-        reg.register(ModJobs.sifter);
-        reg.register(ModJobs.florist);
-        reg.register(ModJobs.enchanter);
-        reg.register(ModJobs.researcher);
-        reg.register(ModJobs.healer);
-        reg.register(ModJobs.pupil);
-        reg.register(ModJobs.teacher);
-        reg.register(ModJobs.glassblower);
-        reg.register(ModJobs.dyer);
-        reg.register(ModJobs.fletcher);
-        reg.register(ModJobs.mechanic);
-        reg.register(ModJobs.planter);
-        reg.register(ModJobs.concreteMixer);
-        reg.register(ModJobs.rabbitHerder);
-        reg.register(ModJobs.beekeeper);
-        reg.register(ModJobs.cookassistant);
-        reg.register(ModJobs.netherworker);
-        reg.register(ModJobs.quarrier);
-        reg.register(ModJobs.druid);
-        reg.register(ModJobs.alchemist);
+        register(reg, ModJobs.placeHolder);
+        register(reg, ModJobs.builder);
+        register(reg, ModJobs.delivery);
+        register(reg, ModJobs.miner);
+        register(reg, ModJobs.lumberjack);
+        register(reg, ModJobs.farmer);
+        register(reg, ModJobs.undertaker);
+        register(reg, ModJobs.fisherman);
+        register(reg, ModJobs.baker);
+        register(reg, ModJobs.cook);
+        register(reg, ModJobs.shepherd);
+        register(reg, ModJobs.cowboy);
+        register(reg, ModJobs.swineHerder);
+        register(reg, ModJobs.chickenHerder);
+        register(reg, ModJobs.smelter);
+        register(reg, ModJobs.ranger);
+        register(reg, ModJobs.knight);
+        register(reg, ModJobs.composter);
+        register(reg, ModJobs.student);
+        register(reg, ModJobs.archer);
+        register(reg, ModJobs.combat);
+        register(reg, ModJobs.sawmill);
+        register(reg, ModJobs.blacksmith);
+        register(reg, ModJobs.stoneMason);
+        register(reg, ModJobs.stoneSmeltery);
+        register(reg, ModJobs.crusher);
+        register(reg, ModJobs.sifter);
+        register(reg, ModJobs.florist);
+        register(reg, ModJobs.enchanter);
+        register(reg, ModJobs.researcher);
+        register(reg, ModJobs.healer);
+        register(reg, ModJobs.pupil);
+        register(reg, ModJobs.teacher);
+        register(reg, ModJobs.glassblower);
+        register(reg, ModJobs.dyer);
+        register(reg, ModJobs.fletcher);
+        register(reg, ModJobs.mechanic);
+        register(reg, ModJobs.planter);
+        register(reg, ModJobs.concreteMixer);
+        register(reg, ModJobs.rabbitHerder);
+        register(reg, ModJobs.beekeeper);
+        register(reg, ModJobs.cookassistant);
+        register(reg, ModJobs.netherworker);
+        register(reg, ModJobs.quarrier);
+        register(reg, ModJobs.druid);
+        register(reg, ModJobs.alchemist);
+    }
+
+    /**
+     * Register the building entry.
+     * @param reg the registry to register it to.
+     * @param entry the entry to register.
+     */
+    private static void register(final IForgeRegistry<JobEntry> reg, final JobEntry entry)
+    {
+        reg.register(entry.getKey(), entry);
     }
 }

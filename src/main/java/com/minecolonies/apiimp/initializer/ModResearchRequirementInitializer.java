@@ -5,8 +5,8 @@ import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.coremod.research.AlternateBuildingResearchRequirement;
 import com.minecolonies.coremod.research.BuildingResearchRequirement;
 import com.minecolonies.coremod.research.ResearchResearchRequirement;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.research.ModResearchRequirements.*;
 
@@ -17,9 +17,9 @@ public class ModResearchRequirementInitializer
         throw new IllegalStateException("Tried to initialize: ModResearchRequirementInitializer but this is a Utility class.");
     }
 
-    public static void init(final RegistryEvent.Register<ResearchRequirementEntry> event)
+    public static void init(final RegisterEvent event)
     {
-        final IForgeRegistry<ResearchRequirementEntry> reg = event.getRegistry();
+        final IForgeRegistry<ResearchRequirementEntry> reg = event.getForgeRegistry();
 
         ModResearchRequirements.alternateBuildingResearchRequirement = new ResearchRequirementEntry.Builder()
                                                                          .setReadFromNBT(AlternateBuildingResearchRequirement::new)
@@ -34,8 +34,8 @@ public class ModResearchRequirementInitializer
                                                                          .setRegistryName(RESEARCH_RESEARCH_REQ_ID)
                                                                          .createResearchRequirementEntry();
 
-        reg.register(ModResearchRequirements.alternateBuildingResearchRequirement);
-        reg.register(ModResearchRequirements.buildingResearchRequirement);
-        reg.register(ModResearchRequirements.researchResearchRequirement);
+        reg.register(ALTERNATE_BUILDING_RESEARCH_REQ_ID, ModResearchRequirements.alternateBuildingResearchRequirement);
+        reg.register(BUILDING_RESEARCH_REQ_ID, ModResearchRequirements.buildingResearchRequirement);
+        reg.register(RESEARCH_RESEARCH_REQ_ID, ModResearchRequirements.researchResearchRequirement);
     }
 }

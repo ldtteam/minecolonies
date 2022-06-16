@@ -28,8 +28,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.MarkBuil
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -235,7 +234,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
 
             if (total > 0)
             {
-                findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.progress.res",
+                findPaneOfTypeByID(LABEL_PROGRESS, Text.class).setText(Component.translatable("com.minecolonies.coremod.gui.progress.res",
                   (int) ((supplied / total) * 100) + "%",
                   moduleView.getProgress() + "%"));
             }
@@ -365,7 +364,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
         //Make sure we have a fresh view
         Network.getNetwork().sendToServer(new MarkBuildingDirtyMessage(builder));
 
-        findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(builder.getWorkerName());
+        findPaneOfTypeByID(LABEL_WORKERNAME, Text.class).setText(Component.literal(builder.getWorkerName()));
         findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(moduleView.getConstructionName());
     }
 
@@ -393,12 +392,12 @@ public class WindowResourceList extends AbstractWindowSkeleton
         if (resource.getAmountInDelivery() > 0)
         {
             rowPane.findPaneOfTypeByID(IN_DELIVERY_ICON, Image.class).setVisible(true);
-            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText(new TextComponent(String.valueOf(resource.getAmountInDelivery())));
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText(Component.literal(String.valueOf(resource.getAmountInDelivery())));
         }
         else if (warehouseAmount > 0)
         {
             rowPane.findPaneOfTypeByID(IN_WAREHOUSE_ICON, Image.class).setVisible(true);
-            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText(new TextComponent(String.valueOf(warehouseAmount)));
+            rowPane.findPaneOfTypeByID(IN_DELIVERY_AMOUNT, Text.class).setText(Component.literal(String.valueOf(warehouseAmount)));
         }
 
         switch (resource.getAvailabilityStatus())
@@ -426,20 +425,20 @@ public class WindowResourceList extends AbstractWindowSkeleton
                 break;
         }
 
-        resourceLabel.setText(resource.getName());
+        resourceLabel.setText(Component.literal(resource.getName()));
         final int missing = resource.getMissingFromPlayer();
         if (missing < 0)
         {
-            resourceMissingLabel.setText(Integer.toString(missing));
+            resourceMissingLabel.setText(Component.literal(Integer.toString(missing)));
         }
         else
         {
             resourceMissingLabel.clearText();
         }
 
-        neededLabel.setText(resource.getAvailable() + " / " + resource.getAmount());
-        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Integer.toString(resource.getAmount() - resource.getAvailable()));
+        neededLabel.setText(Component.literal(resource.getAvailable() + " / " + resource.getAmount()));
+        rowPane.findPaneOfTypeByID(RESOURCE_ID, Text.class).setText(Component.literal(Integer.toString(index)));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Text.class).setText(Component.literal(Integer.toString(resource.getAmount() - resource.getAvailable())));
 
         final ItemStack stack = new ItemStack(resource.getItem(), 1);
         stack.setTag(resource.getItemStack().getTag());

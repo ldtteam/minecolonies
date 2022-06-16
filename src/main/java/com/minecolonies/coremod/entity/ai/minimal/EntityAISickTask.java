@@ -34,7 +34,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
 import java.util.EnumSet;
@@ -462,16 +462,16 @@ public class EntityAISickTask extends Goal
                 return IDLE;
             }
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(id);
-            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_HOSPITAL, disease.getName(), disease.getCureString()),
-              new TranslatableComponent(NO_HOSPITAL),
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO_HOSPITAL, disease.getName(), disease.getCureString()),
+              Component.translatable(NO_HOSPITAL),
               ChatPriority.BLOCKING));
             return WANDER;
         }
         else if (!citizen.getCitizenDiseaseHandler().getDisease().isEmpty())
         {
             final Disease disease = IColonyManager.getInstance().getCompatibilityManager().getDisease(citizen.getCitizenDiseaseHandler().getDisease());
-            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
-              new TranslatableComponent(WAITING_FOR_CURE),
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(WAITING_FOR_CURE, disease.getName(), disease.getCureString()),
+              Component.translatable(WAITING_FOR_CURE),
               ChatPriority.BLOCKING));
         }
 

@@ -21,6 +21,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.BuildingUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +32,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
@@ -165,7 +165,7 @@ public class BuildToolPlaceMessage implements IMessage
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            MessageUtils.format(new TextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
+            MessageUtils.format(Component.literal("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
         if (isHut)

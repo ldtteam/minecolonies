@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,7 +93,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
                 {
                     if (badIndexes.contains(inputIndex))
                     {
-                        final Component tooltipMessage = new TranslatableComponent("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
+                        final Component tooltipMessage = Component.translatable("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
                         return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
                     }
                     guiIngredients.put(inputIndex, ingredient.getDisplayedIngredient());

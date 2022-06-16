@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +22,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -197,7 +199,7 @@ public class WorldUtil
      */
     public static boolean isOverworldType(@NotNull final Level world)
     {
-        return isOfWorldType(world, DimensionType.OVERWORLD_LOCATION);
+        return isOfWorldType(world, BuiltinDimensionTypes.OVERWORLD);
     }
 
     /**
@@ -208,7 +210,7 @@ public class WorldUtil
      */
     public static boolean isNetherType(@NotNull final Level world)
     {
-        return isOfWorldType(world, DimensionType.NETHER_LOCATION);
+        return isOfWorldType(world, BuiltinDimensionTypes.NETHER);
     }
 
     /**

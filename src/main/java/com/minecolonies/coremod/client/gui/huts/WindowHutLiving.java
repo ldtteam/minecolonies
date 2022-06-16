@@ -13,7 +13,7 @@ import com.minecolonies.coremod.client.gui.WindowAssignCitizen;
 import com.minecolonies.coremod.colony.buildings.views.LivingBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.RecallCitizenHutMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0;
@@ -97,7 +97,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
                 final ICitizenDataView citizenDataView = home.getColony().getCitizen(home.getResidents().get(index));
                 if (citizenDataView != null)
                 {
-                    rowPane.findPaneOfTypeByID("name", Text.class).setText((citizenDataView.getJob().isEmpty() ? "" : (new TranslatableComponent(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName());
+                    rowPane.findPaneOfTypeByID("name", Text.class).setText((citizenDataView.getJob().isEmpty() ? "" : (Component.translatable(citizenDataView.getJob()).getString() + ": ")) + citizenDataView.getName());
                 }
             }
         });
@@ -110,7 +110,7 @@ public class WindowHutLiving extends AbstractWindowModuleBuilding<LivingBuilding
      */
     private void refreshView()
     {
-        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(new TranslatableComponent(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
+        findPaneOfTypeByID(ASSIGNED_LABEL, Text.class).setText(Component.translatable(LABEL_HOUSE_ASSIGNED_CITIZENS, building.getResidents().size(), building.getMax()));
         citizen.refreshElementPanes();
     }
 

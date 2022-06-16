@@ -23,13 +23,11 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.PauseCitizenMessage;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RestartCitizenMessage;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -163,7 +161,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
      */
     private void setupSettings(final Button settingsButton)
     {
-        settingsButton.setText(new TranslatableComponent(selectedModule.getHiringMode().getTranslationKey()));
+        settingsButton.setText(Component.translatable(selectedModule.getHiringMode().getTranslationKey()));
     }
 
     /**
@@ -275,7 +273,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
     protected void showEmployedToggled(@NotNull final Button button)
     {
 
-        button.setText(showEmployed ? "N" : "Y");
+        button.setText(Component.literal(showEmployed ? "N" : "Y"));
         showEmployed = !showEmployed;
 
         onOpened();
@@ -291,7 +289,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
         Button button = findPaneOfTypeByID(TOGGLE_SHOW_EMPLOYED, Button.class);
         button.setEnabled(selectedModule instanceof WorkerBuildingModuleView
                 && !(selectedModule instanceof PupilBuildingModuleView));
-        button.setText("N");
+        button.setText(Component.literal("N"));
         showEmployed = false;
     }
 
@@ -371,7 +369,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     }
 
                     isPaused.on();
-                    isPaused.setText(new TranslatableComponent(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
+                    isPaused.setText(Component.translatable(citizen.isPaused() ? COM_MINECOLONIES_COREMOD_GUI_HIRE_UNPAUSE : COM_MINECOLONIES_COREMOD_GUI_HIRE_PAUSE));
                 }
 
                 if (citizen.isPaused())
@@ -383,9 +381,9 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     rowPane.findPaneOfTypeByID(BUTTON_RESTART, Button.class).off();
                 }
 
-                final TextComponent intermString = new TextComponent(" ");
+                final MutableComponent intermString = Component.literal(" ");
                 final TextBuilder textBuilder = PaneBuilders.textBuilder();
-                textBuilder.append(new TextComponent(""));
+                textBuilder.append(Component.literal(""));
                 int skillCount = citizen.getCitizenSkillHandler().getSkills().entrySet().size();
 
                 final Skill primary = selectedModule instanceof  WorkerBuildingModuleView ? ((WorkerBuildingModuleView) selectedModule).getPrimarySkill() : null;
@@ -397,8 +395,8 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                     final int skillLevel = entry.getValue().getA();
                     final Style skillStyle = createColor(primary, secondary, entry.getKey());
 
-                    textBuilder.append(new TranslatableComponent("com.minecolonies.coremod.gui.citizen.skills." + skillName).setStyle(skillStyle));
-                    textBuilder.append(new TextComponent(": " + skillLevel).setStyle(skillStyle));
+                    textBuilder.append(Component.translatable("com.minecolonies.coremod.gui.citizen.skills." + skillName).setStyle(skillStyle));
+                    textBuilder.append(Component.literal(": " + skillLevel).setStyle(skillStyle));
                     if (--skillCount > 0)
                     {
                         textBuilder.append(intermString);
@@ -407,14 +405,14 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 textBuilder.newLine(); // finish the current line
 
                 Component citizenLabelComponent =
-                  citizen.getJob().isEmpty() ? new TextComponent(citizen.getName()) : new TranslatableComponent(citizen.getJob()).append(": ").append(citizen.getName());
+                  citizen.getJob().isEmpty() ? Component.literal(citizen.getName()) : Component.translatable(citizen.getJob()).append(": ").append(citizen.getName());
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Text.class).setText(citizenLabelComponent);
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class).setText(textBuilder.getText());
                 final JobEntry entry = selectedModule.getJobEntry();
                 PaneBuilders.tooltipBuilder()
                   .hoverPane(rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Text.class))
                   .build()
-                  .setText(new TranslatableComponent(entry.getKey().toString() + ".skills.desc"));
+                  .setText(Component.translatable(entry.getKey().toString() + ".skills.desc"));
             }
         });
 
@@ -431,7 +429,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
             {
                 final JobEntry entry = moduleViews.get(index).getJobEntry();
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_JOB, Button.class);
-                button.setText(new TranslatableComponent(entry.getTranslationKey()));
+                button.setText(Component.translatable(entry.getTranslationKey()));
                 if (entry.equals(selectedModule.getJobEntry()))
                 {
                     button.disable();
@@ -440,7 +438,7 @@ public class WindowHireWorker extends AbstractWindowSkeleton
                 {
                     button.enable();
                 }
-                PaneBuilders.tooltipBuilder().hoverPane(button).build().setText(new TranslatableComponent(entry.getKey().toString() + ".job.desc"));
+                PaneBuilders.tooltipBuilder().hoverPane(button).build().setText(Component.translatable(entry.getKey().toString() + ".job.desc"));
             }
         });
     }

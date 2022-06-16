@@ -9,7 +9,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.HireSpiesMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
@@ -77,7 +77,7 @@ public class WindowsBarracksSpies extends BOWindow implements ButtonHandler
         {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
-        findPaneOfTypeByID(TEXT_ID, Text.class).setText(new TranslatableComponent(DESCRIPTION_BARRACKS_HIRE_SPIES));
+        findPaneOfTypeByID(TEXT_ID, Text.class).setText(Component.translatable(DESCRIPTION_BARRACKS_HIRE_SPIES));
     }
 
     @Override

@@ -62,8 +62,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -1342,13 +1341,13 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         if (async)
         {
             citizenData.getJob().getAsyncRequests().add(requestToken);
-            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
-              request.getShortDisplayString()), ChatPriority.PENDING, new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_ASYNC,
+              request.getShortDisplayString()), ChatPriority.PENDING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
         else
         {
-            citizenData.triggerInteraction(new RequestBasedInteraction(new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
-              request.getShortDisplayString()), ChatPriority.BLOCKING, new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
+            citizenData.triggerInteraction(new RequestBasedInteraction(Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL,
+              request.getShortDisplayString()), ChatPriority.BLOCKING, Component.translatable(RequestSystemTranslationConstants.REQUEST_RESOLVER_NORMAL), request.getId()));
         }
 
         addRequestToMaps(citizenData.getId(), requestToken, TypeToken.of(requested.getClass()));
@@ -1965,17 +1964,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     {
         if (!getCitizensByRequest().containsKey(request.getId()))
         {
-            return new TextComponent("<UNKNOWN>");
+            return Component.literal("<UNKNOWN>");
         }
 
         final int citizenId = getCitizensByRequest().get(request.getId());
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData.getJob() == null)
         {
-            return new TextComponent(citizenData.getName());
+            return Component.literal(citizenData.getName());
         }
-        final MutableComponent jobName = new TranslatableComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
-        return jobName.append(new TextComponent(" " + citizenData.getName()));
+        final MutableComponent jobName = Component.translatable(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
+        return jobName.append(Component.literal(" " + citizenData.getName()));
     }
 
     @Override

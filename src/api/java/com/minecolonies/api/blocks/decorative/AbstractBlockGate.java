@@ -1,7 +1,6 @@
 package com.minecolonies.api.blocks.decorative;
 
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +25,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +65,6 @@ public abstract class AbstractBlockGate extends DoorBlock
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
         super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion());
-        this.setRegistryName(name);
         registerDefaultState(defaultBlockState());
 
         this.maxWidth = maxWidth;
@@ -294,18 +291,6 @@ public abstract class AbstractBlockGate extends DoorBlock
                 break;
             }
         }
-    }
-
-    /**
-     * Register the block type to the registry
-     *
-     * @param registry registry to register to
-     * @return block
-     */
-    public AbstractBlockGate registerBlock(final IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
     }
 
     @NotNull

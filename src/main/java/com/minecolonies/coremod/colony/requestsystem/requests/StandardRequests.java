@@ -23,7 +23,6 @@ import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModul
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
-import com.minecolonies.coremod.util.text.NonSiblingFormattingTextComponent;
 import net.minecraft.core.Registry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -32,8 +31,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -76,8 +74,8 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent combined = new NonSiblingFormattingTextComponent();
-            combined.append(new TextComponent(getRequest().getCount() + " "));
+            final MutableComponent combined = Component.literal("");
+            combined.append(Component.literal(getRequest().getCount() + " "));
             combined.append(getRequest().getStack().getHoverName());
             return combined;
         }
@@ -138,8 +136,8 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(stackList.getDescription()));
+            final MutableComponent result = Component.literal("");
+            result.append(Component.translatable(stackList.getDescription()));
             return result;
         }
 
@@ -187,26 +185,26 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent combined = new NonSiblingFormattingTextComponent();
-            combined.append(new TextComponent(getRequest().getCount() + " "));
+            final MutableComponent combined = Component.literal("");
+            combined.append(Component.literal(getRequest().getCount() + " "));
             // getRequest().getTag() is a long string that can't be easily be read by players or turned into a translation key.
             // Instead, try to get a translated text first.
             final String tagKey = "com.minecolonies.coremod.tag." + getRequest().getTag().toString().toLowerCase().replace
                                                                                                                      ("namedtag[", "").replace(':', '.').replace("]", "");
-            final TranslatableComponent tagText = new TranslatableComponent(tagKey);
+            final MutableComponent tagText = Component.translatable(tagKey);
             // test the translated text; if there's a difference, the client has a matching translation key.
             if (!tagText.getContents().equals(tagKey))
             {
-                combined.append(new TextComponent("#").append(tagText));
+                combined.append(Component.literal("#").append(tagText));
             }
             // Otherwise, use the first item from request set if present, or the full tag identifier to assist debugging otherwise.
             else if (!stacks.isEmpty())
             {
-                combined.append(new TextComponent("#").append(stacks.get(0).getHoverName()));
+                combined.append(Component.literal("#").append(stacks.get(0).getHoverName()));
             }
             else
             {
-                combined.append(new TextComponent("#").append(new TextComponent(getRequest().getTag().toString())));
+                combined.append(Component.literal("#").append(Component.literal(getRequest().getTag().toString())));
             }
             return combined;
         }
@@ -241,8 +239,8 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY).append(new TextComponent(
+            final MutableComponent result = Component.literal("");
+            result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_DELIVERY).append(Component.literal(
               getRequest().getStack().getCount() + " ")).append(getRequest().getStack().getDisplayName()));
             return result;
         }
@@ -274,11 +272,11 @@ public final class StandardRequests
 
             if (posInList >= 0)
             {
-            	return posInList == 0 ? ImmutableList.of(new TranslatableComponent(FROM, requester), new TranslatableComponent(IN_PROGRESS)) : ImmutableList.of(new TranslatableComponent(FROM, requester), new TranslatableComponent(IN_QUEUE, posInList));
+            	return posInList == 0 ? ImmutableList.of(Component.translatable(FROM, requester), Component.translatable(IN_PROGRESS)) : ImmutableList.of(Component.translatable(FROM, requester), Component.translatable(IN_QUEUE, posInList));
             }
             else
             {
-                return ImmutableList.of(new TranslatableComponent(FROM, requester));
+                return ImmutableList.of(Component.translatable(FROM, requester));
             }
         }
 
@@ -313,8 +311,8 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_PICKUP));
+            final MutableComponent result = Component.literal("");
+            result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_PICKUP));
             return result;
         }
 
@@ -358,7 +356,7 @@ public final class StandardRequests
         @Override
         public final Component getShortDisplayString()
         {
-            return new TranslatableComponent(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, new TextComponent(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getDisplayName());
+            return Component.translatable(RequestSystemTranslationConstants.REQUEST_SYSTEM_CRAFTING_DISPLAY, Component.literal(String.valueOf(getRequest().getMinCount())), getRequest().getStack().getDisplayName());
         }
 
         protected abstract String getTranslationKey();
@@ -383,20 +381,20 @@ public final class StandardRequests
                 int posInList = getPosInList(colony, view, getId());
                 if (posInList >= 0)
                 {
-                	return posInList == 0 ? ImmutableList.of(new TranslatableComponent(AT, requester), new TranslatableComponent(IN_PROGRESS)) : ImmutableList.of(new TranslatableComponent(FROM, requester), new TranslatableComponent(IN_QUEUE, posInList));
+                	return posInList == 0 ? ImmutableList.of(Component.translatable(AT, requester), Component.translatable(IN_PROGRESS)) : ImmutableList.of(Component.translatable(FROM, requester), Component.translatable(IN_QUEUE, posInList));
                 }
                 else if (getState() == RequestState.FOLLOWUP_IN_PROGRESS)
                 {
-                    return ImmutableList.of(new TranslatableComponent(AT, requester), new TranslatableComponent(FINISHED));
+                    return ImmutableList.of(Component.translatable(AT, requester), Component.translatable(FINISHED));
                 }
                 else
                 {
-                    return ImmutableList.of(new TranslatableComponent(AT, requester), new TranslatableComponent(MISSING_DELIVERIES));
+                    return ImmutableList.of(Component.translatable(AT, requester), Component.translatable(MISSING_DELIVERIES));
                 }
             }
             catch (IllegalArgumentException ex)
             {
-                return ImmutableList.of(new TranslatableComponent(AT, requester), new TranslatableComponent(NOT_RESOLVED));
+                return ImmutableList.of(Component.translatable(AT, requester), Component.translatable(NOT_RESOLVED));
             }
         }
 
@@ -499,8 +497,8 @@ public final class StandardRequests
         @Override
         public Component getLongDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
-            final MutableComponent preType = new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_TYPE_PREFIX);
+            final MutableComponent result = Component.literal("");
+            final MutableComponent preType = Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_TYPE_PREFIX);
 
             result.append(preType);
 
@@ -508,22 +506,22 @@ public final class StandardRequests
 
             if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
             {
-                result.append(new TextComponent(" "));
-                result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
-                result.append(new TextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
+                result.append(Component.literal(" "));
+                result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MINIMUM_LEVEL_PREFIX));
+                result.append(Component.literal(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMinLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMinLevel())));
             }
 
             if (getRequest().getMaxLevel() < ToolLevelConstants.TOOL_LEVEL_MAXIMUM)
             {
                 if (getRequest().getMinLevel() > ToolLevelConstants.TOOL_LEVEL_HAND)
                 {
-                    result.append(new TextComponent(" "));
-                    result.append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
+                    result.append(Component.literal(" "));
+                    result.append(Component.translatable(TranslationConstants.COM_MINECOLONIES_GENERAL_AND));
                 }
 
-                result.append(new TextComponent(" "));
-                result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MAXIMUM_LEVEL_PREFIX));
-                result.append(new TextComponent(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
+                result.append(Component.literal(" "));
+                result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_TOOL_MAXIMUM_LEVEL_PREFIX));
+                result.append(Component.literal(getRequest().isArmor() ? ItemStackUtils.swapArmorGrade(getRequest().getMaxLevel()) : ItemStackUtils.swapToolGrade(getRequest().getMaxLevel())));
             }
 
             return result;
@@ -533,7 +531,7 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
+            final MutableComponent result = Component.literal("");
             result.append(getRequest().getToolClass().getDisplayName());
             return result;
         }
@@ -567,8 +565,8 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD));
+            final MutableComponent result = Component.literal("");
+            result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD));
             return result;
         }
 
@@ -625,7 +623,7 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            return new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE);
+            return Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_SMELTABLE_ORE);
         }
 
         @NotNull
@@ -673,8 +671,8 @@ public final class StandardRequests
         @Override
         public Component getShortDisplayString()
         {
-            final MutableComponent result = new NonSiblingFormattingTextComponent();
-            result.append(new TranslatableComponent(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE));
+            final MutableComponent result = Component.literal("");
+            result.append(Component.translatable(RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE));
             return result;
         }
 

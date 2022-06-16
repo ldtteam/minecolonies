@@ -20,7 +20,6 @@ import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,11 +29,11 @@ import net.minecraft.stats.RecipeBook;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -93,7 +92,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerGuardTypes(final RegistryEvent.Register<GuardType> event)
+    public static void registerGuardTypes(final RegisterEvent event)
     {
         ModGuardTypesInitializer.init(event);
     }
@@ -111,64 +110,63 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerBuildingTypes(@NotNull final RegistryEvent.Register<BuildingEntry> event)
+    public static void registerBuildingTypes(@NotNull final RegisterEvent event)
     {
         ModBuildingsInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerResearchRequirementTypes(@NotNull final RegistryEvent.Register<ResearchRequirementEntry> event)
+    public static void registerResearchRequirementTypes(@NotNull final RegisterEvent event)
     {
         ModResearchRequirementInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerResearchEffectTypes(@NotNull final RegistryEvent.Register<ResearchEffectEntry> event)
+    public static void registerResearchEffectTypes(@NotNull final RegisterEvent event)
     {
         ModResearchEffectInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerInteractionTypes(@NotNull final RegistryEvent.Register<InteractionResponseHandlerEntry> event)
+    public static void registerInteractionTypes(@NotNull final RegisterEvent event)
     {
         ModInteractionsInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerColonyEventTypes(@NotNull final RegistryEvent.Register<ColonyEventTypeRegistryEntry> event)
+    public static void registerColonyEventTypes(@NotNull final RegisterEvent event)
     {
         ModColonyEventTypeInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerColonyEventDescriptionTypes(@NotNull final RegistryEvent.Register<ColonyEventDescriptionTypeRegistryEntry> event)
+    public static void registerColonyEventDescriptionTypes(@NotNull final RegisterEvent event)
     {
         ModColonyEventDescriptionTypeInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerJobTypes(final RegistryEvent.Register<JobEntry> event)
+    public static void registerJobTypes(final RegisterEvent event)
     {
         ModJobsInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerRecipeTypes(final RegistryEvent.Register<RecipeTypeEntry> event)
+    public static void registerRecipeTypes(final RegisterEvent event)
     {
         ModRecipeTypesInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerCraftingTypes(final RegistryEvent.Register<CraftingType> event)
+    public static void registerCraftingTypes(final RegisterEvent event)
     {
         ModCraftingTypesInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerRecipeSerializers(final RegistryEvent.Register<RecipeSerializer<?>> event)
+    public static void registerRecipeSerializers(final RegisterEvent event)
     {
-        final IForgeRegistry<RecipeSerializer<?>> r = event.getRegistry();
-        r.register(CompostRecipe.Serializer.getInstance().setRegistryName(CompostRecipe.ID));
+        event.getForgeRegistry().register(CompostRecipe.ID, CompostRecipe.Serializer.getInstance());
 
         CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
         CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());

@@ -128,7 +128,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     public Component getTitleAsTextComponent()
     {
-        return new TranslatableComponent(this.job.getJobRegistryEntry().getTranslationKey());
+        return Component.translatable(this.job.getJobRegistryEntry().getTranslationKey());
     }
 
     @NotNull
@@ -192,7 +192,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             if (block.tip == null) continue;
             if (block.bounds.contains((int) mouseX, (int) mouseY))
             {
-                tooltips.add(new TextComponent(block.tip));
+                tooltips.add(Component.literal(block.tip));
             }
         }
 
@@ -214,12 +214,12 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
             String tip = null;
-            if (line instanceof TranslatableComponent)
+            if (line instanceof MutableComponent)
             {
-                final String key = ((TranslatableComponent) line).getKey() + ".tip";
+                final String key = ((MutableComponent) line).getKey() + ".tip";
                 if (I18n.exists(key))
                 {
-                    tip = (new TranslatableComponent(key, ((TranslatableComponent) line).getArgs())).getString();
+                    tip = (Component.translatable(key, ((MutableComponent) line).getArgs())).getString();
                 }
             }
             result.add(new InfoBlock(text, tip, new Rect2i(x, y, width, height)));
@@ -259,7 +259,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     private static List<FormattedText> translateDescription(@NotNull final String... keys)
     {
-        return Arrays.stream(keys).map(TranslatableComponent::new).collect(Collectors.toList());
+        return Arrays.stream(keys).map(MutableComponent::new).collect(Collectors.toList());
     }
 
     @NotNull
@@ -314,7 +314,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
                 if (!recipeModId.equals(ingredientModId))
                 {
                     final String modName = modIdHelper.getFormattedModNameForModId(recipeModId);
-                    final TranslatableComponent recipeBy = new TranslatableComponent("jei.tooltip.recipe.by", modName);
+                    final MutableComponent recipeBy = Component.translatable("jei.tooltip.recipe.by", modName);
                     tooltip.add(recipeBy.withStyle(ChatFormatting.GRAY));
                 }
             }
@@ -322,7 +322,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
             if (showAdvanced)
             {
-                final TranslatableComponent recipeId = new TranslatableComponent("jei.tooltip.recipe.id", id.toString());
+                final MutableComponent recipeId = Component.translatable("jei.tooltip.recipe.id", id.toString());
                 tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
             }
         }
@@ -354,24 +354,24 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
                 if (probability >= 1)
                 {
-                    tooltip.add(new TranslatableComponent(key,
+                    tooltip.add(Component.translatable(key,
                             Math.round(probability)));
                 }
                 else
                 {
-                    tooltip.add(new TranslatableComponent(key,
+                    tooltip.add(Component.translatable(key,
                             Math.round(probability * 100) / 100f));
                 }
 
                 if (drop.getConditional())
                 {
-                    tooltip.add(new TranslatableComponent(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
+                    tooltip.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
                 }
 
                 final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
                 if (showAdvanced)
                 {
-                    final TranslatableComponent recipeId = new TranslatableComponent("com.minecolonies.coremod.jei.loottableid", id.toString());
+                    final MutableComponent recipeId = Component.translatable("com.minecolonies.coremod.jei.loottableid", id.toString());
                     tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
                 }
             }

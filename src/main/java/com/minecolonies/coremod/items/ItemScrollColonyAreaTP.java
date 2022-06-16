@@ -55,7 +55,7 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
         if (world.random.nextInt(10) == 0)
         {
             // Fail chance
-            player.displayClientMessage(new TranslatableComponent(
+            player.displayClientMessage(Component.translatable(
               "minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               ChatFormatting.GOLD)), true);
 
@@ -133,27 +133,27 @@ public class ItemScrollColonyAreaTP extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = new TranslatableComponent(TOOL_COLONY_TELEPORT_AREA_SCROLL_DESCRIPTION);
+        final MutableComponent guiHint = Component.translatable(TOOL_COLONY_TELEPORT_AREA_SCROLL_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        MutableComponent colonyDesc = new TranslatableComponent(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
+        MutableComponent colonyDesc = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
         if (stack.getOrCreateTag().contains(TAG_DESC))
         {
-            colonyDesc = new TextComponent(stack.getOrCreateTag().getString(TAG_DESC));
+            colonyDesc = Component.literal(stack.getOrCreateTag().getString(TAG_DESC));
         }
         else
         {
             final IColony colony = getColonyView(stack);
             if (colony != null)
             {
-                colonyDesc = new TextComponent(colony.getName());
+                colonyDesc = Component.literal(colony.getName());
                 stack.getOrCreateTag().putString(TAG_DESC, colony.getName());
             }
         }
 
-        final MutableComponent guiHint2 = new TranslatableComponent(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
+        final MutableComponent guiHint2 = Component.translatable(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }

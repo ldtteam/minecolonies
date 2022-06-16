@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.storage.loot.*;
 import net.minecraft.world.level.storage.loot.entries.*;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -74,7 +75,7 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
                                 .when(new AlternativeLootItemCondition.Builder(
-                                        EntityInBiomeCategory.of(Biome.BiomeCategory.OCEAN),
+                                        EntityInBiomeCategory.of(Biomes.OCEAN),
                                         ResearchUnlocked.effect(ResearchConstants.FISH_TREASURE)
                                 )))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_FISH).setWeight(85).setQuality(-1))

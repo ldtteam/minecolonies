@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Map;
 import java.util.Random;
@@ -211,7 +211,7 @@ public class CustomVisitorListener extends SimpleJsonResourceReloadListener
 
             if (storykey != null)
             {
-                visitorData.triggerInteraction(new RecruitmentInteraction(new TranslatableComponent(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
+                visitorData.triggerInteraction(new RecruitmentInteraction(Component.translatable(storykey, visitorData.getName().split(" ")[0]), ChatPriority.IMPORTANT));
             }
 
             visitorData.markDirty();

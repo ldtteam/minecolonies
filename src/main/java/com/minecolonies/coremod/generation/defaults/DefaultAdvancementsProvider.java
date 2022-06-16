@@ -27,7 +27,7 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.PlacedBlockTrigger;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.advancements.AdvancementProvider;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,8 +68,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         Advancement.Builder.advancement()
                 .parent(new ResourceLocation("story/root"))
                 .display(ModItems.supplyChest,
-                        new TranslatableComponent("advancements.minecolonies.root.title"),
-                        new TranslatableComponent("advancements.minecolonies.root.description"),
+                        Component.translatable("advancements.minecolonies.root.title"),
+                        Component.translatable("advancements.minecolonies.root.description"),
                         null,
                         FrameType.TASK, false, false, false)
                 .addCriterion("supply_ship", new PlaceSupplyCriterionInstance())
@@ -87,8 +87,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final Advancement root = Advancement.Builder.advancement()
                 .display(ModItems.supplyChest,
-                        new TranslatableComponent("advancements.minecolonies.root.title"),
-                        new TranslatableComponent("advancements.minecolonies.root.description"),
+                        Component.translatable("advancements.minecolonies.root.title"),
+                        Component.translatable("advancements.minecolonies.root.description"),
                         new ResourceLocation("textures/block/light_gray_wool.png"),
                         FrameType.TASK, true, true, false)
                 .addCriterion("supply_ship_placed", new PlaceSupplyCriterionInstance())
@@ -264,8 +264,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final Advancement root = Advancement.Builder.advancement()
                 .display(ModBlocks.blockHutBuilder,
-                        new TranslatableComponent("advancements.minecolonies.root.production.title"),
-                        new TranslatableComponent("advancements.minecolonies.root.production.description"),
+                        Component.translatable("advancements.minecolonies.root.production.title"),
+                        Component.translatable("advancements.minecolonies.root.production.description"),
                         new ResourceLocation("structurize:textures/blocks/cactus/cactus_planks.png"),
                         FrameType.TASK, false, false, false)
                 .addCriterion("builders_hut",
@@ -488,8 +488,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
 
         final Advancement root = Advancement.Builder.advancement()
                 .display(ModBlocks.blockHutBarracks,
-                        new TranslatableComponent("advancements.minecolonies.root.military.title"),
-                        new TranslatableComponent("advancements.minecolonies.root.military.description"),
+                        Component.translatable("advancements.minecolonies.root.military.title"),
+                        Component.translatable("advancements.minecolonies.root.military.description"),
                         new ResourceLocation("textures/block/stone_bricks.png"),
                         FrameType.TASK, true, false, false)
                 .addCriterion("guardtower",
@@ -554,8 +554,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                                     @NotNull final String name)
     {
         return new DisplayInfo(new ItemStack(icon),
-                new TranslatableComponent("advancements.minecolonies." + name + ".title"),
-                new TranslatableComponent("advancements.minecolonies." + name + ".description"),
+                Component.translatable("advancements.minecolonies." + name + ".title"),
+                Component.translatable("advancements.minecolonies." + name + ".description"),
                 null, frame, true, true, false);
     }
 
@@ -564,8 +564,8 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                                           @NotNull final String name)
     {
         return new DisplayInfo(new ItemStack(icon),
-                new TranslatableComponent("advancements.minecolonies." + name + ".title"),
-                new TranslatableComponent("advancements.minecolonies." + name + ".description"),
+                Component.translatable("advancements.minecolonies." + name + ".title"),
+                Component.translatable("advancements.minecolonies." + name + ".description"),
                 null, frame, true, true, true);
     }
 

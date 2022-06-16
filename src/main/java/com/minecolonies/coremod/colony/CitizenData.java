@@ -44,8 +44,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+
+import net.minecraft.network.chat.Component;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -432,7 +432,7 @@ public class CitizenData implements ICitizenData
         citizen.getCitizenColonyHandler().setColonyId(getColony().getID());
 
         citizen.setIsChild(isChild());
-        citizen.setCustomName(new TextComponent(getName()));
+        citizen.setCustomName(Component.literal(getName()));
 
         citizen.getAttribute(Attributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
 
@@ -1461,15 +1461,15 @@ public class CitizenData implements ICitizenData
 
         if (workBuilding != null && !workBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
-              new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_WORK),
+            triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
+              Component.translatable(CITIZEN_NOT_GUARD_NEAR_WORK),
               ChatPriority.CHITCHAT));
         }
 
         if (homeBuilding != null && !homeBuilding.isGuardBuildingNear() && !WorldUtil.isPeaceful(colony.getWorld()))
         {
-            triggerInteraction(new StandardInteraction(new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
-              new TranslatableComponent(CITIZEN_NOT_GUARD_NEAR_HOME),
+            triggerInteraction(new StandardInteraction(Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
+              Component.translatable(CITIZEN_NOT_GUARD_NEAR_HOME),
               ChatPriority.CHITCHAT));
         }
     }

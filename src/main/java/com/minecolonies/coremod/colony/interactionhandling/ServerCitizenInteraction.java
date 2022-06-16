@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -128,13 +128,13 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @Override
     public void onServerResponseTriggered(final Component response, final Player player, final ICitizenData data)
     {
-        if (response instanceof TranslatableComponent)
+        if (response instanceof MutableComponent)
         {
-            if (((TranslatableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
+            if (((MutableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.remindmelater"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 10));
             }
-            else if (((TranslatableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
+            else if (((MutableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.ignore"))
             {
                 displayAtWorldTick = (int) (player.level.getGameTime() + (TICKS_SECOND * 60 * 20));
             }
@@ -145,7 +145,7 @@ public abstract class ServerCitizenInteraction extends AbstractInteractionRespon
     @OnlyIn(Dist.CLIENT)
     public boolean onClientResponseTriggered(final Component response, final Player player, final ICitizenDataView data, final BOWindow window)
     {
-        if (((TranslatableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
+        if (((MutableComponent) response).getKey().equals("com.minecolonies.coremod.gui.chat.skipchitchat"))
         {
             final MainWindowCitizen windowCitizen = new MainWindowCitizen(data);
             windowCitizen.open();

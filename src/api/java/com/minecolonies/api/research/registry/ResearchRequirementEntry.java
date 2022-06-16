@@ -3,7 +3,6 @@ package com.minecolonies.api.research.registry;
 import com.minecolonies.api.research.IResearchRequirement;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Function;
@@ -12,9 +11,10 @@ import java.util.function.Function;
  * Entry for the {@link IResearchRequirement} registry. Makes it possible to create a single registry for a {@link IResearchRequirement}.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequirementEntry>
+public class ResearchRequirementEntry
 {
     private final Function<CompoundTag, IResearchRequirement> readFromNBT;
+    private final ResourceLocation registryname;
 
     /**
      * A builder class for {@link ResearchRequirementEntry}.
@@ -61,7 +61,7 @@ public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequire
             Validate.notNull(readFromNBT);
             Validate.notNull(registryName);
 
-            return new ResearchRequirementEntry(readFromNBT).setRegistryName(registryName);
+            return new ResearchRequirementEntry(readFromNBT, registryName);
         }
     }
 
@@ -71,9 +71,10 @@ public class ResearchRequirementEntry extends ForgeRegistryEntry<ResearchRequire
     }
 
     private ResearchRequirementEntry(
-      final Function<CompoundTag, IResearchRequirement> readFromNBT)
+      final Function<CompoundTag, IResearchRequirement> readFromNBT, final ResourceLocation registryName)
     {
         super();
         this.readFromNBT = readFromNBT;
+        this.registryname = registryName;
     }
 }

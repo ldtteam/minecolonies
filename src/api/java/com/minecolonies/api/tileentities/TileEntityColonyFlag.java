@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.items.ModItems;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +36,7 @@ public class TileEntityColonyFlag extends BlockEntity
     /** The colony of the player that placed this banner */
     public int colonyId = -1;
 
-    public TileEntityColonyFlag(final BlockPos pos, final BlockState state) { super(MinecoloniesTileEntities.COLONY_FLAG, pos, state); }
+    public TileEntityColonyFlag(final BlockPos pos, final BlockState state) { super(MinecoloniesTileEntities.COLONY_FLAG.get(), pos, state); }
 
     @Override
     public void saveAdditional(CompoundTag compound)
@@ -89,7 +90,7 @@ public class TileEntityColonyFlag extends BlockEntity
      * @return the list of pattern-color pairs
      */
     @OnlyIn(Dist.CLIENT)
-    public List<Pair<BannerPattern, DyeColor>> getPatternList()
+    public List<Pair<Holder<BannerPattern>, DyeColor>> getPatternList()
     {
         // Structurize will cause the second condition to be false
         if (level != null && level.dimension() != null)
@@ -116,13 +117,13 @@ public class TileEntityColonyFlag extends BlockEntity
     public ItemStack getItemClient()
     {
         ItemStack itemstack = new ItemStack(ModBlocks.blockColonyBanner);
-        List<Pair<BannerPattern, DyeColor>> list = getPatternList();
+        List<Pair<Holder<BannerPattern>, DyeColor>> list = getPatternList();
         ListTag nbt = new ListTag();
 
-        for (Pair<BannerPattern, DyeColor> pair : list)
+        for (Pair<Holder<BannerPattern>, DyeColor> pair : list)
         {
             CompoundTag pairNBT = new CompoundTag();
-            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().getHashname());
+            pairNBT.putString(TAG_SINGLE_PATTERN, pair.getFirst().get().getHashname());
             pairNBT.putInt(TAG_PATTERN_COLOR, pair.getSecond().getId());
             nbt.add(pairNBT);
         }

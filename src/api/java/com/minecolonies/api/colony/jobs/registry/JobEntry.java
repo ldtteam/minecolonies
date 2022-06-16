@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.IJobView;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Objects;
@@ -18,7 +17,7 @@ import java.util.function.Supplier;
  * Entry for the {@link IJob} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class JobEntry extends ForgeRegistryEntry<JobEntry>
+public final class JobEntry
 {
 
     private final Function<ICitizenData, IJob<?>> jobProducer;
@@ -80,7 +79,7 @@ public final class JobEntry extends ForgeRegistryEntry<JobEntry>
             Validate.notNull(registryName);
             Validate.notNull(jobViewProducer);
 
-            return new JobEntry(jobProducer, jobViewProducer, registryName).setRegistryName(registryName);
+            return new JobEntry(jobProducer, jobViewProducer, registryName);
         }
     }
 

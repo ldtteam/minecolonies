@@ -18,7 +18,7 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuilding;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructureWithWorkOrder;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
@@ -261,11 +261,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
             }
         }
 
-        TranslatableComponent message;
+        MutableComponent message;
         switch (wo.getWorkOrderType())
         {
             case REPAIR:
-                message = new TranslatableComponent(
+                message = Component.translatable(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_REPAIRING_COMPLETE,
                   wo.getDisplayName(),
                   position.getX(),
@@ -273,7 +273,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                   position.getZ());
                 break;
             case REMOVE:
-                message = new TranslatableComponent(
+                message = Component.translatable(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_DECONSTRUCTION_COMPLETE,
                   wo.getDisplayName(),
                   position.getX(),
@@ -281,7 +281,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
                   position.getZ());
                 break;
             default:
-                message = new TranslatableComponent(
+                message = Component.translatable(
                   COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_COMPLETE,
                   wo.getDisplayName(),
                   position.getX(),
@@ -292,7 +292,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructureWithWorkO
 
         if (showManualSuffix)
         {
-            message.append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
+            message.append(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_MANUAL_SUFFIX));
         }
 
         worker.getCitizenChatHandler().sendLocalizedChat(message);

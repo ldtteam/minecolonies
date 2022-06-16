@@ -7,7 +7,8 @@ import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,19 +103,19 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     }
 
     @Override
-    public TranslatableComponent getDesc()
+    public MutableComponent getDesc()
     {
-        final TranslatableComponent requirementList = new TranslatableComponent("");
+        final MutableComponent requirementList = Component.translatable("");
         final Iterator<Map.Entry<String, Integer>> iterator = buildings.entrySet().iterator();
         while (iterator.hasNext())
         {
             final Map.Entry<String, Integer> kvp = iterator.next();
-            requirementList.append(new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.level",
-              new TranslatableComponent("block.minecolonies.blockhut" + kvp.getKey()),
+            requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.level",
+              Component.translatable("block.minecolonies.blockhut" + kvp.getKey()),
               kvp.getValue()));
             if (iterator.hasNext())
             {
-                requirementList.append(new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.or"));
+                requirementList.append(Component.translatable("com.minecolonies.coremod.research.requirement.building.or"));
             }
         }
         return requirementList;

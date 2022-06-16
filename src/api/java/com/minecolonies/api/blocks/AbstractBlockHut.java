@@ -11,12 +11,12 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Block;
@@ -27,7 +27,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -39,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +99,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public AbstractBlockHut()
     {
         super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
-        setRegistryName(getHutName());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
         this.name = getHutName();
     }
@@ -128,7 +126,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public AbstractBlockHut(final Properties properties)
     {
         super(properties.noOcclusion());
-        setRegistryName(getHutName());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
         this.name = getHutName();
     }
@@ -144,7 +141,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public BlockEntity newBlockEntity(@NotNull final BlockPos blockPos, @NotNull final BlockState blockState)
     {
-        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.BUILDING.create(blockPos, blockState);
+        final TileEntityColonyBuilding building = (TileEntityColonyBuilding) MinecoloniesTileEntities.BUILDING.get().create(blockPos, blockState);
         building.registryName = this.getBuildingEntry().getRegistryName();
         return building;
     }
@@ -304,9 +301,12 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         setPlacedBy(worldIn, pos, state, placer, stack);
     }
 
-    @Override
-    public void registerBlockItem(final IForgeRegistry<Item> registry, final net.minecraft.world.item.Item.Properties properties)
+    /**
+     * Get the registry name frm the blck hut.
+     * @return the key.
+     */
+    public ResourceLocation getRegistryName()
     {
-        registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
+        return ForgeRegistries.BLOCKS.getKey(this);
     }
 }

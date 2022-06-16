@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.interactionhandling.IInteractionResponseHandler;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Function;
@@ -13,10 +12,10 @@ import java.util.function.Function;
  * Entry for the {@link IInteractionResponseHandler} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<InteractionResponseHandlerEntry>
+public final class InteractionResponseHandlerEntry
 {
-
     private final Function<ICitizen, IInteractionResponseHandler> responseHandlerProducer;
+    private ResourceLocation                                registryName;
 
     /**
      * Builder for a {@link InteractionResponseHandlerEntry}.
@@ -61,7 +60,7 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
             Validate.notNull(responseHandlerProducer);
             Validate.notNull(registryName);
 
-            return new InteractionResponseHandlerEntry(responseHandlerProducer).setRegistryName(registryName);
+            return new InteractionResponseHandlerEntry(responseHandlerProducer, registryName);
         }
     }
 
@@ -75,9 +74,10 @@ public final class InteractionResponseHandlerEntry extends ForgeRegistryEntry<In
         return responseHandlerProducer;
     }
 
-    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer)
+    private InteractionResponseHandlerEntry(final Function<ICitizen, IInteractionResponseHandler> producer, final ResourceLocation registryName)
     {
         super();
         this.responseHandlerProducer = producer;
+        this.registryName = registryName;
     }
 }

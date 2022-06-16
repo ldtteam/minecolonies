@@ -3,8 +3,8 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.research.effects.ModResearchEffects;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
@@ -16,15 +16,15 @@ public class ModResearchEffectInitializer
     }
 
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final RegistryEvent.Register<ResearchEffectEntry> event)
+    public static void init(final RegisterEvent event)
     {
-        final IForgeRegistry<ResearchEffectEntry> reg = event.getRegistry();
+        final IForgeRegistry<ResearchEffectEntry> reg = event.getForgeRegistry();
 
         ModResearchEffects.globalResearchEffect = new ResearchEffectEntry.Builder()
                                                                 .setReadFromNBT(GlobalResearchEffect::new)
                                                                 .setRegistryName(GLOBAL_EFFECT_ID)
                                                                 .createResearchEffectEntry();
 
-        reg.register(ModResearchEffects.globalResearchEffect);
+        reg.register(GLOBAL_EFFECT_ID, ModResearchEffects.globalResearchEffect);
     }
 }

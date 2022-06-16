@@ -5,7 +5,6 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -15,7 +14,7 @@ import javax.annotation.Nonnull;
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
-public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<ColonyEventDescriptionTypeRegistryEntry>
+public class ColonyEventDescriptionTypeRegistryEntry
 {
     /**
      * Function for creating the event description from nbt.
@@ -26,6 +25,11 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
      * Function for creating the event description from a {@link FriendlyByteBuf}.
      */
     private final Function<FriendlyByteBuf, IColonyEventDescription> packetBufferEventDescriptionCreator;
+
+    /**
+     * The name of this registry.
+     */
+    private final ResourceLocation registryName;
 
     /**
      * Creates a new registry entry for the given function and registry name.
@@ -43,7 +47,7 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
 
         nbtEventDescriptionCreator = nbtEventCreator;
         packetBufferEventDescriptionCreator = packetBufferEventCreator;
-        setRegistryName(registryID);
+        registryName = registryID;
     }
 
     /**
@@ -66,5 +70,14 @@ public class ColonyEventDescriptionTypeRegistryEntry extends ForgeRegistryEntry<
     public IColonyEventDescription deserializeEventDescriptionFromFriendlyByteBuf(@Nonnull final FriendlyByteBuf buffer)
     {
         return packetBufferEventDescriptionCreator.apply(buffer);
+    }
+
+    /**
+     * Get the set registry name.
+     * @return the name.
+     */
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
     }
 }

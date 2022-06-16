@@ -3,9 +3,9 @@ package com.minecolonies.api.compatibility.tinkers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import slimeknights.tconstruct.common.TinkerTags;
+/*import slimeknights.tconstruct.common.TinkerTags;
 import slimeknights.tconstruct.world.block.SlimeDirtBlock;
-import slimeknights.tconstruct.world.block.SlimeLeavesBlock;
+import slimeknights.tconstruct.world.block.SlimeLeavesBlock;*/
 
 /**
  * This class is to store a check to see if a tree is a slime tree.
@@ -29,11 +29,11 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime block.
      */
-    @Override
+    /*@Override
     public boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
         return block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_LOGS);
-    }
+    }*/
 
     /**
      * Check if block is slime leaf.
@@ -41,11 +41,11 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime leaf.
      */
-    @Override
+    /*@Override
     public boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
     {
         return block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_LEAVES);
-    }
+    }*/
 
     /**
      * Check if block is slime sapling.
@@ -53,11 +53,11 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    @Override
+    /*@Override
     public boolean checkForTinkersSlimeSapling(@NotNull final Block block)
     {
         return block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_SAPLINGS);
-    }
+    }*/
 
     /**
      * Check if block is slime sapling.
@@ -65,11 +65,11 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param block the block.
      * @return if the block is a slime sapling.
      */
-    @Override
+    /*@Override
     public boolean checkForTinkersSlimeDirtOrGrass(@NotNull final Block block)
     {
         return block instanceof SlimeDirtBlock || block.defaultBlockState().is(TinkerTags.Blocks.SLIMY_GRASS);
-    }
+    }*/
 
     /**
      * Get the Slime leaf variant.
@@ -77,11 +77,11 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
      * @param leaf the leaf.
      * @return the variant.
      */
-    @Override
+    /*@Override
     public int getTinkersLeafVariant(@NotNull final BlockState leaf)
     {
         return ((SlimeLeavesBlock) leaf.getBlock()).getFoliageType().ordinal();
-    }
+    }*/
 
     /**
      * Check if block is slime leaf.

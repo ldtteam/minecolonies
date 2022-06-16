@@ -12,7 +12,7 @@ import journeymap.client.api.model.MapImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
@@ -180,8 +180,8 @@ public class ColonyDeathpoints
             if (grave != null)
             {
                 final Component text = grave.getCitizenJobName() == null
-                                              ? new TranslatableComponent(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
-                                              : new TranslatableComponent(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
+                                              ? Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
+                                              : Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
                 final Waypoint waypoint = new Waypoint(MOD_ID, text.getString(), colony.getDimension(), pos);
                 waypoint.setEditable(true)
                         .setPersistent(false)

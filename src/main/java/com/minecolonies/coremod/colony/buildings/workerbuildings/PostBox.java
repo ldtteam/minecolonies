@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,7 +118,7 @@ public class PostBox extends AbstractBuilding implements IRSComponent
         @Override
         public MutableComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
         {
-            return new TranslatableComponent("block.minecolonies.blockpostbox.name");
+            return Component.translatable("block.minecolonies.blockpostbox.name");
         }
     }
 }

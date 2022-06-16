@@ -6,7 +6,7 @@ import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.interactionhandling.IChatPriority;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -51,10 +51,10 @@ public class SimpleNotificationInteraction extends StandardInteraction
      */
     private void onResponse(final Component response)
     {
-        if (response instanceof TranslatableComponent)
+        if (response instanceof MutableComponent)
         {
-            if (((TranslatableComponent) response).getKey().equals(INTERACTION_R_OKAY)
-                  || ((TranslatableComponent) response).getKey().equals(INTERACTION_R_IGNORE))
+            if (((MutableComponent) response).getKey().equals(INTERACTION_R_OKAY)
+                  || ((MutableComponent) response).getKey().equals(INTERACTION_R_IGNORE))
             {
                 active = false;
             }

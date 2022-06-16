@@ -16,7 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +80,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public Component getDisplayName()
                 {
-                    return new TextComponent("Furnace Crafting GUI");
+                    return Component.literal("Furnace Crafting GUI");
                 }
 
                 @NotNull
@@ -99,7 +99,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public Component getDisplayName()
                 {
-                    return new TextComponent("Brewing Crafting GUI");
+                    return Component.literal("Brewing Crafting GUI");
                 }
 
                 @NotNull
@@ -118,7 +118,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public Component getDisplayName()
                 {
-                    return new TextComponent("Crafting GUI");
+                    return Component.literal("Crafting GUI");
                 }
 
                 @NotNull

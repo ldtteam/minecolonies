@@ -21,7 +21,7 @@ public abstract class AbstractScarecrowTileEntity extends BlockEntity implements
      */
     public AbstractScarecrowTileEntity(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.SCARECROW, pos, state);
+        super(MinecoloniesTileEntities.SCARECROW.get(), pos, state);
     }
 
     /**

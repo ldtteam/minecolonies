@@ -26,8 +26,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.BUILDING_FLOWER_LIST;
 import static com.minecolonies.api.util.constant.BuildingConstants.FUEL_LIST;
@@ -47,9 +47,9 @@ public final class ModBuildingsInitializer
     }
 
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final RegistryEvent.Register<BuildingEntry> event)
+    public static void init(final RegisterEvent event)
     {
-        final IForgeRegistry<BuildingEntry> reg = event.getRegistry();
+        final IForgeRegistry<BuildingEntry> reg = event.getForgeRegistry();
 
         ModBuildings.archery = new BuildingEntry.Builder()
                                  .setBuildingBlock(ModBlocks.blockHutArchery)
@@ -683,57 +683,67 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .createBuildingEntry();
 
-        reg.register(ModBuildings.archery);
-        reg.register(ModBuildings.bakery);
-        reg.register(ModBuildings.barracks);
-        reg.register(ModBuildings.barracksTower);
-        reg.register(ModBuildings.blacksmith);
-        reg.register(ModBuildings.builder);
-        reg.register(ModBuildings.chickenHerder);
-        reg.register(ModBuildings.combatAcademy);
-        reg.register(ModBuildings.composter);
-        reg.register(ModBuildings.cook);
-        reg.register(ModBuildings.cowboy);
-        reg.register(ModBuildings.crusher);
-        reg.register(ModBuildings.deliveryman);
-        reg.register(ModBuildings.farmer);
-        reg.register(ModBuildings.fisherman);
-        reg.register(ModBuildings.guardTower);
-        reg.register(ModBuildings.home);
-        reg.register(ModBuildings.library);
-        reg.register(ModBuildings.lumberjack);
-        reg.register(ModBuildings.miner);
-        reg.register(ModBuildings.sawmill);
-        reg.register(ModBuildings.shepherd);
-        reg.register(ModBuildings.sifter);
-        reg.register(ModBuildings.smeltery);
-        reg.register(ModBuildings.stoneMason);
-        reg.register(ModBuildings.stoneSmelter);
-        reg.register(ModBuildings.swineHerder);
-        reg.register(ModBuildings.townHall);
-        reg.register(ModBuildings.wareHouse);
-        reg.register(ModBuildings.postBox);
-        reg.register(ModBuildings.florist);
-        reg.register(ModBuildings.enchanter);
-        reg.register(ModBuildings.university);
-        reg.register(ModBuildings.hospital);
-        reg.register(ModBuildings.stash);
-        reg.register(ModBuildings.school);
-        reg.register(ModBuildings.glassblower);
-        reg.register(ModBuildings.dyer);
-        reg.register(ModBuildings.fletcher);
-        reg.register(ModBuildings.mechanic);
-        reg.register(ModBuildings.plantation);
-        reg.register(ModBuildings.tavern);
-        reg.register(ModBuildings.rabbitHutch);
-        reg.register(ModBuildings.concreteMixer);
-        reg.register(ModBuildings.beekeeper);
-        reg.register(ModBuildings.mysticalSite);
-        reg.register(ModBuildings.graveyard);
-        reg.register(ModBuildings.netherWorker);
-        reg.register(ModBuildings.simpleQuarry);
-        reg.register(ModBuildings.mediumQuarry);
-        //reg.register(ModBuildings.largeQuarry);
-        reg.register(ModBuildings.alchemist);
+        register(reg, ModBuildings.archery);
+        register(reg, ModBuildings.bakery);
+        register(reg, ModBuildings.barracks);
+        register(reg, ModBuildings.barracksTower);
+        register(reg, ModBuildings.blacksmith);
+        register(reg, ModBuildings.builder);
+        register(reg, ModBuildings.chickenHerder);
+        register(reg, ModBuildings.combatAcademy);
+        register(reg, ModBuildings.composter);
+        register(reg, ModBuildings.cook);
+        register(reg, ModBuildings.cowboy);
+        register(reg, ModBuildings.crusher);
+        register(reg, ModBuildings.deliveryman);
+        register(reg, ModBuildings.farmer);
+        register(reg, ModBuildings.fisherman);
+        register(reg, ModBuildings.guardTower);
+        register(reg, ModBuildings.home);
+        register(reg, ModBuildings.library);
+        register(reg, ModBuildings.lumberjack);
+        register(reg, ModBuildings.miner);
+        register(reg, ModBuildings.sawmill);
+        register(reg, ModBuildings.shepherd);
+        register(reg, ModBuildings.sifter);
+        register(reg, ModBuildings.smeltery);
+        register(reg, ModBuildings.stoneMason);
+        register(reg, ModBuildings.stoneSmelter);
+        register(reg, ModBuildings.swineHerder);
+        register(reg, ModBuildings.townHall);
+        register(reg, ModBuildings.wareHouse);
+        register(reg, ModBuildings.postBox);
+        register(reg, ModBuildings.florist);
+        register(reg, ModBuildings.enchanter);
+        register(reg, ModBuildings.university);
+        register(reg, ModBuildings.hospital);
+        register(reg, ModBuildings.stash);
+        register(reg, ModBuildings.school);
+        register(reg, ModBuildings.glassblower);
+        register(reg, ModBuildings.dyer);
+        register(reg, ModBuildings.fletcher);
+        register(reg, ModBuildings.mechanic);
+        register(reg, ModBuildings.plantation);
+        register(reg, ModBuildings.tavern);
+        register(reg, ModBuildings.rabbitHutch);
+        register(reg, ModBuildings.concreteMixer);
+        register(reg, ModBuildings.beekeeper);
+        register(reg, ModBuildings.mysticalSite);
+        register(reg, ModBuildings.graveyard);
+        register(reg, ModBuildings.netherWorker);
+        register(reg, ModBuildings.simpleQuarry);
+        register(reg, ModBuildings.mediumQuarry);
+        //register(reg, ModBuildings.largeQuarry);
+        register(reg, ModBuildings.alchemist);
+    }
+
+    /**
+     * Register the building entry.
+     * @param reg the registry to register it to.
+     * @param entry the entry to register.
+     */
+    private static void register(final IForgeRegistry<BuildingEntry> reg, final BuildingEntry entry)
+    {
+        reg.register(entry.getRegistryName(), entry);
     }
 }

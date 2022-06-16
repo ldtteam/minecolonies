@@ -6,8 +6,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,7 +32,7 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        Component buildingComponent = customBuildingName.isEmpty() ? new TranslatableComponent(getWorkOrderName()) : new TextComponent(customBuildingName);
+        Component buildingComponent = customBuildingName.isEmpty() ? Component.translatable(getWorkOrderName()) : Component.literal(customBuildingName);
 
         Component nameComponent;
         if (parentTranslationKey.isEmpty())
@@ -43,8 +42,8 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
         else
         {
             Component parentComponent =
-              customParentBuildingName.isEmpty() ? new TranslatableComponent(parentTranslationKey) : new TextComponent(customParentBuildingName);
-            nameComponent = new TranslatableComponent("%s / %s", parentComponent, buildingComponent);
+              customParentBuildingName.isEmpty() ? Component.translatable(parentTranslationKey) : Component.literal(customParentBuildingName);
+            nameComponent = Component.translatable("%s / %s", parentComponent, buildingComponent);
         }
         return getOrderTypePrefix(nameComponent);
     }
@@ -54,13 +53,13 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
         switch (this.getWorkOrderType())
         {
             case BUILD:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_BUILDING, nameComponent);
             case UPGRADE:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_UPGRADING, nameComponent, getCurrentLevel(), getTargetLevel());
             case REPAIR:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_REPAIRING, nameComponent);
             case REMOVE:
-                return new TranslatableComponent(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
+                return Component.translatable(TranslationConstants.BUILDER_ACTION_REMOVING, nameComponent);
             default:
                 return nameComponent;
         }

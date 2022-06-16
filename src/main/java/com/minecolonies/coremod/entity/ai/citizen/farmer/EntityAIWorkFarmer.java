@@ -45,7 +45,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.network.PacketDistributor;
@@ -256,7 +256,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             if (worker.getCitizenData() != null)
             {
-                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(Component.translatable(NO_FREE_FIELDS), ChatPriority.BLOCKING));
             }
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
@@ -369,9 +369,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         if (currentField.getSeed() == null || currentField.getSeed().isEmpty())
         {
             worker.getCitizenData()
-              .triggerInteraction(new PosBasedInteraction(new TranslatableComponent(NO_SEED_SET, currentField.getBlockPos()),
+              .triggerInteraction(new PosBasedInteraction(Component.translatable(NO_SEED_SET, currentField.getBlockPos()),
                 ChatPriority.BLOCKING,
-                new TranslatableComponent(NO_SEED_SET),
+                Component.translatable(NO_SEED_SET),
                 currentField.getBlockPos()));
 
             final FarmerFieldModule module = buildingFarmer.getFirstModuleOccurance(FarmerFieldModule.class);
@@ -580,7 +580,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                 switch ((AIWorkerState) getState())
                 {
                     case FARMER_HOE:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.hoeing"));
+                        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.hoeing"));
 
                         if (!hoeIfAble(position, scarecrow))
                         {
@@ -588,14 +588,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
                         }
                         break;
                     case FARMER_PLANT:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.planting"));
+                        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.planting"));
                         if (!tryToPlant(scarecrow, position))
                         {
                             return PREPARING;
                         }
                         break;
                     case FARMER_HARVEST:
-                        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.harvesting"));
+                        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.harvesting"));
                         if (!harvestIfAble(position))
                         {
                             return getState();

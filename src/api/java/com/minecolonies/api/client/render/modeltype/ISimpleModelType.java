@@ -49,7 +49,7 @@ public interface ISimpleModelType extends IModelType
         final String textureIdentifier =
           path + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getEntityData().get(DATA_TEXTURE_SUFFIX);
         final ResourceLocation modified = new ResourceLocation(namespace, BASE_FOLDER + entityCitizen.getEntityData().get(DATA_STYLE) + "/" + textureIdentifier + ".png");
-        if (Minecraft.getInstance().getResourceManager().hasResource(modified))
+        if (Minecraft.getInstance().getResourceManager().getResource(modified).isPresent())
         {
             return modified;
         }

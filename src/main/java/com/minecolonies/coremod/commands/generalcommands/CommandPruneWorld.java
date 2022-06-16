@@ -9,8 +9,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelResource;
@@ -69,7 +68,7 @@ public class CommandPruneWorld implements IMCOPCommand
     {
         if (arg < 3)
         {
-            context.getSource().sendSuccess(new TranslatableComponent(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
+            context.getSource().sendSuccess(Component.translatable(COMMAND_PRUNE_WORLD_WARNING, arg + 1), true);
             return 0;
         }
 
@@ -113,18 +112,18 @@ public class CommandPruneWorld implements IMCOPCommand
                 {
                     if (!currentRegion.delete())
                     {
-                        context.getSource().sendSuccess(new TextComponent("Could not delete file:" + currentRegion.getPath()), true);
+                        context.getSource().sendSuccess(Component.literal("Could not delete file:" + currentRegion.getPath()), true);
                     }
                     else
                     {
                         deleteCount++;
-                        context.getSource().sendSuccess(new TextComponent("Deleted file:" + currentRegion.getPath()), true);
+                        context.getSource().sendSuccess(Component.literal("Deleted file:" + currentRegion.getPath()), true);
                     }
                 }
             }
         }
 
-        context.getSource().sendSuccess(new TextComponent("Successfully deleted " + deleteCount + " regions!"), true);
+        context.getSource().sendSuccess(Component.literal("Successfully deleted " + deleteCount + " regions!"), true);
         return 0;
     }
 

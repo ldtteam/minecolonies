@@ -6,16 +6,19 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.items.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
+import static com.minecolonies.api.util.constant.Constants.CHIEFSWORD_NAME;
+import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModItemsInitializer
@@ -38,9 +41,9 @@ public final class ModItemsInitializer
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event)
+    public static void registerItems(RegisterEvent event)
     {
-        ModItemsInitializer.init(event.getRegistry());
+        ModItemsInitializer.init(event.getForgeRegistry());
     }
 
     /**
@@ -84,26 +87,25 @@ public final class ModItemsInitializer
         ModItems.adventureToken = new ItemAdventureToken(new Item.Properties());
 
         ModItems.scrollColonyTP = new ItemScrollColonyTP(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
-        registry.register(ModItems.scrollColonyTP);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scroll_tp"), ModItems.scrollColonyTP);
 
         ModItems.scrollColonyAreaTP = new ItemScrollColonyAreaTP(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
-        registry.register(ModItems.scrollColonyAreaTP);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scroll_area_tp"), ModItems.scrollColonyAreaTP);
 
         ModItems.scrollBuff = new ItemScrollBuff(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
-        registry.register(ModItems.scrollBuff);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scroll_buff"), ModItems.scrollBuff);
 
         ModItems.scrollGuardHelp = new ItemScrollGuardHelp(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
-        registry.register(ModItems.scrollGuardHelp);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scroll_guard_help"), ModItems.scrollGuardHelp);
 
         ModItems.scrollHighLight = new ItemScrollHighlight(new Item.Properties().stacksTo(16).tab(ModCreativeTabs.MINECOLONIES));
-        registry.register(ModItems.scrollHighLight);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scroll_highlight"), ModItems.scrollHighLight);
 
         ModItems.santaHat = new ItemSantaHead("santa_hat", ModCreativeTabs.MINECOLONIES, ItemSantaHead.SANTA_HAT, EquipmentSlot.HEAD, new Item.Properties());
         ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
         ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
         ModItems.flagBanner = new ItemColonyFlagBanner("colony_banner", ModCreativeTabs.MINECOLONIES, new Item.Properties());
-
         ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.HEAD, new Item.Properties());
         ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.CHEST, new Item.Properties());
         ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ModCreativeTabs.MINECOLONIES, ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.LEGS, new Item.Properties());
@@ -126,128 +128,124 @@ public final class ModItemsInitializer
 
         ModItems.magicpotion = new ItemMagicPotion("magicpotion", ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
+        registry.register(new ResourceLocation(Constants.MOD_ID, "supplychestdeployer"), ModItems.supplyChest);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scepterguard"), ModItems.scepterGuard);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "supplycampdeployer"), ModItems.supplyCamp);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "ancienttome"), ModItems.ancientTome);
+        registry.register(new ResourceLocation(Constants.MOD_ID, CHIEFSWORD_NAME), ModItems.chiefSword);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "clipboard"), ModItems.clipboard);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "compost"), ModItems.compost);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "resourcescroll"), ModItems.resourceScroll);
+        registry.register(new ResourceLocation(Constants.MOD_ID, SCIMITAR_NAME), ModItems.scimitar);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scepterlumberjack"), ModItems.scepterLumberjack);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoscepter"), ModItems.pharaoscepter);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "firearrow"), ModItems.firearrow);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "scepterbeekeeper"), ModItems.scepterBeekeeper);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mistletoe"), ModItems.mistletoe);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "spear"), ModItems.spear);
 
-        registry.register(ModItems.supplyChest);
-        registry.register(ModItems.permTool);
-        registry.register(ModItems.scepterGuard);
-        registry.register(ModItems.bannerRallyGuards);
-        registry.register(ModItems.supplyCamp);
-        registry.register(ModItems.ancientTome);
-        registry.register(ModItems.chiefSword);
-        registry.register(ModItems.clipboard);
-        registry.register(ModItems.compost);
-        registry.register(ModItems.resourceScroll);
-        registry.register(ModItems.scimitar);
-        registry.register(ModItems.scepterLumberjack);
-        registry.register(ModItems.pharaoscepter);
-        registry.register(ModItems.firearrow);
-        registry.register(ModItems.scepterBeekeeper);
-        registry.register(ModItems.mistletoe);
-        registry.register(ModItems.spear);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "bread_dough"), ModItems.breadDough);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "cookie_dough"), ModItems.cookieDough);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "cake_batter"), ModItems.cakeBatter);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "raw_pumpkin_pie"), ModItems.rawPumpkinPie);
 
-        registry.register(ModItems.breadDough);
-        registry.register(ModItems.cookieDough);
-        registry.register(ModItems.cakeBatter);
-        registry.register(ModItems.rawPumpkinPie);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "milky_bread"), ModItems.milkyBread);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "sugary_bread"), ModItems.sugaryBread);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "golden_bread"), ModItems.goldenBread);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "chorus_bread"), ModItems.chorusBread);
 
-        registry.register(ModItems.milkyBread);
-        registry.register(ModItems.sugaryBread);
-        registry.register(ModItems.goldenBread);
-        registry.register(ModItems.chorusBread);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "adventure_token"), ModItems.adventureToken);
 
-        registry.register(ModItems.adventureToken);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_hat"), ModItems.pirateHelmet_1);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_top"), ModItems.pirateChest_1);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_leggins"), ModItems.pirateLegs_1);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_boots"), ModItems.pirateBoots_1);
 
-        registry.register(ModItems.pirateHelmet_1);
-        registry.register(ModItems.pirateChest_1);
-        registry.register(ModItems.pirateLegs_1);
-        registry.register(ModItems.pirateBoots_1);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_cap"), ModItems.pirateHelmet_2);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_chest"), ModItems.pirateChest_2);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_legs"), ModItems.pirateLegs_2);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirate_shoes"), ModItems.pirateBoots_2);
 
-        registry.register(ModItems.pirateHelmet_2);
-        registry.register(ModItems.pirateChest_2);
-        registry.register(ModItems.pirateLegs_2);
-        registry.register(ModItems.pirateBoots_2);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "plate_armor_helmet"), ModItems.plateArmorHelmet);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "plate_armor_chest"), ModItems.plateArmorChest);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "plate_armor_legs"), ModItems.plateArmorLegs);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "plate_armor_boots"), ModItems.plateArmorBoots);
 
-        registry.register(ModItems.plateArmorHelmet);
-        registry.register(ModItems.plateArmorChest);
-        registry.register(ModItems.plateArmorLegs);
-        registry.register(ModItems.plateArmorBoots);
 
-        registry.register(ModItems.santaHat);
-        registry.register(ModItems.irongate);
-        registry.register(ModItems.woodgate);
-        registry.register(ModItems.flagBanner);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "santa_hat"), ModItems.santaHat);
+        registry.register(new ResourceLocation(Constants.MOD_ID, IRON_GATE), ModItems.irongate);
+        registry.register(new ResourceLocation(Constants.MOD_ID, WOODEN_GATE), ModItems.woodgate);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "colony_banner"), ModItems.flagBanner);
 
-        registry.register(ModItems.sifterMeshString);
-        registry.register(ModItems.sifterMeshFlint);
-        registry.register(ModItems.sifterMeshIron);
-        registry.register(ModItems.sifterMeshDiamond);
 
-        registry.register(ModItems.magicpotion);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "sifter_mesh_string"), ModItems.sifterMeshString);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "sifter_mesh_flint"), ModItems.sifterMeshFlint);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "sifter_mesh_iron"), ModItems.sifterMeshIron);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "sifter_mesh_diamond"), ModItems.sifterMeshDiamond);
 
-        registry.register(new SpawnEggItem(ModEntities.BARBARIAN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "magicpotion"), ModItems.magicpotion);
+
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new SpawnEggItem(ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
           SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbarianegg"));
-        registry.register(new SpawnEggItem(ModEntities.ARCHERBARBARIAN,
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbarcheregg"), new SpawnEggItem(ModEntities.ARCHERBARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
           SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbarcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.CHIEFBARBARIAN,
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "barbchiefegg"), new SpawnEggItem(ModEntities.CHIEFBARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
           SECONDARY_COLOR_BARBARIAN,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("barbchiefegg"));
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
 
-        registry.register(new SpawnEggItem(ModEntities.PIRATE,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pirateegg"), new SpawnEggItem(ModEntities.PIRATE,
           PRIMARY_COLOR_PIRATE,
           SECONDARY_COLOR_PIRATE,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("pirateegg"));
-        registry.register(new SpawnEggItem(ModEntities.ARCHERPIRATE,
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratearcheregg"), new SpawnEggItem(ModEntities.ARCHERPIRATE,
           PRIMARY_COLOR_PIRATE,
           SECONDARY_COLOR_PIRATE,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("piratearcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.CHIEFPIRATE,
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "piratecaptainegg"), new SpawnEggItem(ModEntities.CHIEFPIRATE,
           PRIMARY_COLOR_PIRATE,
           SECONDARY_COLOR_PIRATE,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("piratecaptainegg"));
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
 
-        registry.register(new SpawnEggItem(ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
-          "mummyegg"));
-        registry.register(new SpawnEggItem(ModEntities.ARCHERMUMMY,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyegg"), new SpawnEggItem(ModEntities.MUMMY, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mummyarcheregg"), new SpawnEggItem(ModEntities.ARCHERMUMMY,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("mummyarcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
-          "pharaoegg"));
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoegg"), new SpawnEggItem(ModEntities.PHARAO, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
 
-        registry.register(new SpawnEggItem(ModEntities.SHIELDMAIDEN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "shieldmaidenegg"), new SpawnEggItem(ModEntities.SHIELDMAIDEN,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("shieldmaidenegg"));
-        registry.register(new SpawnEggItem(ModEntities.NORSEMEN_ARCHER,
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenarcheregg"), new SpawnEggItem(ModEntities.NORSEMEN_ARCHER,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("norsemenarcheregg"));
-        registry.register(new SpawnEggItem(ModEntities.NORSEMEN_CHIEF,
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "norsemenchiefegg"), new SpawnEggItem(ModEntities.NORSEMEN_CHIEF,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("norsemenchiefegg"));
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
 
-        registry.register(new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
-          "amazonegg"));
-        registry.register(new SpawnEggItem(ModEntities.AMAZONSPEARMAN,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonegg"), new SpawnEggItem(ModEntities.AMAZON, PRIMARY_COLOR_EG, SECONDARY_COLOR_EG, (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonspearmanegg"), new SpawnEggItem(ModEntities.AMAZONSPEARMAN,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
-          new Item.Properties().tab(ModCreativeTabs.MINECOLONIES)).setRegistryName(
-          "amazonspearmanegg"
-        ));
-        registry.register(new SpawnEggItem(ModEntities.AMAZONCHIEF,
+          new Item.Properties().tab(ModCreativeTabs.MINECOLONIES)));
+        registry.register(new ResourceLocation(Constants.MOD_ID, "amazonchiefegg"), new SpawnEggItem(ModEntities.AMAZONCHIEF,
           PRIMARY_COLOR_EG,
           SECONDARY_COLOR_EG,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("amazonchiefegg"));
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
 
-        registry.register(new SpawnEggItem(ModEntities.MERCENARY,
+        registry.register(new ResourceLocation(Constants.MOD_ID, "mercegg"), new SpawnEggItem(ModEntities.MERCENARY,
           PRIMARY_COLOR_MERC,
           SECONDARY_COLOR_MERC,
-          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)).setRegistryName("mercegg"));
+          (new Item.Properties()).tab(ModCreativeTabs.MINECOLONIES)));
     }
 }

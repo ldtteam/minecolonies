@@ -14,7 +14,7 @@ public class TileEntityNamedGrave extends AbstractTileEntityNamedGrave
      */
     public TileEntityNamedGrave(final BlockPos pos, final BlockState state)
     {
-        this(MinecoloniesTileEntities.NAMED_GRAVE, pos, state);
+        this(MinecoloniesTileEntities.NAMED_GRAVE.get(), pos, state);
     }
 
     /**

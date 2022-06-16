@@ -4,14 +4,13 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.function.Supplier;
 
 /**
  * Guard type class.
  */
-public class GuardType extends ForgeRegistryEntry<GuardType>
+public class GuardType
 {
     /**
      * The job entry.
@@ -49,6 +48,11 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
     private final Class<IJob<?>> clazz;
 
     /**
+     * Unique registry name.
+     */
+    private final ResourceLocation registryName;
+
+    /**
      * Constructor to create the type.
      *
      * @param jobEntry             the job entry..
@@ -66,7 +70,8 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
       final Skill primarySkill,
       final Skill secondarySkill,
       final String workerSoundName,
-      final Class<IJob<?>> clazz)
+      final Class<IJob<?>> clazz,
+      final ResourceLocation registryName)
     {
         super();
         this.jobEntry = jobEntry;
@@ -76,6 +81,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
         this.secondarySkill = secondarySkill;
         this.workerSoundName = workerSoundName;
         this.clazz = clazz;
+        this.registryName = registryName;
     }
 
     /**
@@ -212,7 +218,7 @@ public class GuardType extends ForgeRegistryEntry<GuardType>
 
         public GuardType createGuardType()
         {
-            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz).setRegistryName(registryName);
+            return new GuardType(jobEntry, jobTranslationKey, buttonTranslationKey, primarySkill, secondarySkill, workerSoundName, clazz, registryName);
         }
     }
 }

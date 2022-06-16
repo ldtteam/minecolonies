@@ -21,6 +21,5 @@ public class ItemIronScimitar extends SwordItem
     public ItemIronScimitar(final Item.Properties properties)
     {
         super(Tiers.IRON, 3, -2.4f, properties.tab(ModCreativeTabs.MINECOLONIES));
-        setRegistryName(Constants.MOD_ID.toLowerCase() + ":" + SCIMITAR_NAME);
     }
 }

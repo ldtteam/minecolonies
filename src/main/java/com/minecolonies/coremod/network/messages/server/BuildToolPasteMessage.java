@@ -29,7 +29,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -164,7 +164,7 @@ public class BuildToolPasteMessage implements IMessage
         final ServerPlayer player = ctxIn.getSender();
         if (!Structures.hasMD5(sn))
         {
-            MessageUtils.format(new TextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
+            MessageUtils.format(Component.literal("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
 

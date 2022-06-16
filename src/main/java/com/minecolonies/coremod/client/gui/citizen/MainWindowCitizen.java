@@ -8,14 +8,12 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.AdjustSkillCitizenMessage;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
-
-import net.minecraft.network.chat.TextComponent;
 
 /**
  * BOWindow for the citizen.
@@ -51,7 +49,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
         {
             statusIcon.setImage(citizen.getVisibleStatus().getIcon(), false);
             PaneBuilders.tooltipBuilder()
-                .append(new TranslatableComponent(citizen.getVisibleStatus().getTranslationKey()))
+                .append(Component.translatable(citizen.getVisibleStatus().getTranslationKey()))
                 .hoverPane(statusIcon)
                 .build();
         }
@@ -81,7 +79,7 @@ public class MainWindowCitizen extends AbstractWindowCitizen
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(citizen.getName());
+        findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(Component.literal(citizen.getName()));
 
         CitizenWindowUtils.createHealthBar(citizen, findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class));
         CitizenWindowUtils.createSaturationBar(citizen, this);

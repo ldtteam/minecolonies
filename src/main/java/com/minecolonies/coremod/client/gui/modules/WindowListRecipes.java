@@ -16,7 +16,7 @@ import com.minecolonies.coremod.network.messages.server.colony.building.worker.C
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.ToggleRecipeMessage;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -205,12 +205,12 @@ public class WindowListRecipes extends AbstractModuleWindow
                 if (module.isDisabled(recipe))
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(true);
-                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.recipe.enable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatable("com.minecolonies.coremod.gui.recipe.enable"));
                 }
                 else
                 {
                     rowPane.findPaneOfTypeByID("gradient", Gradient.class).setVisible(false);
-                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.recipe.disable"));
+                    rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, Button.class).setText(Component.translatable("com.minecolonies.coremod.gui.recipe.disable"));
                 }
 
                 // Some special recipes might not include all necessary air blocks.
@@ -271,7 +271,7 @@ public class WindowListRecipes extends AbstractModuleWindow
         {
             lifeCount++;
         }
-        recipeStatus.setText(new TranslatableComponent(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
+        recipeStatus.setText(Component.translatable(TranslationConstants.RECIPE_STATUS, module.getRecipes().size(), module.getMaxRecipes()));
         window.findPaneOfTypeByID(RECIPE_LIST, ScrollingList.class).refreshElementPanes();
     }
 }

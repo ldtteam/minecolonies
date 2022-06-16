@@ -27,7 +27,6 @@ import com.minecolonies.coremod.items.ItemAdventureToken;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -342,12 +341,12 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         // Set up Objectives and scores. 
         if (!world.getScoreboard().hasObjective(OBJECTIVE_HUT_LEVEL))
         {
-            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ObjectiveCriteria.DUMMY, new TextComponent("Worker Building Level"), ObjectiveCriteria.RenderType.INTEGER);
+            world.getScoreboard().addObjective(OBJECTIVE_HUT_LEVEL, ObjectiveCriteria.DUMMY, Component.literal("Worker Building Level"), ObjectiveCriteria.RenderType.INTEGER);
         }
         if (!world.getScoreboard().hasObjective(OBJECTIVE_SECONDARY_SKILL))
         {
             world.getScoreboard()
-              .addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, new TextComponent("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER);
+              .addObjective(OBJECTIVE_SECONDARY_SKILL, ObjectiveCriteria.DUMMY, Component.literal("Worker Secondary Skill Level"), ObjectiveCriteria.RenderType.INTEGER);
         }
         final Objective hutLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_HUT_LEVEL);
         final Objective secondarySkillLevelObjective = world.getScoreboard().getObjective(OBJECTIVE_SECONDARY_SKILL);

@@ -3,6 +3,8 @@ package com.minecolonies.api.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
@@ -10,6 +12,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
 public class EntityInBiomeCategory implements LootItemCondition
 {
     @Nullable
-    private final Biome.BiomeCategory category;
+    private final ResourceKey<Biome> category;
 
-    private EntityInBiomeCategory(@Nullable final Biome.BiomeCategory category)
+    private EntityInBiomeCategory(@Nullable final ResourceKey<Biome> category)
     {
         this.category = category;
     }
@@ -29,7 +32,7 @@ public class EntityInBiomeCategory implements LootItemCondition
         return () -> new EntityInBiomeCategory(null);
     }
 
-    public static LootItemCondition.Builder of(@NotNull final Biome.BiomeCategory category)
+    public static LootItemCondition.Builder of(@NotNull final ResourceKey<Biome> category)
     {
         return () -> new EntityInBiomeCategory(category);
     }
@@ -52,8 +55,7 @@ public class EntityInBiomeCategory implements LootItemCondition
         final Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
         if (entity != null && entity.level != null)
         {
-            final Biome biome = entity.level.getBiome(entity.blockPosition()).value();
-            return biome.getBiomeCategory().equals(category);
+            return entity.level.getBiome(entity.blockPosition()).unwrapKey().get().equals(category);
         }
 
         return false;
@@ -68,7 +70,7 @@ public class EntityInBiomeCategory implements LootItemCondition
         {
             if (condition.category != null)
             {
-                json.addProperty("category", condition.category.getSerializedName());
+                json.addProperty("category", condition.category.toString());
             }
         }
 
@@ -78,7 +80,7 @@ public class EntityInBiomeCategory implements LootItemCondition
                                                  @NotNull final JsonDeserializationContext context)
         {
             final String categoryId = GsonHelper.getAsString(json, "category", "");
-            final Biome.BiomeCategory category = Biome.BiomeCategory.byName(categoryId);
+            final ResourceKey<Biome> category = ForgeRegistries.BIOMES.getDelegate(new ResourceLocation(categoryId)).get().key();
             return new EntityInBiomeCategory(category);
         }
     }

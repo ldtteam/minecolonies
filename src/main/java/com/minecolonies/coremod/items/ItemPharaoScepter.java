@@ -37,7 +37,6 @@ public class ItemPharaoScepter extends BowItem
     public ItemPharaoScepter(final Properties properties)
     {
         super(properties.tab(ModCreativeTabs.MINECOLONIES).durability(384));
-        setRegistryName("pharaoscepter");
     }
 
     @NotNull

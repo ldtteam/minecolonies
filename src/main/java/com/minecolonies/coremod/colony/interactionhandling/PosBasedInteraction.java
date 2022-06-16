@@ -12,7 +12,7 @@ import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -30,10 +30,10 @@ public class PosBasedInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] responses = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_IGNORE), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_SKIP), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), null)};
 
     /**
      * The position this is related to.

@@ -6,8 +6,10 @@ import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * Certain building research requirements.
@@ -32,7 +34,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     /**
      * The research name.
      */
-    private final TranslatableComponent researchName;
+    private final MutableComponent researchName;
 
     /**
      * Create a research-based research requirement, assigning an auto-generation key.
@@ -42,7 +44,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     public ResearchResearchRequirement(final ResourceLocation researchId)
     {
         this.researchId = researchId;
-        this.researchName = new TranslatableComponent("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
+        this.researchName = Component.translatable("com." + researchId.getNamespace() + ".research." + researchId.getPath().replaceAll("[ /]",".") + ".name");
     }
 
     /**
@@ -51,7 +53,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
      * @param researchId the required precursor research.
      * @param researchName the override name for the required research.
      */
-    public ResearchResearchRequirement(final ResourceLocation researchId, final TranslatableComponent researchName)
+    public ResearchResearchRequirement(final ResourceLocation researchId, final MutableComponent researchName)
     {
         this.researchId = researchId;
         this.researchName = researchName;
@@ -64,7 +66,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     public ResearchResearchRequirement(final CompoundTag nbt)
     {
         this.researchId = new ResourceLocation(nbt.getString(TAG_ID));
-        this.researchName = new TranslatableComponent(nbt.getString(TAG_NAME));
+        this.researchName = Component.translatable(nbt.getString(TAG_NAME));
     }
 
     /**
@@ -82,9 +84,9 @@ public class ResearchResearchRequirement implements IResearchRequirement
     }
 
     @Override
-    public TranslatableComponent getDesc()
+    public MutableComponent getDesc()
     {
-        return new TranslatableComponent(TranslationConstants.RESEARCH_REQUIRES, researchName);
+        return Component.translatable(TranslationConstants.RESEARCH_REQUIRES, researchName);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     {
         CompoundTag nbt = new CompoundTag();
         nbt.putString(TAG_ID, this.researchId.toString());
-        nbt.putString(TAG_NAME, this.researchName.getKey());
+        nbt.putString(TAG_NAME, this.researchName.getContents() instanceof TranslatableContents ? ((TranslatableContents) this.researchName.getContents()).getKey() : "");
         return nbt;
     }
 }

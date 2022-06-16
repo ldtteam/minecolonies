@@ -252,10 +252,17 @@ public class GenericRecipe implements IGenericRecipe
             final CraftingContainer inv = new CraftingContainer(new AbstractContainerMenu(MenuType.CRAFTING, 0)
             {
                 @Override
+                public @NotNull ItemStack quickMoveStack(final @NotNull Player player, final int slot)
+                {
+                    return ItemStack.EMPTY;
+                }
+
+                @Override
                 public boolean stillValid(@NotNull final Player playerIn)
                 {
                     return false;
                 }
+
             }, 3, 3);
             for (int slot = 0; slot < inputs.size(); ++slot)
             {

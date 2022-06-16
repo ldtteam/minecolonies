@@ -11,6 +11,7 @@ import com.minecolonies.api.entity.mobs.vikings.INorsemenChiefEntity;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.CompatibilityUtils;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -22,6 +23,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 import java.util.Random;
@@ -37,12 +41,14 @@ public final class RaiderMobUtils
     /**
      * Distances in which spawns are spread
      */
-    public static double MOB_SPAWN_DEVIATION_STEPS = 0.3;
+    public static       double                                MOB_SPAWN_DEVIATION_STEPS = 0.3;
+
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, Constants.MOD_ID);
 
     /**
      * Mob attribute, used for custom attack damage
      */
-    public final static Attribute MOB_ATTACK_DAMAGE = new RangedAttribute( "mc_mob_damage", 2.0, 1.0, 20);
+    public final static RegistryObject<Attribute> MOB_ATTACK_DAMAGE = ATTRIBUTES.register("mc_mob_damage", () -> new RangedAttribute( "mc_mob_damage", 2.0, 1.0, 20));
 
     /**
      * Damage increased by 1 for every 200 raid level difficulty

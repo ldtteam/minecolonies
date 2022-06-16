@@ -21,7 +21,7 @@ import com.minecolonies.coremod.client.gui.WindowSelectRes;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.BlockItem;
@@ -79,7 +79,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
     private void addRecipe()
     {
-        final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER, inputInventory, Minecraft.getInstance().level);
+        final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
 
         if (inputInventory.isEmpty())
@@ -196,7 +196,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         resourceList.enable();
         resourceList.show();
 
-        final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER, inputInventory, Minecraft.getInstance().level);
+        final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
         int inputCount = 0;
         for (int i = 0; i < inputInventory.getContainerSize(); i++)
         {
@@ -247,7 +247,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
                 final ItemStack resource = filteredList.get(index).assemble(inputInventory).copy();
 
                 rowPane.findPaneOfTypeByID(RESOURCE_NAME, Text.class).setText(resource.getHoverName());
-                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(new TextComponent(String.valueOf(resource.getCount())));
+                rowPane.findPaneOfTypeByID(QUANTITY_LABEL, Text.class).setText(Component.literal(String.valueOf(resource.getCount())));
 
                 rowPane.findPaneOfTypeByID(RESOURCE_ICON, ItemIcon.class).setItem(resource);
             }

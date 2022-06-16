@@ -3,9 +3,9 @@ package com.minecolonies.api.colony.colonyEvents.registry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.util.Log;
+import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
@@ -15,12 +15,17 @@ import javax.annotation.Nonnull;
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
  */
-public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEventTypeRegistryEntry>
+public class ColonyEventTypeRegistryEntry
 {
     /**
      * Function for creating the event objects.
      */
     private final BiFunction<IColony, CompoundTag, IColonyEvent> eventCreator;
+
+    /**
+     * The registry id.
+     */
+    private final ResourceLocation registryName;
 
     /**
      * Creates a new registry entry for the given function and registry name
@@ -36,7 +41,7 @@ public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEvent
         }
 
         this.eventCreator = eventCreator;
-        setRegistryName(registryID);
+        this.registryName = registryID;
     }
 
     /**
@@ -49,5 +54,14 @@ public class ColonyEventTypeRegistryEntry extends ForgeRegistryEntry<ColonyEvent
     public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @Nonnull final CompoundTag compound)
     {
         return eventCreator.apply(colony, compound);
+    }
+
+    /**
+     * Get the fitting registry name.
+     * @return the name.
+     */
+    public ResourceLocation getRegistryName()
+    {
+        return registryName;
     }
 }

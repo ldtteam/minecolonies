@@ -16,10 +16,9 @@ import journeymap.client.api.model.WrappedEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -99,7 +98,7 @@ public class EventListener
         if (entity instanceof AbstractEntityCitizen)
         {
             final boolean isVisitor = entity instanceof VisitorCitizen;
-            BaseComponent jobName;
+            MutableComponent jobName;
 
             if (isVisitor)
             {
@@ -109,7 +108,7 @@ public class EventListener
                     return;
                 }
 
-                jobName = new TranslatableComponent(PARTIAL_JOURNEY_MAP_INFO + "visitor");
+                jobName = Component.translatable(PARTIAL_JOURNEY_MAP_INFO + "visitor");
             }
             else
             {
@@ -125,7 +124,7 @@ public class EventListener
                     return;
                 }
 
-                jobName = new TranslatableComponent(jobEntry == null
+                jobName = Component.translatable(jobEntry == null
                         ? PARTIAL_JOURNEY_MAP_INFO + "unemployed"
                         : jobEntry.getTranslationKey());
             }

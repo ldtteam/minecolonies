@@ -28,7 +28,6 @@ public class ItemSpear extends TridentItem
     public ItemSpear(final Properties properties)
     {
         super(properties.durability(250).tab(ModCreativeTabs.MINECOLONIES));
-        setRegistryName(new ResourceLocation(Constants.MOD_ID, "spear"));
     }
 
     @Override

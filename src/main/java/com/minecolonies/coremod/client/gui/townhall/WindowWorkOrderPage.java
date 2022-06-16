@@ -11,7 +11,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.WorkOrderChangeMessage;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -183,8 +183,8 @@ public class WindowWorkOrderPage extends AbstractWindowTownHall
                 Text workOrderTextPanel = rowPane.findPaneOfTypeByID(WORK_LABEL, Text.class);
                 PaneBuilders.tooltipBuilder().append(workOrder.getDisplayName()).hoverPane(workOrderTextPanel).build();
                 workOrderTextPanel.setText(workOrder.getDisplayName());
-                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(new TextComponent(claimingCitizen));
-                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(new TextComponent(Integer.toString(workOrder.getId())));
+                rowPane.findPaneOfTypeByID(ASSIGNEE_LABEL, Text.class).setText(Component.literal(claimingCitizen));
+                rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Text.class).setText(Component.literal(Integer.toString(workOrder.getId())));
             }
         });
     }

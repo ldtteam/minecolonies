@@ -4,8 +4,8 @@ import com.minecolonies.api.crafting.ClassicRecipe;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 public final class ModRecipeTypesInitializer
 {
@@ -15,9 +15,9 @@ public final class ModRecipeTypesInitializer
         throw new IllegalStateException("Tried to initialize: ModRecipeTypesInitializer but this is a Utility class.");
     }
 
-    public static void init(final RegistryEvent.Register<RecipeTypeEntry> event)
+    public static void init(final RegisterEvent event)
     {
-        final IForgeRegistry<RecipeTypeEntry> reg = event.getRegistry();
+        final IForgeRegistry<RecipeTypeEntry> reg = event.getForgeRegistry();
 
         ModRecipeTypes.Classic = new RecipeTypeEntry.Builder()
                                 .setRecipeTypeProducer(ClassicRecipe::new)
@@ -29,7 +29,7 @@ public final class ModRecipeTypesInitializer
                                 .setRegistryName(ModRecipeTypes.MULTI_OUTPUT_ID)
                                 .createRecipeTypeEntry();
 
-        reg.register(ModRecipeTypes.Classic);
-        reg.register(ModRecipeTypes.MultiOutput);
+        reg.register(ModRecipeTypes.CLASSIC_ID, ModRecipeTypes.Classic);
+        reg.register(ModRecipeTypes.MULTI_OUTPUT_ID, ModRecipeTypes.MultiOutput);
     }
 }

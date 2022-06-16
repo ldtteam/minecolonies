@@ -114,7 +114,7 @@ public class WindowMainPage extends AbstractWindowTownHall
                 final Button button = rowPane.findPaneOfTypeByID(BUTTON_TP, Button.class);
                 if (colonyReference.hasTownHall && (building.getBuildingLevel() < MineColonies.getConfig().getServer().minThLevelToTeleport.get() || !building.canPlayerUseTP()))
                 {
-                    button.setText(new TranslatableComponent(TH_TOO_LOW));
+                    button.setText(Component.translatable(TH_TOO_LOW));
                     button.disable();
                 }
                 else

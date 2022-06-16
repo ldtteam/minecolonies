@@ -14,7 +14,7 @@ import com.minecolonies.coremod.client.gui.AbstractWindowModuleBuilding;
 import com.minecolonies.coremod.client.gui.WindowsBarracksSpies;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -173,7 +173,7 @@ public class WindowBarracksBuilding extends AbstractWindowModuleBuilding<Buildin
             distanceDesc = REALLY_FAR_DESC;
         }
         final Component directionDest = BlockPosUtil.calcDirection(building.getPosition(), pos);
-        return new TranslatableComponent(distanceDesc)
+        return Component.translatable(distanceDesc)
                  .append(" ")
                  .append(directionDest);
     }

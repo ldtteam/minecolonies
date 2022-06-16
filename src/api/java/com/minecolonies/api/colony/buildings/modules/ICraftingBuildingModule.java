@@ -294,7 +294,7 @@ public interface ICraftingBuildingModule extends IBuildingModule
     @NotNull
     static ResourceLocation getUid(@NotNull final JobEntry job, @NotNull final String id)
     {
-        final ResourceLocation jobId = job.getRegistryName();
+        final ResourceLocation jobId = job.getKey();
         return new ResourceLocation(jobId.getNamespace(), jobId.getPath() + "/" + id);
     }
 

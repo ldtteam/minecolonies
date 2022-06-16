@@ -16,8 +16,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist
 import com.minecolonies.coremod.entity.ai.citizen.miner.MinerLevel;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.tileentities.TileEntityCompostedDirt;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.tags.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
@@ -34,7 +33,6 @@ import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.common.TierSortingRegistry;
@@ -312,10 +310,10 @@ public final class WorkerUtil
                 final BlockState BlockState = world.getBlockState(levelSignPos);
                 final SignBlockEntity teLevelSign = (SignBlockEntity) te;
 
-                teLevelSign.setMessage(0, new TranslatableComponent(MINER_MINE_NODE).append(": " + levelId));
-                teLevelSign.setMessage(1, new TextComponent("Y: " + (level.getDepth() + 1)));
-                teLevelSign.setMessage(2, new TranslatableComponent(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()));
-                teLevelSign.setMessage(3, new TextComponent(""));
+                teLevelSign.setMessage(0, Component.translatable(MINER_MINE_NODE).append(": " + levelId));
+                teLevelSign.setMessage(1, Component.literal("Y: " + (level.getDepth() + 1)));
+                teLevelSign.setMessage(2, Component.translatable(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.setMessage(3, Component.literal(""));
 
                 teLevelSign.setChanged();
                 world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);

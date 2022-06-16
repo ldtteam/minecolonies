@@ -2,41 +2,70 @@ package com.minecolonies.coremod.structures;
 
 import com.minecolonies.api.util.Log;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
+import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.PostPlacementProcessor;
-import net.minecraft.world.level.levelgen.structure.pieces.PieceGenerator;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.PieceGeneratorSupplier;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawPlacement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 
 import java.util.Optional;
 
 /**
  * Class defining our configured feature - the empty colony that is spawning.
  */
-public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
+public class EmptyColonyStructure extends Structure
 {
-    public EmptyColonyStructure(Codec<JigsawConfiguration> codec)
+
+    // A custom codec that changes the size limit for our code_structure_sky_fan.json's config to not be capped at 7.
+    // With this, we can have a structure with a size limit up to 30 if we want to have extremely long branches of pieces in the structure.
+    public static final Codec<EmptyColonyStructure> COLONY_CODEC = RecordCodecBuilder.<EmptyColonyStructure>mapCodec(instance ->
+                                                                                                  instance.group(EmptyColonyStructure.settingsCodec(instance),
+                                                                                                    StructureTemplatePool.CODEC.fieldOf("start_pool").forGetter(structure -> structure.startPool),
+                                                                                                    ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(structure -> structure.startJigsawName),
+                                                                                                    Codec.intRange(0, 10).fieldOf("size").forGetter(structure -> structure.size),
+                                                                                                    HeightProvider.CODEC.fieldOf("start_height").forGetter(structure -> structure.startHeight),
+                                                                                                    Heightmap.Types.CODEC.optionalFieldOf("project_start_to_heightmap").forGetter(structure -> structure.projectStartToHeightmap),
+                                                                                                    Codec.intRange(1, 128).fieldOf("max_distance_from_center").forGetter(structure -> structure.maxDistanceFromCenter)
+                                                                                                  ).apply(instance, EmptyColonyStructure::new)).codec();
+
+    private final Holder<StructureTemplatePool> startPool;
+    private final Optional<ResourceLocation>    startJigsawName;
+    private final int size;
+    private final HeightProvider startHeight;
+    private final Optional<Heightmap.Types> projectStartToHeightmap;
+    private final int maxDistanceFromCenter;
+
+    public EmptyColonyStructure(Structure.StructureSettings config,
+      Holder<StructureTemplatePool> startPool,
+      Optional<ResourceLocation> startJigsawName,
+      int size,
+      HeightProvider startHeight,
+      Optional<Heightmap.Types> projectStartToHeightmap,
+      int maxDistanceFromCenter)
     {
-        super(codec, (context) -> {
-              // Check if the spot is valid for structure gen. If false, return nothing to signal to the game to skip this spawn attempt.
-              if (!EmptyColonyStructure.isFeatureChunk(context))
-              {
-                  return Optional.empty();
-              }
-              // Create the pieces layout of the structure and give it to
-              else
-              {
-                  return EmptyColonyStructure.createPiecesGenerator(context);
-              }
-          },
-          PostPlacementProcessor.NONE);
+        super(config);
+        this.startPool = startPool;
+        this.startJigsawName = startJigsawName;
+        this.size = size;
+        this.startHeight = startHeight;
+        this.projectStartToHeightmap = projectStartToHeightmap;
+        this.maxDistanceFromCenter = maxDistanceFromCenter;
+    }
+
+    @Override
+    public StructureType<?> type() {
+        return MineColoniesStructures.EMPTY_COLONY.get(); // Helps the game know how to turn this structure back to json to save to chunks
     }
 
     @Override
@@ -45,19 +74,20 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
         return GenerationStep.Decoration.SURFACE_STRUCTURES;
     }
 
-    private static boolean isFeatureChunk(PieceGeneratorSupplier.Context<JigsawConfiguration> context)
+    private static boolean isFeatureChunk(Structure.GenerationContext context)
     {
         BlockPos blockPos = context.chunkPos().getWorldPosition();
 
-        int landHeight = context.chunkGenerator().getFirstOccupiedHeight(blockPos.getX(), blockPos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor());
-        NoiseColumn columnOfBlocks = context.chunkGenerator().getBaseColumn(blockPos.getX(), blockPos.getZ(), context.heightAccessor());
+        int landHeight = context.chunkGenerator().getFirstOccupiedHeight(blockPos.getX(), blockPos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+        NoiseColumn columnOfBlocks = context.chunkGenerator().getBaseColumn(blockPos.getX(), blockPos.getZ(), context.heightAccessor(), context.randomState());
 
         BlockState topBlock = columnOfBlocks.getBlock(landHeight);
 
         return topBlock.getFluidState().isEmpty() && landHeight < 200;
     }
 
-    public static Optional<PieceGenerator<JigsawConfiguration>> createPiecesGenerator(PieceGeneratorSupplier.Context<JigsawConfiguration> context)
+    @Override
+    public Optional<Structure.GenerationStub> findGenerationPoint(Structure.GenerationContext context)
     {
         if (!isFeatureChunk(context))
         {
@@ -67,16 +97,19 @@ public class EmptyColonyStructure extends StructureFeature<JigsawConfiguration>
         // Turns the chunk coordinates into actual coordinates we can use. (Gets center of that chunk)
         BlockPos blockpos = context.chunkPos().getMiddleBlockPosition(0);
 
-        int topLandY = context.chunkGenerator().getFirstFreeHeight(blockpos.getX(), blockpos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor());
+        int topLandY = context.chunkGenerator().getFirstFreeHeight(blockpos.getX(), blockpos.getZ(), Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
         blockpos = blockpos.above(topLandY);
 
-        Optional<PieceGenerator<JigsawConfiguration>> structurePiecesGenerator =
+        Optional<Structure.GenerationStub> structurePiecesGenerator =
           JigsawPlacement.addPieces(
             context,
-            PoolElementStructurePiece::new,
+            this.startPool,
+            this.startJigsawName,
+            this.size,
             blockpos,
             false,
-            false
+            this.projectStartToHeightmap,
+            this.maxDistanceFromCenter
           );
 
         if (structurePiecesGenerator.isPresent())

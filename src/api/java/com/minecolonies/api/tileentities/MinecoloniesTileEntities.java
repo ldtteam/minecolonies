@@ -1,46 +1,32 @@
 package com.minecolonies.api.tileentities;
 
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegistryObject;
 
-@ObjectHolder(Constants.MOD_ID)
 public class MinecoloniesTileEntities
 {
-    @ObjectHolder("scarecrow")
-    public static BlockEntityType<? extends AbstractScarecrowTileEntity> SCARECROW;
+    public static RegistryObject<BlockEntityType<? extends AbstractScarecrowTileEntity>> SCARECROW;
 
-    @ObjectHolder("barrel")
-    public static BlockEntityType<? extends AbstractTileEntityBarrel> BARREL;
+    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityBarrel>> BARREL;
 
-    @ObjectHolder("colonybuilding")
-    public static BlockEntityType<? extends AbstractTileEntityColonyBuilding> BUILDING;
+    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityColonyBuilding>> BUILDING;
 
-    @ObjectHolder("decorationcontroller")
-    public static BlockEntityType<? extends BlockEntity> DECO_CONTROLLER;
+    public static RegistryObject<BlockEntityType<? extends BlockEntity>> DECO_CONTROLLER;
 
-    @ObjectHolder("rack")
-    public static BlockEntityType<TileEntityRack> RACK;
+    public static RegistryObject<BlockEntityType<TileEntityRack>> RACK;
 
-    @ObjectHolder("grave")
-    public static BlockEntityType<TileEntityGrave> GRAVE;
+    public static RegistryObject<BlockEntityType<TileEntityGrave>> GRAVE;
 
-    @ObjectHolder("namedgrave")
-    public static BlockEntityType<? extends TileEntityNamedGrave> NAMED_GRAVE;
+    public static RegistryObject<BlockEntityType<? extends TileEntityNamedGrave>> NAMED_GRAVE;
 
-    @ObjectHolder("warehouse")
-    public static BlockEntityType<? extends AbstractTileEntityWareHouse> WAREHOUSE;
+    public static RegistryObject<BlockEntityType<? extends AbstractTileEntityWareHouse>> WAREHOUSE;
 
-    @ObjectHolder("composteddirt")
-    public static BlockEntityType<? extends BlockEntity> COMPOSTED_DIRT;
+    public static RegistryObject<BlockEntityType<? extends BlockEntity>> COMPOSTED_DIRT;
 
-    @ObjectHolder("enchanter")
-    public static BlockEntityType<TileEntityEnchanter> ENCHANTER;
+    public static RegistryObject<BlockEntityType<TileEntityEnchanter>> ENCHANTER;
 
-    @ObjectHolder("stash")
-    public static BlockEntityType<TileEntityStash> STASH;
+    public static RegistryObject<BlockEntityType<TileEntityStash>> STASH;
 
-    @ObjectHolder("colony_flag")
-    public static BlockEntityType<TileEntityColonyFlag> COLONY_FLAG;
+    public static RegistryObject<BlockEntityType<TileEntityColonyFlag>> COLONY_FLAG;
 }

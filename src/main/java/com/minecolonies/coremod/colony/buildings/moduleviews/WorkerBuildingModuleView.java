@@ -12,7 +12,7 @@ import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder
 import com.minecolonies.coremod.network.messages.server.colony.building.HireFireMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.BuildingHiringModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -162,7 +162,7 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
      */
     public String getJobDisplayName()
     {
-        return new TranslatableComponent(jobEntry.getTranslationKey()).getString();
+        return Component.translatable(jobEntry.getTranslationKey()).getString();
     }
 
     @NotNull

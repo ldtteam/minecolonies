@@ -44,7 +44,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item.Properties;
 
 /**
@@ -85,7 +85,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
             entity.setPos(player.getX(), player.getY(), player.getZ());
             world.addFreshEntity(entity);
 
-            player.displayClientMessage(new TranslatableComponent("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
+            player.displayClientMessage(Component.translatable("minecolonies.scroll.failed" + (world.random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
               ChatFormatting.GOLD)), true);
 
             SoundUtils.playSoundForPlayer(player, SoundEvents.EVOKER_CAST_SPELL, 0.5f, 1.0f);
@@ -201,11 +201,11 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = new TranslatableComponent("item.minecolonies.scroll_guard_help.tip");
+        final MutableComponent guiHint = Component.translatable("item.minecolonies.scroll_guard_help.tip");
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        String colonyDesc = new TranslatableComponent("item.minecolonies.scroll.colony.none").getString();
+        String colonyDesc = Component.translatable("item.minecolonies.scroll.colony.none").getString();
 
         final IColony colony = getColonyView(stack);
         if (colony != null)
@@ -213,7 +213,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
             colonyDesc = colony.getName();
         }
 
-        final MutableComponent guiHint2 = new TranslatableComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
+        final MutableComponent guiHint2 = Component.translatable("item.minecolonies.scroll.colony.tip", colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD));
         tooltip.add(guiHint2);
     }

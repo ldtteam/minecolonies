@@ -16,7 +16,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -156,7 +156,7 @@ public class RecipeSetting implements ICraftingSetting
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         final IRecipeStorage stack = getValue(building);
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(stack.getPrimaryOutput().getDescriptionId()));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(Component.translatable(stack.getPrimaryOutput().getDescriptionId()));
         pane.findPaneOfTypeByID("iconto", ItemIcon.class).setItem(stack.getPrimaryOutput());
         pane.findPaneOfTypeByID("iconfrom", ItemIcon.class).setItem(stack.getCleanedInput().get(0).getItemStack());
     }

@@ -21,7 +21,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.IItemHandler;
@@ -507,6 +506,6 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
     @Override
     public Component getDisplayName()
     {
-        return new TextComponent(owner);
+        return Component.literal(owner);
     }
 }

@@ -10,8 +10,7 @@ import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
@@ -65,7 +64,7 @@ public class PlantationSetting extends StringSetting
     {
         hasResearch = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANT_2) > 0;
         Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutstringsetting.xml"), (View) pane);
-        pane.findPaneOfTypeByID("id", Text.class).setText(new TextComponent(key.getUniqueId().toString()));
+        pane.findPaneOfTypeByID("id", Text.class).setText(Component.literal(key.getUniqueId().toString()));
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> settingsModuleView.trigger(key));
     }
 
@@ -98,10 +97,10 @@ public class PlantationSetting extends StringSetting
     {
         final String[] inputSplit = getSettings().get(getCurrentIndex()).split(SPLIT_TOKEN);
 
-        TranslatableComponent component = new TranslatableComponent("");
+        MutableComponent component = Component.translatable("");
         for (int idx = 0; idx < inputSplit.length; idx++)
         {
-            component.append(new TranslatableComponent(inputSplit[idx]));
+            component.append(Component.translatable(inputSplit[idx]));
             if (idx != (inputSplit.length - 1))
             {
                 component.append(" & ");

@@ -14,7 +14,7 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import com.minecolonies.coremod.network.messages.server.BuildToolPasteMessage;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
@@ -159,7 +159,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
                 HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
                   .setPos(error.getPos())
                   .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
-                  .addText(new TranslatableComponent(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
+                  .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0xFF0000));
             }
         }
@@ -180,11 +180,9 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
     @Override
     public boolean hasMatchingBlock(@NotNull final Inventory inventory, final String hut)
     {
-        //todo 1.19 remove this
-        final String name = hut.equals("citizen") ? "home" : hut;
         return InventoryUtils.hasItemInProvider(inventory.player,
           item -> item.getItem() instanceof BlockItem
                     && StructureName.HUTS.contains(hut)
-                    && ((BlockItem) item.getItem()).getBlock() == IBuildingRegistry.getInstance().getValue(new ResourceLocation(Constants.MOD_ID, name)).getBuildingBlock());
+                    && ((BlockItem) item.getItem()).getBlock() == IBuildingRegistry.getInstance().getValue(new ResourceLocation(Constants.MOD_ID, hut)).getBuildingBlock());
     }
 }

@@ -17,7 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.*;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,7 +81,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
         final IColony colony = getColony(itemStack);
         if (colony == null)
         {
-            player.displayClientMessage(new TranslatableComponent(MESSAGE_SCROLL_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatable(MESSAGE_SCROLL_NEED_COLONY), true);
             return itemStack;
         }
 

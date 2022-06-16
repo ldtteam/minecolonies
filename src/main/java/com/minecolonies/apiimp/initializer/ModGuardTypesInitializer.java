@@ -7,8 +7,8 @@ import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.colony.jobs.JobDruid;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.util.constant.translation.JobTranslationConstants.*;
 
@@ -21,9 +21,9 @@ public final class ModGuardTypesInitializer
     }
 
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final RegistryEvent.Register<GuardType> event)
+    public static void init(final RegisterEvent event)
     {
-        final IForgeRegistry<GuardType> reg = event.getRegistry();
+        final IForgeRegistry<GuardType> reg = event.getForgeRegistry();
 
         ModGuardTypes.knight = new GuardType.Builder()
                                  .setJobTranslationKey(JOB_KNIGHT)
@@ -58,8 +58,8 @@ public final class ModGuardTypesInitializer
           .setClazz(JobDruid.class)
           .createGuardType();
 
-        reg.register(ModGuardTypes.knight);
-        reg.register(ModGuardTypes.ranger);
-        reg.register(ModGuardTypes.druid);
+        reg.register(ModGuardTypes.KNIGHT_ID, ModGuardTypes.knight);
+        reg.register(ModGuardTypes.RANGER_ID, ModGuardTypes.ranger);
+        reg.register(ModGuardTypes.DRUID_ID, ModGuardTypes.druid);
     }
 }

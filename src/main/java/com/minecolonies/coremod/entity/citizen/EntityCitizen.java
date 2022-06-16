@@ -61,8 +61,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -948,7 +947,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         //Will help track down some hard to find bugs (Pathfinding etc.)
         if (citizenJobHandler.getColonyJob() != null && MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            setCustomName(new TextComponent(
+            setCustomName(Component.literal(
               citizenData.getName() + " (" + citizenStatusHandler.getStatus() + ")[" + citizenJobHandler.getColonyJob().getNameTagDescription() + "]"));
         }
     }
@@ -1326,7 +1325,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
 
         if (getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAID), ChatPriority.IMPORTANT));
             setVisibleStatusIfNone(RAIDED);
             desiredActivity = DesiredActivity.SLEEP;
             return false;
@@ -1346,7 +1345,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
                 citizenData.onGoSleep();
                 citizenData.decreaseSaturation(citizenColonyHandler.getPerBuildingFoodCost() * 2);
                 citizenData.markDirty();
-                citizenStatusHandler.setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.sleeping"));
+                citizenStatusHandler.setLatestStatus(Component.translatable("com.minecolonies.coremod.status.sleeping"));
                 desiredActivity = DesiredActivity.SLEEP;
                 return false;
             }
@@ -1357,9 +1356,9 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         {
             if (!getCitizenColonyHandler().getColony().getRaiderManager().isRaided())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING,
                   citizenData.getCitizenMournHandler().getDeceasedCitizens().iterator().next()),
-                  new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
+                  Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_MOURNING),
                   ChatPriority.IMPORTANT));
             }
             setVisibleStatusIfNone(MOURNING);
@@ -1375,13 +1374,13 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
         // Raining
         if (CompatibilityUtils.getWorldFromCitizen(this).isRaining() && !shouldWorkWhileRaining() && !WorldUtil.isNetherType(level))
         {
-            citizenStatusHandler.setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.waiting"),
-              new TranslatableComponent("com.minecolonies.coremod.status.rainStop"));
+            citizenStatusHandler.setLatestStatus(Component.translatable("com.minecolonies.coremod.status.waiting"),
+              Component.translatable("com.minecolonies.coremod.status.rainStop"));
             setVisibleStatusIfNone(BAD_WEATHER);
             if (!citizenData.getColony().getRaiderManager().isRaided()
                   && !citizenData.getCitizenMournHandler().isMourning())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_CITIZEN_RAINING), ChatPriority.HIDDEN));
             }
             desiredActivity = DesiredActivity.SLEEP;
             return false;
@@ -1671,7 +1670,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
      */
     private void performMoveAway(@Nullable final Entity attacker)
     {
-        this.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent("com.minecolonies.coremod.status.avoiding"));
+        this.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.avoiding"));
 
         // Environmental damage
         if (!(attacker instanceof LivingEntity))
@@ -1815,7 +1814,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             citizenColonyHandler.getColony().getCitizenManager().removeCivilian(getCitizenData());
 
             final String deathCause =
-              new TextComponent(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
+              Component.literal(damageSource.getLocalizedDeathMessage(this).getString()).getString().replaceFirst(this.getDisplayName().getString(), "Citizen");
             citizenColonyHandler.getColony().getEventDescriptionManager().addEventDescription(new CitizenDiedEvent(blockPosition(), citizenData.getName(), deathCause));
         }
         super.die(damageSource);

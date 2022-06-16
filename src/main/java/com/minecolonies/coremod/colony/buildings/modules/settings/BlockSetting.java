@@ -18,7 +18,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -116,7 +116,7 @@ public class BlockSetting implements ISetting
 
         Loader.createFromXMLFile(new ResourceLocation("minecolonies:gui/layouthuts/layoutblocksetting.xml"), (View) pane);
         pane.findPaneOfTypeByID("id", Text.class).setText(key.getUniqueId().toString());
-        pane.findPaneOfTypeByID("desc", Text.class).setText(new TranslatableComponent("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
+        pane.findPaneOfTypeByID("desc", Text.class).setText(Component.translatable("com.minecolonies.coremod.setting." + key.getUniqueId().toString()));
 
         pane.findPaneOfTypeByID("trigger", ButtonImage.class).setHandler(button -> new WindowSelectRes(
           window,
@@ -146,7 +146,7 @@ public class BlockSetting implements ISetting
     public void render(final ISettingKey<?> key, final Pane pane, final ISettingsModuleView settingsModuleView, final IBuildingView building, final BOWindow window)
     {
         pane.findPaneOfTypeByID("icon", ItemIcon.class).setItem(new ItemStack(value));
-        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(new TranslatableComponent(SWITCH));
+        pane.findPaneOfTypeByID("trigger", ButtonImage.class).setText(Component.translatable(SWITCH));
     }
 
     @Override

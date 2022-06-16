@@ -26,7 +26,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -230,7 +230,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
 
         if (!CustomVisitorListener.chanceCustomVisitors(newCitizen))
         {
-            newCitizen.triggerInteraction(new RecruitmentInteraction(new TranslatableComponent(
+            newCitizen.triggerInteraction(new RecruitmentInteraction(Component.translatable(
               "com.minecolonies.coremod.gui.chat.recruitstory" + (building.getColony().getWorld().random.nextInt(MAX_STORY) + 1), newCitizen.getName().split(" ")[0]),
               ChatPriority.IMPORTANT));
         }

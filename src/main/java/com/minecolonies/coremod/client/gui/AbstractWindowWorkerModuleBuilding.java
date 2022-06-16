@@ -18,8 +18,6 @@ import com.minecolonies.coremod.network.messages.server.colony.building.ForcePic
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -101,13 +99,13 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         Component component;
         if (prio == 0)
         {
-            component = new TranslatableComponent(TEXT_PICKUP_PRIORITY)
-              .append(new TranslatableComponent(TEXT_PICKUP_PRIORITY_NEVER));
+            component = Component.translatable(TEXT_PICKUP_PRIORITY)
+              .append(Component.translatable(TEXT_PICKUP_PRIORITY_NEVER));
         }
         else
         {
-            component = new TranslatableComponent(TEXT_PICKUP_PRIORITY)
-              .append(new TextComponent(prio + "/10"));
+            component = Component.translatable(TEXT_PICKUP_PRIORITY)
+              .append(Component.literal(prio + "/10"));
         }
         findPaneOfTypeByID(LABEL_PRIO_VALUE, Text.class).setText(component);
     }
@@ -172,7 +170,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
         {
             for (final int worker : module.getAssignedCitizens())
             {
-                workers.add(new Tuple<>(new TranslatableComponent(module.getJobEntry().getTranslationKey()).getString(), worker));
+                workers.add(new Tuple<>(Component.translatable(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
@@ -195,7 +193,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(new TranslatableComponent(workers.get(index).getA()).getString() + ": " + worker.getName());
+                          .setText(Component.literal(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName()));
                     }
                 }
             });

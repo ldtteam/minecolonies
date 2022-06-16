@@ -26,7 +26,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,7 +166,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(EMPTYING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_EMPTYING));
+        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_EMPTYING));
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
         unequip();
 
@@ -224,7 +224,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         }
 
         worker.getCitizenData().setVisibleStatus(DIGGING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_DIGGING));
+        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(MESSAGE_INFO_CITIZEN_STATUS_UNDERTAKER_DIGGING));
         worker.setSprinting(worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(UNDERTAKER_RUN) > 0);
 
         @Nullable final BlockPos gravePos = buildingGraveyard.getGraveToWorkOn();
@@ -412,7 +412,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
             return IDLE;
         }
         worker.getCitizenData().setVisibleStatus(BURYING_ICON);
-        worker.getCitizenStatusHandler().setLatestStatus(new TranslatableComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_BURYING));
+        worker.getCitizenStatusHandler().setLatestStatus(Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_BURYING));
 
         if(burialPos == null || !world.getBlockState(burialPos.getA()).isAir())
         {
@@ -423,7 +423,7 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
         {
             // couldn't find a place to dig a grave
             worker.getCitizenChatHandler()
-              .sendLocalizedChat(new TranslatableComponent(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
+              .sendLocalizedChat(Component.translatable(MESSAGE_INFO_CITIZEN_UNDERTAKER_GRAVEYARD_NO_SPACE, module.getLastGraveData().getCitizenName()));
             return IDLE;
         }
 

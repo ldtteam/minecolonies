@@ -33,7 +33,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.EnumSet;
 
@@ -550,7 +550,7 @@ public class EntityAIEatTask extends Goal
 
         if (restaurantPos == null)
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_RESTAURANT), ChatPriority.BLOCKING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(NO_RESTAURANT), ChatPriority.BLOCKING));
             return CHECK_FOR_FOOD;
         }
         return GO_TO_RESTAURANT;
@@ -574,17 +574,17 @@ public class EntityAIEatTask extends Goal
 
         if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), ISCOOKABLE))
         {
-            citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(RAW_FOOD), ChatPriority.PENDING));
+            citizenData.triggerInteraction(new StandardInteraction(Component.translatable(RAW_FOOD), ChatPriority.PENDING));
         }
         else if (InventoryUtils.hasItemInItemHandler(citizen.getInventoryCitizen(), stack -> CAN_EAT.test(stack) && !canEat(citizenData, stack)))
         {
             if (citizenData.isChild())
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(BETTER_FOOD_CHILDREN), ChatPriority.BLOCKING));
             }
             else
             {
-                citizenData.triggerInteraction(new StandardInteraction(new TranslatableComponent(BETTER_FOOD), ChatPriority.BLOCKING));
+                citizenData.triggerInteraction(new StandardInteraction(Component.translatable(BETTER_FOOD), ChatPriority.BLOCKING));
             }
         }
 

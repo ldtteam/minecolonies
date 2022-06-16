@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegis
 import com.minecolonies.api.colony.interactionhandling.ModInteractionResponseHandlers;
 import com.minecolonies.api.util.Tuple;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,10 +27,10 @@ public class StandardInteraction extends ServerCitizenInteraction
 
     @SuppressWarnings("unchecked")
     private static final Tuple<Component, Component>[] tuples = (Tuple<Component, Component>[]) new Tuple[] {
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_OKAY), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_IGNORE), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_REMIND), null),
-      new Tuple<>(new TranslatableComponent(INTERACTION_R_SKIP), null)};
+      new Tuple<>(Component.translatable(INTERACTION_R_OKAY), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_IGNORE), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_REMIND), null),
+      new Tuple<>(Component.translatable(INTERACTION_R_SKIP), null)};
 
     /**
      * The server interaction response handler with custom validator.

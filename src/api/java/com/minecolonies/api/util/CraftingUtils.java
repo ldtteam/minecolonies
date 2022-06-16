@@ -7,7 +7,6 @@ import com.minecolonies.api.items.ModTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.Tag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

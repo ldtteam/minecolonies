@@ -22,7 +22,7 @@ public class MessageUtils
      */
     public static MessageBuilder format(String key, Object... args)
     {
-        return format(new TranslatableComponent(key, args));
+        return format(Component.translatable(key, args));
     }
 
     /**
@@ -94,7 +94,7 @@ public class MessageUtils
          */
         public MessageBuilder append(String key, Object... args)
         {
-            return append(new TranslatableComponent(key, args));
+            return append(Component.translatable(key, args));
         }
 
         /**
@@ -141,7 +141,7 @@ public class MessageUtils
             mergeComponents();
             for (Player player : players)
             {
-                player.sendMessage(rootComponent, player.getUUID());
+                player.displayClientMessage(rootComponent, false);
             }
         }
 
@@ -248,10 +248,10 @@ public class MessageUtils
                 MutableComponent fullComponent = rootComponent.copy();
                 if (alwaysShowColony || !colony.isCoordInColony(player.level, player.blockPosition()))
                 {
-                    fullComponent = new TextComponent("[" + colony.getName() + "] ").append(rootComponent);
+                    fullComponent = Component.literal("[" + colony.getName() + "] ").append(rootComponent);
                 }
 
-                player.sendMessage(fullComponent, player.getUUID());
+                player.displayClientMessage(fullComponent, false);
             }
         }
     }
@@ -270,7 +270,7 @@ public class MessageUtils
         }
         else
         {
-            return new TextComponent("").append(component);
+            return Component.literal("").append(component);
         }
     }
 }

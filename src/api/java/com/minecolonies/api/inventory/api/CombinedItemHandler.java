@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -336,7 +335,7 @@ public class CombinedItemHandler implements IItemHandlerModifiable, INBTSerializ
     @Override
     public Component getName()
     {
-        return new TextComponent(customName.isEmpty() ? defaultName : customName);
+        return Component.literal(customName.isEmpty() ? defaultName : customName);
     }
 
     @Override

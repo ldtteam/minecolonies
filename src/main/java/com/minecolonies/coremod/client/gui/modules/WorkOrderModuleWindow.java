@@ -17,7 +17,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.network.messages.server.colony.WorkOrderChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.builder.BuilderSelectWorkOrderMessage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
     {
         super(building, res);
 
-        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(new TranslatableComponent(moduleView.getDesc().toLowerCase(Locale.US)));
+        window.findPaneOfTypeByID(DESC_LABEL, Text.class).setText(Component.translatable(moduleView.getDesc().toLowerCase(Locale.US)));
         registerButton(WORK_ORDER_SELECT, this::selectWorkOrder);
     }
 
@@ -152,15 +152,15 @@ public class WorkOrderModuleWindow extends AbstractModuleWindow
           .build();
         workOrderTextPanel.setText(order.getDisplayName());
         rowPane.findPaneOfTypeByID(WORK_ORDER_POS, Text.class)
-          .setText(new TranslatableComponent("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
+          .setText(Component.translatable("com.minecolonies.coremod.gui.blocks.distance", BlockPosUtil.getDistance2D(order.getLocation(), buildingView.getPosition())));
 
         if (order.getClaimedBy().equals(buildingView.getPosition()))
         {
-            rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.builder.cancel"));
+            rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(Component.translatable("com.minecolonies.coremod.gui.builder.cancel"));
         }
         else if (manualMode)
         {
-            rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(new TranslatableComponent("com.minecolonies.coremod.gui.builder.select"));
+            rowPane.findPaneOfTypeByID(WORK_ORDER_SELECT, ButtonImage.class).setText(Component.translatable("com.minecolonies.coremod.gui.builder.select"));
         }
     }
 

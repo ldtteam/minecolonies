@@ -23,7 +23,7 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEve
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
@@ -97,7 +97,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
-        totalCitizenLabel.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+        totalCitizenLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
             citizensSize,
             Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
         List<MutableComponent> hoverText = new ArrayList<>();
@@ -107,20 +107,20 @@ public class WindowInfoPage extends AbstractWindowTownHall
         }
         else if(citizensSize < citizensCap)
         {
-            hoverText.add(new TranslatableComponent(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
+            hoverText.add(Component.translatable(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
             totalCitizenLabel.setColors(ORANGE);
         }
         else
         {
             if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverText.add(new TranslatableComponent(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
+                hoverText.add(Component.translatable(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
             }
             else
             {
-                hoverText.add(new TranslatableComponent( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
+                hoverText.add(Component.translatable( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
             }
-            totalCitizenLabel.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
+            totalCitizenLabel.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
         }
         PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
@@ -189,19 +189,19 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (index < theList.size())
                 {
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
-                    final Component job = new TranslatableComponent(entry.getKey());
-                    final Component numberOfWorkers = new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
+                    final Component job = Component.translatable(entry.getKey());
+                    final Component numberOfWorkers = Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
                     label.setText(numberOfWorkers);
                 }
                 else
                 {
                     if (index == maxJobs + 1)
                     {
-                        label.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount));
+                        label.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount));
                     }
                     else
                     {
-                        label.setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, childCount));
+                        label.setText(Component.translatable(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, childCount));
                     }
                 }
             }
@@ -238,7 +238,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                         rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
                     }
 
-                    actionLabel.setText(new TranslatableComponent(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
+                    actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
                 }
                 else
                 {
@@ -292,7 +292,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
     public void permissionEventsClicked(@NotNull final Button button)
     {
         permissionEvents = !permissionEvents;
-        button.setText(new TranslatableComponent(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
+        button.setText(Component.translatable(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 
     @Override

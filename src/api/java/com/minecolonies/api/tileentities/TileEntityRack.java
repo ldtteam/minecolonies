@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -85,7 +84,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
 
     public TileEntityRack(final BlockPos pos, final BlockState state)
     {
-        super(MinecoloniesTileEntities.RACK, pos, state);
+        super(MinecoloniesTileEntities.RACK.get(), pos, state);
     }
 
     @Override
@@ -611,7 +610,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     @Override
     public Component getDisplayName()
     {
-        return new TextComponent("Rack");
+        return Component.literal("Rack");
     }
 
     @Override

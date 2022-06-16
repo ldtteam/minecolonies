@@ -8,11 +8,11 @@ import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * The citizen chat handler which handles all possible notifications (blocking or not).
@@ -45,27 +45,27 @@ public class CitizenChatHandler implements ICitizenChatHandler
         if (citizen.getCitizenColonyHandler().getColony() != null && citizen.getCitizenData() != null)
         {
             final IJob<?> job = citizen.getCitizenJobHandler().getColonyJob();
-            TranslatableComponent contentComponent;
+            MutableComponent contentComponent;
             if (job != null)
             {
-                contentComponent = new TranslatableComponent(
+                contentComponent = Component.translatable(
                   TranslationConstants.WORKER_DIED,
-                  new TranslatableComponent(job.getJobRegistryEntry().getTranslationKey()),
+                  Component.translatable(job.getJobRegistryEntry().getTranslationKey()),
                   citizen.getCitizenData().getName(),
                   Math.round(citizen.getX()),
                   Math.round(citizen.getY()),
                   Math.round(citizen.getZ()),
-                  new TranslatableComponent(damageSource.msgId));
+                  Component.translatable(damageSource.msgId));
             }
             else
             {
-                contentComponent = new TranslatableComponent(
+                contentComponent = Component.translatable(
                   TranslationConstants.COLONIST_DIED,
                   citizen.getCitizenData().getName(),
                   Math.round(citizen.getX()),
                   Math.round(citizen.getY()),
                   Math.round(citizen.getZ()),
-                  new TranslatableComponent(damageSource.msgId));
+                  Component.translatable(damageSource.msgId));
             }
 
             MessageUtils.format(contentComponent)
@@ -77,7 +77,7 @@ public class CitizenChatHandler implements ICitizenChatHandler
     @Override
     public void sendLocalizedChat(final String keyIn, final Object... msg)
     {
-        sendLocalizedChat(new TranslatableComponent(keyIn, msg));
+        sendLocalizedChat(Component.translatable(keyIn, msg));
     }
 
     @Override
@@ -91,15 +91,15 @@ public class CitizenChatHandler implements ICitizenChatHandler
             if (job != null)
             {
                 builder = MessageUtils.format(job.getJobRegistryEntry().getTranslationKey())
-                            .append(new TextComponent(" "))
+                            .append(Component.literal(" "))
                             .append(citizen.getCustomName())
-                            .append(new TextComponent(": "))
+                            .append(Component.literal(": "))
                             .append(component);
             }
             else
             {
                 builder = MessageUtils.format(citizen.getCustomName())
-                            .append(new TextComponent(": "))
+                            .append(Component.literal(": "))
                             .append(component);
             }
 

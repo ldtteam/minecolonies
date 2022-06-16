@@ -13,7 +13,7 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(new TranslatableComponent(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
+                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(Component.translatable(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
                                                                                        .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
                 }
 

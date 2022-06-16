@@ -16,8 +16,7 @@ import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractCraf
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,18 +71,18 @@ public class PrivateWorkerCraftingRequestResolver extends AbstractCraftingReques
         }
         else
         {
-            return new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+            return Component.translatable(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
         if (request == null)
         {
-            return new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
+            return Component.translatable(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME);
         }
 
         return request.getRequester().getRequesterDisplayName(manager, request)
-                 .append(new TextComponent(" ("))
-                 .append(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
-                 .append(new TextComponent(")"));
+                 .append(Component.literal(" ("))
+                 .append(Component.translatable(TranslationConstants.COM_MINECOLONIES_PRIVATE_CRAFTING_RESOLVER_NAME))
+                 .append(Component.literal(")"));
     }
 
     @Override

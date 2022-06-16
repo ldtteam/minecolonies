@@ -34,7 +34,7 @@ import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
@@ -314,7 +314,7 @@ public class RaidManager implements IRaiderManager
         {
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
-                MessageUtils.format(new TextComponent("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
+                MessageUtils.format(Component.literal("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
             if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
@@ -698,7 +698,7 @@ public class RaidManager implements IRaiderManager
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            MessageUtils.format(new TextComponent("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
+            MessageUtils.format(Component.literal("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
         }
 
         setRaidNextNight(raid);

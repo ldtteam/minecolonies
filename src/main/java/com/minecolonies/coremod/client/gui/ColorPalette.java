@@ -3,8 +3,8 @@ package com.minecolonies.coremod.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -76,7 +76,7 @@ public class ColorPalette
 
         public PaletteButton(int posX, int posY, int sideLength, DyeColor color)
         {
-            super(posX, posY, sideLength, sideLength, new TextComponent(""), pressed -> {});
+            super(posX, posY, sideLength, sideLength, Component.literal(""), pressed -> {});
             this.color = color;
         }
 

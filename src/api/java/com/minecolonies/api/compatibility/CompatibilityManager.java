@@ -21,6 +21,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -45,7 +46,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
 
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.OreBlock;
 import net.minecraft.world.level.block.RedStoneOreBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -336,11 +336,6 @@ public class CompatibilityManager implements ICompatibilityManager
     @Override
     public boolean isOre(final BlockState block)
     {
-        if (block.getBlock() instanceof OreBlock || block.getBlock() instanceof RedStoneOreBlock)
-        {
-            return true;
-        }
-
         return oreBlocks.contains(block.getBlock());
     }
 

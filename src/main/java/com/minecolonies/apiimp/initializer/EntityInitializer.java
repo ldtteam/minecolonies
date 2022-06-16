@@ -26,16 +26,14 @@ import com.minecolonies.coremod.entity.mobs.pirates.EntityPirate;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_HEIGHT;
 import static com.minecolonies.api.util.constant.CitizenConstants.CITIZEN_WIDTH;
 import static com.minecolonies.api.util.constant.Constants.*;
 
-@ObjectHolder(Constants.MOD_ID)
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntityInitializer
 {
@@ -201,17 +199,14 @@ public class EntityInitializer
 
     private static <T extends Entity> EntityType<T> build(final String key, final EntityType.Builder<T> builder)
     {
-        final EntityType<T> entityType = builder.build(Constants.MOD_ID + ":" + key);
-        // TODO: next major mc release, setRegistryName should have complete RL as param
-        entityType.setRegistryName(key);
-        return entityType;
+        return builder.build(Constants.MOD_ID + ":" + key);
     }
 
     @SubscribeEvent
-    public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event)
+    public static void registerEntities(final RegisterEvent event)
     {
-        event.getRegistry()
-          .registerAll(ModEntities.CITIZEN,
+        event.getForgeRegistry()
+          .register(ModEntities.CITIZEN,
             ModEntities.VISITOR,
             ModEntities.PIRATE,
             ModEntities.ARCHERPIRATE,

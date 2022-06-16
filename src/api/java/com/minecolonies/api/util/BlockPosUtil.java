@@ -8,9 +8,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -117,7 +117,7 @@ public final class BlockPosUtil
      * @param random a random object.
      * @return a tuple of two directions.
      */
-    public static Tuple<Direction, Direction> getRandomDirectionTuple(final Random random)
+    public static Tuple<Direction, Direction> getRandomDirectionTuple(final RandomSource random)
     {
         return new Tuple<>(Direction.getRandom(random), Direction.getRandom(random));
     }
@@ -134,7 +134,7 @@ public final class BlockPosUtil
      */
     public static BlockPos getRandomPosition(final Level world, final BlockPos currentPosition, final BlockPos def, final int minDist, final int maxDist)
     {
-        final Random random = world.random;
+        final RandomSource random = world.random;
 
         int tries = 0;
         BlockPos pos = null;
@@ -720,22 +720,22 @@ public final class BlockPosUtil
         {
             if (pos.getY() > building.getY())
             {
-                component = new TranslatableComponent(DIRECTION_UP);
+                component = Component.translatable(DIRECTION_UP);
             }
             else if (pos.getY() < building.getY())
             {
-                component = new TranslatableComponent(DIRECTION_DOWN);
+                component = Component.translatable(DIRECTION_DOWN);
             }
         }
 
         // If a building is greater or smaller in the Z direction, either return north or south
         if (pos.getZ() > building.getZ())
         {
-            component = new TranslatableComponent(DIRECTION_SOUTH);
+            component = Component.translatable(DIRECTION_SOUTH);
         }
         else if (pos.getZ() < building.getZ())
         {
-            component = new TranslatableComponent(DIRECTION_NORTH);
+            component = Component.translatable(DIRECTION_NORTH);
         }
 
         // If a building is greater or smaller in the X direction, either return west or east
@@ -746,11 +746,11 @@ public final class BlockPosUtil
             {
                 component
                   .append("/")
-                  .append(new TranslatableComponent(DIRECTION_EAST));
+                  .append(Component.translatable(DIRECTION_EAST));
             }
             else
             {
-                component = new TranslatableComponent(DIRECTION_EAST);
+                component = Component.translatable(DIRECTION_EAST);
             }
         }
         else if (pos.getX() < building.getX())
@@ -759,16 +759,16 @@ public final class BlockPosUtil
             {
                 component
                   .append("/")
-                  .append(new TranslatableComponent(DIRECTION_WEST));
+                  .append(Component.translatable(DIRECTION_WEST));
             }
             else
             {
-                component = new TranslatableComponent(DIRECTION_WEST);
+                component = Component.translatable(DIRECTION_WEST);
             }
         }
 
         // In case that none of the checks pass (XYZ fully identical to the building), return a component saying the positions are identical
-        return component != null ? component : new TranslatableComponent(DIRECTION_NONE);
+        return component != null ? component : Component.translatable(DIRECTION_NONE);
     }
 
     /**

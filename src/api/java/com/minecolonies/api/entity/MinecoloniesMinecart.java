@@ -5,6 +5,9 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.PoweredRailBlock;
@@ -39,7 +42,7 @@ import net.minecraft.world.phys.AABB;
 /**
  * Special minecolonies minecart that doesn't collide.
  */
-public class MinecoloniesMinecart extends AbstractMinecart
+public class MinecoloniesMinecart extends Minecart
 {
     /**
      * Railshape matrix.

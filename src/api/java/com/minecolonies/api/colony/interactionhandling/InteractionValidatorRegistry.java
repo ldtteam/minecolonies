@@ -4,7 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,7 +103,7 @@ public final class InteractionValidatorRegistry
      * @param component the key to check.
      * @return true if so.
      */
-    public static boolean hasValidator(final TranslatableComponent component)
+    public static boolean hasValidator(final MutableComponent component)
     {
         return map.containsKey(component) || posMap.containsKey(component) || tokenMap.containsKey(component);
     }

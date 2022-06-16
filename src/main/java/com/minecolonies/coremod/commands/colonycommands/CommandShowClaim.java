@@ -13,8 +13,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -51,7 +50,7 @@ public class CommandShowClaim implements IMCOPCommand
         final IColonyTagCapability cap = chunk.getCapability(CLOSE_COLONY_CAP, null).resolve().orElse(null);
         if (cap == null)
         {
-            context.getSource().sendFailure(new TextComponent("No capability for chunk found!"));
+            context.getSource().sendFailure(Component.literal("No capability for chunk found!"));
             return 0;
         }
 
@@ -69,28 +68,28 @@ public class CommandShowClaim implements IMCOPCommand
      */
     private MutableComponent buildClaimCommandResult(final IColonyTagCapability cap, final BlockPos pos, final ServerLevel level)
     {
-        final MutableComponent text = new TranslatableComponent("Claim data of chunk at: %sX %sZ\n", pos.getX(), pos.getZ()).withStyle(ChatFormatting.DARK_AQUA);
+        final MutableComponent text = Component.translatable("Claim data of chunk at: %sX %sZ\n", pos.getX(), pos.getZ()).withStyle(ChatFormatting.DARK_AQUA);
 
         if (!cap.getStaticClaimColonies().isEmpty())
         {
-            text.append(new TranslatableComponent("OwnerID:%s Direct colony claims:\n", cap.getOwningColony()).withStyle(ChatFormatting.GOLD));
+            text.append(Component.translatable("OwnerID:%s Direct colony claims:\n", cap.getOwningColony()).withStyle(ChatFormatting.GOLD));
             for (int colonyID : cap.getStaticClaimColonies())
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, level.dimension());
                 if (colony == null)
                 {
-                    text.append(new TranslatableComponent("ID: %s Name: Unkown Colony\n", colonyID));
+                    text.append(Component.translatable("ID: %s Name: Unkown Colony\n", colonyID));
                 }
                 else
                 {
-                    text.append(new TranslatableComponent("ID: %s Name: %s\n", colonyID, colony.getName()));
+                    text.append(Component.translatable("ID: %s Name: %s\n", colonyID, colony.getName()));
                 }
             }
         }
 
         if (!cap.getAllClaimingBuildings().isEmpty())
         {
-            text.append(new TranslatableComponent("Building claims:\n").withStyle(ChatFormatting.GOLD));
+            text.append(Component.translatable("Building claims:\n").withStyle(ChatFormatting.GOLD));
             for (Map.Entry<Integer, Set<BlockPos>> entry : cap.getAllClaimingBuildings().entrySet())
             {
                 final IColony colony = IColonyManager.getInstance().getColonyByDimension(entry.getKey(), level.dimension());
@@ -101,19 +100,19 @@ public class CommandShowClaim implements IMCOPCommand
                         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
                         if (building != null)
                         {
-                            text.append(new TranslatableComponent("ID: %s Building: %s Pos: %s\n",
+                            text.append(Component.translatable("ID: %s Building: %s Pos: %s\n",
                               entry.getKey(),
-                              new TranslatableComponent(building.getBuildingDisplayName()),
+                              Component.translatable(building.getBuildingDisplayName()),
                               buildingPos));
                         }
                         else
                         {
-                            text.append(new TranslatableComponent("ID: %s Building: Unknown pos: %s\n", entry.getKey(), buildingPos));
+                            text.append(Component.translatable("ID: %s Building: Unknown pos: %s\n", entry.getKey(), buildingPos));
                         }
                     }
                     else
                     {
-                        text.append(new TranslatableComponent("ID: %s Building: Unknown Pos: %s\n", entry.getKey(), buildingPos));
+                        text.append(Component.translatable("ID: %s Building: Unknown Pos: %s\n", entry.getKey(), buildingPos));
                     }
                 }
             }

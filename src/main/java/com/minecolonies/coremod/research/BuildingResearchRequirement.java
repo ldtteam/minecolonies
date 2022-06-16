@@ -5,7 +5,8 @@ import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.ModResearchRequirements;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 /**
  * Certain building research requirements.
@@ -90,18 +91,18 @@ public class BuildingResearchRequirement implements IResearchRequirement
     }
 
     @Override
-    public TranslatableComponent getDesc()
+    public MutableComponent getDesc()
     {
         if(singleBuilding)
         {
-            return new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.mandatory.level",
-              new TranslatableComponent("com.minecolonies.building." + building),
+            return Component.translatable("com.minecolonies.coremod.research.requirement.building.mandatory.level",
+              Component.translatable("com.minecolonies.building." + building),
               this.buildingLevel);
         }
         else
         {
-            return new TranslatableComponent("com.minecolonies.coremod.research.requirement.building.level",
-              new TranslatableComponent("com.minecolonies.building." + building),
+            return Component.translatable("com.minecolonies.coremod.research.requirement.building.level",
+              Component.translatable("com.minecolonies.building." + building),
               this.buildingLevel);
         }
     }

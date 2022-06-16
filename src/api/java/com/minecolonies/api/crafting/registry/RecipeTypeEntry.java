@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.AbstractRecipeType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Function;
@@ -13,10 +12,11 @@ import java.util.function.Function;
  * Entry for the {@link AbstractRecipeType} registry.
  */
 @SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass") //Use the builder to create one.
-public final class RecipeTypeEntry extends ForgeRegistryEntry<RecipeTypeEntry>
+public final class RecipeTypeEntry
 {
 
     private final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer;
+    private final ResourceLocation registryName;
 
     /**
      * Builder for a {@link AbstractRecipeType}.
@@ -61,7 +61,7 @@ public final class RecipeTypeEntry extends ForgeRegistryEntry<RecipeTypeEntry>
             Validate.notNull(recipeTypeProducer);
             Validate.notNull(registryName);
 
-            return new RecipeTypeEntry(recipeTypeProducer).setRegistryName(registryName);
+            return new RecipeTypeEntry(recipeTypeProducer, registryName);
         }
     }
 
@@ -76,9 +76,10 @@ public final class RecipeTypeEntry extends ForgeRegistryEntry<RecipeTypeEntry>
     }
 
     private RecipeTypeEntry(
-      final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer)
+      final Function<IRecipeStorage, AbstractRecipeType<IRecipeStorage>> recipeTypeProducer, final ResourceLocation registryName)
     {
         super();
         this.recipeTypeProducer = recipeTypeProducer;
+        this.registryName = registryName;
     }
 }

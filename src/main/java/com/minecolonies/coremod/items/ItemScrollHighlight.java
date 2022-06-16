@@ -27,7 +27,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item.Properties;
 
 /**
@@ -63,7 +63,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
             if (ctx.getLevel().random.nextInt(10) == 0)
             {
                 ctx.getPlayer()
-                  .displayClientMessage(new TranslatableComponent(
+                  .displayClientMessage(Component.translatable(
                     "minecolonies.scroll.failed" + (ctx.getLevel().random.nextInt(FAIL_RESPONSES_TOTAL) + 1)).setStyle(Style.EMPTY.withColor(
                     ChatFormatting.GOLD)), true);
                 ctx.getPlayer().addEffect(new MobEffectInstance(MobEffects.GLOWING, TICKS_SECOND * 300));
@@ -105,7 +105,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final Level worldIn, @NotNull final List<Component> tooltip, @NotNull final TooltipFlag flagIn)
     {
-        final MutableComponent guiHint = new TranslatableComponent(TOOL_GENERIC_SCROLL_HIGHLIGHT_DESCRIPTION);
+        final MutableComponent guiHint = Component.translatable(TOOL_GENERIC_SCROLL_HIGHLIGHT_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN));
         tooltip.add(guiHint);
     }

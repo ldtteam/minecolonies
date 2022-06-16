@@ -39,7 +39,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerChunkCache;
@@ -51,6 +50,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.scores.PlayerTeam;
@@ -280,7 +280,7 @@ public class Colony implements IColony
      * The colony flag, as a list of patterns.
      */
     private ListTag colonyFlag = new BannerPattern.Builder()
-                                   .addPattern(BannerPattern.BASE, DyeColor.WHITE)
+                                   .addPattern(BannerPatterns.BASE, DyeColor.WHITE)
                                    .toListTag();
 
     /**
@@ -641,7 +641,7 @@ public class Colony implements IColony
             checkOrCreateTeam();
             this.colonyTeamColor = colonyColor;
             this.world.getScoreboard().getPlayerTeam(getTeamName()).setColor(colonyColor);
-            this.world.getScoreboard().getPlayerTeam(getTeamName()).setPlayerPrefix(new TextComponent(colonyColor.toString()));
+            this.world.getScoreboard().getPlayerTeam(getTeamName()).setPlayerPrefix(Component.literal(colonyColor.toString()));
         }
         this.markDirty();
     }
@@ -894,7 +894,7 @@ public class Colony implements IColony
         @NotNull final ListTag freeBlocksTagList = new ListTag();
         for (@NotNull final Block block : freeBlocks)
         {
-            freeBlocksTagList.add(StringTag.valueOf(block.getRegistryName().toString()));
+            freeBlocksTagList.add(StringTag.valueOf(ForgeRegistries.BLOCKS.getKey(block).toString()));
         }
         compound.put(TAG_FREE_BLOCKS, freeBlocksTagList);
 

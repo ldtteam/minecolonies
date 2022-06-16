@@ -35,7 +35,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -359,7 +358,7 @@ public class EntityMercenary extends PathfinderMob implements Npc, IColonyRelate
     @Override
     public Component getName()
     {
-        return new TextComponent(ENTITY_NAME);
+        return Component.literal(ENTITY_NAME);
     }
 
     @Override

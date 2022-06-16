@@ -27,7 +27,6 @@ public class ItemFireArrow extends ArrowItem
     public ItemFireArrow(final Properties properties)
     {
         super(properties.tab(ModCreativeTabs.MINECOLONIES));
-        setRegistryName("firearrow");
     }
 
     @Override

@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,7 +121,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
+            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_CLIPBOARD_NEED_COLONY), true);
         }
     }
 }

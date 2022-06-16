@@ -15,7 +15,7 @@ import com.minecolonies.coremod.client.gui.WindowHireWorker;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.RecallCitizenMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
         {
             for (final int worker : module.getAssignedCitizens())
             {
-                workers.add(new Tuple<>(new TranslatableComponent(module.getJobEntry().getTranslationKey()).getString(), worker));
+                workers.add(new Tuple<>(Component.translatable(module.getJobEntry().getTranslationKey()).getString(), worker));
             }
         }
 
@@ -116,7 +116,7 @@ public class SpecialAssignmentModuleWindow extends AbstractModuleWindow
                     if (worker != null)
                     {
                         rowPane.findPaneOfTypeByID(LABEL_WORKERNAME, Text.class)
-                          .setText(new TranslatableComponent(workers.get(index).getA()).getString() + ": " + worker.getName());
+                          .setText(Component.translatable(workers.get(index).getA()).getString() + ": " + worker.getName());
                     }
                 }
             });

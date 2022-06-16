@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.research;
 
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +30,12 @@ public class ResearchEffectCategory
     /**
      * The optional effect category name, uses for display purposes if present.  Overrides default translation lookups.
      */
-    private final TranslatableComponent effectName;
+    private final MutableComponent effectName;
 
     /**
      * The optional subtitle, uses for display purposes if present.
      */
-    private final TranslatableComponent subtitle;
+    private final MutableComponent subtitle;
 
     /**
      * The absolute value of each level of an effect.
@@ -57,13 +58,13 @@ public class ResearchEffectCategory
         this.effectId = new ResourceLocation(effectId);
         if(effectName != null)
         {
-            this.effectName = new TranslatableComponent(effectName);
+            this.effectName = Component.translatable(effectName);
         }
         else
         {
-            this.effectName = new TranslatableComponent("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]", ".") + ".description");
+            this.effectName = Component.translatable("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]", ".") + ".description");
         }
-        this.subtitle = new TranslatableComponent(subtitle);
+        this.subtitle = Component.translatable(subtitle);
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
     }
@@ -75,8 +76,8 @@ public class ResearchEffectCategory
     public ResearchEffectCategory(final String effectId, final String effectName)
     {
         this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslatableComponent(effectName);
-        this.subtitle = new TranslatableComponent("");
+        this.effectName = Component.translatable(effectName);
+        this.subtitle = Component.translatable("");
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
     }
@@ -88,8 +89,8 @@ public class ResearchEffectCategory
     public ResearchEffectCategory(final String effectId)
     {
         this.effectId = new ResourceLocation(effectId);
-        this.effectName = new TranslatableComponent("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description");
-        this.subtitle = new TranslatableComponent("");
+        this.effectName = Component.translatable("com." + this.effectId.getNamespace() + ".research." + this.effectId.getPath().replaceAll("[ /]",".") + ".description");
+        this.subtitle = Component.translatable("");
         levelsAbsolute.add(0d);
         levelsRelative.add(0d);
     }
@@ -147,7 +148,7 @@ public class ResearchEffectCategory
      * Gets the name identifier of the effect.
      * @return             The effect's display name, as a human-readable text or translation key.
      */
-    public TranslatableComponent getName()
+    public MutableComponent getName()
     {
         return this.effectName;
     }
@@ -156,7 +157,7 @@ public class ResearchEffectCategory
      * Gets the subtitle of the effect.
      * @return             The effect's display name, as a string.
      */
-    public TranslatableComponent getSubtitle()
+    public MutableComponent getSubtitle()
     {
         return this.subtitle;
     }

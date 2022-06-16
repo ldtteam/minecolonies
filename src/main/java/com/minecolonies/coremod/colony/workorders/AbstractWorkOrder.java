@@ -23,7 +23,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -513,7 +513,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public Component getDisplayName()
     {
-        return new TranslatableComponent(workOrderName);
+        return Component.translatable(workOrderName);
     }
 
     /**

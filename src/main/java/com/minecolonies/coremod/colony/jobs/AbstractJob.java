@@ -4,6 +4,7 @@ import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.jobs.IJob;
+import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -128,7 +130,7 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     {
         final CompoundTag compound = new CompoundTag();
 
-        compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getRegistryName().toString());
+        compound.putString(TAG_JOB_TYPE, getJobRegistryEntry().getKey().toString());
         compound.put(TAG_ASYNC_REQUESTS,
           getAsyncRequests().stream()
             .filter(token -> getColony().getRequestManager().getRequestForToken(token) != null)
@@ -159,13 +161,13 @@ public abstract class AbstractJob<AI extends AbstractAISkeleton<J>, J extends Ab
     @Override
     public void serializeToView(final FriendlyByteBuf buffer)
     {
-        buffer.writeUtf(getJobRegistryEntry().getRegistryName().toString());
+        buffer.writeUtf(getJobRegistryEntry().getKey().toString());
         buffer.writeInt(getAsyncRequests().size());
         for (final IToken<?> token : getAsyncRequests())
         {
             StandardFactoryController.getInstance().serialize(buffer, token);
         }
-        buffer.writeRegistryId(getJobRegistryEntry());
+        buffer.writeRegistryId(IJobRegistry.getInstance(), getJobRegistryEntry());
     }
 
     /**

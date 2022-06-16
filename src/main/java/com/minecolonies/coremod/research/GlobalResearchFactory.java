@@ -14,12 +14,13 @@ import com.minecolonies.api.util.NBTUtils;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,8 +49,8 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
 
     @NotNull
     @Override
-    public IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final TranslatableComponent desc, final int universityLevel, final int sortOrder,
-      final ResourceLocation iconTexture, final ItemStack iconStack, final TranslatableComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
+    public IGlobalResearch getNewInstance(final ResourceLocation id, final ResourceLocation branch, final ResourceLocation parent, final MutableComponent desc, final int universityLevel, final int sortOrder,
+      final ResourceLocation iconTexture, final ItemStack iconStack, final MutableComponent subtitle, final boolean onlyChild, final boolean hidden, final boolean autostart, final boolean instant, final boolean immutable)
     {
         return new GlobalResearch(id, branch, parent, desc, universityLevel, sortOrder, iconTexture, iconStack, subtitle, onlyChild, hidden, autostart, instant, immutable);
     }
@@ -121,7 +122,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = new ResourceLocation(nbt.getString(TAG_PARENT));
         final ResourceLocation id = new ResourceLocation(nbt.getString(TAG_ID));
         final ResourceLocation branch = new ResourceLocation(nbt.getString(TAG_BRANCH));
-        final TranslatableComponent desc = new TranslatableComponent(nbt.getString(TAG_NAME));
+        final MutableComponent desc = Component.translatable(nbt.getString(TAG_NAME));
         final int depth = nbt.getInt(TAG_RESEARCH_LVL);
         final int sortOrder =  nbt.getInt(TAG_RESEARCH_SORT);
         final boolean onlyChild = nbt.getBoolean(TAG_ONLY_CHILD);
@@ -129,7 +130,7 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final String[] iconStackParts =  nbt.getString(TAG_ICON_ITEM_STACK).split(":");
         final ItemStack iconStack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(iconStackParts[0], iconStackParts[1])));
         iconStack.setCount(Integer.parseInt(iconStackParts[2]));
-        final TranslatableComponent subtitle = new TranslatableComponent(nbt.getString(TAG_SUBTITLE_NAME));
+        final MutableComponent subtitle = Component.translatable(nbt.getString(TAG_SUBTITLE_NAME));
         final boolean instant = nbt.getBoolean(TAG_INSTANT);
         final boolean autostart = nbt.getBoolean(TAG_AUTOSTART);
         final boolean immutable = nbt.getBoolean(TAG_IMMUTABLE);
@@ -212,13 +213,13 @@ public class GlobalResearchFactory implements IGlobalResearchFactory
         final ResourceLocation parent = buffer.readResourceLocation();
         final ResourceLocation id = buffer.readResourceLocation();
         final ResourceLocation branch = buffer.readResourceLocation();
-        final TranslatableComponent desc = new TranslatableComponent(buffer.readUtf());
+        final MutableComponent desc = Component.translatable(buffer.readUtf());
         final int depth = buffer.readVarInt();
         final int sortOrder = buffer.readVarInt();
         final boolean hasOnlyChild = buffer.readBoolean();
         final ItemStack iconStack = buffer.readItem();
         final ResourceLocation iconTexture = buffer.readResourceLocation();
-        final TranslatableComponent subtitle = new TranslatableComponent(buffer.readUtf());
+        final MutableComponent subtitle = Component.translatable(buffer.readUtf());
         final boolean instant = buffer.readBoolean();
         final boolean autostart = buffer.readBoolean();
         final boolean immutable = buffer.readBoolean();

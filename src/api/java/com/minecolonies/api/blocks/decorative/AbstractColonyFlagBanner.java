@@ -88,17 +88,4 @@ public class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanner<B>> ext
         }
         return super.getCloneItemStack(worldIn, pos, state);
     }
-
-    @Override
-    public AbstractColonyFlagBanner<B> registerBlock(IForgeRegistry<Block> registry)
-    {
-        registry.register(this);
-        return this;
-    }
-
-    @Override
-    public void registerBlockItem(IForgeRegistry<Item> registry, Item.Properties properties)
-    {
-        /* Registration occurs in ModItems */
-    }
 }

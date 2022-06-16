@@ -25,9 +25,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -159,8 +159,8 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
             {
                 String name = ((BuildingBuilder.View) buildingView).getWorkerName();
                 tooltip.add(name != null && !name.trim().isEmpty()
-                              ? new TextComponent(ChatFormatting.DARK_PURPLE + name)
-                              : new TranslatableComponent(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
+                              ? Component.literal(ChatFormatting.DARK_PURPLE + name)
+                              : Component.translatable(COM_MINECOLONIES_SCROLL_BUILDING_NO_WORKER));
             }
         }
     }
@@ -196,7 +196,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
         }
         else
         {
-            player.displayClientMessage(new TranslatableComponent(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
+            player.displayClientMessage(Component.translatable(TranslationConstants.COM_MINECOLONIES_SCROLL_NO_COLONY), true);
         }
     }
 }

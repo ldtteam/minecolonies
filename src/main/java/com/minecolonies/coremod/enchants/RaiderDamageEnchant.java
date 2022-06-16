@@ -10,15 +10,9 @@ import static net.minecraft.world.item.enchantment.EnchantmentCategory.WEAPON;
  */
 public class RaiderDamageEnchant extends Enchantment
 {
-    /**
-     * Enchant id
-     */
-    private final String NAME_ID = "raider_damage_enchant";
-
     public RaiderDamageEnchant(final Rarity rarity, final EquipmentSlot[] slotTypes)
     {
         super(rarity, WEAPON, slotTypes);
-        setRegistryName(NAME_ID);
     }
 
     @Override

@@ -9,8 +9,8 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,24 +39,24 @@ public final class GenericRecipeUtils
         final List<Component> restrictions = new ArrayList<>();
         if (customRecipe.getMinBuildingLevel() == customRecipe.getMaxBuildingLevel())
         {
-            restrictions.add(new TranslatableComponent(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction",
+            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "onelevelrestriction",
                     customRecipe.getMinBuildingLevel()));
         }
         else if (customRecipe.getMinBuildingLevel() > 1 || customRecipe.getMaxBuildingLevel() < CONST_DEFAULT_MAX_BUILDING_LEVEL)
         {
-            restrictions.add(new TranslatableComponent(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
+            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "levelrestriction",
                     customRecipe.getMinBuildingLevel(), customRecipe.getMaxBuildingLevel()));
         }
         if (customRecipe.getRequiredResearchId() != null)
         {
             final Component researchName = getResearchDisplayName(customRecipe.getRequiredResearchId());
-            restrictions.add(new TranslatableComponent(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
+            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "minresearch",
                     researchName));
         }
         if (customRecipe.getExcludedResearchId() != null)
         {
             final Component researchName = getResearchDisplayName(customRecipe.getExcludedResearchId());
-            restrictions.add(new TranslatableComponent(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
+            restrictions.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "maxresearch",
                     researchName));
         }
         return restrictions;
@@ -140,6 +140,6 @@ public final class GenericRecipeUtils
         }
 
         // otherwise it may be an effect with no research (perhaps disabled via datapack)
-        return new TextComponent("???");
+        return Component.literal("???");
     }
 }

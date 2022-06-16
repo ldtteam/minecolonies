@@ -101,7 +101,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      */
     public TileEntityColonyBuilding(final BlockPos pos, final BlockState state)
     {
-        this(MinecoloniesTileEntities.BUILDING, pos, state);
+        this(MinecoloniesTileEntities.BUILDING.get(), pos, state);
     }
 
     /**
