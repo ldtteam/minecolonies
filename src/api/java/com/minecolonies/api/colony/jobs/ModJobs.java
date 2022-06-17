@@ -5,6 +5,9 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ModJobs
 {
     public static final ResourceLocation PLACEHOLDER_ID    = new ResourceLocation(Constants.MOD_ID, "placeholder");
@@ -101,8 +104,18 @@ public final class ModJobs
     public static RegistryObject<JobEntry> druid;
     public static RegistryObject<JobEntry> alchemist;
 
+    /**
+     * List of all jobs.
+     */
+    public static List<ResourceLocation> jobs = new ArrayList<>() { };
+
     private ModJobs()
     {
         throw new IllegalStateException("Tried to initialize: ModJobs but this is a Utility class.");
+    }
+
+    public static List<ResourceLocation> getJobs()
+    {
+        return jobs;
     }
 }

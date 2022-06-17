@@ -5,7 +5,6 @@ import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
-import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
@@ -29,9 +28,7 @@ import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
 import com.minecolonies.coremod.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -51,8 +48,6 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -90,6 +85,8 @@ public class MineColonies
         ModJobsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModRecipeTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         RaiderMobUtils.ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModSoundEvents.SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModInteractionsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json"); // hotfix config comments, it's ugly bcs it's gonna be replaced
         config = new Configuration();
@@ -118,20 +115,6 @@ public class MineColonies
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
-    }
-
-    /**
-     * Called when registering sounds, we have to register all our mod items here.
-     *
-     * @param event the registery event for items.
-     */
-    @SubscribeEvent
-    public static void registerSounds(@NotNull final RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.SOUND_EVENTS))
-        {
-            ModSoundEvents.registerSounds(event.getForgeRegistry());
-        }
     }
 
     @SubscribeEvent

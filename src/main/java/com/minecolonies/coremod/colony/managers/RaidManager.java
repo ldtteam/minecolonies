@@ -33,14 +33,16 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRaiderPathing;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -327,9 +329,9 @@ public class RaidManager implements IRaiderManager
 
             // No rotation till spawners are moved into schematics
             final int shipRotation = new Random().nextInt(3);
-            final String homeBiomePath = ForgeRegistries.BIOMES.getKey(colony.getWorld().getBiome(colony.getCenter()).value()).getPath();
+            final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
             final int rand = colony.getWorld().random.nextInt(100);
-            if ((raidType.isEmpty() && (homeBiomePath.contains(TAIGA_BIOME_ID) || rand < IGNORE_BIOME_CHANCE)
+            if ((raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
                    || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                   && ShipBasedRaiderUtils.canSpawnShipAt(colony,
               targetSpawnPoint,
@@ -356,19 +358,18 @@ public class RaidManager implements IRaiderManager
             }
             else
             {
-                final String biomePath = ForgeRegistries.BIOMES.getKey(colony.getWorld().getBiome(targetSpawnPoint).value()).getPath().toLowerCase();
                 final HordeRaidEvent event;
-                if (((biomePath.contains(DESERT_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
+                if (((biome.is(BiomeTags.HAS_DESERT_PYRAMID) || (rand > IGNORE_BIOME_CHANCE && rand < IGNORE_BIOME_CHANCE * 2))
                        && raidType.isEmpty()) || raidType.equals(EgyptianRaidEvent.EGYPTIAN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new EgyptianRaidEvent(colony);
                 }
-                else if (((biomePath.contains(JUNGLE_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
+                else if (((biome.is(BiomeTags.IS_JUNGLE) || (rand > IGNORE_BIOME_CHANCE * 2 && rand < IGNORE_BIOME_CHANCE * 3)
                                                                     && raidType.isEmpty())) || (raidType.equals(AmazonRaidEvent.AMAZON_RAID_EVENT_TYPE_ID.getPath())))
                 {
                     event = new AmazonRaidEvent(colony);
                 }
-                else if (((biomePath.contains(TAIGA_BIOME_ID) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
+                else if (((biome.is(BiomeTags.IS_TAIGA) || (rand > IGNORE_BIOME_CHANCE * 3 && rand < IGNORE_BIOME_CHANCE * 4))
                             && raidType.isEmpty()) || raidType.equals(NorsemenRaidEvent.NORSEMEN_RAID_EVENT_TYPE_ID.getPath()))
                 {
                     event = new NorsemenRaidEvent(colony);
@@ -694,8 +695,7 @@ public class RaidManager implements IRaiderManager
           canRaid()
             &&
             (
-              raidThisNight(colony.getWorld(), colony)
-                || ForgeRegistries.BIOMES.getKey(colony.getWorld().getBiome(colony.getCenter()).value()).getPath().contains("desert") && colony.getWorld().isRaining()
+              raidThisNight(colony.getWorld(), colony) || colony.getWorld().getBiome(colony.getCenter()).is(BiomeTags.HAS_DESERT_PYRAMID) && colony.getWorld().isRaining()
             );
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())

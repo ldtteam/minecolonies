@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED;
 
@@ -298,7 +299,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     }
 
     @Override
-    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final BlockState virtualBlockAbove)
+    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final Function<BlockPos, BlockState> virtualBlocks)
     {
         return structureAI.getSolidSubstitution(worldPos);
     }

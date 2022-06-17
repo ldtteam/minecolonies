@@ -11,6 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
+
 /**
  * Load only structure handler just to get dimensions etc from structures, not for placement specific for worker usage.
  */
@@ -44,7 +46,7 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
     }
 
     @Override
-    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final BlockState virtualBlockAbove)
+    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final Function<BlockPos, BlockState> virtualBlocks)
     {
         return structureAI.getSolidSubstitution(worldPos);
     }

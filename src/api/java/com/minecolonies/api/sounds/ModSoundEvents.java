@@ -1,14 +1,14 @@
 package com.minecolonies.api.sounds;
 
-import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.*;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,6 +19,8 @@ import java.util.Map;
  */
 public final class ModSoundEvents
 {
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registry.SOUND_EVENT_REGISTRY, Constants.MOD_ID);
+
     /**
      * Map of sound events.
      */
@@ -44,24 +46,24 @@ public final class ModSoundEvents
      *
      * @param registry the registry to register at.
      */
-    public static void registerSounds(final IForgeRegistry<SoundEvent> registry)
+    static
     {
-        for (final JobEntry job : IJobRegistry.getInstance().getValues())
+        for (final ResourceLocation job : ModJobs.getJobs())
         {
-            if (job.getKey().getNamespace().equals(Constants.MOD_ID) && !job.getKey().getPath().equals("placeholder"))
+            if (job.getNamespace().equals(Constants.MOD_ID) && !job.getPath().equals("placeholder"))
             {
                 final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = new HashMap<>();
                 for (final EventType soundEvents : EventType.values())
                 {
-                    final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob." + job.getKey().getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US));
+                    final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob." + job.getPath() + ".male." + soundEvents.name().toLowerCase(Locale.US));
                     final SoundEvent femaleSoundEvent =
-                      ModSoundEvents.getSoundID("mob." + job.getKey().getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US));
+                      ModSoundEvents.getSoundID("mob." + job.getPath() + ".female." + soundEvents.name().toLowerCase(Locale.US));
 
-                    registry.register(maleSoundEvent.getLocation(), maleSoundEvent);
-                    registry.register(femaleSoundEvent.getLocation(), femaleSoundEvent);
+                    SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () -> maleSoundEvent);
+                    SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(),  () -> femaleSoundEvent);
                     map.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
                 }
-                CITIZEN_SOUND_EVENTS.put(job.getKey().getPath(), map);
+                CITIZEN_SOUND_EVENTS.put(job.getPath(), map);
             }
         }
 
@@ -71,8 +73,8 @@ public final class ModSoundEvents
             final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob.citizen.male." + soundEvents.name().toLowerCase(Locale.US));
             final SoundEvent femaleSoundEvent = ModSoundEvents.getSoundID("mob.citizen.female." + soundEvents.name().toLowerCase(Locale.US));
 
-            registry.register(maleSoundEvent.getLocation(), maleSoundEvent);
-            registry.register(femaleSoundEvent.getLocation(), femaleSoundEvent);
+            SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () ->  maleSoundEvent);
+            SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(), () ->  femaleSoundEvent);
             citizenMap.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
         }
         CITIZEN_SOUND_EVENTS.put("citizen", citizenMap);
@@ -83,13 +85,13 @@ public final class ModSoundEvents
             final SoundEvent maleSoundEvent = ModSoundEvents.getSoundID("mob.child.male." + soundEvents.name().toLowerCase(Locale.US));
             final SoundEvent femaleSoundEvent = ModSoundEvents.getSoundID("mob.child.female." + soundEvents.name().toLowerCase(Locale.US));
 
-            registry.register(maleSoundEvent.getLocation(), maleSoundEvent);
-            registry.register(femaleSoundEvent.getLocation(), femaleSoundEvent);
+            SOUND_EVENTS.register(maleSoundEvent.getLocation().getPath(), () ->  maleSoundEvent);
+            SOUND_EVENTS.register(femaleSoundEvent.getLocation().getPath(), () ->  femaleSoundEvent);
             childMap.put(soundEvents, new Tuple<>(maleSoundEvent, femaleSoundEvent));
         }
         CITIZEN_SOUND_EVENTS.put("child", childMap);
 
-        registry.register(TavernSounds.tavernTheme.getLocation(), TavernSounds.tavernTheme);
+        SOUND_EVENTS.register(TavernSounds.tavernTheme.getLocation().getPath(), () -> TavernSounds.tavernTheme);
 
         for (final RaiderType raiderType : RaiderType.values())
         {
@@ -97,9 +99,9 @@ public final class ModSoundEvents
             final SoundEvent raiderDeath = ModSoundEvents.getSoundID("mob." + raiderType.name().toLowerCase(Locale.US) + ".death");
             final SoundEvent raiderSay = ModSoundEvents.getSoundID("mob." + raiderType.name().toLowerCase(Locale.US) + ".say");
 
-            registry.register(raiderHurt.getLocation(), raiderHurt);
-            registry.register(raiderDeath.getLocation(), raiderDeath);
-            registry.register(raiderSay.getLocation(), raiderSay);
+            SOUND_EVENTS.register(raiderHurt.getLocation().getPath(), () ->  raiderHurt);
+            SOUND_EVENTS.register(raiderDeath.getLocation().getPath(), () ->  raiderDeath);
+            SOUND_EVENTS.register(raiderSay.getLocation().getPath(), () ->  raiderSay);
 
             final Map<RaiderSounds.RaiderSoundTypes, SoundEvent> sounds = new HashMap<>();
             sounds.put(RaiderSounds.RaiderSoundTypes.HURT, raiderHurt);
@@ -110,24 +112,24 @@ public final class ModSoundEvents
         }
 
         SAW = ModSoundEvents.getSoundID("tile.sawmill.saw");
-        registry.register(SAW.getLocation(), SAW);
+        SOUND_EVENTS.register(SAW.getLocation().getPath(), () -> SAW);
 
-        registry.register(RaidSounds.WARNING.getLocation(), RaidSounds.WARNING);
-        registry.register(RaidSounds.WARNING_EARLY.getLocation(), RaidSounds.WARNING_EARLY);
-        registry.register(RaidSounds.VICTORY.getLocation(), RaidSounds.VICTORY);
-        registry.register(RaidSounds.VICTORY_EARLY.getLocation(), RaidSounds.VICTORY_EARLY);
+        SOUND_EVENTS.register(RaidSounds.WARNING.getLocation().getPath(), () -> RaidSounds.WARNING);
+        SOUND_EVENTS.register(RaidSounds.WARNING_EARLY.getLocation().getPath(), () -> RaidSounds.WARNING_EARLY);
+        SOUND_EVENTS.register(RaidSounds.VICTORY.getLocation().getPath(), () -> RaidSounds.VICTORY);
+        SOUND_EVENTS.register(RaidSounds.VICTORY_EARLY.getLocation().getPath(), () -> RaidSounds.VICTORY_EARLY);
 
-        registry.register(RaidSounds.AMAZON_RAID.getLocation(), RaidSounds.AMAZON_RAID);
+        SOUND_EVENTS.register(RaidSounds.AMAZON_RAID.getLocation().getPath(), () -> RaidSounds.AMAZON_RAID);
 
-        registry.register(RaidSounds.DESERT_RAID.getLocation(), RaidSounds.DESERT_RAID);
-        registry.register(RaidSounds.DESERT_RAID_WARNING.getLocation(), RaidSounds.DESERT_RAID_WARNING);
+        SOUND_EVENTS.register(RaidSounds.DESERT_RAID.getLocation().getPath(), () -> RaidSounds.DESERT_RAID);
+        SOUND_EVENTS.register(RaidSounds.DESERT_RAID_WARNING.getLocation().getPath(), () -> RaidSounds.DESERT_RAID_WARNING);
 
-        registry.register(MercenarySounds.mercenaryAttack.getLocation(), MercenarySounds.mercenaryAttack);
-        registry.register(MercenarySounds.mercenaryCelebrate.getLocation(), MercenarySounds.mercenaryCelebrate);
-        registry.register(MercenarySounds.mercenaryDie.getLocation(), MercenarySounds.mercenaryDie);
-        registry.register(MercenarySounds.mercenaryHurt.getLocation(), MercenarySounds.mercenaryHurt);
-        registry.register(MercenarySounds.mercenarySay.getLocation(), MercenarySounds.mercenarySay);
-        registry.register(MercenarySounds.mercenaryStep.getLocation(), MercenarySounds.mercenaryStep);
+        SOUND_EVENTS.register(MercenarySounds.mercenaryAttack.getLocation().getPath(), () -> MercenarySounds.mercenaryAttack);
+        SOUND_EVENTS.register(MercenarySounds.mercenaryCelebrate.getLocation().getPath(), () -> MercenarySounds.mercenaryCelebrate);
+        SOUND_EVENTS.register(MercenarySounds.mercenaryDie.getLocation().getPath(), () -> MercenarySounds.mercenaryDie);
+        SOUND_EVENTS.register(MercenarySounds.mercenaryHurt.getLocation().getPath(), () -> MercenarySounds.mercenaryHurt);
+        SOUND_EVENTS.register(MercenarySounds.mercenarySay.getLocation().getPath(), () -> MercenarySounds.mercenarySay);
+        SOUND_EVENTS.register(MercenarySounds.mercenaryStep.getLocation().getPath(), () -> MercenarySounds.mercenaryStep);
     }
 
     /**
