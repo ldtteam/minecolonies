@@ -1,12 +1,17 @@
 {
   "type": "minecolonies:empty_colony",
 
-  "config": {
-    "start_pool": "minecolonies:medieval_birch_pool",
-    "size": 10
-  },
+  "start_pool": "minecolonies:asian_pool",
+  "size": 8,
+  "max_distance_from_center": 80,
+  "step": "surface_structures",
 
-  "biomes": "#minecolonies:has_structure/medieval_birch_colony",
+  "biomes": "#minecolonies:has_structure/asian_colony",
+
+  "start_height": {
+    "above_bottom": 32
+  },
+  "terrain_adaptation": "beard_box",
 
   "adapt_noise": true,
   "spawn_overrides": {

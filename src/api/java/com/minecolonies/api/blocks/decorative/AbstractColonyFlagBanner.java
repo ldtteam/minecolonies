@@ -93,7 +93,7 @@ public abstract class AbstractColonyFlagBanner<B extends AbstractColonyFlagBanne
     @Override
     public AbstractColonyFlagBanner<B> registerBlock(final IForgeRegistry<Block> registry)
     {
-        registry.register(REGISTRY_NAME, this);
+        registry.register(getRegistryName(), this);
         return this;
     }
 
