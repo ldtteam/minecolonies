@@ -2,41 +2,38 @@ package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.FluidState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.Registry;
-import net.minecraft.world.*;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.NIGHT;
 import static com.minecolonies.api.util.constant.CitizenConstants.NOON;
-
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.dimension.DimensionType;
 
 /**
  * Class which has world related util functions like chunk load checks
@@ -68,7 +65,7 @@ public class WorldUtil
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
             final CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>
-              future = ((ServerChunkCache)world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false);
+              future = ((ServerChunkCache) world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false);
 
             return future.isDone() && future.getNow(ChunkHolder.UNLOADED_CHUNK).left().isPresent();
         }
@@ -283,7 +280,8 @@ public class WorldUtil
         if ((flags & 2) != 0)
         {
             final Set<Mob> navigators = ((ServerLevel) world).navigatingMobs;
-            ((ServerLevel) world).navigatingMobs.clear();;
+            ((ServerLevel) world).navigatingMobs.clear();
+            ;
             final boolean result = world.setBlock(pos, state, flags);
             ((ServerLevel) world).navigatingMobs.addAll(navigators);
             return result;
@@ -334,5 +332,40 @@ public class WorldUtil
         return world.getEntitiesOfClass(clazz,
           new AABB(corners.getA().getX(), corners.getA().getY(), corners.getA().getZ(), corners.getB().getX(), corners.getB().getY(), corners.getB().getZ()),
           predicate);
+    }
+
+    /**
+     * Returns a dimensions max height
+     *
+     * @param dimensionType
+     * @return
+     */
+    public static int getDimensionMaxHeight(final DimensionType dimensionType)
+    {
+        return dimensionType.logicalHeight() + dimensionType.minY();
+    }
+
+    /**
+     * Returns a dimension min height
+     *
+     * @param dimensionType
+     * @return
+     */
+    public static int getDimensionMinHeight(final DimensionType dimensionType)
+    {
+        return dimensionType.minY();
+    }
+
+    /**
+     * Check if a given block y is within world bounds
+     *
+     * @param yBlock
+     * @param world
+     * @return
+     */
+    public static boolean isInWorldHeight(final int yBlock, final Level world)
+    {
+        final DimensionType dimensionType = world.dimensionType();
+        return yBlock > getDimensionMinHeight(dimensionType) && yBlock < getDimensionMaxHeight(dimensionType);
     }
 }

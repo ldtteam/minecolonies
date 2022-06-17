@@ -101,8 +101,9 @@ public final class BlockPosUtil
      * @return the resulting compound.
      */
     @NotNull
-    public static CompoundTag writeOptional(@NotNull final CompoundTag compound, @NotNull final String name,
-                                            @Nullable final BlockPos value)
+    public static CompoundTag writeOptional(
+      @NotNull final CompoundTag compound, @NotNull final String name,
+      @Nullable final BlockPos value)
     {
         if (value != null)
         {
@@ -495,7 +496,7 @@ public final class BlockPosUtil
         final int y1 = pos.getY() & ~15;
         final int z1 = pos.getZ() & ~15;
         return new BoundingBox(x1 - blockRadius, y1 - blockRadius, z1 - blockRadius,
-                x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
+          x1 + blockRadius + 15, y1 + blockRadius + 15, z1 + blockRadius + 15);
     }
 
     /**
@@ -567,7 +568,6 @@ public final class BlockPosUtil
     }
 
     /**
-     *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
      * @return True when XYZ is found, an set moving to, otherwise false.
@@ -583,7 +583,6 @@ public final class BlockPosUtil
     }
 
     /**
-     *
      * @param living      A living entity.
      * @param destination chunk coordinates to check moving to.
      * @return True when XYZ is found, an set moving to, otherwise false.
@@ -873,7 +872,7 @@ public final class BlockPosUtil
             y_offset = y_offset > 0 ? y_offset + 1 : y_offset - 1;
             y_offset *= -1;
 
-            if (world.getHeight() <= start.getY() + y)
+            if (!WorldUtil.isInWorldHeight(start.getY() + y, world))
             {
                 return null;
             }
