@@ -118,7 +118,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
             }
         }
         
-        return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.delivery;
+        return !data.isChild() && data.getJobView() != null && data.getJobView().getEntry() == ModJobs.delivery.get();
     }
 
     @Override
@@ -143,6 +143,6 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
     @Override
     public JobEntry getJobEntry()
     {
-        return ModJobs.delivery;
+        return ModJobs.delivery.get();
     }
 }

@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
 /**
@@ -32,7 +33,10 @@ public class ModParticleTypesInitializer
         @SubscribeEvent
         public static void registerParticles(final RegisterEvent event)
         {
-            event.getForgeRegistry().register(SLEEPING_TEXTURE, SLEEPINGPARTICLE_TYPE);
+            if (event.getRegistryKey().equals(ForgeRegistries.Keys.PARTICLE_TYPES))
+            {
+                event.getForgeRegistry().register(SLEEPING_TEXTURE, SLEEPINGPARTICLE_TYPE);
+            }
         }
     }
 

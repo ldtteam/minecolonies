@@ -6,7 +6,6 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.crafting.CountedIngredient;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
-import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
 import net.minecraft.world.level.block.state.BlockState;
@@ -88,12 +87,6 @@ public abstract class CommonProxy implements IProxy
     public void setupApi()
     {
         MinecoloniesAPIProxy.getInstance().setApiInstance(apiImpl);
-    }
-
-    @SubscribeEvent
-    public static void registerRecipeTypes(final RegisterEvent event)
-    {
-        ModRecipeTypesInitializer.init(event);
     }
 
     @SubscribeEvent

@@ -4,32 +4,29 @@ import com.minecolonies.api.crafting.ClassicRecipe;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.MultiOutputRecipe;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
+import com.minecolonies.api.util.constant.Constants;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class ModRecipeTypesInitializer
 {
+    public final static DeferredRegister<RecipeTypeEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "recipetypeentries"), Constants.MOD_ID);
 
     private ModRecipeTypesInitializer()
     {
         throw new IllegalStateException("Tried to initialize: ModRecipeTypesInitializer but this is a Utility class.");
     }
 
-    public static void init(final RegisterEvent event)
+    static
     {
-        final IForgeRegistry<RecipeTypeEntry> reg = event.getForgeRegistry();
-
-        ModRecipeTypes.Classic = new RecipeTypeEntry.Builder()
+        ModRecipeTypes.Classic = DEFERRED_REGISTER.register(ModRecipeTypes.CLASSIC_ID.getPath(), () -> new RecipeTypeEntry.Builder()
                                 .setRecipeTypeProducer(ClassicRecipe::new)
                                 .setRegistryName(ModRecipeTypes.CLASSIC_ID)
-                                .createRecipeTypeEntry();
+                                .createRecipeTypeEntry());
 
-        ModRecipeTypes.MultiOutput = new RecipeTypeEntry.Builder()
+        ModRecipeTypes.MultiOutput = DEFERRED_REGISTER.register(ModRecipeTypes.MULTI_OUTPUT_ID.getPath(), () -> new RecipeTypeEntry.Builder()
                                 .setRecipeTypeProducer(MultiOutputRecipe::new)
                                 .setRegistryName(ModRecipeTypes.MULTI_OUTPUT_ID)
-                                .createRecipeTypeEntry();
-
-        reg.register(ModRecipeTypes.CLASSIC_ID, ModRecipeTypes.Classic);
-        reg.register(ModRecipeTypes.MULTI_OUTPUT_ID, ModRecipeTypes.MultiOutput);
+                                .createRecipeTypeEntry());
     }
 }
