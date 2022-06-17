@@ -20,6 +20,6 @@ public class BlockHutMechanic extends AbstractBlockHut<BlockHutMechanic>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.mechanic;
+        return ModBuildings.mechanic.get();
     }
 }

@@ -93,7 +93,7 @@ public class BuildingShepherd extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.shepherd, EntityType.SHEEP, new ItemStack(Items.WHEAT, 2));
+            super(ModJobs.shepherd.get(), EntityType.SHEEP, new ItemStack(Items.WHEAT, 2));
         }
 
         @Override

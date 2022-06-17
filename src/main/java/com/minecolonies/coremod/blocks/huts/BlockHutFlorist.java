@@ -17,6 +17,6 @@ public class BlockHutFlorist extends AbstractBlockHut<BlockHutFlorist>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.florist;
+        return ModBuildings.florist.get();
     }
 }

@@ -16,6 +16,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.debug.ChunkBorderRenderer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 
@@ -45,6 +46,7 @@ public class ColonyBorderRenderer
             return;
         }
 
+        /* todo: Nightenom
         final ChunkPos playerChunkPos = new ChunkPos(ctx.clientPlayer.blockPosition());
 
         if (lastColony != ctx.nearestColony || !lastPlayerChunkPos.equals(playerChunkPos))
@@ -90,9 +92,10 @@ public class ColonyBorderRenderer
         WorldRenderMacros.LINES.setupRenderState();
         BufferUploader._end(p.getSecond(), ds.mode(), ds.format(), ds.vertexCount(), ds.indexType(), ds.indexCount(), ds.sequentialIndex());
         WorldRenderMacros.LINES.clearRenderState();
-        MatrixUtils.popShaderMVstack();
+        MatrixUtils.popShaderMVstack();*/
     }
 
+    /* todo: Nightenom
     private static Pair<DrawState, ByteBuffer> draw(final BufferBuilder bufferbuilder,
         final Map<ChunkPos, Integer> mapToDraw,
         final int playerColonyId,
@@ -285,5 +288,5 @@ public class ColonyBorderRenderer
         temp.order(preResult.getSecond().order()); // FORGE: Fix incorrect byte order
         temp.put(preResult.getSecond());
         return Pair.of(preResult.getFirst(), temp);
-    }
+    }*/
 }

@@ -128,8 +128,8 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         user.swing(InteractionHand.MAIN_HAND);
 
-        final int level = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getSecondarySkill());
-        final int time = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.getPrimarySkill()) * 20;
+        final int level = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.get().getSecondarySkill());
+        final int time = user.getCitizenData().getCitizenSkillHandler().getLevel(ModGuardTypes.druid.get().getPrimarySkill()) * 20;
 
         final float inaccuracy = 99f / level;
         final MobEffect effect;

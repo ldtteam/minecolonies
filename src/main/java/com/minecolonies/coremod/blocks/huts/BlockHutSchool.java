@@ -26,6 +26,6 @@ public class BlockHutSchool extends AbstractBlockHut<BlockHutSchool>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.school;
+        return ModBuildings.school.get();
     }
 }

@@ -90,7 +90,7 @@ public class BuildingCowboy extends AbstractBuilding
     {
         public MilkingModule()
         {
-            super(ModJobs.cowboy);
+            super(ModJobs.cowboy.get());
         }
 
         @NotNull

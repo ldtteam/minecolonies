@@ -26,7 +26,7 @@ public class BlockHutNetherWorker extends AbstractBlockHut<BlockHutNetherWorker>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.netherWorker;
+        return ModBuildings.netherWorker.get();
     }
     
 }

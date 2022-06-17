@@ -260,7 +260,7 @@ public final class StandardRequests
             int posInList = -1;
             for (IBuildingView view : colony.getBuildings())
             {
-                if (view.getBuildingType() == ModBuildings.deliveryman)
+                if (view.getBuildingType() == ModBuildings.deliveryman.get())
                 {
                     posInList = getPosInList(colony, view, getId());
                     if (posInList >= 0)

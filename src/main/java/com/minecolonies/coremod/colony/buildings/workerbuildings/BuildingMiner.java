@@ -124,7 +124,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     @Override
     public int getResourceBatchMultiplier() 
     {
-        if (getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.quarrier).getAssignedCitizen().isEmpty())
+        if (getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.quarrier.get()).getAssignedCitizen().isEmpty())
         {
             //Ask for 10x the resources if possible
             return 10;

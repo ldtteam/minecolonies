@@ -51,6 +51,6 @@ public class SimpleCraftingModule extends AbstractCraftingBuildingModule.Craftin
     @Override
     public Set<CraftingType> getSupportedCraftingTypes()
     {
-        return Set.of(ModCraftingTypes.SMALL_CRAFTING);
+        return Set.of(ModCraftingTypes.SMALL_CRAFTING.get());
     }
 }

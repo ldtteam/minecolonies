@@ -114,7 +114,7 @@ public class ResearchManager implements IResearchManager
                 Map<BlockPos, IBuilding> buildings = colony.getBuildingManager().getBuildings();
                 for (Map.Entry<BlockPos, IBuilding> building : buildings.entrySet())
                 {
-                    if (building.getValue().getBuildingType() == ModBuildings.university)
+                    if (building.getValue().getBuildingType() == ModBuildings.university.get())
                     {
                         if (building.getValue().getBuildingLevel() > level)
                         {

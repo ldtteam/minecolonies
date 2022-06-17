@@ -20,6 +20,6 @@ public class BlockHutAlchemist extends AbstractBlockHut<BlockHutAlchemist>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.alchemist;
+        return ModBuildings.alchemist.get();
     }
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.api.compatibility;
 
 import com.google.common.collect.*;
+import com.ldtteam.domumornamentum.recipe.ModRecipeSerializers;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -8,6 +9,7 @@ import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.api.compatibility.tinkers.TinkersToolHelper;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.core.Holder;
@@ -526,7 +528,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (compostRecipes.isEmpty())
         {
-            for (final Recipe<?> r : recipeManager.byType(CompostRecipe.TYPE).values())
+            for (final Recipe<?> r : recipeManager.byType(ModRecipeSerializer.CompostRecipeType.get()).values())
             {
                 final CompostRecipe recipe = (CompostRecipe) r;
                 for (final ItemStack stack : recipe.getInput().getItems())

@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.generation;
 
 import com.google.common.collect.Sets;
+import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.data.CachedOutput;
@@ -59,31 +61,18 @@ public abstract class CustomRecipeProvider implements DataProvider
             }
             else
             {
-                saveRecipe(cache, recipe.serializeRecipe(), path.resolve("data/" + recipe.getId().getNamespace() + "/crafterrecipes/" + recipe.getId().getPath() + ".json"));
-            }
-        });
-    }
-
-    private static void saveRecipe(final CachedOutput cache, final JsonObject jsonObject, final Path recipeJson)
-    {
-        try
-        {
-            final String json = GSON.toJson(jsonObject);
-            final String hash = SHA1.hashUnencodedChars(json).toString();
-            if (!Objects.equals(cache.getHash(recipeJson), hash) || !Files.exists(recipeJson))
-            {
-                Files.createDirectories(recipeJson.getParent());
-
-                try (final BufferedWriter bufferedwriter = Files.newBufferedWriter(recipeJson))
+                try
                 {
-                    bufferedwriter.write(json);
+                    DataProvider.saveStable(cache,
+                      recipe.serializeRecipe(),
+                      path.resolve("data/" + recipe.getId().getNamespace() + "/crafterrecipes/" + recipe.getId().getPath() + ".json"));
+                }
+                catch (IOException e)
+                {
+                    Log.getLogger().error("Error saving recipe", e);
                 }
             }
-
-            cache.putNew(recipeJson, hash);
-        } catch (IOException ioexception) {
-            LOGGER.error("Couldn't save recipe {}", recipeJson, ioexception);
-        }
+        });
     }
 
     protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);

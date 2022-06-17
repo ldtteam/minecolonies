@@ -97,13 +97,13 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
     protected void init()
     {
         super.init();
-        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.BREWING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
+        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.BREWING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowBrewingstandCrafting.OnButtonPress());
         this.addRenderableWidget(doneButton);
-        if (!module.canLearn(ModCraftingTypes.BREWING))
+        if (!module.canLearn(ModCraftingTypes.BREWING.get()))
         {
             doneButton.active = false;
         }
@@ -114,7 +114,7 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
         @Override
         public void onPress(@NotNull final Button button)
         {
-            if (module.canLearn(ModCraftingTypes.BREWING))
+            if (module.canLearn(ModCraftingTypes.BREWING.get()))
             {
                 final List<ItemStorage> input = new ArrayList<>();
                 input.add(new ItemStorage(container.slots.get(0).getItem()));

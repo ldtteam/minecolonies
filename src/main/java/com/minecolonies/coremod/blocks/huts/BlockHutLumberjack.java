@@ -26,6 +26,6 @@ public class BlockHutLumberjack extends AbstractBlockHut<BlockHutLumberjack>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.lumberjack;
+        return ModBuildings.lumberjack.get();
     }
 }

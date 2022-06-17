@@ -26,6 +26,6 @@ public class MediumQuarry extends AbstractBlockHut<MediumQuarry>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.mediumQuarry;
+        return ModBuildings.mediumQuarry.get();
     }
 }

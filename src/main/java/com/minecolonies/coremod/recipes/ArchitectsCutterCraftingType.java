@@ -29,15 +29,15 @@ public class ArchitectsCutterCraftingType extends RecipeCraftingType<Container, 
 {
     public ArchitectsCutterCraftingType()
     {
-        super(ModCraftingTypes.ARCHITECTS_CUTTER_ID, ModRecipeTypes.ARCHITECTS_CUTTER, null);
+        super(ModCraftingTypes.ARCHITECTS_CUTTER_ID, ModRecipeTypes.ARCHITECTS_CUTTER.get(), null);
     }
 
     @Override
     public @NotNull List<IGenericRecipe> findRecipes(@NotNull RecipeManager recipeManager, @Nullable Level world)
     {
-        final Random rnd = world == null ? new Random() : world.getRandom();
+        final Random rnd = new Random();
         final List<IGenericRecipe> recipes = new ArrayList<>();
-        for (final ArchitectsCutterRecipe recipe : recipeManager.getAllRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER))
+        for (final ArchitectsCutterRecipe recipe : recipeManager.getAllRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get()))
         {
             // cutter recipes don't implement getIngredients(), so we have to work around it
             final Block generatedBlock = ForgeRegistries.BLOCKS.getValue(recipe.getBlockName());

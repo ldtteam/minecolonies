@@ -43,6 +43,6 @@ public class BlockHutWareHouse extends AbstractBlockHut<BlockHutWareHouse>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.wareHouse;
+        return ModBuildings.wareHouse.get();
     }
 }

@@ -42,6 +42,6 @@ public class BlockHutGraveyard extends AbstractBlockHut<BlockHutGraveyard>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.graveyard;
+        return ModBuildings.graveyard.get();
     }
 }

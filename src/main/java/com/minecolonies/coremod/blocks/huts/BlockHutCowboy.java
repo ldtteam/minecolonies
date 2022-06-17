@@ -26,6 +26,6 @@ public class BlockHutCowboy extends AbstractBlockHut<BlockHutCowboy>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.cowboy;
+        return ModBuildings.cowboy.get();
     }
 }

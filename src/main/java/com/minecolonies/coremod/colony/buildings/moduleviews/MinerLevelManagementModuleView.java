@@ -84,7 +84,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
     {
         for (final WorkerBuildingModuleView workerBuildingModuleView : buildingView.getModuleViews(WorkerBuildingModuleView.class))
         {
-            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarrier && !workerBuildingModuleView.getAssignedCitizens().isEmpty())
+            if (workerBuildingModuleView.getJobEntry() == ModJobs.quarrier.get() && !workerBuildingModuleView.getAssignedCitizens().isEmpty())
             {
                 return false;
             }
@@ -103,7 +103,7 @@ public class MinerLevelManagementModuleView extends AbstractBuildingModuleView
         final int depth = levelsInfo.get(row).getB();
         for (final IWorkOrderView wo : workOrders)
         {
-            if (wo.getDisplayName().getContents().contains("main") && wo.getLocation().getY() == depth)
+            if (wo.getDisplayName().getString().contains("main") && wo.getLocation().getY() == depth)
             {
                 return true;
             }

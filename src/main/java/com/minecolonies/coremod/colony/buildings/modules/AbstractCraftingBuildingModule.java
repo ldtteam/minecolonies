@@ -929,13 +929,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public Set<CraftingType> getSupportedCraftingTypes()
         {
-            return Set.of(ModCraftingTypes.SMALL_CRAFTING, ModCraftingTypes.LARGE_CRAFTING);
+            return Set.of(ModCraftingTypes.SMALL_CRAFTING.get(), ModCraftingTypes.LARGE_CRAFTING.get());
         }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearn(ModCraftingTypes.SMALL_CRAFTING) &&
+            return canLearn(ModCraftingTypes.SMALL_CRAFTING.get()) &&
                     recipe.getIntermediate() == Blocks.AIR;
         }
 
@@ -966,13 +966,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public Set<CraftingType> getSupportedCraftingTypes()
         {
-            return Set.of(ModCraftingTypes.SMELTING);
+            return Set.of(ModCraftingTypes.SMELTING.get());
         }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearn(ModCraftingTypes.SMELTING) &&
+            return canLearn(ModCraftingTypes.SMELTING.get()) &&
                      recipe.getIntermediate() == Blocks.FURNACE;
         }
 
@@ -1003,13 +1003,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @Override
         public Set<CraftingType> getSupportedCraftingTypes()
         {
-            return ImmutableSet.of(ModCraftingTypes.BREWING);
+            return ImmutableSet.of(ModCraftingTypes.BREWING.get());
         }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearn(ModCraftingTypes.BREWING) &&
+            return canLearn(ModCraftingTypes.BREWING.get()) &&
                      recipe.getIntermediate() == Blocks.BREWING_STAND;
         }
 

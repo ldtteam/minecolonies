@@ -1,6 +1,7 @@
 package com.minecolonies.api.crafting;
 
 import com.google.gson.JsonObject;
+import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.util.constant.Constants;
@@ -26,9 +27,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class CompostRecipe implements Recipe<Container>
 {
-    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "composting");
-    public static final RecipeType<CompostRecipe> TYPE = RecipeType.register(ID.toString());
-
     private static final int FERMENT_TIME = 24000;
     private static final int COMPOST_RESULT = 6;
 
@@ -48,7 +46,7 @@ public class CompostRecipe implements Recipe<Container>
 
     @NotNull
     @Override
-    public RecipeType<?> getType() { return TYPE; }
+    public RecipeType<?> getType() { return ModRecipeSerializer.CompostRecipeType.get(); }
 
     @NotNull
     @Override
@@ -108,7 +106,7 @@ public class CompostRecipe implements Recipe<Container>
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return Serializer.getInstance();
+        return ModRecipeSerializer.CompostRecipeSerializer.get();
     }
 
     /**
@@ -141,12 +139,6 @@ public class CompostRecipe implements Recipe<Container>
 
     public static class Serializer implements RecipeSerializer<CompostRecipe>
     {
-        private static final Serializer INSTANCE = new Serializer();
-
-        public static Serializer getInstance() { return INSTANCE; }
-
-        private Serializer() { }
-
         @NotNull
         @Override
         public CompostRecipe fromJson(@NotNull final ResourceLocation recipeId, @NotNull final JsonObject json)

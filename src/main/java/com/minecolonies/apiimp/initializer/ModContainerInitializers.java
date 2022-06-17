@@ -21,7 +21,7 @@ public class ModContainerInitializers
     static
     {
         ModContainers.craftingFurnace = CONTAINERS.register("crafting_furnace", () -> IForgeMenuType.create(ContainerCraftingFurnace::fromFriendlyByteBuf));
-        ModContainers.buildingInv = CONTAINERS.register("crafting_furnace", () -> IForgeMenuType.create(ContainerBuildingInventory::fromFriendlyByteBuf));
+        ModContainers.buildingInv = CONTAINERS.register("building_inv", () -> IForgeMenuType.create(ContainerBuildingInventory::fromFriendlyByteBuf));
         ModContainers.citizenInv = CONTAINERS.register("citizen_inv", () -> IForgeMenuType.create(ContainerCitizenInventory::fromFriendlyByteBuf));
         ModContainers.craftingGrid = CONTAINERS.register("crafting_building", () -> IForgeMenuType.create(ContainerCrafting::fromFriendlyByteBuf));
         ModContainers.rackInv = CONTAINERS.register("rack_inv", () -> IForgeMenuType.create(ContainerRack::fromFriendlyByteBuf));

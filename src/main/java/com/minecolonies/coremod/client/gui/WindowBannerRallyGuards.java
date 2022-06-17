@@ -121,9 +121,9 @@ public class WindowBannerRallyGuards extends AbstractWindowSkeleton
             if (guardTowerView != null)
             {
                 exampleStackDisplay.setItem(new ItemStack(Items.IRON_SWORD));
-                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(Component.translatable(ModGuardTypes.knight.getJobTranslationKey())
+                rowPane.findPaneOfTypeByID(LABEL_GUARDTYPE, Text.class).setText(Component.translatable(ModGuardTypes.knight.get().getJobTranslationKey())
                   .append("|")
-                  .append(Component.translatable(ModGuardTypes.ranger.getJobTranslationKey()))
+                  .append(Component.translatable(ModGuardTypes.ranger.get().getJobTranslationKey()))
                   .append(": ")
                   .append(String.valueOf(guardTowerView.getGuards().size())));
                 rowPane.findPaneOfTypeByID(LABEL_POSITION, Text.class).setText(Component.literal(guardTower.getFirst().toString()));

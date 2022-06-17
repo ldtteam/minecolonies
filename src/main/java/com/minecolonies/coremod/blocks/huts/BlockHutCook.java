@@ -26,6 +26,6 @@ public class BlockHutCook extends AbstractBlockHut<BlockHutCook>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.cook;
+        return ModBuildings.cook.get();
     }
 }

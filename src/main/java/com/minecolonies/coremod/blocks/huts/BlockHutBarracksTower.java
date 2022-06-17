@@ -29,6 +29,6 @@ public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTowe
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.barracksTower;
+        return ModBuildings.barracksTower.get();
     }
 }

@@ -177,11 +177,11 @@ public class CraftingTagAuditor
     private static void doDomumAudit(@NotNull final BufferedWriter writer,
                                      @NotNull final MinecraftServer server) throws IOException
     {
-        final List<IGenericRecipe> cutterRecipes = new ArrayList<>(ModCraftingTypes.ARCHITECTS_CUTTER.findRecipes(server.getRecipeManager(), server.overworld()));
+        final List<IGenericRecipe> cutterRecipes = new ArrayList<>(ModCraftingTypes.ARCHITECTS_CUTTER.get().findRecipes(server.getRecipeManager(), server.overworld()));
         cutterRecipes.sort(Comparator.comparing(r -> ForgeRegistries.ITEMS.getKey(r.getPrimaryOutput().getItem()).toString()));
         final List<ICraftingBuildingModule> crafters = getCraftingModules()
                 .stream()
-                .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER))
+                .filter(m -> m.canLearn(ModCraftingTypes.ARCHITECTS_CUTTER.get()))
                 .collect(Collectors.toList());
 
         writer.write("type,");

@@ -151,7 +151,7 @@ public class GlobalResearchEffect implements IResearchEffect<Double>
     }
 
     @Override
-    public ResearchEffectEntry getRegistryEntry() { return ModResearchEffects.globalResearchEffect; }
+    public ResearchEffectEntry getRegistryEntry() { return ModResearchEffects.globalResearchEffect.get(); }
 
     @Override
     public CompoundTag writeToNBT()

@@ -6,6 +6,7 @@ import com.minecolonies.coremod.Network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -90,9 +91,8 @@ public class PlayAudioMessage implements IMessage
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
-          soundEvent.getLocation(), category,
-          1.0F, 1.0F, false, 0,
-          SoundInstance.Attenuation.NONE, 0, 0, 0, true));
+          soundEvent, category,
+          1.0F, 1.0F, RandomSource.create(), 0.0, 0.0, 0.0));
     }
 
     /**

@@ -182,7 +182,7 @@ public class BuildingBeekeeper extends AbstractBuilding
 
         public HerdingModule()
         {
-            super(ModJobs.beekeeper, EntityType.BEE, ItemStack.EMPTY);
+            super(ModJobs.beekeeper.get(), EntityType.BEE, ItemStack.EMPTY);
         }
 
         @NotNull

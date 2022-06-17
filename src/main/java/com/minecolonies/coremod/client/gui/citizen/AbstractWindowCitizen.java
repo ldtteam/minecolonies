@@ -50,7 +50,7 @@ public abstract class AbstractWindowCitizen extends AbstractWindowRequestTree
 
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library)
+        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get())
         {
             findPaneByID("jobTab").setVisible(true);
             findPaneByID("jobIcon").setVisible(true);

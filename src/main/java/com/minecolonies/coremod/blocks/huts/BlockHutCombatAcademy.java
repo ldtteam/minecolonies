@@ -20,6 +20,6 @@ public class BlockHutCombatAcademy extends AbstractBlockHut<BlockHutCombatAcadem
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.combatAcademy;
+        return ModBuildings.combatAcademy.get();
     }
 }

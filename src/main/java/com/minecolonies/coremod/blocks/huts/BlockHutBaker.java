@@ -26,6 +26,6 @@ public class BlockHutBaker extends AbstractBlockHut<BlockHutBaker>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.bakery;
+        return ModBuildings.bakery.get();
     }
 }

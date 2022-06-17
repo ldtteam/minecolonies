@@ -20,6 +20,6 @@ public class BlockHutCrusher extends AbstractBlockHut<BlockHutCrusher>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.crusher;
+        return ModBuildings.crusher.get();
     }
 }

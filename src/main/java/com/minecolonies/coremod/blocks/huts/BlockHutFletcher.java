@@ -20,6 +20,6 @@ public class BlockHutFletcher extends AbstractBlockHut<BlockHutFletcher>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.fletcher;
+        return ModBuildings.fletcher.get();
     }
 }

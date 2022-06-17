@@ -30,7 +30,7 @@ public abstract class AbstractDOCraftingBuildingModule extends AbstractCraftingB
     @Override
     public Set<CraftingType> getSupportedCraftingTypes()
     {
-        return Set.of(ModCraftingTypes.ARCHITECTS_CUTTER);
+        return Set.of(ModCraftingTypes.ARCHITECTS_CUTTER.get());
     }
 
     @Override

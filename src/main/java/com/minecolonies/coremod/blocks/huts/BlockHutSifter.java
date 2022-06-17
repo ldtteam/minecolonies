@@ -20,6 +20,6 @@ public class BlockHutSifter extends AbstractBlockHut<BlockHutSifter>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.sifter;
+        return ModBuildings.sifter.get();
     }
 }

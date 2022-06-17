@@ -126,31 +126,31 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(FISH_TREASURE).setTranslatedName("Fishers can find treasure outside the ocean"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
-        effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
-        effects.add(new ResearchEffect(ModBuildings.barracks.getBuildingBlock()).setTranslatedName("Unlocks Barracks"));
-        effects.add(new ResearchEffect(ModBuildings.blacksmith.getBuildingBlock()).setTranslatedName("Unlocks Blacksmith's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.combatAcademy.getBuildingBlock()).setTranslatedName("Unlocks Combat Academy"));
-        effects.add(new ResearchEffect(ModBuildings.composter.getBuildingBlock()).setTranslatedName("Unlocks Composter's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.concreteMixer.getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.crusher.getBuildingBlock()).setTranslatedName("Unlocks Crusher's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.dyer.getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.fletcher.getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.florist.getBuildingBlock()).setTranslatedName("Unlocks Flower Shop"));
-        effects.add(new ResearchEffect(ModBuildings.graveyard.getBuildingBlock()).setTranslatedName("Unlocks Graveyard"));
-        effects.add(new ResearchEffect(ModBuildings.glassblower.getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.hospital.getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
-        effects.add(new ResearchEffect(ModBuildings.library.getBuildingBlock()).setTranslatedName("Unlocks Library"));
-        effects.add(new ResearchEffect(ModBuildings.mechanic.getBuildingBlock()).setTranslatedName("Unlocks Mechanic's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.mysticalSite.getBuildingBlock()).setTranslatedName("Unlocks Mystical Site"));
-        effects.add(new ResearchEffect(ModBuildings.plantation.getBuildingBlock()).setTranslatedName("Unlocks Plantation"));
-        effects.add(new ResearchEffect(ModBuildings.sawmill.getBuildingBlock()).setTranslatedName("Unlocks Sawmill"));
-        effects.add(new ResearchEffect(ModBuildings.school.getBuildingBlock()).setTranslatedName("Unlocks School"));
-        effects.add(new ResearchEffect(ModBuildings.sifter.getBuildingBlock()).setTranslatedName("Unlocks Sifter's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.smeltery.getBuildingBlock()).setTranslatedName("Unlocks Smeltery"));
-        effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
-        effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
-        effects.add(new ResearchEffect(ModBuildings.netherWorker.getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
-        effects.add(new ResearchEffect(ModBuildings.alchemist.getBuildingBlock()).setTranslatedName("Unlocks Alchemist"));
+        effects.add(new ResearchEffect(ModBuildings.archery.get().getBuildingBlock()).setTranslatedName("Unlocks Archery"));
+        effects.add(new ResearchEffect(ModBuildings.barracks.get().getBuildingBlock()).setTranslatedName("Unlocks Barracks"));
+        effects.add(new ResearchEffect(ModBuildings.blacksmith.get().getBuildingBlock()).setTranslatedName("Unlocks Blacksmith's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.combatAcademy.get().getBuildingBlock()).setTranslatedName("Unlocks Combat Academy"));
+        effects.add(new ResearchEffect(ModBuildings.composter.get().getBuildingBlock()).setTranslatedName("Unlocks Composter's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.concreteMixer.get().getBuildingBlock()).setTranslatedName("Unlocks Concrete Mixer's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.crusher.get().getBuildingBlock()).setTranslatedName("Unlocks Crusher's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.dyer.get().getBuildingBlock()).setTranslatedName("Unlocks Dyer's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.fletcher.get().getBuildingBlock()).setTranslatedName("Unlocks Fletcher's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.florist.get().getBuildingBlock()).setTranslatedName("Unlocks Flower Shop"));
+        effects.add(new ResearchEffect(ModBuildings.graveyard.get().getBuildingBlock()).setTranslatedName("Unlocks Graveyard"));
+        effects.add(new ResearchEffect(ModBuildings.glassblower.get().getBuildingBlock()).setTranslatedName("Unlocks Glassblower's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.hospital.get().getBuildingBlock()).setTranslatedName("Unlocks Hospital"));
+        effects.add(new ResearchEffect(ModBuildings.library.get().getBuildingBlock()).setTranslatedName("Unlocks Library"));
+        effects.add(new ResearchEffect(ModBuildings.mechanic.get().getBuildingBlock()).setTranslatedName("Unlocks Mechanic's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.mysticalSite.get().getBuildingBlock()).setTranslatedName("Unlocks Mystical Site"));
+        effects.add(new ResearchEffect(ModBuildings.plantation.get().getBuildingBlock()).setTranslatedName("Unlocks Plantation"));
+        effects.add(new ResearchEffect(ModBuildings.sawmill.get().getBuildingBlock()).setTranslatedName("Unlocks Sawmill"));
+        effects.add(new ResearchEffect(ModBuildings.school.get().getBuildingBlock()).setTranslatedName("Unlocks School"));
+        effects.add(new ResearchEffect(ModBuildings.sifter.get().getBuildingBlock()).setTranslatedName("Unlocks Sifter's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.smeltery.get().getBuildingBlock()).setTranslatedName("Unlocks Smeltery"));
+        effects.add(new ResearchEffect(ModBuildings.stoneMason.get().getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
+        effects.add(new ResearchEffect(ModBuildings.stoneSmelter.get().getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
+        effects.add(new ResearchEffect(ModBuildings.netherWorker.get().getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
+        effects.add(new ResearchEffect(ModBuildings.alchemist.get().getBuildingBlock()).setTranslatedName("Unlocks Alchemist"));
 
 
         // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
@@ -170,7 +170,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
             "Blacksmith Learns How to Make Iron Meshes for the Sifter"));
         effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock")).setTranslatedName(
             "Mechanic Learns How to Make Diamond Meshes for the Sifter"));
-            
+
         return effects;
     }
 
@@ -201,7 +201,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                    .setOnlyChild()
                                    .setIcon(ModBlocks.blockHutHospital.asItem())
                                    .addItemCost(Items.CARROT, 1)
-                                   .addEffect(ModBuildings.hospital.getBuildingBlock(), 1)
+                                   .addEffect(ModBuildings.hospital.get().getBuildingBlock(), 1)
                                    .addToList(r);
         final Research bandAid = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/bandaid"), CIVIL).setParentResearch(stamina)
                                    .setTranslatedName("Band Aid")
@@ -281,7 +281,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                 .setIcon(ModBlocks.blockHutLibrary.asItem())
                                 .addBuildingRequirement(ModBuildings.HOME_ID, 3)
                                 .addItemCost(Items.BOOK, 3)
-                                .addEffect(ModBuildings.library.getBuildingBlock(), 1)
+                                .addEffect(ModBuildings.library.get().getBuildingBlock(), 1)
                                 .addToList(r);
         final Research outpost = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/outpost"), CIVIL).setParentResearch(keen)
                                    .setTranslatedName("Outpost")
@@ -550,7 +550,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setIcon(ModBlocks.blockHutSchool.asItem())
                                           .addBuildingRequirement("home", 3)
                                           .addItemCost(Items.BOOK, 3)
-                                          .addEffect(ModBuildings.school.getBuildingBlock(), 1)
+                                          .addEffect(ModBuildings.school.get().getBuildingBlock(), 1)
                                           .addToList(r);
         final Research moreBooks = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/morebooks"), CIVIL).setParentResearch(higherLearning)
                                      .setTranslatedName("More Books")
@@ -637,7 +637,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setSortOrder(5)
           .setIcon(ModBlocks.blockHutMysticalSite.asItem())
           .addItemCost(Items.DIAMOND, 1)
-          .addEffect(ModBuildings.mysticalSite.getBuildingBlock(), 1)
+          .addEffect(ModBuildings.mysticalSite.get().getBuildingBlock(), 1)
           .addToList(r);
 
         // Primary Research #6
@@ -645,7 +645,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                 .setTranslatedName("Remembrance")
                 .setSortOrder(6)
                 .setIcon(ModBlocks.blockHutGraveyard.asItem())
-                .addEffect(ModBuildings.graveyard.getBuildingBlock(), 1)
+                .addEffect(ModBuildings.graveyard.get().getBuildingBlock(), 1)
                 .addBuildingRequirement(ModBuildings.TOWNHALL_ID, 2)
                 .addItemCost(Items.BONE, 8)
                 .setTranslatedSubtitle("Our fallen shall not be forgotten!")
@@ -807,7 +807,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setIcon(ModBlocks.blockHutBarracksTower.asItem())
                                           .addBuildingRequirement(ModBuildings.GUARD_TOWER_ID, 3)
                                           .addItemCost(Items.IRON_BLOCK, 3)
-                                          .addEffect(ModBuildings.barracks.getBuildingBlock(), 1)
+                                          .addEffect(ModBuildings.barracks.get().getBuildingBlock(), 1)
                                           .addToList(r);
         final Research improvedSwords = new Research(new ResourceLocation(Constants.MOD_ID, "combat/improvedswords"), COMBAT).setParentResearch(tacticTraining)
                                           .setTranslatedName("Improved Swords")
@@ -815,7 +815,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setIcon(ModBlocks.blockHutCombatAcademy.asItem())
                                           .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
                                           .addItemCost(Items.IRON_BLOCK, 6)
-                                          .addEffect(ModBuildings.combatAcademy.getBuildingBlock(), 1)
+                                          .addEffect(ModBuildings.combatAcademy.get().getBuildingBlock(), 1)
                                           .addToList(r);
         final Research squireTraining = new Research(new ResourceLocation(Constants.MOD_ID, "combat/squiretraining"), COMBAT).setParentResearch(improvedSwords)
                                           .setTranslatedName("Squire Training")
@@ -853,7 +853,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                         .setIcon(ModBlocks.blockHutArchery.asItem())
                                         .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
                                         .addItemCost(Items.IRON_BLOCK, 6)
-                                        .addEffect(ModBuildings.archery.getBuildingBlock(), 1)
+                                        .addEffect(ModBuildings.archery.get().getBuildingBlock(), 1)
                                         .addToList(r);
         final Research trickShot = new Research(new ResourceLocation(Constants.MOD_ID, "combat/trickshot"), COMBAT).setParentResearch(improvedBows)
                                      .setTranslatedName("Trick Shot")
@@ -1150,7 +1150,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                          .setIcon(ModBlocks.blockHutComposter.asItem())
                                          .addBuildingRequirement(ModBuildings.FARMER_ID, 3)
                                          .addItemCost(Items.BONE_MEAL, 64)
-                                         .addEffect(ModBuildings.composter.getBuildingBlock(), 1)
+                                         .addEffect(ModBuildings.composter.get().getBuildingBlock(), 1)
                                          .addToList(r);
 
         final Research podzolChance = new Research(new ResourceLocation(Constants.MOD_ID, "technology/podzolchance"), TECH).setParentResearch(biodegradable)
@@ -1175,7 +1175,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .setIcon(ModBlocks.blockHutFlorist.asItem())
                                        .addBuildingRequirement(ModBuildings.COMPOSTER_ID, 3)
                                        .addItemCost(ModItems.compost, 64)
-                                       .addEffect(ModBuildings.florist.getBuildingBlock(), 1)
+                                       .addEffect(ModBuildings.florist.get().getBuildingBlock(), 1)
                                        .addToList(r);
         final Research rainbowHeaven = new Research(new ResourceLocation(Constants.MOD_ID, "technology/rainbowheaven"), TECH).setParentResearch(flowerPower)
           .setTranslatedName("Rainbow Heaven")
@@ -1183,7 +1183,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModBlocks.blockHutComposter.asItem())
           .addBuildingRequirement(ModBuildings.FLORIST_ID, 3)
           .addItemCost(Items.POPPY, 64)
-          .addEffect(ModBuildings.dyer.getBuildingBlock(), 1)
+          .addEffect(ModBuildings.dyer.get().getBuildingBlock(), 1)
           .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/honeypot"), TECH).setParentResearch(rainbowHeaven)
           .setTranslatedName("Honey Pot")
@@ -1201,7 +1201,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setIcon(ModBlocks.blockHutPlantation.asItem())
                                      .addBuildingRequirement(ModBuildings.FARMER_ID, 3)
                                      .addItemCost(ModItems.compost, 16)
-                                     .addEffect(ModBuildings.plantation.getBuildingBlock(), 1)
+                                     .addEffect(ModBuildings.plantation.get().getBuildingBlock(), 1)
                                      .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/doubletrouble"), TECH).setParentResearch(letItGrow)
           .setTranslatedName("Double Trouble")
@@ -1279,7 +1279,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
                                     .setIcon(ModBlocks.blockHutNetherWorker.asItem())
                                     .addItemCost(Items.GILDED_BLACKSTONE, 3)
-                                    .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
+                                    .addEffect(ModBuildings.netherWorker.get().getBuildingBlock(), 1)
                                     .addToList(r);
 
         final Research alchemist = new Research(new ResourceLocation(Constants.MOD_ID, "technology/alchemist"), TECH).setParentResearch(netherminer)
@@ -1287,7 +1287,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setTranslatedSubtitle("These Romans are crazy")
           .setIcon(ModBlocks.blockHutAlchemist.asItem())
           .addItemCost(Items.NETHER_WART, 16)
-          .addEffect(ModBuildings.alchemist.getBuildingBlock(), 1)
+          .addEffect(ModBuildings.alchemist.get().getBuildingBlock(), 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/oceanheart"), TECH).setParentResearch(alchemist)
@@ -1306,14 +1306,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                      .setIcon(ModBlocks.blockHutStonemason.asItem())
                                      .addBuildingRequirement(ModBuildings.MINER_ID, 3)
                                      .addItemCost(Items.CHISELED_STONE_BRICKS, 64)
-                                     .addEffect(ModBuildings.stoneMason.getBuildingBlock(), 1)
+                                     .addEffect(ModBuildings.stoneMason.get().getBuildingBlock(), 1)
                                      .addToList(r);
         final Research rockingRoll = new Research(new ResourceLocation(Constants.MOD_ID, "technology/rockingroll"), TECH).setParentResearch(stoneCake)
                                        .setTranslatedName("Rocking Roll")
                                        .setIcon(ModBlocks.blockHutCrusher.asItem())
                                        .addBuildingRequirement("stonemason", 1)
                                        .addItemCost(Items.STONE, 64)
-                                       .addEffect(ModBuildings.crusher.getBuildingBlock(), 1)
+                                       .addEffect(ModBuildings.crusher.get().getBuildingBlock(), 1)
                                        .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/gildedhammer"), TECH).setParentResearch(rockingRoll)
           .setTranslatedName("Gilded Hammer")
@@ -1341,7 +1341,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModBlocks.blockHutConcreteMixer.asItem())
           .addBuildingRequirement("crusher", 1)
           .addItemCost(Items.WHITE_CONCRETE, 32)
-          .addEffect(ModBuildings.concreteMixer.getBuildingBlock(), 1)
+          .addEffect(ModBuildings.concreteMixer.get().getBuildingBlock(), 1)
           .addToList(r);
 
         // Primary Research #5
@@ -1351,14 +1351,14 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .setIcon(ModBlocks.blockHutSawmill.asItem())
                                     .addBuildingRequirement("lumberjack", 3)
                                     .addItemCost(Items.OAK_PLANKS, 64)
-                                    .addEffect(ModBuildings.sawmill.getBuildingBlock(), 1)
+                                    .addEffect(ModBuildings.sawmill.get().getBuildingBlock(), 1)
                                     .addToList(r);
         final Research stringWork = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stringwork"), TECH).setParentResearch(woodwork)
                                       .setTranslatedName("Stringwork")
                                       .setIcon(ModBlocks.blockHutFletcher.asItem())
                                       .addBuildingRequirement(ModBuildings.SAWMILL_ID, 1)
                                       .addItemCost(Items.STRING, 16)
-                                      .addEffect(ModBuildings.fletcher.getBuildingBlock(), 1)
+                                      .addEffect(ModBuildings.fletcher.get().getBuildingBlock(), 1)
                                       .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/hotboots"), TECH).setParentResearch(stringWork)
           .setTranslatedName("Hot Boots")
@@ -1377,7 +1377,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                    .setIcon(ModBlocks.blockHutSifter.asItem())
                                    .addBuildingRequirement(ModBuildings.FISHERMAN_ID, 3)
                                    .addItemCost(Items.STRING, 64)
-                                   .addEffect(ModBuildings.sifter.getBuildingBlock(), 1)
+                                   .addEffect(ModBuildings.sifter.get().getBuildingBlock(), 1)
                                    .addToList(r);
         final Research space = new Research(new ResourceLocation(Constants.MOD_ID, "technology/space"), TECH).setParentResearch(sieving)
                                  .setTranslatedName("Space")
@@ -1495,7 +1495,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                .setIcon(ModBlocks.blockHutSmeltery.asItem())
                                .addBuildingRequirement(ModBuildings.MINER_ID, 2)
                                .addItemCost(Items.LAVA_BUCKET, 4)
-                               .addEffect(ModBuildings.smeltery.getBuildingBlock(), 1)
+                               .addEffect(ModBuildings.smeltery.get().getBuildingBlock(), 1)
                                .addToList(r);
         final Research isThisRedstone = new Research(new ResourceLocation(Constants.MOD_ID, "technology/isthisredstone"), TECH).setParentResearch(hot)
                                           .setTranslatedName("Is This Redstone?")
@@ -1537,7 +1537,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                           .setIcon(ModBlocks.blockHutStoneSmeltery.asItem())
                                           .addBuildingRequirement(ModBuildings.SMELTERY_ID, 3)
                                           .addItemCost(Items.STONE_BRICKS, 64)
-                                          .addEffect(ModBuildings.stoneSmelter.getBuildingBlock(), 1)
+                                          .addEffect(ModBuildings.stoneSmelter.get().getBuildingBlock(), 1)
                                           .addToList(r);
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/knowtheend"), TECH).setParentResearch(theFlintstones)
           .setTranslatedName("Know the End")
@@ -1554,7 +1554,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModBlocks.blockHutGlassblower.asItem())
           .addBuildingRequirement(ModBuildings.SMELTERY_ID, 3)
           .addItemCost(Items.GLASS, 64)
-          .addEffect(ModBuildings.glassblower.getBuildingBlock(), 1)
+          .addEffect(ModBuildings.glassblower.get().getBuildingBlock(), 1)
           .addToList(r);
 
         // Primary Research #7
@@ -1564,7 +1564,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                        .setIcon(ModBlocks.blockHutBlacksmith.asItem())
                                        .addBuildingRequirement(ModBuildings.MINER_ID, 3)
                                        .addItemCost(Items.ANVIL, 1)
-                                       .addEffect(ModBuildings.blacksmith.getBuildingBlock(), 1)
+                                       .addEffect(ModBuildings.blacksmith.get().getBuildingBlock(), 1)
                                        .addToList(r);
         final Research strong = new Research(new ResourceLocation(Constants.MOD_ID, "technology/strong"), TECH).setParentResearch(hittingIron)
                                   .setTranslatedName("Strong")
@@ -1680,7 +1680,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                       .setIcon(ModBlocks.blockHutMechanic.asItem())
                                       .addBuildingRequirement(ModBuildings.BLACKSMITH_ID, 3)
                                       .addItemCost(Items.REDSTONE, 64)
-                                      .addEffect(ModBuildings.mechanic.getBuildingBlock(), 1)
+                                      .addEffect(ModBuildings.mechanic.get().getBuildingBlock(), 1)
                                       .addToList(r);
         final Research enhanced_gates1 = new Research(new ResourceLocation(Constants.MOD_ID, "technology/enhanced_gates1"), TECH).setParentResearch(whatYaNeed)
                                            .setTranslatedName("Enhanced Gates I")

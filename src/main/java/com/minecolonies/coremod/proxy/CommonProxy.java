@@ -3,18 +3,7 @@ package com.minecolonies.coremod.proxy;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
-import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventTypeRegistryEntry;
-import com.minecolonies.api.colony.guardtype.GuardType;
-import com.minecolonies.api.colony.interactionhandling.registry.InteractionResponseHandlerEntry;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
-import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.CountedIngredient;
-import com.minecolonies.api.crafting.registry.CraftingType;
-import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
-import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.apiimp.CommonMinecoloniesAPIImpl;
 import com.minecolonies.apiimp.initializer.*;
@@ -31,9 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.NewRegistryEvent;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -92,12 +79,6 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerGuardTypes(final RegisterEvent event)
-    {
-        ModGuardTypesInitializer.init(event);
-    }
-
-    @SubscribeEvent
     public static void registerNewRegistries(final NewRegistryEvent event)
     {
         apiImpl.onRegistryNewRegistry(event);
@@ -110,67 +91,20 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
-    public static void registerBuildingTypes(@NotNull final RegisterEvent event)
-    {
-        ModBuildingsInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerResearchRequirementTypes(@NotNull final RegisterEvent event)
-    {
-        ModResearchRequirementInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerResearchEffectTypes(@NotNull final RegisterEvent event)
-    {
-        ModResearchEffectInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerInteractionTypes(@NotNull final RegisterEvent event)
-    {
-        ModInteractionsInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerColonyEventTypes(@NotNull final RegisterEvent event)
-    {
-        ModColonyEventTypeInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerColonyEventDescriptionTypes(@NotNull final RegisterEvent event)
-    {
-        ModColonyEventDescriptionTypeInitializer.init(event);
-    }
-
-    @SubscribeEvent
-    public static void registerJobTypes(final RegisterEvent event)
-    {
-        ModJobsInitializer.init(event);
-    }
-
-    @SubscribeEvent
     public static void registerRecipeTypes(final RegisterEvent event)
     {
         ModRecipeTypesInitializer.init(event);
     }
 
     @SubscribeEvent
-    public static void registerCraftingTypes(final RegisterEvent event)
-    {
-        ModCraftingTypesInitializer.init(event);
-    }
-
-    @SubscribeEvent
     public static void registerRecipeSerializers(final RegisterEvent event)
     {
-        event.getForgeRegistry().register(CompostRecipe.ID, CompostRecipe.Serializer.getInstance());
-
-        CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
-        CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
-        CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
+        {
+            CraftingHelper.register(CountedIngredient.ID, CountedIngredient.Serializer.getInstance());
+            CraftingHelper.register(FoodIngredient.ID, FoodIngredient.Serializer.getInstance());
+            CraftingHelper.register(PlantIngredient.ID, PlantIngredient.Serializer.getInstance());
+        }
     }
 
     @Override

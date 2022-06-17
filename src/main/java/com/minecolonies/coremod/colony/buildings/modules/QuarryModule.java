@@ -139,7 +139,7 @@ public class QuarryModule extends AbstractAssignedCitizenModule implements IAssi
     @Override
     public JobEntry getJobEntry()
     {
-        return ModJobs.quarrier;
+        return ModJobs.quarrier.get();
     }
 
     /**

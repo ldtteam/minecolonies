@@ -21,6 +21,6 @@ public class BlockHutConcreteMixer extends AbstractBlockHut<BlockHutConcreteMixe
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.concreteMixer;
+        return ModBuildings.concreteMixer.get();
     }
 }

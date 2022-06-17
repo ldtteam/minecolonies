@@ -20,6 +20,6 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.archery;
+        return ModBuildings.archery.get();
     }
 }

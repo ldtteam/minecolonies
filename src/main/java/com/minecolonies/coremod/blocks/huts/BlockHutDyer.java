@@ -20,7 +20,7 @@ public class BlockHutDyer extends AbstractBlockHut<BlockHutDyer>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.dyer;
+        return ModBuildings.dyer.get();
     }
 
 }

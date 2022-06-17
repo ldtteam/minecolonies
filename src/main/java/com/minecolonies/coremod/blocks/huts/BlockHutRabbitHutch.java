@@ -20,6 +20,6 @@ public class BlockHutRabbitHutch extends AbstractBlockHut<BlockHutRabbitHutch>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.rabbitHutch;
+        return ModBuildings.rabbitHutch.get();
     }
 }

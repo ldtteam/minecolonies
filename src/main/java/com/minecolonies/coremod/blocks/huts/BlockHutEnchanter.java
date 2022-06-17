@@ -23,7 +23,7 @@ public class BlockHutEnchanter extends AbstractBlockHut<BlockHutEnchanter>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.enchanter;
+        return ModBuildings.enchanter.get();
     }
 
     @Nullable

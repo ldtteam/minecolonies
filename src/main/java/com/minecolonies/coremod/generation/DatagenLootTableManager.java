@@ -50,7 +50,7 @@ public class DatagenLootTableManager extends LootTables
         try
         {
             final Resource resource = existingFileHelper.getResource(getPreparedPath(location), PackType.SERVER_DATA);
-            try (final InputStream inputstream = resource.getInputStream();
+            try (final InputStream inputstream = resource.open();
                  final Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
             )
             {

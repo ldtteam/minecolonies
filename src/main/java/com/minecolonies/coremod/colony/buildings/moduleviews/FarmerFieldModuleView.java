@@ -116,7 +116,7 @@ public class FarmerFieldModuleView extends AbstractBuildingModuleView
             Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, addNewField, id));
             scarecrowTileEntity.setTaken(addNewField);
 
-            final WorkerBuildingModuleView view = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == ModJobs.farmer);
+            final WorkerBuildingModuleView view = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == ModJobs.farmer.get());
             if (addNewField)
             {
                 if (!view.getAssignedCitizens().isEmpty())

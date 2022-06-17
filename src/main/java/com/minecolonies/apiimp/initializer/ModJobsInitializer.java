@@ -2,357 +2,299 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DefaultJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.DeferredRegister;
 
 public final class ModJobsInitializer
 {
+    public final static DeferredRegister<JobEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "jobs"), Constants.MOD_ID);
 
     private ModJobsInitializer()
     {
         throw new IllegalStateException("Tried to initialize: ModJobsInitializer but this is a Utility class.");
     }
 
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final RegisterEvent event)
+    static
     {
-        final IForgeRegistry<JobEntry> reg = event.getForgeRegistry();
-
-        ModJobs.placeHolder = new JobEntry.Builder()
+        ModJobs.placeHolder = DEFERRED_REGISTER.register(ModJobs.PLACEHOLDER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobPlaceholder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.PLACEHOLDER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.builder = new JobEntry.Builder()
+        ModJobs.builder = DEFERRED_REGISTER.register(ModJobs.BUILDER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobBuilder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.BUILDER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.delivery = new JobEntry.Builder()
+        ModJobs.delivery = DEFERRED_REGISTER.register(ModJobs.DELIVERY_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobDeliveryman::new)
           .setJobViewProducer(() -> DmanJobView::new)
           .setRegistryName(ModJobs.DELIVERY_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.miner = new JobEntry.Builder()
+        ModJobs.miner = DEFERRED_REGISTER.register(ModJobs.MINER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobMiner::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.MINER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.lumberjack = new JobEntry.Builder()
+        ModJobs.lumberjack = DEFERRED_REGISTER.register(ModJobs.LUMBERJACK_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobLumberjack::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.LUMBERJACK_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.farmer = new JobEntry.Builder()
+        ModJobs.farmer = DEFERRED_REGISTER.register(ModJobs.FARMER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobFarmer::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.FARMER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.undertaker = new JobEntry.Builder()
+        ModJobs.undertaker = DEFERRED_REGISTER.register(ModJobs.UNDERTAKER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobUndertaker::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.UNDERTAKER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.fisherman = new JobEntry.Builder()
+        ModJobs.fisherman = DEFERRED_REGISTER.register(ModJobs.FISHERMAN_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobFisherman::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.FISHERMAN_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.baker = new JobEntry.Builder()
+        ModJobs.baker = DEFERRED_REGISTER.register(ModJobs.BAKER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobBaker::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.BAKER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.cook = new JobEntry.Builder()
+        ModJobs.cook = DEFERRED_REGISTER.register(ModJobs.COOK_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCook::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.COOK_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.shepherd = new JobEntry.Builder()
+        ModJobs.shepherd = DEFERRED_REGISTER.register(ModJobs.SHEPHERD_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobShepherd::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.SHEPHERD_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.cowboy = new JobEntry.Builder()
+        ModJobs.cowboy = DEFERRED_REGISTER.register(ModJobs.COWBOY_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCowboy::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.COWBOY_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.swineHerder = new JobEntry.Builder()
+        ModJobs.swineHerder = DEFERRED_REGISTER.register(ModJobs.SWINE_HERDER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobSwineHerder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.SWINE_HERDER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.chickenHerder = new JobEntry.Builder()
+        ModJobs.chickenHerder = DEFERRED_REGISTER.register(ModJobs.CHICKEN_HERDER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobChickenHerder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.CHICKEN_HERDER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.smelter = new JobEntry.Builder()
+        ModJobs.smelter = DEFERRED_REGISTER.register(ModJobs.SMELTER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobSmelter::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.SMELTER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.ranger = new JobEntry.Builder()
+        ModJobs.ranger = DEFERRED_REGISTER.register(ModJobs.RANGER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobRanger::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.RANGER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.knight = new JobEntry.Builder()
+        ModJobs.knight = DEFERRED_REGISTER.register(ModJobs.KNIGHT_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobKnight::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.KNIGHT_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.composter = new JobEntry.Builder()
+        ModJobs.composter = DEFERRED_REGISTER.register(ModJobs.COMPOSTER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobComposter::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.COMPOSTER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.student = new JobEntry.Builder()
+        ModJobs.student = DEFERRED_REGISTER.register(ModJobs.STUDENT_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobStudent::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.STUDENT_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.archer = new JobEntry.Builder()
+        ModJobs.archer = DEFERRED_REGISTER.register(ModJobs.ARCHER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobArcherTraining::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.ARCHER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.combat = new JobEntry.Builder()
+        ModJobs.combat = DEFERRED_REGISTER.register(ModJobs.COMBAT_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCombatTraining::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.COMBAT_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.sawmill = new JobEntry.Builder()
+        ModJobs.sawmill = DEFERRED_REGISTER.register(ModJobs.SAWMILL_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobSawmill::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.SAWMILL_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.blacksmith = new JobEntry.Builder()
+        ModJobs.blacksmith = DEFERRED_REGISTER.register(ModJobs.BLACKSMITH_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobBlacksmith::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.BLACKSMITH_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.stoneMason = new JobEntry.Builder()
+        ModJobs.stoneMason = DEFERRED_REGISTER.register(ModJobs.STONEMASON_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobStonemason::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.STONEMASON_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.stoneSmeltery = new JobEntry.Builder()
+        ModJobs.stoneSmeltery = DEFERRED_REGISTER.register(ModJobs.STONE_SMELTERY_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobStoneSmeltery::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.STONE_SMELTERY_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.crusher = new JobEntry.Builder()
+        ModJobs.crusher = DEFERRED_REGISTER.register(ModJobs.CRUSHER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCrusher::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.CRUSHER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.sifter = new JobEntry.Builder()
+        ModJobs.sifter = DEFERRED_REGISTER.register(ModJobs.SIFTER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobSifter::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.SIFTER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.florist = new JobEntry.Builder()
+        ModJobs.florist = DEFERRED_REGISTER.register(ModJobs.FLORIST_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobFlorist::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.FLORIST_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.enchanter = new JobEntry.Builder()
+        ModJobs.enchanter = DEFERRED_REGISTER.register(ModJobs.ENCHANTER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobEnchanter::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.ENCHANTER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.researcher = new JobEntry.Builder()
+        ModJobs.researcher = DEFERRED_REGISTER.register(ModJobs.RESEARCHER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobResearch::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.RESEARCHER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.healer = new JobEntry.Builder()
+        ModJobs.healer = DEFERRED_REGISTER.register(ModJobs.HEALER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobHealer::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.HEALER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.pupil = new JobEntry.Builder()
+        ModJobs.pupil = DEFERRED_REGISTER.register(ModJobs.PUPIL_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobPupil::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.PUPIL_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.teacher = new JobEntry.Builder()
+        ModJobs.teacher = DEFERRED_REGISTER.register(ModJobs.TEACHER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobTeacher::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.TEACHER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.glassblower = new JobEntry.Builder()
+        ModJobs.glassblower = DEFERRED_REGISTER.register(ModJobs.GLASSBLOWER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobGlassblower::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.GLASSBLOWER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.dyer = new JobEntry.Builder()
+        ModJobs.dyer = DEFERRED_REGISTER.register(ModJobs.DYER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobDyer::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.DYER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.fletcher = new JobEntry.Builder()
+        ModJobs.fletcher = DEFERRED_REGISTER.register(ModJobs.FLETCHER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobFletcher::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.FLETCHER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.mechanic = new JobEntry.Builder()
+        ModJobs.mechanic = DEFERRED_REGISTER.register(ModJobs.MECHANIC_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobMechanic::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.MECHANIC_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.planter = new JobEntry.Builder()
+        ModJobs.planter = DEFERRED_REGISTER.register(ModJobs.PLANTER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobPlanter::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.PLANTER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.rabbitHerder = new JobEntry.Builder()
+        ModJobs.rabbitHerder = DEFERRED_REGISTER.register(ModJobs.RABBIT_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobRabbitHerder::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.RABBIT_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.concreteMixer = new JobEntry.Builder()
+        ModJobs.concreteMixer = DEFERRED_REGISTER.register(ModJobs.CONCRETE_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobConcreteMixer::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.CONCRETE_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.beekeeper = new JobEntry.Builder()
+        ModJobs.beekeeper = DEFERRED_REGISTER.register(ModJobs.BEEKEEPER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobBeekeeper::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.BEEKEEPER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.cookassistant = new JobEntry.Builder()
+        ModJobs.cookassistant = DEFERRED_REGISTER.register(ModJobs.COOKASSISTANT_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobCookAssistant::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.COOKASSISTANT_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.netherworker = new JobEntry.Builder()
+        ModJobs.netherworker = DEFERRED_REGISTER.register(ModJobs.NETHERWORKER_ID.getPath(), () -> new JobEntry.Builder()
                               .setJobProducer(JobNetherWorker::new)
                               .setJobViewProducer(() -> CrafterJobView::new)
                               .setRegistryName(ModJobs.NETHERWORKER_ID)
-                              .createJobEntry();
+                              .createJobEntry());
 
-        ModJobs.quarrier = new JobEntry.Builder()
+        ModJobs.quarrier = DEFERRED_REGISTER.register(ModJobs.QUARRY_MINER_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobQuarrier::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.QUARRY_MINER_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.druid = new JobEntry.Builder()
+        ModJobs.druid = DEFERRED_REGISTER.register(ModJobs.DRUID_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobDruid::new)
           .setJobViewProducer(() -> DefaultJobView::new)
           .setRegistryName(ModJobs.DRUID_ID)
-          .createJobEntry();
+          .createJobEntry());
 
-        ModJobs.alchemist = new JobEntry.Builder()
+        ModJobs.alchemist = DEFERRED_REGISTER.register(ModJobs.ALCHEMIST_ID.getPath(), () -> new JobEntry.Builder()
           .setJobProducer(JobAlchemist::new)
           .setJobViewProducer(() -> CrafterJobView::new)
           .setRegistryName(ModJobs.ALCHEMIST_ID)
-          .createJobEntry();
-
-        register(reg, ModJobs.placeHolder);
-        register(reg, ModJobs.builder);
-        register(reg, ModJobs.delivery);
-        register(reg, ModJobs.miner);
-        register(reg, ModJobs.lumberjack);
-        register(reg, ModJobs.farmer);
-        register(reg, ModJobs.undertaker);
-        register(reg, ModJobs.fisherman);
-        register(reg, ModJobs.baker);
-        register(reg, ModJobs.cook);
-        register(reg, ModJobs.shepherd);
-        register(reg, ModJobs.cowboy);
-        register(reg, ModJobs.swineHerder);
-        register(reg, ModJobs.chickenHerder);
-        register(reg, ModJobs.smelter);
-        register(reg, ModJobs.ranger);
-        register(reg, ModJobs.knight);
-        register(reg, ModJobs.composter);
-        register(reg, ModJobs.student);
-        register(reg, ModJobs.archer);
-        register(reg, ModJobs.combat);
-        register(reg, ModJobs.sawmill);
-        register(reg, ModJobs.blacksmith);
-        register(reg, ModJobs.stoneMason);
-        register(reg, ModJobs.stoneSmeltery);
-        register(reg, ModJobs.crusher);
-        register(reg, ModJobs.sifter);
-        register(reg, ModJobs.florist);
-        register(reg, ModJobs.enchanter);
-        register(reg, ModJobs.researcher);
-        register(reg, ModJobs.healer);
-        register(reg, ModJobs.pupil);
-        register(reg, ModJobs.teacher);
-        register(reg, ModJobs.glassblower);
-        register(reg, ModJobs.dyer);
-        register(reg, ModJobs.fletcher);
-        register(reg, ModJobs.mechanic);
-        register(reg, ModJobs.planter);
-        register(reg, ModJobs.concreteMixer);
-        register(reg, ModJobs.rabbitHerder);
-        register(reg, ModJobs.beekeeper);
-        register(reg, ModJobs.cookassistant);
-        register(reg, ModJobs.netherworker);
-        register(reg, ModJobs.quarrier);
-        register(reg, ModJobs.druid);
-        register(reg, ModJobs.alchemist);
-    }
-
-    /**
-     * Register the building entry.
-     * @param reg the registry to register it to.
-     * @param entry the entry to register.
-     */
-    private static void register(final IForgeRegistry<JobEntry> reg, final JobEntry entry)
-    {
-        reg.register(entry.getKey(), entry);
+          .createJobEntry());
     }
 }

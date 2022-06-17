@@ -26,6 +26,6 @@ public class BlockHutHospital extends AbstractBlockHut<BlockHutHospital>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.hospital;
+        return ModBuildings.hospital.get();
     }
 }

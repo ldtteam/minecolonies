@@ -20,6 +20,6 @@ public class BlockHutLibrary extends AbstractBlockHut<BlockHutLibrary>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.library;
+        return ModBuildings.library.get();
     }
 }

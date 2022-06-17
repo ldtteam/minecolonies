@@ -744,7 +744,7 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
             case GuardTaskSetting.FOLLOW:
                 return MAX_FOLLOW_DERIVATION;
             default:
-                return MAX_GUARD_DERIVATION + (getModuleForJob().getJobEntry() == ModJobs.knight ? 20 : 0);
+                return MAX_GUARD_DERIVATION + (getModuleForJob().getJobEntry() == ModJobs.knight.get() ? 20 : 0);
         }
     }
 

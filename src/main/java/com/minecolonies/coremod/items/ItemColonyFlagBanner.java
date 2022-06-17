@@ -2,7 +2,6 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPatterns;
@@ -14,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
@@ -72,10 +70,10 @@ public class ItemColonyFlagBanner extends BannerItem
 
             // Set the base pattern, if there wasn't one set.
             // This saves us attempting to alter the item itself to change the base color.
-            if (!patternList.getCompound(0).getString(TAG_SINGLE_PATTERN).equals(BannerPatterns.BASE.getHashname()))
+            if (!patternList.getCompound(0).getString(TAG_SINGLE_PATTERN).equals(BannerPatterns.BASE.location().toString()))
             {
                 CompoundTag nbt = new CompoundTag();
-                nbt.putString(TAG_SINGLE_PATTERN, BannerPatterns.BASE.getHashname());
+                nbt.putString(TAG_SINGLE_PATTERN, BannerPatterns.BASE.location().toString());
                 nbt.putInt(TAG_PATTERN_COLOR, ((AbstractBannerBlock) state.getBlock()).getColor().getId());
                 patternList.add(0, nbt);
             }

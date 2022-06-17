@@ -90,7 +90,7 @@ public class ResearchResearchRequirement implements IResearchRequirement
     }
 
     @Override
-    public ResearchRequirementEntry getRegistryEntry() {return ModResearchRequirements.researchResearchRequirement;}
+    public ResearchRequirementEntry getRegistryEntry() {return ModResearchRequirements.researchResearchRequirement.get();}
 
     @Override
     public CompoundTag writeToNBT()

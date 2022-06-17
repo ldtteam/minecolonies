@@ -20,6 +20,6 @@ public class BlockHutStonemason extends AbstractBlockHut<BlockHutStonemason>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.stoneMason;
+        return ModBuildings.stoneMason.get();
     }
 }

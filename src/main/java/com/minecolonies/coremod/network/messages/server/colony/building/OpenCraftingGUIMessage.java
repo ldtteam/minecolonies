@@ -72,7 +72,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
 
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
-        if (module.canLearn(ModCraftingTypes.SMELTING))
+        if (module.canLearn(ModCraftingTypes.SMELTING.get()))
         {
             NetworkHooks.openGui(player, new MenuProvider()
             {
@@ -91,7 +91,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 }
             }, buffer -> new FriendlyByteBuf(buffer.writeBlockPos(building.getID()).writeUtf(module.getId())));
         }
-        else if (module.canLearn(ModCraftingTypes.BREWING))
+        else if (module.canLearn(ModCraftingTypes.BREWING.get()))
         {
             NetworkHooks.openGui(player, new MenuProvider()
             {
@@ -125,9 +125,9 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
                 @Override
                 public AbstractContainerMenu createMenu(final int id, @NotNull final Inventory inv, @NotNull final Player player)
                 {
-                    return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING), building.getID(), module.getId());
+                    return new ContainerCrafting(id, inv, module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()), building.getID(), module.getId());
                 }
-            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING))).writeBlockPos(building.getID()).writeUtf(module.getId()));
+            }, buffer -> new FriendlyByteBuf(buffer.writeBoolean(module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get()))).writeBlockPos(building.getID()).writeUtf(module.getId()));
         }
     }
 }

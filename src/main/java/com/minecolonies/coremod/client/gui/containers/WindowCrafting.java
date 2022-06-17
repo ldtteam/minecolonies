@@ -112,7 +112,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
-        completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING);
+        completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING.get());
     }
 
     @NotNull
@@ -130,13 +130,13 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.SMALL_CRAFTING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
+        final Component buttonDisplay = Component.translatable(module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
         final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowCrafting.OnButtonPress());
         this.addRenderableWidget(doneButton);
-        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
+        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
         {
             doneButton.active = false;
         }
@@ -148,7 +148,7 @@ public class WindowCrafting extends AbstractContainerScreen<ContainerCrafting>
         @Override
         public void onPress(final Button button)
         {
-            if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
+            if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING.get()))
             {
                 final List<ItemStorage> input = new LinkedList<>();
 

@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -35,7 +36,10 @@ public final class ModBlocksInitializer
     @SubscribeEvent
     public static void registerBlocks(RegisterEvent event)
     {
-        ModBlocksInitializer.init(event.getForgeRegistry());
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCKS))
+        {
+            ModBlocksInitializer.init(event.getForgeRegistry());
+        }
     }
 
     /**
@@ -118,7 +122,10 @@ public final class ModBlocksInitializer
     @SubscribeEvent
     public static void registerItems(RegisterEvent event)
     {
-        ModBlocksInitializer.registerBlockItem(event.getForgeRegistry());
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ITEMS))
+        {
+            ModBlocksInitializer.registerBlockItem(event.getForgeRegistry());
+        }
     }
 
     /**

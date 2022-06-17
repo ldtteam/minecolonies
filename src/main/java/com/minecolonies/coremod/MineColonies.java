@@ -5,6 +5,7 @@ import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.entity.ModEntities;
@@ -14,9 +15,7 @@ import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.apiimp.initializer.InteractionValidatorInitializer;
-import com.minecolonies.apiimp.initializer.ModContainerInitializers;
-import com.minecolonies.apiimp.initializer.TileEntityInitializer;
+import com.minecolonies.apiimp.initializer.*;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.colony.requestsystem.init.RequestSystemInitializer;
 import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControllerInitializer;
@@ -79,6 +78,15 @@ public class MineColonies
         TileEntityInitializer.BLOCK_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModEnchants.ENCHANMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModContainerInitializers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModBuildingsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModGuardTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModColonyEventDescriptionTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModResearchRequirementInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModRecipeSerializerInitializer.RECIPE_SERIALIZER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModRecipeSerializerInitializer.RECIPE_TYPES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModColonyEventTypeInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModCraftingTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModJobsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json"); // hotfix config comments, it's ugly bcs it's gonna be replaced
         config = new Configuration();
@@ -117,7 +125,10 @@ public class MineColonies
     @SubscribeEvent
     public static void registerSounds(@NotNull final RegisterEvent event)
     {
-        ModSoundEvents.registerSounds(event.getForgeRegistry());
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.SOUND_EVENTS))
+        {
+            ModSoundEvents.registerSounds(event.getForgeRegistry());
+        }
     }
 
     @SubscribeEvent

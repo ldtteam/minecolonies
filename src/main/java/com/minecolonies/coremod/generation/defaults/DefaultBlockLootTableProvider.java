@@ -17,6 +17,7 @@ import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -99,10 +100,11 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 
     private void saveBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar)
     {
-        if (block.getRegistryName() != null)
+        final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
+        if (location != null)
         {
-            final ResourceLocation id = new ResourceLocation(block.getRegistryName().getNamespace(),
-                    "blocks/" + block.getRegistryName().getPath());
+            final ResourceLocation id = new ResourceLocation(location.getNamespace(),
+                    "blocks/" + location.getPath());
 
             final LootPoolSingletonContainer.Builder<?> item = LootItem.lootTableItem(block);
             if (block instanceof AbstractBlockHut || block instanceof BlockMinecoloniesRack)
@@ -120,9 +122,10 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 
     private void saveBannerBlock(@NotNull final Block block, @NotNull final LootTableRegistrar registrar)
     {
-        if (block.getRegistryName() != null)
+        final ResourceLocation location = ForgeRegistries.BLOCKS.getKey(block);
+        if (location != null)
         {
-            registrar.register(new ResourceLocation(block.getRegistryName().getNamespace(), "blocks/" + block.getRegistryName().getPath()), LootContextParamSets.BLOCK,
+            registrar.register(new ResourceLocation(location.getNamespace(), "blocks/" + location.getPath()), LootContextParamSets.BLOCK,
               LootTable.lootTable().withPool(LootPool.lootPool()
                                                .add(LootItem.lootTableItem(block))
                                                .apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))

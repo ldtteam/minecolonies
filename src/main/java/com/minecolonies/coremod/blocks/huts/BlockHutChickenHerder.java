@@ -26,6 +26,6 @@ public class BlockHutChickenHerder extends AbstractBlockHut<BlockHutChickenHerde
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.chickenHerder;
+        return ModBuildings.chickenHerder.get();
     }
 }

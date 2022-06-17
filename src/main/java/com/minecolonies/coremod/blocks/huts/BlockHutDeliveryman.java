@@ -27,6 +27,6 @@ public class BlockHutDeliveryman extends AbstractBlockHut<BlockHutDeliveryman>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.deliveryman;
+        return ModBuildings.deliveryman.get();
     }
 }

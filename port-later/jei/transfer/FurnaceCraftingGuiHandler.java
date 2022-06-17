@@ -50,7 +50,7 @@ public class FurnaceCraftingGuiHandler extends AbstractTeachingGuiHandler<Window
     @Override
     protected boolean isSupportedCraftingModule(@NotNull final CraftingModuleView moduleView)
     {
-        return moduleView.canLearn(ModCraftingTypes.SMELTING);
+        return moduleView.canLearn(ModCraftingTypes.SMELTING.get());
     }
 
     @Override

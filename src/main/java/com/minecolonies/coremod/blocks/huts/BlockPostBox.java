@@ -33,7 +33,7 @@ public class BlockPostBox extends AbstractBlockHut<BlockPostBox> implements IRSC
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.postBox;
+        return ModBuildings.postBox.get();
     }
 
     @Deprecated

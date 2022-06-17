@@ -122,7 +122,7 @@ public class AlternateBuildingResearchRequirement implements IResearchRequiremen
     }
 
     @Override
-    public ResearchRequirementEntry getRegistryEntry() { return ModResearchRequirements.alternateBuildingResearchRequirement;}
+    public ResearchRequirementEntry getRegistryEntry() { return ModResearchRequirements.alternateBuildingResearchRequirement.get();}
 
     @Override
     public CompoundTag writeToNBT()

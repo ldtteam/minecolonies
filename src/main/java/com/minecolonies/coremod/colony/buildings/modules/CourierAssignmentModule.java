@@ -98,7 +98,7 @@ public class CourierAssignmentModule extends AbstractAssignedCitizenModule imple
     @Override
     public JobEntry getJobEntry()
     {
-        return ModJobs.delivery;
+        return ModJobs.delivery.get();
     }
 
     @Override

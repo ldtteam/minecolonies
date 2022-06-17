@@ -20,6 +20,6 @@ public class BlockHutGlassblower extends AbstractBlockHut<BlockHutGlassblower>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.glassblower;
+        return ModBuildings.glassblower.get();
     }
 }

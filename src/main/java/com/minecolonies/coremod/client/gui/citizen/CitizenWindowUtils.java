@@ -373,7 +373,7 @@ public class CitizenWindowUtils
     {
         final IBuildingView building = colony.getBuilding(citizen.getWorkBuilding());
 
-        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library && citizen.getJobView() != null)
+        if (building instanceof AbstractBuildingView && building.getBuildingType() != ModBuildings.library.get() && citizen.getJobView() != null)
         {
             final WorkerBuildingModuleView moduleView = building.getModuleViewMatching(WorkerBuildingModuleView.class, m -> m.getJobEntry() == citizen.getJobView().getEntry());
             if (moduleView == null)

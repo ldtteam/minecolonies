@@ -6,9 +6,9 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -198,7 +199,7 @@ public class DefaultNetherWorkerLootProvider implements DataProvider
     private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained)
     {
         final CompoundTag nbt = new CompoundTag();
-        nbt.putString(TAG_ENTITY_TYPE, mob.getRegistryName().toString());
+        nbt.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITIES.getKey(mob).toString());
         nbt.putInt(TAG_DAMAGE, damage_done);
         nbt.putInt(TAG_XP_DROPPED, xp_gained);
 
@@ -216,7 +217,7 @@ public class DefaultNetherWorkerLootProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final HashCache cache) throws IOException
+    public void run(@NotNull final CachedOutput cache) throws IOException
     {
         recipeProvider.run(cache);
         lootTableProvider.run(cache);

@@ -28,6 +28,6 @@ public class BlockHutMysticalSite extends AbstractBlockHut<BlockHutMysticalSite>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.mysticalSite;
+        return ModBuildings.mysticalSite.get();
     }
 }

@@ -20,6 +20,6 @@ public class BlockHutSawmill extends AbstractBlockHut<BlockHutSawmill>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.sawmill;
+        return ModBuildings.sawmill.get();
     }
 }

@@ -26,6 +26,6 @@ public class BlockHutShepherd extends AbstractBlockHut<BlockHutShepherd>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.shepherd;
+        return ModBuildings.shepherd.get();
     }
 }

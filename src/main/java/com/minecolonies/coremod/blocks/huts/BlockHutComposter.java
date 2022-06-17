@@ -19,6 +19,6 @@ public class BlockHutComposter extends AbstractBlockHut<BlockHutComposter>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.composter;
+        return ModBuildings.composter.get();
     }
 }

@@ -1,12 +1,16 @@
 package com.minecolonies.apiimp.initializer;
 
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.guardtype.registry.ModGuardTypes;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.entity.citizen.Skill;
+import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.jobs.JobKnight;
 import com.minecolonies.coremod.colony.jobs.JobRanger;
 import com.minecolonies.coremod.colony.jobs.JobDruid;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 
@@ -14,18 +18,16 @@ import static com.minecolonies.api.util.constant.translation.JobTranslationConst
 
 public final class ModGuardTypesInitializer
 {
+    public final static DeferredRegister<GuardType> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "guardtypes"), Constants.MOD_ID);
 
     private ModGuardTypesInitializer()
     {
         throw new IllegalStateException("Tried to initialize: ModGuardTypesInitializer but this is a Utility class.");
     }
 
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
-    public static void init(final RegisterEvent event)
+    static
     {
-        final IForgeRegistry<GuardType> reg = event.getForgeRegistry();
-
-        ModGuardTypes.knight = new GuardType.Builder()
+        ModGuardTypes.knight = DEFERRED_REGISTER.register(ModGuardTypes.KNIGHT_ID.getPath(), () -> new GuardType.Builder()
                                  .setJobTranslationKey(JOB_KNIGHT)
                                  .setButtonTranslationKey(JOB_KNIGHT_BUTTON)
                                  .setPrimarySkill(Skill.Adaptability)
@@ -34,9 +36,9 @@ public final class ModGuardTypesInitializer
                                  .setJobEntry(() -> ModJobs.knight)
                                  .setRegistryName(ModGuardTypes.KNIGHT_ID)
                                  .setClazz(JobKnight.class)
-                                 .createGuardType();
+                                 .createGuardType());
 
-        ModGuardTypes.ranger = new GuardType.Builder()
+        ModGuardTypes.ranger = DEFERRED_REGISTER.register(ModGuardTypes.RANGER_ID.getPath(), () -> new GuardType.Builder()
                                  .setJobTranslationKey(JOB_RANGER)
                                  .setButtonTranslationKey(JOB_RANGER_BUTTON)
                                  .setPrimarySkill(Skill.Agility)
@@ -45,9 +47,9 @@ public final class ModGuardTypesInitializer
                                  .setJobEntry(() -> ModJobs.ranger)
                                  .setRegistryName(ModGuardTypes.RANGER_ID)
                                  .setClazz(JobRanger.class)
-                                 .createGuardType();
+                                 .createGuardType());
 
-        ModGuardTypes.druid = new GuardType.Builder()
+        ModGuardTypes.druid = DEFERRED_REGISTER.register(ModGuardTypes.DRUID_ID.getPath(), () -> new GuardType.Builder()
           .setJobTranslationKey(JOB_DRUID)
           .setButtonTranslationKey(JOB_DRUID_BUTTON)
           .setPrimarySkill(Skill.Mana)
@@ -56,10 +58,6 @@ public final class ModGuardTypesInitializer
           .setJobEntry(() -> ModJobs.druid)
           .setRegistryName(ModGuardTypes.DRUID_ID)
           .setClazz(JobDruid.class)
-          .createGuardType();
-
-        reg.register(ModGuardTypes.KNIGHT_ID, ModGuardTypes.knight);
-        reg.register(ModGuardTypes.RANGER_ID, ModGuardTypes.ranger);
-        reg.register(ModGuardTypes.DRUID_ID, ModGuardTypes.druid);
+          .createGuardType());
     }
 }

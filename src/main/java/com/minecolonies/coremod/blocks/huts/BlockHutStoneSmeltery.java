@@ -20,6 +20,6 @@ public class BlockHutStoneSmeltery extends AbstractBlockHut<BlockHutStoneSmelter
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.stoneSmelter;
+        return ModBuildings.stoneSmelter.get();
     }
 }

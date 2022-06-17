@@ -185,7 +185,7 @@ public class BuildingCook extends AbstractBuilding
      */
     public boolean getIsCooking()
     {
-        final ICitizenData citizen = this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant).getFirstCitizen();
+        final ICitizenData citizen = this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant.get()).getFirstCitizen();
         return citizen != null && isCooking && isCookingTimeout > 0;
     }
 
@@ -220,7 +220,7 @@ public class BuildingCook extends AbstractBuilding
     public boolean canBeGathered()
     {
         return super.canBeGathered() &&
-                 this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant).getAssignedCitizen().stream()
+                 this.getModuleMatching(CraftingWorkerBuildingModule.class, m -> m.getJobEntry() == ModJobs.cookassistant.get()).getAssignedCitizen().stream()
                    .map(c -> c.getJob(AbstractJobCrafter.class))
                    .filter(Objects::nonNull)
                    .allMatch(AbstractJobCrafter::hasTask);
@@ -241,7 +241,7 @@ public class BuildingCook extends AbstractBuilding
 
         // Make the assistant cook drop everything. We don't want them to keep food.
         // Neither like the cook does here, nor how the average worker does in the super call.
-        if (jobEntry == ModJobs.cookassistant)
+        if (jobEntry == ModJobs.cookassistant.get())
         {
             return stack.getCount();
         }

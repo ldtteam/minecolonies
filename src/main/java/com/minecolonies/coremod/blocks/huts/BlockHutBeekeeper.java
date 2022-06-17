@@ -28,6 +28,6 @@ public class BlockHutBeekeeper extends AbstractBlockHut<BlockHutBeekeeper>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.beekeeper;
+        return ModBuildings.beekeeper.get();
     }
 }

@@ -25,6 +25,6 @@ public class BlockHutTavern extends AbstractBlockHut<com.minecolonies.coremod.bl
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.tavern;
+        return ModBuildings.tavern.get();
     }
 }

@@ -56,7 +56,7 @@ public class BlockStash extends AbstractBlockHut<BlockStash> implements IRSCompo
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.stash;
+        return ModBuildings.stash.get();
     }
 
     @Deprecated

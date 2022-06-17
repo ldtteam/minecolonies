@@ -132,7 +132,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
     @Override
     public BuildingEntry getBuildingEntry()
     {
-        return ModBuildings.townHall;
+        return ModBuildings.townHall.get();
     }
 
     /**

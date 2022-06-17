@@ -60,7 +60,7 @@ public class BuildingChickenHerder extends AbstractBuilding
     {
         public HerdingModule()
         {
-            super(ModJobs.chickenHerder, EntityType.CHICKEN, new ItemStack(Items.WHEAT_SEEDS, 2));
+            super(ModJobs.chickenHerder.get(), EntityType.CHICKEN, new ItemStack(Items.WHEAT_SEEDS, 2));
         }
 
         @Override
