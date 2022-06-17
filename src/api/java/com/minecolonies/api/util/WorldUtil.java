@@ -281,7 +281,6 @@ public class WorldUtil
         {
             final Set<Mob> navigators = ((ServerLevel) world).navigatingMobs;
             ((ServerLevel) world).navigatingMobs.clear();
-            ;
             final boolean result = world.setBlock(pos, state, flags);
             ((ServerLevel) world).navigatingMobs.addAll(navigators);
             return result;
