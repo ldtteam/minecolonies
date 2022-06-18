@@ -42,10 +42,4 @@ public final class WorkerLoadOnlyStructureHandler<J extends AbstractJobStructure
     {
         return structureAI.getSolidSubstitution(blockPos);
     }
-
-    @Override
-    public BlockState getSolidBlockForPos(final BlockPos worldPos, @Nullable final BlockState virtualBlockAbove)
-    {
-        return structureAI.getSolidSubstitution(worldPos);
-    }
 }
