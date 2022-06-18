@@ -106,7 +106,6 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
     /**
      * Create the inventory that belongs to the rack.
-     *
      * @param slots the number of slots.
      * @return the created inventory,
      */
@@ -126,17 +125,12 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
                 if (IColonyManager.getInstance().isCoordinateInAnyColony(level, worldPosition))
                 {
                     final IColony colony = IColonyManager.getInstance().getClosestColony(level, worldPosition);
-                    if (colony == null)
-                    {
-                        return;
-                    }
-
-                    if (inWarehouse)
+                    if (inWarehouse && colony != null && colony.getRequestManager() != null)
                     {
                         colony.getRequestManager().onColonyUpdate(request ->
                                                                     request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
                     }
-                    else
+                    else if (!buildingPos.equals(BlockPos.ZERO))
                     {
                         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
                         if (building != null)
@@ -228,7 +222,6 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
     /**
      * Get the upgrade size.
-     *
      * @return the upgrade size.
      */
     public abstract int getUpgradeSize();
@@ -326,7 +319,6 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
     /**
      * Set the rack as single (or unset).
-     *
      * @param single if so.
      */
     public void setSingle(final boolean single)
