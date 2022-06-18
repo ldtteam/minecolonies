@@ -8,11 +8,11 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -106,6 +106,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
     /**
      * Create the inventory that belongs to the rack.
+     *
      * @param slots the number of slots.
      * @return the created inventory,
      */
@@ -125,12 +126,17 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
                 if (IColonyManager.getInstance().isCoordinateInAnyColony(level, worldPosition))
                 {
                     final IColony colony = IColonyManager.getInstance().getClosestColony(level, worldPosition);
-                    if (inWarehouse && colony != null && colony.getRequestManager() != null)
+                    if (colony == null)
+                    {
+                        return;
+                    }
+
+                    if (inWarehouse)
                     {
                         colony.getRequestManager().onColonyUpdate(request ->
                                                                     request.getRequest() instanceof IDeliverable && ((IDeliverable) request.getRequest()).matches(stack));
                     }
-                    else if (!buildingPos.equals(BlockPos.ZERO))
+                    else
                     {
                         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
                         if (building != null)
@@ -172,7 +178,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      *
      * @param stack             the stack to check.
      * @param ignoreDamageValue ignore the damage value.
-     * @param ignoreNBT           if nbt should be ignored.
+     * @param ignoreNBT         if nbt should be ignored.
      * @return the quantity or 0.
      */
     public abstract int getCount(ItemStack stack, boolean ignoreDamageValue, final boolean ignoreNBT);
@@ -222,6 +228,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
     /**
      * Get the upgrade size.
+     *
      * @return the upgrade size.
      */
     public abstract int getUpgradeSize();
@@ -306,7 +313,8 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             this.setChanged();
             updateBlockState();
         }
-        else if (relativeNeighbor != null && this.worldPosition.subtract(relativeNeighbor).equals(newNeighbor) && level.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
+        else if (relativeNeighbor != null && this.worldPosition.subtract(relativeNeighbor).equals(newNeighbor)
+                   && level.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
         {
             this.relativeNeighbor = null;
             setSingle(true);
@@ -318,6 +326,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
 
     /**
      * Set the rack as single (or unset).
+     *
      * @param single if so.
      */
     public void setSingle(final boolean single)
