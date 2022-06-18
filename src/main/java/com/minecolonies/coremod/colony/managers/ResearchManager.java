@@ -18,6 +18,7 @@ import com.minecolonies.coremod.research.ResearchEffectManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -196,7 +197,8 @@ public class ResearchManager implements IResearchManager
                 citizen.applyResearchEffects();
             }
 
-            MessageUtils.format(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3), IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())
+            MessageUtils.format(RESEARCH_CONCLUDED + ThreadLocalRandom.current().nextInt(3),
+                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
               .sendTo(colony)
               .forAllPlayers();
             for (Player player : colony.getMessagePlayerEntities())

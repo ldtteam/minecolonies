@@ -12,6 +12,7 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.client.render.worldevent.ColonyBorderRenderer;
 import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -68,6 +70,12 @@ public class ClientEventHandler
     public static void renderWorldLastEvent(@NotNull final RenderLevelLastEvent event)
     {
         WorldEventContext.INSTANCE.renderWorldLastEvent(event);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggedOutEvent event)
+    {
+        ColonyBorderRenderer.cleanup();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

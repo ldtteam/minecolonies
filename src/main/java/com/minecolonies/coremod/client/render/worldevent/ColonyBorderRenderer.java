@@ -7,21 +7,18 @@ import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.MutableChunkPos;
-import com.mojang.blaze3d.platform.MemoryTracker;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferBuilder.DrawState;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.datafixers.util.Pair;
+import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.debug.ChunkBorderRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.awt.*;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,9 +31,9 @@ public class ColonyBorderRenderer
     private static final int CHUNK_HEIGHT = 256;
     private static final int PLAYER_CHUNK_STEP = CHUNK_SIZE / 4;
 
-    private static Pair<DrawState, ByteBuffer> colonies = null;
-    private static Pair<DrawState, ByteBuffer> chunktickets = null;
-    private static ChunkPos lastPlayerChunkPos = null;
+    private static VertexBuffer colonies           = null;
+    private static VertexBuffer chunktickets       = null;
+    private static ChunkPos                     lastPlayerChunkPos = null;
     private static IColonyView lastColony = null;
 
     static void render(final WorldEventContext ctx)
@@ -46,7 +43,6 @@ public class ColonyBorderRenderer
             return;
         }
 
-        /* todo: Nightenom
         final ChunkPos playerChunkPos = new ChunkPos(ctx.clientPlayer.blockPosition());
 
         if (lastColony != ctx.nearestColony || !lastPlayerChunkPos.equals(playerChunkPos))
@@ -80,23 +76,35 @@ public class ColonyBorderRenderer
                 }
             }
 
+            if (colonies != null)
+            {
+                colonies.close();
+            }
+            if (chunktickets != null)
+            {
+                chunktickets.close();
+            }
             colonies = draw(bufferbuilder, coloniesMap, nearestColonyId, playerChunkPos, playerRenderDist);
             chunktickets = draw(bufferbuilder, chunkticketsMap, nearestColonyId, playerChunkPos, playerRenderDist);
             bufferbuilder.unsetDefaultColor();
         }
 
-        final Pair<DrawState, ByteBuffer> p = Screen.hasControlDown() ? chunktickets : colonies;
-        final DrawState ds = p.getFirst();
+        final VertexBuffer p = Screen.hasControlDown() ? chunktickets : colonies;
+        if (p == null)
+        {
+            return;
+        }
 
         MatrixUtils.pushShaderMVstack(ctx.poseStack);
         WorldRenderMacros.LINES.setupRenderState();
-        BufferUploader._end(p.getSecond(), ds.mode(), ds.format(), ds.vertexCount(), ds.indexType(), ds.indexCount(), ds.sequentialIndex());
+        p.bind();
+        p.drawWithShader(RenderSystem.getModelViewMatrix(), RenderSystem.getProjectionMatrix(), GameRenderer.getPositionColorShader());
+        VertexBuffer.unbind();
         WorldRenderMacros.LINES.clearRenderState();
-        MatrixUtils.popShaderMVstack();*/
+        MatrixUtils.popShaderMVstack();
     }
 
-    /* todo: Nightenom
-    private static Pair<DrawState, ByteBuffer> draw(final BufferBuilder bufferbuilder,
+    private static VertexBuffer draw(final BufferBuilder bufferbuilder,
         final Map<ChunkPos, Integer> mapToDraw,
         final int playerColonyId,
         final ChunkPos playerChunkPos,
@@ -278,15 +286,33 @@ public class ColonyBorderRenderer
             }
         });
 
-        bufferbuilder.end();
-
+        final BufferBuilder.RenderedBuffer renderedBuffer = bufferbuilder.endOrDiscardIfEmpty();
+        if (renderedBuffer == null)
+        {
+            return null;
+        }
         // create bytebuffer copy since buffer builder uses slice
-        final Pair<DrawState, ByteBuffer> preResult = BufferBuilder.popNextBuffer();
-        final ByteBuffer temp = MemoryTracker.create(preResult.getSecond().capacity());
-        preResult.getSecond().clear();
-        temp.clear();
-        temp.order(preResult.getSecond().order()); // FORGE: Fix incorrect byte order
-        temp.put(preResult.getSecond());
-        return Pair.of(preResult.getFirst(), temp);
-    }*/
+        final VertexBuffer vertexBuffer = new VertexBuffer();
+        vertexBuffer.bind();
+        vertexBuffer.upload(renderedBuffer);
+        VertexBuffer.unbind();
+        return vertexBuffer;
+    }
+
+    /**
+     * Cleanup on logout.
+     */
+    public static void cleanup()
+    {
+        if (colonies != null)
+        {
+            colonies.close();
+        }
+        if (chunktickets != null)
+        {
+            chunktickets.close();
+        }
+        lastColony = null;
+        lastPlayerChunkPos = null;
+    }
 }
