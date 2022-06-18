@@ -178,7 +178,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      *
      * @param stack             the stack to check.
      * @param ignoreDamageValue ignore the damage value.
-     * @param ignoreNBT           if nbt should be ignored.
+     * @param ignoreNBT         if nbt should be ignored.
      * @return the quantity or 0.
      */
     public abstract int getCount(ItemStack stack, boolean ignoreDamageValue, final boolean ignoreNBT);
@@ -313,7 +313,8 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             this.setChanged();
             updateBlockState();
         }
-        else if (relativeNeighbor != null && this.worldPosition.subtract(relativeNeighbor).equals(newNeighbor) && level.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
+        else if (relativeNeighbor != null && this.worldPosition.subtract(relativeNeighbor).equals(newNeighbor)
+                   && level.getBlockState(newNeighbor).getBlock() != ModBlocks.blockRack)
         {
             this.relativeNeighbor = null;
             setSingle(true);
