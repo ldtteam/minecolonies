@@ -211,9 +211,9 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             }
 
             // Now that we've confirmed a branch exists at all, cancel the add if it's from a removed branch.
-            else if(removeBranches.contains(new ResourceLocation(researchJson.get(RESEARCH_BRANCH_PROP).getAsString())))
+            else if (removeBranches.contains(new ResourceLocation(researchJson.get(RESEARCH_BRANCH_PROP).getAsString())))
             {
-                if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
                 {
                     Log.getLogger().info(entry.getKey() + " was removed, as its branch had been removed by data pack.");
                 }
@@ -221,32 +221,30 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
             }
 
             //Missing university level data may not necessarily be a show-stopper, but it is worth warning about.
-            if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get() &&
-                 !(researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsJsonPrimitive().isNumber()))
+            if (!(researchJson.has(RESEARCH_UNIVERSITY_LEVEL_PROP) && researchJson.get(RESEARCH_UNIVERSITY_LEVEL_PROP).getAsJsonPrimitive().isNumber()))
             {
-                Log.getLogger().warn(entry.getKey() + " is a Research, but has invalid or no university level requirements.");
+                Log.getLogger().debug(entry.getKey() + " is a Research, but has invalid or no university level requirements.");
             }
 
             //Pretty much anything else should be allowed: it's plausible pack designers may want a research type without a cost or effect.
             //It's possible we could dynamically derive university levels from parents, but doing so as a rule will prevent research branches that start at T2 or deeper.
             final GlobalResearch research = new GlobalResearch(researchJson, entry.getKey(), effectCategories, checkResourceLoc);
-            if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+
+            Log.getLogger().debug("Parsed research recipe from " + entry.getKey() + " [" + research.getBranch() + "/" + research.getId() + "]");
+            Log.getLogger().debug(research.getName() + " at " + research.getDepth() + "/" + research.getParent());
+            for (IResearchRequirement requirement : research.getResearchRequirement())
             {
-                Log.getLogger().info("Parsed research recipe from " + entry.getKey() + " [" + research.getBranch() + "/" + research.getId() + "]");
-                Log.getLogger().info(research.getName() + " at " + research.getDepth() + "/" + research.getParent());
-                for(IResearchRequirement requirement : research.getResearchRequirement())
-                {
-                    Log.getLogger().info("Requirement: " + requirement.getDesc());
-                }
-                for(ItemStorage itemS : research.getCostList())
-                {
-                    Log.getLogger().info("Cost: " + itemS.toString());
-                }
-                for(IResearchEffect<?> researchEffect : research.getEffects())
-                {
-                    Log.getLogger().info("Effect: " + researchEffect.getId() + " " + researchEffect.getDesc());
-                }
+                Log.getLogger().debug("Requirement: " + requirement.getDesc());
             }
+            for (ItemStorage itemS : research.getCostList())
+            {
+                Log.getLogger().debug("Cost: " + itemS.toString());
+            }
+            for (IResearchEffect<?> researchEffect : research.getEffects())
+            {
+                Log.getLogger().debug("Effect: " + researchEffect.getId() + " " + researchEffect.getDesc());
+            }
+
             researchMap.put(research.getId(), research);
         }
         return researchMap;

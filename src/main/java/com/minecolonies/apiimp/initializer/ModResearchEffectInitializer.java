@@ -2,15 +2,10 @@ package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.research.effects.ModResearchEffects;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
-import com.minecolonies.api.research.registry.ResearchRequirementEntry;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.research.GlobalResearchEffect;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.research.effects.ModResearchEffects.GLOBAL_EFFECT_ID;
 
