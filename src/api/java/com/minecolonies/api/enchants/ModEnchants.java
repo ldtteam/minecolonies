@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public class ModEnchants
 {
-    public static final DeferredRegister<Enchantment> ENCHANMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, Constants.MOD_ID);
+    public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, Constants.MOD_ID);
 
     private ModEnchants()
     {

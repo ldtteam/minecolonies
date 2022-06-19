@@ -7,7 +7,7 @@
   "icon": "minecraft:vine",
   "requirements": [
     {
-      "building": "home",
+      "building": "residence",
       "level": 3
     },
     {

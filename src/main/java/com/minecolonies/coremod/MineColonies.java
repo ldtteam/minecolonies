@@ -72,7 +72,7 @@ public class MineColonies
     public MineColonies()
     {
         TileEntityInitializer.BLOCK_ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ModEnchants.ENCHANMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModEnchants.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModContainerInitializers.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBuildingsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModGuardTypesInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -88,6 +88,8 @@ public class MineColonies
         ModSoundEvents.SOUND_EVENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModInteractionsInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModResearchEffectInitializer.DEFERRED_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+
+        ModEnchantInitializer.init();
 
         LanguageHandler.loadLangPath("assets/minecolonies/lang/%s.json"); // hotfix config comments, it's ugly bcs it's gonna be replaced
         config = new Configuration();

@@ -22,7 +22,7 @@ public final class ModBuildings
     public static final String FARMER_ID         = "farmer";
     public static final String FISHERMAN_ID      = "fisherman";
     public static final String GUARD_TOWER_ID    = "guardtower";
-    public static final String HOME_ID           = "home";
+    public static final String HOME_ID           = "residence";
     public static final String LIBRARY_ID        = "library";
     public static final String LUMBERJACK_ID     = "lumberjack";
     public static final String MINER_ID          = "miner";

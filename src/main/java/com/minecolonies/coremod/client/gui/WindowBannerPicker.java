@@ -15,7 +15,6 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -28,11 +27,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -200,7 +197,7 @@ public class WindowBannerPicker extends Screen
             int posX = center(this.width, PATTERN_COLUMNS, PATTERN_WIDTH, i % PATTERN_COLUMNS, PATTERN_MARGIN);
             int posY = center(this.height+30, PATTERN_ROWS, PATTERN_HEIGHT, Math.floorDiv(i, PATTERN_COLUMNS), PATTERN_MARGIN);
 
-            this.addRenderableWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i).get()));
+            this.addRenderableWidget(new PatternButton(posX, posY, PATTERN_HEIGHT, patterns.get(i)));
         }
     }
 
@@ -252,20 +249,20 @@ public class WindowBannerPicker extends Screen
      * @param pattern the pattern to set in the layer. Uses the existing or BASE if null
      * @param color the associated color for the pattern
      */
-    public void setLayer(@Nullable BannerPattern pattern, DyeColor color)
+    public void setLayer(@Nullable Holder<BannerPattern> pattern, DyeColor color)
     {
         if (pattern == null)
         {
             // Drop out if only the color was selected.
             if (activeLayer == layers.size()) return;
-            else if (activeLayer == 0) pattern = Registry.BANNER_PATTERN.get(BannerPatterns.BASE);
-            else pattern = layers.get(activeLayer).getFirst().get();
+            else if (activeLayer == 0) pattern = Registry.BANNER_PATTERN.getHolderOrThrow(BannerPatterns.BASE);
+            else pattern = layers.get(activeLayer).getFirst();
         }
 
         if (activeLayer == layers.size())
-            layers.add(new Pair<>(Holder.direct(pattern), color));
+            layers.add(new Pair<>(pattern, color));
         else
-            layers.set(activeLayer, new Pair<>(Holder.direct(pattern), color));
+            layers.set(activeLayer, new Pair<>(pattern, color));
     }
 
     @Override
@@ -323,13 +320,13 @@ public class WindowBannerPicker extends Screen
      * @param x the left x position of the banner
      * @param y the top y position of the banner
      */
-    private void drawBannerPattern(BannerPattern pattern, int x, int y)
+    private void drawBannerPattern(Holder<BannerPattern> pattern, int x, int y)
     {
         Lighting.setupForFlatItems();
 
         List<Pair<Holder<BannerPattern>, DyeColor>> list = new ArrayList<>();
         list.add(new Pair<>(Registry.BANNER_PATTERN.getHolder(BannerPatterns.BASE).get(), DyeColor.GRAY));
-        list.add(new Pair<>(Holder.direct(pattern), DyeColor.WHITE));
+        list.add(new Pair<>(pattern, DyeColor.WHITE));
 
         PoseStack transform = new PoseStack();
         transform.pushPose();
@@ -467,8 +464,8 @@ public class WindowBannerPicker extends Screen
      */
     public class PatternButton extends Button
     {
-        private final BannerPattern pattern;
-        private final int index;
+        private final Holder<BannerPattern> pattern;
+        private int index = -1;
 
         /**
          * @param x the left x position of the button
@@ -476,11 +473,20 @@ public class WindowBannerPicker extends Screen
          * @param height the height of the button. Twice the width, always
          * @param pattern the pattern this button represents
          */
-        public PatternButton(int x, int y, int height, BannerPattern pattern)
+        public PatternButton(int x, int y, int height, Holder<BannerPattern> pattern)
         {
             super(x, y, height/2, height, Component.literal(""), btn -> {});
             this.pattern = pattern;
-            this.index = WindowBannerPicker.this.patterns.indexOf(pattern);
+            int tempIndex = 0;
+            for (final Holder<BannerPattern> pat : WindowBannerPicker.this.patterns)
+            {
+                if (pat.get().getHashname().equals(pattern.get().getHashname()))
+                {
+                    this.index = tempIndex;
+                    break;
+                }
+                tempIndex++;
+            }
         }
 
         @Override
@@ -505,7 +511,7 @@ public class WindowBannerPicker extends Screen
             }
             catch (final Exception ex)
             {
-                Log.getLogger().warn(pattern.getHashname());
+                Log.getLogger().warn(pattern.get().getHashname());
                 Log.getLogger().error(ex);
             }
         }

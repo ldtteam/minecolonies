@@ -142,7 +142,7 @@ public abstract class AbstractWindowWorkerModuleBuilding<B extends IBuildingView
      */
     protected void hireClicked(@NotNull final Button button)
     {
-        if (building.getBuildingLevel() == 0 && !ModBuildings.builder.equals(building.getBuildingType()))
+        if (building.getBuildingLevel() == 0 && !ModBuildings.builder.get().equals(building.getBuildingType()))
         {
             MessageUtils.format(COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_LEVEL_0).sendTo(Minecraft.getInstance().player);
             return;

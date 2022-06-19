@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -522,6 +523,17 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             this.setStyle(tags.get(0));
         }
 
+        //todo remove after rescan of 1.19 worldgen colonies
+        if (this.getSchematicName().contains("home"))
+        {
+            this.setSchematicName(this.getSchematicName().replace("home", "residence"));
+            this.registryName = new ResourceLocation(Constants.MOD_ID, "residence");
+        }
+        if (this.getSchematicName().contains("citizen"))
+        {
+            this.setSchematicName(this.getSchematicName().replace("citizen", "residence"));
+            this.registryName = new ResourceLocation(Constants.MOD_ID, "residence");
+        }
         String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, this.getStyle(), this.getSchematicName()).toString();
 
         final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(level, this.getPosition(), structureName, new PlacementSettings(), true);

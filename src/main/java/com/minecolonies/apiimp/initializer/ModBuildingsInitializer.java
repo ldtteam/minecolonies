@@ -265,7 +265,7 @@ public final class ModBuildingsInitializer
 
         ModBuildings.home = DEFERRED_REGISTER.register(ModBuildings.HOME_ID, () -> new BuildingEntry.Builder()
                               .setBuildingBlock(ModBlocks.blockHutHome)
-                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "citizen", 5))
+                              .setBuildingProducer((colony, blockPos) -> new DefaultBuildingInstance(colony, blockPos, "residence", 5))
                               .setBuildingViewProducer(() -> HomeBuildingModule.View::new)
                               .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.HOME_ID))
                               .addBuildingModuleProducer(BedHandlingModule::new)

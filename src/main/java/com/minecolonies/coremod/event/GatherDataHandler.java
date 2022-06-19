@@ -2,6 +2,7 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.coremod.generation.DatagenLootTableManager;
 import com.minecolonies.coremod.generation.defaults.*;
+import com.minecolonies.coremod.util.SchemFixerUtil;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -16,6 +17,8 @@ public class GatherDataHandler
      */
     public static void dataGeneratorSetup(final GatherDataEvent event)
     {
+        SchemFixerUtil.fixSchematics();
+
         final DataGenerator generator = event.getGenerator();
         final LootTables lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator, event.getExistingFileHelper());
