@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/resilience",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 3
+    }
+  ],
   "icon": "minecraft:splash_potion",
+  "parentResearch": "minecolonies:civilian/resilience",
   "requirements": [
     {
       "building": "cook",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healingsaturationlimitaddition": 3
-    }
-  ]
+  "researchLevel": 4
 }

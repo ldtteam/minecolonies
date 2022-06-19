@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/hormones",
-  "researchLevel": 4,
-  "subtitle": "com.minecolonies.research.civilian.puberty.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 3
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/childgrowth3.png",
+  "parentResearch": "minecolonies:civilian/hormones",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 128
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/growthmultiplier": 3
-    }
-  ]
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.civilian.puberty.subtitle"
 }

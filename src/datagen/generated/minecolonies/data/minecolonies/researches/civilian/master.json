@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/bachelor",
-  "researchLevel": 5,
-  "subtitle": "com.minecolonies.research.civilian.master.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 4
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/xpgain4.png",
+  "parentResearch": "minecolonies:civilian/bachelor",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/teachingmultiplier": 4
-    }
-  ]
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.civilian.master.subtitle"
 }

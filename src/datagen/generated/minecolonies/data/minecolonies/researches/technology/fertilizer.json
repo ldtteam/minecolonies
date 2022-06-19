@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/compost",
-  "researchLevel": 5,
-  "subtitle": "com.minecolonies.research.technology.fertilizer.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 4
+    }
+  ],
   "icon": "minecraft:bone_block",
+  "parentResearch": "minecolonies:technology/compost",
   "requirements": [
     {
       "building": "smeltery",
@@ -14,9 +17,6 @@
       "quantity": 512
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/farmingmultiplier": 4
-    }
-  ]
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.technology.fertilizer.subtitle"
 }

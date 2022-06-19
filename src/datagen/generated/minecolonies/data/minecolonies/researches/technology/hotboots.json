@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/stringwork",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.technology.hotboots.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/minerfireresunlock": 1
+    }
+  ],
   "icon": "minecraft:campfire",
+  "parentResearch": "minecolonies:technology/stringwork",
   "requirements": [
     {
       "building": "fletcher",
@@ -18,9 +21,6 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/minerfireresunlock": 1
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.hotboots.subtitle"
 }

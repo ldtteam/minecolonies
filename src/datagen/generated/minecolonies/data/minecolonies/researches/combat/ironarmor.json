@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/ironskin",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 4
+    }
+  ],
   "icon": "minecraft:iron_helmet",
+  "parentResearch": "minecolonies:combat/ironskin",
   "requirements": [
     {
       "building": "townhall",
@@ -13,9 +17,5 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/armordurabilitymultiplier": 4
-    }
-  ]
+  "researchLevel": 4
 }

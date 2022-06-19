@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/biodegradable",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.technology.bonemeal.subtitle",
-  "sortOrder": 3,
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 1
+    }
+  ],
   "icon": "minecraft:wheat_seeds",
+  "parentResearch": "minecolonies:technology/biodegradable",
   "requirements": [
     {
       "building": "miner",
@@ -15,9 +17,7 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/farmingmultiplier": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.technology.bonemeal.subtitle"
 }

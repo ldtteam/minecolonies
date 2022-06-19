@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/parry",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.combat.riposte.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 2
+    }
+  ],
   "icon": "minecraft:iron_chestplate",
+  "parentResearch": "minecolonies:combat/parry",
   "requirements": [
     {
       "building": "combatacademy",
@@ -14,9 +17,6 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/meleearmormultiplier": 2
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.combat.riposte.subtitle"
 }

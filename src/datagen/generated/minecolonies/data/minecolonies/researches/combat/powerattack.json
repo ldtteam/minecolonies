@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/quickdraw",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/meleedamageaddition": 2
+    }
+  ],
   "icon": "minecraft:stone_sword",
+  "parentResearch": "minecolonies:combat/quickdraw",
   "requirements": [
     {
       "building": "combatacademy",
@@ -13,9 +17,5 @@
       "quantity": 4
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/meleedamageaddition": 2
-    }
-  ]
+  "researchLevel": 3
 }

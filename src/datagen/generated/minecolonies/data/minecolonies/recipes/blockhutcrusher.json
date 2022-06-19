@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
+    }
+  },
   "pattern": [
     "XTX",
     "CBC",
     "XXX"
   ],
-  "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
-    "C": {
-      "item": "minecraft:cobblestone"
-    },
-    "B": {
-      "item": "minecraft:iron_ingot"
-    },
-    "T": {
-      "item": "structurize:sceptergold"
-    }
-  },
   "result": {
     "item": "minecolonies:blockhutcrusher"
   }

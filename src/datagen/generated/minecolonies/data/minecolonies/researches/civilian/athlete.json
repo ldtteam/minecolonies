@@ -1,18 +1,18 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/swift",
-  "researchLevel": 6,
-  "subtitle": "com.minecolonies.research.civilian.athlete.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/walkingmultiplier": 4
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/speed4.png",
+  "parentResearch": "minecolonies:civilian/swift",
   "requirements": [
     {
       "item": "minecraft:rabbit_foot",
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/walkingmultiplier": 4
-    }
-  ]
+  "researchLevel": 6,
+  "subtitle": "com.minecolonies.research.civilian.athlete.subtitle"
 }

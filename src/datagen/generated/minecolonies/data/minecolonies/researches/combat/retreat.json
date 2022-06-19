@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/fear",
-  "researchLevel": 5,
-  "subtitle": "com.minecolonies.research.combat.retreat.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 3
+    }
+  ],
   "icon": "minecraft:golden_boots",
+  "parentResearch": "minecolonies:combat/fear",
   "requirements": [
     {
       "building": "guardtower",
@@ -14,9 +17,6 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/fleeingdamagemultiplier": 3
-    }
-  ]
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.combat.retreat.subtitle"
 }

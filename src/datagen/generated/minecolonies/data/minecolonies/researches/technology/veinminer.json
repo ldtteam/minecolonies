@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/hittingiron",
-  "researchLevel": 2,
+  "effects": [
+    {
+      "minecolonies:effects/moreoresmultiplier": 1
+    }
+  ],
   "icon": "minecraft:iron_block",
+  "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
       "building": "miner",
@@ -13,9 +17,5 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/moreoresmultiplier": 1
-    }
-  ]
+  "researchLevel": 2
 }

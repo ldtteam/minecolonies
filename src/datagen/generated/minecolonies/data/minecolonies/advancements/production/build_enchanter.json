@@ -1,27 +1,27 @@
 {
   "parent": "minecolonies:production/build_library",
+  "criteria": {
+    "enchanter": {
+      "conditions": {
+        "hut_name": "enchanter",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutenchanter"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.build.enchanter.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.enchanter.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutenchanter"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "enchanter": {
-      "trigger": "minecolonies:complete_build_request",
-      "conditions": {
-        "hut_name": "enchanter",
-        "level": 1
-      }
+    "title": {
+      "translate": "advancements.minecolonies.build.enchanter.title"
     }
   },
   "requirements": [

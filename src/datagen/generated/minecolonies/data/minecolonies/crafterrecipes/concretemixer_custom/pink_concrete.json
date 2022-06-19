@@ -6,6 +6,6 @@
       "item": "minecraft:pink_concrete_powder"
     }
   ],
-  "result": "minecraft:pink_concrete",
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:pink_concrete"
 }

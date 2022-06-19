@@ -1,27 +1,27 @@
 {
   "parent": "minecolonies:production/build_farmer",
+  "criteria": {
+    "composter": {
+      "conditions": {
+        "hut_name": "composter",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutcomposter"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.build.composter.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.composter.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutcomposter"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "composter": {
-      "trigger": "minecolonies:complete_build_request",
-      "conditions": {
-        "hut_name": "composter",
-        "level": 1
-      }
+    "title": {
+      "translate": "advancements.minecolonies.build.composter.title"
     }
   },
   "requirements": [

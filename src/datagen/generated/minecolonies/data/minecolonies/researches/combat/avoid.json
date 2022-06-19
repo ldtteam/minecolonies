@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/regeneration",
-  "researchLevel": 3,
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/fleeingspeedaddition": 1
+    }
+  ],
   "icon": "minecraft:feather",
+  "parentResearch": "minecolonies:combat/regeneration",
   "requirements": [
     {
       "building": "guardtower",
@@ -14,9 +17,6 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/fleeingspeedaddition": 1
-    }
-  ]
+  "researchLevel": 3,
+  "sortOrder": 2
 }

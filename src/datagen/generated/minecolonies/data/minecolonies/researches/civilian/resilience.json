@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/resistance",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 2
+    }
+  ],
   "icon": "minecraft:potion",
+  "parentResearch": "minecolonies:civilian/resistance",
   "requirements": [
     {
       "building": "cook",
@@ -13,9 +17,5 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healingsaturationlimitaddition": 2
-    }
-  ]
+  "researchLevel": 3
 }

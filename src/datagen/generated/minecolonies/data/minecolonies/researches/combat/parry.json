@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/avoidance",
-  "researchLevel": 2,
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 1
+    }
+  ],
   "icon": "minecraft:leather_chestplate",
+  "parentResearch": "minecolonies:combat/avoidance",
   "requirements": [
     {
       "building": "smeltery",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/meleearmormultiplier": 1
-    }
-  ]
+  "researchLevel": 2
 }

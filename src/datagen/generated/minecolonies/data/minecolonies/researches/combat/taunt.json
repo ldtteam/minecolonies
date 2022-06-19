@@ -1,8 +1,10 @@
 {
   "branch": "minecolonies:combat",
-  "researchLevel": 1,
-  "subtitle": "com.minecolonies.research.combat.taunt.subtitle",
-  "sortOrder": 5,
+  "effects": [
+    {
+      "minecolonies:effects/knighttauntmobsunlock": 1
+    }
+  ],
   "icon": "minecraft:chain",
   "requirements": [
     {
@@ -22,9 +24,7 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/knighttauntmobsunlock": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 5,
+  "subtitle": "com.minecolonies.research.combat.taunt.subtitle"
 }

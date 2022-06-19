@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/biodegradable",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.technology.letitgrow.subtitle",
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/blockhutplantation": 1
+    }
+  ],
   "icon": "minecolonies:blockhutplantation",
+  "parentResearch": "minecolonies:technology/biodegradable",
   "requirements": [
     {
       "building": "farmer",
@@ -15,9 +17,7 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockhutplantation": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "subtitle": "com.minecolonies.research.technology.letitgrow.subtitle"
 }

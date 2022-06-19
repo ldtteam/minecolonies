@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/outpost",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/citizencapaddition": 2
+    }
+  ],
   "icon": "minecolonies:blockhutcitizen:75",
+  "parentResearch": "minecolonies:civilian/outpost",
   "requirements": [
     {
       "building": "residence",
@@ -13,9 +17,5 @@
       "quantity": 128
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/citizencapaddition": 2
-    }
-  ]
+  "researchLevel": 3
 }

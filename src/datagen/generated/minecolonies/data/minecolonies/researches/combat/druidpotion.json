@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/arrowuse",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/consumepotions": 1
+    }
+  ],
   "icon": "minecolonies:mistletoe",
+  "parentResearch": "minecolonies:combat/arrowuse",
   "requirements": [
     {
       "building": "barracks",
@@ -13,9 +17,5 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/consumepotions": 1
-    }
-  ]
+  "researchLevel": 3
 }

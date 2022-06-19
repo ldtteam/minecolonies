@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/nurture",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.civilian.hormones.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 2
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/childgrowth2.png",
+  "parentResearch": "minecolonies:civilian/nurture",
   "requirements": [
     {
       "building": "school",
@@ -14,9 +17,6 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/growthmultiplier": 2
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.hormones.subtitle"
 }

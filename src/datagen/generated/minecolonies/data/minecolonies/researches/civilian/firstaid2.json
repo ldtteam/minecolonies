@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/firstaid",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.civilian.firstaid2.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 2
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/hp2.png",
+  "parentResearch": "minecolonies:civilian/firstaid",
   "requirements": [
     {
       "building": "townhall",
@@ -14,9 +17,6 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healthaddition": 2
-    }
-  ]
+  "researchLevel": 2,
+  "subtitle": "com.minecolonies.research.civilian.firstaid2.subtitle"
 }

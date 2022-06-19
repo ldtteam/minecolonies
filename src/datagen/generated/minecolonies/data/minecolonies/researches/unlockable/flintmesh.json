@@ -1,20 +1,20 @@
 {
-  "branch": "minecolonies:unlockable",
-  "parentResearch": "minecolonies:unlockable/stringmesh",
-  "researchLevel": 2,
-  "icon": "minecolonies:sifter_mesh_string",
-  "requirements": [
-    {
-      "mandatory-building": "sifter",
-      "level": 3
-    }
-  ],
-  "hidden": true,
   "autostart": true,
-  "instant": true,
+  "branch": "minecolonies:unlockable",
   "effects": [
     {
       "minecolonies:effects/sifterflintunlock": 1
     }
-  ]
+  ],
+  "hidden": true,
+  "icon": "minecolonies:sifter_mesh_string",
+  "instant": true,
+  "parentResearch": "minecolonies:unlockable/stringmesh",
+  "requirements": [
+    {
+      "level": 3,
+      "mandatory-building": "sifter"
+    }
+  ],
+  "researchLevel": 2
 }

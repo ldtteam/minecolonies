@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/woodwork",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.technology.memoryaid.subtitle",
-  "sortOrder": 3,
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 1
+    }
+  ],
   "icon": "minecraft:paper",
+  "parentResearch": "minecolonies:technology/woodwork",
   "requirements": [
     {
       "building": "sawmill",
@@ -15,9 +17,7 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/recipesmultiplier": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.technology.memoryaid.subtitle"
 }

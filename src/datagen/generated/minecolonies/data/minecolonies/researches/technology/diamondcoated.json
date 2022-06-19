@@ -1,17 +1,17 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/steelbracing",
-  "researchLevel": 6,
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 5
+    }
+  ],
   "icon": "minecraft:diamond_pickaxe",
+  "parentResearch": "minecolonies:technology/steelbracing",
   "requirements": [
     {
       "item": "minecraft:diamond",
       "quantity": 128
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/tooldurabilitymultiplier": 5
-    }
-  ]
+  "researchLevel": 6
 }

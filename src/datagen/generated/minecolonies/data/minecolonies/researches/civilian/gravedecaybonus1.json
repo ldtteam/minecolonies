@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/remembrance",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.civilian.gravedecaybonus1.subtitle",
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/gravedecaybonus": 1
+    }
+  ],
   "icon": "minecolonies:blockminecoloniesgrave",
+  "parentResearch": "minecolonies:civilian/remembrance",
   "requirements": [
     {
       "building": "graveyard",
@@ -15,9 +17,7 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/gravedecaybonus": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "subtitle": "com.minecolonies.research.civilian.gravedecaybonus1.subtitle"
 }

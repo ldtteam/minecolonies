@@ -1,7 +1,10 @@
 {
   "branch": "minecolonies:civilian",
-  "researchLevel": 1,
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/blockhutlibrary": 1
+    }
+  ],
   "icon": "minecolonies:blockhutlibrary",
   "requirements": [
     {
@@ -13,9 +16,6 @@
       "quantity": 3
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockhutlibrary": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 2
 }

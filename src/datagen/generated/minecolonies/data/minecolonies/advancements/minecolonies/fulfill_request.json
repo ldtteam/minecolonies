@@ -1,34 +1,34 @@
 {
   "parent": "minecolonies:minecolonies/start_builder",
+  "criteria": {
+    "click_gui_button_fulfill": {
+      "conditions": {
+        "button_id": "fulfill",
+        "window_resource_location": "minecolonies:gui/citizen/requests.xml"
+      },
+      "trigger": "minecolonies:click_gui_button"
+    },
+    "click_request_button_fulfill": {
+      "conditions": {
+        "button_id": "fulfill",
+        "window_resource_location": "minecolonies:gui/windowrequestdetail.xml"
+      },
+      "trigger": "minecolonies:click_gui_button"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:resourcescroll"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.click_gui_button_fulfill.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.click_gui_button_fulfill.description"
     },
     "frame": "task",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "click_gui_button_fulfill": {
-      "trigger": "minecolonies:click_gui_button",
-      "conditions": {
-        "button_id": "fulfill",
-        "window_resource_location": "minecolonies:gui/citizen/requests.xml"
-      }
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:resourcescroll"
     },
-    "click_request_button_fulfill": {
-      "trigger": "minecolonies:click_gui_button",
-      "conditions": {
-        "button_id": "fulfill",
-        "window_resource_location": "minecolonies:gui/windowrequestdetail.xml"
-      }
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.click_gui_button_fulfill.title"
     }
   },
   "requirements": [

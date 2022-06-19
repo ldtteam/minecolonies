@@ -6,6 +6,6 @@
       "item": "minecraft:cyan_concrete_powder"
     }
   ],
-  "result": "minecraft:cyan_concrete",
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:cyan_concrete"
 }

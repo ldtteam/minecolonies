@@ -398,12 +398,6 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
         }
 
         @Override
-        public void run(final CachedOutput cache) throws IOException
-        {
-
-        }
-
-        @Override
         protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
         {
             final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(

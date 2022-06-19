@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/boiledleather",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 3
+    }
+  ],
   "icon": "minecraft:chainmail_helmet",
+  "parentResearch": "minecolonies:combat/boiledleather",
   "requirements": [
     {
       "building": "townhall",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/armordurabilitymultiplier": 3
-    }
-  ]
+  "researchLevel": 3
 }

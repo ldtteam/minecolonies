@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/hittingiron",
-  "researchLevel": 2,
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 1
+    }
+  ],
   "icon": "minecraft:wooden_pickaxe",
+  "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
       "building": "blacksmith",
@@ -13,9 +17,5 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/tooldurabilitymultiplier": 1
-    }
-  ]
+  "researchLevel": 2
 }

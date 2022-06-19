@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/ironarmor",
-  "researchLevel": 5,
-  "sortOrder": 1,
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 5
+    }
+  ],
   "icon": "minecraft:golden_helmet",
+  "parentResearch": "minecolonies:combat/ironarmor",
   "requirements": [
     {
       "building": "townhall",
@@ -14,9 +17,6 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/armordurabilitymultiplier": 5
-    }
-  ]
+  "researchLevel": 5,
+  "sortOrder": 1
 }

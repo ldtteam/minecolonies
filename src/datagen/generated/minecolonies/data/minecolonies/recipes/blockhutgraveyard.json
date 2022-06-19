@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XTX",
-    "XBX",
-    "XXX"
-  ],
   "key": {
-    "X": {
-      "item": "minecraft:stone"
-    },
     "B": {
       "item": "minecraft:bone"
     },
     "T": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "item": "minecraft:stone"
     }
   },
+  "pattern": [
+    "XTX",
+    "XBX",
+    "XXX"
+  ],
   "result": {
     "item": "minecolonies:blockhutgraveyard"
   }

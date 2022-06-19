@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XTX",
-    "XBX",
-    "XBX"
-  ],
   "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
     "B": {
       "item": "minecraft:feather"
     },
     "T": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "XTX",
+    "XBX",
+    "XBX"
+  ],
   "result": {
     "item": "minecolonies:blockhutschool"
   }

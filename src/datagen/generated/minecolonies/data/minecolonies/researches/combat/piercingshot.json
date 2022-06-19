@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/penetratingshot",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 3
+    }
+  ],
   "icon": "minecraft:crossbow",
+  "parentResearch": "minecolonies:combat/penetratingshot",
   "requirements": [
     {
       "building": "guardtower",
@@ -13,9 +17,5 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/archerdamageaddition": 3
-    }
-  ]
+  "researchLevel": 4
 }

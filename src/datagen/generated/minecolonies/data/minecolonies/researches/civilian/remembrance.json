@@ -1,13 +1,11 @@
 {
   "branch": "minecolonies:civilian",
-  "researchLevel": 1,
-  "sortOrder": 6,
-  "icon": "minecolonies:blockhutgraveyard",
   "effects": [
     {
       "minecolonies:effects/blockhutgraveyard": 1
     }
   ],
+  "icon": "minecolonies:blockhutgraveyard",
   "requirements": [
     {
       "building": "townhall",
@@ -18,5 +16,7 @@
       "quantity": 8
     }
   ],
+  "researchLevel": 1,
+  "sortOrder": 6,
   "subtitle": "com.minecolonies.research.civilian.remembrance.subtitle"
 }

@@ -1,9 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "I I",
-    "N N"
-  ],
   "key": {
     "I": {
       "item": "minecraft:iron_ingot"
@@ -12,6 +8,10 @@
       "item": "minecraft:iron_nugget"
     }
   },
+  "pattern": [
+    "I I",
+    "N N"
+  ],
   "result": {
     "item": "minecraft:chainmail_boots"
   }

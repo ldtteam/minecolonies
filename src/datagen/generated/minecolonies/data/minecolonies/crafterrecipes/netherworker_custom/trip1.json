@@ -1,22 +1,5 @@
 {
   "type": "recipe",
-  "crafter": "netherworker_custom",
-  "min-building-level": 1,
-  "max-building-level": 1,
-  "inputs": [
-    {
-      "item": "minecraft:cobblestone",
-      "count": 64
-    },
-    {
-      "item": "minecraft:torch",
-      "count": 32
-    },
-    {
-      "item": "minecraft:ladder",
-      "count": 16
-    }
-  ],
   "additional-output": [
     {
       "item": "minecraft:rotten_flesh"
@@ -49,9 +32,6 @@
       "item": "minecraft:leather"
     },
     {
-      "item": "minecraft:magma_cream"
-    },
-    {
       "item": "minecraft:ghast_tear"
     },
     {
@@ -62,8 +42,37 @@
     },
     {
       "item": "minecraft:blaze_rod"
+    },
+    {
+      "item": "minecraft:magma_cream"
+    },
+    {
+      "item": "minecraft:pearlescent_froglight"
+    },
+    {
+      "item": "minecraft:verdant_froglight"
+    },
+    {
+      "item": "minecraft:ochre_froglight"
     }
   ],
+  "crafter": "netherworker_custom",
+  "inputs": [
+    {
+      "count": 64,
+      "item": "minecraft:cobblestone"
+    },
+    {
+      "count": 32,
+      "item": "minecraft:torch"
+    },
+    {
+      "count": 16,
+      "item": "minecraft:ladder"
+    }
+  ],
+  "intermediate": "minecraft:air",
   "loot-table": "minecolonies:recipes/netherworker/trip1",
-  "intermediate": "minecraft:air"
+  "max-building-level": 1,
+  "min-building-level": 1
 }

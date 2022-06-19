@@ -1,24 +1,24 @@
 {
   "parent": "minecolonies:production/build_miner",
+  "criteria": {
+    "mineshaft": {
+      "conditions": {},
+      "trigger": "minecolonies:deep_mine"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecraft:bedrock"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.deep_mine.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.deep_mine.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:bedrock"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "mineshaft": {
-      "trigger": "minecolonies:deep_mine",
-      "conditions": {}
+    "title": {
+      "translate": "advancements.minecolonies.deep_mine.title"
     }
   },
   "requirements": [

@@ -37,14 +37,9 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    public void run(final CachedOutput cache) throws IOException
-    {
-
-    }
-
-    @Override
     protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
     {
+
         final List<ItemStorage> input = new ArrayList<>();
         input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));
         input.add(new ItemStorage(new ItemStack(Items.GRAVEL, 4)));

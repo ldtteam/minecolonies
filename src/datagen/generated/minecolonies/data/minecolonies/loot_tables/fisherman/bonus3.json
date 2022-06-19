@@ -1,26 +1,26 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "weight": 25,
+          "name": "minecraft:prismarine_shard",
           "quality": 1,
-          "name": "minecraft:prismarine_shard"
+          "weight": 25
         },
         {
           "type": "minecraft:item",
-          "weight": 25,
+          "name": "minecraft:prismarine_crystals",
           "quality": 1,
-          "name": "minecraft:prismarine_crystals"
+          "weight": 25
         },
         {
           "type": "minecraft:empty",
           "weight": 950
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

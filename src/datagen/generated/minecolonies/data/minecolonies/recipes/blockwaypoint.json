@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
+    }
+  },
   "pattern": [
     "XXX",
     "XBX",
     "XXX"
   ],
-  "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
-    "B": {
-      "item": "structurize:sceptergold"
-    }
-  },
   "result": {
-    "item": "minecolonies:blockwaypoint",
-    "count": 16
+    "count": 16,
+    "item": "minecolonies:blockwaypoint"
   }
 }

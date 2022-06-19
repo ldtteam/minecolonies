@@ -1,14 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XTX",
-    "AFA",
-    "XXX"
-  ],
   "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
     "A": {
       "item": "minecraft:stone_bricks"
     },
@@ -17,8 +9,16 @@
     },
     "T": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "XTX",
+    "AFA",
+    "XXX"
+  ],
   "result": {
     "item": "minecolonies:blockhutstonesmeltery"
   }

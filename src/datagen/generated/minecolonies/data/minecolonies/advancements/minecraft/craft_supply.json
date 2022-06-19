@@ -1,24 +1,24 @@
 {
   "parent": "minecraft:story/root",
+  "criteria": {
+    "supply_ship": {
+      "conditions": {},
+      "trigger": "minecolonies:supply_placed"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:supplychestdeployer"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.root.title"
-    },
+    "announce_to_chat": false,
     "description": {
       "translate": "advancements.minecolonies.root.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:supplychestdeployer"
+    },
     "show_toast": false,
-    "announce_to_chat": false,
-    "hidden": false
-  },
-  "criteria": {
-    "supply_ship": {
-      "trigger": "minecolonies:supply_placed",
-      "conditions": {}
+    "title": {
+      "translate": "advancements.minecolonies.root.title"
     }
   },
   "requirements": [

@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/strong",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/tooldurabilitymultiplier": 2
+    }
+  ],
   "icon": "minecraft:stone_pickaxe",
+  "parentResearch": "minecolonies:technology/strong",
   "requirements": [
     {
       "building": "blacksmith",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/tooldurabilitymultiplier": 2
-    }
-  ]
+  "researchLevel": 3
 }

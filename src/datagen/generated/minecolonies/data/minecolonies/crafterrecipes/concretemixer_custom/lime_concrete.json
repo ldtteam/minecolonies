@@ -6,6 +6,6 @@
       "item": "minecraft:lime_concrete_powder"
     }
   ],
-  "result": "minecraft:lime_concrete",
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:lime_concrete"
 }

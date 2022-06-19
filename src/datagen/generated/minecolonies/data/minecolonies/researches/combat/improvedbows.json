@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/tactictraining",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.combat.improvedbows.subtitle",
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/blockhutarchery": 1
+    }
+  ],
   "icon": "minecolonies:blockhutarchery",
+  "parentResearch": "minecolonies:combat/tactictraining",
   "requirements": [
     {
       "building": "barracks",
@@ -15,9 +17,7 @@
       "quantity": 6
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockhutarchery": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "subtitle": "com.minecolonies.research.combat.improvedbows.subtitle"
 }

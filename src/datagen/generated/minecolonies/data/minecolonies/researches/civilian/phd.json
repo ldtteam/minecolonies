@@ -1,18 +1,18 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/master",
-  "researchLevel": 6,
-  "subtitle": "com.minecolonies.research.civilian.phd.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 5
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/xpgain5.png",
+  "parentResearch": "minecolonies:civilian/master",
   "requirements": [
     {
       "item": "minecraft:bookshelf",
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/teachingmultiplier": 5
-    }
-  ]
+  "researchLevel": 6,
+  "subtitle": "com.minecolonies.research.civilian.phd.subtitle"
 }

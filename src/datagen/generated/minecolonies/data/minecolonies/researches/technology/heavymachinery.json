@@ -1,17 +1,17 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/redstonepowered",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/blockbreakspeedmultiplier": 3
+    }
+  ],
   "icon": "minecraft:redstone_block",
+  "parentResearch": "minecolonies:technology/redstonepowered",
   "requirements": [
     {
       "item": "minecraft:redstone",
       "quantity": 512
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockbreakspeedmultiplier": 3
-    }
-  ]
+  "researchLevel": 4
 }

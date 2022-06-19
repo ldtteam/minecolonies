@@ -1,33 +1,33 @@
 {
   "parent": "minecolonies:minecolonies/start_builder",
-  "display": {
-    "icon": {
-      "item": "minecraft:torch"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.building_add_recipe_torch.title"
-    },
-    "description": {
-      "translate": "advancements.minecolonies.building_add_recipe_torch.description"
-    },
-    "frame": "task",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
   "criteria": {
     "add_recipe_torch": {
-      "trigger": "minecolonies:building_add_recipe",
       "conditions": {
+        "crafting_size": 2,
         "items": [
           {
             "items": [
               "minecraft:torch"
             ]
           }
-        ],
-        "crafting_size": 2
-      }
+        ]
+      },
+      "trigger": "minecolonies:building_add_recipe"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.minecolonies.building_add_recipe_torch.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:torch"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.building_add_recipe_torch.title"
     }
   },
   "requirements": [

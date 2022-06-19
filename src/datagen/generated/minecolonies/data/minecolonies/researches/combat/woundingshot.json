@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/piercingshot",
-  "researchLevel": 5,
+  "effects": [
+    {
+      "minecolonies:effects/archerdamageaddition": 4
+    }
+  ],
   "icon": "minecolonies:firearrow",
+  "parentResearch": "minecolonies:combat/piercingshot",
   "requirements": [
     {
       "building": "barracks",
@@ -13,9 +17,5 @@
       "quantity": 128
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/archerdamageaddition": 4
-    }
-  ]
+  "researchLevel": 5
 }

@@ -1,24 +1,24 @@
 {
   "parent": "minecolonies:minecolonies/build_tavern",
+  "criteria": {
+    "buried": {
+      "conditions": {},
+      "trigger": "minecolonies:citizen_bury"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutgraveyard"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.citizen.bury.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.citizen.bury.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutgraveyard"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "buried": {
-      "trigger": "minecolonies:citizen_bury",
-      "conditions": {}
+    "title": {
+      "translate": "advancements.minecolonies.citizen.bury.title"
     }
   },
   "requirements": [

@@ -1,17 +1,17 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/provost",
-  "researchLevel": 6,
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 5
+    }
+  ],
   "icon": "minecraft:diamond_chestplate",
+  "parentResearch": "minecolonies:combat/provost",
   "requirements": [
     {
       "item": "minecraft:diamond",
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/meleearmormultiplier": 5
-    }
-  ]
+  "researchLevel": 6
 }

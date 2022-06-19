@@ -1,7 +1,10 @@
 {
   "branch": "minecolonies:combat",
-  "researchLevel": 1,
-  "sortOrder": 3,
+  "effects": [
+    {
+      "minecolonies:effects/shieldusageunlock": 1
+    }
+  ],
   "exclusiveChildResearch": true,
   "icon": "minecraft:shield",
   "requirements": [
@@ -14,9 +17,6 @@
       "quantity": 3
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/shieldusageunlock": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 3
 }

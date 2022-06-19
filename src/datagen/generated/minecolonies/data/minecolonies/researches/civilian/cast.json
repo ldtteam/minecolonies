@@ -1,17 +1,17 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/compress",
-  "researchLevel": 6,
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 5
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/regeneration5.png",
+  "parentResearch": "minecolonies:civilian/compress",
   "requirements": [
     {
       "item": "minecraft:golden_carrot",
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/regenerationmultiplier": 5
-    }
-  ]
+  "researchLevel": 6
 }

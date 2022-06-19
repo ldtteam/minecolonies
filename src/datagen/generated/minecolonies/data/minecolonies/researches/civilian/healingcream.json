@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/bandaid",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.civilian.healingcream.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 2
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/regeneration2.png",
+  "parentResearch": "minecolonies:civilian/bandaid",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/regenerationmultiplier": 2
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.healingcream.subtitle"
 }

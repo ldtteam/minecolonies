@@ -1,7 +1,6 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -10,20 +9,21 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
-          "name": "minecraft:cactus"
+          "name": "minecraft:cactus",
+          "weight": 5
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
-          "name": "minecraft:sugar_cane"
+          "name": "minecraft:sugar_cane",
+          "weight": 5
         },
         {
           "type": "minecraft:item",
-          "weight": 5,
-          "name": "minecraft:gold_nugget"
+          "name": "minecraft:gold_nugget",
+          "weight": 5
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

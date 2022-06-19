@@ -1,7 +1,6 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -10,15 +9,16 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
-          "name": "minecraft:cactus"
+          "name": "minecraft:cactus",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
-          "name": "minecraft:sugar_cane"
+          "name": "minecraft:sugar_cane",
+          "weight": 2
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

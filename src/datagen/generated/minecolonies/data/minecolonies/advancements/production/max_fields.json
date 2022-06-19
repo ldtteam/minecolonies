@@ -1,24 +1,24 @@
 {
   "parent": "minecolonies:production/build_farmer",
+  "criteria": {
+    "fields": {
+      "conditions": {},
+      "trigger": "minecolonies:max_fields"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutfield"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.max_fields.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.max_fields.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutfield"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "fields": {
-      "trigger": "minecolonies:max_fields",
-      "conditions": {}
+    "title": {
+      "translate": "advancements.minecolonies.max_fields.title"
     }
   },
   "requirements": [

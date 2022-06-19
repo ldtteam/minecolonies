@@ -14,7 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class SchemFixerUtil
 {
     public static void fixSchematics()
     {
-        String baseFolder = "/home/ray/Documents/IdeaProjects/minecolonies/src/main/resources/assets/minecolonies/schematics";
+        String baseFolder = Paths.get("").toAbsolutePath().getParent().toString() + "/src/main/resources/assets/minecolonies/schematics";
         File baseFolderFile = new File(baseFolder);
         final List<File> files = Arrays.asList(baseFolderFile.listFiles());
         for (File subFolder :files)

@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/cheatsheet",
-  "researchLevel": 4,
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/citizeninvslotsaddition": 1
+    }
+  ],
   "icon": "minecraft:pink_shulker_box",
+  "parentResearch": "minecolonies:technology/cheatsheet",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/citizeninvslotsaddition": 1
-    }
-  ]
+  "researchLevel": 4,
+  "sortOrder": 2
 }

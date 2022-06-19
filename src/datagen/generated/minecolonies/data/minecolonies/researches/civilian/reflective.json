@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/scholarly",
-  "researchLevel": 5,
-  "subtitle": "com.minecolonies.research.civilian.reflective.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/levelingmultiplier": 4
+    }
+  ],
   "icon": "minecraft:experience_bottle:4",
+  "parentResearch": "minecolonies:civilian/scholarly",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 48
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/levelingmultiplier": 4
-    }
-  ]
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.civilian.reflective.subtitle"
 }

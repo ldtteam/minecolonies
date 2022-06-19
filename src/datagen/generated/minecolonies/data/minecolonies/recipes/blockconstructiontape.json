@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
   "pattern": [
     "SWS",
     "S S",
     "S S"
   ],
-  "key": {
-    "W": {
-      "tag": "minecraft:wool"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
-  },
   "result": {
     "item": "minecolonies:blockconstructiontape"
   }

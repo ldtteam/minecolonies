@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/keen",
-  "researchLevel": 2,
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/levelingmultiplier": 1
+    }
+  ],
   "icon": "minecraft:experience_bottle",
+  "parentResearch": "minecolonies:civilian/keen",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 6
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/levelingmultiplier": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 2
 }

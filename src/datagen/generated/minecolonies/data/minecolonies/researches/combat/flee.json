@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/evade",
-  "researchLevel": 5,
-  "subtitle": "com.minecolonies.research.combat.flee.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/fleeingspeedaddition": 3
+    }
+  ],
   "icon": "minecraft:feather:3",
+  "parentResearch": "minecolonies:combat/evade",
   "requirements": [
     {
       "building": "guardtower",
@@ -14,9 +17,6 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/fleeingspeedaddition": 3
-    }
-  ]
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.combat.flee.subtitle"
 }

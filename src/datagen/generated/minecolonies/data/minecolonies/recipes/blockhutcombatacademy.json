@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XTX",
-    "BBB",
-    "XXX"
-  ],
   "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
     "B": {
       "item": "minecraft:iron_sword"
     },
     "T": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "XTX",
+    "BBB",
+    "XXX"
+  ],
   "result": {
     "item": "minecolonies:blockhutcombatacademy"
   }

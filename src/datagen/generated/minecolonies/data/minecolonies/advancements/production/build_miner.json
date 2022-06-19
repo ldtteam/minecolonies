@@ -1,27 +1,27 @@
 {
   "parent": "minecolonies:production/root",
+  "criteria": {
+    "miner": {
+      "conditions": {
+        "hut_name": "miner",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutminer"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.build.miner.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.miner.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutminer"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "miner": {
-      "trigger": "minecolonies:complete_build_request",
-      "conditions": {
-        "hut_name": "miner",
-        "level": 1
-      }
+    "title": {
+      "translate": "advancements.minecolonies.build.miner.title"
     }
   },
   "requirements": [

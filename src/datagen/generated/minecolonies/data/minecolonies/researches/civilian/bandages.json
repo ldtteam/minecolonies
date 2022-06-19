@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/healingcream",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/regenerationmultiplier": 3
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/regeneration3.png",
+  "parentResearch": "minecolonies:civilian/healingcream",
   "requirements": [
     {
       "building": "library",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/regenerationmultiplier": 3
-    }
-  ]
+  "researchLevel": 4
 }

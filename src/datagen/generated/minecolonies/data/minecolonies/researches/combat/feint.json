@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/regeneration",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/fleeingdamagemultiplier": 1
+    }
+  ],
   "icon": "minecraft:leather_boots",
+  "parentResearch": "minecolonies:combat/regeneration",
   "requirements": [
     {
       "building": "guardtower",
@@ -13,9 +17,5 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/fleeingdamagemultiplier": 1
-    }
-  ]
+  "researchLevel": 3
 }

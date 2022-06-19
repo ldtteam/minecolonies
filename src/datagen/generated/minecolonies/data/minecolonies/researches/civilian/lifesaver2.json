@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/lifesaver",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 4
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/hp4.png",
+  "parentResearch": "minecolonies:civilian/lifesaver",
   "requirements": [
     {
       "building": "townhall",
@@ -13,9 +17,5 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healthaddition": 4
-    }
-  ]
+  "researchLevel": 4
 }

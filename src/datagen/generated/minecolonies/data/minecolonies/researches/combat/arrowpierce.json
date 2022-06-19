@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/arrowuse",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/piercingarrowsunlock": 1
+    }
+  ],
   "icon": "minecraft:enchanted_book",
+  "parentResearch": "minecolonies:combat/arrowuse",
   "requirements": [
     {
       "building": "archery",
@@ -17,9 +21,5 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/piercingarrowsunlock": 1
-    }
-  ]
+  "researchLevel": 3
 }

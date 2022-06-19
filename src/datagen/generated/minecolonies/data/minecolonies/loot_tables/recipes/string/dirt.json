@@ -1,7 +1,6 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -10,8 +9,8 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 25,
-          "name": "minecraft:wheat_seeds"
+          "name": "minecraft:wheat_seeds",
+          "weight": 25
         },
         {
           "type": "minecraft:item",
@@ -29,7 +28,8 @@
           "type": "minecraft:item",
           "name": "minecraft:jungle_sapling"
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

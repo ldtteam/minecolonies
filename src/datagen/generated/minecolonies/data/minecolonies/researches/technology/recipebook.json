@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/cheatsheet",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/recipesmultiplier": 3
+    }
+  ],
   "icon": "minecraft:enchanted_book",
+  "parentResearch": "minecolonies:technology/cheatsheet",
   "requirements": [
     {
       "building": "sawmill",
@@ -13,9 +17,5 @@
       "quantity": 128
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/recipesmultiplier": 3
-    }
-  ]
+  "researchLevel": 4
 }

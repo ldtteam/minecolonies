@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/trickshot",
-  "researchLevel": 4,
-  "subtitle": "com.minecolonies.research.combat.multishot.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/doublearrowsmultiplier": 2
+    }
+  ],
   "icon": "minecraft:tipped_arrow",
+  "parentResearch": "minecolonies:combat/trickshot",
   "requirements": [
     {
       "building": "archery",
@@ -14,9 +17,6 @@
       "quantity": 9
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/doublearrowsmultiplier": 2
-    }
-  ]
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.combat.multishot.subtitle"
 }

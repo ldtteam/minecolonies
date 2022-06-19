@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": {
+      "item": "minecolonies:compost"
+    },
+    "X": {
+      "item": "minecraft:dirt"
+    }
+  },
   "pattern": [
     "XXX",
     "XPX",
     "XXX"
   ],
-  "key": {
-    "X": {
-      "item": "minecraft:dirt"
-    },
-    "P": {
-      "item": "minecolonies:compost"
-    }
-  },
   "result": {
     "item": "minecolonies:composted_dirt"
   }

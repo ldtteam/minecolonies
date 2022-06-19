@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/flowerpower",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.technology.rainbowheaven.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/blockhutdyer": 1
+    }
+  ],
   "icon": "minecolonies:blockhutcomposter",
+  "parentResearch": "minecolonies:technology/flowerpower",
   "requirements": [
     {
       "building": "florist",
@@ -14,9 +17,6 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockhutdyer": 1
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.rainbowheaven.subtitle"
 }

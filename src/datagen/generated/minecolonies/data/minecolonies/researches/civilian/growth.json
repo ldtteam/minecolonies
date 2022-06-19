@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/puberty",
-  "researchLevel": 5,
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 4
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/childgrowth4.png",
+  "parentResearch": "minecolonies:civilian/puberty",
   "requirements": [
     {
       "building": "library",
@@ -13,9 +17,5 @@
       "quantity": 256
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/growthmultiplier": 4
-    }
-  ]
+  "researchLevel": 5
 }

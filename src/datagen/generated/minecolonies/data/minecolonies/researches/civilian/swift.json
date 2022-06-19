@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/agile",
-  "researchLevel": 5,
-  "subtitle": "com.minecolonies.research.civilian.swift.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/walkingmultiplier": 3
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/speed3.png",
+  "parentResearch": "minecolonies:civilian/agile",
   "requirements": [
     {
       "building": "townhall",
@@ -14,9 +17,6 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/walkingmultiplier": 3
-    }
-  ]
+  "researchLevel": 5,
+  "subtitle": "com.minecolonies.research.civilian.swift.subtitle"
 }

@@ -6,6 +6,6 @@
       "item": "minecraft:bucket"
     }
   ],
-  "result": "minecraft:lava_bucket",
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:lava_bucket"
 }

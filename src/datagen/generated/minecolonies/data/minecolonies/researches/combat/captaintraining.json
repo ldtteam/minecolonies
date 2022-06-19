@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/knighttraining",
-  "researchLevel": 5,
+  "effects": [
+    {
+      "minecolonies:effects/blockattacksmultiplier": 3
+    }
+  ],
   "icon": "minecraft:iron_bars",
+  "parentResearch": "minecolonies:combat/knighttraining",
   "requirements": [
     {
       "building": "combatacademy",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockattacksmultiplier": 3
-    }
-  ]
+  "researchLevel": 5
 }

@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/resurrectchance1",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.civilian.resurrectchance2.subtitle",
-  "sortOrder": 1,
+  "effects": [
+    {
+      "minecolonies:effects/resurrectchanceaddition": 2
+    }
+  ],
   "icon": "minecolonies:blockhutgraveyard",
+  "parentResearch": "minecolonies:civilian/resurrectchance1",
   "requirements": [
     {
       "building": "graveyard",
@@ -15,9 +17,7 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/resurrectchanceaddition": 2
-    }
-  ]
+  "researchLevel": 3,
+  "sortOrder": 1,
+  "subtitle": "com.minecolonies.research.civilian.resurrectchance2.subtitle"
 }

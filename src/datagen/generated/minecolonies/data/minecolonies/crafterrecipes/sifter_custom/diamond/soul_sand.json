@@ -1,14 +1,5 @@
 {
   "type": "recipe",
-  "crafter": "sifter_custom",
-  "inputs": [
-    {
-      "item": "minecraft:soul_sand"
-    },
-    {
-      "item": "minecolonies:sifter_mesh_diamond"
-    }
-  ],
   "additional-output": [
     {
       "item": "minecolonies:sifter_mesh_diamond"
@@ -32,7 +23,16 @@
       "item": "minecraft:player_head"
     }
   ],
+  "crafter": "sifter_custom",
+  "inputs": [
+    {
+      "item": "minecraft:soul_sand"
+    },
+    {
+      "item": "minecolonies:sifter_mesh_diamond"
+    }
+  ],
+  "intermediate": "minecraft:air",
   "loot-table": "minecolonies:recipes/diamond/soul_sand",
-  "min-building-level": 5,
-  "intermediate": "minecraft:air"
+  "min-building-level": 5
 }

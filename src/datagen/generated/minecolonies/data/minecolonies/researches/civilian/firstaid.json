@@ -1,8 +1,10 @@
 {
   "branch": "minecolonies:civilian",
-  "researchLevel": 1,
-  "subtitle": "com.minecolonies.research.civilian.firstaid.subtitle",
-  "sortOrder": 3,
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 1
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/hp1.png",
   "requirements": [
     {
@@ -14,9 +16,7 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healthaddition": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.civilian.firstaid.subtitle"
 }

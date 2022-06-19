@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/duelist",
-  "researchLevel": 5,
+  "effects": [
+    {
+      "minecolonies:effects/meleearmormultiplier": 4
+    }
+  ],
   "icon": "minecraft:golden_chestplate",
+  "parentResearch": "minecolonies:combat/duelist",
   "requirements": [
     {
       "building": "combatacademy",
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/meleearmormultiplier": 4
-    }
-  ]
+  "researchLevel": 5
 }

@@ -1,27 +1,27 @@
 {
   "parent": "minecolonies:production/build_delivery_person",
+  "criteria": {
+    "sawmill": {
+      "conditions": {
+        "hut_name": "sawmill",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutsawmill"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.build.sawmill.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.sawmill.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutsawmill"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "sawmill": {
-      "trigger": "minecolonies:complete_build_request",
-      "conditions": {
-        "hut_name": "sawmill",
-        "level": 1
-      }
+    "title": {
+      "translate": "advancements.minecolonies.build.sawmill.title"
     }
   },
   "requirements": [

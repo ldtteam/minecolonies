@@ -1,9 +1,9 @@
 {
   "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 0.35,
   "ingredient": {
     "item": "minecolonies:cake_batter"
   },
-  "result": "minecraft:cake",
-  "experience": 0.35,
-  "cookingtime": 200
+  "result": "minecraft:cake"
 }

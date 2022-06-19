@@ -1,17 +1,17 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/guardianangel",
-  "researchLevel": 6,
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 6
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/hp6.png",
+  "parentResearch": "minecolonies:civilian/guardianangel",
   "requirements": [
     {
       "item": "minecraft:hay_block",
       "quantity": 256
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healthaddition": 6
-    }
-  ]
+  "researchLevel": 6
 }

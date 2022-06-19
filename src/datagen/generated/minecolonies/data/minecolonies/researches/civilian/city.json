@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/village",
-  "researchLevel": 5,
+  "effects": [
+    {
+      "minecolonies:effects/citizencapaddition": 4
+    }
+  ],
   "icon": "minecolonies:blockhutcitizen:200",
+  "parentResearch": "minecolonies:civilian/village",
   "requirements": [
     {
       "building": "townhall",
@@ -13,9 +17,5 @@
       "quantity": 512
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/citizencapaddition": 4
-    }
-  ]
+  "researchLevel": 5
 }

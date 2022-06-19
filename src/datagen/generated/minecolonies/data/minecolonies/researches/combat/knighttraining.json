@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/squiretraining",
-  "researchLevel": 4,
+  "effects": [
+    {
+      "minecolonies:effects/blockattacksmultiplier": 2
+    }
+  ],
   "icon": "minecraft:barrel",
+  "parentResearch": "minecolonies:combat/squiretraining",
   "requirements": [
     {
       "building": "combatacademy",
@@ -13,9 +17,5 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockattacksmultiplier": 2
-    }
-  ]
+  "researchLevel": 4
 }

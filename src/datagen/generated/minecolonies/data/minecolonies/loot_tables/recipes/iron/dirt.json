@@ -1,7 +1,6 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.025,
       "entries": [
         {
@@ -10,28 +9,28 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 50,
-          "name": "minecraft:wheat_seeds"
+          "name": "minecraft:wheat_seeds",
+          "weight": 50
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:oak_sapling"
+          "name": "minecraft:oak_sapling",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:birch_sapling"
+          "name": "minecraft:birch_sapling",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:spruce_sapling"
+          "name": "minecraft:spruce_sapling",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:jungle_sapling"
+          "name": "minecraft:jungle_sapling",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
@@ -61,7 +60,8 @@
           "type": "minecraft:item",
           "name": "minecraft:acacia_sapling"
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

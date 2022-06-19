@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "#forge:storage_blocks",
     "minecraft:bone_block",

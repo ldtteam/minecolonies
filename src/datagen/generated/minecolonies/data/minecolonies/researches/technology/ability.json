@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/hittingiron",
-  "researchLevel": 2,
+  "effects": [
+    {
+      "minecolonies:effects/blockplacespeedmultiplier": 1
+    }
+  ],
   "icon": "minecraft:glowstone_dust",
+  "parentResearch": "minecolonies:technology/hittingiron",
   "requirements": [
     {
       "building": "miner",
@@ -13,9 +17,5 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockplacespeedmultiplier": 1
-    }
-  ]
+  "researchLevel": 2
 }

@@ -1,27 +1,27 @@
 {
   "parent": "minecolonies:production/build_sawmill",
+  "criteria": {
+    "blacksmith": {
+      "conditions": {
+        "hut_name": "blacksmith",
+        "level": 1
+      },
+      "trigger": "minecolonies:complete_build_request"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockhutblacksmith"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.build.blacksmith.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.build.blacksmith.description"
     },
     "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockhutblacksmith"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "blacksmith": {
-      "trigger": "minecolonies:complete_build_request",
-      "conditions": {
-        "hut_name": "blacksmith",
-        "level": 1
-      }
+    "title": {
+      "translate": "advancements.minecolonies.build.blacksmith.title"
     }
   },
   "requirements": [

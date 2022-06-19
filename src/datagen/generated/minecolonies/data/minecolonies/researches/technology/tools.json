@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/skills",
-  "researchLevel": 4,
-  "subtitle": "com.minecolonies.research.technology.tools.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/blockplacespeedmultiplier": 3
+    }
+  ],
   "icon": "minecraft:redstone_lamp",
+  "parentResearch": "minecolonies:technology/skills",
   "requirements": [
     {
       "building": "blacksmith",
@@ -14,9 +17,6 @@
       "quantity": 256
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockplacespeedmultiplier": 3
-    }
-  ]
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.technology.tools.subtitle"
 }

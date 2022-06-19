@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/improveddodge",
-  "researchLevel": 4,
-  "subtitle": "com.minecolonies.research.combat.evasion.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 3
+    }
+  ],
   "icon": "minecraft:iron_boots",
+  "parentResearch": "minecolonies:combat/improveddodge",
   "requirements": [
     {
       "building": "smeltery",
@@ -14,9 +17,6 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/archerarmormultiplier": 3
-    }
-  ]
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.combat.evasion.subtitle"
 }

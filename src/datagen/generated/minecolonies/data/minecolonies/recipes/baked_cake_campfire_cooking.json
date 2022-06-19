@@ -1,9 +1,9 @@
 {
   "type": "minecraft:campfire_cooking",
+  "cookingtime": 600,
+  "experience": 0.35,
   "ingredient": {
     "item": "minecolonies:cake_batter"
   },
-  "result": "minecraft:cake",
-  "experience": 0.35,
-  "cookingtime": 600
+  "result": "minecraft:cake"
 }

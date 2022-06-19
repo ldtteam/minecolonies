@@ -1,8 +1,10 @@
 {
   "branch": "minecolonies:combat",
-  "researchLevel": 1,
-  "subtitle": "com.minecolonies.research.combat.improvedleather.subtitle",
-  "sortOrder": 4,
+  "effects": [
+    {
+      "minecolonies:effects/armordurabilitymultiplier": 1
+    }
+  ],
   "icon": "minecraft:leather_helmet",
   "requirements": [
     {
@@ -14,9 +16,7 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/armordurabilitymultiplier": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 4,
+  "subtitle": "com.minecolonies.research.combat.improvedleather.subtitle"
 }

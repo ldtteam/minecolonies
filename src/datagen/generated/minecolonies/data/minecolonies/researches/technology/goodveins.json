@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/veinminer",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/moreoresmultiplier": 2
+    }
+  ],
   "icon": "minecraft:coal_block",
+  "parentResearch": "minecolonies:technology/veinminer",
   "requirements": [
     {
       "building": "miner",
@@ -13,9 +17,5 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/moreoresmultiplier": 2
-    }
-  ]
+  "researchLevel": 3
 }

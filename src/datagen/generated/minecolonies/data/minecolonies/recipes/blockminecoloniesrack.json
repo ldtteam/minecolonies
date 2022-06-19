@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XXX",
-    "ISI",
-    "XXX"
-  ],
   "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
     "I": {
       "item": "minecraft:iron_nugget"
     },
     "S": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "XXX",
+    "ISI",
+    "XXX"
+  ],
   "result": {
     "item": "minecolonies:blockminecoloniesrack"
   }

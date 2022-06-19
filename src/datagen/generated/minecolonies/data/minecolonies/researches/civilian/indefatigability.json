@@ -1,17 +1,17 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/fortitude",
-  "researchLevel": 6,
+  "effects": [
+    {
+      "minecolonies:effects/healingsaturationlimitaddition": 5
+    }
+  ],
   "icon": "minecraft:experience_bottle",
+  "parentResearch": "minecolonies:civilian/fortitude",
   "requirements": [
     {
       "item": "minecraft:golden_apple",
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healingsaturationlimitaddition": 5
-    }
-  ]
+  "researchLevel": 6
 }

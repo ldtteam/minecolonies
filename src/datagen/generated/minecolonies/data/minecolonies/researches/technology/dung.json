@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/bonemeal",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.technology.dung.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/farmingmultiplier": 2
+    }
+  ],
   "icon": "minecraft:bone_meal",
+  "parentResearch": "minecolonies:technology/bonemeal",
   "requirements": [
     {
       "building": "miner",
@@ -14,9 +17,6 @@
       "quantity": 128
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/farmingmultiplier": 2
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.dung.subtitle"
 }

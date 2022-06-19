@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/whatyaneed",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/enhancesgatedurabilityaddition": 1
+    }
+  ],
   "icon": "minecolonies:gate_wood",
+  "parentResearch": "minecolonies:technology/whatyaneed",
   "requirements": [
     {
       "item": "minecolonies:gate_wood",
@@ -17,9 +21,5 @@
       "quantity": 5
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/enhancesgatedurabilityaddition": 1
-    }
-  ]
+  "researchLevel": 3
 }

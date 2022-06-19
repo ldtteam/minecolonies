@@ -1,18 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "X": {
+      "item": "minecraft:emerald"
+    }
+  },
   "pattern": [
     "  X",
     " S ",
     "S  "
   ],
-  "key": {
-    "X": {
-      "item": "minecraft:emerald"
-    },
-    "S": {
-      "item": "minecraft:stick"
-    }
-  },
   "result": {
     "item": "structurize:shapetool"
   }

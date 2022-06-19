@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/bookworm",
-  "researchLevel": 4,
-  "subtitle": "com.minecolonies.research.civilian.bachelor.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/teachingmultiplier": 3
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/xpgain3.png",
+  "parentResearch": "minecolonies:civilian/bookworm",
   "requirements": [
     {
       "building": "library",
@@ -14,9 +17,6 @@
       "quantity": 12
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/teachingmultiplier": 3
-    }
-  ]
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.civilian.bachelor.subtitle"
 }

@@ -1,24 +1,24 @@
 {
   "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:barrel"
+    },
+    "D": {
+      "item": "minecraft:iron_pickaxe"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
+    }
+  },
   "pattern": [
     "XTX",
     "XDX",
     "XBX"
   ],
-  "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
-    "D": {
-      "item": "minecraft:iron_pickaxe"
-    },
-    "B": {
-      "item": "minecraft:barrel"
-    },
-    "T": {
-      "item": "structurize:sceptergold"
-    }
-  },
   "result": {
     "item": "minecolonies:simplequarry"
   }

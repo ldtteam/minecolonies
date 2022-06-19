@@ -1,10 +1,13 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/improvedleather",
-  "researchLevel": 2,
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/retreatunlock": 1
+    }
+  ],
   "exclusiveChildResearch": true,
   "icon": "minecraft:glistering_melon_slice",
+  "parentResearch": "minecolonies:combat/improvedleather",
   "requirements": [
     {
       "building": "guardtower",
@@ -15,9 +18,6 @@
       "quantity": 1
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/retreatunlock": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 2
 }

@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/memoryaid",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.technology.buildermodes.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/buildermodeunlock": 1
+    }
+  ],
   "icon": "minecolonies:blockhutbuilder",
+  "parentResearch": "minecolonies:technology/memoryaid",
   "requirements": [
     {
       "building": "builder",
@@ -14,10 +17,7 @@
       "quantity": 1
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/buildermodeunlock": 1
-    }
-  ],
-  "sortOrder": 3
+  "researchLevel": 3,
+  "sortOrder": 3,
+  "subtitle": "com.minecolonies.research.technology.buildermodes.subtitle"
 }

@@ -1,8 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/firstaid2",
-  "researchLevel": 3,
+  "effects": [
+    {
+      "minecolonies:effects/healthaddition": 3
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/hp3.png",
+  "parentResearch": "minecolonies:civilian/firstaid2",
   "requirements": [
     {
       "building": "townhall",
@@ -13,9 +17,5 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/healthaddition": 3
-    }
-  ]
+  "researchLevel": 3
 }

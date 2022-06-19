@@ -1,23 +1,23 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XTX",
-    "XBX",
-    "XXX"
-  ],
   "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
     "B": {
       "item": "minecraft:iron_boots"
     },
     "T": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "XTX",
+    "XBX",
+    "XXX"
+  ],
   "result": {
-    "item": "minecolonies:blockhutdeliveryman",
-    "count": 2
+    "count": 2,
+    "item": "minecolonies:blockhutdeliveryman"
   }
 }

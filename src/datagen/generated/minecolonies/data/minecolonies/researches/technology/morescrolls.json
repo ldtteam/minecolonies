@@ -1,7 +1,10 @@
 {
   "branch": "minecolonies:technology",
-  "researchLevel": 1,
-  "sortOrder": 3,
+  "effects": [
+    {
+      "minecolonies:effects/morescrollsunlock": 1
+    }
+  ],
   "icon": "minecolonies:scroll_highlight",
   "requirements": [
     {
@@ -21,9 +24,6 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/morescrollsunlock": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 3
 }

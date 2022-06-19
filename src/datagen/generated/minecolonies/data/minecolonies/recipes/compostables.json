@@ -3,8 +3,8 @@
   "input": [
     {
       "type": "minecolonies:food",
-      "min-saturation": 0.5,
-      "max-saturation": 1.0
+      "max-saturation": 1.0,
+      "min-saturation": 0.5
     },
     {
       "type": "minecolonies:plant"

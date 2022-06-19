@@ -1,6 +1,10 @@
 {
   "branch": "minecolonies:combat",
-  "researchLevel": 1,
+  "effects": [
+    {
+      "minecolonies:effects/sleeplessmultiplier": 1
+    }
+  ],
   "exclusiveChildResearch": true,
   "icon": "minecraft:lime_bed",
   "requirements": [
@@ -13,9 +17,5 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/sleeplessmultiplier": 1
-    }
-  ]
+  "researchLevel": 1
 }

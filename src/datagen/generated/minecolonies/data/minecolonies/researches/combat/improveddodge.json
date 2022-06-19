@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:combat",
-  "parentResearch": "minecolonies:combat/dodge",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.combat.improveddodge.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/archerarmormultiplier": 2
+    }
+  ],
   "icon": "minecolonies:pirate_boots",
+  "parentResearch": "minecolonies:combat/dodge",
   "requirements": [
     {
       "building": "archery",
@@ -14,9 +17,6 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/archerarmormultiplier": 2
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.combat.improveddodge.subtitle"
 }

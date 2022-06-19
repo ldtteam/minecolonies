@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/circus",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.civilian.festival.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/happinessmultiplier": 2
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/happy2.png",
+  "parentResearch": "minecolonies:civilian/circus",
   "requirements": [
     {
       "building": "cook",
@@ -14,9 +17,6 @@
       "quantity": 9
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/happinessmultiplier": 2
-    }
-  ]
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.festival.subtitle"
 }

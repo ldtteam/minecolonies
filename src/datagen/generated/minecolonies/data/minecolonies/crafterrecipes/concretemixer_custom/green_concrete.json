@@ -6,6 +6,6 @@
       "item": "minecraft:green_concrete_powder"
     }
   ],
-  "result": "minecraft:green_concrete",
-  "intermediate": "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:green_concrete"
 }

@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/gravedecaybonus1",
-  "researchLevel": 3,
-  "subtitle": "com.minecolonies.research.civilian.gravedecaybonus2.subtitle",
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/gravedecaybonus": 2
+    }
+  ],
   "icon": "minecolonies:blockminecoloniesgrave",
+  "parentResearch": "minecolonies:civilian/gravedecaybonus1",
   "requirements": [
     {
       "building": "graveyard",
@@ -15,9 +17,7 @@
       "quantity": 8
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/gravedecaybonus": 2
-    }
-  ]
+  "researchLevel": 3,
+  "sortOrder": 2,
+  "subtitle": "com.minecolonies.research.civilian.gravedecaybonus2.subtitle"
 }

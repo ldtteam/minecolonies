@@ -1,8 +1,10 @@
 {
   "branch": "minecolonies:technology",
-  "researchLevel": 1,
-  "sortOrder": 7,
-  "subtitle": "com.minecolonies.research.technology.hittingiron.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/blockhutblacksmith": 1
+    }
+  ],
   "icon": "minecolonies:blockhutblacksmith",
   "requirements": [
     {
@@ -14,9 +16,7 @@
       "quantity": 1
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockhutblacksmith": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 7,
+  "subtitle": "com.minecolonies.research.technology.hittingiron.subtitle"
 }

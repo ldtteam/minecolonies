@@ -1,31 +1,31 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:item",
-          "quality": 1,
-          "name": "minecraft:sponge"
+          "name": "minecraft:sponge",
+          "quality": 1
         },
         {
           "type": "minecraft:item",
-          "weight": 25,
+          "name": "minecraft:prismarine_shard",
           "quality": 1,
-          "name": "minecraft:prismarine_shard"
+          "weight": 25
         },
         {
           "type": "minecraft:item",
-          "weight": 25,
+          "name": "minecraft:prismarine_crystals",
           "quality": 1,
-          "name": "minecraft:prismarine_crystals"
+          "weight": 25
         },
         {
           "type": "minecraft:empty",
           "weight": 949
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

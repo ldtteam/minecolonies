@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/higherlearning",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.civilian.nurture.subtitle",
-  "sortOrder": 2,
+  "effects": [
+    {
+      "minecolonies:effects/growthmultiplier": 1
+    }
+  ],
   "icon": "minecolonies:textures/icons/research/childgrowth1.png",
+  "parentResearch": "minecolonies:civilian/higherlearning",
   "requirements": [
     {
       "building": "school",
@@ -15,9 +17,7 @@
       "quantity": 32
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/growthmultiplier": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 2,
+  "subtitle": "com.minecolonies.research.civilian.nurture.subtitle"
 }

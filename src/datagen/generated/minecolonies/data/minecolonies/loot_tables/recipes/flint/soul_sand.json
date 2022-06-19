@@ -1,7 +1,6 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
       "entries": [
         {
@@ -10,20 +9,21 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:nether_wart"
+          "name": "minecraft:nether_wart",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:quartz"
+          "name": "minecraft:quartz",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:glowstone_dust"
+          "name": "minecraft:glowstone_dust",
+          "weight": 10
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

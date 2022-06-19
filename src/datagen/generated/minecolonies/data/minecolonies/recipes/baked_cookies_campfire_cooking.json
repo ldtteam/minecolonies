@@ -1,9 +1,9 @@
 {
   "type": "minecraft:campfire_cooking",
+  "cookingtime": 75,
+  "experience": 0.0475,
   "ingredient": {
     "item": "minecolonies:cookie_dough"
   },
-  "result": "minecraft:cookie",
-  "experience": 0.0475,
-  "cookingtime": 75
+  "result": "minecraft:cookie"
 }

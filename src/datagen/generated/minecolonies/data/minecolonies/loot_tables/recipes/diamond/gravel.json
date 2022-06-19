@@ -1,7 +1,6 @@
 {
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.035,
       "entries": [
         {
@@ -10,45 +9,46 @@
         },
         {
           "type": "minecraft:item",
-          "weight": 20,
-          "name": "minecraft:redstone"
+          "name": "minecraft:redstone",
+          "weight": 20
         },
         {
           "type": "minecraft:item",
-          "weight": 20,
-          "name": "minecraft:iron_nugget"
+          "name": "minecraft:iron_nugget",
+          "weight": 20
         },
         {
           "type": "minecraft:item",
-          "weight": 20,
-          "name": "minecraft:coal"
+          "name": "minecraft:coal",
+          "weight": 20
         },
         {
           "type": "minecraft:item",
-          "weight": 10,
-          "name": "minecraft:lapis_lazuli"
+          "name": "minecraft:lapis_lazuli",
+          "weight": 10
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
-          "name": "minecraft:iron_ingot"
+          "name": "minecraft:iron_ingot",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
-          "name": "minecraft:gold_ingot"
+          "name": "minecraft:gold_ingot",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
-          "name": "minecraft:emerald"
+          "name": "minecraft:emerald",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
-          "weight": 2,
-          "name": "minecraft:diamond"
+          "name": "minecraft:diamond",
+          "weight": 2
         }
-      ]
+      ],
+      "rolls": 1.0
     }
   ]
 }

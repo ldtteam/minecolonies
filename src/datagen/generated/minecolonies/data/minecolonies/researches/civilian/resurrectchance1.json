@@ -1,10 +1,12 @@
 {
   "branch": "minecolonies:civilian",
-  "parentResearch": "minecolonies:civilian/remembrance",
-  "researchLevel": 2,
-  "subtitle": "com.minecolonies.research.civilian.resurrectchance1.subtitle",
-  "sortOrder": 1,
+  "effects": [
+    {
+      "minecolonies:effects/resurrectchanceaddition": 1
+    }
+  ],
   "icon": "minecolonies:blockhutgraveyard",
+  "parentResearch": "minecolonies:civilian/remembrance",
   "requirements": [
     {
       "building": "graveyard",
@@ -15,9 +17,7 @@
       "quantity": 1
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/resurrectchanceaddition": 1
-    }
-  ]
+  "researchLevel": 2,
+  "sortOrder": 1,
+  "subtitle": "com.minecolonies.research.civilian.resurrectchance1.subtitle"
 }

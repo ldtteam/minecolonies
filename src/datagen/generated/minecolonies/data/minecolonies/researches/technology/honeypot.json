@@ -1,9 +1,12 @@
 {
   "branch": "minecolonies:technology",
-  "parentResearch": "minecolonies:technology/rainbowheaven",
-  "researchLevel": 4,
-  "subtitle": "com.minecolonies.research.technology.honeypot.subtitle",
+  "effects": [
+    {
+      "minecolonies:effects/beekeep2unlock": 1
+    }
+  ],
   "icon": "minecraft:honeycomb",
+  "parentResearch": "minecolonies:technology/rainbowheaven",
   "requirements": [
     {
       "building": "beekeeper",
@@ -14,9 +17,6 @@
       "quantity": 16
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/beekeep2unlock": 1
-    }
-  ]
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.technology.honeypot.subtitle"
 }

@@ -1,32 +1,32 @@
 {
   "parent": "minecolonies:production/build_delivery_person",
+  "criteria": {
+    "postbox": {
+      "conditions": {
+        "block": "minecolonies:blockpostbox"
+      },
+      "trigger": "minecraft:placed_block"
+    },
+    "stash": {
+      "conditions": {
+        "block": "minecolonies:blockstash"
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecolonies:blockpostbox"
-    },
-    "title": {
-      "translate": "advancements.minecolonies.post_and_stash.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancements.minecolonies.post_and_stash.description"
     },
     "frame": "task",
-    "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "postbox": {
-      "trigger": "minecraft:placed_block",
-      "conditions": {
-        "block": "minecolonies:blockpostbox"
-      }
+    "hidden": false,
+    "icon": {
+      "item": "minecolonies:blockpostbox"
     },
-    "stash": {
-      "trigger": "minecraft:placed_block",
-      "conditions": {
-        "block": "minecolonies:blockstash"
-      }
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.minecolonies.post_and_stash.title"
     }
   },
   "requirements": [

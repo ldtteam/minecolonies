@@ -1,8 +1,10 @@
 {
   "branch": "minecolonies:technology",
-  "researchLevel": 1,
-  "subtitle": "com.minecolonies.research.technology.stonecake.subtitle",
-  "sortOrder": 4,
+  "effects": [
+    {
+      "minecolonies:effects/blockhutstonemason": 1
+    }
+  ],
   "icon": "minecolonies:blockhutstonemason",
   "requirements": [
     {
@@ -14,9 +16,7 @@
       "quantity": 64
     }
   ],
-  "effects": [
-    {
-      "minecolonies:effects/blockhutstonemason": 1
-    }
-  ]
+  "researchLevel": 1,
+  "sortOrder": 4,
+  "subtitle": "com.minecolonies.research.technology.stonecake.subtitle"
 }
