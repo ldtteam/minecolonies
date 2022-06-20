@@ -135,7 +135,7 @@ public class JEIPlugin implements IModPlugin
             return;
         }
 
-        populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(), Minecraft.getInstance().level), registration);
+        populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(), Minecraft.getInstance().level), registration::addRecipes);
         recipesLoaded = true;
     }
 
@@ -174,28 +174,22 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    // my java-generics-fu was insufficient to merge these two overloads into one method with a BiConsumer parameter
-    private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
-                                 @NotNull final IRecipeRegistration registration)
+    // while this looks suspiciously similar to BiConsumer, it works around a generic type incompatibility
+    @FunctionalInterface
+    private interface Registrar
     {
-        registration.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
-        registration.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
-
-        for (final JobBasedRecipeCategory<?> category : this.categories)
-        {
-            addJobBasedRecipes(vanilla, category, registration::addRecipes);
-        }
+        <T> void accept(RecipeType<T> type, List<T> list);
     }
 
     private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
-                                 @NotNull final IRecipeManager jeiManager)
+                                 @NotNull final Registrar registrar)
     {
-        jeiManager.addRecipes(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
-        jeiManager.addRecipes(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
+        registrar.accept(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
+        registrar.accept(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            addJobBasedRecipes(vanilla, category, jeiManager::addRecipes);
+            addJobBasedRecipes(vanilla, category, registrar::accept);
         }
     }
 
@@ -229,7 +223,7 @@ public class JEIPlugin implements IModPlugin
             {
                 final IRecipeManager jeiManager = runtime.getRecipeManager();
                 populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(),
-                        Minecraft.getInstance().level), jeiManager);
+                        Minecraft.getInstance().level), jeiManager::addRecipes);
             }
         }
         recipesLoaded = true;
