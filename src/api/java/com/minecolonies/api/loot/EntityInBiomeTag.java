@@ -3,8 +3,8 @@ package com.minecolonies.api.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
@@ -16,38 +16,38 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** A loot condition that checks if the entity producing loot is in a biome with a particular category. */
-public class EntityInBiomeCategory implements LootItemCondition
+/** A loot condition that checks if the entity producing loot is in a biome with a particular tag. */
+public class EntityInBiomeTag implements LootItemCondition
 {
     @Nullable
-    private final ResourceKey<Biome> category;
+    private final TagKey<Biome> tag;
 
-    private EntityInBiomeCategory(@Nullable final ResourceKey<Biome> category)
+    private EntityInBiomeTag(@Nullable final TagKey<Biome> tag)
     {
-        this.category = category;
+        this.tag = tag;
     }
 
     public static LootItemCondition.Builder any()
     {
-        return () -> new EntityInBiomeCategory(null);
+        return () -> new EntityInBiomeTag(null);
     }
 
-    public static LootItemCondition.Builder of(@NotNull final ResourceKey<Biome> category)
+    public static LootItemCondition.Builder of(@NotNull final TagKey<Biome> category)
     {
-        return () -> new EntityInBiomeCategory(category);
+        return () -> new EntityInBiomeTag(category);
     }
 
     @NotNull
     @Override
     public LootItemConditionType getType()
     {
-        return ModLootConditions.entityInBiomeCategory;
+        return ModLootConditions.entityInBiomeTag;
     }
 
     @Override
     public boolean test(@NotNull final LootContext lootContext)
     {
-        if (category == null)
+        if (tag == null)
         {
             return true;
         }
@@ -55,33 +55,33 @@ public class EntityInBiomeCategory implements LootItemCondition
         final Entity entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);
         if (entity != null && entity.level != null)
         {
-            return entity.level.getBiome(entity.blockPosition()).unwrapKey().get().equals(category);
+            return entity.level.getBiome(entity.blockPosition()).is(tag);
         }
 
         return false;
     }
 
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<EntityInBiomeCategory>
+    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<EntityInBiomeTag>
     {
         @Override
         public void serialize(@NotNull final JsonObject json,
-                              @NotNull final EntityInBiomeCategory condition,
+                              @NotNull final EntityInBiomeTag condition,
                               @NotNull final JsonSerializationContext context)
         {
-            if (condition.category != null)
+            if (condition.tag != null)
             {
-                json.addProperty("category", condition.category.toString());
+                json.addProperty("tag", condition.tag.location().toString());
             }
         }
 
         @NotNull
         @Override
-        public EntityInBiomeCategory deserialize(@NotNull final JsonObject json,
-                                                 @NotNull final JsonDeserializationContext context)
+        public EntityInBiomeTag deserialize(@NotNull final JsonObject json,
+                                            @NotNull final JsonDeserializationContext context)
         {
-            final String categoryId = GsonHelper.getAsString(json, "category", "");
-            final ResourceKey<Biome> category = ForgeRegistries.BIOMES.getDelegate(new ResourceLocation(categoryId)).get().key();
-            return new EntityInBiomeCategory(category);
+            final String tagId = GsonHelper.getAsString(json, "tag", "");
+            final TagKey<Biome> tag = tagId.isEmpty() ? null : ForgeRegistries.BIOMES.tags().createTagKey(new ResourceLocation(tagId));
+            return new EntityInBiomeTag(tag);
         }
     }
 }

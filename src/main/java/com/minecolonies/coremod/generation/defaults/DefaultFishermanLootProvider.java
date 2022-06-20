@@ -2,22 +2,23 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.minecolonies.api.loot.EntityInBiomeCategory;
+import com.minecolonies.api.loot.EntityInBiomeTag;
 import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.loot.ResearchUnlocked;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.storage.loot.*;
-import net.minecraft.world.level.storage.loot.entries.*;
+import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.AlternativeLootItemCondition;
-import org.antlr.v4.tool.Alternative;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -75,7 +76,7 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_JUNK).setWeight(10).setQuality(-2))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_TREASURE).setWeight(5).setQuality(2)
                                 .when(new AlternativeLootItemCondition.Builder(
-                                        EntityInBiomeCategory.of(Biomes.OCEAN),
+                                        EntityInBiomeTag.of(BiomeTags.IS_OCEAN),
                                         ResearchUnlocked.effect(ResearchConstants.FISH_TREASURE)
                                 )))
                         .add(LootTableReference.lootTableReference(ModLootTables.FISHING_FISH).setWeight(85).setQuality(-1))
