@@ -17,8 +17,8 @@
               "condition": "minecraft:alternative",
               "terms": [
                 {
-                  "category": "ResourceKey[minecraft:worldgen/biome / minecraft:ocean]",
-                  "condition": "minecolonies:entity_in_biome_category"
+                  "condition": "minecolonies:entity_in_biome_tag",
+                  "tag": "minecraft:is_ocean"
                 },
                 {
                   "condition": "minecolonies:research_unlocked",
