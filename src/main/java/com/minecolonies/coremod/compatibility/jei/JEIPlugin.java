@@ -7,7 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.crafting.CompostRecipe;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
@@ -18,12 +18,13 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipesReloadedEvent;
 import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
 import com.minecolonies.coremod.compatibility.jei.transfer.*;
 import mezz.jei.api.IModPlugin;
-import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.recipe.IRecipeManager;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
@@ -35,10 +36,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -74,25 +72,39 @@ public class JEIPlugin implements IModPlugin
         categories.clear();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
+            final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
+
             for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
                 final IBuildingModule module = producer.get();
 
-                if (module instanceof ICraftingBuildingModule)
+                if (module instanceof final ICraftingBuildingModule crafting)
                 {
-                    final ICraftingBuildingModule crafting = (ICraftingBuildingModule) module;
                     final IJob<?> job = crafting.getCraftingJob();
                     if (job != null)
                     {
-                        registerCategory(registration, new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper));
+                        GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
+                        if (category == null)
+                        {
+                            category = new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper);
+                            craftingCategories.put(job.getJobRegistryEntry(), category);
+                        }
+                        else
+                        {
+                            category.addModule(crafting);
+                        }
                     }
                 }
 
-                if (module instanceof AnimalHerdingModule)
+                if (module instanceof final AnimalHerdingModule herding)
                 {
-                    final AnimalHerdingModule herding = (AnimalHerdingModule) module;
                     registerCategory(registration, new HerderRecipeCategory(building, herding.getHerdingJob(), herding, guiHelper));
                 }
+            }
+
+            for (final GenericRecipeCategory category : craftingCategories.values())
+            {
+                registerCategory(registration, category);
             }
         }
     }
@@ -107,7 +119,7 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
-        registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM,
+        registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM_STACK,
                 Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         if (!recipesLoaded && !Minecraft.getInstance().isLocalServer())
@@ -130,22 +142,22 @@ public class JEIPlugin implements IModPlugin
     @Override
     public void registerRecipeCatalysts(@NotNull final IRecipeCatalystRegistration registration)
     {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockBarrel), CompostRecipe.ID);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutComposter), CompostRecipe.ID);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFisherman), ModJobs.FISHERMAN_ID);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockBarrel), ModRecipeTypes.COMPOSTING);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutComposter), ModRecipeTypes.COMPOSTING);
+        registration.addRecipeCatalyst(new ItemStack(ModBlocks.blockHutFisherman), ModRecipeTypes.FISHING);
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            registration.addRecipeCatalyst(category.getCatalyst(), category.getUid());
+            registration.addRecipeCatalyst(category.getCatalyst(), category.getRecipeType());
         }
     }
 
     @Override
     public void registerRecipeTransferHandlers(@NotNull final IRecipeTransferRegistration registration)
     {
-        registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.CRAFTING);
-        registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.FURNACE);
-        registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.BREWING);
+        registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.CRAFTING);
+        registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.SMELTING);
+        registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.BREWING);
     }
 
     @Override
@@ -162,22 +174,36 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
-                                 @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
+    // while this looks suspiciously similar to BiConsumer, it works around a generic type incompatibility
+    @FunctionalInterface
+    private interface Registrar
     {
-        registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
-        registrar.accept(FishermanRecipeCategory.findRecipes(), ModJobs.FISHERMAN_ID);
+        <T> void accept(RecipeType<T> type, List<T> list);
+    }
+
+    private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                 @NotNull final Registrar registrar)
+    {
+        registrar.accept(ModRecipeTypes.COMPOSTING, CompostRecipeCategory.findRecipes());
+        registrar.accept(ModRecipeTypes.FISHING, FishermanRecipeCategory.findRecipes());
 
         for (final JobBasedRecipeCategory<?> category : this.categories)
         {
-            try
-            {
-                registrar.accept(category.findRecipes(vanilla), category.getUid());
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().error("Failed to process recipes for " + category.getTitle(), e);
-            }
+            addJobBasedRecipes(vanilla, category, registrar::accept);
+        }
+    }
+
+    private <R> void addJobBasedRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
+                                        @NotNull final JobBasedRecipeCategory<R> category,
+                                        @NotNull final BiConsumer<RecipeType<R>, List<R>> registrar)
+    {
+        try
+        {
+            registrar.accept(category.getRecipeType(), category.findRecipes(vanilla));
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().error("Failed to process recipes for " + category.getTitle(), e);
         }
     }
 
@@ -197,14 +223,7 @@ public class JEIPlugin implements IModPlugin
             {
                 final IRecipeManager jeiManager = runtime.getRecipeManager();
                 populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(),
-                        Minecraft.getInstance().level), (list, uid) ->
-                {
-                    for (final Object recipe : list)
-                    {
-                        //noinspection deprecation
-                        jeiManager.addRecipe(recipe, uid);
-                    }
-                });
+                        Minecraft.getInstance().level), jeiManager::addRecipes);
             }
         }
         recipesLoaded = true;
