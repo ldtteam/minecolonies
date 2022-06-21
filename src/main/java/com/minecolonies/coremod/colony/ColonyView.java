@@ -920,7 +920,6 @@ public final class ColonyView implements IColonyView
         if (citizen != null)
         {
             citizens.put(citizen.getId(), citizen);
-            Log.getLogger().warn("Got Message for citizen: " + citizen.getId() + " in colony: " + citizen.getColonyId());
         }
         else
         {
