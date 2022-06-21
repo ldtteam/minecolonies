@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
@@ -35,10 +36,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -74,25 +72,39 @@ public class JEIPlugin implements IModPlugin
         categories.clear();
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
+            final Map<JobEntry, GenericRecipeCategory> craftingCategories = new HashMap<>();
+
             for (final Supplier<IBuildingModule> producer : building.getModuleProducers())
             {
                 final IBuildingModule module = producer.get();
 
-                if (module instanceof ICraftingBuildingModule)
+                if (module instanceof final ICraftingBuildingModule crafting)
                 {
-                    final ICraftingBuildingModule crafting = (ICraftingBuildingModule) module;
                     final IJob<?> job = crafting.getCraftingJob();
                     if (job != null)
                     {
-                        registerCategory(registration, new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper));
+                        GenericRecipeCategory category = craftingCategories.get(job.getJobRegistryEntry());
+                        if (category == null)
+                        {
+                            category = new GenericRecipeCategory(building, job, crafting, guiHelper, modIdHelper);
+                            craftingCategories.put(job.getJobRegistryEntry(), category);
+                        }
+                        else
+                        {
+                            category.addModule(crafting);
+                        }
                     }
                 }
 
-                if (module instanceof AnimalHerdingModule)
+                if (module instanceof final AnimalHerdingModule herding)
                 {
-                    final AnimalHerdingModule herding = (AnimalHerdingModule) module;
                     registerCategory(registration, new HerderRecipeCategory(building, herding.getHerdingJob(), herding, guiHelper));
                 }
+            }
+
+            for (final GenericRecipeCategory category : craftingCategories.values())
+            {
+                registerCategory(registration, category);
             }
         }
     }
