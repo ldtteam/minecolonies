@@ -61,7 +61,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.InfestedBlock;
 import net.minecraft.world.level.block.SpawnerBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -84,10 +83,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.research.util.ResearchConstants.SOFT_SHOES;
@@ -95,7 +91,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COLONY_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_EVENT_ID;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_BED_OCCUPIED;
-import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.*;
 import static net.minecraftforge.eventbus.api.EventPriority.HIGHEST;
 import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
 
@@ -104,6 +99,11 @@ import static net.minecraftforge.eventbus.api.EventPriority.LOWEST;
  */
 public class EventHandler
 {
+    /**
+     * Player position map for watching chunk entries
+     */
+    private static Map<UUID, ChunkPos> playerPositions = new HashMap<>();
+
     /**
      * Adds our custom loot tables to vanilla tables.
      *
@@ -131,7 +131,9 @@ public class EventHandler
     {
         if (!event.getWorld().isClientSide())
         {
-            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy)  && !(event.getEntity().getType().is(ModTags.mobAttackBlacklist)))
+            if (MineColonies.getConfig().getServer().mobAttackCitizens.get() && (event.getEntity() instanceof Enemy) && !(event.getEntity()
+              .getType()
+              .is(ModTags.mobAttackBlacklist)))
             {
                 ((Mob) event.getEntity()).targetSelector.addGoal(6, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityCitizen.class, true));
                 ((Mob) event.getEntity()).targetSelector.addGoal(7, new NearestAttackableTargetGoal<>((Mob) event.getEntity(), EntityMercenary.class, true));
@@ -256,7 +258,6 @@ public class EventHandler
 
     /**
      * Event called when the player enters a new chunk.
-     *
      */
     @SubscribeEvent
     public static void onEnteringChunk(final TickEvent.PlayerTickEvent event)
@@ -268,6 +269,14 @@ public class EventHandler
 
         final Level world = event.player.level;
         final ChunkPos chunkPos = event.player.chunkPosition();
+
+        final ChunkPos oldPos = playerPositions.computeIfAbsent(event.player.getUUID(), e -> event.player.chunkPosition());
+        if (oldPos.equals(chunkPos))
+        {
+            return;
+        }
+
+        playerPositions.put(event.player.getUUID(), chunkPos);
 
         final LevelChunk chunk = world.getChunk(chunkPos.x, chunkPos.z);
 
@@ -326,6 +335,7 @@ public class EventHandler
 
     /**
      * Join world event.
+     *
      * @param event the join world event.
      */
     @SubscribeEvent
@@ -383,7 +393,7 @@ public class EventHandler
                     colony.getPackageManager().addImportantColonyPlayer(player);
                 }
             }
-            
+
             final int size = player.getInventory().getContainerSize();
             for (int i = 0; i < size; i++)
             {
@@ -420,7 +430,6 @@ public class EventHandler
 
     /**
      * Event called when a citizen enters a new chunk.
-     *
      */
     public static void onEnteringChunkEntity(@NotNull final EntityCitizen entityCitizen, final ChunkPos newChunkPos)
     {
@@ -459,7 +468,9 @@ public class EventHandler
     public static void onBlockBreak(@NotNull final BlockEvent.BreakEvent event)
     {
         if (event.getWorld().isClientSide() || !(event.getWorld() instanceof Level))
+        {
             return;
+        }
 
         final Level world = (Level) event.getWorld();
 
@@ -469,8 +480,8 @@ public class EventHandler
             if (spawner instanceof SpawnerBlockEntity)
             {
                 final IColony colony = IColonyManager.getInstance()
-                                         .getColonyByDimension(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_COLONY_ID),
-                                           world.dimension());
+                  .getColonyByDimension(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_COLONY_ID),
+                    world.dimension());
                 if (colony != null)
                 {
                     colony.getEventManager().onTileEntityBreak(((SpawnerBlockEntity) spawner).getSpawner().nextSpawnData.getEntityToSpawn().getInt(TAG_EVENT_ID), spawner);
@@ -591,7 +602,8 @@ public class EventHandler
 
     /**
      * Event when a player right-clicks with a build tool.
-     * @param event   {@link PlayerInteractEvent.RightClickItem}
+     *
+     * @param event {@link PlayerInteractEvent.RightClickItem}
      */
     @SubscribeEvent
     public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
@@ -748,19 +760,19 @@ public class EventHandler
         }
     }
 
-/**
- * Gets called when farmland is trampled
- *
- * @param event the event to handle
- */
+    /**
+     * Gets called when farmland is trampled
+     *
+     * @param event the event to handle
+     */
     @SubscribeEvent
     public static void onCropTrample(BlockEvent.FarmlandTrampleEvent event)
     {
         if (!event.getWorld().isClientSide()
-            && event.getEntity() instanceof AbstractEntityCitizen
-            && ((AbstractEntityCitizen) event.getEntity()).getCitizenJobHandler().getColonyJob() instanceof JobFarmer
-            && ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SOFT_SHOES) > 0
-            )
+              && event.getEntity() instanceof AbstractEntityCitizen
+              && ((AbstractEntityCitizen) event.getEntity()).getCitizenJobHandler().getColonyJob() instanceof JobFarmer
+              && ((AbstractEntityCitizen) event.getEntity()).getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(SOFT_SHOES) > 0
+        )
         {
             event.setCanceled(true);
         }
@@ -802,7 +814,7 @@ public class EventHandler
                     if (visitorData.getEntity().isPresent())
                     {
                         AbstractEntityCitizen visitorEntity = visitorData.getEntity().get();
-                        for(EquipmentSlot slotType : EquipmentSlot.values())
+                        for (EquipmentSlot slotType : EquipmentSlot.values())
                         {
                             ItemStack itemstack = entity.getItemBySlot(slotType);
                             if (slotType.getType() == EquipmentSlot.Type.ARMOR && !itemstack.isEmpty())
