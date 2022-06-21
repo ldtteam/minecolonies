@@ -140,7 +140,7 @@ public class BuildingSmeltery extends AbstractBuilding
             final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
             for (final ItemStack stack : compatibility.getListOfAllItems())
             {
-                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).test(stack))
+                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
                 {
                     final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
                     recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
@@ -168,7 +168,44 @@ public class BuildingSmeltery extends AbstractBuilding
             super(jobEntry);
         }
 
-        @Override 
+        @NotNull
+        @Override
+        public List<ResourceLocation> getAdditionalLootTables()
+        {
+            final List<ResourceLocation> lootTables = new ArrayList<>(super.getAdditionalLootTables());
+
+            for (final Item input : ModTags.breakable_ore.getValues())
+            {
+                lootTables.add(getLootTable(input));
+            }
+
+            return lootTables;
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+
+            for (final Item input : ModTags.breakable_ore.getValues())
+            {
+                recipes.add(new GenericRecipe(
+                        null,                    //recipe
+                        ItemStack.EMPTY,            //output
+                        Collections.emptyList(),    //additional outputs
+                        Collections.singletonList(Collections.singletonList(new ItemStack(input))), //inputs
+                        1,                   //grid
+                        Blocks.AIR,                 //intermediate
+                        getLootTable(input),        //loottable
+                        Collections.emptyList(),    //restrictions
+                        -1));               //levelsort
+            }
+
+            return recipes;
+        }
+
+        @Override
         public void checkForWorkerSpecificRecipes()
         {
             super.checkForWorkerSpecificRecipes();
