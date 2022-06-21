@@ -174,7 +174,7 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             final List<ResourceLocation> lootTables = new ArrayList<>(super.getAdditionalLootTables());
 
-            for (final Item input : ModTags.breakable_ore.getValues())
+            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
             {
                 lootTables.add(getLootTable(input));
             }
@@ -188,7 +188,7 @@ public class BuildingSmeltery extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
 
-            for (final Item input : ModTags.breakable_ore.getValues())
+            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
             {
                 recipes.add(new GenericRecipe(
                         null,                    //recipe
