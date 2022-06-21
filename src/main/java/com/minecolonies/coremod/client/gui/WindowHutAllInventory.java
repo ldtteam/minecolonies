@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -226,9 +227,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
                                                                   || stack.getItemStack().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                  || stack.getItemStack()
-                                                                       .getHoverName()
-                                                                       .getString()
+                                                                  || getString(stack.getItemStack())
                                                                        .toLowerCase(Locale.US)
                                                                        .contains(filter.toLowerCase(Locale.US));
 
@@ -266,6 +265,21 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         }
 
         updateResourceList();
+    }
+
+    /**
+     * Get identifying string from itemstack.
+     * @param stack the stack to gen the string from.
+     * @return a single string.
+     */
+    private static String getString(final ItemStack stack)
+    {
+        final StringBuilder output = new StringBuilder();
+        for (final Component comp : stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL))
+        {
+            output.append(comp.getString()).append(" ");
+        }
+        return output.toString();
     }
 
     /**
