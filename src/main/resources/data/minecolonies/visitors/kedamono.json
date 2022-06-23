@@ -1,0 +1,10 @@
+{
+  "texture": "80dd6693-89be-4552-b33f-a9aa5b9bb99e",
+  "citizensuffix": "_w",
+  "name": "Kedamono Dragon",
+  "chance": 0.9,
+  "storylangkey": "com.minecolonies.coremod.gui.chat.kedamono",
+  "recruitcost": "minecraft:purple_bed",
+  "recruitcostcount": 27,
+  "gender": "male"
+}
