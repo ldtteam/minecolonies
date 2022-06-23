@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.crafting;
 
+import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
@@ -7,15 +8,12 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.TranslationConstants;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -82,13 +80,18 @@ public final class GenericRecipeUtils
     public static IGenericRecipe filterInputs(@NotNull IGenericRecipe recipe,
                                               @NotNull OptionalPredicate<ItemStack> predicate)
     {
+        // for filtering purposes, most recipes want to treat null/don't-care in the ingredient filter as
+        // acceptable (don't remove the item from the recipe).  DO recipes, though, have a massive
+        // alternate-ingredient stack for the same recipe and we do want to only show in JEI the inputs
+        // that explicitly pass the filter, not merely those that don't fail it.
+        final boolean fallbackAccept = !isDomumRecipe(recipe);
         final List<List<ItemStack>> newInputs = new ArrayList<>();
         boolean modified = false;
 
         for (final List<ItemStack> slot : recipe.getInputs())
         {
             final List<ItemStack> newSlot = slot.stream()
-                    .filter(stack -> predicate.test(stack).orElse(true))
+                    .filter(stack -> predicate.test(stack).orElse(fallbackAccept))
                     .collect(Collectors.toList());
 
             if (newSlot.isEmpty() && !slot.isEmpty())
@@ -117,6 +120,18 @@ public final class GenericRecipeUtils
                 recipe.getLootTable(),
                 recipe.getRestrictions(),
                 recipe.getLevelSort());
+    }
+
+    private static boolean isDomumRecipe(@NotNull final IGenericRecipe recipe)
+    {
+        final ItemStack output = recipe.getPrimaryOutput();
+        if (output.isEmpty()) return false;
+
+        if (output.getItem() instanceof BlockItem blockItem)
+        {
+            return blockItem.getBlock() instanceof IMateriallyTexturedBlock;
+        }
+        return false;
     }
 
     @NotNull
