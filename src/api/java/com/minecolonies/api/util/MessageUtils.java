@@ -264,13 +264,6 @@ public class MessageUtils
      */
     private static MutableComponent getFormattableComponent(Component component)
     {
-        if (component instanceof MutableComponent)
-        {
-            return (MutableComponent) component;
-        }
-        else
-        {
-            return new TextComponent("").append(component);
-        }
+        return component.copy();
     }
 }

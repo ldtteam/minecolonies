@@ -7,26 +7,24 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The JEI recipe category for animal herders.
@@ -71,22 +69,13 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
     }
 
     @Override
-    public void setIngredients(@NotNull final HerdingRecipe recipe, @NotNull final IIngredients ingredients)
+    public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
+                          @NotNull final HerdingRecipe recipe,
+                          @NotNull final IFocusGroup focuses)
     {
-        ingredients.setInputLists(VanillaTypes.ITEM, Collections.singletonList(recipe.getBreedingItems()));
-        ingredients.setOutputLists(VanillaTypes.ITEM, new ArrayList<>(recipe.getDrops().stream()
-                .map(LootTableAnalyzer.LootDrop::getItemStacks)
-                .collect(Collectors.toList())));
-    }
-
-    @Override
-    public void setRecipe(@NotNull final IRecipeLayout layout, @NotNull final HerdingRecipe recipe, @NotNull final IIngredients ingredients)
-    {
-        final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
-
-        guiItemStacks.init(0, true, WIDTH - 18, CITIZEN_Y - 20);
-        guiItemStacks.setBackground(0, slot);
-        guiItemStacks.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
+        builder.addSlot(RecipeIngredientRole.INPUT, WIDTH - 18, CITIZEN_Y - 20)
+                .setBackground(this.slot, -1, -1)
+                .addItemStacks(recipe.getBreedingItems());
 
         if (!recipe.getDrops().isEmpty())
         {
@@ -97,15 +86,13 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
             int x = startX;
             int y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
             int c = 0;
-            int slot = 1;
 
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, recipe.getDrops(), recipe.getId()));
             for (final LootTableAnalyzer.LootDrop drop : recipe.getDrops())
             {
-                guiItemStacks.init(slot, true, x, y);
-                guiItemStacks.setBackground(slot, this.chanceSlot);
-                guiItemStacks.set(slot, drop.getItemStacks());
-                ++slot;
+                builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                        .setBackground(this.chanceSlot, -1, -1)
+                        .addItemStacks(drop.getItemStacks())
+                        .addTooltipCallback(new LootTableTooltipCallback(drop, recipe.getId()));
                 if (++c >= columns)
                 {
                     c = 0;
@@ -121,9 +108,12 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
     }
 
     @Override
-    public void draw(@NotNull HerdingRecipe recipe, @NotNull PoseStack matrixStack, double mouseX, double mouseY)
+    public void draw(@NotNull final HerdingRecipe recipe,
+                     @NotNull final IRecipeSlotsView recipeSlotsView,
+                     @NotNull final PoseStack stack,
+                     final double mouseX, final double mouseY)
     {
-        super.draw(recipe, matrixStack, mouseX, mouseY);
+        super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
 
         final LivingEntity animal = recipe.getAnimal();
         if (animal != null)
@@ -136,8 +126,8 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
             final float yaw = animalTimer.getValue();
             final float headYaw = (float) Math.atan((animal_cx - mouseX) / 40.0F) * 40.0F + yaw;
             final float pitch = (float) Math.atan((animal_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-            RenderHelper.scissor(matrixStack, ANIMAL_X, ANIMAL_Y, ANIMAL_W, ANIMAL_H);
-            RenderHelper.renderEntity(matrixStack, animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
+            RenderHelper.scissor(stack, ANIMAL_X, ANIMAL_Y, ANIMAL_W, ANIMAL_H);
+            RenderHelper.renderEntity(stack, animal_cx, animal_by - offsetY, scale, headYaw, yaw, pitch, animal);
             RenderHelper.stopScissor();
         }
     }

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.crafting;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -263,11 +264,17 @@ public class CustomRecipeManager
 
         for (final BuildingEntry building : IMinecoloniesAPI.getInstance().getBuildingRegistry())
         {
-            building.getModuleProducers().stream()
-                    .map(Supplier::get)
-                    .filter(m -> m instanceof AnimalHerdingModule)
-                    .map(m -> (AnimalHerdingModule) m)
-                    .forEach(herding -> lootIds.add(herding.getDefaultLootTable()));
+            building.getModuleProducers().stream().map(Supplier::get).forEach(module ->
+            {
+                if (module instanceof AnimalHerdingModule herding)
+                {
+                    lootIds.add(herding.getDefaultLootTable());
+                }
+                if (module instanceof ICraftingBuildingModule crafting)
+                {
+                    lootIds.addAll(crafting.getAdditionalLootTables());
+                }
+            });
         }
 
         lootIds.add(ModLootTables.FISHING);
