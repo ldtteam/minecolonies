@@ -110,7 +110,7 @@ public class BuildingMechanic extends AbstractBuilding
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
             final OptionalPredicate<ItemStack> sawmill = CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
-                    .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(stack.getItem())));
+                    .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
 
             final Predicate<ItemStack> handled = sawmill
                     .or(CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FLETCHER))

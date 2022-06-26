@@ -7,20 +7,19 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
         this.title = Component.translatable(ModBlocks.blockBarrel.getDescriptionId()).getString();
 
         this.background = guiHelper.createBlankDrawable(80, 50);
-        this.icon = guiHelper.createDrawableIngredient(new ItemStack(ModBlocks.blockBarrel));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.blockBarrel));
         this.slot = guiHelper.getSlotDrawable();
         this.timer = guiHelper.createTickTimer(60, BarrelType.values().length - 2, false);
     }
@@ -58,9 +57,9 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     @NotNull
     @Override
-    public ResourceLocation getUid()
+    public RecipeType<CompostRecipe> getRecipeType()
     {
-        return CompostRecipe.ID;
+        return ModRecipeTypes.COMPOSTING;
     }
 
     @NotNull
@@ -79,44 +78,35 @@ public class CompostRecipeCategory implements IRecipeCategory<CompostRecipe>
 
     @NotNull
     @Override
-    public Class<? extends CompostRecipe> getRecipeClass()
-    {
-        return CompostRecipe.class;
-    }
-
-    @Override
     public Component getTitle()
     {
         return Component.literal(this.title);
     }
 
     @Override
-    public void setIngredients(@NotNull final CompostRecipe recipe, @NotNull final IIngredients ingredients)
+    public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
+                          @NotNull final CompostRecipe recipe,
+                          @NotNull final IFocusGroup focuses)
     {
-        ingredients.setInputIngredients(recipe.getIngredients());
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.INPUT, 0, 0)
+                .setBackground(this.slot, -1, -1)
+                .addIngredients(recipe.getIngredients().get(0));
+
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 62, 0)
+                .setBackground(this.slot, -1, -1)
+                .addItemStack(recipe.getResultItem());
     }
 
     @Override
-    public void setRecipe(@NotNull final IRecipeLayout layout, @NotNull final CompostRecipe recipe, @NotNull final IIngredients ingredients)
-    {
-        final IGuiItemStackGroup itemStacks = layout.getItemStacks();
-
-        itemStacks.init(0, true, 0, 0);
-        itemStacks.init(1, false, 62, 0);
-        itemStacks.setBackground(0, this.slot);
-        itemStacks.setBackground(1, this.slot);
-
-        itemStacks.set(ingredients);
-    }
-
-    @Override
-    public void draw(@NotNull final CompostRecipe recipe, @NotNull final PoseStack matrixStack, final double mouseX, final double mouseY)
+    public void draw(@NotNull final CompostRecipe recipe,
+                     @NotNull final IRecipeSlotsView recipeSlotsView,
+                     @NotNull final PoseStack stack,
+                     final double mouseX, final double mouseY)
     {
         final BarrelType type = BarrelType.byMetadata(this.timer.getValue());
         final BlockState barrel = ModBlocks.blockBarrel.defaultBlockState()
                 .setValue(AbstractBlockBarrel.FACING, Direction.SOUTH)
                 .setValue(AbstractBlockBarrel.VARIANT, type);
-        RenderHelper.renderBlock(matrixStack, barrel, 40, 20, 100, -30F, 20F, 25F);
+        RenderHelper.renderBlock(stack, barrel, 40, 20, 100, -30F, 20F, 25F);
     }
 }

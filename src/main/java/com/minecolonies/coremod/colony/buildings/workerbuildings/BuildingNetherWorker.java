@@ -15,14 +15,10 @@ import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.modules.MinimumStockModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.FlintAndSteelItem;
@@ -30,16 +26,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-
-import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
-
-import java.util.Iterator;
 import java.util.List;
+
+import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
+import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
+import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
+import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
 public class BuildingNetherWorker extends AbstractBuilding
 {
@@ -308,9 +303,9 @@ public class BuildingNetherWorker extends AbstractBuilding
     public static void onResetFoodExclusionList(final ItemListModule listModule)
     {
         listModule.clearItems();
-        for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ModTags.excludedFood))
+        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ModTags.excludedFood))
         {
-            listModule.addItem(new ItemStorage(new ItemStack(itemHolder.value())));
+            listModule.addItem(new ItemStorage(new ItemStack(item)));
         }
     }
 

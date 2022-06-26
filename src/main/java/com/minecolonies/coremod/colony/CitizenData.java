@@ -45,8 +45,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
-import net.minecraft.network.chat.Component;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -566,25 +564,41 @@ public class CitizenData implements ICitizenData
         final String[] firstParentNameSplit = nameA.split(" ");
         final String[] secondParentNameSplit = nameB.split(" ");
 
-        int lastNameIndex = 1;
+        if (firstParentNameSplit.length <= 1)
+        {
+            generateName(rand, "", secondParentName);
+            return;
+        }
+
+        if (secondParentNameSplit.length <= 1)
+        {
+            generateName(rand, firstParentName, "");
+            return;
+        }
+
+        int lastNameIndexFirst = 1;
+        int lastNameIndexSecond = 1;
+
         if (MineColonies.getConfig().getServer().useEasternNameOrder.get())
         {
-            lastNameIndex = 0;
+            lastNameIndexFirst = 0;
+            lastNameIndexSecond = 0;
         }
         else if (MineColonies.getConfig().getServer().useMiddleInitial.get())
         {
-            lastNameIndex = 2;
+            lastNameIndexFirst = firstParentNameSplit.length <= 2 ? 1 : 2;
+            lastNameIndexSecond = secondParentNameSplit.length <= 2 ? 1 : 2;
         }
 
         if (random.nextBoolean())
         {
-            middleInitial = firstParentNameSplit[lastNameIndex].substring(0, 1);
-            lastName = secondParentNameSplit[lastNameIndex];
+            middleInitial = firstParentNameSplit[lastNameIndexFirst].substring(0, 1);
+            lastName = secondParentNameSplit[lastNameIndexSecond];
         }
         else
         {
-            middleInitial = secondParentNameSplit[lastNameIndex].substring(0, 1);
-            lastName = firstParentNameSplit[lastNameIndex];
+            middleInitial = secondParentNameSplit[lastNameIndexSecond].substring(0, 1);
+            lastName = firstParentNameSplit[lastNameIndexFirst];
         }
 
         if (female)

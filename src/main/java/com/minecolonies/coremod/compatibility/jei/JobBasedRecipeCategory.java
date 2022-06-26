@@ -14,10 +14,15 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
-\import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.gui.ingredient.IRecipeSlotTooltipCallback;
+import mezz.jei.api.gui.ingredient.IRecipeSlotView;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -25,7 +30,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +50,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 {
     protected static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/jei_recipe.png");
     @NotNull protected final IJob<?> job;
-    @NotNull private final ResourceLocation uid;
+    @NotNull private final RecipeType<T> type;
     @NotNull private final ItemStack catalyst;
     @NotNull private final IDrawableStatic background;
     @NotNull private final IDrawable icon;
@@ -59,16 +68,16 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     protected static final int CITIZEN_H = 71;
 
     protected JobBasedRecipeCategory(@NotNull final IJob<?> job,
-                                     @NotNull final ResourceLocation uid,
+                                     @NotNull final RecipeType<T> type,
                                      @NotNull final ItemStack icon,
                                      @NotNull final IGuiHelper guiHelper)
     {
         this.job = job;
-        this.uid = uid;
+        this.type = type;
         this.catalyst = icon;
 
         this.background = guiHelper.createDrawable(TEXTURE, 0, 0, WIDTH, HEIGHT);
-        this.icon = guiHelper.createDrawableIngredient(icon);
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, icon);
         this.slot = guiHelper.getSlotDrawable();
         this.chanceSlot = guiHelper.createDrawable(TEXTURE, 0, 121, 18, 18);
 
@@ -111,9 +120,9 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
     @NotNull
     @Override
-    public ResourceLocation getUid()
+    public RecipeType<T> getRecipeType()
     {
-        return this.uid;
+        return this.type;
     }
 
     @NotNull
@@ -143,13 +152,16 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return this.icon;
     }
 
-    public Collection<?> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
+    public List<T> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
         return Collections.emptyList();
     }
 
     @Override
-    public void draw(@NotNull final T recipe, @NotNull final PoseStack matrixStack, final double mouseX, final double mouseY)
+    public void draw(@NotNull final T recipe,
+                     @NotNull final IRecipeSlotsView recipeSlotsView,
+                     @NotNull final PoseStack stack,
+                     final double mouseX, final double mouseY)
     {
         final float scale = CITIZEN_H / 2.4f;
         final int citizen_cx = CITIZEN_X + (CITIZEN_W / 2);
@@ -160,8 +172,8 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         final float headYaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 40.0F;
         final float yaw = (float) Math.atan((citizen_cx - mouseX) / 40.0F) * 20.0F;
         final float pitch = (float) Math.atan((citizen_cy - offsetY - mouseY) / 40.0F) * 20.0F;
-        RenderHelper.scissor(matrixStack, CITIZEN_X, CITIZEN_Y, CITIZEN_W, CITIZEN_H);
-        RenderHelper.renderEntity(matrixStack, citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
+        RenderHelper.scissor(stack, CITIZEN_X, CITIZEN_Y, CITIZEN_W, CITIZEN_H);
+        RenderHelper.renderEntity(stack, citizen_cx, citizen_by - offsetY, scale, headYaw, yaw, pitch, this.citizen);
         RenderHelper.stopScissor();
 
         int y = 0;
@@ -169,19 +181,21 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         for (final FormattedText line : this.description)
         {
             final int x = 0;
-            mc.font.draw(matrixStack, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor());
+            mc.font.draw(stack, Language.getInstance().getVisualOrder(line), x, y, ChatFormatting.BLACK.getColor());
             y += mc.font.lineHeight + 2;
         }
 
         for (final InfoBlock block : this.infoBlocksCache.getUnchecked(recipe))
         {
-            mc.font.drawShadow(matrixStack, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor());
+            mc.font.drawShadow(stack, block.text, block.bounds.getX(), block.bounds.getY(), ChatFormatting.YELLOW.getColor());
         }
     }
 
     @NotNull
     @Override
-    public List<Component> getTooltipStrings(@NotNull final T recipe, final double mouseX, final double mouseY)
+    public List<Component> getTooltipStrings(@NotNull final T recipe,
+                                                      @NotNull final IRecipeSlotsView recipeSlotsView,
+                                                      final double mouseX, final double mouseY)
     {
         final List<Component> tooltips = new ArrayList<>();
 
@@ -212,12 +226,12 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             final int height = mc.font.lineHeight;
             final int x = WIDTH - width;
             String tip = null;
-            if (line instanceof MutableComponent)
+            if (line.getContents() instanceof TranslatableContents contents)
             {
-                final String key = ((MutableComponent) line).getKey() + ".tip";
+                final String key = contents.getKey() + ".tip";
                 if (I18n.exists(key))
                 {
-                    tip = (Component.translatable(key, ((MutableComponent) line).getArgs())).getString();
+                    tip = (Component.translatable(key, contents.getArgs())).getString();
                 }
             }
             result.add(new InfoBlock(text, tip, new Rect2i(x, y, width, height)));
@@ -257,7 +271,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     @NotNull
     private static List<FormattedText> translateDescription(@NotNull final String... keys)
     {
-        return Arrays.stream(keys).map(MutableComponent::new).collect(Collectors.toList());
+        return Arrays.stream(keys).map(Component::translatable).collect(Collectors.toList());
     }
 
     @NotNull
@@ -267,7 +281,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         for (final FormattedText component : input)
         {
             final Optional<String[]> expanded = component.visit(line -> Optional.of(line.split("\\\\n")));
-            expanded.ifPresent(e -> lines.addAll(Arrays.stream(e).map(TextComponent::new).collect(Collectors.toList())));
+            expanded.ifPresent(e -> lines.addAll(Arrays.stream(e).map(Component::literal).collect(Collectors.toList())));
         }
         return lines;
     }
@@ -284,31 +298,27 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return lines;
     }
 
-    protected static class RecipeIdTooltipCallback implements ITooltipCallback<ItemStack>
+    protected static class RecipeIdTooltipCallback implements IRecipeSlotTooltipCallback
     {
-        private final int slot;
         private final ResourceLocation id;
         private final IModIdHelper modIdHelper;
 
-        public RecipeIdTooltipCallback(final int slot, final ResourceLocation id, IModIdHelper modIdHelper)
+        public RecipeIdTooltipCallback(final ResourceLocation id, final IModIdHelper modIdHelper)
         {
-            this.slot = slot;
             this.id = id;
             this.modIdHelper = modIdHelper;
         }
 
         @Override
-        public void onTooltip(final int slotIndex,
-                              final boolean input,
-                              @NotNull final ItemStack ingredient,
+        public void onTooltip(@NotNull final IRecipeSlotView recipeSlotView,
                               @NotNull final List<Component> tooltip)
         {
-            if (slotIndex != slot) return;
+            final ItemStack ingredient = recipeSlotView.getDisplayedIngredient().flatMap(d -> d.getIngredient(VanillaTypes.ITEM_STACK)).orElse(ItemStack.EMPTY);
 
             if (modIdHelper.isDisplayingModNameEnabled())
             {
                 final String recipeModId = id.getNamespace();
-                final String ingredientModId = ingredient.getItem().getRegistryName().getNamespace();
+                final String ingredientModId = ingredient.getItem().getCreatorModId(ingredient);
                 if (!recipeModId.equals(ingredientModId))
                 {
                     final String modName = modIdHelper.getFormattedModNameForModId(recipeModId);
@@ -326,52 +336,46 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         }
     }
 
-    protected static class LootTableTooltipCallback implements ITooltipCallback<ItemStack>
+    protected static class LootTableTooltipCallback implements IRecipeSlotTooltipCallback
     {
-        private final int firstSlot;
-        private final List<LootTableAnalyzer.LootDrop> drops;
+        private final LootTableAnalyzer.LootDrop drop;
         private final ResourceLocation id;
 
-        public LootTableTooltipCallback(final int firstSlot, final List<LootTableAnalyzer.LootDrop> drops, final ResourceLocation id)
+        public LootTableTooltipCallback(final LootTableAnalyzer.LootDrop drop, final ResourceLocation id)
         {
-            this.firstSlot = firstSlot;
-            this.drops = drops;
+            this.drop = drop;
             this.id = id;
         }
 
         @Override
-        public void onTooltip(final int slot, final boolean input, @NotNull final ItemStack stack, @NotNull final List<Component> tooltip)
+        public void onTooltip(@NotNull final IRecipeSlotView recipeSlotView,
+                              @NotNull final List<Component> tooltip)
         {
-            final int index = slot - this.firstSlot;
-            if (index >= 0 && index < this.drops.size())
+            final String key = TranslationConstants.PARTIAL_JEI_INFO +
+                    (this.drop.getQuality() < 0 ? "chancenegskill.tip" : this.drop.getQuality() > 0 ? "chanceskill.tip" : "chance.tip");
+            final float probability = this.drop.getProbability() * 100;
+
+            if (probability >= 1)
             {
-                final LootTableAnalyzer.LootDrop drop = this.drops.get(index);
-                final String key = TranslationConstants.PARTIAL_JEI_INFO +
-                        (drop.getQuality() < 0 ? "chancenegskill.tip" : drop.getQuality() > 0 ? "chanceskill.tip" : "chance.tip");
-                final float probability = drop.getProbability() * 100;
-
-                if (probability >= 1)
-                {
                     tooltip.add(Component.translatable(key,
-                            Math.round(probability)));
-                }
-                else
-                {
+                        Math.round(probability)));
+            }
+            else
+            {
                     tooltip.add(Component.translatable(key,
-                            Math.round(probability * 100) / 100f));
-                }
+                        Math.round(probability * 100) / 100f));
+            }
 
-                if (drop.getConditional())
-                {
-                    tooltip.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
-                }
+            if (this.drop.getConditional())
+            {
+                tooltip.add(Component.translatable(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
+            }
 
-                final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
-                if (showAdvanced)
-                {
-                    final MutableComponent recipeId = Component.translatable("com.minecolonies.coremod.jei.loottableid", id.toString());
-                    tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
-                }
+            final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();
+            if (showAdvanced)
+            {
+                final MutableComponent recipeId = Component.translatable("com.minecolonies.coremod.jei.loottableid", id.toString());
+                tooltip.add(recipeId.withStyle(ChatFormatting.DARK_GRAY));
             }
         }
     }

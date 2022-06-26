@@ -18,26 +18,17 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.util.FurnaceRecipes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.Suppression.MAGIC_NUMBERS_SHOULD_NOT_BE_USED;
@@ -146,7 +137,7 @@ public class BuildingSmeltery extends AbstractBuilding
             final ICompatibilityManager compatibility = IColonyManager.getInstance().getCompatibilityManager();
             for (final ItemStack stack : compatibility.getListOfAllItems())
             {
-                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).test(stack))
+                if (ItemStackUtils.IS_SMELTABLE.and(compatibility::isOre).and(s -> !s.is(ModTags.breakable_ore)).test(stack))
                 {
                     final ItemStack output = FurnaceRecipes.getInstance().getSmeltingResult(stack);
                     recipes.add(createSmeltingRecipe(new ItemStorage(stack), output, Blocks.FURNACE));
@@ -174,14 +165,52 @@ public class BuildingSmeltery extends AbstractBuilding
             super(jobEntry);
         }
 
-        @Override 
+        @NotNull
+        @Override
+        public List<ResourceLocation> getAdditionalLootTables()
+        {
+            final List<ResourceLocation> lootTables = new ArrayList<>(super.getAdditionalLootTables());
+
+            //noinspection ConstantConditions
+            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
+            {
+                lootTables.add(getLootTable(input));
+            }
+
+            return lootTables;
+        }
+
+        @NotNull
+        @Override
+        public List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly()
+        {
+            final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
+
+            //noinspection ConstantConditions
+            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
+            {
+                recipes.add(new GenericRecipe(
+                        null,                    //recipe
+                        ItemStack.EMPTY,            //output
+                        Collections.emptyList(),    //additional outputs
+                        Collections.singletonList(Collections.singletonList(new ItemStack(input))), //inputs
+                        1,                   //grid
+                        Blocks.AIR,                 //intermediate
+                        getLootTable(input),        //loottable
+                        Collections.emptyList(),    //restrictions
+                        -1));               //levelsort
+            }
+
+            return recipes;
+        }
+
+        @Override
         public void checkForWorkerSpecificRecipes()
         {
             super.checkForWorkerSpecificRecipes();
 
-            for (Iterator<Holder<Item>> it = Registry.ITEM.getTagOrEmpty(ModTags.breakable_ore).iterator(); it.hasNext(); )
+            for (final Item input : ForgeRegistries.ITEMS.tags().getTag(ModTags.breakable_ore))
             {
-                final Item input = it.next().value();
                 Block b = Block.byItem(input);
                 List<ItemStack> drops = Block.getDrops(b.defaultBlockState(), (ServerLevel) building.getColony().getWorld(), building.getID(), null);
                 for (ItemStack drop : drops)

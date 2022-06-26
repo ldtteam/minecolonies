@@ -348,7 +348,7 @@ public class GlobalResearch implements IGlobalResearch
         this.textureIcon = iconTexture;
         if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
         {
-            Log.getLogger().info("Client received recipe [" + branch + "/" + id + "]");
+            Log.getLogger().info("Client received research [" + branch + "/" + id + "]");
         }
     }
 

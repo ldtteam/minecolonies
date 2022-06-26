@@ -117,7 +117,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
                     if (!data.getSittingPosition().equals(BlockPos.ZERO))
                     {
                         count++;
-                        avg.offset(data.getSittingPosition());
+                        avg = avg.offset(data.getSittingPosition());
                     }
                 }
             }

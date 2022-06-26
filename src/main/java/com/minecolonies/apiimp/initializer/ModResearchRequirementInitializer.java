@@ -16,7 +16,7 @@ import static com.minecolonies.api.research.ModResearchRequirements.*;
 
 public class ModResearchRequirementInitializer
 {
-    public final static DeferredRegister<ResearchRequirementEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "guardtypes"), Constants.MOD_ID);
+    public final static DeferredRegister<ResearchRequirementEntry> DEFERRED_REGISTER = DeferredRegister.create(new ResourceLocation(Constants.MOD_ID, "researchrequirementtypes"), Constants.MOD_ID);
 
     private ModResearchRequirementInitializer()
     {
