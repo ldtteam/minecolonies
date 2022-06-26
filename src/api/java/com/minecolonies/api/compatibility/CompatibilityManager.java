@@ -1,6 +1,8 @@
 package com.minecolonies.api.compatibility;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
@@ -10,26 +12,29 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.OreBlock;
+import net.minecraft.world.level.block.RedStoneOreBlock;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -37,17 +42,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.ItemStackUtils.*;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_SAP_LEAF;
-
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.OreBlock;
-import net.minecraft.world.level.block.RedStoneOreBlock;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * CompatibilityManager handling certain list and maps of itemStacks of certain types.
@@ -436,7 +435,7 @@ public class CompatibilityManager implements ICompatibilityManager
             {
                 monsterSet.add(entry.getKey().location());
             }
-            else if (Iterators.contains(Registry.ENTITY_TYPE.getTagOrEmpty(ModTags.hostile).iterator(), entry.getValue()))
+            else if (entry.getValue().is(ModTags.hostile))
             {
                 monsterSet.add(entry.getKey().location());
             }
@@ -477,14 +476,11 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (smeltableOres.isEmpty())
         {
-            Set<Item> m = new HashSet<>();
+            Set<Item> m = Stream.of(Tags.Items.ORES, ModTags.breakable_ore, ModTags.raw_ore)
+                    .flatMap(tag -> ForgeRegistries.ITEMS.tags().getTag(tag).stream())
+                    .collect(Collectors.toSet());
 
-
-            m.addAll(StreamSupport.stream(Registry.ITEM.getTagOrEmpty(Tags.Items.ORES).spliterator(), false).map(Holder::value).toList());
-            m.addAll(StreamSupport.stream(Registry.ITEM.getTagOrEmpty(ModTags.breakable_ore).spliterator(), false).map(Holder::value).toList());
-            m.addAll(StreamSupport.stream(Registry.ITEM.getTagOrEmpty(ModTags.raw_ore).spliterator(), false).map(Holder::value).toList());
-
-            for(Item item : m)
+            for (Item item : m)
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
                 item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
@@ -510,10 +506,10 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverSaplings()
     {
-        for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ItemTags.SAPLINGS))
+        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.SAPLINGS))
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            itemHolder.value().fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
                 saplings.add(new ItemStorage(stack, false, true));
@@ -552,10 +548,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         if (plantables.isEmpty())
         {
-            for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ModTags.floristFlowers))
+            for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ModTags.floristFlowers))
             {
                 final NonNullList<ItemStack> list = NonNullList.create();
-                itemHolder.value().fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
                 for (final ItemStack stack : list)
                 {
                     if (stack.getItem() instanceof BlockItem)
@@ -804,10 +800,10 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         Set<ItemStorage> flowers = new HashSet<>();
 
-        for (final Holder<Item> itemHolder : Registry.ITEM.getTagOrEmpty(ItemTags.FLOWERS))
+        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.FLOWERS))
         {
             final NonNullList<ItemStack> list = NonNullList.create();
-            itemHolder.value().fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
+            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
             for (final ItemStack stack : list)
             {
                 flowers.add(new ItemStorage(stack));
