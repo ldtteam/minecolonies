@@ -14,10 +14,12 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.event.HighlightManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -221,9 +223,7 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         });
         final Predicate<ItemStorage> filterPredicate = stack -> filter.isEmpty()
                                                                   || stack.getItemStack().getDescriptionId().toLowerCase(Locale.US).contains(filter.toLowerCase(Locale.US))
-                                                                  || stack.getItemStack()
-                                                                       .getHoverName()
-                                                                       .getString()
+                                                                  || getString(stack.getItemStack())
                                                                        .toLowerCase(Locale.US)
                                                                        .contains(filter.toLowerCase(Locale.US));
 
@@ -261,6 +261,21 @@ public class WindowHutAllInventory extends AbstractWindowSkeleton
         }
 
         updateResourceList();
+    }
+
+    /**
+     * Get identifying string from itemstack.
+     * @param stack the stack to gen the string from.
+     * @return a single string.
+     */
+    private static String getString(final ItemStack stack)
+    {
+        final StringBuilder output = new StringBuilder();
+        for (final ITextComponent comp : stack.getTooltipLines(Minecraft.getInstance().player, ITooltipFlag.TooltipFlags.NORMAL))
+        {
+            output.append(comp.getString()).append(" ");
+        }
+        return output.toString();
     }
 
     /**
