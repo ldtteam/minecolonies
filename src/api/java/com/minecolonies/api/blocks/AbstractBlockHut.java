@@ -1,12 +1,18 @@
 package com.minecolonies.api.blocks;
 
+import com.ldtteam.structurize.blockentities.interfaces.*;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
+import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -15,8 +21,19 @@ import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.TranslationConstants;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Block;
@@ -39,10 +56,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
@@ -55,7 +79,15 @@ import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
  * All AbstractBlockHut[something] should extend this class.
  */
 @SuppressWarnings("PMD.ExcessiveImports")
-public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable, IAnchorBlock, ITickableBlockMinecolonies
+public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends AbstractBlockMinecolonies<B> implements IBuilderUndestroyable,
+                                                                                                                        IAnchorBlock,
+                                                                                                                        ITickableBlockMinecolonies,
+                                                                                                                        INamedBlueprintAnchorBlock,
+                                                                                                                        ILeveledBlueprintAnchorBlock,
+                                                                                                                        IRequirementsBlueprintAnchorBlock,
+                                                                                                                        ISpecialPasteBlueprintAnchorBlock,
+                                                                                                                        IInvisibleBlueprintAnchorBlock
+
 {
     /**
      * Hardness factor of the pvp mode.
@@ -290,9 +322,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param mirror  the mirror used.
      * @param style   the style of the building
      */
-    public void onBlockPlacedByBuildTool(
-      @NotNull final Level worldIn, @NotNull final BlockPos pos,
-      final BlockState state, final LivingEntity placer, final ItemStack stack, final boolean mirror, final String style)
+    public void onBlockPlacedByBuildTool(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack, final boolean mirror, final String style)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)
@@ -309,4 +339,97 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         registry.register((new ItemBlockHut(this, properties)).setRegistryName(this.getRegistryName()));
     }
+
+    @Override
+    public boolean isVisible(@Nullable final CompoundTag beData)
+    {
+        final Map<BlockPos, List<String>> data = readTagPosMapFrom(beData.getCompound(TAG_BLUEPRINTDATA));
+        return !data.getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains("invisible");
+    }
+
+    @Override
+    public List<MutableComponent> getRequirements(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
+    {
+        final List<MutableComponent> requirements = new ArrayList<>();
+        final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(level, pos);
+        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
+        {
+            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.cost", new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
+              ChatFormatting.RED)));
+        }
+        if (colonyView == null)
+        {
+            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.incolony"));
+            return requirements;
+        }
+        final ResourceLocation effectId = colonyView.getResearchManager().getResearchEffectIdFrom(this);
+        if (colonyView.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
+        {
+            return requirements;
+        }
+        if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
+        {
+            requirements.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
+            requirements.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
+        }
+
+        return requirements;
+    }
+
+    @Override
+    public boolean areRequirementsMet(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
+    {
+        return this.getRequirements(level, pos, player).isEmpty();
+    }
+
+    @Override
+    public List<MutableComponent> getDesc()
+    {
+        final List<MutableComponent> desc = new ArrayList<>();
+        desc.add(new TranslatableComponent(getBuildingEntry().getTranslationKey() + ".desc"));
+        return desc;
+    }
+
+    @Override
+    public Component getBlueprintDisplayName()
+    {
+        return new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName());
+    }
+
+    @Override
+    public int getLevel(final CompoundTag beData)
+    {
+        if (beData == null)
+        {
+            return 0;
+        }
+
+        try
+        {
+            return Integer.parseInt(beData.getCompound(TAG_BLUEPRINTDATA).getString(TAG_SCHEMATIC_NAME).replaceAll("[^0-9]", ""));
+        }
+        catch (final NumberFormatException exception)
+        {
+            Log.getLogger().error("Couldn't get level from hut: " + getHutName() + ". Potential corrubt blockEntity data.");
+            return 0;
+        }
+    }
+
+    @Override
+    public void paste(
+      final Blueprint blueprint,
+      final Level world,
+      final Player player,
+      final BlockPos buildPos,
+      final PlacementSettings placementSettings,
+      final boolean complete,
+      final BlockState blockState)
+    {
+       Log.getLogger().warn("MineColonies Pasting Action Ongoing");
+    }
+
+    //todo on receiving the first colony view, we set the style in the colony (if finished loading, else delay for later).
+    //todo supplycamp/ship just search all styles -> New fully custom UI just for those, no more old UI, no more mixing! (no shared variables!)
+    //todo we need a mapping that allows buildings to recover their blueprint paths (now based on StylePack name + subpath + filename)
+
 }

@@ -260,7 +260,7 @@ public class BuildToolPasteMessage implements IMessage
      * @param state    The state of the hut.
      * @param complete If complete or not.
      */
-    private static void handleHut(
+    public static void handleHut(
             @NotNull final Level world, @NotNull final Player player,
             final StructureName sn,
             final int rotation, @NotNull final BlockPos buildPos, final boolean mirror, final BlockState state, final boolean complete)

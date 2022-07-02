@@ -78,12 +78,6 @@ MineColonies is a colony simulator within Minecraft! There are numerous types of
     ordering="AFTER"
     side="BOTH"
 [[dependencies.minecolonies]]
-    modId="multipiston"
-    mandatory=true
-    versionRange="[${multiPistonVersion}, )"
-    ordering="AFTER"
-    side="BOTH"
-[[dependencies.minecolonies]]
     modId="journeymap"
     mandatory=false
     versionRange="[${project.jmapVersion},)"
