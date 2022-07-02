@@ -187,10 +187,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob<?, J>, B ex
             final int fortune = ItemStackUtils.getFortuneOf(tool);
 
             //create list for all item drops to be stored in
-            List<ItemStack> localItems = new ArrayList<ItemStack>();
+            List<ItemStack> localItems = new ArrayList<>();
 
             //Checks to see if the equipped tool has Silk Touch AND if the blocktoMine has a viable Item SilkTouch can get.
-            if (shouldSilkTouchBlock(curBlockState))
+            if (!tool.isEmpty() && shouldSilkTouchBlock(curBlockState))
             {
                 final ItemStack fakeTool = tool.copy();
                 fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
