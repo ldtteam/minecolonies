@@ -2294,7 +2294,7 @@
 
   "com.minecolonies.coremod.hut.incolony": "Has to be placed inside a Colony",
   "com.minecolonies.coremod.hut.cost": "Requires 1 %s Block in Inventory",
-  "com.minecolonies.coremod.blueprint.placement": "Add to Colony",
+  "com.minecolonies.coremod.blueprint.placement": "Assign to Builder",
 
   "com.minecolonies.building.miner.desc": "Digs into the Ground for Ores and Stones. Not Yours.",
   "com.minecolonies.building.farmer.desc": "Plants and Harvests Crops. Has A Green Thumb.",

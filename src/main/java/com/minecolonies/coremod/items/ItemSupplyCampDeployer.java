@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.items;
 
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
-import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.OldSettings;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -157,10 +157,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             return true;
         }
 
-        final BlockPos zeroPos = pos.subtract(Settings.instance.getActiveStructure().getPrimaryBlockOffset());
-        final int sizeX = Settings.instance.getActiveStructure().getSizeX();
-        final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
-        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(Settings.instance.getActiveStructure(), 1) - 1;
+        /*todo redo entirely
+        final BlockPos zeroPos = pos.subtract(OldSettings.instance.getActiveStructure().getPrimaryBlockOffset());
+        final int sizeX = OldSettings.instance.getActiveStructure().getSizeX();
+        final int sizeZ = OldSettings.instance.getActiveStructure().getSizeZ();
+        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(OldSettings.instance.getActiveStructure(), 1) - 1;
 
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {
@@ -175,7 +176,7 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
                 }
             }
         }
-
+        */
         return placementErrorList.isEmpty();
     }
 

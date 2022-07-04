@@ -41,20 +41,6 @@ public interface IProxy
     void showCitizenWindow(ICitizenDataView citizen);
 
     /**
-     * Opens a build tool window.
-     *
-     * @param pos coordinates.
-     */
-    void openBuildToolWindow(final BlockPos pos);
-
-    /**
-     * Opens a shape tool window.
-     *
-     * @param pos coordinates.
-     */
-    void openShapeToolWindow(final BlockPos pos);
-
-    /**
      * Open the suggestion window.
      *
      * @param pos   the position to open it at.

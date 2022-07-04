@@ -2,7 +2,8 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
-import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.OldSettings;
+import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
@@ -24,24 +25,20 @@ public class ColonyWaypointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        final Blueprint structure = Settings.instance.getActiveStructure();
-        if (structure != null && ctx.hasNearestColony() && Settings.instance.getStructureName() != null
-            && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
+        final Blueprint structure = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
+        if (structure != null && structure.getFilePath().toString().contains(WAYPOINT_STRING) && ctx.nearestColony != null)
         {
             if (wayPointTemplate == null)
             {
-                final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(),
-                    BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-
                 wayPointTemplate = new LoadOnlyStructureHandler(ctx.clientLevel,
                     BlockPos.ZERO,
                     "schematics/infrastructure/waypoint",
-                    settings,
+                  new PlacementSettings(),
                     true).getBluePrint();
             }
 
             StructureClientHandler.renderStructureAtPosList(
-                Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure()
+              RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint()
                     : wayPointTemplate,
                 ctx.partialTicks,
                 new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),

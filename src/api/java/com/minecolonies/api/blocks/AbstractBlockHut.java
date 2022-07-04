@@ -56,6 +56,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -348,6 +350,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public List<MutableComponent> getRequirements(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
     {
         final List<MutableComponent> requirements = new ArrayList<>();
@@ -377,6 +380,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public boolean areRequirementsMet(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
     {
         return this.getRequirements(level, pos, player).isEmpty();

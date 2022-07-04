@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.proxy;
 
-import com.ldtteam.structurize.helpers.Settings;
+import com.ldtteam.structurize.helpers.OldSettings;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
@@ -54,30 +54,6 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openBuildToolWindow(@Nullable final BlockPos pos)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
-            return;
-        }
-
-        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, GROUNDSTYLE_RELATIVE);
-        window.open();
-    }
-
-    @Override
-    public void openShapeToolWindow(@Nullable final BlockPos pos)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
-            return;
-        }
-
-        @Nullable final WindowMinecoloniesShapeTool window = new WindowMinecoloniesShapeTool(pos);
-        window.open();
-    }
-
-    @Override
     public void openDecorationControllerWindow(@Nullable final BlockPos pos)
     {
         if (pos == null)
@@ -99,18 +75,6 @@ public class ClientProxy extends CommonProxy
     public void openSuggestionWindow(@NotNull final BlockPos pos, @NotNull final BlockState state, @NotNull final ItemStack stack)
     {
         new WindowSuggestBuildTool(pos, state, stack).open();
-    }
-
-    @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle)
-    {
-        if (pos == null && Settings.instance.getActiveStructure() == null)
-        {
-            return;
-        }
-
-        @Nullable final WindowMinecoloniesBuildTool window = new WindowMinecoloniesBuildTool(pos, structureName, rotation, groundstyle);
-        window.open();
     }
 
     @Override

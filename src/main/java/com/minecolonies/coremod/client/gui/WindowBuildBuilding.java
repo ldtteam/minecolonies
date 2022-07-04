@@ -8,7 +8,6 @@ import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
 import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
@@ -272,16 +271,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
                 }
                 stylesDropDownList.setSelectedIndex(newIndex);
             }
-        }
-
-        final boolean enabled;
-        if (Settings.instance.isStaticSchematicMode())
-        {
-            enabled = false;
-        }
-        else
-        {
-            enabled = true;
         }
 
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
