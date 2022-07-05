@@ -1,6 +1,6 @@
 {
 	"credit": "Made with Blockbench",
-	"parent": "block/block",
+	"parent": "minecraft:block/cross",
 	"ambientocclusion": false,
 	"loader": "forge:multi-layer",
 	"textures": {
