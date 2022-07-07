@@ -36,7 +36,12 @@ import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
  */
 public class WorkManager implements IWorkManager
 {
-    private static final String                   TAG_WORK_ORDERS = "workOrders";
+    /**
+     * Workorder NBT tags.
+     */
+    private static final String TAG_WORK_ORDERS = "workOrders";
+    private static final String TAG_NEW_SYSTEM  = "newsystem";
+
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
@@ -199,6 +204,7 @@ public class WorkManager implements IWorkManager
             list.add(orderCompound);
         }
         compound.put(TAG_WORK_ORDERS, list);
+        compound.putBoolean(TAG_NEW_SYSTEM, true);
     }
 
     /**
@@ -210,6 +216,13 @@ public class WorkManager implements IWorkManager
     public void read(@NotNull final CompoundTag compound)
     {
         workOrders.clear();
+
+        if (!compound.contains(TAG_NEW_SYSTEM))
+        {
+            // On the new system, we drop all current workorders to avoid any issues.
+            return;
+        }
+
         //  Work Orders
         final ListTag list = compound.getList(TAG_WORK_ORDERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i)

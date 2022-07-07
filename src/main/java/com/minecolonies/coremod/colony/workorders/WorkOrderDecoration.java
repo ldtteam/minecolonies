@@ -22,8 +22,8 @@ public class WorkOrderDecoration extends AbstractWorkOrder
 {
     public static WorkOrderDecoration create(
       @NotNull final WorkOrderType type,
-      final String structureName,
-      final String workOrderName,
+      final String packName,
+      final String path,
       final BlockPos location,
       final int rotation,
       final boolean mirror,
@@ -44,8 +44,8 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         }
 
         return new WorkOrderDecoration(
-          structureName,
-          workOrderName,
+          packName,
+          path,
           type,
           location,
           rotation,
@@ -63,10 +63,10 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     }
 
     private WorkOrderDecoration(
-      String structureName, String workOrderName, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
+      String packName, String path, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
       int targetLevel)
     {
-        super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
+        super(packName, path, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
     }
 
     /**

@@ -4,14 +4,15 @@ import com.ldtteam.structurize.api.util.ItemStackUtils;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,12 +21,12 @@ import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 
-public class GeneralBlockPlacementHandler implements IPlacementHandler
+public class HutPlacementHandler implements IPlacementHandler
 {
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return true;
+        return blockState.getBlock() instanceof AbstractBlockHut<?>;
     }
 
     @Override
@@ -53,7 +54,10 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
+                if (!complete)
+                {
+                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
+                }
             }
             catch (final Exception ex)
             {
@@ -73,16 +77,12 @@ public class GeneralBlockPlacementHandler implements IPlacementHandler
       final boolean complete)
     {
         final List<ItemStack> itemList = new ArrayList<>();
-        if (!ChiselAndBitsCheck.isChiselAndBitsBlock(blockState))
-        {
-            itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-        }
+        itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         if (tileEntityData != null)
         {
             itemList.addAll(ItemStackUtils.getItemStacksOfTileEntity(tileEntityData, blockState));
         }
         itemList.removeIf(ItemStackUtils::isEmpty);
-
         return itemList;
     }
 }

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.event;
 
-import com.ldtteam.structurize.helpers.OldSettings;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;

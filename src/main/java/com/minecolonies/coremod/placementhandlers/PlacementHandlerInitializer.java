@@ -32,5 +32,6 @@ public final class PlacementHandlerInitializer
         PlacementHandlers.add(new GatePlacementHandler());
         PlacementHandlers.add(new NetherrackPlacementHandler());
         PlacementHandlers.add(new LecternPlacementHandler());
+        PlacementHandlers.add(new HutPlacementHandler());
     }
 }

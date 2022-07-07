@@ -48,19 +48,19 @@ public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerIns
 
     /**
      * Performs the check for the conditions
-     * @param structureName the id of the structure that was just placed
+     * @param hutName the id of the structure that was just placed
      * @return whether the check succeeded
      */
-    public boolean test(final StructureName structureName)
+    public boolean test(final String hutName)
     {
         if (this.hutName != null)
         {
-            return this.hutName.equalsIgnoreCase(structureName.getHutName());
+            return this.hutName.equalsIgnoreCase(hutName);
         }
 
         if (this.structureName != null)
         {
-            return this.structureName.equals(structureName);
+            return this.structureName.equals(hutName);
         }
 
         return true;

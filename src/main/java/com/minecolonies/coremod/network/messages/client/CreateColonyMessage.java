@@ -4,14 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.ChatFormatting;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.stats.Stats;
@@ -24,7 +22,6 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -114,9 +111,9 @@ public class CreateColonyMessage implements IMessage
 
         final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
 
-        if (!hut.getStyle().isEmpty())
+        if (!hut.getStructurePack().isEmpty())
         {
-            style = hut.getStyle();
+            style = hut.getStructurePack();
         }
         else if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
         {

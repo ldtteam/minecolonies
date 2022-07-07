@@ -15,7 +15,7 @@ public class PlaceStructureListeners extends CriterionListeners<PlaceStructureCr
         super(playerAdvancements);
     }
 
-    public void trigger(final StructureName structureName)
+    public void trigger(final String structureName)
     {
         trigger(instance -> instance.test(structureName));
     }

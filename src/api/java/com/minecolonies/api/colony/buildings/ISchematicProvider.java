@@ -90,14 +90,28 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
      *
      * @return String representation of the current building-style
      */
-    String getStyle();
+    String getStructurePack();
 
     /**
      * Sets the style of the building.
      *
      * @param style String value of the style.
      */
-    void setStyle(String style);
+    void setStructurePack(String style);
+
+    /**
+     * Returns the blueprint path of the current building.
+     *
+     * @return String representation of the current blueprint-path
+     */
+    String getBlueprintPath();
+
+    /**
+     * Sets the blueprint path of the building.
+     *
+     * @param path String value of the blueprint-path.
+     */
+    void setBlueprintPath(String path);
 
     /**
      * Returns the level of the current object.

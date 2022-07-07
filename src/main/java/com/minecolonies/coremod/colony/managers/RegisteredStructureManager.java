@@ -588,9 +588,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
-                if (!tileEntity.getStyle().isEmpty())
+                if (!tileEntity.getStructurePack().isEmpty())
                 {
-                    building.setStyle(tileEntity.getStyle());
+                    building.setStyle(tileEntity.getStructurePack());
                 }
                 else
                 {

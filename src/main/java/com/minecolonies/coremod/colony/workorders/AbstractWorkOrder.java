@@ -103,12 +103,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * The structurize schematic name.
      */
-    private String structureName;
+    private String packName;
 
     /**
      * The work order name.
      */
-    private String workOrderName;
+    private String path;
 
     /**
      * The work order type.
@@ -307,8 +307,8 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     protected AbstractWorkOrder(
-      String structureName,
-      String workOrderName,
+      String packName,
+      String path,
       WorkOrderType workOrderType,
       BlockPos location,
       int rotation,
@@ -317,8 +317,8 @@ public abstract class AbstractWorkOrder implements IWorkOrder
       int targetLevel)
     {
         this();
-        this.structureName = structureName;
-        this.workOrderName = workOrderName;
+        this.packName = packName;
+        this.path = path;
         this.workOrderType = workOrderType;
         this.location = location;
         this.rotation = rotation;
@@ -556,9 +556,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
-        // TODO: In 1.19 remove this method call as this is purely for backwards compatibility with old class mappings
-        migrateOldNbt(compound, manager);
-
         id = compound.getInt(TAG_ID);
         if (compound.contains(TAG_TH_PRIORITY))
         {
@@ -740,92 +737,5 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
         return false;
-    }
-
-    // TODO: In 1.19 remove this method as this is purely for backwards compatibility with old class mappings
-    private static void migrateOldNbt(final CompoundTag compound, IWorkManager manager)
-    {
-        // When the old TAG_BUILDING tag no longer exists in the compound NBT, it means the work order has already migrated
-        if (!compound.contains(TAG_BUILDING_OLD) && !compound.getString(TAG_TYPE).equals("removal"))
-        {
-            return;
-        }
-
-        // Migrate tags
-        // Re-write the location
-        BlockPosUtil.write(compound, TAG_LOCATION, BlockPosUtil.read(compound, TAG_BUILDING_OLD));
-        // Re-write the rotation
-        compound.putInt(TAG_ROTATION, compound.getInt(TAG_BUILDING_ROTATION_OLD));
-        // Re-write the mirrored state
-        compound.putBoolean(TAG_ROTATION, compound.getBoolean(TAG_BUILDING_ROTATION_OLD));
-        // Re-write the mirrored state
-        compound.putInt(TAG_AMOUNT_OF_RESOURCES, compound.getInt(TAG_AMOUNT_OF_RESOURCES_OLD));
-
-        // Re-write the current and upgrade level
-        int targetLevel = compound.getInt(TAG_UPGRADE_LEVEL_OLD);
-
-        // If the tag is removal it's indicating an old removal request
-        if (compound.getString(TAG_TYPE).equals("removal"))
-        {
-            compound.putString(TAG_TYPE, "building");
-            compound.putInt(TAG_WO_TYPE, WorkOrderType.REMOVE.ordinal());
-            compound.putInt(TAG_CURRENT_LEVEL, targetLevel);
-            compound.putInt(TAG_TARGET_LEVEL, 0);
-        }
-        else if (targetLevel == 1)
-        {
-            compound.putInt(TAG_WO_TYPE, WorkOrderType.BUILD.ordinal());
-            compound.putInt(TAG_CURRENT_LEVEL, 0);
-            compound.putInt(TAG_TARGET_LEVEL, targetLevel);
-        }
-        else if (targetLevel > 1)
-        {
-            IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
-            BlockEntity entity = manager.getColony().getWorld().getBlockEntity(BlockPosUtil.read(compound, TAG_LOCATION));
-
-            if (building != null)
-            {
-                if (building.getBuildingLevel() == targetLevel)
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
-                }
-                else
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
-                }
-            }
-            else if (entity instanceof TileEntityDecorationController)
-            {
-                TileEntityDecorationController dEntity = (TileEntityDecorationController) entity;
-                if (dEntity.getTier() == targetLevel)
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
-                }
-                else
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
-                }
-            }
-            compound.putInt(TAG_TARGET_LEVEL, targetLevel);
-            compound.putInt(TAG_CURRENT_LEVEL, building.getBuildingLevel());
-        }
-
-        // Remove old NBT
-        compound.remove(TAG_BUILDING_OLD);
-        compound.remove(TAG_BUILDING_ROTATION_OLD);
-        compound.remove(TAG_IS_MIRRORED_OLD);
-        compound.remove(TAG_AMOUNT_OF_RESOURCES_OLD);
-        compound.remove(TAG_UPGRADE_LEVEL_OLD);
-
-        // Building specific info
-        IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
-        if (building != null)
-        {
-            final WorkOrderBuilding test = new WorkOrderBuilding();
-            test.setCustomName(building);
-            compound.putString("customName", test.getCustomName());
-            compound.putString("customParentName", test.getCustomParentName());
-            compound.putString("parentTranslationKey", test.getParentTranslationKey());
-        }
     }
 }

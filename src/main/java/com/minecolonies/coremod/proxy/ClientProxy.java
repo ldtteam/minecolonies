@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.proxy;
 
-import com.ldtteam.structurize.helpers.OldSettings;
 import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;

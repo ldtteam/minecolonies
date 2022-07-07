@@ -3,6 +3,8 @@ package com.minecolonies.api.blocks;
 import com.ldtteam.structurize.blockentities.interfaces.*;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
+import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
@@ -11,8 +13,6 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.modules.IAssignsJob;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
@@ -66,7 +66,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
@@ -87,8 +86,9 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                                                                                                                         INamedBlueprintAnchorBlock,
                                                                                                                         ILeveledBlueprintAnchorBlock,
                                                                                                                         IRequirementsBlueprintAnchorBlock,
-                                                                                                                        ISpecialPasteBlueprintAnchorBlock,
-                                                                                                                        IInvisibleBlueprintAnchorBlock
+                                                                                                                        IInvisibleBlueprintAnchorBlock,
+                                                                                                                        ISpecialCreativeHandler
+
 
 {
     /**
@@ -324,13 +324,22 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
      * @param mirror  the mirror used.
      * @param style   the style of the building
      */
-    public void onBlockPlacedByBuildTool(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack, final boolean mirror, final String style)
+    public void onBlockPlacedByBuildTool(
+      @NotNull final Level worldIn,
+      @NotNull final BlockPos pos,
+      final BlockState state,
+      final LivingEntity placer,
+      final ItemStack stack,
+      final boolean mirror,
+      final StructurePackMeta style,
+      final String blueprintPath)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
             ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setStyle(style);
+            ((AbstractTileEntityColonyBuilding) tileEntity).setStructurePack(style);
+            ((AbstractTileEntityColonyBuilding) tileEntity).setBlueprintPath(blueprintPath);
         }
 
         setPlacedBy(worldIn, pos, state, placer, stack);
@@ -420,20 +429,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     }
 
     @Override
-    public void paste(
-      final Blueprint blueprint,
-      final Level world,
-      final Player player,
-      final BlockPos buildPos,
-      final PlacementSettings placementSettings,
-      final boolean complete,
-      final BlockState blockState)
+    public AbstractStructureHandler getStructureHandler(final Level level, final BlockPos blockPos, final Blueprint blueprint, final PlacementSettings placementSettings, final boolean b)
     {
-       Log.getLogger().warn("MineColonies Pasting Action Ongoing");
+        return new CreativeBuildingStructureHandler(level, blockPos, blueprint, placementSettings, b);
     }
-
-    //todo on receiving the first colony view, we set the style in the colony (if finished loading, else delay for later).
-    //todo supplycamp/ship just search all styles -> New fully custom UI just for those, no more old UI, no more mixing! (no shared variables!)
-    //todo we need a mapping that allows buildings to recover their blueprint paths (now based on StylePack name + subpath + filename)
-
 }

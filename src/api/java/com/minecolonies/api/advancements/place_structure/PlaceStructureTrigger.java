@@ -24,7 +24,7 @@ public class PlaceStructureTrigger extends AbstractCriterionTrigger<PlaceStructu
      * @param player the player the check regards
      * @param structureName the structure id of what was just placed
      */
-    public void trigger(final ServerPlayer player, final StructureName structureName)
+    public void trigger(final ServerPlayer player, final String structureName)
     {
         final PlaceStructureListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)

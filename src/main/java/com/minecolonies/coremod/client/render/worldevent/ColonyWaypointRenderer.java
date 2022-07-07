@@ -2,10 +2,8 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
-import com.ldtteam.structurize.helpers.OldSettings;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import net.minecraft.core.BlockPos;
 import java.util.ArrayList;

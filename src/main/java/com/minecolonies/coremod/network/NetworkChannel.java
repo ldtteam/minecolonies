@@ -137,7 +137,6 @@ public class NetworkChannel
         registerMessage(++idx, TownHallRenameMessage.class, TownHallRenameMessage::new);
         registerMessage(++idx, MinerSetLevelMessage.class, MinerSetLevelMessage::new);
         registerMessage(++idx, RecallCitizenMessage.class, RecallCitizenMessage::new);
-        registerMessage(++idx, BuildToolPlaceMessage.class, BuildToolPlaceMessage::new);
         registerMessage(++idx, ToggleJobMessage.class, ToggleJobMessage::new);
         registerMessage(++idx, HireFireMessage.class, HireFireMessage::new);
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
@@ -162,7 +161,6 @@ public class NetworkChannel
         registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
         registerMessage(++idx, ForcePickupMessage.class, ForcePickupMessage::new);
         registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
-        registerMessage(++idx, BuildToolPasteMessage.class, BuildToolPasteMessage::new);
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
         registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
         registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);

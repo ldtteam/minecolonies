@@ -729,6 +729,13 @@ public final class TranslationConstants
 
     //</editor-fold>
 
+    //<editor-fold desc="Structure handling related keys">
+
+    @NonNls
+    public static final String NO_CUSTOM_BUILDINGS = "com.minecolonies.coremod.structures.nocustomhuts";
+
+    //</editor-fold>
+
     private TranslationConstants()
     {
         // empty default

@@ -44,12 +44,12 @@ public class DecorationBuildRequestMessage implements IMessage
     /**
      * The display name of the decoration.
      */
-    private String displayName;
+    private String packName;
 
     /**
      * The name of the decoration.
      */
-    private String name;
+    private String path;
 
     /**
      * The level of the decoration.
@@ -73,17 +73,17 @@ public class DecorationBuildRequestMessage implements IMessage
      * Creates a build request for a decoration.
      *
      * @param pos         the position of it.
-     * @param displayName it's name.
-     * @param name        it's name.
+     * @param packName    pack name.
+     * @param path        blueprint path.
      * @param level       the level.
      * @param dimension   the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String displayName, final String name, final int level, final ResourceKey<Level> dimension)
+    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String packName, final String path, final int level, final ResourceKey<Level> dimension)
     {
         super();
         this.pos = pos;
-        this.displayName = displayName;
-        this.name = name;
+        this.packName = packName;
+        this.path = path;
         this.level = level;
         this.dimension = dimension;
     }
@@ -92,8 +92,8 @@ public class DecorationBuildRequestMessage implements IMessage
     public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
         this.pos = buf.readBlockPos();
-        this.displayName = buf.readUtf(32767);
-        this.name = buf.readUtf(32767);
+        this.packName = buf.readUtf(32767);
+        this.path = buf.readUtf(32767);
         this.level = buf.readInt();
         this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
     }
@@ -102,8 +102,8 @@ public class DecorationBuildRequestMessage implements IMessage
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBlockPos(this.pos);
-        buf.writeUtf(this.displayName);
-        buf.writeUtf(this.name);
+        buf.writeUtf(this.packName);
+        buf.writeUtf(this.path);
         buf.writeInt(this.level);
         buf.writeUtf(this.dimension.location().toString());
     }
@@ -157,7 +157,7 @@ public class DecorationBuildRequestMessage implements IMessage
                 {
                     if (!(structureState.getBlock() instanceof BlockDecorationController))
                     {
-                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", name + level));
+                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", path + level));
                         return;
                     }
 
@@ -180,9 +180,10 @@ public class DecorationBuildRequestMessage implements IMessage
             WorkOrderDecoration order;
             if (level > currentLevel)
             {
+                //todo
                 order = WorkOrderDecoration.create(
                   WorkOrderType.UPGRADE,
-                  name + level,
+                  path + level,
                   WordUtils.capitalizeFully(displayName),
                   pos,
                   difference,

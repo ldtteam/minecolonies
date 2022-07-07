@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
-import com.ldtteam.structurize.helpers.OldSettings;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;

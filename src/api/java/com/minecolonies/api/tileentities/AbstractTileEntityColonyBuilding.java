@@ -1,6 +1,7 @@
 package com.minecolonies.api.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
@@ -153,16 +154,30 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     /**
      * Getter for the style.
      *
-     * @return the string of it.
+     * @return the pack of it.
      */
-    public abstract String getStyle();
+    public abstract StructurePackMeta getStructurePack();
 
     /**
-     * Set the style of the tileEntity.
+     * Set the pack of the tileEntity.
      *
-     * @param style the style to set.
+     * @param style the pack to set.
      */
-    public abstract void setStyle(String style);
+    public abstract void setStructurePack(final StructurePackMeta style);
+
+    /**
+     * Set the blueprint path of the tileEntity.
+     *
+     * @param path the path to set.
+     */
+    public abstract void setBlueprintPath(final String path);
+
+    /**
+     * Get the blueprint path of the tileEntity.
+     *
+     * @return  path the path to get.
+     */
+    public abstract String getBlueprintPath();
 
     /**
      * Get the building name that this {@link AbstractTileEntityColonyBuilding} belongs to.
