@@ -21,10 +21,13 @@ public class BlueprintMapping
     static
     {
         styleMapping.put("sandstone", "Moroccan");
-        styleMapping.put("asian", "Asian");
+        styleMapping.put("asian", "Oriental");
         styleMapping.put("wooden", "Default");
 
         //todo add remaining
-        pathMapping.put("sandstone:citizen1", "fundamentals/citizen1");
+        pathMapping.put("sandstone:citizen", "fundamentals/citizen");
+        pathMapping.put("asianalternative:citizen", "fundamentals/citizenalt");
+        pathMapping.put("Default:townhall", "fundamentals/townhall");
+
     }
 }

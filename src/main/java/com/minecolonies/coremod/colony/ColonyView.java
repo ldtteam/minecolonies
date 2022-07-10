@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -35,7 +36,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -325,7 +325,7 @@ public final class ColonyView implements IColonyView
 
         buf.writeLong(colony.getMercenaryUseTime());
 
-        buf.writeUtf(colony.getStyle());
+        buf.writeUtf(colony.getStructurePack());
         buf.writeBoolean(colony.getRaiderManager().isRaided());
         buf.writeBoolean(colony.getRaiderManager().areSpiesEnabled());
         // ToDo: rework ally system
@@ -823,6 +823,10 @@ public final class ColonyView implements IColonyView
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = buf.readUtf(32767);
+        if (isNewSubscription && StructurePacks.packMetas.containsKey(this.style))
+        {
+            StructurePacks.selectedPack = StructurePacks.packMetas.get(this.style);
+        }
 
         this.isUnderRaid = buf.readBoolean();
         this.spiesEnabled = buf.readBoolean();
@@ -1385,13 +1389,13 @@ public final class ColonyView implements IColonyView
      * @return the current default style.
      */
     @Override
-    public String getStyle()
+    public String getStructurePack()
     {
         return style;
     }
 
     @Override
-    public void setStyle(final String style)
+    public void setStructurePack(final String style)
     {
         // Not needed.
     }

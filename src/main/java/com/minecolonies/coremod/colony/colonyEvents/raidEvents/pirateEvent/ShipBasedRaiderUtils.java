@@ -2,15 +2,13 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Material;
@@ -72,26 +70,17 @@ public final class ShipBasedRaiderUtils
       final IColonyRaidEvent event,
       final int shipRotation)
     {
-        final CreativeRaiderStructureHandler
-          structure = new CreativeRaiderStructureHandler(world,
-          targetSpawnPoint,
-          Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize,
-          new PlacementSettings(Mirror.NONE, BlockPosUtil.getRotationFromRotations(shipRotation)),
-          true,
-          event,
-          colony.getID());
+        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture("Default",
+          "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize), colony.getWorld(), (blueprint -> {
 
-        if (!colony.getEventManager()
-               .getStructureManager()
-               .spawnTemporaryStructure(structure.getBluePrint(),
-                 Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize,
-                 targetSpawnPoint,
-                 event.getID(),
-                 shipRotation,
-                 Mirror.NONE))
-        {
-            return false;
-        }
+            colony.getEventManager()
+              .getStructureManager()
+              .spawnTemporaryStructure(blueprint,
+                targetSpawnPoint,
+                event.getID(),
+                shipRotation,
+                Mirror.NONE);
+        })));
         return true;
     }
 
@@ -139,11 +128,10 @@ public final class ShipBasedRaiderUtils
         final Level world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
-        final CreativeBuildingStructureHandler
-          structure = new CreativeBuildingStructureHandler(colony.getWorld(), spawnPoint, Structures.SCHEMATICS_PREFIX + SHIP_FOLDER + shipSize, new PlacementSettings(), true);
-        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
+        final Blueprint blueprint = StructurePacks.getBlueprint("Default", "decorations/" + SHIP_FOLDER + shipSize);
+        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
-        return canPlaceShipAt(spawnPoint, structure.getBluePrint(), world) || canPlaceShipAt(spawnPoint.below(), structure.getBluePrint(), world);
+        return canPlaceShipAt(spawnPoint, blueprint, world) || canPlaceShipAt(spawnPoint.below(), blueprint, world);
     }
 
     /**

@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
+import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickingTransition;
@@ -38,7 +39,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.*;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -80,7 +80,7 @@ public class Colony implements IColony
     /**
      * The default style for the building.
      */
-    private String style = DEFAULT_STYLE;
+    private String pack = DEFAULT_STYLE;
 
     /**
      * Id of the colony.
@@ -777,9 +777,13 @@ public class Colony implements IColony
             moveIn = compound.getBoolean(TAG_MOVE_IN);
         }
 
-        if (compound.getAllKeys().contains(TAG_STYLE))
+        if (compound.contains(TAG_STYLE))
         {
-            this.style = compound.getString(TAG_STYLE);
+            this.pack = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
+        }
+        else
+        {
+            this.pack = compound.getString(TAG_PACK);
         }
 
         raidManager.read(compound);
@@ -912,7 +916,7 @@ public class Colony implements IColony
         compound.putBoolean(TAG_MANUAL_HOUSING, manualHousing);
         compound.putBoolean(TAG_MOVE_IN, moveIn);
         compound.put(TAG_REQUESTMANAGER, getRequestManager().serializeNBT());
-        compound.putString(TAG_STYLE, style);
+        compound.putString(TAG_PACK, pack);
         compound.putBoolean(TAG_AUTO_DELETE, canColonyBeAutoDeleted);
         compound.putInt(TAG_TEAM_COLOR, colonyTeamColor.ordinal());
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
@@ -1463,20 +1467,20 @@ public class Colony implements IColony
      * @return the style string.
      */
     @Override
-    public String getStyle()
+    public String getStructurePack()
     {
-        return style;
+        return pack;
     }
 
     /**
-     * Setter for the default style of the colony.
+     * Setter for the default pack of the colony.
      *
      * @param style the default string.
      */
     @Override
-    public void setStyle(final String style)
+    public void setStructurePack(final String style)
     {
-        this.style = style;
+        this.pack = style;
         this.markDirty();
     }
 

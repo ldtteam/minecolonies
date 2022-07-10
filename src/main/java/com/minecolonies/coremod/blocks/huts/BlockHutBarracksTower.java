@@ -3,17 +3,9 @@ package com.minecolonies.coremod.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.readTagPosMapFrom;
 
 /**
  * Block of the BarracksTower.

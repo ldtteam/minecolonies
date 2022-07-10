@@ -83,7 +83,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
     private void addStandardAdvancements(@NotNull final Consumer<Advancement> consumer,
                                          @NotNull final ExistingFileHelper fileHelper)
     {
-        final String GROUP = "minecolonies/";
+        final String GROUP = "blueprints/minecolonies/";
 
         final Advancement root = Advancement.Builder.advancement()
                 .display(ModItems.supplyChest,
@@ -407,7 +407,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                         new BuildingAddRecipeCriterionInstance(item(Items.JUNGLE_DOOR), 3))
                 .addCriterion("add_recipe_acacia_door",
                         new BuildingAddRecipeCriterionInstance(item(Items.ACACIA_DOOR), 3))
-                .save(consumer, new ResourceLocation(MOD_ID, "minecolonies/building_add_recipe_door"), fileHelper);
+                .save(consumer, new ResourceLocation(MOD_ID, "blueprints/minecolonies/building_add_recipe_door"), fileHelper);
 
         // --- farming ---
 

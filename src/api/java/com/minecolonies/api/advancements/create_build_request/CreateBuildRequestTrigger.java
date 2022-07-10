@@ -1,7 +1,6 @@
 package com.minecolonies.api.advancements.create_build_request;
 
 import com.google.gson.JsonObject;
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +23,7 @@ public class CreateBuildRequestTrigger extends AbstractCriterionTrigger<CreateBu
      * @param structureName the structure that is to be created
      * @param level the level that the request will complete
      */
-    public void trigger(final ServerPlayer player, final StructureName structureName, final int level)
+    public void trigger(final ServerPlayer player, final String structureName, final int level)
     {
         if (player != null)
         {

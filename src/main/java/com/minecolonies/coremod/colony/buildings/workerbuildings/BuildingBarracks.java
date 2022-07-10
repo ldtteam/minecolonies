@@ -120,7 +120,7 @@ public class BuildingBarracks extends AbstractBuilding
             final IBuilding building = getColony().getBuildingManager().getBuilding(pos);
             if (building instanceof BuildingBarracksTower)
             {
-                building.setStyle(this.getStyle());
+                building.setStructurePack(this.getStructurePack());
                 ((BuildingBarracksTower) building).addBarracks(getPosition());
                 if (!towers.contains(pos))
                 {

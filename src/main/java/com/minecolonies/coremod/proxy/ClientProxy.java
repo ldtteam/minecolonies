@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.proxy;
 
-import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -25,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_RELATIVE;
 
 /**
  * Client side proxy.
@@ -99,35 +96,6 @@ public class ClientProxy extends CommonProxy
     {
         @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos, warehousePos, warehouseCompound);
         window.open();
-    }
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        if (net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer() == null)
-        {
-            if (IColonyManager.getInstance().getServerUUID() != null)
-            {
-                return new File(Minecraft.getInstance().gameDirectory, Constants.MOD_ID + "/" + IColonyManager.getInstance().getServerUUID());
-            }
-            else
-            {
-                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen", new Exception());
-                return null;
-            }
-        }
-
-        // if the world schematics folder exists we use it
-        // otherwise we use the minecraft folder  /minecolonies/schematics if on the physical client on the logical server
-        final File worldSchematicFolder = new File(ServerLifecycleHooks.getCurrentServer().getServerDirectory()
-                                                     + "/" + Constants.MOD_ID + '/' + Structures.SCHEMATICS_PREFIX);
-
-        if (!worldSchematicFolder.exists())
-        {
-            return new File(Minecraft.getInstance().gameDirectory, Constants.MOD_ID);
-        }
-
-        return worldSchematicFolder.getParentFile();
     }
 
     @NotNull

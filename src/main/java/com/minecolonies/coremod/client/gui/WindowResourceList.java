@@ -317,7 +317,7 @@ public class WindowResourceList extends AbstractWindowSkeleton
             if (currentWorkOrder.isPresent())
             {
                 long location = currentWorkOrder.get().getLocation().asLong();
-                return location + "__" + currentWorkOrder.get().getStructureName();
+                return location + "__" + currentWorkOrder.get().getPackName();
             }
         }
         return "";

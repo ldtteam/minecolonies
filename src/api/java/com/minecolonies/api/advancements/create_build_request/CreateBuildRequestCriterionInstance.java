@@ -1,7 +1,6 @@
 package com.minecolonies.api.advancements.create_build_request;
 
 import com.google.gson.JsonObject;
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.DeserializationContext;
@@ -17,23 +16,11 @@ import org.jetbrains.annotations.NotNull;
 public class CreateBuildRequestCriterionInstance extends AbstractCriterionTriggerInstance
 {
     private String        hutName;
-    private StructureName structureName;
     private int           level = -1;
 
     public CreateBuildRequestCriterionInstance()
     {
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.Composite.ANY);
-    }
-
-    /**
-     * Construct the check with a single condition
-     * @param structureName the structure that has to be requested to succeed
-     */
-    public CreateBuildRequestCriterionInstance(final StructureName structureName)
-    {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.Composite.ANY);
-
-        this.structureName = structureName;
     }
 
     /**
@@ -45,19 +32,6 @@ public class CreateBuildRequestCriterionInstance extends AbstractCriterionTrigge
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.Composite.ANY);
 
         this.hutName = hutName;
-    }
-
-    /**
-     * Construct the check with a more specific condition
-     * @param structureName the structure that has to be requested to succeed
-     * @param level the level that the request should complete
-     */
-    public CreateBuildRequestCriterionInstance(final StructureName structureName, final int level)
-    {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_CREATE_BUILD_REQUEST), EntityPredicate.Composite.ANY);
-
-        this.structureName = structureName;
-        this.level = level;
     }
 
     /**
@@ -79,25 +53,17 @@ public class CreateBuildRequestCriterionInstance extends AbstractCriterionTrigge
      * @param level the level that the structure will be once completed, or 0
      * @return whether the check succeeded
      */
-    public boolean test(final StructureName structureName, final int level)
+    public boolean test(final String structureName, final int level)
     {
         if (this.hutName != null && this.level != -1)
         {
-            return this.hutName.equalsIgnoreCase(structureName.getHutName()) && this.level <= level;
+            return this.hutName.equalsIgnoreCase(structureName) && this.level <= level;
         }
         else if (this.hutName != null)
         {
-            return this.hutName.equalsIgnoreCase(structureName.getHutName());
+            return this.hutName.equalsIgnoreCase(structureName);
         }
 
-        if (this.structureName != null && this.level != -1)
-        {
-            return this.structureName.equals(structureName) && this.level <= level;
-        }
-        else if (this.structureName != null)
-        {
-            return this.structureName.equals(structureName);
-        }
 
         return true;
     }
@@ -117,17 +83,6 @@ public class CreateBuildRequestCriterionInstance extends AbstractCriterionTrigge
             return new CreateBuildRequestCriterionInstance(hutName);
         }
 
-        if (jsonObject.has("structure_name"))
-        {
-            final StructureName structureName = new StructureName(GsonHelper.getAsString(jsonObject, "structure_name"));
-            if (jsonObject.has("structure_name"))
-            {
-                final int level = GsonHelper.getAsInt(jsonObject, "level");
-                return new CreateBuildRequestCriterionInstance(structureName, level);
-            }
-            return new CreateBuildRequestCriterionInstance(structureName);
-        }
-
         return new CreateBuildRequestCriterionInstance();
     }
 
@@ -139,10 +94,6 @@ public class CreateBuildRequestCriterionInstance extends AbstractCriterionTrigge
         if (this.hutName != null)
         {
             json.addProperty("hut_name", this.hutName);
-        }
-        else if (this.structureName != null)
-        {
-            json.addProperty("structure_name", this.structureName.toString());
         }
         if (this.level >= 0)
         {

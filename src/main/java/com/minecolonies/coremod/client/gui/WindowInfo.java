@@ -8,7 +8,6 @@ import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Arrays;
@@ -35,7 +34,7 @@ public class WindowInfo extends AbstractWindowSkeleton
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
 
-        final String translationPrefix = PARTIAL_INFO_TEXT + building.getSchematicName() + ".";
+        final String translationPrefix = PARTIAL_INFO_TEXT + building.getStructurePath() + ".";
         final Supplier<TextBuilder> nameBuilder = () -> PaneBuilders.textBuilder().colorName("red");
         final Supplier<TextBuilder> textBuilder = () -> PaneBuilders.textBuilder().colorName("black");
         final Supplier<View> pageBuilder = () -> {

@@ -7,7 +7,6 @@ import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -241,9 +240,9 @@ public interface IColony
 
     Map<BlockPos, BlockState> getWayPoints();
 
-    String getStyle();
+    String getStructurePack();
 
-    void setStyle(String style);
+    void setStructurePack(String style);
 
     IRegisteredStructureManager getBuildingManager();
 

@@ -3,9 +3,9 @@ package com.minecolonies.coremod.colony.managers;
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
+import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.items.ItemScanTool;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
@@ -23,11 +23,15 @@ import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
-import static com.ldtteam.structurize.management.Structures.SCHEMATIC_EXTENSION_NEW;
+import static com.ldtteam.structurize.api.util.constant.Constants.BLUEPRINT_FOLDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 /**
@@ -75,7 +79,6 @@ public class EventStructureManager implements IEventStructureManager
     @Override
     public boolean spawnTemporaryStructure(
       final Blueprint structure,
-      final String schematicPath,
       final BlockPos targetSpawnPoint,
       final int eventID,
       final int rotations,
@@ -89,30 +92,22 @@ public class EventStructureManager implements IEventStructureManager
         final Level world = colony.getWorld();
 
         final int y = BlueprintTagUtils.getNumberOfGroundLevels(structure, 4) - 1;
-
         final BlockPos spawnPos = targetSpawnPoint.offset(0, -y, 0).offset(structure.getPrimaryBlockOffset());
 
         final BlockPos zeroPos = spawnPos.subtract(structure.getPrimaryBlockOffset());
-        final BlockPos cornerPos = new BlockPos(zeroPos.getX() + structure.getSizeX() - 1, zeroPos.getY() + structure.getSizeY(), zeroPos.getZ() + structure.getSizeZ() - 1);
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
-        final String backupPath = Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER + "/" + colony.getID() + "/" + colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath() + "/" + anchor;
+        final Path outputPath = new File(".").toPath().resolve(BLUEPRINT_FOLDER).resolve(STRUCTURE_BACKUP_FOLDER).resolve(Integer.toString(colony.getID())).resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath());
+        final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true, (short)structure.getSizeX(), (short) structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(),
+          Optional.of(anchor)));
 
-        if (!ItemScanTool.saveStructureOnServer(world,
-          zeroPos,
-          cornerPos,
-          backupPath,
-          false))
-        {
-            // No structure spawn if we didn't successfully save the surroundings before
-            Log.getLogger().info("Failed to save schematics for event");
-            return false;
-        }
+        StructurePacks.storeBlueprint(bp, outputPath);
+
         backupSchematics.put(anchor, eventID);
 
         CreativeRaiderStructureHandler.loadAndPlaceStructureWithRotation(world,
-          schematicPath,
+          structure,
           spawnPos,
           BlockPosUtil.getRotationFromRotations(rotations),
           mirror,
@@ -132,34 +127,27 @@ public class EventStructureManager implements IEventStructureManager
 
             if (entry.getValue() == eventID)
             {
-                final String oldBackupPath = String.valueOf(colony.getID()) + colony.getDimension() + entry.getKey();
-                String fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + "/" + STRUCTURE_BACKUP_FOLDER).toString() + "/" +
-                        String.valueOf(colony.getID()) + "/" + colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath() + "/" + entry.getKey();
+                final Path backupPath = new File(".").toPath()
+                  .resolve(BLUEPRINT_FOLDER)
+                  .resolve(STRUCTURE_BACKUP_FOLDER)
+                  .resolve(Integer.toString(colony.getID()))
+                  .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
+                  .resolve(entry.getKey().toString());
 
-                // TODO: remove compat for colony.getDimension()-based file names after sufficient time has passed from PR#6305
-                if(CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                    fileName,
-                    entry.getKey(),
-                    Rotation.NONE,
-                    Mirror.NONE,
-                    true, null) == null)
-                {
-                    fileName = new StructureName("cache", "backup", Structures.SCHEMATICS_PREFIX + STRUCTURE_BACKUP_FOLDER).toString() + oldBackupPath;
-                    CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                            fileName,
-                            entry.getKey(),
-                            Rotation.NONE,
-                            Mirror.NONE,
-                            true, null);
-                }
+                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
+                  StructurePacks.getBlueprintFuture(backupPath),
+                  entry.getKey(),
+                  Rotation.NONE,
+                  Mirror.NONE,
+                  true, null);
 
                 try
                 {
-                    Structurize.proxy.getSchematicsFolder().toPath().resolve(fileName + SCHEMATIC_EXTENSION_NEW).toFile().delete();
+                    Files.delete(backupPath);
                 }
                 catch (Exception e)
                 {
-                    Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + fileName, e);
+                    Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + backupPath.toString(), e);
                 }
 
                 iterator.remove();

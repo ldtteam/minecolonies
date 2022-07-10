@@ -1,7 +1,6 @@
 package com.minecolonies.api.advancements.place_structure;
 
 import com.google.gson.JsonObject;
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.level.ServerPlayer;

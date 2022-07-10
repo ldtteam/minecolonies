@@ -588,13 +588,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
-                if (!tileEntity.getStructurePack().isEmpty())
+                if (tileEntity.getStructurePack() != null)
                 {
-                    building.setStyle(tileEntity.getStructurePack());
+                    building.setStructurePack(tileEntity.getStructurePack().getName());
+                    building.setBlueprintPath(tileEntity.getBlueprintPath());
                 }
                 else
                 {
-                    building.setStyle(colony.getStyle());
+                    building.setStructurePack(colony.getStructurePack());
                 }
 
                 if (world != null && !(building instanceof IRSComponent))

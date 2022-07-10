@@ -100,7 +100,7 @@ public class CreateColonyMessage implements IMessage
 
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 
-        String style = Constants.DEFAULT_STYLE;
+        String pack = Constants.DEFAULT_STYLE;
         final BlockEntity tileEntity = world.getBlockEntity(townHall);
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
@@ -110,10 +110,9 @@ public class CreateColonyMessage implements IMessage
         }
 
         final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-
-        if (!hut.getStructurePack().isEmpty())
+        if (hut.getStructurePack() != null)
         {
-            style = hut.getStructurePack();
+            pack = hut.getStructurePack().getName();
         }
         else if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
         {
@@ -151,7 +150,7 @@ public class CreateColonyMessage implements IMessage
 
         if (ownedColony == null)
         {
-            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
+            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
             IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
             MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
             return;

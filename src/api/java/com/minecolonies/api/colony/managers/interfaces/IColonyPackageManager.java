@@ -57,11 +57,6 @@ public interface IColonyPackageManager
     void sendWorkOrderPackets();
 
     /**
-     * Sends packages to update the schematics.
-     */
-    void sendSchematicsPackets();
-
-    /**
      * Mark the package manager dirty.
      */
     void setDirty();

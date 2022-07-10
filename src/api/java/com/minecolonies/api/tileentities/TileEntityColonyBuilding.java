@@ -88,12 +88,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * The style of the building.
      */
-    private String packMeta;
+    private String packMeta = "";
 
     /**
      * Path of the blueprint.
      */
-    private String path;
+    private String path = "";
 
     /**
      * The name of the building location.
@@ -350,18 +350,30 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         }
         mirror = compound.getBoolean(TAG_MIRROR);
 
-        final String packName;
-        final String path;
+        String packName;
+        String path;
         if (compound.contains(TAG_STYLE))
         {
+            final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
             packName = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
-            path = BlueprintMapping.pathMapping.get(packName + ":" + this.getSchematicName());
+            path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level;
         }
         else
         {
             packName = compound.getString(TAG_PACK);
             path = compound.getString(TAG_PATH);
         }
+
+        if (packName == null || packName.isEmpty())
+        {
+            packName = StructurePacks.selectedPack.getName();
+        }
+
+        if (path.isEmpty())
+        {
+            path = BlueprintMapping.pathMapping.get(packName + ":" + ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName().getPath());
+        }
+
         this.packMeta = packName;
         this.path = path;
 
@@ -588,8 +600,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         }
         else
         {
+            final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
             packName = BlueprintMapping.styleMapping.get(tagName);
-            blueprintPath = BlueprintMapping.pathMapping.get(this.getSchematicName());
+            blueprintPath = BlueprintMapping.pathMapping.get(tagName + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level;
         }
 
         this.setStructurePack(StructurePacks.packMetas.get(packName));

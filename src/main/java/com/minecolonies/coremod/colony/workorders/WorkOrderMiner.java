@@ -34,6 +34,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
     /**
      * Create a new work order telling the miner to build a mine.
      *
+     * @param packName      The name of the pack.
      * @param structureName The name of the mine.
      * @param workOrderName The user friendly name of the mine.
      * @param rotation      The number of times the mine was rotated.
@@ -42,6 +43,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
      * @param minerBuilding The id of the building of the miner.
      */
     public WorkOrderMiner(
+      final String packName,
       final String structureName,
       final String workOrderName,
       final int rotation,
@@ -49,7 +51,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
       final boolean mirror,
       final BlockPos minerBuilding)
     {
-        super(structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
+        super(packName, structureName, workOrderName, WorkOrderType.BUILD, location, rotation, mirror, 0, 1);
         this.minerBuilding = minerBuilding;
     }
 

@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.decorative.BlockConstructionTape;
 import com.minecolonies.coremod.util.ColonyUtils;
@@ -40,13 +40,10 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(workOrder.getLocation(),
-          world,
-          new LoadOnlyStructureHandler(world, workOrder.getLocation(), workOrder.getStructureName(), new PlacementSettings(), true).getBluePrint(),
-          workOrder.getRotation(),
-          workOrder.isMirrored());
-        placeConstructionTape(corners, world);
+        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(workOrder.getStructurePack(), workOrder.getStructurePath()), world, (blueprint -> {
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
+            placeConstructionTape(corners, world);
+        })));
     }
 
     /**
@@ -150,14 +147,10 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        final LoadOnlyStructureHandler structure =
-          new LoadOnlyStructureHandler(world, workOrder.getLocation(), workOrder.getStructureName(), new PlacementSettings(), true);
-        if (structure.hasBluePrint())
-        {
-            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world,
-              structure.getBluePrint(), workOrder.getRotation(), workOrder.isMirrored());
+        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(workOrder.getStructurePack(), workOrder.getStructurePath()), world, (blueprint -> {
+            final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
             removeConstructionTape(corners, world);
-        }
+        })));
     }
 
     /**

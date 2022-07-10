@@ -95,6 +95,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public IAIState loadRequirements()
     {
+        if (loadingBlueprint)
+        {
+            return getState();
+        }
+
         if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
@@ -168,7 +173,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation();
         final boolean removal = workOrder.getWorkOrderType() == WorkOrderType.REMOVE;
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder.getStructurePack(), workOrder.getStructurePath(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }
@@ -344,7 +349,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         else
         {
             // TODO: Preferably want to use the display name of the building (in order to respect custom name) however this will require an event rework so it stores text components rather than strings
-            String workOrderName = wo.getWorkOrderName();
+            String workOrderName = wo.getTranslationKey();
             sendCompletionMessage(wo);
 
             switch (wo.getWorkOrderType())

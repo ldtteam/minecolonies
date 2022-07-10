@@ -222,6 +222,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     {
         corner1 = pos1;
         corner2 = pos2;
+        setChanged();
     }
 
     @Override

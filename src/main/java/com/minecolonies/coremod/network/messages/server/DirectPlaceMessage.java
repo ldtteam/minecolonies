@@ -1,11 +1,15 @@
 package com.minecolonies.coremod.network.messages.server;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
 import net.minecraft.core.BlockPos;
@@ -15,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
@@ -118,17 +123,32 @@ public class DirectPlaceMessage implements IMessage
             }
 
             player.getCommandSenderWorld().setBlockAndUpdate(pos, state);
-            InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
-            state.getBlock().setPlacedBy(world, pos, state, player, stack);
-
-            if (compound != null && compound.contains(TAG_OTHER_LEVEL))
+            final BlockEntity tileEntity = world.getBlockEntity(pos);
+            if (tileEntity instanceof TileEntityColonyBuilding)
             {
-                final IBuilding building = colony.getBuildingManager().getBuilding(pos);
-                if (building != null)
-                {
-                    building.setBuildingLevel(compound.getInt(TAG_OTHER_LEVEL));
-                    building.setDeconstructed();
-                }
+                ((TileEntityColonyBuilding) tileEntity).setStructurePack(StructurePacks.selectedPack);
+
+                ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.findBlueprintFuture(StructurePacks.selectedPack.getName(), blueprint -> blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() == state.getBlock()), world, (blueprint -> {
+                    if (blueprint == null)
+                    {
+                        return;
+                    }
+                    String fullPath = blueprint.getFilePath().toString();
+                    fullPath = fullPath.replace(StructurePacks.selectedPack.getPath().toString() + "/", "");
+                    ((TileEntityColonyBuilding) tileEntity).setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
+                    InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
+                    state.getBlock().setPlacedBy(world, pos, state, player, stack);
+
+                    if (compound != null && compound.contains(TAG_OTHER_LEVEL))
+                    {
+                        final IBuilding building = colony.getBuildingManager().getBuilding(pos);
+                        if (building != null)
+                        {
+                            building.setBuildingLevel(compound.getInt(TAG_OTHER_LEVEL));
+                            building.setDeconstructed();
+                        }
+                    }
+                })));
             }
         }
     }

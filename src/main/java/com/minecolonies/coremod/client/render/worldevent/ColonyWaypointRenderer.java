@@ -2,11 +2,12 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
 
 public class ColonyWaypointRenderer
@@ -15,6 +16,11 @@ public class ColonyWaypointRenderer
      * Cached wayPointBlueprint.
      */
     private static Blueprint wayPointTemplate;
+
+    /**
+     * Pending template to be loaded.
+     */
+    private static Future<Blueprint> pendingTemplate;
 
     /**
      * Renders waypoints of current colony.
@@ -26,13 +32,28 @@ public class ColonyWaypointRenderer
         final Blueprint structure = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
         if (structure != null && structure.getFilePath().toString().contains(WAYPOINT_STRING) && ctx.nearestColony != null)
         {
-            if (wayPointTemplate == null)
+            if (wayPointTemplate == null && pendingTemplate == null)
             {
-                wayPointTemplate = new LoadOnlyStructureHandler(ctx.clientLevel,
-                    BlockPos.ZERO,
-                    "schematics/infrastructure/waypoint",
-                  new PlacementSettings(),
-                    true).getBluePrint();
+                pendingTemplate = StructurePacks.getBlueprintFuture("Default", "infrastructure/roads/waypoint");
+            }
+
+            if (pendingTemplate != null)
+            {
+                if (pendingTemplate.isDone())
+                {
+                    try
+                    {
+                        wayPointTemplate = pendingTemplate.get();
+                    }
+                    catch (InterruptedException | ExecutionException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    return;
+                }
             }
 
             StructureClientHandler.renderStructureAtPosList(

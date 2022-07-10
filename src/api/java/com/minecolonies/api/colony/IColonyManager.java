@@ -33,9 +33,9 @@ public interface IColonyManager
      * @param pos        Coordinate of the center of the colony.
      * @param player     the player that creates the colony - owner.
      * @param colonyName the initial colony name.
-     * @param style      the default style of the colony.
+     * @param pack       the default pack of the colony.
      */
-    void createColony(@NotNull Level w, BlockPos pos, @NotNull Player player, @NotNull String colonyName, @NotNull String style);
+    void createColony(@NotNull Level w, BlockPos pos, @NotNull Player player, @NotNull String colonyName, @NotNull String pack);
 
     /**
      * Delete the colony in a world.

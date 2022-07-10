@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
@@ -261,7 +260,7 @@ public class WorkManager implements IWorkManager
         {
             for (final IWorkOrder or : workOrders.values())
             {
-                if (or.getLocation().equals(order.getLocation()) && or.getStructureName().equals(order.getStructureName()))
+                if (or.getLocation().equals(order.getLocation()) && or.getStructurePath().equals(order.getStructurePath()) && or.getStructurePack().equals(order.getStructurePack()))
                 {
                     Log.getLogger().warn("Avoiding adding duplicate workOrder");
                     removeWorkOrder(or);
@@ -283,17 +282,16 @@ public class WorkManager implements IWorkManager
 
         if (!readingFromNbt)
         {
-            final StructureName structureName = new StructureName(order.getStructureName());
             if (order instanceof WorkOrderBuilding)
             {
                 final int level = order.getTargetLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getStructurePath(), level));
             }
             else if (order instanceof WorkOrderDecoration)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getStructurePath(), 0));
             }
         }
 
@@ -310,10 +308,11 @@ public class WorkManager implements IWorkManager
     private boolean isWorkOrderWithinColony(final IWorkOrder order)
     {
         final Level world = colony.getWorld();
+        final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath());
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(order.getLocation(),
           world,
-          new LoadOnlyStructureHandler(world, order.getLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          blueprint,
           order.getRotation(),
           order.isMirrored());
 

@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -15,8 +14,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -57,7 +54,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
         if (buttonInfo != null)
         {
-            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getSchematicName() + ".0"));
+            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getStructurePath() + ".0"));
         }
     }
 

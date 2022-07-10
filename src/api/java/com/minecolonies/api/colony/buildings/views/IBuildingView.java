@@ -88,7 +88,7 @@ public interface IBuildingView extends IRequester
      *
      * @return the schematic name.
      */
-    String getSchematicName();
+    String getStructurePath();
 
     /**
      * Getter for the custom building name.
@@ -102,7 +102,7 @@ public interface IBuildingView extends IRequester
      *
      * @return the style string.
      */
-    String getStyle();
+    String getStructurePack();
 
     /**
      * Getter for the rotation.

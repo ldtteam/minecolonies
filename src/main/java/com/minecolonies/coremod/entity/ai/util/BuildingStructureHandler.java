@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED;
 
@@ -71,19 +72,19 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      *
      * @param world             the world.
      * @param worldPos          the pos it is placed at.
-     * @param structureName     the name of the structure.
+     * @param blueprintFuture   the structure.
      * @param settings          the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
       final Level world,
       final BlockPos worldPos,
-      final String structureName,
+      final Future<Blueprint> blueprintFuture,
       final PlacementSettings settings,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
       final Stage[] stages)
     {
-        super(world, worldPos, structureName, settings);
+        super(world, worldPos, blueprintFuture, settings);
         setupBuilding();
         this.structureAI = entityAIStructure;
         this.stages = stages;

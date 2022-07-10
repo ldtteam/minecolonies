@@ -88,14 +88,6 @@ public interface IProxy
       final @Nullable CompoundTag warehouseCompound);
 
     /**
-     * Get the file representation of the additional schematics' folder.
-     *
-     * @return the folder for the schematic
-     */
-    @Nullable
-    File getSchematicsFolder();
-
-    /**
      * Returns the recipe book from the player.
      *
      * @param player THe player.

@@ -1,47 +1,33 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
-import com.ldtteam.structurize.Network;
-import com.ldtteam.structurize.api.util.Log;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.items.ModItems;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
-import com.ldtteam.structurize.placement.structure.IStructureHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.ModBuildings;
-import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraft.world.phys.AABB;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class NearColonyBuildingsRenderer
 {
     /**
      * The distance in which previews of nearby buildings are rendered
      */
-    private static final double PREVIEW_RANGE = 25.0f;
-
-    /**
-     * The active blueprint pos distance shift needed for cache reset
-     */
-    private static final double CACHE_RESET_RANGE = PREVIEW_RANGE / 2.0F;
+    private static final double PREVIEW_RANGE = 10.0f;
 
     /**
      * The cached map of blueprints of nearby buildings that are rendered.
@@ -54,6 +40,12 @@ public class NearColonyBuildingsRenderer
      * Set of already requested structures.
      */
     public static Set<String> alreadyRequestedStructures = new HashSet<>();
+
+    /**
+     * Blueprints we're still loading.
+     */
+    private static Queue<PendingRenderData> pendingBlueprints = new LinkedList<>();
+
 
     /**
      * Renders building bounding boxes into the client.
@@ -77,7 +69,7 @@ public class NearColonyBuildingsRenderer
         }
 
         final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").pos;
-        if (lastCacheRebuild == null || !lastCacheRebuild.closerThan(activePosition, CACHE_RESET_RANGE))
+        if (lastCacheRebuild == null || Minecraft.getInstance().level.getGameTime() % 20 == 0)
         {
             rebuildCache(ctx);
             lastCacheRebuild = activePosition;
@@ -108,6 +100,9 @@ public class NearColonyBuildingsRenderer
     {
         final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").pos;
         final Map<BlockPos, RenderData> newCache = new HashMap<>();
+        final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
+        final BlockPos zeroPos = activePosition.subtract(blueprint.getPrimaryBlockOffset());
+        final AABB blueprintAABB = new AABB(zeroPos.offset(-1, -1, -1), zeroPos.offset(blueprint.getSizeX() , blueprint.getSizeY() , blueprint.getSizeZ() ));
 
         for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
         {
@@ -115,6 +110,7 @@ public class NearColonyBuildingsRenderer
             {
                 continue;
             }
+            final BlockPos currentPosition = buildingView.getPosition();
 
             final TileEntityColonyBuilding tileEntityColonyBuilding = (TileEntityColonyBuilding) ctx.clientLevel.getBlockEntity(buildingView.getPosition());
             if (tileEntityColonyBuilding != null)
@@ -123,81 +119,88 @@ public class NearColonyBuildingsRenderer
                 BlockPos cornerA = corners.getA();
                 BlockPos cornerB = corners.getB();
 
-                if (activePosition.getX() >= cornerA.getX() - 1 && activePosition.getX() <= cornerB.getX() + 1
-                      && activePosition.getY() >= cornerA.getY() - 1 && activePosition.getY() <= cornerB.getY() + 1
-                      && activePosition.getZ() >= cornerA.getZ() - 1 && activePosition.getZ() <= cornerB.getZ() + 1)
+                if (blueprintAABB.intersects(new AABB(cornerA, cornerB)))
                 {
-                    final BlockPos currentPosition = buildingView.getPosition();
                     if (blueprintCache.containsKey(currentPosition))
                     {
                         newCache.put(currentPosition, blueprintCache.get(currentPosition));
                         continue;
                     }
 
-                    final BlockEntity tile = ctx.clientLevel.getBlockEntity(buildingView.getID());
-                    String schematicName = buildingView.getSchematicName();
-                    if (tile instanceof IBlueprintDataProvider)
-                    {
-                        if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
-                        {
-                            schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
-                        }
-                    }
+                    String schemPath = buildingView.getStructurePath();
+                    schemPath = schemPath.replace(".blueprint", "");
+                    schemPath = schemPath.substring(0, schemPath.length() - 1) + buildingView.getBuildingMaxLevel() + ".blueprint";
 
-                    final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX,
-                      buildingView.getStyle(),
-                      schematicName + buildingView.getBuildingMaxLevel());
+                    final String structurePack = buildingView.getStructurePack();
 
-                    final String structureName = sn.toString();
-                    final String md5 = Structures.getMD5(structureName);
+                    final Future<Blueprint> localBlueprint = StructurePacks.getBlueprintFuture(structurePack, schemPath);
+                    pendingBlueprints.add(new PendingRenderData(localBlueprint, currentPosition,
+                      new PlacementSettings(buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(buildingView.getRotation())),
+                        buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel()));
 
-                    final IStructureHandler wrapper = new LoadOnlyStructureHandler(ctx.clientLevel,
-                      buildingView.getID(),
-                      structureName,
-                      new PlacementSettings(),
-                      true);
-                    if (!wrapper.hasBluePrint() || !wrapper.isCorrectMD5(md5))
-                    {
-                        if (alreadyRequestedStructures.contains(structureName))
-                        {
-                            continue;
-                        }
-                        alreadyRequestedStructures.add(structureName);
-
-                        Log.getLogger().error("Couldn't find schematic: " + structureName + " requesting to server if possible.");
-                        if (ServerLifecycleHooks.getCurrentServer() == null)
-                        {
-                            Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
-                        }
-                        continue;
-                    }
-
-                    final Blueprint blueprint = wrapper.getBluePrint();
-                    final Mirror mirror = buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE;
-                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(buildingView.getRotation()), mirror, ctx.clientLevel);
-
-                    final BlockPos primaryOffset = blueprint.getPrimaryBlockOffset();
-                    final BlockPos boxStartPos = currentPosition.subtract(primaryOffset);
-                    final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
-                    final BlockPos boxEndPos = boxStartPos.offset(size).subtract(new BlockPos(1, 1, 1));
-                    blueprint.setRenderSource(buildingView.getID());
-
-                    if (buildingView.getBuildingLevel() < buildingView.getBuildingMaxLevel())
-                    {
-                        newCache.put(currentPosition, new RenderData(blueprint, boxStartPos, boxEndPos));
-                    }
-                    else
-                    {
-                        newCache.put(currentPosition, new RenderData(null, boxStartPos, boxEndPos));
-                    }
                 }
+                else if (blueprintCache.containsKey(currentPosition))
+                {
+                    blueprintCache.remove(currentPosition);
+                }
+            }
+        }
+
+        if (pendingBlueprints.isEmpty())
+        {
+            return;
+        }
+
+        final PendingRenderData data = pendingBlueprints.peek();
+        if (data.blueprint() != null && data.blueprint.isDone())
+        {
+            try
+            {
+                pendingBlueprints.poll();
+                final Blueprint localBlueprint = data.blueprint().get();
+                if (localBlueprint == null)
+                {
+                    return;
+                }
+                localBlueprint.rotateWithMirror(data.settings().getRotation(), data.settings.getMirror(), ctx.clientLevel);
+
+                final BlockPos primaryOffset = localBlueprint.getPrimaryBlockOffset();
+                final BlockPos boxStartPos = data.pos.subtract(primaryOffset);
+                final BlockPos size = new BlockPos(localBlueprint.getSizeX(), localBlueprint.getSizeY(), localBlueprint.getSizeZ());
+                final BlockPos boxEndPos = boxStartPos.offset(size).subtract(new BlockPos(1, 1, 1));
+                localBlueprint.setRenderSource(data.pos);
+
+                if (data.isMax)
+                {
+                    newCache.put(null, new RenderData(null, boxStartPos, boxEndPos));
+                }
+                else
+                {
+                    newCache.put(data.pos, new RenderData(localBlueprint, boxStartPos, boxEndPos));
+                }
+            }
+            catch (final InterruptedException | ExecutionException ex)
+            {
+                //Noop
             }
         }
 
         blueprintCache = newCache;
     }
 
-    private static record RenderData(Blueprint blueprint, BlockPos boxStartPos, BlockPos boxEndPos)
+    /**
+     * Holds blueprint renderdata.
+     */
+    private record RenderData(Blueprint blueprint, BlockPos boxStartPos, BlockPos boxEndPos)
     {
+
+    }
+
+    /**
+     * Holds blueprint renderdata.
+     */
+    private record PendingRenderData(Future<Blueprint> blueprint, BlockPos pos, PlacementSettings settings, boolean isMax)
+    {
+
     }
 }

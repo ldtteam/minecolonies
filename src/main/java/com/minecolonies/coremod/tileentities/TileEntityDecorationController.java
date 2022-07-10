@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LEVEL;
-import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProvider
 {
@@ -34,9 +35,14 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     private String schematicName = "";
 
     /**
-     * The schematic name of the placerholder block.
+     * The schematic path of the placerholder block.
      */
     private String schematicPath = "";
+
+    /**
+     * The packName it is included in.
+     */
+    private String packName = "";
 
     /**
      * The current level.
@@ -65,13 +71,23 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     }
 
     /**
-     * Geter for the name stored in this.
+     * Getter for the name stored in this.
      *
      * @return String name.
      */
     public String getSchematicPath()
     {
         return schematicPath;
+    }
+
+    /**
+     * Getter for the pack.
+     *
+     * @return String name.
+     */
+    public String getPackName()
+    {
+        return packName;
     }
 
     @Override
@@ -198,6 +214,17 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             this.schematicPath = compound.getString(TAG_NAME);
         }
 
+        if (compound.contains(TAG_PACK))
+        {
+            this.packName = compound.getString(TAG_PACK);
+        }
+        else
+        {
+            final String[] split = this.schematicPath.split("/");
+            this.packName = BlueprintMapping.styleMapping.get(split[1]);
+            this.schematicPath = StructurePacks.findBlueprint(this.packName, schematicName).toString().replace(StructurePacks.packMetas.get(packName).getPath().toString(), "");
+        }
+
         if (compound.contains(TAG_LEVEL))
         {
             this.tier = compound.getInt(TAG_LEVEL);
@@ -225,6 +252,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         super.saveAdditional(compound);
         writeSchematicDataToNBT(compound);
         compound.putString(TAG_NAME, schematicPath);
+        compound.putString(TAG_PACK, packName);
         compound.putInt(TAG_LEVEL, tier);
         compound.putInt(TAG_FACING, basicFacing.get2DDataValue());
     }

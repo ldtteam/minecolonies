@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -18,13 +17,11 @@ import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderDecorationView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,8 +45,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private static final String TAG_TH_PRIORITY         = "priority";
     private static final String TAG_CLAIMED_BY          = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
-    private static final String TAG_STRUCTURE_NAME      = "structureName";
-    private static final String TAG_WO_NAME             = "workOrderName";
+    private static final String TAG_STRUCTURE_PACK      = "structurePack";
+    private static final String TAG_STRUCTURE_PATH      = "structurePath";
+    private static final String TAG_TRANSLATION_KEY     = "translationKey";
     private static final String TAG_WO_TYPE             = "workOrderType";
     private static final String TAG_LOCATION            = "location";
     private static final String TAG_ROTATION            = "rotation";
@@ -60,15 +58,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private static final String TAG_ITERATOR            = "iterator";
     private static final String TAG_IS_CLEARED          = "cleared";
     private static final String TAG_IS_REQUESTED        = "requested";
-
-    /**
-     * Old NBT tags for storage
-     */
-    private static final String TAG_BUILDING_OLD            = "building";
-    private static final String TAG_BUILDING_ROTATION_OLD   = "buildingRotation";
-    private static final String TAG_IS_MIRRORED_OLD         = "mirrored";
-    private static final String TAG_AMOUNT_OF_RESOURCES_OLD = "resQuantity";
-    private static final String TAG_UPGRADE_LEVEL_OLD       = "upgradeLevel";
 
     /**
      * Bimap of workOrder from string to class.
@@ -84,6 +73,11 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
         addMapping("miner", WorkOrderMiner.class, WorkOrderMinerView.class);
     }
+
+    /**
+     * Translation key.
+     */
+    private String translationKey;
 
     /**
      * The ID of the work order.
@@ -309,6 +303,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     protected AbstractWorkOrder(
       String packName,
       String path,
+      String translationKey,
       WorkOrderType workOrderType,
       BlockPos location,
       int rotation,
@@ -319,6 +314,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         this();
         this.packName = packName;
         this.path = path;
+        this.translationKey = translationKey;
         this.workOrderType = workOrderType;
         this.location = location;
         this.rotation = rotation;
@@ -394,15 +390,21 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     @Override
-    public final String getStructureName()
+    public final String getStructurePath()
     {
-        return structureName;
+        return path;
     }
 
     @Override
-    public final String getWorkOrderName()
+    public String getStructurePack()
     {
-        return workOrderName;
+        return packName;
+    }
+
+    @Override
+    public final String getTranslationKey()
+    {
+        return translationKey;
     }
 
     @Override
@@ -513,7 +515,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public Component getDisplayName()
     {
-        return new TranslatableComponent(workOrderName);
+        return new TranslatableComponent(getTranslationKey());
     }
 
     /**
@@ -578,8 +580,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
-        structureName = compound.getString(TAG_STRUCTURE_NAME);
-        workOrderName = compound.getString(TAG_WO_NAME);
+        packName = compound.getString(TAG_STRUCTURE_PACK);
+        path = compound.getString(TAG_STRUCTURE_PATH);
+        translationKey = compound.getString(TAG_TRANSLATION_KEY);
         workOrderType = WorkOrderType.values()[compound.getInt(TAG_WO_TYPE)];
         location = BlockPosUtil.read(compound, TAG_LOCATION);
         rotation = compound.getInt(TAG_ROTATION);
@@ -607,8 +610,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        compound.putString(TAG_STRUCTURE_NAME, structureName);
-        compound.putString(TAG_WO_NAME, workOrderName);
+        compound.putString(TAG_STRUCTURE_PACK, path);
+        compound.putString(TAG_STRUCTURE_PATH, packName);
+        compound.putString(TAG_TRANSLATION_KEY, translationKey);
         compound.putInt(TAG_WO_TYPE, workOrderType.ordinal());
         BlockPosUtil.write(compound, TAG_LOCATION, location);
         compound.putInt(TAG_ROTATION, rotation);
@@ -633,8 +637,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(id);
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
-        buf.writeUtf(structureName);
-        buf.writeUtf(workOrderName);
+        buf.writeUtf(packName);
+        buf.writeUtf(path);
+        buf.writeUtf(translationKey);
         buf.writeInt(workOrderType.ordinal());
         buf.writeBlockPos(location);
         buf.writeInt(rotation);

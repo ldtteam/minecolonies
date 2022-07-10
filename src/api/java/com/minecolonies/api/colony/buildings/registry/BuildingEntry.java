@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.buildings.registry;
 
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -105,15 +104,6 @@ public class BuildingEntry extends ForgeRegistryEntry<BuildingEntry>
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
 
-            //todo 1.19: Change citizen to home consistently over all schematics.
-            if (registryName.getPath().equals("home"))
-            {
-                StructureName.HUTS.add("citizen");
-            }
-            else
-            {
-                StructureName.HUTS.add(registryName.getPath());
-            }
             return new BuildingEntry(buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers, buildingModuleViewProducers).setRegistryName(registryName);
         }
 

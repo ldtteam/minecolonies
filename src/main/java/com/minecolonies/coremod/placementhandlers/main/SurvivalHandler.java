@@ -2,6 +2,7 @@ package com.minecolonies.coremod.placementhandlers.main;
 
 import com.ldtteam.structurize.blockentities.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.ClientStructurePackLoader;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -63,6 +64,11 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @OnlyIn(Dist.CLIENT)
     public boolean canHandle(final Blueprint blueprint, final ClientLevel clientLevel, final Player player, final BlockPos blockPos, final PlacementSettings placementSettings)
     {
+        if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof BlockHutTownHall)
+        {
+            return true;
+        }
+
         final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(clientLevel, blockPos);
         if (colonyView == null)
         {
@@ -88,9 +94,9 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
-        //todo on receiving the first colony view, we set the style in the colony (if finished loading, else delay for later).
+        blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
+
         //todo supplycamp/ship just search all styles -> New fully custom UI just for those, no more old UI, no more mixing! (no shared variables!)
-        //todo we need a mapping that allows buildings to recover their blueprint paths (now based on StylePack name + subpath + filename)
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
@@ -223,13 +229,12 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             //todo: Gotta open client side UI: Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
         }
 
+        //todo. On placement without buildtool, the building does a search. todo, search api with predicate
 
+        //todo on townhall placement ask to choose the style first.
         //todo, check if decoration (through anchor), if so, we're alright. Just gotta make sure that decos can't place upgraded hut blocks
         //todo if deco, then we make a build request for the deco (we also want to double check the deco controller, maybe even ask for a deco controller beforehand)
         //todo if building, then we check if the blueprint exists on the server side, if not
-
-        // todo remove block from player inventory
-        // todo register the stuff.
 
         Log.getLogger().warn("Handling Survival Placement in Colony");
     }

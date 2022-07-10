@@ -233,12 +233,6 @@ public abstract class CommonProxy implements IProxy
          */
     }
 
-    @Override
-    public File getSchematicsFolder()
-    {
-        return null;
-    }
-
     @NotNull
     @Override
     public RecipeBook getRecipeBookFromPlayer(@NotNull final Player player)

@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -676,8 +678,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         buf.writeInt(getMaxBuildingLevel());
         buf.writeInt(getPickUpPriority());
         buf.writeInt(getCurrentWorkOrderLevel());
-        buf.writeUtf(getStyle());
-        buf.writeUtf(this.getSchematicName());
+        buf.writeUtf(getStructurePack());
+        buf.writeUtf(getBlueprintPath());
         buf.writeBlockPos(getParent());
         buf.writeUtf(this.customName);
 
@@ -980,8 +982,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final WorkOrderBuilding workOrder = WorkOrderBuilding.create(WorkOrderType.BUILD, this);
-        final LoadOnlyStructureHandler wrapper = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), workOrder.getStructureName(), new PlacementSettings(), true);
-        if (!wrapper.hasBluePrint())
+        final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
+        if (blueprint == null)
         {
             setCorners(getPosition(), getPosition());
             return;
@@ -990,7 +992,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(this.getPosition(),
           colony.getWorld(),
-          wrapper.getBluePrint(),
+          blueprint,
           workOrder.getRotation(),
           workOrder.isMirrored());
         this.setCorners(corners.getA(), corners.getB());

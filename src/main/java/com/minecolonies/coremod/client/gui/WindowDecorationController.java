@@ -3,6 +3,8 @@ package com.minecolonies.coremod.client.gui;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.controls.TextField;
+import com.ldtteam.structurize.storage.ClientBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -116,35 +118,26 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             findPaneByID(BUTTON_REPAIR).hide();
         }
 
-        LoadOnlyStructureHandler structure = null;
-        try
-        {
-            final String structureName = controller.getSchematicPath().replace("/structurize/", "").replaceAll("\\d$", "");
-            structure =
-              new LoadOnlyStructureHandler(world, b, structureName + (controller.getTier() + 1), new PlacementSettings(), true);
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().info("Unable to load structure: " + controller.getSchematicPath() + " for decoration controller!");
-        }
+        ClientBlueprintFutureProcessor.consumerQueue.add(new ClientBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), this.controller.getSchematicPath()), (blueprint -> {
+            findPaneByID(LABEL_NO_UPGRADE).hide();
+            if (blueprint == null )
+            {
+                findPaneByID(BUTTON_BUILD).hide();
+                findPaneByID(LABEL_NO_UPGRADE).show();
+            }
 
-        findPaneByID(LABEL_NO_UPGRADE).hide();
-        if (structure == null || !structure.hasBluePrint())
-        {
-            findPaneByID(BUTTON_BUILD).hide();
-            findPaneByID(LABEL_NO_UPGRADE).show();
-        }
+            if (!isCreative)
+            {
+                textFieldName.disable();
+                textFieldLevel.disable();
+                findPaneByID(BUTTON_DONE).hide();
+            }
+            else
+            {
+                findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslatableComponent(WARNING_DECORATION_NAME_SCAN));
+            }
+        })));
 
-        if (!isCreative)
-        {
-            textFieldName.disable();
-            textFieldLevel.disable();
-            findPaneByID(BUTTON_DONE).hide();
-        }
-        else
-        {
-            findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslatableComponent(WARNING_DECORATION_NAME_SCAN));
-        }
     }
 
     /**

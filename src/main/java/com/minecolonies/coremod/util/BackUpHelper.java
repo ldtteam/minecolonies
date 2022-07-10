@@ -471,7 +471,7 @@ public final class BackUpHelper
         final File minecraftDir = new File(topworldDir.getAbsolutePath().replace(topworldDir.getPath(), ""));
 
         final String worldname = topworldDir.getParent().replace("." + File.separator, "");
-        final String minecoloniesZipDir = worldname + File.separator + "minecolonies";
+        final String minecoloniesZipDir = worldname + File.separator + "blueprints/minecolonies";
         final File saveDir = new File(topworldDir, FILENAME_MINECOLONIES_PATH);
         try (FileOutputStream fos = new FileOutputStream(new File(saveDir, String.format(FILENAME_EXPORT, colony.getID()))))
         {

@@ -1,7 +1,6 @@
 package com.minecolonies.api.advancements.place_structure;
 
 import com.google.gson.JsonObject;
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.DeserializationContext;
@@ -16,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerInstance
 {
-    private String        hutName;
-    private StructureName structureName;
+    private String structureName;
 
     public PlaceStructureCriterionInstance()
     {
@@ -32,19 +30,9 @@ public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerIns
     {
         super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.Composite.ANY);
 
-        this.hutName = hutName;
+        this.structureName = hutName;
     }
 
-    /**
-     * Construct the check with a single condition
-     * @param structureName the structure that has to be placed to succeed
-     */
-    public PlaceStructureCriterionInstance(final StructureName structureName)
-    {
-        super(new ResourceLocation(Constants.MOD_ID, Constants.CRITERION_STRUCTURE_PLACED), EntityPredicate.Composite.ANY);
-
-        this.structureName = structureName;
-    }
 
     /**
      * Performs the check for the conditions
@@ -53,14 +41,9 @@ public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerIns
      */
     public boolean test(final String hutName)
     {
-        if (this.hutName != null)
-        {
-            return this.hutName.equalsIgnoreCase(hutName);
-        }
-
         if (this.structureName != null)
         {
-            return this.structureName.equals(hutName);
+            return this.structureName.equalsIgnoreCase(hutName);
         }
 
         return true;
@@ -75,11 +58,6 @@ public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerIns
             final String hutName = GsonHelper.getAsString(jsonObject, "hut_name");
             return new PlaceStructureCriterionInstance(hutName);
         }
-        else if (jsonObject.has("structure_name"))
-        {
-            final StructureName structureName = new StructureName(GsonHelper.getAsString(jsonObject, "structure_name"));
-            return new PlaceStructureCriterionInstance(structureName);
-        }
         return new PlaceStructureCriterionInstance();
     }
 
@@ -88,13 +66,9 @@ public class PlaceStructureCriterionInstance extends AbstractCriterionTriggerIns
     public JsonObject serializeToJson(@NotNull final SerializationContext context)
     {
         final JsonObject json = super.serializeToJson(context);
-        if (this.hutName != null)
+        if (this.structureName != null)
         {
-            json.addProperty("hut_name", this.hutName);
-        }
-        else if (this.structureName != null)
-        {
-            json.addProperty("structure_name", this.structureName.toString());
+            json.addProperty("hut_name", this.structureName);
         }
         return json;
     }

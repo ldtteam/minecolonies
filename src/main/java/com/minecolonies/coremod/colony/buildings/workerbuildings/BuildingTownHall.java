@@ -137,10 +137,10 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
      * @param style String value of the style.
      */
     @Override
-    public void setStyle(final String style)
+    public void setStructurePack(final String style)
     {
-        super.setStyle(style);
-        colony.setStyle(style);
+        super.setStructurePack(style);
+        colony.setStructurePack(style);
     }
 
     /**
