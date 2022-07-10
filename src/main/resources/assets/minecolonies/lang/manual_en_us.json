@@ -2344,5 +2344,6 @@
   "com.minecolonies.building.composter.desc": "Turns Organic Materials Into Something Useful. Really Stinks To Work Here.",
   "com.minecolonies.building.alchemist.desc": "Either Brews Potions Or Trouble. Witch is It?",
   "com.minecolonies.building.quarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
-  "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?"
+  "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
+  "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack"
 }
