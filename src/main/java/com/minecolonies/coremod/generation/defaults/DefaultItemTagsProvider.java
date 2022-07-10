@@ -188,7 +188,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_STONEMASON))
                 .add(Items.FIREWORK_STAR)
-                .add(Items.GLISTERING_MELON_SLICE);
+                .add(Items.GLISTERING_MELON_SLICE)
+                .add(Items.BOW, Items.CROSSBOW);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_COOK))
                 .addTag(ItemTags.FISHES)
