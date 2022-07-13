@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench",
+	"parent": "minecraft:block/cross",
 	"textures": {
 		"0": "block/brown_concrete_powder",
 		"2": "block/stripped_spruce_log",
