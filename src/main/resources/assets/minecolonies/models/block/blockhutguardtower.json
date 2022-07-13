@@ -1,5 +1,6 @@
 {
   "credit": "Made with Blockbench, a free, modern block model editor by JannisX11",
+  "parent": "minecraft:block/cross",
   "ambientocclusion": false,
   "textures": {
     "0": "block/spruce_planks",
