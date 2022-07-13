@@ -153,6 +153,9 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void doneClicked()
     {
+        //todo special handling too, because this is gonna be leveled. todo general for the deco controller.
+        //todo, check if decoration (through anchor), if so, we're alright. Just gotta make sure that decos can't place upgraded hut blocks
+
         if (isCreative)
         {
             String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
@@ -184,14 +187,14 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
+        /*Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
           controller.getSchematicName()
             .substring(controller.getSchematicName().lastIndexOf("/") + 1)
             .replaceAll("\\d$", ""),
           controller.getSchematicPath()
             .replaceAll("\\d$", ""),
           controller.getTier() + 1,
-          world.dimension()));
+          world.dimension(), controller));*/
         close();
     }
 
@@ -200,14 +203,15 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
+        //todo
+        /*Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
           controller.getSchematicName()
             .substring(controller.getSchematicName().lastIndexOf("/") + 1)
             .replaceAll("\\d$", ""),
           controller.getSchematicPath()
             .replaceAll("\\d$", ""),
           controller.getTier(),
-          world.dimension()));
+          world.dimension()));*/
         close();
     }
 }

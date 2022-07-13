@@ -1,16 +1,20 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.items.ItemScanTool;
+import com.ldtteam.structurize.management.Manager;
+import com.ldtteam.structurize.placement.StructurePlacementUtils;
+import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
+import com.ldtteam.structurize.placement.structure.IStructureHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CreativeBuildingStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.nbt.CompoundTag;
@@ -134,12 +138,11 @@ public class EventStructureManager implements IEventStructureManager
                   .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
                   .resolve(entry.getKey().toString());
 
-                CreativeBuildingStructureHandler.loadAndPlaceStructureWithRotation(colony.getWorld(),
-                  StructurePacks.getBlueprintFuture(backupPath),
-                  entry.getKey(),
-                  Rotation.NONE,
-                  Mirror.NONE,
-                  true, null);
+                final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), StructurePacks.getBlueprintFuture(backupPath), new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
+                structure.getBluePrint().rotateWithMirror( Rotation.NONE, Mirror.NONE, colony.getWorld());
+
+                final StructurePlacer instantPlacer = new StructurePlacer(structure);
+                Manager.addToQueue(new TickedWorldOperation(instantPlacer, null));
 
                 try
                 {

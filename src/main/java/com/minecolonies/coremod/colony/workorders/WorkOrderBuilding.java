@@ -66,6 +66,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         final int targetSchematicLevel = type == WorkOrderType.REMOVE ? building.getBuildingLevel() : targetLevel;
         String schemPath = building.getBlueprintPath().replace(".blueprint", "");
+        //todo townhall placement borked
         schemPath = schemPath.substring(0, schemPath.length() - 1) + targetSchematicLevel + ".blueprint";
         WorkOrderBuilding wo = new WorkOrderBuilding(
           building.getStructurePack(),

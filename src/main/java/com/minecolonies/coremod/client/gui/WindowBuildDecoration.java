@@ -31,6 +31,8 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,6 +74,16 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final String path;
 
     /**
+     * Rotation.
+     */
+    private final Rotation rotation;
+
+    /**
+     * Mirror.
+     */
+    private final boolean mirror;
+
+    /**
      * Drop down list for builders.
      */
     private DropDownList buildersDropDownList;
@@ -94,7 +106,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(final BlockPos pos, final String packMeta, final String path)
+    public WindowBuildDecoration(final BlockPos pos, final String packMeta, final String path, final Rotation rotation, final boolean mirror)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.packMeta = packMeta;
@@ -110,8 +122,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).hide();
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).disable();
+        findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).hide();
 
         blueprintFuture = StructurePacks.getBlueprintFuture(packMeta, path);
+        this.rotation = rotation;
+        this.mirror = mirror;
     }
 
     @Override
@@ -204,6 +219,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
               blueprintFuture.get(),
               new PlacementSettings(),
               true);
+            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, Minecraft.getInstance().level);
 
             StructurePlacer placer = new StructurePlacer(structure);
             StructurePhasePlacementResult result;
@@ -304,7 +320,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
     private void confirmedBuild()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(structurePos, packMeta, path, -1, Minecraft.getInstance().level.dimension()));
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(structurePos, packMeta, path, -1, Minecraft.getInstance().level.dimension(), rotation, mirror));
         close();
     }
 }

@@ -46,16 +46,22 @@ public class CreateColonyMessage implements IMessage
      */
     String colonyName;
 
+    /**
+     * The structure pack name.
+     */
+    String packName;
+
     public CreateColonyMessage()
     {
         super();
     }
 
-    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName)
+    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName, final String packName)
     {
         this.townHall = townHall;
         this.claim = claim;
         this.colonyName = colonyName;
+        this.packName = packName;
     }
 
     @Override
@@ -64,6 +70,7 @@ public class CreateColonyMessage implements IMessage
         buf.writeBlockPos(townHall);
         buf.writeBoolean(claim);
         buf.writeUtf(colonyName);
+        buf.writeUtf(packName);
     }
 
     @Override
@@ -72,6 +79,7 @@ public class CreateColonyMessage implements IMessage
         townHall = buf.readBlockPos();
         claim = buf.readBoolean();
         colonyName = buf.readUtf(32767);
+        packName = buf.readUtf(32767);
     }
 
     @Nullable
@@ -92,15 +100,9 @@ public class CreateColonyMessage implements IMessage
             return;
         }
 
-        if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative() && !claim)
-        {
-            MessageUtils.format(MESSAGE_COLONY_START_SUPPLY_NEED).sendTo(sender);
-            return;
-        }
-
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 
-        String pack = Constants.DEFAULT_STYLE;
+        String pack = packName;
         final BlockEntity tileEntity = world.getBlockEntity(townHall);
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
@@ -114,9 +116,14 @@ public class CreateColonyMessage implements IMessage
         {
             pack = hut.getStructurePack().getName();
         }
-        else if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
+
+        if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
         {
             hut.reactivate();
+            if (hut.getStructurePack() != null)
+            {
+                pack = hut.getStructurePack().getName();
+            }
         }
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())

@@ -132,18 +132,6 @@ public class BuildingTownHall extends AbstractBuilding implements ITownHall
     }
 
     /**
-     * Sets the style of the building.
-     *
-     * @param style String value of the style.
-     */
-    @Override
-    public void setStructurePack(final String style)
-    {
-        super.setStructurePack(style);
-        colony.setStructurePack(style);
-    }
-
-    /**
      * ClientSide representation of the building.
      */
     public static class View extends AbstractBuildingView implements ITownHallView

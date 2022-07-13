@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.storage.StructurePackMeta;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
@@ -34,9 +35,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -432,5 +435,125 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public AbstractStructureHandler getStructureHandler(final Level level, final BlockPos blockPos, final Blueprint blueprint, final PlacementSettings placementSettings, final boolean b)
     {
         return new CreativeBuildingStructureHandler(level, blockPos, blueprint, placementSettings, b);
+    }
+
+    @Override
+    public boolean setup(
+      final ServerPlayer player,
+      final Level world,
+      final BlockPos pos,
+      final Blueprint blueprint,
+      final PlacementSettings settings,
+      final boolean fancyPlacement,
+      final String pack,
+      final String path)
+    {
+        final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+        if (!(anchor.getBlock() instanceof AbstractBlockHut<?>))
+        {
+            return true;
+        }
+        if (!canPaste(anchor.getBlock(), player, pos))
+        {
+            return false;
+        }
+        world.destroyBlock(pos, true);
+        world.setBlockAndUpdate(pos, anchor);
+        ((AbstractBlockHut<?>) anchor.getBlock()).onBlockPlacedByBuildTool(world,
+          pos,
+          anchor,
+          player,
+          null,
+          settings.getMirror() != Mirror.NONE,
+          StructurePacks.packMetas.get(pack),
+          path);
+
+        @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, pos);
+        if (building == null)
+        {
+            if (anchor.getBlock() != ModBlocks.blockHutTownHall)
+            {
+                SoundUtils.playErrorSound(player, player.blockPosition());
+                Log.getLogger().error("BuildTool: building is null!", new Exception());
+                return false;
+            }
+        }
+        else
+        {
+            SoundUtils.playSuccessSound(player, player.blockPosition());
+            if (building.getTileEntity() != null)
+            {
+                final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+                if (colony == null)
+                {
+                    Log.getLogger().info("No colony for " + player.getName().getString());
+                    return false;
+                }
+                else
+                {
+                    building.getTileEntity().setColony(colony);
+                }
+            }
+
+            final String adjusted = path.replace(".blueprint", "");
+            final String num = adjusted.substring(path.replace(".blueprint", "").length() - 2, adjusted.length() - 1);
+
+            building.setStructurePack(pack);
+            building.setBlueprintPath(path);
+            try
+            {
+                building.setBuildingLevel(Integer.parseInt(num));
+            }
+            catch (final NumberFormatException ex)
+            {
+                building.setBuildingLevel(1);
+            }
+
+            building.setIsMirrored(settings.mirror != Mirror.NONE);
+            building.onUpgradeComplete(building.getBuildingLevel());
+        }
+        return true;
+    }
+
+    /**
+     * Check if we got permissions to paste.
+     * @param anchor the anchor of the paste.
+     * @param player the player pasting it.
+     * @param pos the position its pasted at.
+     * @return true if fine.
+     */
+    private boolean canPaste(final Block anchor, final Player player, final BlockPos pos)
+    {
+        final IColony colony = IColonyManager.getInstance().getIColony(player.level, pos);
+
+        if (colony == null)
+        {
+            if(anchor == ModBlocks.blockHutTownHall)
+            {
+                return true;
+            }
+
+            //  Not in a colony
+            if (IColonyManager.getInstance().getIColonyByOwner(player.level, player) == null)
+            {
+                MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_NOT_PRESENT).sendTo(player);
+            }
+            else
+            {
+                MessageUtils.format(MESSAGE_WARNING_TOWN_HALL_TOO_FAR_AWAY).sendTo(player);
+            }
+
+            return false;
+        }
+        else if (!colony.getPermissions().hasPermission(player, Action.PLACE_HUTS))
+        {
+            //  No permission to place hut in colony
+            MessageUtils.format(PERMISSION_OPEN_HUT, colony.getName()).sendTo(player);
+            return false;
+        }
+        else
+        {
+            return colony.getBuildingManager().canPlaceAt(anchor, pos, player);
+        }
     }
 }

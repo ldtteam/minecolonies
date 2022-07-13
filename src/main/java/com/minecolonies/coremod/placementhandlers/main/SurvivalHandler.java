@@ -1,8 +1,7 @@
 package com.minecolonies.coremod.placementhandlers.main;
 
-import com.ldtteam.structurize.blockentities.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.storage.ClientStructurePackLoader;
+import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -13,15 +12,17 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
-import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
+import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
+import com.minecolonies.coremod.network.messages.client.OpenDecoWindowMessage;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,10 +39,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Predicate;
+
+import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
+import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.ProgressTranslationConstants.PROGRESS_SUPPLY_CHEST_PLACED;
 
 /**
  * Minecolonies survival blueprint handler.
@@ -94,9 +102,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
-        blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
-
-        //todo supplycamp/ship just search all styles -> New fully custom UI just for those, no more old UI, no more mixing! (no shared variables!)
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
@@ -220,22 +225,86 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 }
             }
         }
-        else if (anchor.getBlock() instanceof BlockDecorationController)
+        else if (blueprintPath.contains("supplycamp") || blueprintPath.contains("supplyship"))
         {
-            //todo special handling too, because this is gonna be leveled. todo general for the deco controller.
+            handleSupplyPlacement((ServerPlayer) player, blueprintPath, blockPos, placementSettings, blueprint);
         }
         else
         {
-            //todo: Gotta open client side UI: Minecraft.getInstance().tell(new WindowBuildDecoration(msg, Settings.instance.getPosition(), structureName)::open);
+            Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
         }
 
-        //todo. On placement without buildtool, the building does a search. todo, search api with predicate
-
-        //todo on townhall placement ask to choose the style first.
-        //todo, check if decoration (through anchor), if so, we're alright. Just gotta make sure that decos can't place upgraded hut blocks
-        //todo if deco, then we make a build request for the deco (we also want to double check the deco controller, maybe even ask for a deco controller beforehand)
-        //todo if building, then we check if the blueprint exists on the server side, if not
-
         Log.getLogger().warn("Handling Survival Placement in Colony");
+    }
+
+    /**
+     * Specific supplycamp placement.
+     * @param player the player trying to.
+     * @param blueprintPath the path of the blueprint.
+     * @param blockPos the position.
+     * @param placementSettings the placement settings.
+     * @param blueprint the blueprint.
+     */
+    private void handleSupplyPlacement(
+      final ServerPlayer player,
+      final String blueprintPath,
+      final @NotNull BlockPos blockPos,
+      final PlacementSettings placementSettings,
+      final Blueprint blueprint)
+    {
+        if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
+              && !isFreeInstantPlacementMH(player))
+        {
+            MessageUtils.format(WARNING_SUPPLY_CHEST_ALREADY_PLACED).sendTo(player);
+            return;
+        }
+
+        Predicate<ItemStack> searchPredicate = stack -> !stack.isEmpty();
+        if (blueprintPath.contains("supplyship"))
+        {
+            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyChest), true, false));
+        }
+        if (blueprintPath.contains("supplycamp"))
+        {
+            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyCamp), true, false));
+        }
+
+        if (isFreeInstantPlacementMH(player))
+        {
+            searchPredicate =
+              searchPredicate.and(
+                stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
+        }
+
+        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.getInventory()), searchPredicate);
+
+        if (slot != -1 && !ItemStackUtils.isEmpty(player.getInventory().removeItemNoUpdate(slot)))
+        {
+            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
+            {
+                MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
+                player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
+                AdvancementTriggers.PLACE_SUPPLY.trigger(player);
+            }
+
+            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level, blueprint,
+              blockPos, placementSettings.getRotation(), placementSettings.getMirror() != Mirror.NONE ? Mirror.FRONT_BACK : Mirror.NONE, true, player);
+        }
+        else
+        {
+            MessageUtils.format(WARNING_REMOVING_SUPPLY_CHEST).sendTo(player);
+        }
+    }
+
+    /**
+     * Whether the itemstack used allows a free placement.
+     *
+     * @param playerEntity the player to check
+     * @return whether the itemstack used allows a free placement.
+     */
+    private boolean isFreeInstantPlacementMH(ServerPlayer playerEntity)
+    {
+        final ItemStack mhItem = playerEntity.getMainHandItem();
+        return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
     }
 }

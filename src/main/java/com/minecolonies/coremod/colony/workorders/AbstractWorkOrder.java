@@ -610,8 +610,8 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        compound.putString(TAG_STRUCTURE_PACK, path);
-        compound.putString(TAG_STRUCTURE_PATH, packName);
+        compound.putString(TAG_STRUCTURE_PACK, packName);
+        compound.putString(TAG_STRUCTURE_PATH, path);
         compound.putString(TAG_TRANSLATION_KEY, translationKey);
         compound.putInt(TAG_WO_TYPE, workOrderType.ordinal());
         BlockPosUtil.write(compound, TAG_LOCATION, location);

@@ -35,9 +35,9 @@ dependencies {
         transitive = false
     }
 
-    implementation (fg.deobf("com.ldtteam:multi-piston:${project.multiPistonVersion}")){
-        transitive = false
-    }
+    //implementation (fg.deobf("com.ldtteam:multi-piston:${project.multiPistonVersion}")){
+    //    transitive = false
+    //}
 
     datagenLibrary (("com.ldtteam:datagenerators:${project.dataGeneratorsVersion}")){
         transitive = false

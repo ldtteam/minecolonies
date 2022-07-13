@@ -2,6 +2,8 @@ package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.structurize.client.gui.WindowSwitchPack;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -45,7 +47,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     /**
      * Townhall position
      */
-    private final BlockPos pos;
+    private BlockPos pos;
 
     public WindowTownHallColonyManage(final Player player, final BlockPos pos, final Level world)
     {
@@ -143,6 +145,19 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     }
 
     /**
+     * Create a new colony a pot after setting style.
+     * @param pos the pos to create it at.
+     * @param reactive if its a reactivation only.
+     * @param name the name of the new colony.
+     */
+    public WindowTownHallColonyManage(final BlockPos pos, final boolean reactive, final Component name)
+    {
+        super(MOD_ID + TOWNHALL_COLONY_MANAGEMENT_GUI);
+        Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactive, name.getString(), StructurePacks.selectedPack.getName()));
+        close();
+    }
+
+    /**
      * On create button
      */
     public void onCreate()
@@ -153,14 +168,26 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         new VanillaParticleMessage(pos.getX(), pos.getY(), pos.getZ(), ParticleTypes.DRAGON_BREATH).onExecute(null, false);
         Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, new BlockPos(Minecraft.getInstance().player.position()),
           SoundEvents.CAMPFIRE_CRACKLE, SoundSource.AMBIENT, 2.5f, 0.8f);
-        boolean reactivate  = false;
+        final boolean reactivate;
         final BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(pos);
         if (entity instanceof final TileEntityColonyBuilding hut)
         {
             reactivate = hut.getPositionedTags().containsKey(BlockPos.ZERO) && hut.getPositionedTags().get(BlockPos.ZERO).contains(DEACTIVATED);
         }
-        Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactivate, colonyName.getString()));
-        close();
+        else
+        {
+            reactivate = false;
+        }
+
+        if (reactivate)
+        {
+            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactivate, colonyName.getString(),""));
+            close();
+        }
+        else
+        {
+            new WindowSwitchPack(() -> new WindowTownHallColonyManage(pos, reactivate, colonyName)).open();
+        }
     }
 
     /**

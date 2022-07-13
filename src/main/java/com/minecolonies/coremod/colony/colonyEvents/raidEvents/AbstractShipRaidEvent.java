@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
+import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -15,6 +16,7 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
+import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -168,12 +170,13 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
         ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture("Default", "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc()), colony.getWorld(), (blueprint -> {
-            CreativeBuildingStructureHandler structure =
-              new CreativeBuildingStructureHandler(colony.getWorld(),
+            CreativeRaiderStructureHandler structure =
+              new CreativeRaiderStructureHandler(colony.getWorld(),
                 spawnPoint,
                 blueprint,
                 new PlacementSettings(),
-                true);
+                true,
+                this, colony.getID());
             structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
             if (spawnPathResult != null && spawnPathResult.isDone())
@@ -186,11 +189,11 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
                     {
                         spawnPoint = endpoint;
                         structure =
-                          new CreativeBuildingStructureHandler(colony.getWorld(),
+                          new CreativeRaiderStructureHandler(colony.getWorld(),
                             spawnPoint,
                             blueprint,
                             new PlacementSettings(),
-                            true);
+                            true, this, colony.getID());
                         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
                     }
                 }

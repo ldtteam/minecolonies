@@ -12,6 +12,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
@@ -51,6 +52,16 @@ public class DecorationBuildRequestMessage implements IMessage
     private String path;
 
     /**
+     * The rotation.
+     */
+    private Rotation rotation;
+
+    /**
+     * If mirrored.
+     */
+    private boolean mirror;
+
+    /**
      * The level of the decoration.
      */
     private int level;
@@ -77,7 +88,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param level       the level.
      * @param dimension   the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String packName, final String path, final int level, final ResourceKey<Level> dimension)
+    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String packName, final String path, final int level, final ResourceKey<Level> dimension, final Rotation rotation, final boolean mirror)
     {
         super();
         this.pos = pos;
@@ -85,6 +96,8 @@ public class DecorationBuildRequestMessage implements IMessage
         this.path = path;
         this.level = level;
         this.dimension = dimension;
+        this.rotation = rotation;
+        this.mirror = mirror;
     }
 
     @Override
@@ -95,6 +108,8 @@ public class DecorationBuildRequestMessage implements IMessage
         this.path = buf.readUtf(32767);
         this.level = buf.readInt();
         this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.mirror = buf.readBoolean();
+        this.rotation = Rotation.values()[buf.readInt()];
     }
 
     @Override
@@ -105,6 +120,8 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeUtf(this.path);
         buf.writeInt(this.level);
         buf.writeUtf(this.dimension.location().toString());
+        buf.writeBoolean(this.mirror);
+        buf.writeInt(this.rotation.ordinal());
     }
 
     @Nullable
@@ -130,93 +147,111 @@ public class DecorationBuildRequestMessage implements IMessage
             return;
         }
 
-        final BlockEntity entity = player.getCommandSenderWorld().getBlockEntity(pos);
-        if (entity instanceof TileEntityDecorationController)
+        final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
+          .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
+          .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
+
+        if (wo.isPresent())
         {
-            final Optional<Map.Entry<Integer, IWorkOrder>> wo = colony.getWorkManager().getWorkOrders().entrySet().stream()
-              .filter(entry -> entry.getValue() instanceof WorkOrderDecoration)
-              .filter(entry -> entry.getValue().getLocation().equals(pos)).findFirst();
-
-            if (wo.isPresent())
-            {
-                colony.getWorkManager().removeWorkOrder(wo.get().getKey());
-                return;
-            }
-
-            ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(packName, path), player.level, (blueprint -> {
-                int difference = 0;
-
-                if (blueprint != null)
-                {
-                    final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
-                    if (structureState != null)
-                    {
-                        if (!(structureState.getBlock() instanceof BlockDecorationController))
-                        {
-                            Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", path + level));
-                            return;
-                        }
-
-                        final int structureRotation = structureState.getValue(BlockDecorationController.FACING).get2DDataValue();
-                        final int worldRotation = colony.getWorld().getBlockState(this.pos).getValue(BlockDecorationController.FACING).get2DDataValue();
-
-                        if (structureRotation <= worldRotation)
-                        {
-                            difference = worldRotation - structureRotation;
-                        }
-                        else
-                        {
-                            difference = 4 + worldRotation - structureRotation;
-                        }
-                    }
-                }
-
-                final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
-                final int currentLevel = ((TileEntityDecorationController) entity).getTier();
-                WorkOrderDecoration order;
-                final String[] split = path.split("/");
-                final String displayName = split[split.length - 1];
-
-
-                if (level > currentLevel)
-                {
-                    order = WorkOrderDecoration.create(
-                      WorkOrderType.UPGRADE,
-                      packName,
-                      path + level,
-                      WordUtils.capitalizeFully(displayName),
-                      pos,
-                      difference,
-                      state.getValue(BlockDecorationController.MIRROR),
-                      currentLevel);
-                }
-                else if (level == currentLevel)
-                {
-                    order = WorkOrderDecoration.create(
-                      WorkOrderType.REPAIR,
-                      packName,
-                      path + level,
-                      WordUtils.capitalizeFully(displayName),
-                      pos,
-                      difference,
-                      state.getValue(BlockDecorationController.MIRROR),
-                      currentLevel);
-                }
-                else
-                {
-                    order = WorkOrderDecoration.create(
-                      WorkOrderType.BUILD,
-                      packName,
-                      path + level,
-                      WordUtils.capitalizeFully(displayName),
-                      pos,
-                      difference,
-                      state.getValue(BlockDecorationController.MIRROR),
-                      currentLevel);
-                }
-
-                colony.getWorkManager().addWorkOrder(order, false);
-            })));
+            colony.getWorkManager().removeWorkOrder(wo.get().getKey());
+            return;
         }
+
+        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(packName, path),
+          player.level,
+          (blueprint -> {
+              int difference = 0;
+
+              if (blueprint == null)
+              {
+                  Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path + level));
+                  return;
+              }
+
+              final String[] split = path.split("/");
+              final String displayName = split[split.length - 1].replace(".blueprint", "");
+
+              final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
+              if (structureState != null)
+              {
+                  if (!(structureState.getBlock() instanceof BlockDecorationController))
+                  {
+                      colony.getWorkManager().addWorkOrder(
+                        WorkOrderDecoration.create(
+                          WorkOrderType.UPGRADE,
+                          packName,
+                          path,
+                          WordUtils.capitalizeFully(displayName),
+                          pos,
+                          rotation.ordinal(),
+                          mirror,
+                          0), false);
+                      return;
+                  }
+
+                  final int structureRotation = structureState.getValue(BlockDecorationController.FACING).get2DDataValue();
+                  final int worldRotation = colony.getWorld().getBlockState(this.pos).getValue(BlockDecorationController.FACING).get2DDataValue();
+
+                  if (structureRotation <= worldRotation)
+                  {
+                      difference = worldRotation - structureRotation;
+                  }
+                  else
+                  {
+                      difference = 4 + worldRotation - structureRotation;
+                  }
+              }
+
+
+              final BlockEntity entity = player.getCommandSenderWorld().getBlockEntity(pos);
+              if (!(entity instanceof TileEntityDecorationController))
+              {
+                  return;
+              }
+
+              final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
+              final int currentLevel = ((TileEntityDecorationController) entity).getTier();
+              WorkOrderDecoration order;
+
+              if (level > currentLevel)
+              {
+                  order = WorkOrderDecoration.create(
+                    WorkOrderType.UPGRADE,
+                    packName,
+                    path + level,
+                    WordUtils.capitalizeFully(displayName),
+                    pos,
+                    difference,
+                    state.getValue(BlockDecorationController.MIRROR),
+                    currentLevel);
+              }
+              else if (level == currentLevel)
+              {
+                  order = WorkOrderDecoration.create(
+                    WorkOrderType.REPAIR,
+                    packName,
+                    path + level,
+                    WordUtils.capitalizeFully(displayName),
+                    pos,
+                    difference,
+                    state.getValue(BlockDecorationController.MIRROR),
+                    currentLevel);
+              }
+              else
+              {
+                  order = WorkOrderDecoration.create(
+                    WorkOrderType.BUILD,
+                    packName,
+                    path + level,
+                    WordUtils.capitalizeFully(displayName),
+                    pos,
+                    difference,
+                    state.getValue(BlockDecorationController.MIRROR),
+                    currentLevel);
+              }
+
+              colony.getWorkManager().addWorkOrder(order, false);
+          })));
     }
 }
+

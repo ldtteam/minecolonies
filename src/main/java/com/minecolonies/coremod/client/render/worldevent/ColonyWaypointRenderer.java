@@ -34,7 +34,7 @@ public class ColonyWaypointRenderer
         {
             if (wayPointTemplate == null && pendingTemplate == null)
             {
-                pendingTemplate = StructurePacks.getBlueprintFuture("Default", "infrastructure/roads/waypoint");
+                pendingTemplate = StructurePacks.getBlueprintFuture("Default", "infrastructure/roads/waypoint.blueprint");
             }
 
             if (pendingTemplate != null)
@@ -44,6 +44,7 @@ public class ColonyWaypointRenderer
                     try
                     {
                         wayPointTemplate = pendingTemplate.get();
+                        pendingTemplate = null;
                     }
                     catch (InterruptedException | ExecutionException e)
                     {
@@ -54,6 +55,11 @@ public class ColonyWaypointRenderer
                 {
                     return;
                 }
+            }
+
+            if (wayPointTemplate == null)
+            {
+                return;
             }
 
             StructureClientHandler.renderStructureAtPosList(
