@@ -385,6 +385,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             }
         }
 
+        if (path == null || path.isEmpty())
+        {
+            path = BlueprintMapping.pathMapping.get("wooden:" + ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName().getPath()) + "1.blueprint";
+        }
+
         this.packMeta = packName;
         this.path = path;
 
@@ -505,6 +510,18 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     public void setBlueprintPath(final String path)
     {
         this.path = path;
+    }
+
+    @Override
+    public void setPackName(final String packName)
+    {
+        this.packMeta = packName;
+    }
+
+    @Override
+    public String getPackName()
+    {
+        return packMeta;
     }
 
     @Override

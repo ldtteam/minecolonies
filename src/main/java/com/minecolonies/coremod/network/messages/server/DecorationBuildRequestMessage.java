@@ -11,12 +11,10 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
@@ -62,14 +60,14 @@ public class DecorationBuildRequestMessage implements IMessage
     private boolean mirror;
 
     /**
-     * The level of the decoration.
-     */
-    private int level;
-
-    /**
      * The dimension.
      */
     private ResourceKey<Level> dimension;
+
+    /**
+     * Type of workorder.
+     */
+    private WorkOrderType workOrderType;
 
     /**
      * Empty constructor used when registering the
@@ -85,16 +83,15 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param pos         the position of it.
      * @param packName    pack name.
      * @param path        blueprint path.
-     * @param level       the level.
      * @param dimension   the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(@NotNull final BlockPos pos, final String packName, final String path, final int level, final ResourceKey<Level> dimension, final Rotation rotation, final boolean mirror)
+    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final Rotation rotation, final boolean mirror)
     {
         super();
+        this.workOrderType = workOrderType;
         this.pos = pos;
         this.packName = packName;
         this.path = path;
-        this.level = level;
         this.dimension = dimension;
         this.rotation = rotation;
         this.mirror = mirror;
@@ -103,10 +100,10 @@ public class DecorationBuildRequestMessage implements IMessage
     @Override
     public void fromBytes(@NotNull final FriendlyByteBuf buf)
     {
+        this.workOrderType = WorkOrderType.values()[buf.readInt()];
         this.pos = buf.readBlockPos();
         this.packName = buf.readUtf(32767);
         this.path = buf.readUtf(32767);
-        this.level = buf.readInt();
         this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         this.mirror = buf.readBoolean();
         this.rotation = Rotation.values()[buf.readInt()];
@@ -115,10 +112,10 @@ public class DecorationBuildRequestMessage implements IMessage
     @Override
     public void toBytes(@NotNull final FriendlyByteBuf buf)
     {
+        buf.writeInt(this.workOrderType.ordinal());
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.packName);
         buf.writeUtf(this.path);
-        buf.writeInt(this.level);
         buf.writeUtf(this.dimension.location().toString());
         buf.writeBoolean(this.mirror);
         buf.writeInt(this.rotation.ordinal());
@@ -160,11 +157,9 @@ public class DecorationBuildRequestMessage implements IMessage
         ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(packName, path),
           player.level,
           (blueprint -> {
-              int difference = 0;
-
               if (blueprint == null)
               {
-                  Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path + level));
+                  Log.getLogger().error(String.format("Schematic %s doesn't exist on the server.", path));
                   return;
               }
 
@@ -178,7 +173,7 @@ public class DecorationBuildRequestMessage implements IMessage
                   {
                       colony.getWorkManager().addWorkOrder(
                         WorkOrderDecoration.create(
-                          WorkOrderType.UPGRADE,
+                          WorkOrderType.BUILD,
                           packName,
                           path,
                           WordUtils.capitalizeFully(displayName),
@@ -188,67 +183,17 @@ public class DecorationBuildRequestMessage implements IMessage
                           0), false);
                       return;
                   }
-
-                  final int structureRotation = structureState.getValue(BlockDecorationController.FACING).get2DDataValue();
-                  final int worldRotation = colony.getWorld().getBlockState(this.pos).getValue(BlockDecorationController.FACING).get2DDataValue();
-
-                  if (structureRotation <= worldRotation)
-                  {
-                      difference = worldRotation - structureRotation;
-                  }
-                  else
-                  {
-                      difference = 4 + worldRotation - structureRotation;
-                  }
               }
 
-
-              final BlockEntity entity = player.getCommandSenderWorld().getBlockEntity(pos);
-              if (!(entity instanceof TileEntityDecorationController))
-              {
-                  return;
-              }
-
-              final BlockState state = player.getCommandSenderWorld().getBlockState(pos);
-              final int currentLevel = ((TileEntityDecorationController) entity).getTier();
-              WorkOrderDecoration order;
-
-              if (level > currentLevel)
-              {
-                  order = WorkOrderDecoration.create(
-                    WorkOrderType.UPGRADE,
-                    packName,
-                    path + level,
-                    WordUtils.capitalizeFully(displayName),
-                    pos,
-                    difference,
-                    state.getValue(BlockDecorationController.MIRROR),
-                    currentLevel);
-              }
-              else if (level == currentLevel)
-              {
-                  order = WorkOrderDecoration.create(
-                    WorkOrderType.REPAIR,
-                    packName,
-                    path + level,
-                    WordUtils.capitalizeFully(displayName),
-                    pos,
-                    difference,
-                    state.getValue(BlockDecorationController.MIRROR),
-                    currentLevel);
-              }
-              else
-              {
-                  order = WorkOrderDecoration.create(
-                    WorkOrderType.BUILD,
-                    packName,
-                    path + level,
-                    WordUtils.capitalizeFully(displayName),
-                    pos,
-                    difference,
-                    state.getValue(BlockDecorationController.MIRROR),
-                    currentLevel);
-              }
+              WorkOrderDecoration order = WorkOrderDecoration.create(
+                workOrderType,
+                packName,
+                path,
+                WordUtils.capitalizeFully(displayName),
+                pos,
+                rotation.ordinal(),
+                mirror,
+                0);
 
               colony.getWorkManager().addWorkOrder(order, false);
           })));

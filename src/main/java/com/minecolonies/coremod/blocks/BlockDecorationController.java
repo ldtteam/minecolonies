@@ -1,13 +1,16 @@
 package com.minecolonies.coremod.blocks;
 
+import com.ldtteam.structurize.blockentities.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
@@ -41,13 +44,15 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 import java.util.ArrayList;
 
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
+import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_SCHEMATIC_NAME;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.BuildingConstants.LEISURE;
 
 /**
  * Creates a decoration controller block.
  */
-public class BlockDecorationController extends AbstractBlockMinecoloniesHorizontal<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock
+public class BlockDecorationController extends AbstractBlockMinecoloniesHorizontal<BlockDecorationController> implements IBuilderUndestroyable, IAnchorBlock, EntityBlock, ILeveledBlueprintAnchorBlock
 {
     /**
      * The hardness this block has.
@@ -181,5 +186,23 @@ public class BlockDecorationController extends AbstractBlockMinecoloniesHorizont
     public BlockState mirror(@NotNull BlockState state, Mirror mirrorIn)
     {
         return state.setValue(MIRROR, mirrorIn != Mirror.NONE);
+    }
+
+    @Override
+    public int getLevel(final CompoundTag beData)
+    {
+        if (beData == null)
+        {
+            return 0;
+        }
+
+        try
+        {
+            return Integer.parseInt(beData.getCompound(TAG_BLUEPRINTDATA).getString(TAG_SCHEMATIC_NAME).replaceAll("[^0-9]", ""));
+        }
+        catch (final NumberFormatException exception)
+        {
+            return 0;
+        }
     }
 }

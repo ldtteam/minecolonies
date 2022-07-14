@@ -145,19 +145,6 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
     }
 
     /**
-     * Create a new colony a pot after setting style.
-     * @param pos the pos to create it at.
-     * @param reactive if its a reactivation only.
-     * @param name the name of the new colony.
-     */
-    public WindowTownHallColonyManage(final BlockPos pos, final boolean reactive, final Component name)
-    {
-        super(MOD_ID + TOWNHALL_COLONY_MANAGEMENT_GUI);
-        Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactive, name.getString(), StructurePacks.selectedPack.getName()));
-        close();
-    }
-
-    /**
      * On create button
      */
     public void onCreate()
@@ -181,12 +168,13 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
 
         if (reactivate)
         {
-            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, reactivate, colonyName.getString(),""));
+            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, true, colonyName.getString(),""));
             close();
         }
         else
         {
-            new WindowSwitchPack(() -> new WindowTownHallColonyManage(pos, reactivate, colonyName)).open();
+            Network.getNetwork().sendToServer(new CreateColonyMessage(pos, false, colonyName.getString(), StructurePacks.selectedPack.getName()));
+            close();
         }
     }
 

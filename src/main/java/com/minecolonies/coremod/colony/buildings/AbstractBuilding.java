@@ -981,21 +981,27 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        final WorkOrderBuilding workOrder = WorkOrderBuilding.create(WorkOrderType.BUILD, this);
-        final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
-        if (blueprint == null)
+        try
+        {
+            final WorkOrderBuilding workOrder = WorkOrderBuilding.create(WorkOrderType.BUILD, this);
+            final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
+            if (blueprint == null)
+            {
+                setCorners(getPosition(), getPosition());
+                return;
+            }
+            final Tuple<BlockPos, BlockPos> corners
+              = ColonyUtils.calculateCorners(this.getPosition(),
+              colony.getWorld(),
+              blueprint,
+              workOrder.getRotation(),
+              workOrder.isMirrored());
+            this.setCorners(corners.getA(), corners.getB());
+        }
+        catch (final Exception ex)
         {
             setCorners(getPosition(), getPosition());
-            return;
         }
-
-        final Tuple<BlockPos, BlockPos> corners
-          = ColonyUtils.calculateCorners(this.getPosition(),
-          colony.getWorld(),
-          blueprint,
-          workOrder.getRotation(),
-          workOrder.isMirrored());
-        this.setCorners(corners.getA(), corners.getB());
     }
 
     @Override

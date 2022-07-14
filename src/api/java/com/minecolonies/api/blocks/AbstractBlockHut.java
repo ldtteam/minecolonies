@@ -367,21 +367,24 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         final List<MutableComponent> requirements = new ArrayList<>();
         final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(level, pos);
-        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
-        {
-            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.cost", new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
-              ChatFormatting.RED)));
-        }
         if (colonyView == null)
         {
-            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.incolony"));
+            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
+
+        if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
+        {
+            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.cost", new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            return requirements;
+        }
+
         final ResourceLocation effectId = colonyView.getResearchManager().getResearchEffectIdFrom(this);
         if (colonyView.getResearchManager().getResearchEffects().getEffectStrength(effectId) > 0)
         {
             return requirements;
         }
+
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
             requirements.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));

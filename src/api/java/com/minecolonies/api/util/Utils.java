@@ -11,6 +11,8 @@ import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * General purpose utilities class. todo: split up into logically distinct parts
@@ -157,5 +159,32 @@ public final class Utils
         long truncated = value / (divideBy / 10); //the number part of the output times 10
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+    }
+
+    /**
+     * Get the level of this blueprint from the name
+     * @param schematicName the name of the blueprint.
+     * @return the level or -1 if it doesn't have one.
+     */
+    public static int getBlueprintLevel(final String schematicName)
+    {
+        Matcher matcher = Pattern.compile("[0-9]$").matcher(schematicName);
+        if (matcher.find())
+        {
+            final String string = matcher.group();
+            if (!string.isEmpty())
+            {
+                try
+                {
+                    return Integer.parseInt(string);
+                }
+                catch (final NumberFormatException ex)
+                {
+                    // noop
+                }
+            }
+        }
+
+        return -1;
     }
 }

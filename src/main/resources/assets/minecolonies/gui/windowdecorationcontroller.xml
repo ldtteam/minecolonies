@@ -1,27 +1,16 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
-        lightbox="true"
-        xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
-    <label id="nameLabel" size="50% 11" pos="50 40" color="white"
-           label="$(com.minecolonies.coremod.gui.deco.name)"/>
-    <input id="name" size="150 18" pos="50 50" maxlength="100"/>
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true" size="190 133" lightbox="false" xsi:noNamespaceSchemaLocation="file:../../../../../api/java/com/minecolonies/blockui/blockui.xsd">
 
-    <label id="levelLabel" size="50% 11" pos="250 40" color="white"
-           label="$(com.minecolonies.coremod.gui.deco.level)"/>
-    <input id="level" size="150 18" pos="250 50" maxlength="5"/>
+    <image source="minecolonies:textures/gui/citizen/colonist_paper_sketch.png" size="100% 100%"/>
 
-    <buttonimage id="done" align="TOP_MIDDLE" size="129 17" pos="0 80"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
-                 label="$(gui.done)" textcolor="black"/>
+    <label id="name" size="100 11" pos="15 10" textcolor="black"/>
+
     <buttonimage id="cancel" size="14 15" pos="400 0"
                  source="minecolonies:textures/gui/button_x.png" textcolor="black"/>
 
-    <label id="infotextnoupgrade" size="50% 11" pos="60 103" color="white"
-           label="$(com.minecolonies.coremod.gui.deco.level.none)"/>
-
-    <buttonimage id="repair" align="TOP_MIDDLE" size="129 17" pos="-70 120"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+    <buttonimage id="repair" size="86 17" pos="12 100"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.repair)" textcolor="black"/>
-    <buttonimage id="build" align="TOP_MIDDLE" size="129 17" pos="60 120"
-                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+    <buttonimage id="build" size="86 17" pos="95 100"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
                  label="$(com.minecolonies.coremod.gui.workerhuts.upgrade)" textcolor="black"/>
 </window>

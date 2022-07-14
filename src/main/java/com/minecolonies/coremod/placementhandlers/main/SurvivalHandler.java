@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers.main;
 
+import com.ldtteam.structurize.blockentities.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
@@ -231,7 +232,22 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
         else
         {
-            Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+            if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof ILeveledBlueprintAnchorBlock)
+            {
+                int level = Utils.getBlueprintLevel(blueprint.getFileName().replace(".blueprint", ""));
+                if (level == -1)
+                {
+                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                }
+                else
+                {
+                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                }
+            }
+            else
+            {
+                Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+            }
         }
 
         Log.getLogger().warn("Handling Survival Placement in Colony");

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages.client;
 
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
@@ -112,7 +113,7 @@ public class CreateColonyMessage implements IMessage
         }
 
         final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-        if (hut.getStructurePack() != null)
+        if (hut.getStructurePack() != null && claim)
         {
             pack = hut.getStructurePack().getName();
         }
@@ -125,6 +126,8 @@ public class CreateColonyMessage implements IMessage
                 pack = hut.getStructurePack().getName();
             }
         }
+
+        hut.setStructurePack(StructurePacks.packMetas.get(pack));
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {

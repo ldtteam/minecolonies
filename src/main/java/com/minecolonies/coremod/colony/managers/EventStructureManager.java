@@ -4,7 +4,6 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
 import com.ldtteam.structurize.management.Manager;
-import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
@@ -106,7 +105,7 @@ public class EventStructureManager implements IEventStructureManager
         final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true, (short)structure.getSizeX(), (short) structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(),
           Optional.of(anchor)));
 
-        StructurePacks.storeBlueprint(bp, outputPath);
+        StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath);
 
         backupSchematics.put(anchor, eventID);
 
@@ -138,7 +137,7 @@ public class EventStructureManager implements IEventStructureManager
                   .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
                   .resolve(entry.getKey().toString());
 
-                final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), StructurePacks.getBlueprintFuture(backupPath), new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
+                final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
                 structure.getBluePrint().rotateWithMirror( Rotation.NONE, Mirror.NONE, colony.getWorld());
 
                 final StructurePlacer instantPlacer = new StructurePlacer(structure);

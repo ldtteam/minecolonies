@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
@@ -320,7 +321,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
     private void confirmedBuild()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(structurePos, packMeta, path, -1, Minecraft.getInstance().level.dimension(), rotation, mirror));
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, packMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror));
         close();
     }
 }

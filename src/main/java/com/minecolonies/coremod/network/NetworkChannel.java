@@ -176,7 +176,6 @@ public class NetworkChannel
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
         registerMessage(++idx, BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);
         registerMessage(++idx, DecorationBuildRequestMessage.class, DecorationBuildRequestMessage::new);
-        registerMessage(++idx, DecorationControllerUpdateMessage.class, DecorationControllerUpdateMessage::new);
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);

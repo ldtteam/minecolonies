@@ -195,6 +195,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public void triggerSuccess(final BlockPos pos, final List<ItemStack> list, final boolean placement)
     {
+        super.triggerSuccess(pos, list, placement);
         final BlockState state = getBluePrint().getBlockState(pos);
         final BlockPos worldPos = getProgressPosInWorld(pos);
         if (building != null)
