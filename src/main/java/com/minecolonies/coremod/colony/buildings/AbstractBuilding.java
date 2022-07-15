@@ -1969,11 +1969,17 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         }
 
         final int citizenId = getCitizensByRequest().get(request.getId());
+        if (citizenId == -1)
+        {
+            return new TranslatableComponent(getBuildingDisplayName());
+        }
+
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
         if (citizenData.getJob() == null)
         {
             return new TextComponent(citizenData.getName());
         }
+
         final MutableComponent jobName = new TranslatableComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         return jobName.append(new TextComponent(" " + citizenData.getName()));
     }
