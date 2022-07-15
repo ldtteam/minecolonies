@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.ModBlocks;

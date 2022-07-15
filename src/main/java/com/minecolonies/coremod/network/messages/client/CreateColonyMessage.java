@@ -52,17 +52,23 @@ public class CreateColonyMessage implements IMessage
      */
     String packName;
 
+    /**
+     * The structure path name.
+     */
+    String pathName;
+
     public CreateColonyMessage()
     {
         super();
     }
 
-    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName, final String packName)
+    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName, final String packName, final String pathName)
     {
         this.townHall = townHall;
         this.claim = claim;
         this.colonyName = colonyName;
         this.packName = packName;
+        this.pathName = pathName;
     }
 
     @Override
@@ -72,6 +78,7 @@ public class CreateColonyMessage implements IMessage
         buf.writeBoolean(claim);
         buf.writeUtf(colonyName);
         buf.writeUtf(packName);
+        buf.writeUtf(pathName);
     }
 
     @Override
@@ -81,6 +88,7 @@ public class CreateColonyMessage implements IMessage
         claim = buf.readBoolean();
         colonyName = buf.readUtf(32767);
         packName = buf.readUtf(32767);
+        pathName = buf.readUtf(32767);
     }
 
     @Nullable
@@ -128,6 +136,7 @@ public class CreateColonyMessage implements IMessage
         }
 
         hut.setStructurePack(StructurePacks.packMetas.get(pack));
+        hut.setBlueprintPath(pathName);
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {

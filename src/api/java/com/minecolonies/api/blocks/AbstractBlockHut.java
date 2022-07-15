@@ -559,4 +559,14 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             return colony.getBuildingManager().canPlaceAt(anchor, pos, player);
         }
     }
+
+    /**
+     * Get the blueprint name.
+     * @return the name.
+     */
+    public String getBlueprintName()
+    {
+        return getBuildingEntry().getRegistryName().getPath();
+    }
 }
+

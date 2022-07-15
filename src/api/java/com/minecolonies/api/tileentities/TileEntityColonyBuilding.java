@@ -375,7 +375,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                     packName = BlueprintMapping.styleMapping.get(tags.get(0));
                     if (path == null || path.isEmpty())
                     {
-                        path = BlueprintMapping.pathMapping.get(tags.get(0) + ":" + ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName().getPath()) + "1.blueprint";
+                        path = BlueprintMapping.pathMapping.get(tags.get(0) + ":" + ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
                     }
                 }
             }
@@ -387,7 +387,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (path == null || path.isEmpty())
         {
-            path = BlueprintMapping.pathMapping.get("wooden:" + ((AbstractBlockHut) getBlockState().getBlock()).getBuildingEntry().getRegistryName().getPath()) + "1.blueprint";
+            path = BlueprintMapping.pathMapping.get("wooden:" + ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
         }
 
         this.packMeta = packName;

@@ -21,6 +21,8 @@ public class BlueprintMapping
     {
         styleMapping.put("sandstone", "Moroccan");
         styleMapping.put("asian", "East Asian");
+        styleMapping.put("asianalternative", "East Asian");
+
         styleMapping.put("wooden", "Default");
 
         //todo remaining styles
