@@ -1970,7 +1970,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final int citizenId = getCitizensByRequest().get(request.getId());
         if (citizenId == -1)
         {
-            return new TranslatableComponent(getBuildingDisplayName());
+            return Component.translatable(getBuildingDisplayName());
         }
 
         final ICitizenData citizenData = colony.getCitizenManager().getCivilian(citizenId);
@@ -1979,8 +1979,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return Component.literal(citizenData.getName());
         }
 
-        final MutableComponent jobName = new TranslatableComponent(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
-        return jobName.append(new TextComponent(" " + citizenData.getName()));
+        final MutableComponent jobName = Component.translatable(citizenData.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
+        return jobName.append(Component.literal(" " + citizenData.getName()));
     }
 
     @Override
