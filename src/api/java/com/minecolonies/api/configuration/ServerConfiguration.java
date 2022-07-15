@@ -46,7 +46,6 @@ public class ServerConfiguration extends AbstractConfiguration
     public final ForgeConfigSpec.IntValue     updateRate;
     public final ForgeConfigSpec.IntValue     dirtFromCompost;
     public final ForgeConfigSpec.IntValue     luckyBlockChance;
-    public final ForgeConfigSpec.BooleanValue restrictBuilderUnderground;
     public final ForgeConfigSpec.IntValue     minThLevelToTeleport;
     public final ForgeConfigSpec.BooleanValue suggestBuildToolPlacement;
     public final ForgeConfigSpec.DoubleValue  foodModifier;
@@ -97,7 +96,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
     public final ForgeConfigSpec.BooleanValue doBarbariansSpawn;
     public final ForgeConfigSpec.IntValue     barbarianHordeDifficulty;
-    public final ForgeConfigSpec.IntValue     spawnBarbarianSize;
     public final ForgeConfigSpec.IntValue     maxBarbarianSize;
     public final ForgeConfigSpec.BooleanValue doBarbariansBreakThroughWalls;
     public final ForgeConfigSpec.IntValue     averageNumberOfNightsBetweenRaids;
@@ -127,11 +125,9 @@ public class ServerConfiguration extends AbstractConfiguration
      *  ------------------- ######## Compatibility Settings ######## ------------------- *
      *  -------------------------------------------------------------------------------- */
 
-    public final ForgeConfigSpec.ConfigValue<List<? extends String>> enabledModTags;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListStudyItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> configListRecruitmentItems;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> luckyOres;
-    public final ForgeConfigSpec.DoubleValue                         enchanterExperienceMultiplier;
     public final ForgeConfigSpec.IntValue                            dynamicTreeHarvestSize;
     public final ForgeConfigSpec.IntValue                            fishingRodDurabilityAdjustT1;
     public final ForgeConfigSpec.IntValue                            fishingRodDurabilityAdjustT2;
@@ -193,7 +189,6 @@ public class ServerConfiguration extends AbstractConfiguration
         updateRate = defineInteger(builder, "updaterate", 1, 1, 100);
         dirtFromCompost = defineInteger(builder, "dirtfromcompost", 1, 0, 100);
         luckyBlockChance = defineInteger(builder, "luckyblockchance", 1, 0, 100);
-        restrictBuilderUnderground = defineBoolean(builder, "restrictbuilderunderground", true);
         minThLevelToTeleport = defineInteger(builder, "minthleveltoteleport", 3, 0, 5);
         suggestBuildToolPlacement = defineBoolean(builder, "suggestbuildtoolplacement", true);
         foodModifier = defineDouble(builder, "foodmodifier", 1.0, 0.1, 100);
@@ -237,7 +232,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         doBarbariansSpawn = defineBoolean(builder, "dobarbariansspawn", true);
         barbarianHordeDifficulty = defineInteger(builder, "barbarianhordedifficulty", DEFAULT_BARBARIAN_DIFFICULTY, MIN_BARBARIAN_DIFFICULTY, MAX_BARBARIAN_DIFFICULTY);
-        spawnBarbarianSize = defineInteger(builder, "spawnbarbariansize", 5, MIN_SPAWN_BARBARIAN_HORDE_SIZE, MAX_SPAWN_BARBARIAN_HORDE_SIZE);
         maxBarbarianSize = defineInteger(builder, "maxBarbarianSize", 80, MIN_BARBARIAN_HORDE_SIZE, MAX_BARBARIAN_HORDE_SIZE);
         doBarbariansBreakThroughWalls = defineBoolean(builder, "dobarbariansbreakthroughwalls", true);
         averageNumberOfNightsBetweenRaids = defineInteger(builder, "averagenumberofnightsbetweenraids", 14, 1, 50);
@@ -271,167 +265,6 @@ public class ServerConfiguration extends AbstractConfiguration
 
         swapToCategory(builder, "compatibility");
 
-        enabledModTags = defineList(builder, "enabledmodtags",
-          Arrays.asList(
-            "minecraft:wool",
-            "minecraft:planks",
-            "minecraft:stone_bricks",
-            "minecraft:wooden_buttons",
-            "minecraft:buttons",
-            "minecraft:carpets",
-            "minecraft:wooden_doors",
-            "minecraft:wooden_stairs",
-            "minecraft:wooden_slabs",
-            "minecraft:wooden_fences",
-            "minecraft:wooden_pressure_plates",
-            "minecraft:wooden_trapdoors",
-            "minecraft:saplings",
-            "minecraft:logs",
-            "minecraft:dark_oak_logs",
-            "minecraft:oak_logs",
-            "minecraft:birch_logs",
-            "minecraft:acacia_logs",
-            "minecraft:jungle_logs",
-            "minecraft:spruce_logs",
-            "minecraft:banners",
-            "minecraft:sand",
-            "minecraft:walls",
-            "minecraft:anvil",
-            "minecraft:leaves",
-            "minecraft:small_flowers",
-            "minecraft:beds",
-            "minecraft:fishes",
-            "minecraft:signs",
-            "minecraft:music_discs",
-            "minecraft:arrows",
-            "forge:bones",
-            "forge:bookshelves",
-            "forge:chests/ender",
-            "forge:chests/trapped",
-            "forge:chests/wooden",
-            "forge:cobblestone",
-            "forge:crops/beetroot",
-            "forge:crops/carrot",
-            "forge:crops/nether_wart",
-            "forge:crops/potato",
-            "forge:crops/wheat",
-            "forge:dusts/prismarine",
-            "forge:dusts/redstone",
-            "forge:dusts/glowstone",
-            "forge:dyes",
-            "forge:dyes/black",
-            "forge:dyes/red",
-            "forge:dyes/green",
-            "forge:dyes/brown",
-            "forge:dyes/blue",
-            "forge:dyes/purple",
-            "forge:dyes/cyan",
-            "forge:dyes/light_gray",
-            "forge:dyes/gray",
-            "forge:dyes/pink",
-            "forge:dyes/lime",
-            "forge:dyes/yellow",
-            "forge:dyes/light_blue",
-            "forge:dyes/magenta",
-            "forge:dyes/orange",
-            "forge:dyes/white",
-            "forge:eggs",
-            "forge:ender_pearls",
-            "forge:feathers",
-            "forge:fence_gates",
-            "forge:fence_gates/wooden",
-            "forge:fences",
-            "forge:fences/nether_brick",
-            "forge:fences/wooden",
-            "forge:gems/diamond",
-            "forge:gems/emerald",
-            "forge:gems/lapis",
-            "forge:gems/prismarine",
-            "forge:gems/quartz",
-            "forge:glass",
-            "forge:glass/black",
-            "forge:glass/blue",
-            "forge:glass/brown",
-            "forge:glass/colorless",
-            "forge:glass/cyan",
-            "forge:glass/gray",
-            "forge:glass/green",
-            "forge:glass/light_blue",
-            "forge:glass/light_gray",
-            "forge:glass/lime",
-            "forge:glass/magenta",
-            "forge:glass/orange",
-            "forge:glass/pink",
-            "forge:glass/purple",
-            "forge:glass/red",
-            "forge:glass/white",
-            "forge:glass/yellow",
-            "forge:glass_panes",
-            "forge:glass_panes/black",
-            "forge:glass_panes/blue",
-            "forge:glass_panes/brown",
-            "forge:glass_panes/colorless",
-            "forge:glass_panes/cyan",
-            "forge:glass_panes/gray",
-            "forge:glass_panes/green",
-            "forge:glass_panes/light_blue",
-            "forge:glass_panes/light_gray",
-            "forge:glass_panes/lime",
-            "forge:glass_panes/magenta",
-            "forge:glass_panes/orange",
-            "forge:glass_panes/pink",
-            "forge:glass_panes/purple",
-            "forge:glass_panes/red",
-            "forge:glass_panes/white",
-            "forge:glass_panes/yellow",
-            "forge:gravel",
-            "forge:gunpowder",
-            "forge:heads",
-            "forge:ingots/brick",
-            "forge:ingots/gold",
-            "forge:ingots/iron",
-            "forge:ingots/nether_brick",
-            "forge:leather",
-            "forge:mushrooms",
-            "forge:nether_stars",
-            "forge:netherrack",
-            "forge:nuggets/gold",
-            "forge:nuggets/iron",
-            "forge:obsidian",
-            "forge:ores/coal",
-            "forge:ores/diamond",
-            "forge:ores/emerald",
-            "forge:ores/gold",
-            "forge:ores/iron",
-            "forge:ores/lapis",
-            "forge:ores/quartz",
-            "forge:ores/redstone",
-            "forge:rods/blaze",
-            "forge:rods/wooden",
-            "forge:sand",
-            "forge:sand/colorless",
-            "forge:sand/red",
-            "forge:sandstone",
-            "forge:seeds",
-            "forge:seeds/beetroot",
-            "forge:seeds/melon",
-            "forge:seeds/pumpkin",
-            "forge:seeds/wheat",
-            "forge:slimeballs",
-            "forge:stained_glass",
-            "forge:stained_glass_panes",
-            "forge:stone",
-            "forge:storage_blocks/coal",
-            "forge:storage_blocks/diamond",
-            "forge:storage_blocks/emerald",
-            "forge:storage_blocks/gold",
-            "forge:storage_blocks/iron",
-            "forge:storage_blocks/lapis",
-            "forge:storage_blocks/quartz",
-            "forge:storage_blocks/redstone",
-            "forge:string"),
-          s -> s instanceof String);
-
         configListStudyItems = defineList(builder, "configliststudyitems",
           Arrays.asList
                   ("minecraft:paper;400;100", "minecraft:book;600;10"),
@@ -464,8 +297,6 @@ public class ServerConfiguration extends AbstractConfiguration
                     "minecraft:diamond_ore!2",
                     "minecraft:emerald_ore!1"),
           s -> s instanceof String);
-
-        enchanterExperienceMultiplier = defineDouble(builder, "enchanterexperiencemultiplier", 2, 1, 10);
 
         dynamicTreeHarvestSize = defineInteger(builder, "dynamictreeharvestsize", 5, 1, 8);
 
