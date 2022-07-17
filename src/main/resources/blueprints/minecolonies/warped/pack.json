@@ -1,0 +1,14 @@
+{
+  "icon": "icon.jpeg",
+  "name": "Default",
+  "authors": [
+    "Cugo"
+  ],
+  "desc": "The perfect pack to build up a colony in the nether. Beware of Zombie Pigmen!",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}
