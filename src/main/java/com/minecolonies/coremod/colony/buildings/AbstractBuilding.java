@@ -455,7 +455,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             return;
         }
 
-        if (type == WorkOrderType.REMOVE &&
+
+        if (type != WorkOrderType.REMOVE &&
               !canBeBuiltByBuilder(workOrder.getTargetLevel()) &&
               !workOrder.canBeResolved(colony, workOrder.getTargetLevel()))
         {

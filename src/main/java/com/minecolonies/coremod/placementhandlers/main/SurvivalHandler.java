@@ -103,6 +103,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final BlockPos blockPos,
       final PlacementSettings placementSettings)
     {
+        blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {

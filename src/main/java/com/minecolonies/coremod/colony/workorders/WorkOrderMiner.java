@@ -35,7 +35,7 @@ public class WorkOrderMiner extends AbstractWorkOrder
      * Create a new work order telling the miner to build a mine.
      *
      * @param packName      The name of the pack.
-     * @param structureName The name of the mine.
+     * @param structureName The path of the blueprint.
      * @param workOrderName The user friendly name of the mine.
      * @param rotation      The number of times the mine was rotated.
      * @param location      The location where the mine should be built.

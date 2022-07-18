@@ -136,7 +136,7 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
                 return IDLE;
             }
 
-            final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), "infrastructure/mineshafts/" + quarry.getSchematicName() + "shaft1", quarry.getSchematicName() + "shaft1", quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
+            final WorkOrderMiner wo = new WorkOrderMiner(quarry.getStructurePack(), "infrastructure/mineshafts/" + quarry.getSchematicName() + "shaft1.blueprint", quarry.getSchematicName() + "shaft1", quarry.getRotation(), quarry.getPosition().below(2), false, building.getPosition());
             building.getColony().getWorkManager().addWorkOrder(wo, false);
             job.setWorkOrder(wo);
         }
@@ -159,32 +159,37 @@ public class EntityAIQuarrier extends AbstractEntityAIStructureWithWorkOrder<Job
         ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(blueprintFuture, world, (blueprint -> {
             if (blueprint == null)
             {
-                final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
-                structure = new BuildingStructureHandler<>(world,
-                  position,
-                  blueprint,
-                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-                  this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
-                building.setTotalStages(3);
-
-                if (!structure.hasBluePrint())
-                {
-                    handleSpecificCancelActions();
-                    Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " aborting loading procedure");
-                    this.loadingBlueprint = false;
-                    return;
-                }
-
-                job.setBlueprint(structure.getBluePrint());
-                job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
-                setStructurePlacer(structure);
-
-                if (getProgressPos() != null)
-                {
-                    structure.setStage(getProgressPos().getB());
-                }
+                handleSpecificCancelActions();
+                Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " in: " + packName + ". Aborting loading procedure");
                 this.loadingBlueprint = false;
+                return;
             }
+
+            final BuildingStructureHandler<JobQuarrier, BuildingMiner> structure;
+            structure = new BuildingStructureHandler<>(world,
+              position,
+              blueprint,
+              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, DECORATE, CLEAR});
+            building.setTotalStages(3);
+
+            if (!structure.hasBluePrint())
+            {
+                handleSpecificCancelActions();
+                Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " aborting loading procedure");
+                this.loadingBlueprint = false;
+                return;
+            }
+
+            job.setBlueprint(structure.getBluePrint());
+            job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+            setStructurePlacer(structure);
+
+            if (getProgressPos() != null)
+            {
+                structure.setStage(getProgressPos().getB());
+            }
+            this.loadingBlueprint = false;
         })));
     }
 

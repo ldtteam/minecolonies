@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -296,7 +295,7 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
 
         if (job == null || job.getWorkOrder() == null)
         {
-            final WorkOrderMiner wo = new WorkOrderMiner(needsFallback ? "Default" : structurePack, "infrastructure/mineshafts/" + style, "infrastructure/mineshafts/" + style, rotateCount, structurePos, false, buildingMiner.getPosition());
+            final WorkOrderMiner wo = new WorkOrderMiner(needsFallback ? "Default" : structurePack, style + ".blueprint", style, rotateCount, structurePos, false, buildingMiner.getPosition());
             wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
             if (job != null)
@@ -348,7 +347,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     private static boolean needsFallBack(final String structurePacks, final String shaft)
     {
-        final Blueprint check = StructurePacks.getBlueprint(structurePacks, "infrastructure/mineshafts/" + shaft);
-        return check != null;
+        return StructurePacks.getBlueprint(structurePacks, shaft + ".blueprint") == null;
     }
 }
