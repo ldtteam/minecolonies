@@ -1,0 +1,14 @@
+{
+  "icon": "sandstone.png",
+  "name": "Desert",
+  "authors": [
+    "Raycoms", "John Reiher", "SomeAddons", "AravanFox", "Moobien"
+  ],
+  "desc": "It's 1001 Nights. Pack in your Magic Carpet and build up your own Desert Empire!",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

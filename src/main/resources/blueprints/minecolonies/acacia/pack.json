@@ -1,0 +1,14 @@
+{
+  "icon": "acacia.jpeg",
+  "name": "Acacia Savanna",
+  "authors": [
+    "John Reiher"
+  ],
+  "desc": "The Norsemen are back and are looking for a new Leader. Create a flourishing Norsemen Empire and strike fear in the hearts of your Neighbors!",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}
