@@ -1,17 +1,23 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.compatibility.candb.ChiselAndBitsCheck;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +37,7 @@ public class HutPlacementHandler implements IPlacementHandler
 
     @Override
     public ActionProcessingResult handle(
+      @NotNull final Blueprint blueprint,
       @NotNull final Level world,
       @NotNull final BlockPos pos,
       @NotNull final BlockState blockState,
@@ -54,9 +61,34 @@ public class HutPlacementHandler implements IPlacementHandler
             try
             {
                 handleTileEntityPlacement(tileEntityData, world, pos, settings);
-                if (!complete)
+                final BlockEntity be = world.getBlockEntity(pos);
+                if (be != null)
                 {
-                    blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
+                    //todo this might cause issues then with included buildings? If they're not an "invisible" one? (what we can do, is check for the tag here, and then treat it as normal.
+                    final String folder = blueprint.getFilePath().toString().replace(StructurePacks.packMetas.get(blueprint.getPackName()).getPath().toString(), "").substring(1);
+                    if (pos.equals(centerPos))
+                    {
+                        ((IBlueprintDataProvider) be).setBlueprintPath(
+                          blueprint.getFilePath().toString().replace(StructurePacks.selectedPack.getPath().toString() + "/", "") + folder + "/" + blueprint.getFileName() + ".blueprint");
+                    }
+                    else
+                    {
+                        final String partialPath = folder + "/" + ((IBlueprintDataProvider) be).getSchematicName();
+                        if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
+                        {
+                            ((IBlueprintDataProvider) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");
+                        }
+                        else
+                        {
+                            ((IBlueprintDataProvider) be).setBlueprintPath(partialPath + ".blueprint");
+                        }
+                    }
+                    ((IBlueprintDataProvider) be).setPackName(blueprint.getPackName());
+
+                    if (!complete)
+                    {
+                        blockState.getBlock().setPlacedBy(world, pos, blockState, null, BlockUtils.getItemStackFromBlockState(blockState));
+                    }
                 }
             }
             catch (final Exception ex)

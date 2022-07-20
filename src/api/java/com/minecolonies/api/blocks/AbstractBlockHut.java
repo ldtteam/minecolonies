@@ -398,6 +398,10 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @OnlyIn(Dist.CLIENT)
     public boolean areRequirementsMet(final ClientLevel level, final BlockPos pos, final LocalPlayer player)
     {
+        if (player.isCreative())
+        {
+            return true;
+        }
         return this.getRequirements(level, pos, player).isEmpty();
     }
 

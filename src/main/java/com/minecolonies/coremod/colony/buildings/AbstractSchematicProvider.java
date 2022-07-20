@@ -217,18 +217,28 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
     private void deserializerStructureInformationFrom(final CompoundTag compound)
     {
-        if (compound.contains(TAG_STYLE))
+        String packName;
+        String path;
+        if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
         {
-            structurePack = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
-            path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + buildingLevel;
+            packName = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
+            path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName()) + buildingLevel  + ".blueprint";
         }
         else
         {
-            structurePack = compound.getString(TAG_PACK);
+            packName = compound.getString(TAG_PACK);
             path = compound.getString(TAG_PATH);
         }
 
-        if (structurePack.isEmpty())
+        if (path == null || path.isEmpty())
+        {
+            path = BlueprintMapping.pathMapping.get("wooden:" + getBuildingType().getBuildingBlock().getBlueprintName()) + "1.blueprint";
+        }
+
+        this.structurePack = packName;
+        this.path = path;
+
+        if (structurePack == null || structurePack.isEmpty())
         {
             Log.getLogger().warn("Loaded empty style, setting to Default");
             structurePack = "Default";

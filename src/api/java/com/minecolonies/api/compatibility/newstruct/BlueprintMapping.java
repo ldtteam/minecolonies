@@ -19,11 +19,19 @@ public class BlueprintMapping
 
     static
     {
-        styleMapping.put("sandstone", "Moroccan");
+        styleMapping.put("wooden", "Default");
         styleMapping.put("asian", "East Asian");
         styleMapping.put("asianalternative", "East Asian");
 
-        styleMapping.put("wooden", "Default");
+        styleMapping.put("lostcity", "Lost City");
+        styleMapping.put("incan", "Incan");
+        styleMapping.put("nordic", "Nordic");
+        styleMapping.put("sandstone", "Moroccan");
+        styleMapping.put("spacewars", "Spacewars");
+        styleMapping.put("warped", "Warped");
+        styleMapping.put("truedwarven", "True Dwarven");
+        styleMapping.put("stone", "Alt Default");
+        styleMapping.put("acacia", "Acacia Savanna");
 
         //todo remaining styles
 

@@ -1,13 +1,16 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -24,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -195,9 +199,8 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public void triggerSuccess(final BlockPos pos, final List<ItemStack> list, final boolean placement)
     {
-        super.triggerSuccess(pos, list, placement);
-        final BlockState state = getBluePrint().getBlockState(pos);
         final BlockPos worldPos = getProgressPosInWorld(pos);
+        final BlockState state = getBluePrint().getBlockState(pos);
         if (building != null)
         {
             building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());
@@ -269,7 +272,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public int getMaxBlocksCheckedPerCall()
     {
-        return 250;
+        return 10000;
     }
 
     @Override
