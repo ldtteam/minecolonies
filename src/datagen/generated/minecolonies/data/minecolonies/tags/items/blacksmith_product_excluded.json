@@ -6,6 +6,8 @@
     "#minecolonies:sawmill_product",
     "#minecolonies:stonemason_product",
     "minecraft:firework_star",
-    "minecraft:glistering_melon_slice"
+    "minecraft:glistering_melon_slice",
+    "minecraft:bow",
+    "minecraft:crossbow"
   ]
 }
