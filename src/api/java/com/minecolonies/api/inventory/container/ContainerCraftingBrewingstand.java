@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
@@ -252,10 +253,10 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
     {
         if (slotId >= 0 && slotId < brewingStandInventory.getSlots())
         {
-            // 1 is shift-click
             if (mode == ClickType.PICKUP
                   || mode == ClickType.PICKUP_ALL
-                  || mode == ClickType.SWAP)
+                  || mode == ClickType.SWAP
+                  || mode == ClickType.QUICK_MOVE)
             {
                 final Slot slot = this.slots.get(slotId);
                 handleSlotClick(slot, this.getCarried());
@@ -322,54 +323,34 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
     @Override
     public ItemStack quickMoveStack(final Player playerIn, final int index)
     {
-        if (index <= brewingStandInventory.getSlots())
-        {
-            return ItemStack.EMPTY;
-        }
-        final int furnaceSlots = brewingStandInventory.getSlots();
-        final int totalSlots = playerInventory.getContainerSize() + furnaceSlots;
-
-        ItemStack itemstack = ItemStackUtils.EMPTY;
         final Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem())
         {
-            final ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index == 0)
+            final ItemStack stack = slot.getItem();
+            if (index < 3)
             {
-                if (!this.moveItemStackTo(itemstack1, furnaceSlots, totalSlots, true))
-                {
-                    return ItemStackUtils.EMPTY;
-                }
-                slot.onQuickCraft(itemstack1, itemstack);
-            }
-            else if (index < HOTBAR_START)
-            {
-                if (!this.moveItemStackTo(itemstack1, HOTBAR_START, totalSlots, false))
-                {
-                    return ItemStackUtils.EMPTY;
-                }
-            }
-            else if ((index < totalSlots
-                        && !this.moveItemStackTo(itemstack1, furnaceSlots, HOTBAR_START, false))
-                       || !this.moveItemStackTo(itemstack1, furnaceSlots, totalSlots, false))
-            {
+                setContainer(ItemStack.EMPTY);
                 return ItemStack.EMPTY;
             }
-            if (itemstack1.getCount() == 0)
+            if (index == 3)
             {
-                slot.set(ItemStackUtils.EMPTY);
+                setInput(ItemStack.EMPTY);
+                return ItemStack.EMPTY;
             }
-            else
+
+            if (BrewingRecipeRegistry.isValidIngredient(stack))
             {
-                slot.setChanged();
+                setInput(stack);
+                return ItemStack.EMPTY;
             }
-            if (itemstack1.getCount() == itemstack.getCount())
+            else if (BrewingRecipeRegistry.isValidInput(stack) && stack.getCount() == 1)
             {
-                return ItemStackUtils.EMPTY;
+                setContainer(stack);
+                return ItemStack.EMPTY;
             }
         }
-        return itemstack;
+
+        return ItemStack.EMPTY;
     }
 
     /**

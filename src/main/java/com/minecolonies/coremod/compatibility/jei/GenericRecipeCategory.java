@@ -8,21 +8,21 @@ import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import com.mojang.blaze3d.vertex.PoseStack;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,7 +47,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         super(job, Objects.requireNonNull(crafting.getUid()), getCatalyst(building), guiHelper);
 
         this.building = building;
-        this.crafting = crafting;
+        this.crafting.add(crafting);
         this.arrow = guiHelper.createDrawable(TEXTURE, 20, 121, 24, 18);
         this.modIdHelper = modIdHelper;
 
@@ -56,7 +56,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @NotNull private final BuildingEntry building;
-    @NotNull private final ICraftingBuildingModule crafting;
+    @NotNull private final List<ICraftingBuildingModule> crafting = new ArrayList<>();
     @NotNull private final IDrawableStatic arrow;
     @NotNull private final IModIdHelper modIdHelper;
 
@@ -66,6 +66,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     private static final int INPUT_SLOT_W = WIDTH - INPUT_SLOT_X;
     private final int outputSlotX;
     private final int outputSlotY;
+
+    public void addModule(@NotNull final ICraftingBuildingModule module)
+    {
+        this.crafting.add(module);
+    }
 
     @NotNull
     @Override
@@ -82,76 +87,55 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @Override
-    public void setIngredients(@NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
-    {
-        final List<List<ItemStack>> outputs = new ArrayList<>();
-        if (!isLootBasedRecipe(recipe))
-        {
-            outputs.add(recipe.getAllMultiOutputs());
-        }
-        outputs.addAll(recipe.getAdditionalOutputs().stream().map(Collections::singletonList).collect(Collectors.toList()));
-
-        if (recipe.getLootTable() != null)
-        {
-            final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
-            outputs.addAll(drops.stream().map(LootTableAnalyzer.LootDrop::getItemStacks).collect(Collectors.toList()));
-        }
-
-        ingredients.setInputLists(VanillaTypes.ITEM, recipe.getInputs());
-        ingredients.setOutputLists(VanillaTypes.ITEM, outputs);
-    }
-
-    @Override
-    public void setRecipe(@NotNull final IRecipeLayout layout, @NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
+    public void setRecipe(@NotNull final IRecipeLayoutBuilder builder,
+                          @NotNull final IGenericRecipe recipe,
+                          @NotNull final IFocusGroup focuses)
     {
         if (isLootBasedRecipe(recipe))
         {
-            setLootBasedRecipe(layout, recipe, ingredients);
+            setLootBasedRecipe(builder, recipe, focuses);
         }
         else
         {
-            setNormalRecipe(layout, recipe, ingredients);
+            setNormalRecipe(builder, recipe, focuses);
         }
     }
 
-    private void setNormalRecipe(@NotNull final IRecipeLayout layout, @NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
+    private void setNormalRecipe(@NotNull final IRecipeLayoutBuilder builder,
+                                 @NotNull final IGenericRecipe recipe,
+                                 @NotNull final IFocusGroup focuses)
     {
-        final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
         final ResourceLocation id = recipe.getRecipeId();
 
         int x = outputSlotX;
         int y = outputSlotY;
-        int slot = 0;
-        guiItemStacks.init(slot, false, x, y);
-        guiItemStacks.setBackground(slot, this.slot);
-        guiItemStacks.set(slot, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
+        IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                .setBackground(this.slot, -1, -1)
+                .addItemStacks(recipe.getAllMultiOutputs());
         if (id != null)
         {
-            guiItemStacks.addTooltipCallback(new RecipeIdTooltipCallback(slot, id, this.modIdHelper));
+            slot.addTooltipCallback(new RecipeIdTooltipCallback(id, this.modIdHelper));
         }
         x += this.slot.getWidth();
-        ++slot;
 
         for (final ItemStack extra : recipe.getAdditionalOutputs())
         {
-            guiItemStacks.init(slot, false, x, y);
-            guiItemStacks.setBackground(slot, this.slot);
-            guiItemStacks.set(slot, extra);
+            builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                    .setBackground(this.slot, -1, -1)
+                    .addItemStack(extra);
             x += this.slot.getWidth();
-            ++slot;
         }
 
         if (recipe.getLootTable() != null)
         {
             final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
-            guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops, recipe.getLootTable()));
             for (final LootTableAnalyzer.LootDrop drop : drops)
             {
-                guiItemStacks.init(slot, false, x, y);
-                guiItemStacks.setBackground(slot, this.chanceSlot);
-                guiItemStacks.set(slot, drop.getItemStacks());
+                builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                        .setBackground(this.chanceSlot, -1, -1)
+                        .addItemStacks(drop.getItemStacks())
+                        .addTooltipCallback(new LootTableTooltipCallback(drop, recipe.getLootTable()));
                 x += this.chanceSlot.getWidth();
-                ++slot;
             }
         }
 
@@ -167,9 +151,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             int c = 0;
             for (final List<ItemStack> input : inputs)
             {
-                guiItemStacks.init(slot, true, x, y);
-                guiItemStacks.set(slot, input);
-                ++slot;
+                builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+                        .addItemStacks(input);
                 if (++c >= inputColumns)
                 {
                     c = 0;
@@ -184,26 +167,24 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
         }
     }
 
-    private void setLootBasedRecipe(@NotNull final IRecipeLayout layout, @NotNull final IGenericRecipe recipe, @NotNull final IIngredients ingredients)
+    private void setLootBasedRecipe(@NotNull final IRecipeLayoutBuilder builder,
+                                    @NotNull final IGenericRecipe recipe,
+                                    @NotNull final IFocusGroup focuses)
     {
         assert recipe.getLootTable() != null;
-        final IGuiItemStackGroup guiItemStacks = layout.getItemStacks();
         final List<LootTableAnalyzer.LootDrop> drops = getLootDrops(recipe.getLootTable());
         final ResourceLocation id = recipe.getRecipeId();
 
         int x = LOOT_SLOTS_X;
         int y = CITIZEN_Y;
-        int slot = 0;
 
         final List<List<ItemStack>> inputs = recipe.getInputs();
         if (!inputs.isEmpty())
         {
             for (final List<ItemStack> input : inputs)
             {
-                guiItemStacks.init(slot, false, x, y);
-                guiItemStacks.set(slot, input);
-                ++slot;
-
+                builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+                        .addItemStacks(input);
                 x += this.slot.getWidth() + 2;
             }
         }
@@ -229,26 +210,26 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
             y = CITIZEN_Y + CITIZEN_H - rows * this.slot.getHeight() + 1;
             int c = 0;
 
-            if (showLootTooltip)
-            {
-                guiItemStacks.addTooltipCallback(new LootTableTooltipCallback(slot, drops, recipe.getLootTable()));
-            }
             for (final LootTableAnalyzer.LootDrop drop : drops)
             {
-                guiItemStacks.init(slot, true, x, y);
-                guiItemStacks.setBackground(slot, this.chanceSlot);
-                guiItemStacks.set(slot, drop.getItemStacks());
+                final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                        .setBackground(this.chanceSlot, -1, -1)
+                        .addItemStacks(drop.getItemStacks());
+                if (showLootTooltip)
+                {
+                    slot.addTooltipCallback(new LootTableTooltipCallback(drop, recipe.getLootTable()));
+                }
                 if (id != null)
                 {
-                    guiItemStacks.addTooltipCallback(new RecipeIdTooltipCallback(slot, id, this.modIdHelper));
+                    slot.addTooltipCallback(new RecipeIdTooltipCallback(id, this.modIdHelper));
                 }
-                ++slot;
                 if (++c >= columns)
                 {
                     c = 0;
                     x = startX;
                     y += this.slot.getHeight();
-                } else
+                }
+                else
                 {
                     x += this.slot.getWidth();
                 }
@@ -257,27 +238,31 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     }
 
     @Override
-    public void draw(@NotNull final IGenericRecipe recipe, @NotNull final PoseStack matrixStack, final double mouseX, final double mouseY)
+    public void draw(@NotNull final IGenericRecipe recipe,
+                     @NotNull final IRecipeSlotsView recipeSlotsView,
+                     @NotNull final PoseStack stack,
+                     final double mouseX, final double mouseY)
     {
-        super.draw(recipe, matrixStack, mouseX, mouseY);
+        super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
 
         if (!isLootBasedRecipe(recipe))
         {
-            this.arrow.draw(matrixStack, CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y + (CITIZEN_H - this.arrow.getHeight()) / 2);
+            this.arrow.draw(stack, CITIZEN_X + CITIZEN_W + 4, CITIZEN_Y + (CITIZEN_H - this.arrow.getHeight()) / 2);
         }
 
         if (recipe.getIntermediate() != Blocks.AIR)
         {
             final BlockState block = recipe.getIntermediate().defaultBlockState();
-            RenderHelper.renderBlock(matrixStack, block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
+            RenderHelper.renderBlock(stack, block, outputSlotX + 8, CITIZEN_Y + 6, 100, -30F, 30F, 16F);
         }
     }
 
-    @NotNull
     @Override
-    public List<Component> getTooltipStrings(@NotNull final IGenericRecipe recipe, final double mouseX, final double mouseY)
+    public @NotNull List<Component> getTooltipStrings(@NotNull final IGenericRecipe recipe,
+                                                      @NotNull final IRecipeSlotsView recipeSlotsView,
+                                                      final double mouseX, final double mouseY)
     {
-        final List<Component> tooltips = new ArrayList<>(super.getTooltipStrings(recipe, mouseX, mouseY));
+        final List<Component> tooltips = super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
 
         if (recipe.getIntermediate() != Blocks.AIR)
         {
@@ -304,7 +289,11 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     @NotNull
     public List<IGenericRecipe> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
-        final List<IGenericRecipe> recipes = RecipeAnalyzer.findRecipes(vanilla, this.crafting);
+        final List<IGenericRecipe> recipes = new ArrayList<>();
+        for (final ICraftingBuildingModule module : this.crafting)
+        {
+            recipes.addAll(RecipeAnalyzer.findRecipes(vanilla, module));
+        }
 
         return recipes.stream()
                 .sorted(Comparator.comparing(IGenericRecipe::getLevelSort)

@@ -86,7 +86,7 @@ public final class LootTableAnalyzer
                     .filter(entry ->
                     {
                         final String type = GsonHelper.getAsString(entry.getAsJsonObject(), "type");
-                        return type.equals("minecraft:empty") || type.equals("minecraft:item") || type.equals("minecraft:tag") || type.equals("minecraft:loot_table");
+                        return type.equals("minecraft:empty") || type.equals("minecraft:item") || type.equals("minecraft:tag") || type.equals("minecraft:loot_table") || type.equals("minecraft:alternatives");
                     })
                     .mapToInt(entry -> GsonHelper.getAsInt(entry.getAsJsonObject(), "weight", 1))
                     .sum();
@@ -94,51 +94,74 @@ public final class LootTableAnalyzer
             for (final JsonElement ej : entries)
             {
                 final JsonObject entryJson = ej.getAsJsonObject();
-                final String type = GsonHelper.getAsString(entryJson, "type");
-                if (type.equals("minecraft:item"))
+                final float weight = GsonHelper.getAsFloat(entryJson, "weight", 1);
+                final List<LootDrop> entryDrops = entryToDrops(lootTableManager, entryJson);
+                for (final LootDrop drop : entryDrops)
                 {
-                    final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(entryJson, "name")));
-                    final float weight = GsonHelper.getAsFloat(entryJson, "weight", 1);
-                    final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
-                    float modifier = 1.0F;
-                    final boolean conditional = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
-                    ItemStack stack = new ItemStack(item);
-                    if (entryJson.has("functions"))
-                    {
-                        final Tuple<ItemStack, Float> result = processFunctions(stack, GsonHelper.getAsJsonArray(entryJson, "functions"));
-                        stack = result.getA();
-                        modifier = result.getB();
-                    }
-
-                    if (stack.getItem().equals(ModItems.adventureToken))
-                    {
-                        final List<LootDrop> mobDrops = expandAdventureToken(lootTableManager, stack);
-                        for (final LootTableAnalyzer.LootDrop drop : mobDrops)
-                        {
-                            drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality() + quality, drop.getConditional() || conditional));
-                        }
-                    }
-                    else
-                    {
-                        drops.add(new LootDrop(Collections.singletonList(stack), weight / totalWeight * modifier, quality, conditional));
-                    }
-                }
-                else if (type.equals("minecraft:loot_table"))
-                {
-                    final ResourceLocation table = new ResourceLocation(GsonHelper.getAsString(entryJson, "name"));
-                    final List<LootTableAnalyzer.LootDrop> tableDrops = toDrops(lootTableManager, table);
-                    final float weight = GsonHelper.getAsFloat(entryJson, "weight", 1);
-                    final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
-                    final boolean conditional = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
-                    for (final LootTableAnalyzer.LootDrop drop : tableDrops)
-                    {
-                        drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality() + quality, drop.getConditional() || conditional));
-                    }
+                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability() * (weight / totalWeight), drop.getQuality(), drop.getConditional()));
                 }
             }
         }
 
         drops.sort(Comparator.comparing(LootDrop::getProbability).reversed());
+        return drops;
+    }
+
+    @NotNull
+    private static List<LootDrop> entryToDrops(@Nullable final LootTables lootTableManager,
+                                               @NotNull final JsonObject entryJson)
+    {
+        final List<LootDrop> drops = new ArrayList<>();
+        final String type = GsonHelper.getAsString(entryJson, "type");
+        switch (type)
+        {
+            case "minecraft:item" -> {
+                final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(entryJson, "name")));
+                final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
+                float modifier = 1.0F;
+                final boolean conditional = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
+                ItemStack stack = new ItemStack(item);
+                if (entryJson.has("functions"))
+                {
+                    final Tuple<ItemStack, Float> result = processFunctions(stack, GsonHelper.getAsJsonArray(entryJson, "functions"));
+                    stack = result.getA();
+                    modifier = result.getB();
+                }
+                if (stack.getItem().equals(ModItems.adventureToken))
+                {
+                    final List<LootDrop> mobDrops = expandAdventureToken(lootTableManager, stack);
+                    for (final LootDrop drop : mobDrops)
+                    {
+                        drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability(), drop.getQuality() + quality, drop.getConditional() || conditional));
+                    }
+                }
+                else
+                {
+                    drops.add(new LootDrop(Collections.singletonList(stack), modifier, quality, conditional));
+                }
+            }
+            case "minecraft:loot_table" -> {
+                final ResourceLocation table = new ResourceLocation(GsonHelper.getAsString(entryJson, "name"));
+                final List<LootDrop> tableDrops = toDrops(lootTableManager, table);
+                final float quality = GsonHelper.getAsFloat(entryJson, "quality", 0);
+                final boolean conditional = GsonHelper.getAsJsonArray(entryJson, "conditions", new JsonArray()).size() > 0;
+                for (final LootDrop drop : tableDrops)
+                {
+                    drops.add(new LootDrop(drop.getItemStacks(), drop.getProbability(), drop.getQuality() + quality, drop.getConditional() || conditional));
+                }
+            }
+            case "minecraft:alternatives" -> {
+                final JsonArray children = GsonHelper.getAsJsonArray(entryJson, "children", new JsonArray());
+                // currently, the only one of these we're dealing with is "silk touch or not", so we'll just find the
+                // first one that doesn't have conditions and call it a day, at least for now... (or failing that, just the last)
+                final JsonObject childJson = StreamSupport.stream(children.spliterator(), false)
+                        .map(JsonElement::getAsJsonObject)
+                        .filter(j -> !j.has("conditions"))
+                        .findFirst()
+                        .orElse(children.get(children.size() - 1).getAsJsonObject());
+                drops.addAll(entryToDrops(lootTableManager, childJson));
+            }
+        }
         return drops;
     }
 
@@ -224,14 +247,19 @@ public final class LootTableAnalyzer
                     stack = EnchantmentHelper.enchantItem(ThreadLocalRandom.current(), stack, levels, treasure);
                     break;
 
+                case "minecraft:apply_bonus":
                 case "minecraft:looting_enchant":
                     // just ignore this for now; we could possibly increase the count a little or
-                    // add a tooltip to indicate it's boosted by looting, but meh.
+                    // add a tooltip to indicate it's boosted by looting/fortune, but meh.
                     break;
 
                 case "minecraft:furnace_smelt":
                     // this is mostly just to cook the meat if an animal is on fire, which
                     // we can safely ignore.
+                    break;
+
+                case "minecraft:explosion_decay":
+                    // ignore this; we're not expecting explosions
                     break;
 
                 default:
@@ -247,7 +275,7 @@ public final class LootTableAnalyzer
     {
         if (json == null) return new Tuple<>(1, 1.0F);
 
-        if (json.isJsonObject() && GsonHelper.getAsString(json.getAsJsonObject(), "type", "").equals("uniform"))
+        if (json.isJsonObject() && GsonHelper.getAsString(json.getAsJsonObject(), "type", "").equals("minecraft:uniform"))
         {
             final int min = GsonHelper.getAsInt(json.getAsJsonObject(), "min", 0);
             final int max = GsonHelper.getAsInt(json.getAsJsonObject(), "max", 1);
@@ -267,9 +295,9 @@ public final class LootTableAnalyzer
         {
             switch (GsonHelper.getAsString(json.getAsJsonObject(), "type", ""))
             {
-                case "constant":
+                case "minecraft:constant":
                     return GsonHelper.getAsInt(json.getAsJsonObject(), "value", defaultValue);
-                case "uniform":
+                case "minecraft:uniform":
                     return GsonHelper.getAsInt(json.getAsJsonObject(), "max", defaultValue);
                 default:
                     return defaultValue;
@@ -291,9 +319,9 @@ public final class LootTableAnalyzer
         {
             switch (GsonHelper.getAsString(json.getAsJsonObject(), "type", ""))
             {
-                case "constant":
+                case "minecraft:constant":
                     return GsonHelper.getAsFloat(json.getAsJsonObject(), "value", defaultValue);
-                case "uniform":
+                case "minecraft:uniform":
                     return GsonHelper.getAsFloat(json.getAsJsonObject(), "max", defaultValue);
                 default:
                     return defaultValue;

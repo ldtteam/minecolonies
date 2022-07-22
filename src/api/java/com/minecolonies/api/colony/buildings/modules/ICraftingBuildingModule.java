@@ -6,15 +6,15 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.IRecipeStorage;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.util.OptionalPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -237,6 +237,20 @@ public interface ICraftingBuildingModule extends IBuildingModule
      */
     @NotNull
     List<IGenericRecipe> getAdditionalRecipesForDisplayPurposesOnly();
+
+    /**
+     * Gets a list of loot tables that should be available for drop
+     * analysis (beyond any already used in recipes).  This is not
+     * intended for actually generating loot, just for display purposes
+     * such as in JEI (e.g. via {@link #getAdditionalRecipesForDisplayPurposesOnly()}).
+     *
+     * @return The list of loot table ids
+     */
+    @NotNull
+    default List<ResourceLocation> getAdditionalLootTables()
+    {
+        return Collections.emptyList();
+    }
 
     /**
      * Add a recipe to the building.
