@@ -11,11 +11,13 @@
 
     <view id="equipment" size="164 16" pos="13 90"/>
     <gradient size="164 36" pos="13 110" gradientstart="4292072403" gradientend="4289309097"/>
-    <gradient size="164 80" pos="13 150" gradientstart="4292072403" gradientend="4289309097"/>
+    <gradient id="resourcesbg" size="164 80" pos="13 150" gradientstart="4292072403" gradientend="4289309097"/>
     <box size="164 36" pos="13 110" linewidth="2">
         <view id="mobs" size="100% 100%"/>
     </box>
     <box size="164 80" pos="13 150" linewidth="2">
         <view id="resources" size="100% 100%"/>
     </box>
+    <image id="rip" source="minecolonies:textures/icons/grave_icon.png" size="8 8" pos="166 153"
+           tooltip="$(com.minecolonies.gui.workerhuts.expedition.killed.tip)" visible="false" />
 </window>

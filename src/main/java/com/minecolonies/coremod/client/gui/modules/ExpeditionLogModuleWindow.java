@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui.modules;
 
-import com.ldtteam.blockui.controls.EntityIcon;
-import com.ldtteam.blockui.controls.ItemIcon;
-import com.ldtteam.blockui.controls.Text;
+import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -75,6 +73,20 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(new TextComponent(Objects.requireNonNullElse(expeditionLog.getName(), "")));
         findPaneOfTypeByID("status", Text.class).setText(new TranslatableComponent(
                 TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.ROOT)));
+
+        final Gradient bg = findPaneOfTypeByID("resourcesbg", Gradient.class);
+        if (expeditionLog.getStatus().equals(ExpeditionLog.Status.KILLED))
+        {
+            findPaneOfTypeByID("rip", Image.class).setVisible(true);
+            bg.setGradientStart(0xDD, 0x66, 0x66, 0xFF);
+            bg.setGradientEnd(0xAA, 0x55, 0x55, 0xFF);
+        }
+        else
+        {
+            findPaneOfTypeByID("rip", Image.class).setVisible(false);
+            bg.setGradientStart(0xD3, 0xD3, 0xD3, 0xFF);
+            bg.setGradientEnd(0xA9, 0xA9, 0xA9, 0xFF);
+        }
 
         clearChildren(findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class), 1);
         clearChildren(findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class), 0);

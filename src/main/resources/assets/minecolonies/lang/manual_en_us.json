@@ -1143,6 +1143,7 @@
   "com.minecolonies.gui.workerhuts.expedition.returning_home": "Returning Home",
   "com.minecolonies.gui.workerhuts.expedition.completed": "Expedition Complete",
   "com.minecolonies.gui.workerhuts.expedition.killed": "Died during Expedition",
+  "com.minecolonies.gui.workerhuts.expedition.killed.tip": "Sadly, these items were lost.",
 
   "minecolonies.config.enchantments": "Enchantments",
   "minecolonies.config.enchantments.comment": "The possible enchantments for the enchanter.",
