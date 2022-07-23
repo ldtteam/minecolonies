@@ -1145,6 +1145,7 @@
   "com.minecolonies.gui.workerhuts.expedition.returning_home": "Returning Home",
   "com.minecolonies.gui.workerhuts.expedition.completed": "Expedition Complete",
   "com.minecolonies.gui.workerhuts.expedition.killed": "Died during Expedition",
+  "com.minecolonies.gui.workerhuts.expedition.killed.tip": "Sadly, these items were lost.",
 
   "minecolonies.config.enchanterexperiencemultiplier": "Enchanter Experience Multiplier",
   "minecolonies.config.enchanterexperiencemultiplier.comment": "Experience multiplier of the enchanter (how much more experience do they get from a citizen than they drain).",

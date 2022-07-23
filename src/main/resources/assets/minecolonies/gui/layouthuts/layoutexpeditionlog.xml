@@ -18,4 +18,6 @@
     <box size="164 80" pos="13 150" linewidth="2">
         <view id="resources" size="100% 100%"/>
     </box>
+    <image id="rip" source="minecolonies:textures/icons/grave_icon.png" size="8 8" pos="168 151"
+           tooltip="$(com.minecolonies.gui.workerhuts.expedition.killed.tip)" visible="false" />
 </window>

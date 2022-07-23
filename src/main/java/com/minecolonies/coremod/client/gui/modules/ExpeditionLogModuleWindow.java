@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.client.gui.modules;
 
-import com.ldtteam.blockout.controls.EntityIcon;
-import com.ldtteam.blockout.controls.Gradient;
-import com.ldtteam.blockout.controls.ItemIcon;
-import com.ldtteam.blockout.controls.Text;
+import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.View;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -38,6 +35,10 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
      */
     private static final String RESOURCE_STRING = ":gui/layouthuts/layoutexpeditionlog.xml";
 
+    private static final String MOBS_BG = "mobsbg";
+    private static final String RESOURCE_BG = "resourcesbg";
+    private static final String DEATH_ICON = "rip";
+
     private final ExpeditionLogModuleView module;
 
     /**
@@ -50,8 +51,8 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.module = module;
 
-        findPaneOfTypeByID("mobsbg", Gradient.class).setBlitOffset(-50);
-        findPaneOfTypeByID("resourcesbg", Gradient.class).setBlitOffset(-50);
+        findPaneOfTypeByID(MOBS_BG, Gradient.class).setBlitOffset(-50);
+        findPaneOfTypeByID(RESOURCE_BG, Gradient.class).setBlitOffset(-50);
     }
 
     @Override
@@ -79,6 +80,20 @@ public class ExpeditionLogModuleWindow extends AbstractModuleWindow
         findPaneOfTypeByID(WINDOW_ID_NAME, Text.class).setText(new StringTextComponent(Optional.ofNullable(expeditionLog.getName()).orElse("")));
         findPaneOfTypeByID("status", Text.class).setText(new TranslationTextComponent(
                 TranslationConstants.PARTIAL_EXPEDITION_STATUS + expeditionLog.getStatus().name().toLowerCase(Locale.ROOT)));
+
+        final Gradient bg = findPaneOfTypeByID(RESOURCE_BG, Gradient.class);
+        if (expeditionLog.getStatus().equals(ExpeditionLog.Status.KILLED))
+        {
+            findPaneOfTypeByID(DEATH_ICON, Image.class).setVisible(true);
+            bg.setGradientStart(0xDD, 0x66, 0x66, 0xFF);
+            bg.setGradientEnd(0xAA, 0x55, 0x55, 0xFF);
+        }
+        else
+        {
+            findPaneOfTypeByID(DEATH_ICON, Image.class).setVisible(false);
+            bg.setGradientStart(0xD3, 0xD3, 0xD3, 0xFF);
+            bg.setGradientEnd(0xA9, 0xA9, 0xA9, 0xFF);
+        }
 
         clearChildren(findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class), 1);
         clearChildren(findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class), 0);
