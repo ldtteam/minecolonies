@@ -8,6 +8,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.AbstractTileEntityBarrel;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -21,7 +22,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import org.jetbrains.annotations.NotNull;
@@ -148,7 +148,7 @@ public class TileEntityBarrel extends AbstractTileEntityBarrel
 
         if (items == AbstractTileEntityBarrel.MAX_ITEMS)
         {
-            playerIn.sendMessage(new TranslationTextComponent("entity.barrel.working"), playerIn.getUUID());
+            MessageUtils.format("entity.barrel.working").sendTo(playerIn);
             return false;
         }
         else

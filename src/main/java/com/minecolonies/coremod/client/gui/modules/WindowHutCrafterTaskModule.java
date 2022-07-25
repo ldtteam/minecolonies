@@ -4,7 +4,6 @@ import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.controls.Image;
 import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
@@ -14,6 +13,7 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -99,14 +99,12 @@ public class WindowHutCrafterTaskModule extends AbstractModuleWindow
                     rowPane.findPaneOfTypeByID(PARENT, Text.class).clearText();
                 }
 
-                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class)
-                  .setText(request.getShortDisplayString().getString().replace("§f", ""));
+                rowPane.findPaneOfTypeByID(REQUEST_SHORT_DETAIL, Text.class).setText(request.getShortDisplayString().getString().replace("§f", ""));
 
                 if (request.getRequest() instanceof IDeliverymanRequestable)
                 {
-                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class)
-                      .setText(
-                        LanguageHandler.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY) + ((IDeliverymanRequestable) (request.getRequest())).getPriority());
+                    rowPane.findPaneOfTypeByID(REQUEST_PRIORITY, Text.class).setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_PRIORITY)
+                                                                                       .append(String.valueOf(((IDeliverymanRequestable) request.getRequest()).getPriority())));
                 }
 
                 final Image logo = rowPane.findPaneOfTypeByID(DELIVERY_IMAGE, Image.class);

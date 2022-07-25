@@ -6,11 +6,17 @@ import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.INPC;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.ITeleporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.minecolonies.api.sounds.EventType.SUCCESS;
+import static com.minecolonies.api.util.SoundUtils.playSoundAtCivilian;
+import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
 public abstract class AbstractCivilianEntity extends AgeableEntity implements INPC, IStuckHandlerEntity
 {
@@ -19,6 +25,11 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
      * Whether this entity can be stuck for stuckhandling
      */
     private boolean canBeStuck = true;
+
+    /**
+     * Time after which the next player collision is possible
+     */
+    protected long nextPlayerCollisionTime = 0;
 
     protected AbstractCivilianEntity(final EntityType<? extends AgeableEntity> type, final World worldIn)
     {
@@ -31,6 +42,13 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
      * @param data the data to set.
      */
     public abstract void setCivilianData(@Nullable ICivilianData data);
+
+    /**
+     * Setter for the citizen data.
+     *
+     * @return civilian data
+     */
+    public abstract ICivilianData getCivilianData();
 
     /**
      * Mark the citizen dirty to synch the data with the client.
@@ -65,6 +83,33 @@ public abstract class AbstractCivilianEntity extends AgeableEntity implements IN
     public void setCanBeStuck(final boolean canBeStuck)
     {
         this.canBeStuck = canBeStuck;
+    }
+
+    @Override
+    public void push(@NotNull final Entity entityIn)
+    {
+        if (entityIn instanceof ServerPlayerEntity)
+        {
+            onPlayerCollide((PlayerEntity) entityIn);
+        }
+        super.push(entityIn);
+    }
+
+    /**
+     * On player collision action
+     *
+     * @param player
+     */
+    public void onPlayerCollide(final PlayerEntity player)
+    {
+        if (player.level.getGameTime() > nextPlayerCollisionTime)
+        {
+            nextPlayerCollisionTime = player.level.getGameTime() + TICKS_SECOND * 15;
+            getNavigation().stop();
+            getLookControl().setLookAt(player.position().add(0, player.eyeHeight, 0));
+
+            playSoundAtCivilian(level, blockPosition(), SUCCESS, getCivilianData());
+        }
     }
 
     /**

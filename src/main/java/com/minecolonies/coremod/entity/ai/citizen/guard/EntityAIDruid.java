@@ -7,15 +7,10 @@ import com.minecolonies.coremod.colony.jobs.JobDruid;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavigate;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobWalkRandomEdge;
-import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
 import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 
 /**
@@ -38,23 +33,14 @@ public class EntityAIDruid extends AbstractEntityAIGuard<JobDruid, AbstractBuild
         if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0)
         {
             // Mistletoes and water bottles
-            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
-              item -> item.getItem() instanceof PotionItem,
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
+              item ->  item.getItem() == ModItems.magicpotion,
               32,
               worker.getInventoryCitizen());
 
-            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
-              item -> item.getItem() == ModItems.mistletoe,
-              32,
-              worker.getInventoryCitizen());
-
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof PotionItem) < 5)
+            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion) < 8)
             {
-                checkIfRequestForItemExistOrCreateAsynch(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER), 9, 1);
-            }
-            if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() == ModItems.mistletoe) < 8)
-            {
-                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(ModItems.mistletoe), 32, 8);
+                checkIfRequestForItemExistOrCreateAsync(new ItemStack(ModItems.magicpotion), 16, 8);
             }
         }
     }

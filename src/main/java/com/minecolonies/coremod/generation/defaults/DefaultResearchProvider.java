@@ -104,7 +104,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Guard and Worker unlocks do not need a strength, but do have static ResourceLocations.
         effects.add(new ResearchEffect(ARCHER_USE_ARROWS).setTranslatedName("Archers Use Arrows For +2 Damage"));
-        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Watter Bottles and Mistletoes to unlock new Abilities"));
+        effects.add(new ResearchEffect(DRUID_USE_POTIONS).setTranslatedName("Druids request Magic Potions to unlock new Abilities"));
         effects.add(new ResearchEffect(CRUSHING_11).setTranslatedName("Crusher Recipes Cost -50%"));
         effects.add(new ResearchEffect(KNIGHT_TAUNT).setTranslatedName("Knights Force Mobs to Target Them"));
         effects.add(new ResearchEffect(FIRE_RES).setTranslatedName("Miners Have Fire and Lava Immunity"));
@@ -122,6 +122,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(USE_TOTEM).setTranslatedName("Undertaker gains the ability to use Totems of Undying to assist in Resurrection"));
         effects.add(new ResearchEffect(RECIPE_MODE).setTranslatedName("Add the option to select recipes based on Warehouse stock"));
         effects.add(new ResearchEffect(BUILDER_MODE).setTranslatedName("Add the option to select different build-modes for your builders"));
+        effects.add(new ResearchEffect(SOFT_SHOES).setTranslatedName("Farmers will no longer trample crops"));
+        effects.add(new ResearchEffect(FISH_TREASURE).setTranslatedName("Fishers can find treasure outside the ocean"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -148,6 +150,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.stoneMason.getBuildingBlock()).setTranslatedName("Unlocks Stonemason's Hut"));
         effects.add(new ResearchEffect(ModBuildings.stoneSmelter.getBuildingBlock()).setTranslatedName("Unlocks Stone Smeltery"));
         effects.add(new ResearchEffect(ModBuildings.netherWorker.getBuildingBlock()).setTranslatedName("Unlocks Nether Mine"));
+        effects.add(new ResearchEffect(ModBuildings.alchemist.getBuildingBlock()).setTranslatedName("Unlocks Alchemist"));
+
 
         // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
         // Assigning them for now to handle text cleanly, and to allow researches with both recipe and non-recipe effects.
@@ -1250,8 +1254,18 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addToList(r);
 
         // Primary Research #2
+        final Research softShoes = new Research(new ResourceLocation(Constants.MOD_ID, "technology/softshoes"), TECH).setTranslatedName("Soft Shoes")
+        .setTranslatedSubtitle("Tiptoe through the tulips.")
+        .setSortOrder(2)
+        .setIcon(Items.LEATHER_BOOTS)
+        .addItemCost(Items.WHITE_WOOL, 16)
+        .addItemCost(Items.FEATHER, 16)
+        .addEffect(SOFT_SHOES, 1)
+        .addToList(r);
+
+        // Primary Research #3
         final Research moreScrolls = new Research(new ResourceLocation(Constants.MOD_ID, "technology/morescrolls"), TECH).setTranslatedName("More Scrolls")
-          .setSortOrder(2)
+          .setSortOrder(3)
           .setIcon(ModItems.scrollHighLight)
           .addBuildingRequirement("enchanter", 3)
           .addItemCost(Items.PAPER, 64)
@@ -1260,7 +1274,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(new ResourceLocation("minecolonies:effects/morescrollsunlock"), 1)
           .addToList(r);
 
-        new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
+        final Research netherminer = new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
                                     .setTranslatedName("Open the Nether")
                                     .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
                                     .setIcon(ModBlocks.blockHutNetherWorker.asItem())
@@ -1268,10 +1282,27 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                     .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
                                     .addToList(r);
 
-        // Primary Research #3
+        final Research alchemist = new Research(new ResourceLocation(Constants.MOD_ID, "technology/alchemist"), TECH).setParentResearch(netherminer)
+          .setTranslatedName("Magic Potions")
+          .setTranslatedSubtitle("These Romans are crazy")
+          .setIcon(ModBlocks.blockHutAlchemist.asItem())
+          .addItemCost(Items.NETHER_WART, 16)
+          .addEffect(ModBuildings.alchemist.getBuildingBlock(), 1)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/oceanheart"), TECH).setParentResearch(alchemist)
+                .setTranslatedName("Ocean's Heart")
+                .setTranslatedSubtitle("With great mystic power comes great mystic loot!")
+                .setIcon(Items.FISHING_ROD)
+                .addBuildingRequirement(ModBuildings.FISHERMAN_ID, 4)
+                .addItemCost(Items.HEART_OF_THE_SEA, 1)
+                .addEffect(FISH_TREASURE, 1)
+                .addToList(r);
+
+        // Primary Research #4
         final Research stoneCake = new Research(new ResourceLocation(Constants.MOD_ID, "technology/stonecake"), TECH).setTranslatedName("Stone Cake")
                                      .setTranslatedSubtitle("Don't break a tooth!")
-                                     .setSortOrder(3)
+                                     .setSortOrder(4)
                                      .setIcon(ModBlocks.blockHutStonemason.asItem())
                                      .addBuildingRequirement(ModBuildings.MINER_ID, 3)
                                      .addItemCost(Items.CHISELED_STONE_BRICKS, 64)
@@ -1305,10 +1336,10 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(ModBuildings.concreteMixer.getBuildingBlock(), 1)
           .addToList(r);
 
-        // Primary Research #4
+        // Primary Research #5
         final Research woodwork = new Research(new ResourceLocation(Constants.MOD_ID, "technology/woodwork"), TECH).setTranslatedName("Woodwork")
                                     .setTranslatedSubtitle("Where oh where would a wood worker work if a wood worker would work wood?")
-                                    .setSortOrder(4)
+                                    .setSortOrder(5)
                                     .setIcon(ModBlocks.blockHutSawmill.asItem())
                                     .addBuildingRequirement("lumberjack", 3)
                                     .addItemCost(Items.OAK_PLANKS, 64)
@@ -1450,9 +1481,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(CITIZEN_INV_SLOTS, 3)
           .addToList(r);
 
-        // Primary Research #5
+        // Primary Research #6
         final Research hot = new Research(new ResourceLocation(Constants.MOD_ID, "technology/hot"), TECH).setTranslatedName("Hot!")
-                               .setSortOrder(5)
+                               .setSortOrder(6)
                                .setIcon(ModBlocks.blockHutSmeltery.asItem())
                                .addBuildingRequirement(ModBuildings.MINER_ID, 2)
                                .addItemCost(Items.LAVA_BUCKET, 4)
@@ -1518,8 +1549,9 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(ModBuildings.glassblower.getBuildingBlock(), 1)
           .addToList(r);
 
-        // Primary Research #6
+        // Primary Research #7
         final Research hittingIron = new Research(new ResourceLocation(Constants.MOD_ID, "technology/hittingiron"), TECH).setTranslatedName("Hitting Iron!")
+                                       .setSortOrder(7)
                                        .setTranslatedSubtitle("We're still ironing out the details.")
                                        .setIcon(ModBlocks.blockHutBlacksmith.asItem())
                                        .addBuildingRequirement(ModBuildings.MINER_ID, 3)

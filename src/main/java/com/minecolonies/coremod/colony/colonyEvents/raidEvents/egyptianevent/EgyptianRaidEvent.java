@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.egyptianevent;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
@@ -17,7 +16,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import static com.minecolonies.api.entity.ModEntities.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_EGYPTIAN;
@@ -175,6 +174,6 @@ public class EgyptianRaidEvent extends HordeRaidEvent
     @Override
     protected IFormattableTextComponent getDisplayName()
     {
-        return new StringTextComponent(LanguageHandler.format(RAID_EGYPTIAN));
+        return new TranslationTextComponent(RAID_EGYPTIAN);
     }
 }

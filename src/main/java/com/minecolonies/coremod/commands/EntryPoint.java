@@ -39,9 +39,10 @@ public class EntryPoint
          * Colony commands subtree
          */
         final CommandTree colonyCommands = new CommandTree("colony")
-                                             .addNode(new CommandAddOfficer().build())
-                                             .addNode(new CommandChangeOwner().build())
-                                             .addNode(new CommandClaimChunks().build())
+          .addNode(new CommandAddOfficer().build())
+          .addNode(new CommandChangeOwner().build())
+          .addNode(new CommandClaimChunks().build())
+          .addNode(new CommandShowClaim().build())
                                              .addNode(new CommandTeleport().build())
                                              .addNode(new CommandDeleteColony().build())
                                              .addNode(new CommandCanRaiderSpawn().build())

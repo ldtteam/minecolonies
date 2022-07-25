@@ -128,5 +128,8 @@ public class ModModelTypeInitializer
 
         ModModelTypes.DRUID = new SimpleModelType(ModModelTypes.DRUID_ID, 1, new ModelEntityDruidMale(), new ModelEntityDruidFemale());
         reg.register(ModModelTypes.DRUID);
+
+        ModModelTypes.ALCHEMIST = new SimpleModelType(ModModelTypes.ALCHEMIST_ID, 1, new ModelEntityAlchemistMale(), new ModelEntityAlchemistFemale());
+        reg.register(ModModelTypes.ALCHEMIST);
     }
 }

@@ -88,11 +88,11 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
     {
         if (worker.getRandom().nextInt(STUDY_TO_RECESS_RATIO) < 1)
         {
-            recessPos = getOwnBuilding().getPosition();
+            recessPos = building.getPosition();
             return RECESS;
         }
 
-        final BuildingSchool school = getOwnBuilding();
+        final BuildingSchool school = building;
         final BlockPos pos = school.getRandomPlaceToSit();
         if (pos == null)
         {
@@ -141,7 +141,7 @@ public class EntityAIWorkPupil extends AbstractEntityAIInteract<JobPupil, Buildi
             return DECIDE;
         }
 
-        if (walkToBlock(studyPos))
+        if (walkToBlock(studyPos, 1))
         {
             return getState();
         }

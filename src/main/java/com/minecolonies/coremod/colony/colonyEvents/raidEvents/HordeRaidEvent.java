@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.EventStatus;
@@ -11,6 +10,7 @@ import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.sounds.RaidSounds;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.NbtTagConstants;
@@ -32,6 +32,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
@@ -281,7 +282,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (horde.hordeSize > 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_BARBARIANS_KILLED_MESSAGE, colony.getName());
+            MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
         }
     }
 
@@ -317,7 +318,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
     @Override
     public void onStart()
     {
-        if (spawnPathResult.isDone())
+        if (spawnPathResult != null && spawnPathResult.isDone())
         {
             final Path path = spawnPathResult.getPath();
             if (path != null && path.canReach())
@@ -350,9 +351,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         updateRaidBar();
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getImportantMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
+        MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName()).sendTo(colony).forManagers();
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundCategory.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);
@@ -373,8 +372,8 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
      */
     protected void updateRaidBar()
     {
-        final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(getDisplayName().append(new StringTextComponent(" - " + directionName)));
+        final ITextComponent directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
+        raidBar.setName(getDisplayName().append(" - ").append(directionName));
         for (final PlayerEntity player : colony.getPackageManager().getCloseSubscribers())
         {
             raidBar.addPlayer((ServerPlayerEntity) player);
@@ -468,7 +467,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         if (total == 0)
         {
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), LanguageHandler.translateKey(ALL_BARBARIANS_KILLED_MESSAGE), colony.getName());
+            MessageUtils.format(ALL_BARBARIANS_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
 
             PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.VICTORY_EARLY : RaidSounds.VICTORY, SoundCategory.RECORDS);
             PlayAudioMessage.sendToAll(getColony(), false, true, audio);
@@ -480,7 +479,7 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
         }
         else if (total > 0 && total <= SMALL_HORDE_SIZE)
         {
-            LanguageHandler.sendPlayersMessage(colony.getMessagePlayerEntities(), ONLY_X_BARBARIANS_LEFT_MESSAGE, total);
+            MessageUtils.format(ONLY_X_BARBARIANS_LEFT_MESSAGE, total).sendTo(colony).forManagers();
         }
     }
 

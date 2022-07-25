@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
@@ -14,16 +15,18 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_MAXIMUM_NUMBER_RECIPES;
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * AbstractCrafting gui.
@@ -106,7 +109,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         super(container, playerInventory, iTextComponent);
         this.building = (AbstractBuildingView) IColonyManager.getInstance().getBuildingView(playerInventory.player.level.dimension(), container.getPos());
         this.module = building.getModuleViewMatching(CraftingModuleView.class, v -> v.getId().equals(container.getModuleId()));
-        completeCrafting = module.canLearnLargeRecipes();
+        completeCrafting = module.canLearn(ModCraftingTypes.LARGE_CRAFTING);
     }
 
     @NotNull
@@ -124,14 +127,13 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     protected void init()
     {
         super.init();
-        final String buttonDisplay = module.canLearnCraftingRecipes() ? I18n.get("gui.done") : LanguageHandler.format("com.minecolonies.coremod.gui.recipe.full");
+        final ITextComponent buttonDisplay = new TranslationTextComponent(module.canLearn(ModCraftingTypes.SMALL_CRAFTING) ? BASE_GUI_DONE : WARNING_MAXIMUM_NUMBER_RECIPES);
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button
-          doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, new StringTextComponent(buttonDisplay), new WindowCrafting.OnButtonPress());
+        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowCrafting.OnButtonPress());
         this.addButton(doneButton);
-        if (!module.canLearnCraftingRecipes())
+        if (!module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
         {
             doneButton.active = false;
         }
@@ -142,7 +144,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
         @Override
         public void onPress(final Button button)
         {
-            if (module.canLearnCraftingRecipes())
+            if (module.canLearn(ModCraftingTypes.SMALL_CRAFTING))
             {
                 final List<ItemStorage> input = new LinkedList<>();
 
@@ -160,7 +162,8 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
 
                 if (!ItemStackUtils.isEmpty(primaryOutput))
                 {
-                    Network.getNetwork().sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getId()));
+                    Network.getNetwork()
+                      .sendToServer(new AddRemoveRecipeMessage(building, input, completeCrafting ? 3 : 2, primaryOutput, secondaryOutputs, false, module.getId()));
                 }
             }
         }
@@ -172,7 +175,7 @@ public class WindowCrafting extends ContainerScreen<ContainerCrafting>
     @Override
     protected void renderLabels(@NotNull final MatrixStack stack, final int mouseX, final int mouseY)
     {
-        this.font.draw(stack, I18n.get("container.crafting"), X_OFFSET, Y_OFFSET, GUI_COLOR);
+        this.font.draw(stack, new TranslationTextComponent("container.crafting").getString(), X_OFFSET, Y_OFFSET, GUI_COLOR);
     }
 
     /**

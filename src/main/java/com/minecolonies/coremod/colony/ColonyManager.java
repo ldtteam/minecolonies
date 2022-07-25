@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -79,7 +78,7 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String style)
+    public void createColony(@NotNull final World w, final BlockPos pos, @NotNull final PlayerEntity player, @NotNull final String colonyName, @NotNull final String style)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
@@ -91,7 +90,6 @@ public final class ColonyManager implements IColonyManager
         final IColony colony = cap.createColony(w, pos);
         colony.setStyle(style);
 
-        final String colonyName = LanguageHandler.format("com.minecolonies.coremod.gui.townHall.defaultName", player.getName().getString());
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);
 
@@ -106,7 +104,7 @@ public final class ColonyManager implements IColonyManager
             return;
         }
 
-        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter(), colony.getDimension());
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
     }
 
     @Override
@@ -146,7 +144,7 @@ public final class ColonyManager implements IColonyManager
 
         try
         {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter(), colony.getDimension());
+            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
             Log.getLogger().info("Removing citizens for " + id);
             for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
             {
@@ -425,12 +423,12 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyView(cap.getOwningColony(), w.dimension());
         }
-        else if (!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getStaticClaimColonies().isEmpty())
         {
             @Nullable IColonyView closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
-            for (final int cId : cap.getAllCloseColonies())
+            for (final int cId : cap.getStaticClaimColonies())
             {
                 final IColonyView c = getColonyView(cId, w.dimension());
                 if (c != null && c.getDimension() == w.dimension())
@@ -482,12 +480,12 @@ public final class ColonyManager implements IColonyManager
         {
             return getColonyByWorld(cap.getOwningColony(), w);
         }
-        else if (!cap.getAllCloseColonies().isEmpty())
+        else if (!cap.getStaticClaimColonies().isEmpty())
         {
             @Nullable IColony closestColony = null;
             long closestDist = Long.MAX_VALUE;
 
-            for (final int cId : cap.getAllCloseColonies())
+            for (final int cId : cap.getStaticClaimColonies())
             {
                 final IColony c = getColonyByWorld(cId, w);
                 if (c != null && c.getDimension() == w.dimension())

@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.buildings.modules;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildMiner;
+import com.minecolonies.coremod.colony.workorders.WorkOrderMiner;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,7 +19,6 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner.SHAFT_RADIUS;
-import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 
 /**
  * Module containing miner level management.
@@ -116,9 +115,9 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
             buf.writeInt(level.getDepth());
         }
 
-        final List<WorkOrderBuildMiner> list = building.getColony().getWorkManager().getOrderedList(WorkOrderBuildMiner.class, building.getPosition());
+        final List<WorkOrderMiner> list = building.getColony().getWorkManager().getOrderedList(WorkOrderMiner.class, building.getPosition());
         buf.writeInt(list.size());
-        for (@NotNull final WorkOrderBuildMiner wo : list)
+        for (@NotNull final WorkOrderMiner wo : list)
         {
             wo.serializeViewNetworkData(buf);
         }
@@ -204,9 +203,14 @@ public class MinerLevelManagementModule extends AbstractBuildingModule implement
      *
      * @return the int id of the active node.
      */
-    @NotNull
+    @Nullable
     public Node getActiveNode()
     {
+        if (levels.isEmpty())
+        {
+            return null;
+        }
+
         Node calcNode = activeNode;
         if (activeNode == null || activeNode.getStatus() == Node.NodeStatus.COMPLETED)
         {

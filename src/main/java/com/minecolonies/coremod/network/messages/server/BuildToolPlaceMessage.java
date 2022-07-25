@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.server;
 
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
@@ -11,21 +10,20 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
-import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import com.minecolonies.coremod.util.BuildingUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -36,6 +34,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +59,7 @@ public class BuildToolPlaceMessage implements IMessage
     private BlockPos pos;
     private boolean  isHut;
     private boolean  mirror;
-    public BlockPos builder = BlockPos.ZERO;
+    public  BlockPos builder = BlockPos.ZERO;
 
     /**
      * Empty constructor used when registering the
@@ -164,7 +163,7 @@ public class BuildToolPlaceMessage implements IMessage
         final StructureName sn = new StructureName(structureName);
         if (!Structures.hasMD5(sn))
         {
-            player.sendMessage(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!"), player.getUUID());
+            MessageUtils.format(new StringTextComponent("Can not build " + workOrderName + ": schematic missing!")).sendTo(player);
             return;
         }
         if (isHut)
@@ -200,14 +199,15 @@ public class BuildToolPlaceMessage implements IMessage
         final Block blockAtPos = world.getBlockState(buildPos).getBlock();
         if (blockAtPos instanceof IBuilderUndestroyable || ModTags.indestructible.contains(blockAtPos))
         {
-            LanguageHandler.sendPlayerMessage(player, INDESTRUCTIBLE_BLOCK_AT_POS);
+            MessageUtils.format(INDESTRUCTIBLE_BLOCK_AT_POS).sendTo(player);
             SoundUtils.playErrorSound(player, buildPos);
             return;
         }
 
         final Block block = state.getBlock();
         final ItemStack tempStack = new ItemStack(block, 1);
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
+        final int slot =
+          InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.inventory), s -> ItemStackUtils.compareItemStacksIgnoreStackSize(tempStack, s, false, false));
         if (slot < 0)
         {
             return;
@@ -227,7 +227,7 @@ public class BuildToolPlaceMessage implements IMessage
         final CompoundNBT compound = stack.getTag();
         if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
         {
-            LanguageHandler.sendPlayerMessage(player, WRONG_COLONY, compound.getInt(TAG_COLONY_ID));
+            MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
             return;
         }
 
@@ -274,12 +274,12 @@ public class BuildToolPlaceMessage implements IMessage
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(player, NO_HUT_IN_INVENTORY);
+            MessageUtils.format(NO_HUT_IN_INVENTORY).sendTo(player);
         }
     }
 
     /**
-     * Creates the {@link WorkOrderBuildDecoration} to start building the decoration.
+     * Creates the {@link WorkOrderDecoration} to start building the decoration.
      *
      * @param world         The world the decoration is being built in.
      * @param player        The player who placed the decoration.
@@ -317,7 +317,13 @@ public class BuildToolPlaceMessage implements IMessage
                 }
             }
 
-            WorkOrderBuildDecoration woDeco = new WorkOrderBuildDecoration(schem, woName, rotation, buildPos, mirror);
+            WorkOrderDecoration woDeco = WorkOrderDecoration.create(WorkOrderType.BUILD,
+              schem,
+              WordUtils.capitalizeFully(woName),
+              buildPos,
+              rotation,
+              mirror,
+              0);
             if (!builder.equals(BlockPos.ZERO))
             {
                 woDeco.setClaimedBy(builder);
@@ -355,7 +361,7 @@ public class BuildToolPlaceMessage implements IMessage
         {
             if (!sn.getHutName().equals(ModBuildings.TOWNHALL_ID))
             {
-            SoundUtils.playErrorSound(player, player.blockPosition());
+                SoundUtils.playErrorSound(player, player.blockPosition());
                 Log.getLogger().error("BuildTool: building is null!", new Exception());
             }
         }

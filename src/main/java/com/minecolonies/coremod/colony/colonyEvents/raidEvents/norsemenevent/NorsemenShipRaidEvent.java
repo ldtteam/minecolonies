@@ -1,17 +1,15 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents.norsemenevent;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.AbstractShipRaidEvent;
-
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.RAID_NORSEMEN;
@@ -95,6 +93,6 @@ public class NorsemenShipRaidEvent extends AbstractShipRaidEvent
     @Override
     protected IFormattableTextComponent getDisplayName()
     {
-        return new StringTextComponent(LanguageHandler.format(RAID_NORSEMEN));
+        return new TranslationTextComponent(RAID_NORSEMEN);
     }
 }

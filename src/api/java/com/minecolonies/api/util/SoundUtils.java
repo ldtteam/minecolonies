@@ -1,7 +1,9 @@
 package com.minecolonies.api.util;
 
 import com.minecolonies.api.colony.ICitizenData;
+import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.sounds.EventType;
+import net.minecraft.client.audio.SoundSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
@@ -238,6 +240,39 @@ public final class SoundUtils
         }
 
         final SoundEvent event = citizenData.isFemale() ? map.get(type).getB() : map.get(type).getA();
+
+        if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
+        {
+            worldIn.playSound(null,
+              position,
+              event,
+              SoundCategory.NEUTRAL,
+              (float) VOLUME,
+              (float) PITCH);
+        }
+    }
+
+    /**
+     * Plays a sound with a certain chance at a certain position.
+     *
+     * @param worldIn      the world to play the sound in.
+     * @param position     position to play the sound at.
+     * @param type         sound to play.
+     * @param civilianData the citizen.
+     */
+    public static void playSoundAtCivilian(
+      @NotNull final World worldIn,
+      @NotNull final BlockPos position,
+      @Nullable final EventType type,
+      @Nullable final ICivilianData civilianData)
+    {
+        if (civilianData == null)
+        {
+            return;
+        }
+
+        final Map<EventType, Tuple<SoundEvent, SoundEvent>> map = CITIZEN_SOUND_EVENTS.get(civilianData.isChild() ? "child" : "citizen");
+        final SoundEvent event = civilianData.isFemale() ? map.get(type).getB() : map.get(type).getA();
 
         if (type.getChance() > rand.nextDouble() * ONE_HUNDRED)
         {

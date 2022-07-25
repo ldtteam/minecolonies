@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.permissions.*;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
-import com.minecolonies.api.colony.workorders.WorkOrderView;
+import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -173,7 +173,7 @@ public interface IColonyView extends IColony
      *
      * @return a unmodifiable Collection of the workOrders.
      */
-    Collection<WorkOrderView> getWorkOrders();
+    Collection<IWorkOrderView> getWorkOrders();
 
     /**
      * Gets the CitizenDataView for a citizen id.

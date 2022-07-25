@@ -443,15 +443,14 @@ public final class BackUpHelper
                 final int id = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
                 if (id != colonyId)
                 {
+                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, loadedColony.getID(), loadedColony.getCenter());
                     for (final IBuilding building : loadedColony.getBuildingManager().getBuildings().values())
                     {
-                        ChunkDataHelper.claimColonyChunks(loadedColony,
+                        ChunkDataHelper.claimBuildingChunks(loadedColony,
                           true,
                           building.getPosition(),
                           building.getClaimRadius(building.getBuildingLevel()));
                     }
-
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, loadedColony.getID(), loadedColony.getCenter(), loadedColony.getDimension());
                 }
             }
         }

@@ -95,7 +95,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
     @Override
     protected int getExtendedCount(final ItemStack primaryOutput)
     {
-        return getOwnBuilding().outputBlockCountInWorld(primaryOutput);
+        return building.outputBlockCountInWorld(primaryOutput);
     }
 
     /**
@@ -128,7 +128,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(slot);
             final Block block = ((BlockItem) stack.getItem()).getBlock();
-            final BlockPos posToPlace = getOwnBuilding().getBlockToPlace();
+            final BlockPos posToPlace = building.getBlockToPlace();
             if (posToPlace != null)
             {
                 if (walkToBlock(posToPlace))
@@ -145,7 +145,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             }
         }
 
-        final BlockPos pos = getOwnBuilding().getBlockToMine();
+        final BlockPos pos = building.getBlockToMine();
         if (pos != null)
         {
             if (walkToBlock(pos))
@@ -162,7 +162,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             return START_WORKING;
         }
 
-        if (InventoryUtils.hasItemInItemHandler(getOwnBuilding().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), CONCRETE))
+        if (InventoryUtils.hasItemInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), CONCRETE))
         {
             needsCurrently = new Tuple<>(CONCRETE, STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;

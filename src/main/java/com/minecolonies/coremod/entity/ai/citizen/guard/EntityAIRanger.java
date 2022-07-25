@@ -35,14 +35,14 @@ public class EntityAIRanger extends AbstractEntityAIGuard<JobRanger, AbstractBui
         if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(ARCHER_USE_ARROWS) > 0)
         {
             // Pickup arrows and request arrows
-            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(getOwnBuilding(),
+            InventoryUtils.transferXOfFirstSlotInProviderWithIntoNextFreeSlotInItemHandler(building,
               item -> item.getItem() instanceof ArrowItem,
               64,
               worker.getInventoryCitizen());
 
             if (InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), item -> item.getItem() instanceof ArrowItem) < 16)
             {
-                checkIfRequestForItemExistOrCreateAsynch(new ItemStack(Items.ARROW), 64, 16);
+                checkIfRequestForItemExistOrCreateAsync(new ItemStack(Items.ARROW), 64, 16);
             }
         }
     }

@@ -1,6 +1,7 @@
 {
   "branch": "minecolonies:technology",
   "researchLevel": 1,
+  "sortOrder": 7,
   "subtitle": "com.minecolonies.research.technology.hittingiron.subtitle",
   "icon": "minecolonies:blockhutblacksmith",
   "requirements": [

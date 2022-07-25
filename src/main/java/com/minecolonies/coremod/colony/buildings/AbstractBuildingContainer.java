@@ -42,7 +42,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     /**
      * A list which contains the position of all containers which belong to the worker building.
      */
-    protected final List<BlockPos> containerList = new ArrayList<>();
+    protected final Set<BlockPos> containerList = new HashSet<>();
 
     /**
      * List of items the worker should keep. With the quantity and if he should keep it in the inventory as well.
@@ -126,10 +126,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     @Override
     public void addContainerPosition(@NotNull final BlockPos pos)
     {
-        if (!containerList.contains(pos))
-        {
-            containerList.add(pos);
-        }
+        containerList.add(pos);
     }
 
     @Override

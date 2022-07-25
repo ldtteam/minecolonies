@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages.server;
 
 import com.minecolonies.api.inventory.container.ContainerCrafting;
+import com.minecolonies.api.inventory.container.ContainerCraftingBrewingstand;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -116,6 +117,13 @@ public class TransferRecipeCraftingTeachingMessage implements IMessage
             final ContainerCraftingFurnace container = (ContainerCraftingFurnace) player.containerMenu;
 
             container.setFurnaceInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
+        }
+        else if (player.containerMenu instanceof ContainerCraftingBrewingstand)
+        {
+            final ContainerCraftingBrewingstand container = (ContainerCraftingBrewingstand) player.containerMenu;
+
+            container.setInput(itemStacks.getOrDefault(0, ItemStack.EMPTY));
+            container.setContainer(itemStacks.getOrDefault(1, ItemStack.EMPTY));
         }
     }
 }

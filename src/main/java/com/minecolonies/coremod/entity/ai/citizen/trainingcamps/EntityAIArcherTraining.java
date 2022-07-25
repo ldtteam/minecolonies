@@ -104,7 +104,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     private IAIState selectTarget()
     {
-        final BuildingArchery archeryBuilding = getOwnBuilding();
+        final BuildingArchery archeryBuilding = building;
         if (targetCounter >= archeryBuilding.getBuildingLevel() * BUILDING_LEVEL_TARGET_MULTIPLIER)
         {
             targetCounter = 0;
@@ -129,7 +129,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
      */
     private IAIState findShootingStandPosition()
     {
-        final BuildingArchery archeryBuilding = getOwnBuilding();
+        final BuildingArchery archeryBuilding = building;
         final BlockPos shootingPos = archeryBuilding.getRandomShootingStandPosition(worker.getRandom());
 
         if (shootingPos == null)
@@ -227,7 +227,7 @@ public class EntityAIArcherTraining extends AbstractEntityAITraining<JobArcherTr
             return false;
         }
 
-        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, getOwnBuilding().getMaxToolLevel());
+        final int bowSlot = InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.BOW, 0, building.getMaxToolLevel());
         worker.getCitizenItemHandler().setHeldItem(Hand.MAIN_HAND, bowSlot);
         return true;
     }

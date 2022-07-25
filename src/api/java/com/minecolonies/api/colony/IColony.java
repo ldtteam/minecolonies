@@ -15,7 +15,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -107,6 +106,7 @@ public interface IColony
 
     /**
      * Check if the colony has a building type at a specific level or higher.
+     *
      * @param building       The string identifier for the building, based on schematic name.
      * @param level          The level requirement.
      * @param singleBuilding If true, requires that a single building meet the minimum requirement.
@@ -427,25 +427,15 @@ public interface IColony
 
     /**
      * Set the texture style of the colony.
+     *
      * @param style the style to set.
      */
     void setTextureStyle(String style);
 
     /**
      * Get the colony style.
+     *
      * @return the string id of the style.
      */
     String getTextureStyleId();
-
-    /**
-     * Notify the players in the colony.
-     * @param component the message.
-     */
-    void notifyPlayers(ITextComponent component);
-
-    /**
-     * Notify the managing players in the colony.
-     * @param component the message.
-     */
-    void notifyColonyManagers(ITextComponent component);
 }

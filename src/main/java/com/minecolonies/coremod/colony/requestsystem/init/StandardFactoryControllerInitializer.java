@@ -94,6 +94,8 @@ public final class StandardFactoryControllerInitializer
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.CrafterRecipeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BuilderModeSettingFactory());
         StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.DynamicTreesSettingFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.BeekeeperCollectionSettingsFactory());
+        StandardFactoryController.getInstance().registerNewFactory(new SettingsFactories.RecipeSettingFactory());
 
         StandardFactoryController.getInstance().registerNewTypeOverrideHandler(new TypeTokenFactory.TypeTokenSubTypeOverrideHandler());
 

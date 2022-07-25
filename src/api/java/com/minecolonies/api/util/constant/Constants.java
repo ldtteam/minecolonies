@@ -137,6 +137,21 @@ public final class Constants
     public static final int DEFAULT_SIZE = 27;
 
     /**
+     * Slot where the fuel should be put in the brewing stand.
+     */
+    public static final int BREWING_FUEL_SLOT = 4;
+
+    /**
+     * Slot where the ingredient is put in brewing stand.
+     */
+    public static final int INGREDIENT_SLOT = 3;
+
+    /**
+     * Amount of fuel to maintain when brewing.
+     */
+    public static final int BREWING_MIN_FUEL_COUNT = 8;
+
+    /**
      * Slots per line.
      */
     public static final int SLOT_PER_LINE = 9;

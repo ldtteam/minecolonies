@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.IImmutableItemStorageFactory;
 import com.minecolonies.api.crafting.ImmutableItemStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -36,7 +37,7 @@ public class ImmutableItemStorageFactory implements IImmutableItemStorageFactory
     @Override
     public short getSerializationId()
     {
-        return 45;
+        return SerializationIdentifierConstants.IMMUTABLE_ITEM_STORAGE_ID;
     }
 
     @Override

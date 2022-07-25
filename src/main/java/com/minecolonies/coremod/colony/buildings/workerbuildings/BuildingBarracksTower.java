@@ -1,12 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockout.views.Window;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import com.minecolonies.coremod.util.ChunkDataHelper;
@@ -14,8 +13,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_UPGRADE_BARRACKS;
 
 /**
  * Building class for the Barracks Tower.
@@ -36,7 +36,6 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
      * Position of the barracks for this tower.
      */
     private BlockPos barracks = null;
-
 
     /**
      * The abstract constructor of the building.
@@ -68,13 +67,21 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
     {
         final int buildingLevel = getBuildingLevel();
         final IBuilding building = getColony().getBuildingManager().getBuilding(barracks);
+
         if (building != null && buildingLevel < getMaxBuildingLevel() && buildingLevel < building.getBuildingLevel())
         {
-            requestWorkOrder(buildingLevel + 1, builder, false);
+            if (buildingLevel == 0)
+            {
+                requestWorkOrder(WorkOrderType.BUILD, builder);
+            }
+            else
+            {
+                requestWorkOrder(WorkOrderType.UPGRADE, builder);
+            }
         }
         else
         {
-            player.sendMessage(new TranslationTextComponent("com.minecolonies.coremod.worker.needbarracks"), player.getUUID());
+            MessageUtils.format(WARNING_UPGRADE_BARRACKS).sendTo(player);
         }
     }
 
@@ -99,7 +106,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             return;
         }
-        ChunkDataHelper.claimColonyChunks(colony, true, barracks, barrack.getClaimRadius(newLevel));
+        ChunkDataHelper.claimBuildingChunks(colony, true, barracks, barrack.getClaimRadius(newLevel));
 
         if (newLevel == barrack.getMaxBuildingLevel())
         {
@@ -108,11 +115,15 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
             {
                 Log.getLogger().info("Upgraded: " + allUpgraded);
                 if (colony.getBuildingManager().getBuilding(tower).getBuildingLevel() != barrack.getMaxBuildingLevel())
+                {
                     allUpgraded = false;
+                }
             }
 
             if (allUpgraded)
+            {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, AdvancementTriggers.ALL_TOWERS::trigger);
+            }
         }
     }
 

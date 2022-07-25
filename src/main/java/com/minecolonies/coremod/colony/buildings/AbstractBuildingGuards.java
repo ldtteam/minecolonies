@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -15,6 +13,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.settings.*;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
@@ -46,8 +45,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
-import static com.minecolonies.api.util.constant.CitizenConstants.*;
+import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
+import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_RALLYING_POINT_OUT_OF_RANGE;
 import static com.minecolonies.coremod.util.ServerUtils.getPlayerFromUUID;
 
 /**
@@ -79,6 +80,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";
     private static final String NBT_MINE_POS       = "minePos";
+    private static final String NBT_PLAYER_UUID    = "playeruuid";
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
@@ -227,6 +229,12 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         {
             minePos = NBTUtil.readBlockPos(compound.getCompound(NBT_MINE_POS));
         }
+
+        if (compound.contains(NBT_PLAYER_UUID))
+        {
+            followPlayerUUID = compound.getUUID(NBT_PLAYER_UUID);
+        }
+
     }
 
     @Override
@@ -247,6 +255,11 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         if (minePos != null)
         {
             compound.put(NBT_MINE_POS, NBTUtil.writeBlockPos(minePos));
+        }
+
+        if (followPlayerUUID != null)
+        {
+            compound.putUUID(NBT_PLAYER_UUID, followPlayerUUID);
         }
 
         return compound;
@@ -565,7 +578,7 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
 
             if (outOfRange)
             {
-                LanguageHandler.sendPlayerMessage(player, "item.minecolonies.banner_rally_guards.outofrange");
+                MessageUtils.format(WARNING_RALLYING_POINT_OUT_OF_RANGE).sendTo(player);
                 setRallyLocation(null);
                 return null;
             }

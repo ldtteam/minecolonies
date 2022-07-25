@@ -2,7 +2,6 @@ package com.minecolonies.coremod.util;
 
 import com.ldtteam.structures.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.entity.ai.Status;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
@@ -11,6 +10,8 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFlorist;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
@@ -29,8 +30,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IForgeShearable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +41,9 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.MOVE_MINIMAL;
 import static com.minecolonies.api.util.constant.CitizenConstants.ROTATION_MOVEMENT;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_MINE_NODE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MINER_NODES;
+import static com.minecolonies.coremod.colony.buildings.AbstractBuilding.USE_SHEARS;
 
 /**
  * Utility methods for BlockPos.
@@ -163,9 +168,14 @@ public final class WorkerUtil
      * @param blockHardness the hardness.
      * @return the toolType to use.
      */
-    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness)
+    public static IToolType getBestToolForBlock(final BlockState state, float blockHardness, final AbstractBuilding building)
     {
         final net.minecraftforge.common.ToolType forgeTool = state.getHarvestTool();
+
+        if (building.getOptionalSetting(USE_SHEARS).orElse(new BoolSetting(true)).getValue() && state.getBlock() instanceof IForgeShearable)
+        {
+            return ToolType.SHEARS;
+        }
 
         String toolName = "";
         if (forgeTool == null)
@@ -305,12 +315,10 @@ public final class WorkerUtil
                 final BlockState BlockState = world.getBlockState(levelSignPos);
                 final SignTileEntity teLevelSign = (SignTileEntity) te;
 
-                teLevelSign.setMessage(0, new StringTextComponent(TextFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerMineNode") + ": " + levelId)));
-                teLevelSign.setMessage(1, new StringTextComponent(TextFormatting.stripFormatting("Y: " + (level.getDepth() + 1))));
-                teLevelSign.setMessage(2, new StringTextComponent(TextFormatting.stripFormatting(
-                  LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.minerNode") + ": " + level.getNumberOfBuiltNodes())));
-                teLevelSign.setMessage(3, new StringTextComponent(TextFormatting.stripFormatting("")));
+                teLevelSign.setMessage(0, new TranslationTextComponent(MINER_MINE_NODE).append(": " + levelId));
+                teLevelSign.setMessage(1, new StringTextComponent("Y: " + (level.getDepth() + 1)));
+                teLevelSign.setMessage(2, new TranslationTextComponent(MINER_NODES).append(": " + level.getNumberOfBuiltNodes()));
+                teLevelSign.setMessage(3, new StringTextComponent(""));
 
                 teLevelSign.setChanged();
                 world.sendBlockUpdated(levelSignPos, BlockState, BlockState, 3);

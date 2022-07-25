@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizen;
@@ -10,11 +9,13 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.IReproductionManager;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenBornEvent;
 import com.minecolonies.coremod.util.AdvancementUtils;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_NEW_CHILD_BORN;
 import static com.minecolonies.coremod.colony.CitizenData.SUFFIXES;
 
 /**
@@ -112,7 +114,7 @@ public class ReproductionManager implements IReproductionManager
                 secondParent = firstParent.getPartner();
                 if (secondParent == null)
                 {
-                    assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()) || cit.isRelatedTo(firstParent));
+                    assignedCitizens.removeIf(cit -> cit.getPartner() != null || cit.getName().equals(firstParent.getName()) || cit.isRelatedTo(firstParent) || cit.isChild());
                     if (assignedCitizens.size() > 0 && random.nextBoolean())
                     {
                         secondParent = assignedCitizens.get(random.nextInt(assignedCitizens.size()));
@@ -194,7 +196,7 @@ public class ReproductionManager implements IReproductionManager
             final int populationCount = colony.getCitizenManager().getCurrentCitizenCount();
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, playerMP -> AdvancementTriggers.COLONY_POPULATION.trigger(playerMP, populationCount));
 
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), "com.minecolonies.coremod.progress.newChild", newCitizen.getName(), colony.getName());
+            MessageUtils.format(MESSAGE_NEW_CHILD_BORN, newCitizen.getName(), colony.getName()).with(TextFormatting.GOLD).sendTo(colony).forManagers();
             colony.getCitizenManager().spawnOrCreateCitizen(newCitizen, colony.getWorld(), newHome.getPosition());
 
             colony.getEventDescriptionManager().addEventDescription(new CitizenBornEvent(newHome.getPosition(), newCitizen.getName()));

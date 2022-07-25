@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.coremod.commands.commandTypes.IMCCommand;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
@@ -8,7 +7,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeHooks;
+
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_HELP_INFO_DISCORD;
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_HELP_INFO_WIKI;
 
 public class CommandHelp implements IMCCommand
 {
@@ -30,9 +33,9 @@ public class CommandHelp implements IMCCommand
             return 0;
         }
 
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.help.wiki"), true);
+        context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_HELP_INFO_WIKI), true);
         context.getSource().sendSuccess(((IFormattableTextComponent) ForgeHooks.newChatWithLinks(wikiUrl)).append(new StringTextComponent("\n")), true);
-        context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.help.discord"), true);
+        context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_HELP_INFO_DISCORD), true);
         context.getSource().sendSuccess(ForgeHooks.newChatWithLinks(discordUrl), true);
 
         return 1;

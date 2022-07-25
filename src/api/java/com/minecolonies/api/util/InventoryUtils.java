@@ -29,10 +29,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
@@ -758,6 +761,38 @@ public class InventoryUtils
     }
 
     /**
+     * Check if a building has more than a count in stack. Return the count it has if it has less.
+     *
+     * @param provider building to check in.
+     * @param stack    the stack to check.
+     * @return Amount of occurrences of stacks that match the given predicate.
+     */
+    public static int hasBuildingEnoughElseCount(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> stack, final int count)
+    {
+        int totalCount = 0;
+        final World world = provider.getColony().getWorld();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    totalCount += ((TileEntityRack) entity).getItemCount(stack);
+                }
+
+                if (totalCount > count)
+                {
+                    return Integer.MAX_VALUE;
+                }
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
      * Count the number of items of different types a building has.
      * 
      * @param provider the building to check.
@@ -853,11 +888,48 @@ public class InventoryUtils
                 {
                     totalCount += ((TileEntityRack) entity).getItemCount(predicate);
                 }
-                else if (entity instanceof ChestTileEntity)
+            }
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Count the number of items a building has.
+     * Only count up to "limit" of a particular item.
+     *
+     * @param provider  building to check in.
+     * @param predicate the predicate to match.
+     * @return Amount of occurrences of stacks that match the given stack.
+     */
+    public static int getCountFromBuildingWithLimit(@NotNull final IBuilding provider, @NotNull final Predicate<ItemStack> predicate, final Function<ItemStack, Integer> limit)
+    {
+        final World world = provider.getColony().getWorld();
+
+        final Map<ItemStorage, Integer> allMatching = new HashMap<>();
+
+        for (final BlockPos pos : provider.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final TileEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
                 {
-                    totalCount += getItemCountInProvider(entity, predicate);
+                    for (final Map.Entry<ItemStorage, Integer> entry : ((TileEntityRack) entity).getAllContent().entrySet())
+                    {
+                        if (predicate.test(entry.getKey().getItemStack()))
+                        {
+                            allMatching.put(entry.getKey(), allMatching.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                        }
+                    }
                 }
             }
+        }
+
+        int totalCount = 0;
+        for (final Map.Entry<ItemStorage, Integer> entry : allMatching.entrySet())
+        {
+            totalCount += Math.min(limit.apply(entry.getKey().getItemStack()), entry.getValue());
         }
 
         return totalCount;
@@ -3012,9 +3084,9 @@ public class InventoryUtils
 
         if (!result)
         {
-            player.sendMessage(itemStack.getHoverName()
-                .copy()
-                .append(new TranslationTextComponent("com.minecolonies.coremod.playerinvfull.hotbarinsert")), player.getUUID());
+            MessageUtils.format(itemStack.getDisplayName().copy())
+              .append(MESSAGE_INFO_PLAYER_INVENTORY_FULL_HOTBAR_INSERT)
+              .sendTo(player);
         }
         return result;
     }

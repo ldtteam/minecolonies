@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.SoundUtils;
@@ -28,6 +27,7 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DESC;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 /**
  * Teleport scroll to teleport you back to the set colony. Requires colony permissions
@@ -121,27 +121,27 @@ public class ItemScrollColonyTP extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_tp.tip");
+        final IFormattableTextComponent guiHint = new TranslationTextComponent(TOOL_COLONY_TELEPORT_SCROLL_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 
-        String colonyDesc = new TranslationTextComponent("item.minecolonies.scroll.colony.none").getString();
+        ITextComponent colonyDesc = new TranslationTextComponent(TOOL_COLONY_TELEPORT_SCROLL_NO_COLONY);
 
         if (stack.getOrCreateTag().contains(TAG_DESC))
         {
-            colonyDesc = stack.getOrCreateTag().getString(TAG_DESC);
+            colonyDesc = new StringTextComponent(stack.getOrCreateTag().getString(TAG_DESC));
         }
         else
         {
             final IColony colony = getColonyView(stack);
             if (colony != null)
             {
-                colonyDesc = colony.getName();
-                stack.getOrCreateTag().putString(TAG_DESC, colonyDesc);
+                colonyDesc = new StringTextComponent(colony.getName());
+                stack.getOrCreateTag().putString(TAG_DESC, colony.getName());
             }
         }
 
-        final IFormattableTextComponent guiHint2 = new TranslationTextComponent("item.minecolonies.scroll.colony.tip", colonyDesc);
+        final IFormattableTextComponent guiHint2 = new TranslationTextComponent(TOOL_COLONY_TELEPORT_SCROLL_COLONY_NAME, colonyDesc);
         guiHint2.setStyle(Style.EMPTY.withColor(TextFormatting.GOLD));
         tooltip.add(guiHint2);
     }

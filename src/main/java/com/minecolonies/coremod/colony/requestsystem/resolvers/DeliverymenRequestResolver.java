@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -78,6 +79,12 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
         return citizenList;
     }
 
+    @Override
+    public int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    {
+        return (int) BlockPosUtil.getDistance(request.getRequester().getLocation().getInDimensionLocation(), getLocation().getInDimensionLocation());
+    }
+
     @Nullable
     @Override
     public List<IToken<?>> attemptResolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request)
@@ -108,17 +115,35 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
             return null;
         }
 
-
-        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
-        job.addRequest(request.getId(), bestScore.getB());
-
         return Lists.newArrayList();
     }
 
     @Override
     public void resolveRequest(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends R> request) throws RuntimeException
     {
-        //Noop. The delivery man will resolve it.
+        ICitizenData chosenCourier = null;
+
+        Tuple<Double, Integer> bestScore = null;
+        for (final ICitizenData citizen : getResolveAbleDeliverymen(manager))
+        {
+            if (citizen.isWorking())
+            {
+                Tuple<Double, Integer> localScore = ((JobDeliveryman) citizen.getJob()).getScoreForDelivery(request);
+                if (bestScore == null || localScore.getA() < bestScore.getA())
+                {
+                    bestScore = localScore;
+                    chosenCourier = citizen;
+                }
+            }
+        }
+
+        if (chosenCourier == null)
+        {
+            return;
+        }
+
+        final JobDeliveryman job = (JobDeliveryman) chosenCourier.getJob();
+        job.addRequest(request.getId(), bestScore.getB());
     }
 
     @Nullable

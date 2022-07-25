@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages.server.colony.building;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -63,7 +63,7 @@ public class ForcePickupMessage extends AbstractBuildingServerMessage<IBuilding>
                 return;
             }
 
-            LanguageHandler.sendPlayerMessage(player, COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED);
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_DELIVERYMAN_FORCEPICKUP_FAILED).sendTo(player);
         }
     }
 }

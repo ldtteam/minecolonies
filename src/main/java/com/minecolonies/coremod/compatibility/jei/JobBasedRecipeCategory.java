@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
@@ -24,7 +25,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         this.citizen = createCitizenWithJob(this.job);
 
         this.description = wordWrap(breakLines(translateDescription(
-                TranslationConstants.COM_MINECOLONIES_JEI_PREFIX +
+                TranslationConstants.PARTIAL_JEI_INFO +
                         this.job.getJobRegistryEntry().getRegistryName().getPath())));
 
         this.infoBlocksCache = CacheBuilder.newBuilder()
@@ -143,7 +143,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
         return this.icon;
     }
 
-    public Collection<?> findRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla)
+    public Collection<?> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
         return Collections.emptyList();
     }
@@ -345,7 +345,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
             if (index >= 0 && index < this.drops.size())
             {
                 final LootTableAnalyzer.LootDrop drop = this.drops.get(index);
-                final String key = TranslationConstants.COM_MINECOLONIES_JEI_PREFIX +
+                final String key = TranslationConstants.PARTIAL_JEI_INFO +
                         (drop.getQuality() < 0 ? "chancenegskill.tip" : drop.getQuality() > 0 ? "chanceskill.tip" : "chance.tip");
                 final float probability = drop.getProbability() * 100;
 
@@ -362,7 +362,7 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
 
                 if (drop.getConditional())
                 {
-                    tooltip.add(new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + "conditions.tip"));
+                    tooltip.add(new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + "conditions.tip"));
                 }
 
                 final boolean showAdvanced = Minecraft.getInstance().options.advancedItemTooltips || Screen.hasShiftDown();

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_COMPLAINS_DAYS;
-import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;;
+import static com.minecolonies.api.util.constant.HappinessConstants.IDLE_AT_JOB_DEMANDS_DAYS;
 
 public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 {
@@ -274,7 +274,18 @@ public interface IJob<AI extends Goal> extends INBTSerializable<CompoundNBT>
 
     /**
      * Set the registry entry of the job.
+     *
      * @param jobEntry the job entry belonging to it.
      */
     void setRegistryEntry(JobEntry jobEntry);
+
+    /**
+     * Whether the job is a guard
+     *
+     * @return
+     */
+    default boolean isGuard()
+    {
+        return false;
+    }
 }

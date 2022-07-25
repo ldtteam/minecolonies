@@ -1,12 +1,14 @@
 package com.minecolonies.coremod.compatibility.journeymap;
 
 import journeymap.client.api.option.*;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JOURNEY_MAP_INFO;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class JourneymapOptions
@@ -22,10 +24,11 @@ public class JourneymapOptions
     private final Option<Boolean> guards;
     private final Option<Boolean> citizens;
     private final Option<Boolean> visitors;
+    private final Option<RaiderColor> raiders;
 
     public JourneymapOptions()
     {
-        final String prefix = COM_MINECOLONIES_JMAP_PREFIX + "options.";
+        final String prefix = PARTIAL_JOURNEY_MAP_INFO + "options.";
         final OptionCategory category = new OptionCategory(MOD_ID, prefix + "category");
 
         this.borderFullscreenStyle = new EnumOption<>(category, "borderFullscreenStyle", prefix + "borderfullscreenstyle", BorderStyle.FILLED).setSortOrder(100);
@@ -39,6 +42,7 @@ public class JourneymapOptions
         this.guards = new BooleanOption(category, "guards", prefix + "guards", true).setSortOrder(300);
         this.citizens = new BooleanOption(category, "citizens", prefix + "citizens", true).setSortOrder(301);
         this.visitors = new BooleanOption(category, "visitors", prefix + "visitors", true).setSortOrder(302);
+        this.raiders = new EnumOption<>(category, "raiders", prefix + "raiders", RaiderColor.HOSTILE).setSortOrder(303);
     }
 
     public static BorderStyle getBorderFullscreenStyle(@NotNull final Optional<JourneymapOptions> options)
@@ -96,11 +100,16 @@ public class JourneymapOptions
         return options.map(o -> o.visitors.get()).orElse(true);
     }
 
+    public static RaiderColor getRaiderColor(@NotNull final Optional<JourneymapOptions> options)
+    {
+        return options.map(o -> o.raiders.get()).orElse(RaiderColor.HOSTILE);
+    }
+
     public enum BorderStyle implements KeyedEnum
     {
-        HIDDEN(COM_MINECOLONIES_JMAP_PREFIX + "borderstyle.hidden"),
-        FRAMED(COM_MINECOLONIES_JMAP_PREFIX + "borderstyle.framed"),
-        FILLED(COM_MINECOLONIES_JMAP_PREFIX + "borderstyle.filled");
+        HIDDEN(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.hidden"),
+        FRAMED(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.framed"),
+        FILLED(PARTIAL_JOURNEY_MAP_INFO + "borderstyle.filled");
 
         private final String key;
 
@@ -113,6 +122,37 @@ public class JourneymapOptions
         public String getKey()
         {
             return this.key;
+        }
+    }
+
+    public enum RaiderColor implements KeyedEnum
+    {
+        HOSTILE(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.hostile", Color.fromRgb(0xFFFFFFFF)),
+        NONE(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.none", Color.fromRgb(0xFF000000)),
+        YELLOW(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.yellow", Color.fromLegacyFormat(TextFormatting.YELLOW)),
+        RED(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.red", Color.fromLegacyFormat(TextFormatting.RED)),
+        PURPLE(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.purple", Color.fromLegacyFormat(TextFormatting.LIGHT_PURPLE)),
+        ORANGE(PARTIAL_JOURNEY_MAP_INFO + "raidercolor.orange", Color.fromLegacyFormat(TextFormatting.GOLD));
+
+        private final String key;
+        private final Color color;
+
+        RaiderColor(final String key, final Color color)
+        {
+            this.key = key;
+            this.color = color;
+        }
+
+        @Override
+        public String getKey()
+        {
+            return this.key;
+        }
+
+        @NotNull
+        public Color getColor()
+        {
+            return this.color;
         }
     }
 }

@@ -31,11 +31,10 @@ public class BuildingBuiltEvent extends AbstractBuildingEvent
      * 
      * @param eventPos      the position of the hut block of the building.
      * @param buildingName  the name of the building.
-     * @param buildingLevel the level of the building after this event.
      */
-    public BuildingBuiltEvent(BlockPos eventPos, String buildingName, int buildingLevel)
+    public BuildingBuiltEvent(BlockPos eventPos, String buildingName)
     {
-        super(eventPos, buildingName, buildingLevel);
+        super(eventPos, buildingName, 1);
     }
 
     @Override

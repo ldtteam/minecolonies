@@ -4,10 +4,9 @@ import com.ldtteam.structures.helpers.Settings;
 import com.ldtteam.structurize.client.gui.WindowBuildTool;
 import com.ldtteam.structurize.management.StructureName;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
-import com.ldtteam.structurize.util.LanguageHandler;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
 import com.minecolonies.api.util.InventoryUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.event.HighlightManager;
@@ -22,13 +21,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ldtteam.structurize.management.StructureName.HUTS;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * BuildTool window.
@@ -136,7 +136,7 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.supplyChestDeployer.invalid");
+                MessageUtils.format(WARNING_SUPPLY_SHIP_IN_WATER).sendTo(Minecraft.getInstance().player);
             }
         }
         else if (schemName.contains("supplycamp"))
@@ -152,15 +152,15 @@ public class WindowMinecoloniesBuildTool extends WindowBuildTool
         HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
         if (!placementErrorList.isEmpty())
         {
-            LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, "item.supply.badblocks");
+            MessageUtils.format(WARNING_SUPPLY_BUILDING_BAD_BLOCKS).sendTo(Minecraft.getInstance().player);
 
             for (final PlacementError error : placementErrorList)
             {
                 HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
-                                                                     .setPos(error.getPos())
-                                                                     .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
-                                                                     .addText(LanguageHandler.translateKey("item.supply.error." + error.getType().toString().toLowerCase()))
-                                                                     .setColor(0xFF0000));
+                  .setPos(error.getPos())
+                  .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
+                  .addText(new TranslationTextComponent(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
+                  .setColor(0xFF0000));
             }
         }
 
