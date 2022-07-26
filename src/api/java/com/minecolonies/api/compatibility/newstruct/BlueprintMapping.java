@@ -23,6 +23,16 @@ public class BlueprintMapping
         styleMapping.put("asian", "East Asian");
         styleMapping.put("asianalternative", "East Asian");
 
+        styleMapping.put("medievaloak", "Medieval Oak");
+        styleMapping.put("medievalspruce", "Medieval Spruce");
+        styleMapping.put("medievaldarkoak", "Medieval Dark Oak");
+        styleMapping.put("medievalbirch", "Medieval Birch");
+
+        styleMapping.put("darkoak", "Dark Oak");
+        styleMapping.put("fortress", "Fortress");
+        styleMapping.put("caledonia", "Caledonia");
+        styleMapping.put("birch", "Birch");
+        styleMapping.put("jungle", "Jungle");
         styleMapping.put("lostcity", "Lost City");
         styleMapping.put("incan", "Incan");
         styleMapping.put("nordic", "Nordic");
@@ -32,8 +42,6 @@ public class BlueprintMapping
         styleMapping.put("truedwarven", "True Dwarven");
         styleMapping.put("stone", "Alt Default");
         styleMapping.put("acacia", "Acacia Savanna");
-
-        //todo remaining styles
 
         final Map<String, List<String>> foldersToHuts = new HashMap<>();
         foldersToHuts.put("agriculture/horticulture", Arrays.asList("composter", "farmer", "florist", "plantation"));
@@ -49,6 +57,11 @@ public class BlueprintMapping
         foldersToHuts.put("fundamentals", Arrays.asList("builder", "citizen", "cook", "hospital", "lumberjack", "miner", "tavern", "townhall"));
         foldersToHuts.put("military", Arrays.asList("archery", "barracks", "barrackstower", "combatacademy", "guardtower"));
         foldersToHuts.put("mystic", Arrays.asList("enchanter", "netherworker"));
+
+        runForStyle(foldersToHuts, "medievaloak");
+        runForStyle(foldersToHuts, "medievalspruce");
+        runForStyle(foldersToHuts, "medievaldarkoak");
+        runForStyle(foldersToHuts, "medievalbirch");
 
         runForStyle(foldersToHuts, "asian");
         runForStyle(foldersToHuts, "wooden");
@@ -69,6 +82,7 @@ public class BlueprintMapping
         runForStyle(foldersToHuts, "birch");
         runForStyle(foldersToHuts, "asian");
         runForStyle(foldersToHuts, "acacia");
+        runForStyle(foldersToHuts, "fortress");
 
         // This is for the default mapping of things.
         runForStyle(foldersToHuts, "");
@@ -81,9 +95,39 @@ public class BlueprintMapping
         pathMapping.put("woodalternative:deliveryman", "craftsmanship/storage/deliverymanalt");
         pathMapping.put("woodalternative:warehouse", "craftsmanship/storage/warehousealt");
 
-        //todo remaining alt huts
+        pathMapping.put("junglealternative:farmer", "agriculture/horticulture/farmeralt");
+
+        pathMapping.put("caledoniaalternative:farmer", "agriculture/horticulture/farmeralt");
+        pathMapping.put("caledoniaalternative:guardtower", "military/guardtoweralt");
+
+        runForAlt(foldersToHuts, "medievalbirchalternative");
+        runForAlt(foldersToHuts, "medievaloakalternative");
+        runForAlt(foldersToHuts, "medievaldarkoakalternative");
+        runForAlt(foldersToHuts, "medievalsprucealternative");
+        runForAlt(foldersToHuts, "fortressalternative");
     }
 
+    /**
+     * Generate backwards compat for alternative styles with many buildings.
+     * @param foldersToHuts the folder mapping.
+     * @param style the pack name.
+     */
+    private static void runForAlt(final Map<String, List<String>> foldersToHuts, final String style)
+    {
+        for (final Map.Entry<String, List<String>> entry : foldersToHuts.entrySet())
+        {
+            for (final String hut : entry.getValue())
+            {
+                pathMapping.put(style + ":" + hut, entry.getKey() + "/" +  "alt" + hut);
+            }
+        }
+    }
+
+    /**
+     * Generate backwards compat for all the default huts.
+     * @param foldersToHuts the folder mapping.
+     * @param style the pack name.
+     */
     private static void runForStyle(final Map<String, List<String>> foldersToHuts, final String style)
     {
         for (final Map.Entry<String, List<String>> entry : foldersToHuts.entrySet())
