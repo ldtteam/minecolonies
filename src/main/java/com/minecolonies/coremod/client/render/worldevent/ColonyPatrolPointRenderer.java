@@ -3,6 +3,7 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -23,7 +24,7 @@ public class ColonyPatrolPointRenderer
     /**
      * Cached wayPointBlueprint.
      */
-    private static Blueprint partolPointTemplate;
+    private static BlueprintPreviewData partolPointTemplate;
 
     private static Future<Blueprint> pendingTemplate;
 
@@ -55,14 +56,18 @@ public class ColonyPatrolPointRenderer
 
         if (pendingTemplate == null && partolPointTemplate == null)
         {
-            pendingTemplate = StructurePacks.getBlueprintFuture("Default", "infrastructure/roads/patrolpoint");
+            pendingTemplate = StructurePacks.getBlueprintFuture("Default", "infrastructure/roads/patrolpoint.blueprint");
             return;
         }
         else if (pendingTemplate != null && pendingTemplate.isDone())
         {
             try
             {
-                partolPointTemplate = pendingTemplate.get();
+                final BlueprintPreviewData tempPreviewData = new BlueprintPreviewData();
+                tempPreviewData.setBlueprint(pendingTemplate.get());
+                tempPreviewData.pos = BlockPos.ZERO;
+                partolPointTemplate = tempPreviewData;
+                pendingTemplate = null;
             }
             catch (InterruptedException | ExecutionException e)
             {
@@ -75,7 +80,7 @@ public class ColonyPatrolPointRenderer
         {
             StructureClientHandler.renderStructureAtPosList(partolPointTemplate,
                 ctx.partialTicks,
-                guardTower.getPatrolTargets().stream().map(BlockPos::above).toList(),
+                guardTower.getPatrolTargets(),
                 ctx.poseStack);
         }
     }

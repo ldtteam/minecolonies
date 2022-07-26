@@ -15,9 +15,11 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.client.gui.townhall.WindowTownHallColonyManage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -133,7 +135,8 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
         final List<MutableComponent> requirements = new ArrayList<>();
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.cost", new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName())));
+            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.cost", new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(
+              ChatFormatting.RED)));
         }
 
         return requirements;

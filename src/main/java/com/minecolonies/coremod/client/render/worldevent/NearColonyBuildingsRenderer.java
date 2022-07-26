@@ -5,6 +5,7 @@ import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.items.ModItems;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
+import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -79,7 +80,7 @@ public class NearColonyBuildingsRenderer
         {
             final RenderData buildingData = nearbyBuilding.getValue();
             final BlockPos position = nearbyBuilding.getKey();
-            if (buildingData.blueprint != null)
+            if (buildingData.blueprint != null && buildingData.blueprint.getBlueprint() != null)
             {
                 StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
             }
@@ -162,7 +163,15 @@ public class NearColonyBuildingsRenderer
                 {
                     return;
                 }
-                localBlueprint.rotateWithMirror(data.settings().getRotation(), data.settings.getMirror(), ctx.clientLevel);
+
+                final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData();
+                blueprintPreviewData.setBlueprint(localBlueprint);
+                blueprintPreviewData.pos = data.pos;
+                blueprintPreviewData.rotate(data.settings.getRotation());
+                if (data.settings.getMirror() != Mirror.NONE)
+                {
+                    blueprintPreviewData.mirror();
+                }
 
                 final BlockPos primaryOffset = localBlueprint.getPrimaryBlockOffset();
                 final BlockPos boxStartPos = data.pos.subtract(primaryOffset);
@@ -176,7 +185,7 @@ public class NearColonyBuildingsRenderer
                 }
                 else
                 {
-                    newCache.put(data.pos, new RenderData(localBlueprint, boxStartPos, boxEndPos));
+                    newCache.put(data.pos, new RenderData(blueprintPreviewData, boxStartPos, boxEndPos));
                 }
             }
             catch (final InterruptedException | ExecutionException ex)
@@ -191,7 +200,7 @@ public class NearColonyBuildingsRenderer
     /**
      * Holds blueprint renderdata.
      */
-    private record RenderData(Blueprint blueprint, BlockPos boxStartPos, BlockPos boxEndPos)
+    private record RenderData(BlueprintPreviewData blueprint, BlockPos boxStartPos, BlockPos boxEndPos)
     {
 
     }

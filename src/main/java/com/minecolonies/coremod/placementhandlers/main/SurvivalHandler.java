@@ -19,7 +19,6 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.blocks.BlockDecorationController;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.event.EventHandler;
@@ -110,6 +109,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             if (clientPack || !StructurePacks.packMetas.containsKey(packName))
             {
                 MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
+                SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
 
@@ -117,8 +117,9 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             if (anchor.getBlock() != null && EventHandler.onBlockHutPlaced(world, player, anchor.getBlock(), blockPos))
             {
                 final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), anchor.getBlock());
-                if (slot == -1)
+                if (slot == -1 && !player.isCreative())
                 {
+                    SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
 
@@ -128,6 +129,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                             && !(anchor.getBlock() instanceof BlockHutTownHall
                                    && IColonyManager.getInstance().isFarEnoughFromColonies(world, blockPos))))
                 {
+                    SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
 
@@ -135,6 +137,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
                 {
                     MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
+                    SoundUtils.playErrorSound(player, player.blockPosition());
                     return;
                 }
 
@@ -226,6 +229,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     }
                 }
             }
+            SoundUtils.playSuccessSound(player, player.blockPosition());
         }
         else if (blueprintPath.contains("supplycamp") || blueprintPath.contains("supplyship"))
         {
@@ -270,9 +274,10 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
       final Blueprint blueprint)
     {
         if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
-              && !isFreeInstantPlacementMH(player))
+              && !isFreeInstantPlacementMH(player) && !player.isCreative())
         {
             MessageUtils.format(WARNING_SUPPLY_CHEST_ALREADY_PLACED).sendTo(player);
+            SoundUtils.playErrorSound(player, player.blockPosition());
             return;
         }
 
@@ -303,6 +308,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
                 AdvancementTriggers.PLACE_SUPPLY.trigger(player);
             }
+
+            SoundUtils.playSuccessSound(player, player.blockPosition());
 
             StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level, blueprint,
               blockPos, placementSettings.getRotation(), placementSettings.getMirror() != Mirror.NONE ? Mirror.FRONT_BACK : Mirror.NONE, true, player);

@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
+import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_WARNING_SUPPLY_BUILDING_ERROR;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_BUILDING_BAD_BLOCKS;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_TOGGLE;
@@ -63,7 +65,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
      */
     public WindowSupplies(@Nullable final BlockPos pos, final String type)
     {
-        super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos,0, "supplies");
+        super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
         packList = findPaneOfTypeByID("packs", ScrollingList.class);
         registerButton(BUTTON_TOGGLE, this::switchPack);
 
@@ -72,6 +74,13 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
             RenderingCache.blueprintRenderingCache.remove("supplies");
             matchingPacks.clear();
+        }
+        else if (!matchingPacks.isEmpty())
+        {
+            if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
+            {
+                RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(matchingPacks.get(0).getB());
+            }
         }
         WindowSupplies.type = type;
 
@@ -161,6 +170,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     private void switchPack(final Button button)
     {
         RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(matchingPacks.get(this.packList.getListElementIndexByPane(button)).getB());
+        adjustToGroundOffset();
     }
 
     @Override
@@ -205,7 +215,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                   .sendToServer(new BuildToolPlacementMessage(BuildToolPlacementMessage.HandlerType.Survival,
                     Constants.MOD_ID,
                     pack,
-                    previewData.getBlueprint().getFilePath().toString().replace(StructurePacks.packMetas.get(pack).getPath().toString() + "/", "") + "/" + previewData.getBlueprint().getFileName() + ".blueprint",
+                      StructurePacks.packMetas.get(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.pos,
                     previewData.rotation,
                     previewData.mirror));
@@ -224,7 +234,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                   .sendToServer(new BuildToolPlacementMessage(BuildToolPlacementMessage.HandlerType.Survival,
                     Constants.MOD_ID,
                     pack,
-                    previewData.getBlueprint().getFilePath().toString().replace(StructurePacks.packMetas.get(pack).getPath().toString() + "/", "") + "/" + previewData.getBlueprint().getFileName() + ".blueprint",
+                    StructurePacks.packMetas.get(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.pos,
                     previewData.rotation,
                     previewData.mirror));

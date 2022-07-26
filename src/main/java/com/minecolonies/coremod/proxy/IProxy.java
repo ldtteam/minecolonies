@@ -50,16 +50,6 @@ public interface IProxy
     void openSuggestionWindow(@NotNull BlockPos pos, @NotNull BlockState state, @NotNull final ItemStack stack);
 
     /**
-     * Opens a build tool window for a specific structure.
-     *
-     * @param pos           the position.
-     * @param structureName the structure name.
-     * @param rotation      the rotation.
-     * @param groundstyle   one of the GROUNDSTYLE_ values.
-     */
-    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle);
-
-    /**
      * Opens a rally banner window.
      *
      * @param banner The banner to edit in the GUI

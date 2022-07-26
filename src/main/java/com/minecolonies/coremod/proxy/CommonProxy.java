@@ -198,14 +198,6 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
     public void openBannerRallyGuardsWindow(final ItemStack banner)
     {
         /*

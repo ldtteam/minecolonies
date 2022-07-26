@@ -4,6 +4,9 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
+import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
+import net.minecraft.core.BlockPos;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -15,7 +18,7 @@ public class ColonyWaypointRenderer
     /**
      * Cached wayPointBlueprint.
      */
-    private static Blueprint wayPointTemplate;
+    private static BlueprintPreviewData wayPointTemplate;
 
     /**
      * Pending template to be loaded.
@@ -43,7 +46,10 @@ public class ColonyWaypointRenderer
                 {
                     try
                     {
-                        wayPointTemplate = pendingTemplate.get();
+                        final BlueprintPreviewData tempPreviewData = new BlueprintPreviewData();
+                        tempPreviewData.setBlueprint(pendingTemplate.get());
+                        tempPreviewData.pos = BlockPos.ZERO;
+                        wayPointTemplate = tempPreviewData;
                         pendingTemplate = null;
                     }
                     catch (InterruptedException | ExecutionException e)
@@ -63,7 +69,7 @@ public class ColonyWaypointRenderer
             }
 
             StructureClientHandler.renderStructureAtPosList(
-              RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint()
+              RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
                     : wayPointTemplate,
                 ctx.partialTicks,
                 new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),

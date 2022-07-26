@@ -456,10 +456,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final String path)
     {
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-        if (!(anchor.getBlock() instanceof AbstractBlockHut<?>))
+        if (!(anchor.getBlock() instanceof AbstractBlockHut<?>) || (!fancyPlacement && player.isCreative()))
         {
             return true;
         }
+
         if (!canPaste(anchor.getBlock(), player, pos))
         {
             return false;
