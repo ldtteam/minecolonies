@@ -1,0 +1,14 @@
+{
+  "icon": "jungle.jpeg",
+  "name": "Jungle",
+  "authors": [
+    "John Reiher", "assisted by Raycoms & Pixblockus"
+  ],
+  "desc": "Live like the Swiss Family Robinson, or your favorite SciFi movie franchise tree dwellers! This style builds around the native Jungle trees, though you will have to plant your own in many cases. Link the buildings with skyways over the undergrowth of the jungle canopy.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

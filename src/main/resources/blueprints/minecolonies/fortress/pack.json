@@ -1,0 +1,14 @@
+{
+  "icon": "fortress.png",
+  "name": "Fortress",
+  "authors": [
+    "Aravan"
+  ],
+  "desc": "Put together a mighty fortress on a large plain space by aligning the buildings like a large puzzle.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

@@ -20,13 +20,6 @@ plugins {
 }
 
 apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
-
-afterEvaluate {
-    tasks.reobfJar.enabled = false
-    tasks.reobfApiJar.enabled = false
-    tasks.reobfShadowJar.enabled = false
-}
 
 configurations {
     library

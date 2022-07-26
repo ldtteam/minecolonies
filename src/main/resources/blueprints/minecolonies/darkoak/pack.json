@@ -1,0 +1,14 @@
+{
+  "icon": "darkoak.png",
+  "name": "Dark Oak",
+  "authors": [
+    "Annie","Cugo"
+  ],
+  "desc": "Create your Forest Kingdom on the Tree Tops in the Middle of a Dark Forest.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

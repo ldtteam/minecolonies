@@ -1,0 +1,14 @@
+{
+  "icon": "medievaloak.png",
+  "name": "Medieval Oak",
+  "authors": [
+    "Carlansor"
+  ],
+  "desc": "Carl still didn't sind me a desc yet.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}
