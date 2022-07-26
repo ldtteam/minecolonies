@@ -34,6 +34,7 @@ import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.entity.ai.util.BuildingStructureHandler;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -599,7 +600,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
             Log.getLogger().warn("Couldn't find structure with name: " + name + " aborting loading procedure");
             return;
         }
-
+        final MutableComponent jobName = Component.translatable(worker.getCitizenData().getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
         job.setBlueprint(structure.getBluePrint());
         job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
         setStructurePlacer(structure);
