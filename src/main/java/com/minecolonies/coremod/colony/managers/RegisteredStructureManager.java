@@ -28,10 +28,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
@@ -48,18 +45,17 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.MathUtils.RANDOM;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TAVERN;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_DUPLICATE_TOWN_HALL;
-import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
 public class RegisteredStructureManager implements IRegisteredStructureManager
 {
@@ -746,7 +742,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
 
         for (final IBuilding colonyBuilding : getBuildings().values())
         {
-            if (colonyBuilding instanceof IGuardBuilding)
+            if (colonyBuilding instanceof IGuardBuilding || colonyBuilding instanceof BuildingBarracks)
             {
                 final BoundingBox guardedRegion = BlockPosUtil.getChunkAlignedBB(colonyBuilding.getPosition(), colonyBuilding.getClaimRadius(colonyBuilding.getBuildingLevel()));
                 if (guardedRegion.isInside(building.getPosition()))
