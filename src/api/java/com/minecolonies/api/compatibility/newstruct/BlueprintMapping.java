@@ -19,29 +19,37 @@ public class BlueprintMapping
 
     static
     {
-        styleMapping.put("wooden", "Default");
-        styleMapping.put("asian", "East Asian");
-        styleMapping.put("asianalternative", "East Asian");
-
         styleMapping.put("medievaloak", "Medieval Oak");
         styleMapping.put("medievalspruce", "Medieval Spruce");
         styleMapping.put("medievaldarkoak", "Medieval Dark Oak");
         styleMapping.put("medievalbirch", "Medieval Birch");
-
-        styleMapping.put("darkoak", "Dark Oak");
-        styleMapping.put("fortress", "Fortress");
         styleMapping.put("caledonia", "Caledonia");
-        styleMapping.put("birch", "Birch");
-        styleMapping.put("jungle", "Jungle");
-        styleMapping.put("lostcity", "Lost City");
+        styleMapping.put("darkoak", "Dark Oak Treehouse");
+        styleMapping.put("fortress", "Fortress");
+        styleMapping.put("birch", "Urban Birch");
+        styleMapping.put("jungle", "Jungle Treehouse");
+        styleMapping.put("lostcity", "Lost Mesa City");
         styleMapping.put("incan", "Incan");
-        styleMapping.put("nordic", "Nordic");
-        styleMapping.put("sandstone", "Moroccan");
+        styleMapping.put("nordic", "Spruce Norse");
+        styleMapping.put("sandstone", "Desert Oasis");
         styleMapping.put("spacewars", "Spacewars");
-        styleMapping.put("warped", "Warped");
-        styleMapping.put("truedwarven", "True Dwarven");
-        styleMapping.put("stone", "Alt Default");
-        styleMapping.put("acacia", "Acacia Savanna");
+        styleMapping.put("warped", "Warped Netherlands");
+        styleMapping.put("truedwarven", "Stalactite Caves");
+        styleMapping.put("stone", "Minecolonies Original");
+        styleMapping.put("acacia", "Urban Savanna");
+        styleMapping.put("wooden", "Minecolonies Original");
+        styleMapping.put("asian", "Pagoda");
+
+        styleMapping.put("asianalternative", "Pagoda");
+        styleMapping.put("fortressalternative", "Fortress");
+        styleMapping.put("junglealternative", "Jungle Treehouse");
+        styleMapping.put("woodalternative", "Minecolonies Original");
+        styleMapping.put("stonealternative", "Minecolonies Original");
+        styleMapping.put("medievaloakalternative", "Medieval Oak");
+        styleMapping.put("medievalsprucealternative", "Medieval Spruce");
+        styleMapping.put("medievaldarkoakalternative", "Medieval Dark Oak");
+        styleMapping.put("medievalbirchalternative", "Medieval Birch");
+        styleMapping.put("caledoniaalternative", "Caledonia");
 
         final Map<String, List<String>> foldersToHuts = new HashMap<>();
         foldersToHuts.put("agriculture/horticulture", Arrays.asList("composter", "farmer", "florist", "plantation"));
@@ -56,7 +64,9 @@ public class BlueprintMapping
         foldersToHuts.put("education", Arrays.asList("library", "school", "university"));
         foldersToHuts.put("fundamentals", Arrays.asList("builder", "citizen", "cook", "hospital", "lumberjack", "miner", "tavern", "townhall"));
         foldersToHuts.put("military", Arrays.asList("archery", "barracks", "barrackstower", "combatacademy", "guardtower"));
-        foldersToHuts.put("mystic", Arrays.asList("enchanter", "netherworker"));
+        foldersToHuts.put("mystic", Arrays.asList("enchanter", "netherworker", "mysticalsite", "graveyard"));
+
+        foldersToHuts.put("infrastructure/mineshafts", Arrays.asList("simplequarry", "mediumquarry"));
 
         runForStyle(foldersToHuts, "medievaloak");
         runForStyle(foldersToHuts, "medievalspruce");
@@ -87,6 +97,12 @@ public class BlueprintMapping
         // This is for the default mapping of things.
         runForStyle(foldersToHuts, "");
 
+        runForAlt(foldersToHuts, "medievalbirchalternative");
+        runForAlt(foldersToHuts, "medievaloakalternative");
+        runForAlt(foldersToHuts, "medievaldarkoakalternative");
+        runForAlt(foldersToHuts, "medievalsprucealternative");
+        runForAlt(foldersToHuts, "fortressalternative");
+
         pathMapping.put("asianalternative:citizen", "fundamentals/citizenalt");
         pathMapping.put("asianalternative:guardtower", "military/guardtoweralt");
 
@@ -94,17 +110,12 @@ public class BlueprintMapping
         pathMapping.put("woodalternative:shepherd", "agriculture/husbandry/shepherdalt");
         pathMapping.put("woodalternative:deliveryman", "craftsmanship/storage/deliverymanalt");
         pathMapping.put("woodalternative:warehouse", "craftsmanship/storage/warehousealt");
+        pathMapping.put("stonealternative:citizen", "fundamentals/citizenalt");
 
         pathMapping.put("junglealternative:farmer", "agriculture/horticulture/farmeralt");
 
         pathMapping.put("caledoniaalternative:farmer", "agriculture/horticulture/farmeralt");
         pathMapping.put("caledoniaalternative:guardtower", "military/guardtoweralt");
-
-        runForAlt(foldersToHuts, "medievalbirchalternative");
-        runForAlt(foldersToHuts, "medievaloakalternative");
-        runForAlt(foldersToHuts, "medievaldarkoakalternative");
-        runForAlt(foldersToHuts, "medievalsprucealternative");
-        runForAlt(foldersToHuts, "fortressalternative");
     }
 
     /**

@@ -354,9 +354,18 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         String path;
         if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
         {
-            final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
             packName = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
-            path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level  + ".blueprint";
+
+            if (this.getSchematicName().isEmpty())
+            {
+                path = null;
+            }
+            else
+            {
+                final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
+                path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level
+                         + ".blueprint";
+            }
         }
         else
         {
@@ -385,7 +394,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             }
         }
 
-        if (path == null || path.isEmpty())
+        if (path == null || path.isEmpty() || path.contains("null"))
         {
             path = BlueprintMapping.pathMapping.get("wooden:" + ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
         }
