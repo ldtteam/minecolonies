@@ -1,10 +1,10 @@
 {
   "icon": "acacia.jpeg",
-  "name": "Acacia Savanna",
+  "name": "Urban Savanna",
   "authors": [
     "John Reiher"
   ],
-  "desc": "In the heat of the Savana, you'll find the perfect spot for a place to live. Making use of the native acacia trees, this style is semi-modern, more of a ranch style than an urban one.",
+  "desc": "In the heat of the Savanna, you'll find the perfect spot for a place to live. Making use of the native acacia trees, this style is semi-modern, more of a ranch style than an urban one.",
   "mods": [
   "structurize",
   "minecolonies"
