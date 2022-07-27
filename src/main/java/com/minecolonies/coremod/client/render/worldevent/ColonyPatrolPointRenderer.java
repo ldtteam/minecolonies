@@ -65,7 +65,7 @@ public class ColonyPatrolPointRenderer
             {
                 final BlueprintPreviewData tempPreviewData = new BlueprintPreviewData();
                 tempPreviewData.setBlueprint(pendingTemplate.get());
-                tempPreviewData.pos = BlockPos.ZERO;
+                tempPreviewData.setPos(BlockPos.ZERO);
                 partolPointTemplate = tempPreviewData;
                 pendingTemplate = null;
             }

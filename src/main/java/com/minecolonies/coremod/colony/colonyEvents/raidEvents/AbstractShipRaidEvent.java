@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
-import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ColonyState;
@@ -169,7 +169,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
-        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture("Default", "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc()), colony.getWorld(), (blueprint -> {
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture("Default", "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc()), colony.getWorld(), (blueprint -> {
             CreativeRaiderStructureHandler structure =
               new CreativeRaiderStructureHandler(colony.getWorld(),
                 spawnPoint,

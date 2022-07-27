@@ -1,6 +1,6 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProvider
+public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack implements IBlueprintDataProviderBE
 {
     /**
      * Version of the TE data.
@@ -237,7 +237,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     public void readSchematicDataFromNBT(final CompoundTag originalCompound)
     {
         final String old = getSchematicName();
-        IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
+        IBlueprintDataProviderBE.super.readSchematicDataFromNBT(originalCompound);
 
         if (level == null || level.isClientSide || getColony() == null || getColony().getBuildingManager() == null)
         {

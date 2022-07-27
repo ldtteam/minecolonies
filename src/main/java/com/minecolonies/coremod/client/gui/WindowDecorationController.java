@@ -2,7 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.structurize.storage.ClientBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.ClientFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -90,7 +90,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             {
                 buttonBuild.setText(new TranslatableComponent(ACTION_BUILD));
 
-                ClientBlueprintFutureProcessor.consumerQueue.add(new ClientBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), this.controller.getSchematicPath()), (blueprint -> {
+                ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), this.controller.getSchematicPath()), (blueprint -> {
                     if (blueprint != null )
                     {
                         final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
@@ -104,7 +104,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
                 if (level != -1)
                 {
                     final String path = this.controller.getSchematicPath().replace(level + ".blueprint", (level + 1) + ".blueprint");
-                    ClientBlueprintFutureProcessor.consumerQueue.add(new ClientBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), path),
+                    ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), path),
                       (blueprint -> {
                         if (blueprint != null)
                         {

@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.ldtteam.structurize.api.util.Log;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 import static com.minecolonies.api.util.constant.SchematicTagConstants.*;
 
 /**
@@ -83,9 +83,9 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
-                if (entity instanceof IBlueprintDataProvider)
+                if (entity instanceof IBlueprintDataProviderBE)
                 {
-                    this.map = ((IBlueprintDataProvider) entity).getWorldTagPosMap();
+                    this.map = ((IBlueprintDataProviderBE) entity).getWorldTagPosMap();
                 }
             }
         }
@@ -128,9 +128,9 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
             if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
             {
                 final BlockEntity entity = BlockEntity.loadStatic(pos, info.getState(), info.getTileEntityData());
-                if (entity instanceof IBlueprintDataProvider)
+                if (entity instanceof IBlueprintDataProviderBE)
                 {
-                    this.map = ((IBlueprintDataProvider) entity).getWorldTagPosMap();
+                    this.map = ((IBlueprintDataProviderBE) entity).getWorldTagPosMap();
                 }
             }
         }

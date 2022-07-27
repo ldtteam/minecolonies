@@ -66,7 +66,8 @@ public class FMLEventHandler
         IColonyManager.getInstance().getRecipeManager().reset();
     }
 
-    public static void onServerStopped(final ServerStoppingEvent event)
+    @SubscribeEvent
+    public static void onServerStopped(@NotNull final ServerStoppingEvent event)
     {
         Pathfinding.shutdown();
     }

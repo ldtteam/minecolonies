@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableSet;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
@@ -563,9 +563,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void upgradeBuildingLevelToSchematicData()
     {
         final BlockEntity tileEntity = colony.getWorld().getBlockEntity(getID());
-        if (tileEntity instanceof IBlueprintDataProvider)
+        if (tileEntity instanceof IBlueprintDataProviderBE)
         {
-            final IBlueprintDataProvider blueprintDataProvider = (IBlueprintDataProvider) tileEntity;
+            final IBlueprintDataProviderBE blueprintDataProvider = (IBlueprintDataProviderBE) tileEntity;
             if (blueprintDataProvider.getSchematicName().isEmpty())
             {
                 return;
@@ -597,7 +597,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider)
+    public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProviderBE blueprintDataProvider)
     {
         upgradeBuildingLevelToSchematicData();
     }

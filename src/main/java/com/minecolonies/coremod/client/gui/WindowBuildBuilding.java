@@ -11,8 +11,7 @@ import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
-import com.ldtteam.structurize.storage.ClientBlueprintFutureProcessor;
-import com.ldtteam.structurize.storage.StructurePackMeta;
+import com.ldtteam.structurize.storage.ClientFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -290,7 +289,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
 
         String name = building.getStructurePath().replace(".blueprint", "");
         name = name.substring(0, name.length() - 1) + nextLevel + ".blueprint";
-        ClientBlueprintFutureProcessor.consumerQueue.add(new ClientBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name), (blueprint -> {
+        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name), (blueprint -> {
             resources.clear();
             if (blueprint == null)
             {

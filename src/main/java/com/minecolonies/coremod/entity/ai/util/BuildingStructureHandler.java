@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.util;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.storage.StructurePacks;

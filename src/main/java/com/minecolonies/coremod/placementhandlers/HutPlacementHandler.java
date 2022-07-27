@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.api.util.ItemStackUtils;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
@@ -66,22 +66,22 @@ public class HutPlacementHandler implements IPlacementHandler
                     final String folder = blueprint.getFilePath().toString().replace(StructurePacks.packMetas.get(blueprint.getPackName()).getPath().toString(), "").substring(1);
                     if (pos.equals(centerPos))
                     {
-                        ((IBlueprintDataProvider) be).setBlueprintPath(
+                        ((IBlueprintDataProviderBE) be).setBlueprintPath(
                           blueprint.getFilePath().toString().replace(StructurePacks.selectedPack.getPath().toString() + "/", "") + folder + "/" + blueprint.getFileName() + ".blueprint");
                     }
                     else
                     {
-                        final String partialPath = folder + "/" + ((IBlueprintDataProvider) be).getSchematicName();
+                        final String partialPath = folder + "/" + ((IBlueprintDataProviderBE) be).getSchematicName();
                         if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
                         {
-                            ((IBlueprintDataProvider) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");
                         }
                         else
                         {
-                            ((IBlueprintDataProvider) be).setBlueprintPath(partialPath + ".blueprint");
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath + ".blueprint");
                         }
                     }
-                    ((IBlueprintDataProvider) be).setPackName(blueprint.getPackName());
+                    ((IBlueprintDataProviderBE) be).setPackName(blueprint.getPackName());
 
                     if (!complete)
                     {

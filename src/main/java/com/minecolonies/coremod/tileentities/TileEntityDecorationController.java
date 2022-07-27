@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.tileentities;
 
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
@@ -24,7 +24,7 @@ import java.util.Map;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProvider, IRotatableBlockEntity
+public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
 {
     /**
      * Tag to store the basic facing to NBT
@@ -161,7 +161,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     @Override
     public void readSchematicDataFromNBT(CompoundTag compound)
     {
-        IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
+        IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         if (compound.contains(TAG_NAME))
         {
             this.schematicPath = compound.getString(TAG_NAME);
@@ -195,7 +195,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public void load(final CompoundTag compound)
     {
         super.load(compound);
-        IBlueprintDataProvider.super.readSchematicDataFromNBT(compound);
+        IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
         this.mirror = compound.getBoolean(TAG_MIRROR);
         this.schematicPath = compound.getString(TAG_NAME);

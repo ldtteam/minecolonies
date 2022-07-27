@@ -69,7 +69,7 @@ public class NearColonyBuildingsRenderer
             return;
         }
 
-        final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").pos;
+        final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getPos();
         if (lastCacheRebuild == null || Minecraft.getInstance().level.getGameTime() % 20 == 0)
         {
             rebuildCache(ctx);
@@ -99,7 +99,7 @@ public class NearColonyBuildingsRenderer
 
     private static void rebuildCache(final WorldEventContext ctx)
     {
-        final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").pos;
+        final BlockPos activePosition = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getPos();
         final Map<BlockPos, RenderData> newCache = new HashMap<>();
         final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
         final BlockPos zeroPos = activePosition.subtract(blueprint.getPrimaryBlockOffset());
@@ -166,7 +166,7 @@ public class NearColonyBuildingsRenderer
 
                 final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData();
                 blueprintPreviewData.setBlueprint(localBlueprint);
-                blueprintPreviewData.pos = data.pos;
+                blueprintPreviewData.setPos(data.pos);
                 blueprintPreviewData.rotate(data.settings.getRotation());
                 if (data.settings.getMirror() != Mirror.NONE)
                 {

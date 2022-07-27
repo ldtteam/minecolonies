@@ -1,6 +1,6 @@
 package com.minecolonies.api.colony.buildings;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
@@ -188,5 +188,5 @@ public interface ISchematicProvider extends INBTSerializable<CompoundTag>
      * @param oldSchematic
      * @param newSchematic
      */
-    void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider);
+    void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProviderBE blueprintDataProvider);
 }

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.placementhandlers.main;
 
-import com.ldtteam.structurize.blockentities.interfaces.ILeveledBlueprintAnchorBlock;
+import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;

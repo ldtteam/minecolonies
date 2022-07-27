@@ -1,7 +1,7 @@
 package com.minecolonies.api.blocks;
 
 import com.ldtteam.structurize.blockentities.interfaces.*;
-import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
+import com.ldtteam.structurize.blocks.interfaces.*;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.storage.StructurePackMeta;
@@ -70,7 +70,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.*;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.*;
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
@@ -90,7 +90,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                                                                                                                         ILeveledBlueprintAnchorBlock,
                                                                                                                         IRequirementsBlueprintAnchorBlock,
                                                                                                                         IInvisibleBlueprintAnchorBlock,
-                                                                                                                        ISpecialCreativeHandler
+                                                                                                                        ISpecialCreativeHandlerAnchorBlock
 
 
 {

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -154,7 +154,7 @@ public class DecorationBuildRequestMessage implements IMessage
             return;
         }
 
-        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(packName, path),
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName, path),
           player.level,
           (blueprint -> {
               if (blueprint == null)

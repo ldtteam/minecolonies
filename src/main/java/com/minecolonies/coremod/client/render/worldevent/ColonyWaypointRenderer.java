@@ -48,7 +48,7 @@ public class ColonyWaypointRenderer
                     {
                         final BlueprintPreviewData tempPreviewData = new BlueprintPreviewData();
                         tempPreviewData.setBlueprint(pendingTemplate.get());
-                        tempPreviewData.pos = BlockPos.ZERO;
+                        tempPreviewData.setPos(BlockPos.ZERO);
                         wayPointTemplate = tempPreviewData;
                         pendingTemplate = null;
                     }

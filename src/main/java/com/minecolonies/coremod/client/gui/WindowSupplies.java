@@ -72,7 +72,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         if (!type.equals(WindowSupplies.type))
         {
             HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
-            RenderingCache.blueprintRenderingCache.remove("supplies");
+            RenderingCache.removeBlueprint("supplies");
             matchingPacks.clear();
         }
         else if (!matchingPacks.isEmpty())
@@ -87,7 +87,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
 
         if (pos != null)
         {
-            RenderingCache.getOrCreateBlueprintPreviewData("supplies").pos = pos;
+            RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
         }
         updatePlacementOptions(type);
     }
@@ -124,7 +124,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         {
             for (final StructurePackMeta packName : StructurePacks.packMetas.values())
             {
-                ClientBlueprintFutureProcessor.consumerQueue.add(new ClientBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(packName.getName(),
+                ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName.getName(),
                   "decorations/supplies/" + type + ".blueprint"), (blueprint -> {
                     if (blueprint != null)
                     {
@@ -177,7 +177,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     protected void cancelClicked()
     {
         HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
-        RenderingCache.blueprintRenderingCache.remove("supplies");
+        RenderingCache.removeBlueprint("supplies");
         close();
     }
 
@@ -207,7 +207,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         final List<PlacementError> placementErrorList = new ArrayList<>();
         if (type.equals("supplycamp"))
         {
-            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").pos,
+            if (ItemSupplyCampDeployer.canCampBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
               placementErrorList,
               Minecraft.getInstance().player))
             {
@@ -216,16 +216,16 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                     Constants.MOD_ID,
                     pack,
                       StructurePacks.packMetas.get(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
-                    previewData.pos,
-                    previewData.rotation,
-                    previewData.mirror));
+                    previewData.getPos(),
+                    previewData.getRotation(),
+                    previewData.getMirror()));
                 cancelClicked();
                 return;
             }
         }
         else
         {
-            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").pos,
+            if (ItemSupplyChestDeployer.canShipBePlaced(Minecraft.getInstance().level, RenderingCache.getOrCreateBlueprintPreviewData("supplies").getPos(),
               previewData.getBlueprint(),
               placementErrorList,
               Minecraft.getInstance().player))
@@ -235,9 +235,9 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                     Constants.MOD_ID,
                     pack,
                     StructurePacks.packMetas.get(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
-                    previewData.pos,
-                    previewData.rotation,
-                    previewData.mirror));
+                    previewData.getPos(),
+                    previewData.getRotation(),
+                    previewData.getMirror()));
                 cancelClicked();
                 return;
             }

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
@@ -70,7 +70,7 @@ public final class ShipBasedRaiderUtils
       final IColonyRaidEvent event,
       final int shipRotation)
     {
-        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture("Default",
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture("Default",
           "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize), colony.getWorld(), (blueprint -> {
 
             colony.getEventManager()

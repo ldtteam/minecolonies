@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.ldtteam.structurize.storage.ServerBlueprintFutureProcessor;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -41,7 +41,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(workOrder.getStructurePack(), workOrder.getStructurePath()), world, (blueprint -> {
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(workOrder.getStructurePack(), workOrder.getStructurePath()), world, (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
             placeConstructionTape(corners, world);
         })));
@@ -55,7 +55,7 @@ public final class ConstructionTapeHelper
      */
     public static void placeConstructionTape(@NotNull final IBuilding building, @NotNull final Level world)
     {
-        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(), building.getBlueprintPath()), world, (blueprint -> {
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(), building.getBlueprintPath()), world, (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(building.getPosition(), world, blueprint, building.getRotation(), building.isMirrored());
             placeConstructionTape(corners, world);
         })));
@@ -162,7 +162,7 @@ public final class ConstructionTapeHelper
      */
     public static void removeConstructionTape(@NotNull final IWorkOrder workOrder, @NotNull final Level world)
     {
-        ServerBlueprintFutureProcessor.consumerQueue.add(new ServerBlueprintFutureProcessor.ProcessingData(StructurePacks.getBlueprintFuture(workOrder.getStructurePack(), workOrder.getStructurePath()), world, (blueprint -> {
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(workOrder.getStructurePack(), workOrder.getStructurePath()), world, (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(workOrder.getLocation(), world, blueprint, workOrder.getRotation(), workOrder.isMirrored());
             removeConstructionTape(corners, world);
         })));

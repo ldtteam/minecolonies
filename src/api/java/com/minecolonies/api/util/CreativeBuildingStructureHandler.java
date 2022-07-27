@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.api.util.Log;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
@@ -98,7 +98,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
             if (te != null)
             {
-                ((IBlueprintDataProvider) te).readSchematicDataFromNBT(teData);
+                ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(teData);
                 ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
                 te.setChanged();
             }
