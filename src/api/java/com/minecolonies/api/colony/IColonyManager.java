@@ -255,8 +255,6 @@ public interface IColonyManager
 
     /**
      * On world tick, tick every Colony in that world. NOTE: Review this for performance.
-     *
-     * @param event {@link TickEvent.WorldTickEvent}.
      */
     void onWorldTick(@NotNull TickEvent.LevelTickEvent event);
 

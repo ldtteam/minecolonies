@@ -472,8 +472,6 @@ public interface IBuilding extends IBuildingContainer, IRequestResolverProvider,
 
     /**
      * On tick of the colony.
-     *
-     * @param colony {@link net.minecraftforge.event.TickEvent.WorldTickEvent}
      */
     void onColonyTick(IColony colony);
 
