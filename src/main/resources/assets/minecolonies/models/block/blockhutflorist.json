@@ -1,12 +1,13 @@
 {
 	"credit": "Made with Blockbench",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/stripped_oak_log"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"parent": "block/block",
 			"textures": {
 				"2": "block/spruce_planks",
@@ -868,7 +869,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"textures": {
 				"18": "block/poppy",
 				"19": "block/blue_orchid",

@@ -31,8 +31,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -67,13 +67,17 @@ public class ClientEventHandler
     private static final Lazy<Map<String, BuildingEntry>> crafterToBuilding = Lazy.of(ClientEventHandler::buildCrafterToBuildingMap);
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void renderWorldLastEvent(@NotNull final RenderLevelLastEvent event)
+    public static void renderWorldLastEvent(@NotNull final RenderLevelStageEvent event)
     {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
+        {
+            return;
+        }
         WorldEventContext.INSTANCE.renderWorldLastEvent(event);
     }
 
     @SubscribeEvent
-    public static void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggedOutEvent event)
+    public static void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event)
     {
         ColonyBorderRenderer.cleanup();
     }
@@ -115,14 +119,14 @@ public class ClientEventHandler
     public static void onItemTooltipEvent(final ItemTooltipEvent event)
     {
         // Vanilla recipe books populate tooltips once before the player exists on remote clients, some other cases.
-        if(event.getPlayer() == null)
+        if(event.getEntity() == null)
         {
             return;
         }
-        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getPlayer().level, event.getPlayer().blockPosition());
+        IColony colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColony(event.getEntity().level, event.getEntity().blockPosition());
         if(colony == null)
         {
-            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getPlayer().level, event.getPlayer());
+            colony = IMinecoloniesAPI.getInstance().getColonyManager().getIColonyByOwner(event.getEntity().level, event.getEntity());
         }
         handleCrafterRecipeTooltips(colony, event.getToolTip(), event.getItemStack().getItem());
         if(event.getItemStack().getItem() instanceof BlockItem)
@@ -282,11 +286,9 @@ public class ClientEventHandler
 
     /**
      * Event when the debug screen is opened. Event gets called by displayed text on the screen, we only need it when f3 is clicked.
-     *
-     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
     @SubscribeEvent
-    public static void onDebugOverlay(final RenderGameOverlayEvent.Text event)
+    public static void onDebugOverlay(final CustomizeGuiOverlayEvent.DebugText event)
     {
         final Minecraft mc = Minecraft.getInstance();
         if (mc.options.renderDebug)

@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -46,7 +46,7 @@ public class ModParticleTypesInitializer
     public static class ClientRegistration
     {
         @SubscribeEvent
-        public static void registerParticleFactories(ParticleFactoryRegisterEvent event)
+        public static void registerParticleFactories(RegisterParticleProvidersEvent event)
         {
             Minecraft.getInstance().particleEngine.register(SLEEPINGPARTICLE_TYPE, SleepingParticle.Factory::new);
         }

@@ -55,7 +55,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
         for (int i = 0; i < filterableList.size(); ++i)
         {
             final ResourceLocation res = new ResourceLocation(filterableList.getString(i));
-            if (ForgeRegistries.ENTITIES.containsKey(res))
+            if (ForgeRegistries.ENTITY_TYPES.containsKey(res))
             {
                 mobsAllowed.add(res);
             }
@@ -113,7 +113,7 @@ public class EntityListModule extends AbstractBuildingModule implements IEntityL
         buf.writeInt(mobsAllowed.size());
         for (final ResourceLocation entity : mobsAllowed)
         {
-            buf.writeRegistryIdUnsafe(ForgeRegistries.ENTITIES, entity);
+            buf.writeRegistryIdUnsafe(ForgeRegistries.ENTITY_TYPES, entity);
         }
     }
 

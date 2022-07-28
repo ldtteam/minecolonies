@@ -37,13 +37,13 @@ public class FMLEventHandler
     @SubscribeEvent
     public static void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
     {
-        if (event.getPlayer() instanceof ServerPlayer)
+        if (event.getEntity() instanceof ServerPlayer)
         {
-            Network.getNetwork().sendToPlayer(new ServerUUIDMessage(), (ServerPlayer) event.getPlayer());
-            Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), (ServerPlayer) event.getPlayer());
+            Network.getNetwork().sendToPlayer(new ServerUUIDMessage(), (ServerPlayer) event.getEntity());
+            Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), (ServerPlayer) event.getEntity());
 
             // This automatically reloads the owner of the colony if failed.
-            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayer) event.getPlayer()).getLevel(), event.getPlayer());
+            IColonyManager.getInstance().getIColonyByOwner(((ServerPlayer) event.getEntity()).getLevel(), event.getEntity());
             //ColonyManager.syncAllColoniesAchievements();
         }
     }
@@ -57,7 +57,7 @@ public class FMLEventHandler
     }
 
     @SubscribeEvent
-    public static void onWorldTick(final TickEvent.WorldTickEvent event)
+    public static void onWorldTick(final TickEvent.LevelTickEvent event)
     {
         IColonyManager.getInstance().onWorldTick(event);
     }

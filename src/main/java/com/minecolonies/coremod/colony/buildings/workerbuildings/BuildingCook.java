@@ -100,7 +100,7 @@ public class BuildingCook extends AbstractBuilding
     {
         super(c, l);
         keepX.put(this::isAllowedFood, new Tuple<>(STACKSIZE, true));
-        keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getContainerItem()) && !stack.getContainerItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
+        keepX.put(stack -> !ItemStackUtils.isEmpty(stack.getCraftingRemainingItem()) && !stack.getCraftingRemainingItem().getItem().equals(Items.BUCKET), new Tuple<>(STACKSIZE, false));
     }
 
     /**

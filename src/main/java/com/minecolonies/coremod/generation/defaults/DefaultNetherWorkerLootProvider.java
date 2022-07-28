@@ -39,6 +39,9 @@ import java.util.stream.Stream;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
+
 public class DefaultNetherWorkerLootProvider implements DataProvider
 {
     private static final int MAX_BUILDING_LEVEL = 5;
@@ -199,7 +202,7 @@ public class DefaultNetherWorkerLootProvider implements DataProvider
     private LootPoolSingletonContainer.Builder<?> createAdventureToken(@NotNull final EntityType<?> mob, final int damage_done, final int xp_gained)
     {
         final CompoundTag nbt = new CompoundTag();
-        nbt.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITIES.getKey(mob).toString());
+        nbt.putString(TAG_ENTITY_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(mob).toString());
         nbt.putInt(TAG_DAMAGE, damage_done);
         nbt.putInt(TAG_XP_DROPPED, xp_gained);
 

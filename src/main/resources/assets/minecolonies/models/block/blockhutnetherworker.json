@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
     "textures": {
         "particle": "block/nether_portal"
     },
     "layers" :{
-        "solid": {
+        "first": {
+      "render_type": "solid",
             "textures": {
                 "0": "entity/piglin/zombified_piglin",
                 "3": "block/netherite_block",
@@ -480,7 +481,8 @@
                 }
             ]
         },
-        "cutout": {
+        "second": {
+      "render_type": "cutout",
             "textures": {
                 "11": "item/iron_pickaxe"
             },
@@ -497,7 +499,8 @@
                 }
             ]
         },
-        "translucent": {
+      "third": {
+        "render_type": "translucent",
             "textures": {
                 "9": "block/nether_portal"
             },

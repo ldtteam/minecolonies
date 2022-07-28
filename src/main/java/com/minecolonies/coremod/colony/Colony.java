@@ -1079,9 +1079,9 @@ public class Colony implements IColony
      * @param event {@link TickEvent.WorldTickEvent}
      */
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.LevelTickEvent event)
     {
-        if (event.world != getWorld())
+        if (event.level != getWorld())
         {
             /*
              * If the event world is not the colony world ignore. This might happen in interactions with other mods.

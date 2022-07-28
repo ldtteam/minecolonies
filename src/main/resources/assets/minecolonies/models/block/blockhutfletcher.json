@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/oak_planks"
 	},
@@ -38,8 +38,9 @@
 			"scale": [1.02, 1.02, 1.02]
 		}
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"parent": "block/block",
 			"textures": {
 				"9": "block/gray_wool",
@@ -703,7 +704,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
 				"transp": "map/map_icons",

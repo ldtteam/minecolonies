@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
+
 /**
  * Datagen for fisherman loot tables
  */

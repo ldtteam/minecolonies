@@ -27,6 +27,8 @@ import java.util.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
+
 /**
  * Citizen mourning goal. Has citizens randomly walk around townhall.
  */

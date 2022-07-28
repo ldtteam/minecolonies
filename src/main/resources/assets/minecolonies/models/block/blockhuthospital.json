@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/stripped_spruce_log"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"parent": "block/block",
 			"textures": {
 				"0": "minecolonies:blocks/books/booktexture_yellow",
@@ -589,7 +590,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
 				"5": "minecolonies:blocks/cloth-diamond",

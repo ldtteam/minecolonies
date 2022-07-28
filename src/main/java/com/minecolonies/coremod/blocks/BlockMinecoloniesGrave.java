@@ -40,6 +40,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 /**
  * Block for the graves
  */
@@ -174,7 +176,7 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
             final TileEntityGrave grave = (TileEntityGrave) tileEntity;
             if (!worldIn.isClientSide)
             {
-                NetworkHooks.openGui((ServerPlayer) player,
+                NetworkHooks.openScreen((ServerPlayer) player,
                   grave,
                   buf -> buf.writeBlockPos(grave.getBlockPos()));
             }

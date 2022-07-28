@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+
 /** Datagen for concrete mixer crafterrecipes */
 public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
 {

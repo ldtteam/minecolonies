@@ -45,6 +45,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 /**
  * Block for the shelves of the warehouse.
  */
@@ -244,7 +246,7 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             final TileEntityRack rack = (TileEntityRack) tileEntity;
             if (!worldIn.isClientSide)
             {
-                NetworkHooks.openGui((ServerPlayer) player,
+                NetworkHooks.openScreen((ServerPlayer) player,
                   rack,
                   buf -> buf.writeBlockPos(rack.getBlockPos()).writeBlockPos(rack.getOtherChest() == null ? BlockPos.ZERO : rack.getOtherChest().getBlockPos()));
             }

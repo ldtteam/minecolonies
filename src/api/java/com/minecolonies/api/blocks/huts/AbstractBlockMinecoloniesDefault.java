@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 import net.minecraftforge.registries.IForgeRegistry;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public abstract class AbstractBlockMinecoloniesDefault<B extends AbstractBlockMinecoloniesDefault<B>> extends AbstractBlockMinecoloniesContainer<B>
 {
     /**

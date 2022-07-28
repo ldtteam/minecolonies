@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/oak_planks"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"parent": "block/block",
 			"textures": {
 				"3": "block/spruce_planks",
@@ -640,7 +641,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
 				"1_8": "minecolonies:blocks/books/miners_hut_map"

@@ -786,12 +786,12 @@ public abstract class AbstractEntityAIGuard<J extends AbstractJobGuard<J>, B ext
      */
     public static boolean isAttackableTarget(final AbstractEntityCitizen user, final LivingEntity entity)
     {
-        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(ForgeRegistries.ENTITIES.getKey(entity.getType())) && !user.getCitizenData()
+        if (IColonyManager.getInstance().getCompatibilityManager().getAllMonsters().contains(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType())) && !user.getCitizenData()
           .getWorkBuilding()
           .getModuleMatching(
             EntityListModule.class,
             m -> m.getId().equals(HOSTILE_LIST))
-          .isEntityInList(ForgeRegistries.ENTITIES.getKey(entity.getType())))
+          .isEntityInList(ForgeRegistries.ENTITY_TYPES.getKey(entity.getType())))
         {
             return true;
         }

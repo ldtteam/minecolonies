@@ -37,6 +37,9 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
+
 public class DefaultSifterCraftingProvider implements DataProvider
 {
     private final SifterRecipeProvider recipeProvider;

@@ -110,6 +110,8 @@ import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECRE
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 /**
  * The Class used to represent the citizen entities.
  */

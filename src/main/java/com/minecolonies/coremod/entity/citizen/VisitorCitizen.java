@@ -57,6 +57,8 @@ import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_IN
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 /**
  * Visitor citizen entity
  */

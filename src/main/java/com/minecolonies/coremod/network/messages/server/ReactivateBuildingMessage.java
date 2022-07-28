@@ -100,7 +100,7 @@ public class ReactivateBuildingMessage implements IMessage
             if (building == null)
             {
                 final BlockEntity tileEntity = world.getBlockEntity(pos);
-                if (tileEntity instanceof @NotNull final TileEntityColonyBuilding hut)
+                if (tileEntity instanceof final TileEntityColonyBuilding hut)
                 {
                     if (!colony.getBuildingManager().canPlaceAt(tileEntity.getBlockState().getBlock(), pos, player))
                     {

@@ -424,7 +424,7 @@ public class CompatibilityManager implements ICompatibilityManager
     {
         Set<ResourceLocation> monsterSet = new HashSet<>();
 
-        for (final Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITIES.getEntries())
+        for (final Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entry : ForgeRegistries.ENTITY_TYPES.getEntries())
         {
             if (entry.getValue().getCategory() == MobCategory.MONSTER)
             {

@@ -43,6 +43,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
 import static com.minecolonies.coremod.MineColonies.getConfig;
 
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
+
 /**
  * Singleton class that links colonies to minecraft.
  */
@@ -648,11 +650,11 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void onWorldTick(final TickEvent.@NotNull WorldTickEvent event)
+    public void onWorldTick(final TickEvent.@NotNull LevelTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            getColonies(event.world).forEach(c -> c.onWorldTick(event));
+            getColonies(event.level).forEach(c -> c.onWorldTick(event));
         }
     }
 

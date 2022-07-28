@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/spruce_planks"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"textures": {
 				"5": "block/stripped_spruce_log",
 				"7": "block/spruce_planks",
@@ -439,7 +440,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"textures": {
 				"1": "minecolonies:blocks/fisher_net",
 				"12": "item/string",

@@ -34,6 +34,9 @@ import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
+import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
+
 public class DefaultEnchanterCraftingProvider implements DataProvider
 {
     private static final int MAX_BUILDING_LEVEL = 5;

@@ -6,7 +6,7 @@ import com.minecolonies.coremod.util.SchemFixerUtil;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent;
 
 public class GatherDataHandler
 {

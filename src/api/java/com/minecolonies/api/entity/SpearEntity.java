@@ -24,6 +24,8 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 /**
  * Custom arrow entity used for spear throwing, acts similar to the trident without any of the special effects.
  */

@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -40,7 +40,7 @@ public class WorldEventContext
      */
     int clientRenderDist;
 
-    public void renderWorldLastEvent(final RenderLevelLastEvent event)
+    public void renderWorldLastEvent(final RenderLevelStageEvent event)
     {
         bufferSource = WorldRenderMacros.getBufferSource();
         poseStack = event.getPoseStack();

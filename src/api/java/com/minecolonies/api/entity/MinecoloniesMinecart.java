@@ -39,6 +39,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.AABB;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 /**
  * Special minecolonies minecart that doesn't collide.
  */

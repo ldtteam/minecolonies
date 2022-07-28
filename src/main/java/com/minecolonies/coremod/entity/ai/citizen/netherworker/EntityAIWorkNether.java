@@ -810,7 +810,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             citizenData.increaseSaturation(satIncrease / 2.0);
             citizenData.getInventory().extractItem(slot, 1, false);
 
-            final ItemStack containerItem = stack.getContainerItem();
+            final ItemStack containerItem = stack.getCraftingRemainingItem();
 
             if (containerItem != null && !(containerItem.getItem() instanceof AirItem))
             {

@@ -142,7 +142,7 @@ public class TagWorkAroundEventHandler
         @SubscribeEvent
         public static void onTagsUpdated(final TagsUpdatedEvent event)
         {
-            tagManager = event.getTagManager();
+            tagManager = event.getRegistryAccess();
             maybeLoadRecipes();
         }
 
@@ -151,7 +151,7 @@ public class TagWorkAroundEventHandler
          * @param event {@link net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent}
          */
         @SubscribeEvent
-        public static void onLoggedOut(final ClientPlayerNetworkEvent.LoggedOutEvent event)
+        public static void onLoggedOut(final ClientPlayerNetworkEvent.LoggingOut event)
         {
             recipeManager = null;
             tagManager = null;

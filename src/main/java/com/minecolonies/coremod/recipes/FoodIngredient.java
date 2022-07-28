@@ -20,6 +20,9 @@ import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 
+import net.minecraft.world.item.crafting.Ingredient.ItemValue;
+import net.minecraft.world.item.crafting.Ingredient.Value;
+
 /**
  * An ingredient that can be used in a vanilla recipe to match food items.
  * Only items with at least *some* healing and saturation are counted, and

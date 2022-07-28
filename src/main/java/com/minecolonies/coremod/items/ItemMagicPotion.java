@@ -2,6 +2,8 @@ package com.minecolonies.coremod.items;
 
 import net.minecraft.world.item.CreativeModeTab;
 
+import net.minecraft.world.item.Item.Properties;
+
 /**
  * Class describing the magic potion item.
  */

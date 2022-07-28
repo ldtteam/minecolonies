@@ -258,7 +258,7 @@ public interface IColonyManager
      *
      * @param event {@link TickEvent.WorldTickEvent}.
      */
-    void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
+    void onWorldTick(@NotNull TickEvent.LevelTickEvent event);
 
     /**
      * When a world is loaded, Colonies in that world need to grab the reference to the World. Additionally, when loading the first world, load the manager data.

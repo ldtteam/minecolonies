@@ -45,6 +45,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUA
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
+import net.minecraft.world.item.Item.Properties;
+
 /**
  * Rally Guards Banner Item class. Used to give tasks to guards.
  */

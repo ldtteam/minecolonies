@@ -1286,7 +1286,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.LevelTickEvent event)
     {
 
     }

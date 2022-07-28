@@ -41,6 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.world.entity.Entity.RemovalReason;
+
 public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {
     private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(NewBobberEntity.class, EntityDataSerializers.INT);

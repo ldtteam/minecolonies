@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
+
 public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 {
     public DefaultBlockLootTableProvider(@NotNull DataGenerator dataGenerator)

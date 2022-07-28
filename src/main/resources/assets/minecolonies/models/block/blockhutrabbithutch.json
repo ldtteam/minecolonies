@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/oak_planks"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"textures": {
 				"14": "entity/chest/normal",
 				"15": "block/cauldron_side",
@@ -518,7 +519,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"textures": {
 				"5": "item/carrot"
 			},

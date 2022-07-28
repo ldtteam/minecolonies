@@ -42,6 +42,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 /**
  * The cnet.minecraft.core.Directions, placement and activation.
  */
@@ -113,7 +115,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
 
             if (entity instanceof ScarecrowTileEntity)
             {
-                NetworkHooks.openGui((ServerPlayer) player, (ScarecrowTileEntity) entity, pos);
+                NetworkHooks.openScreen((ServerPlayer) player, (ScarecrowTileEntity) entity, pos);
             }
             else
             {

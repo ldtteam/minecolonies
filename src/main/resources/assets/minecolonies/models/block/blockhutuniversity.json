@@ -2,14 +2,15 @@
   "credit": "Made with Blockbench",
   "parent": "block/block",
   "ambientocclusion": false,
-  "loader": "forge:multi-layer",
+  "loader": "forge:composite",
   "textures": {
     "particle": "block/oak_planks"
   },
-  "layers": {
+  "children": {
     "base": {
     },
-    "solid": {
+    "first": {
+      "render_type": "solid",
 		"textures": {
 		"0": "minecolonies:blocks/books/booktexture_blue",
 		"8": "block/oak_planks",
@@ -617,7 +618,8 @@
 		}
 	]
 		},
-    "cutout": {
+    "second": {
+      "render_type": "cutout",
       "textures": {
         "19": "item/feather"
       },

@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate.RestrictionType;
+
 /**
  * Minecolonies async PathNavigate.
  */

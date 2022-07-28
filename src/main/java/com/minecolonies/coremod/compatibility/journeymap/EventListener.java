@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class EventListener
     }
 
     @SubscribeEvent
-    public void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggedOutEvent event)
+    public void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event)
     {
         ColonyDeathpoints.clear();
         this.jmap.getApi().removeAll(MOD_ID);
@@ -62,11 +62,11 @@ public class EventListener
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onChunkLoaded(@NotNull final ChunkEvent.Load event)
     {
-        if (!event.getWorld().isClientSide()) return;
+        if (!event.getLevel().isClientSide()) return;
 
-        if (event.getWorld() instanceof Level)
+        if (event.getLevel() instanceof Level)
         {
-            final ResourceKey<Level> dimension = ((Level) event.getWorld()).dimension();
+            final ResourceKey<Level> dimension = ((Level) event.getLevel()).dimension();
 
             ColonyDeathpoints.updateChunk(this.jmap, dimension, event.getChunk());
         }

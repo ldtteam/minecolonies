@@ -11,6 +11,8 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Items;
 
+import net.minecraft.world.item.Item.Properties;
+
 /**
  * Class handling the Plate Armor.
  */

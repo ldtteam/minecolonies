@@ -111,7 +111,7 @@ public class EntityListModuleView extends AbstractBuildingModuleView implements 
 
         for (int j = 0; j < size; j++)
         {
-            listOfEntities.add(ForgeRegistries.ENTITIES.getKey(buf.readRegistryIdUnsafe(ForgeRegistries.ENTITIES)));
+            listOfEntities.add(ForgeRegistries.ENTITY_TYPES.getKey(buf.readRegistryIdUnsafe(ForgeRegistries.ENTITY_TYPES)));
         }
     }
 

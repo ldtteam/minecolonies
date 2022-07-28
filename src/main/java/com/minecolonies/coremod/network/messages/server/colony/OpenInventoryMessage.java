@@ -152,7 +152,7 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
                 citizen.getInventoryCitizen().setCustomName(name);
             }
 
-            NetworkHooks.openGui(player, citizen, packetBuffer -> packetBuffer.writeVarInt(citizen.getCitizenColonyHandler().getColonyId()).writeVarInt(citizen.getCivilianID()));
+            NetworkHooks.openScreen(player, citizen, packetBuffer -> packetBuffer.writeVarInt(citizen.getCitizenColonyHandler().getColonyId()).writeVarInt(citizen.getCivilianID()));
         }
     }
 
@@ -162,14 +162,14 @@ public class OpenInventoryMessage extends AbstractColonyServerMessage
 
         if(tileEntity instanceof TileEntityRack || tileEntity instanceof TileEntityGrave)
         {
-            NetworkHooks.openGui(player, (MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
+            NetworkHooks.openScreen(player, (MenuProvider) tileEntity, packetBuffer -> packetBuffer.writeVarInt(colony.getID()).writeBlockPos(tileEntity.getBlockPos()));
         }
     }
 
     private void doFieldInventory(final ServerPlayer player)
     {
         @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) BlockPosUtil.getTileEntity(CompatibilityUtils.getWorldFromEntity(player), tePos);
-        NetworkHooks.openGui(player, scarecrowTileEntity);
+        NetworkHooks.openScreen(player, scarecrowTileEntity);
     }
 
     /**

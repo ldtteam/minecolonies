@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/campfire_log"
 	},
@@ -11,8 +11,9 @@
 			"translation": [0, 10.5, 0]
 		}
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"textures": {
 				"3": "block/cauldron_bottom",
 				"4": "block/cauldron_inner",
@@ -679,7 +680,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"textures": {
 				"fire": "block/campfire_fire"
 			},

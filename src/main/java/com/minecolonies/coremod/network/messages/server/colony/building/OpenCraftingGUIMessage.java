@@ -74,7 +74,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         final AbstractCraftingBuildingModule module = building.getModuleMatching(AbstractCraftingBuildingModule.class, m -> m.getId().equals(id));
         if (module.canLearn(ModCraftingTypes.SMELTING.get()))
         {
-            NetworkHooks.openGui(player, new MenuProvider()
+            NetworkHooks.openScreen(player, new MenuProvider()
             {
                 @NotNull
                 @Override
@@ -93,7 +93,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
         else if (module.canLearn(ModCraftingTypes.BREWING.get()))
         {
-            NetworkHooks.openGui(player, new MenuProvider()
+            NetworkHooks.openScreen(player, new MenuProvider()
             {
                 @NotNull
                 @Override
@@ -112,7 +112,7 @@ public class OpenCraftingGUIMessage extends AbstractBuildingServerMessage<IBuild
         }
         else
         {
-            net.minecraftforge.network.NetworkHooks.openGui(player, new MenuProvider()
+            net.minecraftforge.network.NetworkHooks.openScreen(player, new MenuProvider()
             {
                 @NotNull
                 @Override

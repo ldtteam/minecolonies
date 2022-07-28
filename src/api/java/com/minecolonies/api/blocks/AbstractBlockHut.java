@@ -51,6 +51,8 @@ import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 /**
  * Abstract class for all minecolonies blocks.
  * <p>

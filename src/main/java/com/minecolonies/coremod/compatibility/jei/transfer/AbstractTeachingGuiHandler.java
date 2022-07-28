@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import mezz.jei.api.gui.handlers.IGhostIngredientHandler.Target;
+
 /**
  * Common base class for JEI teaching GUI extensions.
  */

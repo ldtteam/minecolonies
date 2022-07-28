@@ -230,7 +230,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         final List<ItemStorage> input = currentRecipeStorage.getCleanedInput();
         for (final ItemStorage inputStorage : input)
         {
-            final ItemStack container = inputStorage.getItem().getContainerItem(inputStorage.getItemStack());
+            final ItemStack container = inputStorage.getItem().getCraftingRemainingItem(inputStorage.getItemStack());
             final int remaining;
             if(!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getCraftingToolsAndSecondaryOutputs(), inputStorage.getItemStack(), false, true))
             {
@@ -308,7 +308,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
         {
             final Predicate<ItemStack> predicate = stack -> !ItemStackUtils.isEmpty(stack) && new Stack(stack, false).matches(inputStorage.getItemStack());
             final int invCount = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), predicate);
-            final ItemStack container = inputStorage.getItem().getContainerItem(inputStorage.getItemStack());
+            final ItemStack container = inputStorage.getItem().getCraftingRemainingItem(inputStorage.getItemStack());
             final int remaining;
             if(!currentRecipeStorage.getCraftingToolsAndSecondaryOutputs().isEmpty() && ItemStackUtils.compareItemStackListIgnoreStackSize(currentRecipeStorage.getCraftingToolsAndSecondaryOutputs(), inputStorage.getItemStack(), false, true))
             {

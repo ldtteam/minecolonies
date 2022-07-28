@@ -176,7 +176,7 @@ public final class LootTableAnalyzer
             final String entityType = token.getTag().getString(TAG_ENTITY_TYPE);
             if (!entityType.isEmpty())
             {
-                final EntityType<?> mob = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityType));
+                final EntityType<?> mob = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityType));
                 if (mob != null)
                 {
                     return toDrops(lootTableManager, mob.getDefaultLootTable());

@@ -18,10 +18,12 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class ItemSpear extends TridentItem
 {
@@ -31,12 +33,12 @@ public class ItemSpear extends TridentItem
     }
 
     @Override
-    public void initializeClient(final Consumer<IItemRenderProperties> consumer)
+    public void initializeClient(final Consumer<IClientItemExtensions> consumer)
     {
         super.initializeClient(consumer);
-        consumer.accept(new IItemRenderProperties() {
+        consumer.accept(new IClientItemExtensions() {
             @Override
-            public BlockEntityWithoutLevelRenderer getItemStackRenderer()
+            public BlockEntityWithoutLevelRenderer getCustomRenderer()
             {
                 return new SpearItemTileEntityRenderer();
             }

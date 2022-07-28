@@ -2,14 +2,15 @@
   "credit": "created by:OddRobbia02 with Blockbench",
   "parent": "block/cube_all",
   "ambientocclusion": false,
-  "loader": "forge:multi-layer",
+  "loader": "forge:composite",
   "textures": {
     "particle": "block/cobblestone"
   },
-  "layers": {
+  "children": {
     "base": {
     },
-    "solid": {
+    "first": {
+      "render_type": "solid",
       "textures": {
         "1": "block/cobblestone",
         "3": "block/coal_block",
@@ -802,7 +803,8 @@
         }
       ]
     },
-    "cutout": {
+    "second": {
+      "render_type": "cutout",
       "textures": {
         "1": "block/cobblestone",
         "7": "block/stone",

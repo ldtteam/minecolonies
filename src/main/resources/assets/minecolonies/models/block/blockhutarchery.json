@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/cross",
     "ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/target_side"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"textures": {
 				"0": "entity/armorstand/wood",
 				"1": "block/target_side",
@@ -230,7 +231,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"textures": {
 				"7": "item/string",
 				"8": "item/arrow"

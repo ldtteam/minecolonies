@@ -23,6 +23,8 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_NAME_GUI;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_TOOLTIP_GUI;
 
+import net.minecraft.world.item.Item.Properties;
+
 public class ItemAdventureToken extends AbstractItemMinecolonies
 {
     /**

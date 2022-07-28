@@ -2,12 +2,13 @@
 	"credit": "Made with Blockbench",
 	"parent": "minecraft:block/cross",
 	"ambientocclusion": false,
-	"loader": "forge:multi-layer",
+	"loader": "forge:composite",
 	"textures": {
 		"particle": "block/stripped_oak_log"
 	},
-	"layers": {
-		"solid": {
+	"children": {
+		"first": {
+      "render_type": "solid",
 			"textures": {
 				"6": "block/stripped_oak_log",
 				"7": "block/iron_block",
@@ -256,7 +257,8 @@
 				}
 			]
 		},
-		"cutout": {
+		"second": {
+      "render_type": "cutout",
 			"textures": {
 				"16": "block/potatoes_stage2"
 			},

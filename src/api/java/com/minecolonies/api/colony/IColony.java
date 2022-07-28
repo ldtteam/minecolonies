@@ -46,7 +46,7 @@ public interface IColony
     @NotNull
     IWorkManager getWorkManager();
 
-    void onWorldTick(@NotNull TickEvent.WorldTickEvent event);
+    void onWorldTick(@NotNull TickEvent.LevelTickEvent event);
 
     /**
      * Returns the position of the colony.
