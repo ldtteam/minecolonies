@@ -116,6 +116,8 @@ public class BlueprintMapping
 
         pathMapping.put("caledoniaalternative:farmer", "agriculture/horticulture/farmeralt");
         pathMapping.put("caledoniaalternative:guardtower", "military/guardtoweralt");
+
+        //todo re-think build tool suggest window.
     }
 
     /**

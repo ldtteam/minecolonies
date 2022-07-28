@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 
 public class ColonyWaypointRenderer
 {
@@ -37,7 +38,7 @@ public class ColonyWaypointRenderer
         {
             if (wayPointTemplate == null && pendingTemplate == null)
             {
-                pendingTemplate = StructurePacks.getBlueprintFuture("Default", "infrastructure/roads/waypoint.blueprint");
+                pendingTemplate = StructurePacks.getBlueprintFuture(DEFAULT_STYLE, "infrastructure/roads/waypoint.blueprint");
             }
 
             if (pendingTemplate != null)

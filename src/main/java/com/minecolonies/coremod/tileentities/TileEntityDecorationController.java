@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
 public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
@@ -180,14 +181,14 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             }
             else
             {
-                this.packName = "Default";
+                this.packName = DEFAULT_STYLE;
             }
             this.schematicPath = StructurePacks.packMetas.get(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
         }
 
         if (this.packName == null)
         {
-            this.packName = "Default";
+            this.packName = DEFAULT_STYLE;
         }
     }
 

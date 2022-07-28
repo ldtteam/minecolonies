@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -169,7 +170,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         status = EventStatus.PREPARING;
         daysToGo = MineColonies.getConfig().getServer().daysUntilPirateshipsDespawn.get();
 
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture("Default", "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc()), colony.getWorld(), (blueprint -> {
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(DEFAULT_STYLE, "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize.schematicPrefix + this.getShipDesc()), colony.getWorld(), (blueprint -> {
             CreativeRaiderStructureHandler structure =
               new CreativeRaiderStructureHandler(colony.getWorld(),
                 spawnPoint,

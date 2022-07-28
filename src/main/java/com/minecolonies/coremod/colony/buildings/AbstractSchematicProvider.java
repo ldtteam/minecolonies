@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_INVALID_BUILDING;
 
@@ -58,7 +59,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * The building style.
      */
-    private String structurePack = "Default";
+    private String structurePack = DEFAULT_STYLE;
 
     /**
      * The building blueprint path.
@@ -241,7 +242,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         if (structurePack == null || structurePack.isEmpty())
         {
             Log.getLogger().warn("Loaded empty style, setting to Default");
-            structurePack = "Default";
+            structurePack = DEFAULT_STYLE;
         }
     }
 
