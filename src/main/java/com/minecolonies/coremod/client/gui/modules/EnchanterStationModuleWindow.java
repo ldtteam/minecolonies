@@ -99,7 +99,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
                 String text = "";
                 if (bView instanceof AbstractBuildingView)
                 {
-                    text += bView.getCustomName().isEmpty() ? bView.getStructurePath() : bView.getCustomName();
+                    text += bView.getCustomName().isEmpty() ? new TranslatableComponent(bView.getBuildingType().getTranslationKey()).getString() : bView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";
                     rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(text);
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);
