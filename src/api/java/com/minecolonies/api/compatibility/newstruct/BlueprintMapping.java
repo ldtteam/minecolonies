@@ -30,7 +30,7 @@ public class BlueprintMapping
         styleMapping.put("jungle", "Jungle Treehouse");
         styleMapping.put("lostcity", "Lost Mesa City");
         styleMapping.put("incan", "Incan");
-        styleMapping.put("nordic", "Spruce Norse");
+        styleMapping.put("nordic", "Nordic Spruce");
         styleMapping.put("sandstone", "Desert Oasis");
         styleMapping.put("spacewars", "Spacewars");
         styleMapping.put("warped", "Warped Netherlands");
