@@ -42,7 +42,6 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      * Constants used for sheep dying calculations.
      */
     private static final int HUNDRED_PERCENT_CHANCE      = 100;
-    private static final int NUMBER_OF_DYE_POSSIBILITIES = 15;
 
     /**
      * Creates the abstract part of the AI. Always use this constructor!
@@ -191,16 +190,16 @@ public class EntityAIWorkShepherd extends AbstractEntityAIHerder<JobShepherd, Bu
      */
     private void dyeSheepChance(final Sheep sheep)
     {
-        if (worker.getCitizenColonyHandler().getWorkBuilding() != null && building.getSetting(BuildingShepherd.DYEING).getValue())
+        if (building != null && building.getSetting(BuildingShepherd.DYEING).getValue())
         {
-            final int chanceToDye = worker.getCitizenColonyHandler().getWorkBuilding().getBuildingLevel();
-
-            final int rand = world.random.nextInt(HUNDRED_PERCENT_CHANCE);
+            final int chanceToDye = building.getBuildingLevel();
+            final int rand = worker.getRandom().nextInt(HUNDRED_PERCENT_CHANCE);
 
             if (rand <= chanceToDye)
             {
-                final int dyeInt = world.random.nextInt(NUMBER_OF_DYE_POSSIBILITIES);
-                sheep.setColor(DyeColor.byId(dyeInt));
+                final DyeColor[] colors = DyeColor.values();
+                final int dyeIndex = worker.getRandom().nextInt(colors.length);
+                sheep.setColor(colors[dyeIndex]);
             }
         }
     }
