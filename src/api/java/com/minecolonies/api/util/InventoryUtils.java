@@ -2997,7 +2997,7 @@ public class InventoryUtils
                     if (amount > stack.getCount())
                     {
                         // Not enough yet
-                        foundSaturation += stack.getCount() * itemFood.getSaturationModifier();
+                        foundSaturation += stack.getCount() * itemFood.getNutrition();
                         extractedFood = handler.extractItem(i, stack.getCount(), false);
                     }
                     else
