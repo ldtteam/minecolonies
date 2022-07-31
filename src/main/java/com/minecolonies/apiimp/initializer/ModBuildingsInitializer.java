@@ -10,6 +10,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.CompatibilityManager;
 import com.minecolonies.api.entity.citizen.Skill;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -647,6 +648,7 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new ItemListModule(FOOD_EXCLUSION_LIST).onResetToDefaults(BuildingNetherWorker::onResetFoodExclusionList), () -> () -> new ItemListModuleView(FOOD_EXCLUSION_LIST, RequestSystemTranslationConstants.REQUESTS_TYPE_FOOD, true,
                                         (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getEdibles(buildingView.getBuildingLevel() - 1)))
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
+                                    .addBuildingModuleProducer(() -> new ExpeditionLogModule(ResearchConstants.NETHER_LOG), () -> ExpeditionLogModuleView::new)
                                     .createBuildingEntry());
 
         ModBuildings.simpleQuarry = DEFERRED_REGISTER.register(ModBuildings.SIMPLE_QUARRY_ID, () -> new BuildingEntry.Builder()

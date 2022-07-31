@@ -98,7 +98,17 @@ public class CitizenWindowUtils
     public static void createHealthBar(final ICitizenDataView citizen, final View healthBarView)
     {
         int health = (int) citizen.getHealth();
+        createHealthBar(health, healthBarView);
+    }
 
+    /**
+     * Creates an health bar according to the citizen maxHealth and currentHealth.
+     *
+     * @param health        the health amount.
+     * @param healthBarView the health bar view.
+     */
+    public static void createHealthBar(int health, final View healthBarView)
+    {
         healthBarView.setAlignment(Alignment.MIDDLE_RIGHT);
         healthBarView.findPaneOfTypeByID(WINDOW_ID_HEALTHLABEL, Text.class).setText(Component.literal(Integer.toString(health / 2)));
 
@@ -191,12 +201,23 @@ public class CitizenWindowUtils
     }
 
     /**
-     * Creates an health bar according to the citizen maxHealth and currentHealth.
+     * Creates a saturation bar
      *
      * @param citizen the citizen.
      * @param view    the view to add these to.
      */
     public static void createSaturationBar(final ICitizenDataView citizen, final View view)
+    {
+        createSaturationBar(citizen.getSaturation(), view);
+    }
+
+    /**
+     * Creates a saturation bar
+     *
+     * @param curSaturation the current saturation level.
+     * @param view    the view to add these to.
+     */
+    public static void createSaturationBar(final double curSaturation, final View view)
     {
         view.findPaneOfTypeByID(WINDOW_ID_SATURATION_BAR, View.class).setAlignment(Alignment.MIDDLE_RIGHT);
 
@@ -216,7 +237,7 @@ public class CitizenWindowUtils
 
         //Current saturation (Full food hearts).
         int saturationPos;
-        for (saturationPos = 0; saturationPos < ((int) citizen.getSaturation()); saturationPos++)
+        for (saturationPos = 0; saturationPos < ((int) curSaturation); saturationPos++)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, FULL_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
@@ -227,7 +248,7 @@ public class CitizenWindowUtils
         }
 
         //Half food items.
-        if (citizen.getSaturation() / 2 % 1 > 0)
+        if (curSaturation / 2 % 1 > 0)
         {
             @NotNull final Image saturation = new Image();
             saturation.setImage(Screen.GUI_ICONS_LOCATION, HALF_SATURATION_ITEM_ROW_POS, SATURATION_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);

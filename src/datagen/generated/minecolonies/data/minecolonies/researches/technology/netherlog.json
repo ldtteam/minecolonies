@@ -1,0 +1,27 @@
+{
+  "branch": "minecolonies:technology",
+  "effects": [
+    {
+      "minecolonies:effects/netherexpeditionlog": 1
+    }
+  ],
+  "icon": "minecraft:ender_eye",
+  "parentResearch": "minecolonies:technology/opennether",
+  "requirements": [
+    {
+      "item": "minecraft:ender_eye",
+      "quantity": 16
+    },
+    {
+      "item": "minecolonies:ancienttome",
+      "quantity": 1
+    },
+    {
+      "building": "netherworker",
+      "level": 1
+    }
+  ],
+  "researchLevel": 3,
+  "sortOrder": 4,
+  "subtitle": "com.minecolonies.research.technology.netherlog.subtitle"
+}

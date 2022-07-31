@@ -14,5 +14,6 @@
     }
   ],
   "researchLevel": 2,
+  "sortOrder": 1,
   "subtitle": "com.minecolonies.research.technology.opennether.subtitle"
 }
