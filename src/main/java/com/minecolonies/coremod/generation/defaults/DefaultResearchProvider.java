@@ -124,6 +124,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(BUILDER_MODE).setTranslatedName("Add the option to select different build-modes for your builders"));
         effects.add(new ResearchEffect(SOFT_SHOES).setTranslatedName("Farmers will no longer trample crops"));
         effects.add(new ResearchEffect(FISH_TREASURE).setTranslatedName("Fishers can find treasure outside the ocean"));
+        effects.add(new ResearchEffect(NETHER_LOG).setTranslatedName("Adds expedition log to Nether Mine"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -1277,6 +1278,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         final Research netherminer = new Research(new ResourceLocation(Constants.MOD_ID, "technology/opennether"), TECH).setParentResearch(moreScrolls)
                                     .setTranslatedName("Open the Nether")
                                     .setTranslatedSubtitle("It's a dangerous job, but it must be done!")
+                                    .setSortOrder(1)
                                     .setIcon(ModBlocks.blockHutNetherWorker.asItem())
                                     .addItemCost(Items.GILDED_BLACKSTONE, 3)
                                     .addEffect(ModBuildings.netherWorker.getBuildingBlock(), 1)
@@ -1290,9 +1292,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addEffect(ModBuildings.alchemist.getBuildingBlock(), 1)
           .addToList(r);
 
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/netherlog"), TECH).setParentResearch(netherminer)
+                .setTranslatedName("Gaze into the Pits")
+                .setTranslatedSubtitle("Always use proper lenses to avoid eye damage")
+                .setSortOrder(4)
+                .setIcon(Items.ENDER_EYE)
+                .addItemCost(Items.ENDER_EYE, 16)
+                .addItemCost(ModItems.ancientTome, 1)
+                .addBuildingRequirement(ModBuildings.NETHERWORKER_ID, 1)
+                .addEffect(NETHER_LOG, 1)
+                .addToList(r);
+
+        // this is intended to be a side branch (since it has a very high cost) -- there's still room for a "main line" level 4 research!
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/oceanheart"), TECH).setParentResearch(alchemist)
                 .setTranslatedName("Ocean's Heart")
                 .setTranslatedSubtitle("With great mystic power comes great mystic loot!")
+                .setSortOrder(4)
                 .setIcon(Items.FISHING_ROD)
                 .addBuildingRequirement(ModBuildings.FISHERMAN_ID, 4)
                 .addItemCost(Items.HEART_OF_THE_SEA, 1)
