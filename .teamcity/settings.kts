@@ -81,6 +81,7 @@ object Alpha : Project({
         text("env.crowdinKey", "credentialsJSON:769784c9-3cf4-4647-b4c8-39d365a8a55a", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
+        param("Current Minecraft Version", "main")
         param("env.CURSERELEASETYPE", "alpha")
         param("env.Version.Suffix", "-ALPHA")
     }
