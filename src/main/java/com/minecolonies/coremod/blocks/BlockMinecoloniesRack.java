@@ -98,6 +98,13 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         return SHAPE;
     }
 
+    @NotNull
+    @Override
+    public VoxelShape getCollisionShape(final BlockState state, final BlockGetter level, final BlockPos pos, final CollisionContext ctx)
+    {
+        return Shapes.block();
+    }
+
     @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
