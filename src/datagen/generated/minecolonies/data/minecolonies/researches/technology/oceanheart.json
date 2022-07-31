@@ -3,6 +3,7 @@
   "parentResearch": "minecolonies:technology/alchemist",
   "researchLevel": 4,
   "subtitle": "com.minecolonies.research.technology.oceanheart.subtitle",
+  "sortOrder": 4,
   "icon": "minecraft:fishing_rod",
   "requirements": [
     {
