@@ -1136,6 +1136,15 @@
   "com.minecolonies.gui.workerhuts.enchanter.daily": "Daily XP drain",
   "com.minecolonies.coremod.enchanter.nodrainingsset": "Please configure some workers I can drain experience from so I can work!",
 
+  "com.minecolonies.gui.workerhuts.expeditionlog": "Expedition Log",
+  "com.minecolonies.gui.workerhuts.expedition.none": "No expedition",
+  "com.minecolonies.gui.workerhuts.expedition.starting": "Starting Expedition",
+  "com.minecolonies.gui.workerhuts.expedition.in_progress": "On an Adventure",
+  "com.minecolonies.gui.workerhuts.expedition.returning_home": "Returning Home",
+  "com.minecolonies.gui.workerhuts.expedition.completed": "Expedition Complete",
+  "com.minecolonies.gui.workerhuts.expedition.killed": "Died during Expedition",
+  "com.minecolonies.gui.workerhuts.expedition.killed.tip": "Sadly, these items were lost.",
+
   "minecolonies.config.enchantments": "Enchantments",
   "minecolonies.config.enchantments.comment": "The possible enchantments for the enchanter.",
 
