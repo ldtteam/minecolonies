@@ -29,7 +29,7 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2021.2"
+version = "2022.04"
 
 project {
     description = "The Minecolonies Minecraft Mod"
@@ -41,8 +41,8 @@ project {
         param("env.Version.Suffix", "")
         param("env.Version.Major", "1")
         text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
-        param("Current Minecraft Version", "1.18.1")
         text("Repository", "ldtteam/minecolonies", label = "Repository", description = "The repository for minecolonies.", readOnly = true, allowEmpty = true)
+        param("Current Minecraft Version", "main")
         param("env.Version.Minor", "0")
         param("Upsource.Project.Id", "minecolonies")
         param("Default.Branch", "version/main")
@@ -78,9 +78,10 @@ object Alpha : Project({
     buildType(Alpha_Release)
 
     params {
-        text("env.crowdinKey", "credentialsJSON:57fbe4f4-13dd-4c72-b6b3-3cc1e3a8240e", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        text("env.crowdinKey", "credentialsJSON:769784c9-3cf4-4647-b4c8-39d365a8a55a", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
+        param("Current Minecraft Version", "main")
         param("env.CURSERELEASETYPE", "alpha")
         param("env.Version.Suffix", "-ALPHA")
     }
@@ -118,29 +119,6 @@ object Alpha_Release : BuildType({
             param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
             param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
-        }
-        gradle {
-            name = "Analyze"
-            id = "RUNNER_144"
-            tasks = "sonarqube"
-            buildFile = "build.gradle"
-            gradleParams = "-Dsonar.projectKey=ldtteam_minecolonies -Dsonar.host.url=https://code-analysis.ldtteam.com -Dsonar.login=%sonarqube.token%"
-            enableStacktrace = true
-            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
-            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = """
-                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
-                -u 0
-            """.trimIndent()
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
-            param("org.jfrog.artifactory.selectedDeployableServer.useM2CompatiblePatterns", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
-            param("org.jfrog.artifactory.selectedDeployableServer.buildDependencies", "Requires Artifactory Pro.")
-            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
-            param("org.jfrog.artifactory.selectedDeployableServer.publishMavenDescriptors", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.publishIvyDescriptors", "true")
-            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
         }
         stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9", "RUNNER_144")
     }
@@ -212,6 +190,33 @@ object Branches_Build : BuildType({
         param("env.Version.Patch", "${Branches_Common.depParamRefs.buildNumber}")
     }
 
+    steps {
+        gradle {
+            name = "Compile"
+            id = "RUNNER_9"
+            tasks = "build"
+            buildFile = "build.gradle"
+            gradleParams = "-x test"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = "-v /opt/share/buildsystem/gradle:/home/gradle/.gradle -u 0"
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionNumberOfBuilds", "300")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetention", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionAsync", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionDeleteArtifacts", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionMaxDays", "150")
+        }
+    }
+
     triggers {
         vcs {
             id = "vcsTrigger"
@@ -224,7 +229,7 @@ object Branches_Build : BuildType({
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
     }
-
+    
     disableSettings("BUILD_EXT_14")
 })
 
@@ -303,7 +308,7 @@ object PullRequests_2_BuildAndTest : BuildType({
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
     }
-
+    
     disableSettings("BUILD_EXT_15")
 })
 
@@ -344,7 +349,7 @@ object Beta_UpgradeAlphaBeta : BuildType({
             param("revisionRuleBuildBranch", "<default>")
         }
     }
-
+    
     disableSettings("BUILD_EXT_9")
 })
 
