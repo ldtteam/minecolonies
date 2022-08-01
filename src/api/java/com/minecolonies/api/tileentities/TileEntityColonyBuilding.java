@@ -502,7 +502,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public StructurePackMeta getStructurePack()
     {
-        return StructurePacks.packMetas.get(this.packMeta);
+        return StructurePacks.getStructurePack(this.packMeta);
     }
 
     /**
@@ -643,7 +643,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             blueprintPath = BlueprintMapping.pathMapping.get(tagName + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
         }
 
-        this.setStructurePack(StructurePacks.packMetas.get(packName));
+        this.setStructurePack(StructurePacks.getStructurePack(packName));
         this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
     }
 

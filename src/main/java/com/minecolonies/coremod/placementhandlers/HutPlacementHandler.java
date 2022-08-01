@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
@@ -62,16 +63,14 @@ public class HutPlacementHandler implements IPlacementHandler
                 final BlockEntity be = world.getBlockEntity(pos);
                 if (be != null)
                 {
-                    //todo this might cause issues then with included buildings? If they're not an "invisible" one? (what we can do, is check for the tag here, and then treat it as normal.
-                    final String folder = blueprint.getFilePath().toString().replace(StructurePacks.packMetas.get(blueprint.getPackName()).getPath().toString(), "").substring(1);
                     if (pos.equals(centerPos))
                     {
-                        ((IBlueprintDataProviderBE) be).setBlueprintPath(
-                          blueprint.getFilePath().toString().replace(StructurePacks.selectedPack.getPath().toString() + "/", "") + folder + "/" + blueprint.getFileName() + ".blueprint");
+                        final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName() + ".blueprint"));
+                        ((IBlueprintDataProviderBE) be).setBlueprintPath(location);
                     }
-                    else
+                    else if(!((IBlueprintDataProviderBE) be).getPositionedTags().getOrDefault(BlockPos.ZERO, Collections.emptyList()).contains("invisible"))
                     {
-                        final String partialPath = folder + "/" + ((IBlueprintDataProviderBE) be).getSchematicName();
+                        final String partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(((IBlueprintDataProviderBE) be).getSchematicName()));
                         if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
                         {
                             ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");

@@ -122,7 +122,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     {
         if (matchingPacks.isEmpty())
         {
-            for (final StructurePackMeta packName : StructurePacks.packMetas.values())
+            for (final StructurePackMeta packName : StructurePacks.getPackMetas())
             {
                 ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName.getName(),
                   "decorations/supplies/" + type + ".blueprint"), (blueprint -> {
@@ -215,7 +215,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                   .sendToServer(new BuildToolPlacementMessage(BuildToolPlacementMessage.HandlerType.Survival,
                     Constants.MOD_ID,
                     pack,
-                      StructurePacks.packMetas.get(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
+                      StructurePacks.getStructurePack(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
                     previewData.getRotation(),
                     previewData.getMirror()));
@@ -234,7 +234,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                   .sendToServer(new BuildToolPlacementMessage(BuildToolPlacementMessage.HandlerType.Survival,
                     Constants.MOD_ID,
                     pack,
-                    StructurePacks.packMetas.get(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
+                    StructurePacks.getStructurePack(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
                     previewData.getRotation(),
                     previewData.getMirror()));

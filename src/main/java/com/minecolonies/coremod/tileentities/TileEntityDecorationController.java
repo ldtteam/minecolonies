@@ -183,7 +183,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             {
                 this.packName = DEFAULT_STYLE;
             }
-            this.schematicPath = StructurePacks.packMetas.get(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
+            this.schematicPath = StructurePacks.getStructurePack(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
         }
 
         if (this.packName == null)

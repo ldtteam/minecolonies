@@ -507,7 +507,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         this.structurePack = pack;
         cachedRotation = -1;
         this.markDirty();
-        getTileEntity().setStructurePack(StructurePacks.packMetas.get(pack));
+        getTileEntity().setStructurePack(StructurePacks.getStructurePack(pack));
     }
 
     @Override

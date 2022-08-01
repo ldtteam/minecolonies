@@ -473,7 +473,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
           player,
           null,
           settings.getMirror() != Mirror.NONE,
-          StructurePacks.packMetas.get(pack),
+          StructurePacks.getStructurePack(pack),
           path);
 
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, pos);

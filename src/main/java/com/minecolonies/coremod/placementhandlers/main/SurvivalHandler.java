@@ -4,6 +4,7 @@ import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
+import com.ldtteam.structurize.storage.ServerStructurePackLoader;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -106,7 +107,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (anchor.getBlock() instanceof AbstractBlockHut<?>)
         {
-            if (clientPack || !StructurePacks.packMetas.containsKey(packName))
+            if (clientPack || !StructurePacks.hasPack(packName))
             {
                 MessageUtils.format(NO_CUSTOM_BUILDINGS).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
@@ -158,7 +159,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   player,
                   null,
                   placementSettings.getMirror() != Mirror.NONE,
-                  StructurePacks.packMetas.get(packName),
+                  StructurePacks.getStructurePack(packName),
                   blueprintPath);
 
                 int level = 0;

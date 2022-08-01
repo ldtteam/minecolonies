@@ -823,9 +823,9 @@ public final class ColonyView implements IColonyView
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = buf.readUtf(32767);
-        if (isNewSubscription && StructurePacks.packMetas.containsKey(this.style))
+        if (isNewSubscription && StructurePacks.hasPack(this.style))
         {
-            StructurePacks.selectedPack = StructurePacks.packMetas.get(this.style);
+            StructurePacks.selectedPack = StructurePacks.getStructurePack(this.style);
         }
 
         this.isUnderRaid = buf.readBoolean();

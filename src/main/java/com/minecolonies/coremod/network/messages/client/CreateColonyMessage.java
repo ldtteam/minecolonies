@@ -135,7 +135,7 @@ public class CreateColonyMessage implements IMessage
             }
         }
 
-        hut.setStructurePack(StructurePacks.packMetas.get(pack));
+        hut.setStructurePack(StructurePacks.getStructurePack(pack));
         hut.setBlueprintPath(pathName);
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
