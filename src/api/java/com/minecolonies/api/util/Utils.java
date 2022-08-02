@@ -168,7 +168,7 @@ public final class Utils
      */
     public static int getBlueprintLevel(final String schematicName)
     {
-        Matcher matcher = Pattern.compile("[0-9]$").matcher(schematicName);
+        Matcher matcher = Pattern.compile("[0-9]$").matcher(schematicName.replace(".blueprint", ""));
         if (matcher.find())
         {
             final String string = matcher.group();

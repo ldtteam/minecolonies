@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
+import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
@@ -75,7 +76,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         {
             final Optional<IWorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getLocation().equals(this.controller.getBlockPos())).findFirst();
 
-            int level = Utils.getBlueprintLevel(controller.getSchematicName()) -1;
+            int level = Utils.getBlueprintLevel(controller.getSchematicName());
             if (wo.isPresent())
             {
                 findPaneByID(BUTTON_BUILD).show();
@@ -90,31 +91,41 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             {
                 buttonBuild.setText(new TranslatableComponent(ACTION_BUILD));
 
-                ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), this.controller.getSchematicPath()), (blueprint -> {
-                    if (blueprint != null )
-                    {
-                        final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-                        if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
-                        {
-                            findPaneByID(BUTTON_REPAIR).show();
-                        }
-                    }
-                })));
-
-                if (level != -1)
+                try
                 {
-                    final String path = this.controller.getSchematicPath().replace(level + ".blueprint", (level + 1) + ".blueprint");
-                    ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(this.controller.getPackName(), path),
-                      (blueprint -> {
+                    final String cleanedPackName = this.controller.getPackName().replace(Minecraft.getInstance().player.getUUID().toString(), "");
+                    ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
+                      StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(this.controller.getSchematicPath())), (blueprint -> {
                         if (blueprint != null)
                         {
                             final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
                             if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
                             {
-                                findPaneByID(BUTTON_BUILD).show();
+                                findPaneByID(BUTTON_REPAIR).show();
                             }
                         }
                     })));
+
+                    if (level != -1)
+                    {
+                        final String path = this.controller.getSchematicPath().replace(level + ".blueprint", (level + 1) + ".blueprint");
+                        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
+                          StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(path)),
+                          (blueprint -> {
+                              if (blueprint != null)
+                              {
+                                  final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+                                  if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
+                                  {
+                                      findPaneByID(BUTTON_BUILD).show();
+                                  }
+                              }
+                          })));
+                    }
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Unable to retrieve blueprint");
                 }
             }
         }
