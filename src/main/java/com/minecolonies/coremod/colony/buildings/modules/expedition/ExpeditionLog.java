@@ -258,7 +258,7 @@ public class ExpeditionLog
         for (final Map.Entry<EntityType<?>, Integer> entry : this.mobs.entrySet())
         {
             final CompoundTag mob = new CompoundTag();
-            mob.putString(TAG_TYPE, entry.getKey().getDescriptionId());
+            mob.putString(TAG_TYPE, ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).toString());
             mob.putInt(TAG_COUNT, entry.getValue());
             mobs.add(mob);
         }
