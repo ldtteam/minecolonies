@@ -1,14 +1,20 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.WorldUtil;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.JigsawBlock;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.StructureVoidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,12 +29,12 @@ import static com.ldtteam.structurize.placement.handlers.placement.PlacementHand
 /**
  * Handler for some specific blocks that we want only to paste/cost in the complete mode.
  */
-public class BuilderIgnorePlacementHandler implements IPlacementHandler
+public class JigsawPlacementHandler implements IPlacementHandler
 {
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return blockState.getBlock() instanceof StructureBlock || blockState.getBlock() instanceof StructureVoidBlock;
+        return blockState.getBlock() instanceof JigsawBlock;
     }
 
     @Override
@@ -59,6 +65,26 @@ public class BuilderIgnorePlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
+        if (tileEntityData != null && tileEntityData.contains("final_state"))
+        {
+            final String stateString = tileEntityData.getString("final_state");
+            BlockStateParser blockstateparser = new BlockStateParser(new StringReader(stateString), false);
+            BlockState finalState = Blocks.AIR.defaultBlockState();
+
+            try {
+                blockstateparser.parse(true);
+                BlockState resultState = blockstateparser.getState();
+                if (resultState != null) {
+                    finalState = resultState;
+                }
+            } catch (CommandSyntaxException commandsyntaxexception) {
+                Log.getLogger().warn("Unable to place Jigsaw");
+            }
+
+            WorldUtil.setBlockState(world, pos, finalState, com.ldtteam.structurize.api.util.constant.Constants.UPDATE_FLAG);
+        }
+
+
         return ActionProcessingResult.SUCCESS;
     }
 
@@ -70,6 +96,30 @@ public class BuilderIgnorePlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete)
     {
-        return Collections.emptyList();
+        if (complete)
+        {
+            return ImmutableList.of(new ItemStack(Blocks.JIGSAW));
+        }
+
+        final String stateString = tileEntityData.getString("final_state");
+        BlockStateParser blockstateparser = new BlockStateParser(new StringReader(stateString), false);
+        BlockState finalState = Blocks.AIR.defaultBlockState();
+
+        try {
+            blockstateparser.parse(true);
+            BlockState resultState = blockstateparser.getState();
+            if (resultState != null) {
+                finalState = resultState;
+            }
+        } catch (CommandSyntaxException commandsyntaxexception) {
+            Log.getLogger().warn("Unable to place Jigsaw");
+        }
+
+        if (finalState.getBlock() == Blocks.AIR)
+        {
+            return Collections.emptyList();
+        }
+
+        return ImmutableList.of(BlockUtils.getItemStackFromBlockState(finalState));
     }
 }
