@@ -238,7 +238,7 @@ public class ExpeditionLog
     {
         compound.putString(TAG_STATUS, this.status.name());
         compound.putInt(TAG_ID, this.id);
-        compound.putString(TAG_NAME, this.name);
+        compound.putString(TAG_NAME, this.name == null ? "" : this.name);
 
         final CompoundNBT stats = new CompoundNBT();
         for (final Map.Entry<StatType, Double> entry : this.stats.entrySet())
@@ -281,6 +281,7 @@ public class ExpeditionLog
         this.status = Enums.getIfPresent(Status.class, compound.getString(TAG_STATUS)).or(Status.NONE);
         this.id = compound.getInt(TAG_ID);
         this.name = compound.getString(TAG_NAME);
+        if (this.name.isEmpty()) this.name = null;
 
         this.stats.clear();
         final CompoundNBT stats = compound.getCompound(TAG_STATS);
