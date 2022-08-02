@@ -6,7 +6,7 @@
     "textures": {
         "particle": "block/nether_portal"
     },
-    "layers" :{
+    "children" :{
         "first": {
       "render_type": "solid",
             "textures": {
