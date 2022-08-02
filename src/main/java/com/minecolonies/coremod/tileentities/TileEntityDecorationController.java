@@ -179,7 +179,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             {
                 this.packName = BlueprintMapping.styleMapping.get(split[2]);
             }
-            else
+
+            if (this.packName == null || this.packName.isEmpty())
             {
                 this.packName = DEFAULT_STYLE;
             }
@@ -210,8 +211,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         writeSchematicDataToNBT(compound);
         compound.putInt(TAG_ROTATION, this.rotation.ordinal());
         compound.putBoolean(TAG_MIRROR, this.mirror);
-        compound.putString(TAG_NAME, schematicPath);
-        compound.putString(TAG_PACK, packName);
+        compound.putString(TAG_NAME, (schematicName == null || schematicName.isEmpty()) ? "" : schematicPath);
+        compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);
     }
 
     @Nullable
