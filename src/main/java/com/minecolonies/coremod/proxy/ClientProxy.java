@@ -15,6 +15,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -127,9 +128,13 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void openResourceScrollWindow(final int colonyId, final BlockPos buildingPos)
+    public void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos buildingPos,
+      final @Nullable BlockPos warehousePos,
+      final @Nullable CompoundNBT warehouseCompound)
     {
-        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos);
+        @Nullable final WindowResourceList window = new WindowResourceList(colonyId, buildingPos, warehousePos, warehouseCompound);
         window.open();
     }
 

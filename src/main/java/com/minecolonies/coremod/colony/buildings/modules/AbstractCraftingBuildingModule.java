@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
+import com.google.common.collect.ImmutableSet;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -16,6 +18,7 @@ import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCraf
 import com.minecolonies.api.colony.requestsystem.resolver.IRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
@@ -29,7 +32,6 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobCrafter;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingProductionResolver;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.PublicWorkerCraftingRequestResolver;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
@@ -38,7 +40,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandler;
@@ -142,14 +144,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
      */
     protected int getMaxRecipes()
     {
-        final double increase;
-        if(canLearnLargeRecipes() || canLearnFurnaceRecipes())
+        double increase = 1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPES);
+        if (canLearnManyRecipes())
         {
-            increase = (1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPES)) * EXTRA_RECIPE_MULTIPLIER;
-        }
-        else
-        {
-            increase = 1 + building.getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPES);
+            increase *= EXTRA_RECIPE_MULTIPLIER;
         }
         return (int) (Math.pow(2, building.getBuildingLevel()) * increase);
     }
@@ -258,9 +256,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         {
             buf.writeBoolean(false);
         }
-        buf.writeBoolean(this.canLearnCraftingRecipes());
-        buf.writeBoolean(this.canLearnFurnaceRecipes());
-        buf.writeBoolean(this.canLearnLargeRecipes());
+
+        final Set<CraftingType> craftingTypes = this.getSupportedCraftingTypes();
+        buf.writeVarInt(craftingTypes.size());
+        for (final CraftingType type : craftingTypes)
+        {
+            buf.writeRegistryIdUnsafe(MinecoloniesAPIProxy.getInstance().getCraftingTypeRegistry(), type);
+        }
 
         final List<IRecipeStorage> storages = new ArrayList<>();
         final List<IRecipeStorage> disabledStorages = new ArrayList<>();
@@ -380,7 +382,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     @Override
     public boolean isVisible()
     {
-        return true;
+        return !getSupportedCraftingTypes().isEmpty() || !recipes.isEmpty();
     }
 
     @Override
@@ -564,16 +566,13 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 replaceRecipe(recipe.getToken(), IColonyManager.getInstance().getRecipeManager().checkOrAddRecipe(storage));
 
                 // Expected parameters for RECIPE_IMPROVED are Job, Result, Ingredient, Citizen
-                final TranslationTextComponent message = new TranslationTextComponent(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
-                  new TranslationTextComponent(citizen.getJob().getJobRegistryEntry().getTranslationKey().toLowerCase()),
-                  recipe.getPrimaryOutput().getHoverName(),
-                  reducedItem.getItemStack().getHoverName(),
-                  citizen.getName());
-
-                for(PlayerEntity player : building.getColony().getMessagePlayerEntities())
-                {
-                    player.sendMessage(message, player.getUUID());
-                }
+                IFormattableTextComponent jobComponent = MessageUtils.format(citizen.getJob().getJobRegistryEntry().getTranslationKey()).create();
+                MessageUtils.format(RECIPE_IMPROVED + citizen.getRandom().nextInt(3),
+                    jobComponent,
+                    recipe.getPrimaryOutput().getHoverName(),
+                    reducedItem.getItemStack().getHoverName(),
+                    citizen.getName())
+                  .sendTo(building.getColony()).forAllPlayers();
             }
         }
     }
@@ -887,6 +886,12 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         return stack -> Optional.empty();
     }
 
+    @Override
+    public boolean canLearnManyRecipes()
+    {
+        return true;
+    }
+
     /** This module is for standard crafters (3x3 by default) */
     public abstract static class Crafting extends AbstractCraftingBuildingModule
     {
@@ -901,18 +906,15 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return true; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return false; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return true; }
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return ImmutableSet.of(ModCraftingTypes.SMALL_CRAFTING, ModCraftingTypes.LARGE_CRAFTING);
+        }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearnCraftingRecipes() &&
+            return canLearn(ModCraftingTypes.SMALL_CRAFTING) &&
                     recipe.getIntermediate() == Blocks.AIR;
         }
 
@@ -941,19 +943,16 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return false; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return true; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return false; }
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return ImmutableSet.of(ModCraftingTypes.SMELTING);
+        }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            return canLearnFurnaceRecipes() &&
-                    recipe.getIntermediate() == Blocks.FURNACE;
+            return canLearn(ModCraftingTypes.SMELTING) &&
+                     recipe.getIntermediate() == Blocks.FURNACE;
         }
 
         /**
@@ -964,6 +963,43 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         public String getId()
         {
             return "smelting";
+        }
+    }
+
+    /** this module is for brewing-only users */
+    public abstract static class Brewing extends AbstractCraftingBuildingModule
+    {
+        /**
+         * Create a new module.
+         *
+         * @param jobEntry the entry of the job.
+         */
+        public Brewing(final JobEntry jobEntry)
+        {
+            super(jobEntry);
+        }
+
+        @Override
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return ImmutableSet.of(ModCraftingTypes.BREWING);
+        }
+
+        @Override
+        public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
+        {
+            return canLearn(ModCraftingTypes.BREWING) &&
+                     recipe.getIntermediate() == Blocks.BREWING_STAND;
+        }
+
+        /**
+         * Get a string identifier to this.
+         * @return the id.
+         */
+        @NotNull
+        public String getId()
+        {
+            return "brewing";
         }
     }
 
@@ -981,13 +1017,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         }
 
         @Override
-        public boolean canLearnCraftingRecipes() { return false; }
-
-        @Override
-        public boolean canLearnFurnaceRecipes() { return false; }
-
-        @Override
-        public boolean canLearnLargeRecipes() { return false; }
+        public Set<CraftingType> getSupportedCraftingTypes()
+        {
+            return ImmutableSet.of();
+        }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe) { return false; }

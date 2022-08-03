@@ -600,6 +600,12 @@ public enum AIWorkerState implements IAIState
     /*
 ### Plantation related ###
      */
+    PLANTATION_MOVE_TO_SOIL(true),
+
+    PLANTATION_CHECK_SOIL(true),
+
+    PLANTATION_CLEAR_OBSTACLE(true),
+
     PLANTATION_FARM(true),
 
     PLANTATION_PLANT(true),
@@ -607,7 +613,41 @@ public enum AIWorkerState implements IAIState
     /*
 ### Beekeeper ###
      */
-    BEEKEEPER_HARVEST(true);
+    BEEKEEPER_HARVEST(true),
+
+        /*
+###Alchemist users###
+     */
+
+    /**
+     * brews potions until.
+     */
+    START_USING_BREWINGSTAND(true),
+
+    /**
+     * Retrieve the ore from the brewingStand.
+     */
+    RETRIEVING_END_PRODUCT_FROM_BREWINGSTAMD(true),
+
+    /**
+     * Retrieve used fuel from the brewingStand.
+     */
+    RETRIEVING_USED_FUEL_FROM_BREWINGSTAND(true),
+
+    /**
+     * Fuel the brewingStand.
+     */
+    ADD_FUEL_TO_BREWINGSTAND(true),
+
+    /**
+     * Harvest the mistletoes.
+     */
+    HARVEST_MISTLETOE(true),
+
+    /**
+     * Harvest the netherwart.
+     */
+    HARVEST_NETHERWART(true);
 
     /**
      * Is it okay to eat.

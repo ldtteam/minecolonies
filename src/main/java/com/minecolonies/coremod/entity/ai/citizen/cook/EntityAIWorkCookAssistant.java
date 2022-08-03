@@ -37,13 +37,13 @@ public class EntityAIWorkCookAssistant extends AbstractEntityAIRequestSmelter<Jo
     {
         IAIState nextState = super.decide();
         // Only mark is cooking if the current recipe is a furnace recipe, to keep the cook from messing with the furnaces
-        if (job.hasTask() && !getOwnBuilding().getIsCooking() && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
+        if (job.hasTask() && !building.getIsCooking() && currentRecipeStorage != null && currentRecipeStorage.getIntermediate() == Blocks.FURNACE)
         {
-            getOwnBuilding().setIsCooking(true);
+            building.setIsCooking(true);
         }
-        if(!job.hasTask() && getOwnBuilding().getIsCooking())
+        if(!job.hasTask() && building.getIsCooking())
         {
-            getOwnBuilding().setIsCooking(false);
+            building.setIsCooking(false);
         }
         return nextState;
     }

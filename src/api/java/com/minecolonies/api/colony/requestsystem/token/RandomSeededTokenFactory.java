@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.requestsystem.token;
 
 import com.google.common.reflect.TypeToken;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -27,6 +28,6 @@ public class RandomSeededTokenFactory extends AbstractTokenFactory<Integer>
     @Override
     public short getSerializationId()
     {
-        return 2;
+        return SerializationIdentifierConstants.RANDOM_SEED_TOKEN_ID;
     }
 }

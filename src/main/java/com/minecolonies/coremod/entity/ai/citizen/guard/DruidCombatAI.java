@@ -133,8 +133,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
         boolean gotMaterial = false;
         BiPredicate<LivingEntity,Effect> predicate;
         if (user.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(DRUID_USE_POTIONS) > 0
-              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() instanceof PotionItem)
-              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.mistletoe))
+              && InventoryUtils.hasItemInItemHandler(user.getInventoryCitizen(), item -> item.getItem() == ModItems.magicpotion))
         {
             gotMaterial = true;
         }
@@ -154,8 +153,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
 
         if (gotMaterial)
         {
-            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER), 1);
-            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.mistletoe), 1);
+            InventoryUtils.removeStackFromItemHandler(user.getCitizenData().getInventory(), new ItemStack(ModItems.magicpotion, 1), 1);
         }
 
         this.instantEffect = effect.isInstantenous();
@@ -239,7 +237,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     {
         return (AbstractEntityAIGuard.isAttackableTarget(user, entity)
                   || (entity instanceof IThreatTableEntity && ((IThreatTableEntity) entity).getThreatTable().getTarget() != null )
-                  || (entity instanceof PlayerEntity && entity.getLastHurtByMobTimestamp() != 0 && entity.tickCount - entity.getLastHurtByMobTimestamp() < 20 * 30))
+                  || (entity instanceof PlayerEntity && entity.getLastHurtByMobTimestamp() != 0 && entity.tickCount > entity.getLastHurtByMobTimestamp() && entity.tickCount - entity.getLastHurtByMobTimestamp() < 20 * 30))
                  && !wasAffectedByDruid(entity);
     }
 
@@ -286,7 +284,7 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
             }
         }
 
-        return foundTarget && targetsUnderEffect <= parentAI.getOwnBuilding().getBuildingLevel() * 2;
+        return foundTarget && targetsUnderEffect <= parentAI.building.getBuildingLevel() * 2;
     }
 
     /**

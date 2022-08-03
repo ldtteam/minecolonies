@@ -44,7 +44,6 @@ public final class NbtTagConstants
     public static final String TAG_BLOCK                  = "block";
     public static final String TAG_POS                    = "pos";
     public static final String TAG_PLANTGROUND            = "plantGround";
-    public static final String TAG_CURRENT_PHASE          = "currentPhase";
     public static final String TAG_BOOKCASES              = "bookcase";
     public static final String TAG_BUILDING_MANAGER       = "buildingManager";
     public static final String TAG_CITIZEN_MANAGER        = "citizenManager";
@@ -77,6 +76,7 @@ public final class NbtTagConstants
     public static final String TAG_PURGED_MOBS            = "purgedMobs";
     public static final String TAG_RESERVED               = "reserved";
     public static final String TAG_DESC                   = "desc";
+    public static final String TAG_BREWING_STAND          = "brewingStand";
 
     public static final String TAG_PARENT_A = "parentA";
     public static final String TAG_PARENT_B = "parentB";
@@ -189,6 +189,12 @@ public final class NbtTagConstants
     public static final String TAG_CORNER1 = "corner1";
     public static final String TAG_CORNER2 = "corner2";
     public static final String TAG_HEIGHT  = "height";
+
+    /**
+     * Tag to store a snapshot of a given warehouse in the resource scroll.
+     */
+    public static final String TAG_WAREHOUSE_SNAPSHOT         = "version";
+    public static final String TAG_WAREHOUSE_SNAPSHOT_WO_HASH = "wo_hash";
 
     /**
      * Tag to store if the field has been taken.

@@ -13,7 +13,6 @@ import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -23,8 +22,8 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
 import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
@@ -42,6 +41,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 public class WindowBuildDecoration extends AbstractWindowSkeleton
@@ -100,8 +100,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
 
-        findPaneOfTypeByID(BUTTON_BUILD, Button.class)
-                .setText(LanguageHandler.format("com.minecolonies.coremod.gui.workerhuts.build"));
+        findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(new TranslationTextComponent(ACTION_BUILD));
         findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
@@ -128,14 +127,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         {
             if (structureName.getStyle().equals("supplycamp") || structureName.getStyle().equals("supplyship"))
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.NO_COLONY_YET);
+                MessageUtils.format(NO_COLONY_YET).sendTo(Minecraft.getInstance().player);
             }
             else
             {
-                LanguageHandler.sendPlayerMessage(Minecraft.getInstance().player, TranslationConstants.OUT_OF_COLONY,
-                        structureName.getSchematic(),
-                        structurePos.getX(),
-                        structurePos.getZ());
+                MessageUtils.format(OUT_OF_COLONY, structureName.getSchematic(), structurePos.getX(), structurePos.getZ()).sendTo(Minecraft.getInstance().player);
             }
 
             close();

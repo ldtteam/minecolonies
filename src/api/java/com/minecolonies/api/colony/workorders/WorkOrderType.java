@@ -5,5 +5,8 @@ package com.minecolonies.api.colony.workorders;
  */
 public enum WorkOrderType
 {
-    BUILD
+    BUILD,
+    UPGRADE,
+    REPAIR,
+    REMOVE
 }

@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.tileentity.BannerTileEntity;
@@ -28,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
 
 /**
  * A custom rendered Screen (i.e. not BlockOut) that renders a picker for the banners,
@@ -198,7 +199,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 2, 80, 1, 10),
                 this.height - 40,
                 80, SIDE,
-                new TranslationTextComponent("gui.done"),
+                new TranslationTextComponent(BASE_GUI_DONE),
                 pressed -> {
                     BannerPattern.Builder builder = new BannerPattern.Builder();
                     for (Pair<BannerPattern, DyeColor> pair : layers)
@@ -277,7 +278,7 @@ public class WindowBannerPicker extends Screen
         // Render the instructions
         this.drawCenteredString(stack,
                 this.font,
-                I18n.get("com.minecolonies.coremod.gui.flag.choose"),
+                new TranslationTextComponent("com.minecolonies.coremod.gui.flag.choose").getString(),
                 this.width /2,
                 16,
                 0xFFFFFF /* white */

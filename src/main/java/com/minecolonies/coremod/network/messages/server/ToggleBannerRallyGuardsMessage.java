@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.network.messages.server;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,6 +14,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR;
 import static com.minecolonies.coremod.items.ItemBannerRallyGuards.toggleBanner;
 
 /**
@@ -73,7 +74,7 @@ public class ToggleBannerRallyGuardsMessage implements IMessage
 
         if (slot == -1)
         {
-            LanguageHandler.sendPlayerMessage(player, TranslationConstants.COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR);
+            MessageUtils.format(COM_MINECOLONIES_BANNER_RALLY_GUARDS_GUI_ERROR).sendTo(player);
             return;
         }
 

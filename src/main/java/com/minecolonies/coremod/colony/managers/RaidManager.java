@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -12,6 +11,7 @@ import com.minecolonies.api.colony.managers.interfaces.IRaiderManager;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
@@ -37,6 +37,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -313,9 +314,7 @@ public class RaidManager implements IRaiderManager
         {
             if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
             {
-                LanguageHandler.sendPlayersMessage(
-                  colony.getMessagePlayerEntities(),
-                  "Horde Spawn Point: " + targetSpawnPoint);
+                MessageUtils.format(new StringTextComponent("Horde Spawn Point: " + targetSpawnPoint)).sendTo(colony).forAllPlayers();
             }
 
             if (colony.getWorld().getBlockState(targetSpawnPoint).getMaterial() == Material.AIR
@@ -466,22 +465,22 @@ public class RaidManager implements IRaiderManager
             return null;
         }
 
-        spawnPos = BlockPosUtil.findAround(colony.getWorld(),
+        BlockPos worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
           BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
           3,
           30,
           SOLID_AIR_POS_SELECTOR);
 
-        if (spawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
+        if (worldSpawnPos == null && MineColonies.getConfig().getServer().skyRaiders.get())
         {
-            spawnPos = BlockPosUtil.findAround(colony.getWorld(),
+            worldSpawnPos = BlockPosUtil.findAround(colony.getWorld(),
               BlockPosUtil.getFloor(spawnPos, colony.getWorld()),
               10,
               15,
               DOUBLE_AIR_POS_SELECTOR);
         }
 
-        return spawnPos;
+        return worldSpawnPos;
     }
 
     /**
@@ -496,35 +495,28 @@ public class RaidManager implements IRaiderManager
       final BlockPos advancePos)
     {
         BlockPos spawnPos = new BlockPos(start);
-        BlockPos tempPos = new BlockPos(spawnPos);
+        Vector3d tempPos = new Vector3d(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
         final Collection<IBuilding> buildings = colony.getBuildingManager().getBuildings().values();
 
-        final int xDiff = start.getX() - advancePos.getX();
-        final int zDiff = start.getZ() - advancePos.getZ();
+        final int xDiff = Math.abs(start.getX() - advancePos.getX());
+        final int zDiff = Math.abs(start.getZ() - advancePos.getZ());
 
-        Vector3d rates = new Vector3d(1, 1, 1);
-
-        if (xDiff > zDiff)
-        {
-            rates = new Vector3d((xDiff) / ((double) zDiff), 1, start.getZ() < advancePos.getZ() ? 1 : -1);
-        }
-        else
-        {
-            rates = new Vector3d(start.getX() < advancePos.getX() ? 1 : -1, 1, (zDiff) / ((double) xDiff));
-        }
+        Vector3d xzRatio = new Vector3d(xDiff * (start.getX() < advancePos.getX() ? 1 : -1), 0, zDiff * (start.getZ() < advancePos.getZ() ? 1 : -1));
+        // Reduce ratio to 3 chunks a step
+        xzRatio = xzRatio.normalize().scale(3);
 
         int validChunkCount = 0;
         for (int i = 0; i < 10; i++)
         {
-            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
+            if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
             {
-                tempPos = tempPos.offset(16 * rates.x, 0, 16 * rates.z);
+                tempPos = tempPos.add(16 * xzRatio.x, 0, 16 * xzRatio.z);
 
-                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), tempPos))
+                if (WorldUtil.isEntityBlockLoaded(colony.getWorld(), new BlockPos(tempPos)))
                 {
-                    if (isValidSpawnPoint(buildings, tempPos))
+                    if (isValidSpawnPoint(buildings, new BlockPos(tempPos)))
                     {
-                        spawnPos = tempPos;
+                        spawnPos = new BlockPos(tempPos);
                         validChunkCount++;
                         if (validChunkCount > 5)
                         {
@@ -706,9 +698,7 @@ public class RaidManager implements IRaiderManager
 
         if (MineColonies.getConfig().getServer().enableInDevelopmentFeatures.get())
         {
-            LanguageHandler.sendPlayersMessage(
-              colony.getImportantMessageEntityPlayers(),
-              "Will raid tomorrow: " + raid);
+            MessageUtils.format(new StringTextComponent("Will raid tomorrow: " + raid)).sendTo(colony).forAllPlayers();
         }
 
         setRaidNextNight(raid);

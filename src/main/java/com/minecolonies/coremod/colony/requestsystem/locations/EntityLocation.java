@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
+import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -225,7 +226,7 @@ public class EntityLocation implements ILocation
         @Override
         public short getSerializationId()
         {
-            return 4;
+            return SerializationIdentifierConstants.ENTITY_LOCATION_ID;
         }
     }
 

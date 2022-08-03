@@ -14,8 +14,17 @@
           "type": "minecraft:loot_table",
           "conditions": [
             {
-              "condition": "minecolonies:entity_in_biome_category",
-              "category": "ocean"
+              "condition": "minecraft:alternative",
+              "terms": [
+                {
+                  "condition": "minecolonies:entity_in_biome_category",
+                  "category": "ocean"
+                },
+                {
+                  "condition": "minecolonies:research_unlocked",
+                  "id": "minecolonies:effects/fishingtreasure"
+                }
+              ]
             }
           ],
           "weight": 5,

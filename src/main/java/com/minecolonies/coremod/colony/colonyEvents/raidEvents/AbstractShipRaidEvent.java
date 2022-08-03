@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
 import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.ColonyState;
 import com.minecolonies.api.colony.IColony;
@@ -11,10 +10,7 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.CreativeBuildingStructureHandler;
-import com.minecolonies.api.util.Tuple;
-import com.minecolonies.api.util.WorldUtil;
+import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
@@ -35,7 +31,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.common.util.Constants;
@@ -178,7 +176,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             true);
         structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, colony.getWorld());
 
-        if (spawnPathResult.isDone())
+        if (spawnPathResult != null && spawnPathResult.isDone())
         {
             final Path path = spawnPathResult.getPath();
             if (path != null && path.canReach())
@@ -213,10 +211,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
         updateRaidBar();
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getImportantMessageEntityPlayers(),
-          RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName());
-
+        MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
         colony.markDirty();
     }
 
@@ -225,8 +221,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
      */
     protected void updateRaidBar()
     {
-        final String directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
-        raidBar.setName(getDisplayName().append(new StringTextComponent(" - " + directionName)));
+        final ITextComponent directionName = BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint);
+        raidBar.setName(getDisplayName().append(" - ").append(directionName));
         for (final PlayerEntity player : colony.getPackageManager().getCloseSubscribers())
         {
             raidBar.addPlayer((ServerPlayerEntity) player);
@@ -307,11 +303,8 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
     @Override
     public void onFinish()
     {
-        LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(),
-          PIRATES_SAILING_OFF_MESSAGE,
-          BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint),
-          colony.getName(),
-          colony.getName());
+        MessageUtils.format(PIRATES_SAILING_OFF_MESSAGE, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+          .sendTo(colony).forManagers();
         for (final Entity entity : raiders.keySet())
         {
             entity.remove();
@@ -333,7 +326,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
             if (spawners.isEmpty())
             {
                 daysToGo = 2;
-                LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName());
+                MessageUtils.format(ALL_PIRATE_SPAWNERS_DESTROYED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
             }
         }
     }
@@ -355,7 +348,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
         if (raiders.isEmpty() && spawners.isEmpty())
         {
             status = EventStatus.WAITING;
-            LanguageHandler.sendPlayersMessage(colony.getImportantMessageEntityPlayers(), ALL_PIRATES_KILLED_MESSAGE, colony.getName());
+            MessageUtils.format(ALL_PIRATES_KILLED_MESSAGE, colony.getName()).sendTo(colony).forManagers();
         }
     }
 

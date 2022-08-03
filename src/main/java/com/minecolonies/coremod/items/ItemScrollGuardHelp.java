@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -8,6 +7,7 @@ import com.minecolonies.api.entity.ai.statemachine.AIOneTimeEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_GUARD_SCROLL_NO_GUARD_BUILDING;
 
 /**
  * Magic scroll which summons guards to the users aid, with a limited duration. Only works within the same world as the colony.
@@ -63,7 +64,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
         if (!(building instanceof AbstractBuildingGuards))
         {
-            LanguageHandler.sendPlayerMessage(player, "minecolonies.scroll.noguardbuilding");
+            MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(player);
             return itemStack;
         }
 
@@ -168,7 +169,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
             final IBuilding building = ((TileEntityColonyBuilding) te).getColony().getBuildingManager().getBuilding(ctx.getClickedPos());
             if (!(building instanceof AbstractBuildingGuards))
             {
-                LanguageHandler.sendPlayerMessage(ctx.getPlayer(), "minecolonies.scroll.noguardbuilding");
+                MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(ctx.getPlayer());
             }
         }
 
@@ -193,7 +194,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_guard_help.tip");
+        final IFormattableTextComponent guiHint = new TranslationTextComponent("item.minecolonies.scroll_guard_help.tip");
         guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
 

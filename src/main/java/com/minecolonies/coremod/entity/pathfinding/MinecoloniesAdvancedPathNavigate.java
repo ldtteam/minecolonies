@@ -400,7 +400,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 }
                 else
                 {
-                    ourEntity.stopRiding();
+                    if (destination == null || mob.distanceToSqr(destination.getX(), destination.getY(), destination.getZ()) > 2)
+                    {
+                        ourEntity.stopRiding();
+                    }
                 }
             }
             else if ((Math.abs(pEx.x - mob.getX()) > 7 || Math.abs(pEx.z - mob.getZ()) > 7) && ourEntity.vehicle != null)
@@ -536,7 +539,10 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     {
         pathResult.getJob().synchToClient(mob);
         moveTo(pathResult.getPath(), getSpeedFactor());
-        pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
+        if (pathResult != null)
+        {
+            pathResult.setStatus(PathFindingStatus.IN_PROGRESS_FOLLOWING);
+        }
         return false;
     }
 

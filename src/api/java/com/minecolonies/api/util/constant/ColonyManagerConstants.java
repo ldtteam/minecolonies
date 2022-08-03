@@ -63,6 +63,11 @@ public final class ColonyManagerConstants
     public static final String MISSING_WORLD_CAP_MESSAGE = "Missing world capability with colony manager!";
 
     /**
+     * ID for when no colony exists
+     */
+    public static final int NO_COLONY_ID = 0;
+
+    /**
      * Private constructor to hide implicit one.
      */
     private ColonyManagerConstants()

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.compatibility.journeymap;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
@@ -16,6 +15,8 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JOURNEY_MAP_INFO;
 
 /**
  * Utility class to manage colony deathpoint mapping.
@@ -178,10 +179,10 @@ public class ColonyDeathpoints
             final IGraveData grave = ((AbstractTileEntityGrave) blockEntity).getGraveData();
             if (grave != null)
             {
-                final String text = grave.getCitizenJobName() == null
-                    ? LanguageHandler.format(COM_MINECOLONIES_JMAP_PREFIX + "deathpoint_name", grave.getCitizenName())
-                    : LanguageHandler.format(COM_MINECOLONIES_JMAP_PREFIX + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
-                final Waypoint waypoint = new Waypoint(MOD_ID, text, colony.getDimension(), pos);
+                final ITextComponent text = grave.getCitizenJobName() == null
+                                              ? new TranslationTextComponent(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_name", grave.getCitizenName())
+                                              : new TranslationTextComponent(PARTIAL_JOURNEY_MAP_INFO + "deathpoint_namejob", grave.getCitizenName(), grave.getCitizenJobName());
+                final Waypoint waypoint = new Waypoint(MOD_ID, text.getString(), colony.getDimension(), pos);
                 waypoint.setEditable(true)
                         .setPersistent(false)
                         .setIcon(deathIcon.get())

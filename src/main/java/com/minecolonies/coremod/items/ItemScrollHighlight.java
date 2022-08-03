@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.SoundUtils;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.TOOL_GENERIC_SCROLL_HIGHLIGHT_DESCRIPTION;
 
 /**
  * Magic scroll which highlights and speedbuffs workers of the building it is applied to
@@ -98,7 +98,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
     public void appendHoverText(
       @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent("item.minecolonies.scroll_highlight.tip");
+        final IFormattableTextComponent guiHint = new TranslationTextComponent(TOOL_GENERIC_SCROLL_HIGHLIGHT_DESCRIPTION);
         guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.DARK_GREEN));
         tooltip.add(guiHint);
     }

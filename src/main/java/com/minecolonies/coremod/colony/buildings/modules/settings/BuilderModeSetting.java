@@ -2,7 +2,11 @@ package com.minecolonies.coremod.colony.buildings.modules.settings;
 
 import com.ldtteam.structurize.Structurize;
 import com.ldtteam.structurize.placement.StructureIterators;
+import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +39,22 @@ public class BuilderModeSetting extends StringSetting
     }
 
     @Override
+    public boolean isActive(final ISettingsModule module)
+    {
+        return module.getBuilding().getColony().getResearchManager().getResearchEffects().getEffectStrength(BUILDER_MODE) > 0;
+    }
+
+    @Override
     public boolean isActive(final ISettingsModuleView module)
     {
         return module.getColony().getResearchManager().getResearchEffects().getEffectStrength(BUILDER_MODE) > 0;
+    }
+
+    @NotNull
+    public static String getActualValue(@NotNull final IBuilding building)
+    {
+        return building.getOptionalSetting(BuildingBuilder.BUILDING_MODE)
+                .map(StringSetting::getValue)
+                .orElse(Structurize.getConfig().getServer().iteratorType.get());
     }
 }

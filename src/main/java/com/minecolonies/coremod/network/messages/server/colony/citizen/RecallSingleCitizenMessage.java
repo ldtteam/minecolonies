@@ -1,11 +1,11 @@
 package com.minecolonies.coremod.network.messages.server.colony.citizen;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.TeleportHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,6 +15,8 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_CITIZEN_RECALL_FAILED;
 
 /**
  * Recalls the citizen to the location.
@@ -86,7 +88,7 @@ public class RecallSingleCitizenMessage extends AbstractBuildingServerMessage<IB
                 return;
             }
 
-            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerhuts.recallFail");
+            MessageUtils.format(WARNING_CITIZEN_RECALL_FAILED).sendTo(player);
         }
     }
 }

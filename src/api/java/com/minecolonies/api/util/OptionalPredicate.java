@@ -32,6 +32,32 @@ public interface OptionalPredicate<T>
     }
 
     /**
+     * Convert the given predicate into an optional success.
+     * @param predicate the input predicate
+     * @return a predicate which returns true if the input predicate returns true,
+     * or empty if the input predicate returns false.
+     * @param <T> the input type
+     */
+    @NotNull
+    static<T> OptionalPredicate<T> passIf(@NotNull final Predicate<T> predicate)
+    {
+        return t -> predicate.test(t) ? Optional.of(true) : Optional.empty();
+    }
+
+    /**
+     * Convert the given predicate into an optional failure.
+     * @param predicate the input predicate
+     * @return a predicate which returns false if the input predicate returns true,
+     * or empty if the input predicate returns false.
+     * @param <T> the input type
+     */
+    @NotNull
+    static<T> OptionalPredicate<T> failIf(@NotNull final Predicate<T> predicate)
+    {
+        return t -> predicate.test(t) ? Optional.of(false) : Optional.empty();
+    }
+
+    /**
      * Turns an OptionalPredicate into a regular {@link Predicate} by
      * providing a default value returned when empty.
      *

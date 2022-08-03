@@ -84,7 +84,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private IAIState decide()
     {
-        final int paperInBuilding = InventoryUtils.getCountFromBuilding(getOwnBuilding(), PAPER);
+        final int paperInBuilding = InventoryUtils.hasBuildingEnoughElseCount(building, PAPER, 1);
         final int paperInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), PAPER);
         if (paperInBuilding + paperInInv <= 0)
         {
@@ -99,7 +99,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
 
         final List<AbstractEntityCitizen> pupils = WorldUtil.getEntitiesWithinBuilding(world,
           AbstractEntityCitizen.class,
-          getOwnBuilding(),
+          building,
           cit -> cit.isBaby() && cit.vehicle != null && cit.getCitizenJobHandler().getColonyJob() instanceof JobPupil);
         if (pupils.size() > 0)
         {
@@ -182,7 +182,7 @@ public class EntityAIWorkTeacher extends AbstractEntityAIInteract<JobTeacher, Bu
      */
     private void requestPaper()
     {
-        if (!getOwnBuilding().hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
+        if (!building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
           q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == Items.PAPER))
         {
             worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(Items.PAPER, PAPER_TO_REQUEST)));

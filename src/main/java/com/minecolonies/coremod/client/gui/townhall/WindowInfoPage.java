@@ -2,17 +2,17 @@ package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockout.Pane;
 import com.ldtteam.blockout.PaneBuilders;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IBuildingEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.ICitizenEventDescription;
 import com.minecolonies.api.colony.colonyEvents.descriptions.IColonyEventDescription;
-import com.minecolonies.api.colony.permissions.*;
-import com.minecolonies.api.util.Log;
+import com.minecolonies.api.colony.permissions.PermissionEvent;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
@@ -23,6 +23,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHal
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEvent;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -97,7 +98,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
         }
 
         final Text totalCitizenLabel = findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Text.class);
-        totalCitizenLabel.setText(LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
+        totalCitizenLabel.setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT,
             citizensSize,
             Math.max(citizensSize, building.getColony().getCitizenCountLimit())));
         List<IFormattableTextComponent> hoverText = new ArrayList<>();
@@ -107,21 +108,20 @@ public class WindowInfoPage extends AbstractWindowTownHall
         }
         else if(citizensSize < citizensCap)
         {
-            hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.houselimited", this.building.getColony().getName()));
+            hoverText.add(new TranslationTextComponent(WARNING_POPULATION_NEEDS_HOUSING, this.building.getColony().getName()));
             totalCitizenLabel.setColors(ORANGE);
         }
         else
         {
             if(citizensCap < MineColonies.getConfig().getServer().maxCitizenPerColony.get())
             {
-                hoverText.add(new TranslationTextComponent("com.minecolonies.coremod.gui.townhall.population.totalcitizens.researchlimited", this.building.getColony().getName()));
+                hoverText.add(new TranslationTextComponent(WARNING_POPULATION_RESEARCH_LIMITED, this.building.getColony().getName()));
             }
             else
             {
-                hoverText.add(new TranslationTextComponent( "com.minecolonies.coremod.gui.townhall.population.totalcitizens.configlimited", this.building.getColony().getName()));
+                hoverText.add(new TranslationTextComponent( WARNING_POPULATION_CONFIG_LIMITED, this.building.getColony().getName()));
             }
-            totalCitizenLabel.setText(
-                LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
+            totalCitizenLabel.setText(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_TOTALCITIZENS_COUNT, citizensSize, citizensCap));
             totalCitizenLabel.setColors(RED);
         }
         PaneBuilders.tooltipBuilder().hoverPane(totalCitizenLabel).build().setText(hoverText);
@@ -159,8 +159,8 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 unemployedCount++;
             }
         }
-        final String numberOfUnemployed = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount);
-        final String numberOfKids = LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children);
+        final ITextComponent numberOfUnemployed = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_UNEMPLOYED, unemployedCount);
+        final ITextComponent numberOfKids = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_CHILDS, children);
 
         final ScrollingList list = findPaneOfTypeByID("citizen-stats", ScrollingList.class);
         if (list == null)
@@ -189,9 +189,8 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 if (index < theList.size())
                 {
                     final Map.Entry<String, Tuple<Integer, Integer>> entry = theList.get(index);
-                    final String job = LanguageHandler.format(entry.getKey());
-                    final String numberOfWorkers =
-                      LanguageHandler.format(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
+                    final ITextComponent job = new TranslationTextComponent(entry.getKey());
+                    final ITextComponent numberOfWorkers = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_POPULATION_EACH, job, entry.getValue().getA(), entry.getValue().getB());
                     label.setText(numberOfWorkers);
                 }
                 else
@@ -227,7 +226,9 @@ public class WindowInfoPage extends AbstractWindowTownHall
                 final Text actionLabel = rowPane.findPaneOfTypeByID(ACTION_LABEL, Text.class);
                 if (permissionEvents)
                 {
-                    final PermissionEvent event = building.getPermissionEvents().get(index);
+                    final List<PermissionEvent> permissionEvents = building.getPermissionEvents();
+                    Collections.reverse(permissionEvents);
+                    final PermissionEvent event = permissionEvents.get(index);
 
                     nameLabel.setText(event.getName() + (event.getId() == null ? " <fake>" : ""));
                     rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ());
@@ -237,18 +238,13 @@ public class WindowInfoPage extends AbstractWindowTownHall
                         rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
                     }
 
-                    final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US));
-
-                    if (name.contains(KEY_TO_PERMISSIONS))
-                    {
-                        Log.getLogger().warn("Didn't work for:" + name);
-                        return;
-                    }
-                    actionLabel.setText(name);
+                    actionLabel.setText(new TranslationTextComponent(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
                 }
                 else
                 {
-                    final IColonyEventDescription event = building.getColonyEvents().get(index);
+                    final List<IColonyEventDescription> colonyEvents = building.getColonyEvents();
+                    Collections.reverse(colonyEvents);
+                    final IColonyEventDescription event = colonyEvents.get(index);
                     if (event instanceof CitizenDiedEvent)
                     {
                         actionLabel.setText(((CitizenDiedEvent) event).getDeathCause());
@@ -264,7 +260,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     else if (event instanceof IBuildingEventDescription)
                     {
                         IBuildingEventDescription buildEvent = (IBuildingEventDescription) event;
-                        nameLabel.setText(buildEvent.getBuildingName() + " " + buildEvent.getLevel());
+                        nameLabel.setText(MessageUtils.format(buildEvent.getBuildingName()).append(" " + buildEvent.getLevel()).create());
                     }
                     rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(event.getEventPos().getX() + " " + event.getEventPos().getY() + " " + event.getEventPos().getZ());
                     rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
@@ -290,13 +286,13 @@ public class WindowInfoPage extends AbstractWindowTownHall
 
     /**
      * Switching between permission and colony events.
-     * 
+     *
      * @param button the clicked button.
      */
     public void permissionEventsClicked(@NotNull final Button button)
     {
         permissionEvents = !permissionEvents;
-        button.setText(LanguageHandler.format(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
+        button.setText(new TranslationTextComponent(permissionEvents ? TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_COLONYEVENTS : TranslationConstants.COM_MINECOLONIES_CIREMOD_GUI_TOWNHALL_PERMISSIONEVENTS));
     }
 
     @Override

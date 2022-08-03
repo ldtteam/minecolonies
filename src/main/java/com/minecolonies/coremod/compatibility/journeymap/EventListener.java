@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.IJobRegistry;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.citizen.VisitorCitizen;
 import journeymap.client.api.display.Context;
@@ -32,7 +33,7 @@ import java.util.Set;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_JOB;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_JMAP_PREFIX;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_JOURNEY_MAP_INFO;
 
 public class EventListener
 {
@@ -104,7 +105,7 @@ public class EventListener
                     return;
                 }
 
-                jobName = new TranslationTextComponent(COM_MINECOLONIES_JMAP_PREFIX + "visitor");
+                jobName = new TranslationTextComponent(PARTIAL_JOURNEY_MAP_INFO + "visitor");
             }
             else
             {
@@ -121,7 +122,7 @@ public class EventListener
                 }
 
                 jobName = new TranslationTextComponent(jobEntry == null
-                        ? COM_MINECOLONIES_JMAP_PREFIX + "unemployed"
+                        ? PARTIAL_JOURNEY_MAP_INFO + "unemployed"
                         : jobEntry.getTranslationKey());
             }
 
@@ -146,6 +147,19 @@ public class EventListener
             if (!isVisitor && JourneymapOptions.getShowColonistTeamColour(this.jmap.getOptions()))
             {
                 wrapper.setColor(entity.getTeamColor());
+            }
+        }
+        else if (entity instanceof AbstractEntityMinecoloniesMob)
+        {
+            final JourneymapOptions.RaiderColor color = JourneymapOptions.getRaiderColor(this.jmap.getOptions());
+
+            if (JourneymapOptions.RaiderColor.NONE.equals(color))
+            {
+                wrapper.setDisable(true);
+            }
+            else if (!JourneymapOptions.RaiderColor.HOSTILE.equals(color))
+            {
+                wrapper.setColor(color.getColor().getValue());
             }
         }
     }

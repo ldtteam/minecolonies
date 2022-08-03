@@ -11,6 +11,7 @@ import com.minecolonies.api.colony.interactionhandling.registry.InteractionRespo
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.CountedIngredient;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.crafting.registry.RecipeTypeEntry;
 import com.minecolonies.api.research.effects.registry.ResearchEffectEntry;
 import com.minecolonies.api.research.registry.ResearchRequirementEntry;
@@ -156,6 +157,12 @@ public abstract class CommonProxy implements IProxy
     }
 
     @SubscribeEvent
+    public static void registerCraftingTypes(final RegistryEvent.Register<CraftingType> event)
+    {
+        ModCraftingTypesInitializer.init(event);
+    }
+
+    @SubscribeEvent
     public static void registerRecipeSerializers(final RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
         final IForgeRegistry<IRecipeSerializer<?>> r = event.getRegistry();
@@ -229,7 +236,11 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openResourceScrollWindow(final int colonyId, final BlockPos pos)
+    public void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos pos,
+      final BlockPos warehousePos,
+      final CompoundNBT warehouseCompound)
     {
         /*
          * Intentionally left empty.

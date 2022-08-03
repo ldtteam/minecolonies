@@ -126,7 +126,7 @@ public class Node implements Comparable<Node>
     }
 
     /**
-     * Create an MNode from a bytebuf.
+     * Create an Node from a bytebuf.
      * @param byteBuf the buffer to load it from.
      */
     public Node(final PacketBuffer byteBuf)

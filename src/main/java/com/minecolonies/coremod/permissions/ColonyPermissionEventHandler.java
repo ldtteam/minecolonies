@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.permissions;
 
 import com.ldtteam.structurize.items.ItemScanTool;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
@@ -13,6 +12,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
@@ -57,6 +57,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.PERMISSION_DENIED;
 
 /**
  * This class handles all permission checks on events and cancels them if needed.
@@ -177,7 +179,7 @@ public class ColonyPermissionEventHandler
                   || lastPlayerNotificationTick.get(entity.getUUID()) + (Constants.TICKS_SECOND * MineColonies.getConfig().getServer().secondsBetweenPermissionMessages.get())
                        < worldTime)
             {
-                LanguageHandler.sendPlayerMessage((PlayerEntity) entity, "com.minecolonies.coremod.permission.no");
+                MessageUtils.format(PERMISSION_DENIED).sendTo((PlayerEntity) entity);
                 lastPlayerNotificationTick.put(entity.getUUID(), worldTime);
             }
         }

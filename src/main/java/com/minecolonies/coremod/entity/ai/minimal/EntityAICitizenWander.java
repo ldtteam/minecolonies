@@ -10,6 +10,7 @@ import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLibrary;
+import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.entity.SittingEntity;
 import com.minecolonies.coremod.entity.ai.citizen.student.EntityAIStudy;
 import net.minecraft.entity.ai.goal.Goal;
@@ -222,7 +223,8 @@ public class EntityAICitizenWander extends Goal
         {
             return false;
         }
-        return citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone() && !citizen.isBaby();
+        return citizen.getDesiredActivity() != DesiredActivity.SLEEP && citizen.getNavigation().isDone() && !citizen.isBaby()
+                 && !(citizen.getCitizenData().getJob() instanceof AbstractJobGuard);
     }
 
     @Override

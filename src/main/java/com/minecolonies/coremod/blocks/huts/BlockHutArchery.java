@@ -22,6 +22,4 @@ public class BlockHutArchery extends AbstractBlockHut<BlockHutArchery>
     {
         return ModBuildings.archery;
     }
-
-
 }

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.compatibility.jei.transfer;
 
+import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.containers.WindowFurnaceCrafting;
 import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
@@ -48,7 +49,7 @@ public class FurnaceCraftingGuiHandler extends AbstractTeachingGuiHandler<Window
     @Override
     protected boolean isSupportedCraftingModule(@NotNull final CraftingModuleView moduleView)
     {
-        return moduleView.canLearnFurnaceRecipes();
+        return moduleView.canLearn(ModCraftingTypes.SMELTING);
     }
 
     @Override

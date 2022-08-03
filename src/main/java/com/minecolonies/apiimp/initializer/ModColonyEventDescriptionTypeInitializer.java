@@ -3,6 +3,7 @@ package com.minecolonies.apiimp.initializer;
 import com.minecolonies.api.colony.colonyEvents.registry.ColonyEventDescriptionTypeRegistryEntry;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingBuiltEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingDeconstructedEvent;
+import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingRepairedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.buildingEvents.BuildingUpgradedEvent;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.*;
 import net.minecraftforge.event.RegistryEvent;
@@ -28,6 +29,7 @@ public final class ModColonyEventDescriptionTypeInitializer
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(CitizenGrownUpEvent::loadFromNBT, CitizenGrownUpEvent::loadFromPacketBuffer, CitizenGrownUpEvent.CITIZEN_GROWN_UP_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingBuiltEvent::loadFromNBT, BuildingBuiltEvent::loadFromPacketBuffer, BuildingBuiltEvent.BUILDING_BUILT_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingUpgradedEvent::loadFromNBT, BuildingUpgradedEvent::loadFromPacketBuffer, BuildingUpgradedEvent.BUILDING_UPGRADED_EVENT_ID));
+        reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingRepairedEvent::loadFromNBT, BuildingRepairedEvent::loadFromPacketBuffer, BuildingRepairedEvent.BUILDING_REPAIRED_EVENT_ID));
         reg.register(new ColonyEventDescriptionTypeRegistryEntry(BuildingDeconstructedEvent::loadFromNBT, BuildingDeconstructedEvent::loadFromPacketBuffer, BuildingDeconstructedEvent.BUILDING_DECONSTRUCTED_EVENT_ID));
     }
 }

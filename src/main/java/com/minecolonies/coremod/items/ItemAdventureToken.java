@@ -1,25 +1,19 @@
 package com.minecolonies.coremod.items;
 
-import java.util.List;
-
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
-import com.minecolonies.api.util.constant.TranslationConstants;
-
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.*;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import java.util.List;
 
-import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ENTITY_TYPE;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_NAME_GUI;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_TOOLTIP_GUI;
 
 public class ItemAdventureToken extends AbstractItemMinecolonies
 {
@@ -37,7 +31,7 @@ public class ItemAdventureToken extends AbstractItemMinecolonies
         if(stack.hasTag() && stack.getTag().contains(TAG_ENTITY_TYPE))
         {
             EntityType<?> mobType = EntityType.byString(stack.getTag().getString(TAG_ENTITY_TYPE)).orElse(EntityType.ZOMBIE);
-            return LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_NAME_GUI, mobType.getDescription());
+            return new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_NAME_GUI, mobType.getDescription());
         }
         
         return super.getName(stack);
@@ -48,7 +42,7 @@ public class ItemAdventureToken extends AbstractItemMinecolonies
     public void appendHoverText(
     @NotNull final ItemStack stack, @Nullable final World worldIn, @NotNull final List<ITextComponent> tooltip, @NotNull final ITooltipFlag flagIn)
     {
-        final IFormattableTextComponent guiHint = LanguageHandler.buildChatComponent(TranslationConstants.COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_TOOLTIP_GUI);
+        final IFormattableTextComponent guiHint = new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ADVENTURE_TOKEN_TOOLTIP_GUI);
         guiHint.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
         tooltip.add(guiHint);
 

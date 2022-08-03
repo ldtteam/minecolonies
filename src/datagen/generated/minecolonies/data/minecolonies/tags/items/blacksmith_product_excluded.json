@@ -4,6 +4,10 @@
     "#minecolonies:dyer_product",
     "#minecolonies:mechanic_product",
     "#minecolonies:sawmill_product",
-    "minecraft:firework_star"
+    "#minecolonies:stonemason_product",
+    "minecraft:firework_star",
+    "minecraft:glistering_melon_slice",
+    "minecraft:bow",
+    "minecraft:crossbow"
   ]
 }

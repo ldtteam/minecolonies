@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands.generalcommands;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -14,10 +13,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minecolonies.api.util.constant.translation.CommandTranslationConstants.COMMAND_RAID_TONIGHT_WARNING;
 import static com.minecolonies.coremod.commands.CommandArgumentNames.*;
 
 public class CommandRaidAll implements IMCOPCommand
@@ -55,7 +56,7 @@ public class CommandRaidAll implements IMCOPCommand
             {
                 colony.getRaiderManager().raiderEvent(raidType);
             }
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight"), true);
+            context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_RAID_TONIGHT_WARNING), true);
             return 1;
         }
         else if(StringArgumentType.getString(context, RAID_TIME_ARG).equals(RAID_TONIGHT))
@@ -64,7 +65,7 @@ public class CommandRaidAll implements IMCOPCommand
             {
                 colony.getRaiderManager().setRaidNextNight(true, raidType);
             }
-            context.getSource().sendSuccess(LanguageHandler.buildChatComponent("com.minecolonies.command.raidtonight"), true);
+            context.getSource().sendSuccess(new TranslationTextComponent(COMMAND_RAID_TONIGHT_WARNING), true);
             return 1;
         }
         return 0;

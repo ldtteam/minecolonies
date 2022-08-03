@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.compatibility.jei;
 
-import com.google.common.collect.ImmutableMap;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
@@ -10,15 +9,14 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipesReloadedEvent;
-import com.minecolonies.coremod.compatibility.jei.transfer.CraftingGuiHandler;
-import com.minecolonies.coremod.compatibility.jei.transfer.FurnaceCraftingGuiHandler;
-import com.minecolonies.coremod.compatibility.jei.transfer.PrivateCraftingTeachingTransferHandler;
-import com.minecolonies.coremod.compatibility.jei.transfer.PrivateSmeltingTeachingTransferHandler;
+import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
+import com.minecolonies.coremod.compatibility.jei.transfer.*;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
@@ -29,12 +27,7 @@ import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -115,7 +108,7 @@ public class JEIPlugin implements IModPlugin
     public void registerRecipes(@NotNull final IRecipeRegistration registration)
     {
         registration.addIngredientInfo(new ItemStack(ModBlocks.blockHutComposter.asItem()), VanillaTypes.ITEM,
-                new TranslationTextComponent(TranslationConstants.COM_MINECOLONIES_JEI_PREFIX + ModJobs.COMPOSTER_ID.getPath()));
+                new TranslationTextComponent(TranslationConstants.PARTIAL_JEI_INFO + ModJobs.COMPOSTER_ID.getPath()));
 
         if (!recipesLoaded && !Minecraft.getInstance().isLocalServer())
         {
@@ -130,7 +123,7 @@ public class JEIPlugin implements IModPlugin
             return;
         }
 
-        populateRecipes(buildVanillaRecipesMap(), registration::addRecipes);
+        populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(), Minecraft.getInstance().level), registration::addRecipes);
         recipesLoaded = true;
     }
 
@@ -152,6 +145,7 @@ public class JEIPlugin implements IModPlugin
     {
         registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.CRAFTING);
         registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.FURNACE);
+        registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(registration.getTransferHelper()), VanillaRecipeCategoryUid.BREWING);
     }
 
     @Override
@@ -159,6 +153,7 @@ public class JEIPlugin implements IModPlugin
     {
         new CraftingGuiHandler(this.categories).register(registration);
         new FurnaceCraftingGuiHandler(this.categories).register(registration);
+        new BrewingCraftingGuiHandler(this.categories).register(registration);
     }
 
     @Override
@@ -167,49 +162,7 @@ public class JEIPlugin implements IModPlugin
         this.weakRuntime = new WeakReference<>(jeiRuntime);
     }
 
-    private Map<IRecipeType<?>, List<IGenericRecipe>> buildVanillaRecipesMap()
-    {
-        final RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
-
-        final List<IGenericRecipe> craftingRecipes = new ArrayList<>();
-        for (final IRecipe<CraftingInventory> recipe : recipeManager.byType(IRecipeType.CRAFTING).values())
-        {
-            if (!recipe.canCraftInDimensions(3, 3)) continue;
-
-            tryAddingVanillaRecipe(craftingRecipes, recipe);
-        }
-
-        final List<IGenericRecipe> smeltingRecipes = new ArrayList<>();
-        for (final IRecipe<IInventory> recipe : recipeManager.byType(IRecipeType.SMELTING).values())
-        {
-            tryAddingVanillaRecipe(smeltingRecipes, recipe);
-        }
-
-        return new ImmutableMap.Builder<IRecipeType<?>, List<IGenericRecipe>>()
-                .put(IRecipeType.CRAFTING, craftingRecipes)
-                .put(IRecipeType.SMELTING, smeltingRecipes)
-                .build();
-    }
-
-    private void tryAddingVanillaRecipe(@NotNull final List<IGenericRecipe> recipes,
-                                        @NotNull final IRecipe<?> recipe)
-    {
-        if (recipe.getResultItem().isEmpty()) return;     // invalid or special recipes
-
-        try
-        {
-            final IGenericRecipe genericRecipe = GenericRecipeUtils.create(recipe);
-            if (genericRecipe.getInputs().isEmpty()) return;
-
-            recipes.add(genericRecipe);
-        }
-        catch (final Exception ex)
-        {
-            Log.getLogger().warn("Error evaluating recipe " + recipe.getId() + "; ignoring.", ex);
-        }
-    }
-
-    private void populateRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla,
+    private void populateRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla,
                                  @NotNull final BiConsumer<Collection<?>, ResourceLocation> registrar)
     {
         registrar.accept(CompostRecipeCategory.findRecipes(), CompostRecipe.ID);
@@ -243,7 +196,8 @@ public class JEIPlugin implements IModPlugin
             if (runtime != null)
             {
                 final IRecipeManager jeiManager = runtime.getRecipeManager();
-                populateRecipes(buildVanillaRecipesMap(), (list, uid) ->
+                populateRecipes(RecipeAnalyzer.buildVanillaRecipesMap(Minecraft.getInstance().level.getRecipeManager(),
+                        Minecraft.getInstance().level), (list, uid) ->
                 {
                     for (final Object recipe : list)
                     {

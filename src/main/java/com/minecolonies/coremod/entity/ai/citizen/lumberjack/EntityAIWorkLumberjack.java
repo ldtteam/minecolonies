@@ -10,7 +10,9 @@ import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
+import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingLumberjack;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
@@ -237,13 +239,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             return LUMBERJACK_START_WORKING;
         }
 
-
-        if (currentRequest != null && currentRecipeStorage != null)
-        {
-            return QUERY_ITEMS;
-        }
-
-        return GET_RECIPE;
+        return getNextCraftingState();
     }
 
     /**
@@ -278,7 +274,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState prepareForWoodcutting()
     {
-        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(ToolType.HOE))
+        if (checkForToolOrWeapon(ToolType.AXE) || checkForToolOrWeapon(building.getOptionalSetting(AbstractBuilding.USE_SHEARS).orElse(new BoolSetting(true)).getValue() ? ToolType.SHEARS : ToolType.HOE))
         {
             // Reset everything, maybe there are new crafting requests
             return START_WORKING;
@@ -329,7 +325,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
      */
     private IAIState findTree()
     {
-        final BuildingLumberjack building = getOwnBuilding();
         worker.getCitizenData().setVisibleStatus(SEARCH);
 
         if (pathResult != null && pathResult.isComputing())
@@ -387,12 +382,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else
         {
-            job.setTree(new Tree(world, pathResult.treeLocation, getOwnBuilding().getColony()));
+            job.setTree(new Tree(world, pathResult.treeLocation, building.getColony()));
 
             // Check if tree creation was successful
             if (job.getTree().isTree())
             {
-                job.getTree().findLogs(world, getOwnBuilding().getColony());
+                job.getTree().findLogs(world, building.getColony());
                 return LUMBERJACK_CHOP_TREE;
             }
             else
@@ -452,7 +447,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 return getState();
             }
 
-            final BuildingLumberjack building = getOwnBuilding();
             if (building.shouldReplant())
             {
                 plantSapling();
@@ -857,7 +851,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 if (world.getBlockState(pos.below()).getBlock() instanceof NetherrackBlock)
                 {
                     world.setBlockAndUpdate(pos.below(), new_block.defaultBlockState());
-                    getOwnBuilding().addNetherTree(pos);
+                    building.addNetherTree(pos);
                 }
             }
 

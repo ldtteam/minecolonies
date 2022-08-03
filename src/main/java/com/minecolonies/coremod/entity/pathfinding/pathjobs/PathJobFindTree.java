@@ -179,8 +179,8 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final Node parent)
+    protected boolean isPassable(@NotNull final BlockState block, final BlockPos pos, final Node parent, final boolean head)
     {
-        return super.isPassable(block, pos, parent) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
+        return super.isPassable(block, pos, parent, head) || (block.is(BlockTags.LEAVES) && isInRestrictedArea(pos)) || Compatibility.isDynamicTrunkShell(block.getBlock());
     }
 }

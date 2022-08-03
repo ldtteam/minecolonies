@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeBook;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -64,7 +65,8 @@ public interface IProxy
 
     /**
      * Opens a build tool window for a specific structure.
-     *  @param pos           the position.
+     *
+     * @param pos           the position.
      * @param structureName the structure name.
      * @param rotation      the rotation.
      * @param groundstyle   one of the GROUNDSTYLE_ values.
@@ -88,10 +90,16 @@ public interface IProxy
     /**
      * Opens the resource scroll window.
      *
-     * @param colonyId the colony id.
-     * @param pos      the position of the builder.
+     * @param colonyId          the colony id.
+     * @param pos               the position of the builder.
+     * @param warehousePos      the position of the warehouse clicked on (if any).
+     * @param warehouseCompound the compound data to store the warehouse snapshot to.
      */
-    void openResourceScrollWindow(final int colonyId, final BlockPos pos);
+    void openResourceScrollWindow(
+      final int colonyId,
+      final BlockPos pos,
+      final @Nullable BlockPos warehousePos,
+      final @Nullable CompoundNBT warehouseCompound);
 
     /**
      * Get the file representation of the additional schematics' folder.

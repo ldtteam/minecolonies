@@ -9,8 +9,10 @@ import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.modules.ItemListModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingComposter;
@@ -18,7 +20,6 @@ import com.minecolonies.coremod.colony.jobs.JobComposter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.tileentities.TileEntityBarrel;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
@@ -106,8 +107,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
     private IAIState accelerateBarrels()
     {
         final int accelerationTicks = (worker.getCitizenData().getCitizenSkillHandler().getLevel(getModuleForJob().getPrimarySkill()) / 10) * 2;
-        final World world = getOwnBuilding().getColony().getWorld();
-        for (final BlockPos pos : getOwnBuilding().getBarrels())
+        final World world = building.getColony().getWorld();
+        for (final BlockPos pos : building.getBarrels())
         {
             if (WorldUtil.isBlockLoaded(world, pos))
             {
@@ -142,18 +143,18 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        final List<ItemStorage> list = getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).getList();
+        final List<ItemStorage> list = building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).getList();
         if (list.isEmpty())
         {
             complain();
             return getState();
         }
 
-        if (InventoryUtils.hasItemInProvider(getOwnBuilding(), stack -> list.contains(new ItemStorage(stack))))
+        if (InventoryUtils.hasItemInProvider(building, stack -> list.contains(new ItemStorage(stack))))
         {
             InventoryUtils.transferItemStackIntoNextFreeSlotFromProvider(
-              getOwnBuilding(),
-              InventoryUtils.findFirstSlotInProviderNotEmptyWith(getOwnBuilding(), stack -> list.contains(new ItemStorage(stack))),
+              building,
+              InventoryUtils.findFirstSlotInProviderNotEmptyWith(building, stack -> list.contains(new ItemStorage(stack))),
               worker.getInventoryCitizen());
         }
 
@@ -169,7 +170,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
 
         worker.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
 
-        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData().getId()))
+        if (!building.hasWorkerOpenRequests(worker.getCitizenData().getId()))
         {
             final ArrayList<ItemStack> itemList = new ArrayList<>();
             for (final ItemStorage item : list)
@@ -180,7 +181,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             }
             if (!itemList.isEmpty())
             {
-                worker.getCitizenData().createRequestAsync(new StackList(itemList, COM_MINECOLONIES_REQUESTS_COMPOSTABLE, Constants.STACKSIZE * getOwnBuilding().getBarrels().size(), 1, getOwnBuilding().getSetting(BuildingComposter.MIN).getValue()));
+                worker.getCitizenData().createRequestAsync(new StackList(itemList, RequestSystemTranslationConstants.REQUESTS_TYPE_COMPOSTABLE, Constants.STACKSIZE * building.getBarrels().size(), 1, building.getSetting(BuildingComposter.MIN).getValue()));
             }
         }
 
@@ -204,7 +205,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             return getState();
         }
 
-        final BuildingComposter building = this.getOwnBuilding();
+        final BuildingComposter building = this.building;
 
         for (final BlockPos barrel : building.getBarrels())
         {
@@ -250,7 +251,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (worker.getItemInHand(Hand.MAIN_HAND) == ItemStack.EMPTY)
         {
             final int slot = InventoryUtils.findFirstSlotInItemHandlerWith(
-              worker.getInventoryCitizen(), stack -> getOwnBuilding().getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
+              worker.getInventoryCitizen(), stack -> building.getModuleMatching(ItemListModule.class, m -> m.getId().equals(COMPOSTABLE_LIST)).isItemInList(new ItemStorage(stack)));
 
             if (slot >= 0)
             {
@@ -306,7 +307,7 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
             final TileEntityBarrel te = (TileEntityBarrel) world.getBlockEntity(currentTarget);
             final ItemStack compost = te.retrieveCompost(getLootMultiplier(worker.getRandom()));
 
-            if (getOwnBuilding().getSetting(BuildingComposter.PRODUCE_DIRT).getValue())
+            if (building.getSetting(BuildingComposter.PRODUCE_DIRT).getValue())
             {
                 /**
                  * Podzol or dirt?
@@ -376,10 +377,8 @@ public class EntityAIWorkComposter extends AbstractEntityAIInteract<JobComposter
         if (ticksToComplain <= 0)
         {
             ticksToComplain = TICKS_UNTIL_COMPLAIN;
-            for (final PlayerEntity player : getOwnBuilding().getColony().getMessagePlayerEntities())
-            {
-                player.sendMessage(new TranslationTextComponent(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST), player.getUUID());
-            }
+            MessageUtils.format(COM_MINECOLONIES_COREMOD_ENTITY_COMPOSTER_EMPTYLIST)
+              .sendTo(building.getColony()).forAllPlayers();
         }
         else
         {

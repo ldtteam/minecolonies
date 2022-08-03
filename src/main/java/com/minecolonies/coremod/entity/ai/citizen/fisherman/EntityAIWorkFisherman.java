@@ -566,7 +566,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getMainHandItem() == null || (worker.getMainHandItem().getItem() != worker.getItemHandlerCitizen().getStackInSlot(rodSlot).getItem()))
+        if (worker.getMainHandItem() == null || !ItemStackUtils.compareItemStacksIgnoreStackSize(worker.getMainHandItem(), worker.getItemHandlerCitizen().getStackInSlot(rodSlot), false, true))
         {
             equipRod();
             return getState();
@@ -590,7 +590,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
     private int getRodSlot()
     {
         return InventoryUtils.getFirstSlotOfItemHandlerContainingTool(getInventory(), ToolType.FISHINGROD,
-          TOOL_LEVEL_WOOD_OR_GOLD, getOwnBuilding().getMaxToolLevel());
+          TOOL_LEVEL_WOOD_OR_GOLD, building.getMaxToolLevel());
     }
 
     /**
@@ -649,7 +649,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
                 .withRandom(worker.getRandom())
                 .withLuck((float) getPrimarySkillLevel())
                 .create(LootParameterSets.FISHING);
-        final LootTable bonusLoot = this.world.getServer().getLootTables().get(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.getOwnBuilding().getBuildingLevel(), new ResourceLocation("")));
+        final LootTable bonusLoot = this.world.getServer().getLootTables().get(ModLootTables.FISHERMAN_BONUS.getOrDefault(this.building.getBuildingLevel(), new ResourceLocation("")));
         final List<ItemStack> loot = bonusLoot.getRandomItems(context);
 
         for (final ItemStack itemstack : loot)

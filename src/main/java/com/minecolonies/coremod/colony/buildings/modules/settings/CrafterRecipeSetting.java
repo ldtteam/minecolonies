@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.modules.settings;
 
+import com.minecolonies.api.colony.buildings.modules.ISettingsModule;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingsModuleView;
+
 import java.util.List;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPE_MODE;
@@ -32,6 +34,12 @@ public class CrafterRecipeSetting extends StringSettingWithDesc
     public CrafterRecipeSetting(final List<String> settings, final int currentIndex)
     {
         super(settings, currentIndex);
+    }
+
+    @Override
+    public boolean isActive(final ISettingsModule module)
+    {
+        return module.getBuilding().getColony().getResearchManager().getResearchEffects().getEffectStrength(RECIPE_MODE) > 0;
     }
 
     @Override

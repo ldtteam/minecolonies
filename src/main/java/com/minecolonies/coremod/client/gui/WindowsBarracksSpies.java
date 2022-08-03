@@ -2,7 +2,6 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockout.controls.*;
 import com.ldtteam.blockout.views.Window;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.InventoryUtils;
@@ -12,8 +11,11 @@ import com.minecolonies.coremod.network.messages.server.colony.HireSpiesMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+
+import static com.minecolonies.api.util.constant.TranslationConstants.DESCRIPTION_BARRACKS_HIRE_SPIES;
 
 /**
  * UI for hiring spies on the barracks
@@ -74,7 +76,7 @@ public class WindowsBarracksSpies extends Window implements ButtonHandler
         {
             findPaneOfTypeByID(BUTTON_HIRE, ButtonImage.class).disable();
         }
-        findPaneOfTypeByID(TEXT_ID, Text.class).setText(LanguageHandler.format("com.minecolonies.coremod.gui.barracks.spies.desc"));
+        findPaneOfTypeByID(TEXT_ID, Text.class).setText(new TranslationTextComponent(DESCRIPTION_BARRACKS_HIRE_SPIES));
     }
 
     @Override

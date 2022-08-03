@@ -3,6 +3,7 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
+import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -16,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -143,7 +143,7 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
 
     @NotNull
     @Override
-    public Collection<?> findRecipes(@NotNull final Map<IRecipeType<?>, List<IGenericRecipe>> vanilla)
+    public Collection<?> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
         final List<ItemStack> breedingItems = this.herding.getBreedingItems();
 

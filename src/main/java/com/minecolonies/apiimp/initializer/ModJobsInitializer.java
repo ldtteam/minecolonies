@@ -292,6 +292,12 @@ public final class ModJobsInitializer
           .setRegistryName(ModJobs.DRUID_ID)
           .createJobEntry();
 
+        ModJobs.alchemist = new JobEntry.Builder()
+          .setJobProducer(JobAlchemist::new)
+          .setJobViewProducer(() -> CrafterJobView::new)
+          .setRegistryName(ModJobs.ALCHEMIST_ID)
+          .createJobEntry();
+
         reg.register(ModJobs.placeHolder);
         reg.register(ModJobs.builder);
         reg.register(ModJobs.delivery);
@@ -337,5 +343,6 @@ public final class ModJobsInitializer
         reg.register(ModJobs.netherworker);
         reg.register(ModJobs.quarrier);
         reg.register(ModJobs.druid);
+        reg.register(ModJobs.alchemist);
     }
 }

@@ -42,6 +42,12 @@ public abstract class AbstractRequestResolver<R extends IRequestable> implements
         return location;
     }
 
+    @Override
+    public int getSuitabilityMetric(@NotNull final IRequest<? extends R> request)
+    {
+        return 0;
+    }
+
     @NotNull
     @Override
     public IFormattableTextComponent getRequesterDisplayName(@NotNull final IRequestManager manager, @NotNull final IRequest<?> request)

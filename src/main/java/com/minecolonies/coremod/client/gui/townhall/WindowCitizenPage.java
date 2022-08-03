@@ -1,20 +1,25 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockout.Pane;
-import com.ldtteam.blockout.controls.*;
+import com.ldtteam.blockout.controls.Button;
+import com.ldtteam.blockout.controls.ButtonImage;
+import com.ldtteam.blockout.controls.Text;
 import com.ldtteam.blockout.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.citizen.CitizenWindowUtils;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.citizen.RecallSingleCitizenMessage;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -77,8 +82,8 @@ public class WindowCitizenPage extends AbstractWindowTownHall
         final ICitizenDataView view = citizens.get(row);
         CitizenWindowUtils.createHappinessBar(view, this);
         CitizenWindowUtils.createSkillContent(view, this);
-        findPaneOfTypeByID(JOB_LABEL, Text.class).setText(
-          "§l" + LanguageHandler.format(view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob()));
+        String jobKey = view.getJob().trim().isEmpty() ? COM_MINECOLONIES_COREMOD_GUI_TOWNHALL_CITIZEN_UNEMPLOYED : view.getJob();
+        findPaneOfTypeByID(JOB_LABEL, Text.class).setText(new TranslationTextComponent(jobKey).withStyle(TextFormatting.BOLD));
         findPaneOfTypeByID(HIDDEN_CITIZEN_ID, Text.class).setText(String.valueOf(view.getId()));
     }
 

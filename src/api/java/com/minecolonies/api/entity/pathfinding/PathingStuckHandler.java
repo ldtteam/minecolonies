@@ -285,7 +285,8 @@ public class PathingStuckHandler implements IStuckHandler
         if (stuckLevel == 0)
         {
             stuckLevel++;
-            delayToNextUnstuckAction = 200;
+            delayToNextUnstuckAction = 100;
+            navigator.getOurEntity().stopRiding();
             navigator.stop();
             return;
         }
@@ -295,9 +296,18 @@ public class PathingStuckHandler implements IStuckHandler
         {
             stuckLevel++;
             delayToNextUnstuckAction = 300;
+
+            if (navigator.getPath() != null)
+            {
+                moveAwayStartPos = navigator.getPath().getNodePos(navigator.getPath().getNextNodeIndex());
+            }
+            else
+            {
+                moveAwayStartPos = navigator.getOurEntity().blockPosition().above();
+            }
+
             navigator.stop();
             navigator.moveAwayFromXYZ(navigator.getOurEntity().blockPosition(), 10, 1.0f, false);
-            moveAwayStartPos = navigator.getOurEntity().blockPosition();
             return;
         }
 
@@ -322,6 +332,10 @@ public class PathingStuckHandler implements IStuckHandler
             {
                 delayToNextUnstuckAction = 100;
                 placeLeaves(navigator);
+            }
+            else if (canPlaceLadders || canBuildLeafBridges)
+            {
+                return;
             }
         }
 
@@ -444,7 +458,7 @@ public class PathingStuckHandler implements IStuckHandler
         final World world = navigator.getOurEntity().level;
         final MobEntity entity = navigator.getOurEntity();
 
-        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos());
+        final Direction badFacing = BlockPosUtil.getFacing(new BlockPos(entity.position()), navigator.getDesiredPos()).getOpposite();
 
         for (final Direction dir : HORIZONTAL_DIRS)
         {
@@ -453,11 +467,31 @@ public class PathingStuckHandler implements IStuckHandler
                 continue;
             }
 
-            if (world.isEmptyBlock(new BlockPos(entity.position()).below().relative(dir)))
+            for (int i = 1; i <= (dir == badFacing.getOpposite() ? 3 : 1); i++)
             {
-                world.setBlockAndUpdate(new BlockPos(entity.position()).below().relative(dir), Blocks.ACACIA_LEAVES.defaultBlockState());
+                if (!tryPlaceLeaveOnPos(world, new BlockPos(entity.position()).below().relative(dir, i)))
+                {
+                    break;
+                }
             }
         }
+    }
+
+    /**
+     * Places a leave block in the world
+     *
+     * @param world
+     * @param pos
+     * @return
+     */
+    private boolean tryPlaceLeaveOnPos(final World world, final BlockPos pos)
+    {
+        if (world.isEmptyBlock(pos))
+        {
+            world.setBlockAndUpdate(pos, Blocks.ACACIA_LEAVES.defaultBlockState());
+            return true;
+        }
+        return false;
     }
 
     /**

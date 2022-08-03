@@ -1,9 +1,9 @@
 package com.minecolonies.coremod.items;
 
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.ChangeFreeToInteractBlockMessage;
 import net.minecraft.block.Block;
@@ -19,6 +19,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
 /**
  * Permission scepter. used to add free to interact blocks or positions to the colonies permission list
@@ -151,14 +153,12 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
         {
             case TAG_VALUE_MODE_BLOCK:
                 compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_LOCATION);
-                LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "location");
+                MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_LOCATION).create()).sendTo(playerIn);
                 break;
-
             case TAG_VALUE_MODE_LOCATION:
             default:
                 compound.putString(TAG_ITEM_MODE, TAG_VALUE_MODE_BLOCK);
-                LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.item.permissionscepter.setmode", "block");
-
+                MessageUtils.format(TOOL_PERMISSION_SCEPTER_SET_MODE, MessageUtils.format(TOOL_PERMISSION_SCEPTER_MODE_BLOCK).create()).sendTo(playerIn);
                 break;
         }
     }
