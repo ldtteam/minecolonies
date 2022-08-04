@@ -41,8 +41,8 @@ project {
         param("env.Version.Suffix", "")
         param("env.Version.Major", "1")
         text("env.Version", "%env.Version.Major%.%env.Version.Minor%.%env.Version.Patch%%env.Version.Suffix%", label = "Version", description = "The version of the project.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
-        text("Repository", "ldtteam/minecolonies", label = "Repository", description = "The repository for minecolonies.", readOnly = true, allowEmpty = true)
         param("Current Minecraft Version", "main")
+        text("Repository", "ldtteam/minecolonies", label = "Repository", description = "The repository for minecolonies.", readOnly = true, allowEmpty = true)
         param("env.Version.Minor", "0")
         param("Upsource.Project.Id", "minecolonies")
         param("Default.Branch", "version/main")
@@ -78,10 +78,10 @@ object Alpha : Project({
     buildType(Alpha_Release)
 
     params {
-        text("env.crowdinKey", "credentialsJSON:769784c9-3cf4-4647-b4c8-39d365a8a55a", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        text("env.crowdinKey", "credentialsJSON:ce949f49-133c-4bb1-83d7-257c570d43aa", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        param("Current Minecraft Version", "main")
         param("Default.Branch", "version/%Current Minecraft Version%")
         param("VCS.Branches", "+:refs/heads/version/(*)")
-        param("Current Minecraft Version", "main")
         param("env.CURSERELEASETYPE", "alpha")
         param("env.Version.Suffix", "-ALPHA")
     }
@@ -96,6 +96,10 @@ object Alpha_Release : BuildType({
 
     params {
         param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
+    }
+
+    vcs {
+        branchFilter = "+:*"
     }
 
     steps {
@@ -120,7 +124,7 @@ object Alpha_Release : BuildType({
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
             param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
         }
-        stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9", "RUNNER_144")
+        stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9")
     }
 
     features {
