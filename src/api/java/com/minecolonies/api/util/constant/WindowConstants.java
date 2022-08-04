@@ -2,8 +2,7 @@ package com.minecolonies.api.util.constant;
 
 import net.minecraft.util.ResourceLocation;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_OFF;
-import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_WORKERHUTS_RETRIEVE_ON;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
  * Class which contains all constants required for windows.

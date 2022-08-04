@@ -62,6 +62,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private final ZoomDragMap dragView;
 
+    /**
+     * Colony data beeing currently displayed
+     */
     private Map<ICitizenDataView, Pane>             citizens       = new HashMap<>();
     private Map<IBuildingView, ItemIcon>            buildings      = new HashMap<>();
     private Map<ColonyListMessage.ColonyInfo, View> coloniesImages = new HashMap<>();
@@ -76,6 +79,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
      */
     private final DecimalFormat scaleformet = new DecimalFormat("##");
 
+    /**
+     * Scale of the map element
+     */
     private double currentScale = 0;
 
     /**
@@ -327,6 +333,12 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Scales the world pos to the UI pos, current scales positions which are farther out to display closer so you get a decent overview of nearby colonies which can be quite far away
+     *
+     * @param worldPos
+     * @return
+     */
     private BlockPos worldPosToUIPos(final BlockPos worldPos)
     {
         return new BlockPos(

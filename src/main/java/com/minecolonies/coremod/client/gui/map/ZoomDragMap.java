@@ -8,7 +8,7 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Zoomable and scrollable "online map"-like view
+ * Zoomable and scrollable "online map"-like view, mostly copied from BlockUI's drag view
  */
 public class ZoomDragMap extends View
 {
