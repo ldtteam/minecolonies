@@ -239,6 +239,8 @@
   "minecolonies.config.auditcraftingtags.comment": "Generate crafting_audit.csv on loading recipes to verify tags.",
   "minecolonies.config.debuginventories": "Debug Inventories",
   "minecolonies.config.debuginventories.comment": "Enable inventory debugging.",
+  "minecolonies.config.blueprintbuildmode": "Blueprint Build Mode",
+  "minecolonies.config.blueprintbuildmode.comment": "Turn this on if you're using this world for blueprint building and scanning.",
   "minecolonies.config.luckyores": "List of Lucky Ores",
   "minecolonies.config.luckyores.comment": "List of ore blocks rarely found magically by Miners (see \"Ore Chance\"). Includes the block and its chance, separated by exclamation marks.",
   "minecolonies.config.configlistrecruitmentitems": "List of Recruitment Items",

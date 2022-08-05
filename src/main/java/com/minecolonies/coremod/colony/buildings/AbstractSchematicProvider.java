@@ -222,8 +222,8 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         String path;
         if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
         {
-            packName = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
-            path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName()) + buildingLevel  + ".blueprint";
+            packName = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
+            path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName()) + buildingLevel  + ".blueprint";
         }
         else
         {
@@ -233,7 +233,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         if (path == null || path.isEmpty())
         {
-            path = BlueprintMapping.pathMapping.get("wooden:" + getBuildingType().getBuildingBlock().getBlueprintName()) + "1.blueprint";
+            path = BlueprintMapping.getPathMapping("", getBuildingType().getBuildingBlock().getBlueprintName()) + "1.blueprint";
         }
 
         this.structurePack = packName;

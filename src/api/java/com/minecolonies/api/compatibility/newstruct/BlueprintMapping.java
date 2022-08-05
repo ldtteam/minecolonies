@@ -10,12 +10,12 @@ public class BlueprintMapping
     /**
      * Maps an old style name to a new style name.
      */
-    public static Map<String, String> styleMapping = new HashMap<>();
+    private static Map<String, String> styleMapping = new HashMap<>();
 
     /**
      * Maps the old blueprint path to the new path. Query it with style:blueprintName and receive the pack specific path.
      */
-    public static Map<String, String> pathMapping = new HashMap<>();
+    private static Map<String, String> pathMapping = new HashMap<>();
 
     static
     {
@@ -116,6 +116,27 @@ public class BlueprintMapping
 
         pathMapping.put("caledoniaalternative:farmer", "agriculture/horticulture/farmeralt");
         pathMapping.put("caledoniaalternative:guardtower", "military/guardtoweralt");
+    }
+
+    /**
+     * Get the style mapping for a style.
+     * @param key the old style name.
+     * @return the new stylename if mapping exists, else the same key again.
+     */
+    public static String getStyleMapping(final String key)
+    {
+        return styleMapping.getOrDefault(key, key);
+    }
+
+    /**
+     * Get the path mapping for a hut for a given style. Or the default mapping if no special handling is setup.
+     * @param style the style to query it for.
+     * @param hut the hut to query it for.
+     * @return the mapping.
+     */
+    public static String getPathMapping(final String style, final String hut)
+    {
+        return pathMapping.getOrDefault(style + ":" + hut, pathMapping.get(":" + hut));
     }
 
     /**

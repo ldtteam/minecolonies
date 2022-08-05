@@ -7,6 +7,7 @@ import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
+import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
@@ -17,6 +18,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -461,7 +463,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
             return true;
         }
 
-        if (!canPaste(anchor.getBlock(), player, pos))
+        if (!IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get() && !canPaste(anchor.getBlock(), player, pos))
         {
             return false;
         }
@@ -475,6 +477,11 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
           settings.getMirror() != Mirror.NONE,
           StructurePacks.getStructurePack(pack),
           path);
+
+        if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
+        {
+            return true;
+        }
 
         @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, pos);
         if (building == null)

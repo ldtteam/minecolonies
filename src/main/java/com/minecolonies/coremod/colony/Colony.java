@@ -779,7 +779,7 @@ public class Colony implements IColony
 
         if (compound.contains(TAG_STYLE))
         {
-            this.pack = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
+            this.pack = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
         }
         else
         {

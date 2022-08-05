@@ -354,7 +354,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         String path;
         if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
         {
-            packName = BlueprintMapping.styleMapping.get(compound.getString(TAG_STYLE));
+            packName = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
 
             if (this.getSchematicName().isEmpty())
             {
@@ -363,7 +363,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             else
             {
                 final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
-                path = BlueprintMapping.pathMapping.get(compound.getString(TAG_STYLE) + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level
+                path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level
                          + ".blueprint";
             }
         }
@@ -381,10 +381,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                 tags.remove("deactivated");
                 if (!tags.isEmpty())
                 {
-                    packName = BlueprintMapping.styleMapping.get(tags.get(0));
+                    packName = BlueprintMapping.getStyleMapping(tags.get(0));
                     if (path == null || path.isEmpty())
                     {
-                        path = BlueprintMapping.pathMapping.get(tags.get(0) + ":" + ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+                        path = BlueprintMapping.getPathMapping(tags.get(0), ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
                     }
                 }
             }
@@ -396,7 +396,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (path == null || path.isEmpty() || path.contains("null"))
         {
-            path = BlueprintMapping.pathMapping.get("wooden:" + ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+            path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
         }
 
         this.packMeta = packName;
@@ -413,8 +413,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
-        compound.putString(TAG_PACK, packMeta);
-        compound.putString(TAG_PATH, path);
+        compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
+        compound.putString(TAG_PATH, path == null ? "" : path);
         compound.putString(TAG_BUILDING_TYPE, registryName.toString());
     }
 
@@ -639,8 +639,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         else
         {
             final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
-            packName = BlueprintMapping.styleMapping.get(tagName);
-            blueprintPath = BlueprintMapping.pathMapping.get(tagName + ":" + this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
+            packName = BlueprintMapping.getStyleMapping(tagName);
+            blueprintPath = BlueprintMapping.getPathMapping(tagName, this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
         }
 
         this.setStructurePack(StructurePacks.getStructurePack(packName));
