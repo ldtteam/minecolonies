@@ -82,7 +82,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER, inputInventory, Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
 
-        if (inputInventory.isEmpty())
+        if (inputInventory.isEmpty() || list.isEmpty())
         {
             return;
         }
