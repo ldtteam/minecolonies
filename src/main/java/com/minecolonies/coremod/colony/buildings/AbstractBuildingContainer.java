@@ -211,7 +211,7 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
     public void setTileEntity(final AbstractTileEntityColonyBuilding te)
     {
         tileEntity = te;
-        if (te.isOutdated())
+        if (te != null && te.isOutdated())
         {
             safeUpdateTEDataFromSchematic();
         }
