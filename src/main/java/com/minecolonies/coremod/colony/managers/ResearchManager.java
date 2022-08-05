@@ -17,7 +17,6 @@ import com.minecolonies.coremod.research.LocalResearchTree;
 import com.minecolonies.coremod.research.ResearchEffectManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -149,7 +148,7 @@ public class ResearchManager implements IResearchManager
             // if research has item requirements, only notify player; we don't want to have items disappearing from inventories.
             if (!research.getCostList().isEmpty())
             {
-                MessageUtils.format(RESEARCH_AVAILABLE, research.getName()).sendTo(colony).forAllPlayers();
+                MessageUtils.format(RESEARCH_AVAILABLE, MutableComponent.create(research.getName())).sendTo(colony).forAllPlayers();
                 for (Player player : colony.getMessagePlayerEntities())
                 {
                     SoundUtils.playSuccessSound(player, player.blockPosition());
@@ -208,8 +207,8 @@ public class ResearchManager implements IResearchManager
         }
         else
         {
-            MessageUtils.format(RESEARCH_AVAILABLE, research.getName())
-              .append(MESSAGE_RESEARCH_STARTED, research.getName())
+            MessageUtils.format(RESEARCH_AVAILABLE, MutableComponent.create(research.getName()))
+              .append(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName()))
               .sendTo(colony)
               .forAllPlayers();
             for (Player player : colony.getMessagePlayerEntities())
