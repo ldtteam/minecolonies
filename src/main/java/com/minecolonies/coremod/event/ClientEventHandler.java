@@ -215,7 +215,7 @@ public class ClientEventHandler
                     for (IGlobalResearch research : researches)
                     {
                         toolTip.add(Component.translatable(COM_MINECOLONIES_COREMOD_ITEM_REQUIRES_RESEARCH_TOOLTIP_GUI,
-                          research.getName()).setStyle(Style.EMPTY.withColor(researchFormat)));
+                                MutableComponent.create(research.getName())).setStyle(Style.EMPTY.withColor(researchFormat)));
                     }
                 }
             }

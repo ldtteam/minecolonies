@@ -10,12 +10,12 @@ import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.research.effects.IResearchEffectManager;
 import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.api.util.*;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,7 +143,7 @@ public class LocalResearchTree implements ILocalResearchTree
             final InvWrapper playerInv = new InvWrapper(player.getInventory());
             if (!research.hasEnoughResources(playerInv))
             {
-                MessageUtils.format("com.minecolonies.coremod.research.costnotavailable", research.getName()).sendTo(player);
+                MessageUtils.format("com.minecolonies.coremod.research.costnotavailable", MutableComponent.create(research.getName())).sendTo(player);
                 SoundUtils.playErrorSound(player, player.blockPosition());
                 return;
             }
@@ -174,7 +174,7 @@ public class LocalResearchTree implements ILocalResearchTree
                     }
                 }
             }
-            MessageUtils.format(MESSAGE_RESEARCH_STARTED, research.getName()).sendTo(player);
+            MessageUtils.format(MESSAGE_RESEARCH_STARTED, MutableComponent.create(research.getName())).sendTo(player);
             research.startResearch(colony.getResearchManager().getResearchTree());
             SoundUtils.playSuccessSound(player, player.blockPosition());
         }
@@ -205,7 +205,7 @@ public class LocalResearchTree implements ILocalResearchTree
         // If in progress and get another request, cancel research, and remove it from the local tree.
         if(research.getState() == ResearchState.IN_PROGRESS)
         {
-            MessageUtils.format("com.minecolonies.coremod.research.stopped", IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())
+            MessageUtils.format("com.minecolonies.coremod.research.stopped", MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
               .sendTo(player);
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
@@ -234,7 +234,7 @@ public class LocalResearchTree implements ILocalResearchTree
                     if (count < cost.getAmount())
                     {
                         MessageUtils.format("com.minecolonies.coremod.research.costnotavailable",
-                          IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()).sendTo(player);
+                                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())).sendTo(player);
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         return;
                     }
@@ -254,7 +254,7 @@ public class LocalResearchTree implements ILocalResearchTree
                     }
                 }
             }
-            MessageUtils.format("com.minecolonies.coremod.research.undo", IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())
+            MessageUtils.format("com.minecolonies.coremod.research.undo", MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
               .sendTo(player);
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
