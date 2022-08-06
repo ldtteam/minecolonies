@@ -5,22 +5,24 @@ import com.minecolonies.api.inventory.container.ContainerCrafting;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.TransferRecipeCraftingTeachingMessage;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.ingredient.IGuiIngredient;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.ingredient.IRecipeSlotView;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +45,7 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         return ContainerCrafting.class;
     }
 
+    @NotNull
     @Override
     public Class<CraftingRecipe> getRecipeClass()
     {
@@ -51,16 +54,13 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(
-            @NotNull final ContainerCrafting craftingGUIBuilding,
-            @NotNull final CraftingRecipe recipe,
-            @NotNull final IRecipeLayout recipeLayout,
-            @NotNull final Player player,
-            final boolean maxTransfer,
-            final boolean doTransfer)
+    public IRecipeTransferError transferRecipe(@NotNull final ContainerCrafting craftingGUIBuilding,
+                                               @NotNull final CraftingRecipe recipe,
+                                               @NotNull final IRecipeSlotsView recipeSlots,
+                                               @NotNull final Player player,
+                                               final boolean maxTransfer,
+                                               final boolean doTransfer)
     {
-        final IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-
         // compact the crafting grid into a 2x2 area
         final Map<Integer, ItemStack> guiIngredients = new HashMap<>();
         guiIngredients.put(0, ItemStackUtils.EMPTY);
@@ -85,21 +85,20 @@ public class PrivateCraftingTeachingTransferHandler implements IRecipeTransferHa
         }
 
         int inputIndex = 0;
-        for (final IGuiIngredient<ItemStack> ingredient : itemStackGroup.getGuiIngredients().values())
+        final List<IRecipeSlotView> slots = recipeSlots.getSlotViews(RecipeIngredientRole.INPUT);
+        for (final IRecipeSlotView slot : slots)
         {
-            if (ingredient.isInput())
+            if (slot.getAllIngredients().findAny().isPresent())
             {
-                if (!ingredient.getAllIngredients().isEmpty())
+                if (badIndexes.contains(inputIndex))
                 {
-                    if (badIndexes.contains(inputIndex))
-                    {
-                        final Component tooltipMessage = new TranslatableComponent("jei.tooltip.error.recipe.transfer.too.large.player.getInventory()");
-                        return handlerHelper.createUserErrorForSlots(tooltipMessage, badIndexes);
-                    }
-                    guiIngredients.put(inputIndex, ingredient.getDisplayedIngredient());
+                    final Component tooltipMessage = new TranslatableComponent("jei.tooltip.error.recipe.transfer.too.large.player.inventory");
+                    final List<IRecipeSlotView> badSlots = badIndexes.stream().map(slots::get).toList();
+                    return handlerHelper.createUserErrorForMissingSlots(tooltipMessage, badSlots);
                 }
-                inputIndex++;
+                guiIngredients.put(inputIndex, slot.getDisplayedIngredient(VanillaTypes.ITEM).orElse(ItemStack.EMPTY));
             }
+            inputIndex++;
         }
 
         if (doTransfer)
