@@ -1,10 +1,10 @@
 package com.minecolonies.api.compatibility;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -13,11 +13,16 @@ import java.util.function.Predicate;
 public interface IFurnaceRecipes
 {
     /**
-     * Set the map. This is called from the client side message.
-     *
-     * @param map the map to set.
+     * Serialize to a network buffer for synching to the client.
+     * @param buf the serialization buffer
      */
-    void setMap(final Map<ItemStorage, RecipeStorage> map);
+    void serialize(@NotNull final FriendlyByteBuf buf);
+
+    /**
+     * Deserialize from a network buffer for synching from the server.
+     * @param buf the deserialization buffer
+     */
+    void deserialize(@NotNull final FriendlyByteBuf buf);
 
     /**
      * Get the smelting result for a certain itemStack.
