@@ -71,7 +71,17 @@ public class HutPlacementHandler implements IPlacementHandler
                     }
                     else if(!((IBlueprintDataProviderBE) be).getPositionedTags().getOrDefault(BlockPos.ZERO, Collections.emptyList()).contains("invisible"))
                     {
-                        final String partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(((IBlueprintDataProviderBE) be).getSchematicName()));
+                        final String partialPath;
+                        if (((IBlueprintDataProviderBE) be).getSchematicName().isEmpty())
+                        {
+                            final String[] elements = ((IBlueprintDataProviderBE) be).getBlueprintPath().split("/");
+                            partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(elements[elements.length - 1].replace(".blueprint", "")));
+                        }
+                        else
+                        {
+                            partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(((IBlueprintDataProviderBE) be).getSchematicName()));
+                        }
+
                         if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
                         {
                             ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");
