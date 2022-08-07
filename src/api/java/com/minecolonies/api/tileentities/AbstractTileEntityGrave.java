@@ -40,6 +40,12 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
         super(tileEntityTypeIn, pos, state);
         decay_timer = DEFAULT_DECAY_TIMER;
         decayed = false;
+
+        // Have the graves be bigger.
+        for (int i = 0; i < 3; i++)
+        {
+            upgradeRackSize();
+        }
     }
 
     /**
