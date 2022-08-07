@@ -1,11 +1,8 @@
 package com.minecolonies.api.blocks;
 
-import com.ldtteam.structurize.blockentities.interfaces.*;
 import com.ldtteam.structurize.blocks.interfaces.*;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
-import com.ldtteam.structurize.storage.StructurePackMeta;
-import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -18,7 +15,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.configuration.Configuration;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -336,14 +332,14 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
       final LivingEntity placer,
       final ItemStack stack,
       final boolean mirror,
-      final StructurePackMeta style,
+      final String style,
       final String blueprintPath)
     {
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
         if (tileEntity instanceof AbstractTileEntityColonyBuilding)
         {
             ((AbstractTileEntityColonyBuilding) tileEntity).setMirror(mirror);
-            ((AbstractTileEntityColonyBuilding) tileEntity).setStructurePack(style);
+            ((AbstractTileEntityColonyBuilding) tileEntity).setPackName(style);
             ((AbstractTileEntityColonyBuilding) tileEntity).setBlueprintPath(blueprintPath);
         }
 
@@ -475,7 +471,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
           player,
           null,
           settings.getMirror() != Mirror.NONE,
-          StructurePacks.getStructurePack(pack),
+          pack,
           path);
 
         if (IMinecoloniesAPI.getInstance().getConfig().getServer().blueprintBuildMode.get())
@@ -581,4 +577,3 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         return getBuildingEntry().getRegistryName().getPath();
     }
 }
-

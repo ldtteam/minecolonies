@@ -189,7 +189,7 @@ public abstract class AbstractTileEntityColonyBuilding extends TileEntityRack im
     @Override
     public String getSchematicName()
     {
-        return schematicName;
+        return schematicName.replace(".blueprint", "");
     }
 
     @Override

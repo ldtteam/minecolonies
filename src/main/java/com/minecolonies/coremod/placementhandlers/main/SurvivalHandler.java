@@ -159,7 +159,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                   player,
                   null,
                   placementSettings.getMirror() != Mirror.NONE,
-                  StructurePacks.getStructurePack(packName),
+                  packName,
                   blueprintPath);
 
                 int level = 0;
