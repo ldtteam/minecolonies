@@ -55,10 +55,29 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
      */
     protected ItemStackHandler inventory;
 
+    /**
+     * Create a new rack.
+     * @param tileEntityTypeIn the specific block entity type.
+     * @param pos the position.
+     * @param state its state.
+     */
     public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state)
     {
         super(tileEntityTypeIn, pos, state);
         inventory = createInventory(DEFAULT_SIZE);
+    }
+
+    /**
+     * Create a rack with a specific inventory size.
+     * @param tileEntityTypeIn the specific block entity type.
+     * @param pos the position.
+     * @param state its state.
+     * @param size the ack size.
+     */
+    public AbstractTileEntityRack(final BlockEntityType<?> tileEntityTypeIn, final BlockPos pos, final BlockState state, final int size)
+    {
+        super(tileEntityTypeIn, pos, state);
+        inventory = createInventory(size);
     }
 
     /**

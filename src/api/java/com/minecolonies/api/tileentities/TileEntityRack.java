@@ -78,11 +78,35 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
      */
     private LazyOptional<IItemHandler> lastOptional;
 
+    /**
+     * Create a new rack.
+     * @param type the specific block entity type.
+     * @param pos the position.
+     * @param state its state.
+     */
     public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state)
     {
         super(type, pos, state);
     }
 
+    /**
+     * Create a rack with a specific inventory size.
+     * @param type the specific block entity type.
+     * @param pos the position.
+     * @param state its state.
+     * @param size the ack size.
+     */
+    public TileEntityRack(final BlockEntityType<? extends TileEntityRack> type, final BlockPos pos, final BlockState state, final int size)
+    {
+        super(type, pos, state, size);
+        this.size = ((size - DEFAULT_SIZE) / SLOT_PER_LINE);
+    }
+
+    /**
+     * Create a new default rack.
+     * @param pos the position.
+     * @param state its state.
+     */
     public TileEntityRack(final BlockPos pos, final BlockState state)
     {
         super(MinecoloniesTileEntities.RACK, pos, state);
@@ -652,5 +676,14 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         }
 
         lastOptional = null;
+    }
+
+    /**
+     * Check if this is marked as a single rack.
+     * @return true if so.
+     */
+    public boolean isSingle()
+    {
+        return this.single;
     }
 }
