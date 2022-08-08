@@ -125,14 +125,4 @@ public class FurnaceRecipes implements IFurnaceRecipes
         }
         return instance;
     }
-
-    /**
-     * Method to check if the furnace recipes are loaded already.
-     *
-     * @return true if so.
-     */
-    public boolean loaded()
-    {
-        return !recipes.isEmpty();
-    }
 }
