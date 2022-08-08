@@ -8,8 +8,10 @@ import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.compatibility.CraftingTagAuditor;
 import com.minecolonies.coremod.network.messages.client.UpdateClientWithCompatibilityMessage;
 import com.minecolonies.coremod.util.FurnaceRecipes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,81 +35,111 @@ import org.jetbrains.annotations.NotNull;
 public class DataPackSyncEventHandler
 {
     /**
-     * Updates internal caches of vanilla recipes and tags.
-     * This is only called server-side, after JsonReloadListeners have finished.
-     *
-     * @param server The server.
+     * Events subscribed on both client and server (but mostly for server-side events).
      */
-    private static void loadRecipes(@NotNull final MinecraftServer server)
+    public static class ServerEvents
     {
-        FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
-        IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager());
-        CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
-    }
-
-    /**
-     * Send custom sync packets to the given player.
-     *
-     * @param player the player to send the sync packets to.
-     * @param compatMsg a cached copy of this message, to avoid rebuilding it for each player.
-     */
-    private static void sendPackets(@NotNull final ServerPlayer player,
-                                    @NotNull final UpdateClientWithCompatibilityMessage compatMsg)
-    {
-        Network.getNetwork().sendToPlayer(compatMsg, player);
-        CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
-        IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
-    }
-
-    /**
-     * This event fires on server-side both at initial world load and whenever a new player
-     * joins the server (with getPlayer() != null), and also on datapack reload (with null).
-     * Note that at this point the client has not yet received the recipes/tags.
-     *
-     * @param event {@link net.minecraftforge.event.OnDatapackSyncEvent}
-     */
-    @SubscribeEvent
-    public static void onDataPackSync(final OnDatapackSyncEvent event)
-    {
-        final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
-        final MinecraftServer server = event.getPlayerList().getServer();
-
-        if (event.getPlayer() == null)
+        /**
+         * Updates internal caches of vanilla recipes and tags.
+         * This is only called server-side, after JsonReloadListeners have finished.
+         *
+         * @param server The server.
+         */
+        private static void loadRecipes(@NotNull final MinecraftServer server)
         {
-            // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
-            loadRecipes(server);
+            FurnaceRecipes.getInstance().loadRecipes(server.getRecipeManager());
+            IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().discover(server.getRecipeManager());
+            CustomRecipeManager.getInstance().buildLootData(server.getLootTables());
+        }
 
-            // and then finally update every player with the results (not needed for single player)
-            if (!server.isSingleplayer())
+        /**
+         * Send custom sync packets to the given player.
+         *
+         * @param player    the player to send the sync packets to.
+         * @param compatMsg a cached copy of this message, to avoid rebuilding it for each player.
+         */
+        private static void sendPackets(@NotNull final ServerPlayer player,
+                                        @NotNull final UpdateClientWithCompatibilityMessage compatMsg)
+        {
+            Network.getNetwork().sendToPlayer(compatMsg, player);
+            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets(player);
+            IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets(player);
+        }
+
+        /**
+         * This event fires on server-side both at initial world load and whenever a new player
+         * joins the server (with getPlayer() != null), and also on datapack reload (with null).
+         * Note that at this point the client has not yet received the recipes/tags.
+         *
+         * @param event {@link net.minecraftforge.event.OnDatapackSyncEvent}
+         */
+        @SubscribeEvent
+        public static void onDataPackSync(final OnDatapackSyncEvent event)
+        {
+            final CustomRecipeManager recipeManager = CustomRecipeManager.getInstance();
+            final MinecraftServer server = event.getPlayerList().getServer();
+
+            if (event.getPlayer() == null)
             {
-                final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
-                for (final ServerPlayer player : event.getPlayerList().getPlayers())
+                // for a reload event, we also want to rebuild various lists (mirroring FMLServerStartedEvent)
+                loadRecipes(server);
+
+                // and then finally update every player with the results (not needed for single player)
+                if (!server.isSingleplayer())
                 {
-                    sendPackets(player, compatMsg);
+                    final UpdateClientWithCompatibilityMessage compatMsg = new UpdateClientWithCompatibilityMessage(true);
+                    for (final ServerPlayer player : event.getPlayerList().getPlayers())
+                    {
+                        sendPackets(player, compatMsg);
+                    }
                 }
             }
-        }
-        else if (!server.isSingleplayer())
-        {
-            sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(true));
+            else if (!server.isSingleplayer())
+            {
+                sendPackets(event.getPlayer(), new UpdateClientWithCompatibilityMessage(true));
+            }
+
+            if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
+                    (event.getPlayer() == null || event.getPlayerList().getPlayers().isEmpty()))
+            {
+                CraftingTagAuditor.doRecipeAudit(server, recipeManager);
+            }
         }
 
-        if (MineColonies.getConfig().getServer().auditCraftingTags.get() &&
-                (event.getPlayer() == null || event.getPlayerList().getPlayers().isEmpty()))
+        /**
+         * Fires on a server side only, when the server has started.
+         * This event is the first reliable point for server-only parsing of available smelting recipes, which are
+         * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
+         *
+         * @param event {@link ServerStartedEvent}
+         */
+        @SubscribeEvent
+        public static void onServerStarted(@NotNull final ServerStartedEvent event)
         {
-            CraftingTagAuditor.doRecipeAudit(server, recipeManager);
+            loadRecipes(event.getServer());
         }
     }
 
     /**
-     * Fires on a server side only, when the server has started.
-     * This event is the first reliable point for server-only parsing of available smelting recipes, which are
-     * required for FurnaceRecipes and CompatibilityManager.discoverOres and .discoverFood.
-     * @param event  {@link ServerStartedEvent}
+     * Events subscribed on client-side only.
      */
-    @SubscribeEvent
-    public static void onServerStarted(@NotNull final ServerStartedEvent event)
+    public static class ClientEvents
     {
-        loadRecipes(event.getServer());
+        /**
+         * Fired when the recipes are synched to client.  This happens after the {@link OnDatapackSyncEvent}.
+         *
+         * @param event {@link RecipesUpdatedEvent}
+         */
+        @SubscribeEvent
+        public static void onRecipesLoaded(@NotNull final RecipesUpdatedEvent event)
+        {
+            if (Minecraft.getInstance().hasSingleplayerServer())
+            {
+                // don't need to update on single player, this already happened "server-side".
+                return;
+            }
+
+            FurnaceRecipes.getInstance().loadRecipes(event.getRecipeManager());
+        }
     }
 }

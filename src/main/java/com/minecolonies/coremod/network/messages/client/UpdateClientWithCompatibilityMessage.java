@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.client;
 
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.coremod.util.FurnaceRecipes;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.LogicalSide;
@@ -35,7 +34,6 @@ public class UpdateClientWithCompatibilityMessage implements IMessage
         super();
 
         this.buffer = new FriendlyByteBuf(Unpooled.buffer());
-        FurnaceRecipes.getInstance().serialize(this.buffer);
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().serialize(this.buffer);
     }
 
@@ -62,9 +60,7 @@ public class UpdateClientWithCompatibilityMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        FurnaceRecipes.getInstance().deserialize(this.buffer);
         IMinecoloniesAPI.getInstance().getColonyManager().getCompatibilityManager().deserialize(this.buffer);
-
         this.buffer.release();
     }
 }

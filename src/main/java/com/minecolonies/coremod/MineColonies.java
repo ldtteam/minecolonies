@@ -82,7 +82,8 @@ public class MineColonies
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(EventHandler.class);
         Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(FMLEventHandler.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(ClientEventHandler.class));
-        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.class);
+        Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ServerEvents.class);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> Mod.EventBusSubscriber.Bus.FORGE.bus().get().register(DataPackSyncEventHandler.ClientEvents.class));
 
         Mod.EventBusSubscriber.Bus.MOD.bus().get().register(CommonProxy.class);
 

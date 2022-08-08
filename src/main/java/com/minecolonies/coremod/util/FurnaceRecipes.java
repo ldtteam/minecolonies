@@ -8,16 +8,13 @@ import com.minecolonies.api.crafting.RecipeStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.TypeConstants;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -82,37 +79,6 @@ public class FurnaceRecipes implements IFurnaceRecipes
         ItemStackUtils.ISCOOKABLE = itemStack -> ItemStackUtils.ISFOOD.test(instance.getSmeltingResult(itemStack));
         ItemStackUtils.CAN_EAT =
                 itemStack -> ItemStackUtils.ISFOOD.test(itemStack) && !ItemStackUtils.ISCOOKABLE.test(itemStack);
-    }
-
-    /**
-     * Serialize to a network buffer for synching to the client.
-     * @param buf the serialization buffer
-     */
-    public void serialize(@NotNull final FriendlyByteBuf buf)
-    {
-        buf.writeCollection(recipes.values(), StandardFactoryController.getInstance()::serialize);
-    }
-
-    /**
-     * Deserialize from a network buffer for synching from the server.
-     * @param buf the deserialization buffer
-     */
-    public void deserialize(@NotNull final FriendlyByteBuf buf)
-    {
-        recipes.clear();
-        reverseRecipes.clear();
-        loadUtilityPredicates();
-
-        final List<RecipeStorage> allRecipes = buf.readList(StandardFactoryController.getInstance()::deserialize);
-
-        for (final RecipeStorage storage : allRecipes)
-        {
-            recipes.put(storage.getCleanedInput().get(0), storage);
-
-            final ItemStack output = storage.getPrimaryOutput().copy();
-            output.setCount(1);
-            reverseRecipes.put(new ItemStorage(output), storage);
-        }
     }
 
     /**
