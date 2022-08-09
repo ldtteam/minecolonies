@@ -134,7 +134,8 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     return;
                 }
 
-                final CompoundTag compound = stack.getTag();
+                final ItemStack inventoryStack = slot == -1 ? stack : player.getInventory().getItem(slot);
+                final CompoundTag compound = inventoryStack.getTag();
                 if (tempColony != null && compound != null && compound.contains(TAG_COLONY_ID) && tempColony.getID() != compound.getInt(TAG_COLONY_ID))
                 {
                     MessageUtils.format(WRONG_COLONY, compound.getInt(TAG_COLONY_ID)).sendTo(player);
