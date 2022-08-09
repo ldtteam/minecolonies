@@ -182,7 +182,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                     }
                 }
 
-                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack, 1);
+                InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), inventoryStack, 1);
 
                 @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(world, blockPos);
                 if (building == null)
