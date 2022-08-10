@@ -76,8 +76,18 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent combined = new NonSiblingFormattingTextComponent();
-            combined.append(new TextComponent(getRequest().getCount() + " "));
-            combined.append(getRequest().getStack().getHoverName());
+
+            if (getRequest().getMinimumCount() == getRequest().getCount())
+            {
+                combined.append(new TextComponent(getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+            else
+            {
+                combined.append(new TextComponent(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+
             return combined;
         }
 
