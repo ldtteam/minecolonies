@@ -7,7 +7,6 @@ import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityRack;
 import com.minecolonies.api.util.*;
 import com.minecolonies.coremod.colony.buildings.modules.WarehouseModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHouse;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,6 +37,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public TileEntityWareHouse(final BlockPos pos, final BlockState state)
     {
         super(MinecoloniesTileEntities.WAREHOUSE.get(), pos, state);
+        inWarehouse = true;
     }
 
     @Override

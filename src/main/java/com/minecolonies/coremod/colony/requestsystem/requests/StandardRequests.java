@@ -24,6 +24,7 @@ import com.minecolonies.coremod.colony.jobs.views.CrafterJobView;
 import com.minecolonies.coremod.colony.jobs.views.DmanJobView;
 import com.minecolonies.coremod.colony.requestable.SmeltableOre;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.core.NonNullList;
@@ -73,8 +74,18 @@ public final class StandardRequests
         public Component getShortDisplayString()
         {
             final MutableComponent combined = Component.literal("");
-            combined.append(Component.literal(getRequest().getCount() + " "));
-            combined.append(getRequest().getStack().getHoverName());
+
+            if (getRequest().getMinimumCount() == getRequest().getCount())
+            {
+                combined.append(Component.literal(getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+            else
+            {
+                combined.append(Component.literal(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+
             return combined;
         }
 

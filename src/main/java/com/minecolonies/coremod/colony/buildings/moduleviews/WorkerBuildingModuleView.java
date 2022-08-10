@@ -185,6 +185,6 @@ public class WorkerBuildingModuleView extends AbstractBuildingModuleView impleme
     @Override
     public boolean isFull()
     {
-        return buildingView.isDeconstructed() || getAssignedCitizens().size() >= getMaxInhabitants();
+        return !buildingView.allowsAssignment() || getAssignedCitizens().size() >= getMaxInhabitants();
     }
 }

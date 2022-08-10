@@ -689,4 +689,10 @@ public abstract class AbstractBuildingView implements IBuildingView
         }
         return assignees;
     }
+
+    @Override
+    public boolean allowsAssignment()
+    {
+        return !isDeconstructed;
+    }
 }
