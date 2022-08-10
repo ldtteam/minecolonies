@@ -82,7 +82,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         final List<ArchitectsCutterRecipe> list = Minecraft.getInstance().level.getRecipeManager().getRecipesFor(ModRecipeTypes.ARCHITECTS_CUTTER.get(), inputInventory, Minecraft.getInstance().level);
         final Map<Integer, List<Integer>> map = new HashMap<>();
 
-        if (inputInventory.isEmpty())
+        if (inputInventory.isEmpty() || list.isEmpty())
         {
             return;
         }
@@ -103,18 +103,8 @@ public class DOCraftingWindow extends AbstractModuleWindow
             }
         }
 
-        int inputCount = 0;
-        for (int i = 0; i < inputInventory.getContainerSize(); i++)
-        {
-            if (!inputInventory.getItem(i).isEmpty())
-            {
-                inputCount++;
-            }
-        }
-
-        final List<Integer> inputIndizes = map.get(inputCount);
         final List<ItemStorage> input = new ArrayList<>();
-        for (int i = 0; i < inputCount; i++)
+        for (int i = 0; i < inputInventory.getContainerSize(); ++i)
         {
             final ItemStack atPos = inputInventory.getItem(i).copy();
             if (!ItemStackUtils.isEmpty(atPos))
@@ -122,6 +112,12 @@ public class DOCraftingWindow extends AbstractModuleWindow
                 atPos.setCount(1);
                 input.add(new ItemStorage(atPos));
             }
+        }
+
+        final List<Integer> inputIndizes = map.get(input.size());
+        if (inputIndizes == null)
+        {
+            return;
         }
 
         final List<ItemStack> additionalOutput = new ArrayList<>();
