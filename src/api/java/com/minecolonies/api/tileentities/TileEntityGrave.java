@@ -139,18 +139,6 @@ public class TileEntityGrave extends AbstractTileEntityGrave
     public void load(final BlockState state, final CompoundNBT compound)
     {
         super.load(state, compound);
-        inventory = createInventory(DEFAULT_SIZE);
-
-        final ListNBT inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.size(); i++)
-        {
-            final CompoundNBT inventoryCompound = inventoryTagList.getCompound(i);
-            if (!inventoryCompound.contains(TAG_EMPTY))
-            {
-                final ItemStack stack = ItemStack.of(inventoryCompound);
-                inventory.setStackInSlot(i, stack);
-            }
-        }
 
         decay_timer         = compound.contains(TAG_DECAY_TIMER) ? compound.getInt(TAG_DECAY_TIMER) : DEFAULT_DECAY_TIMER;
         decayed             = compound.contains(TAG_DECAYED) ? compound.getBoolean(TAG_DECAYED) :false;
@@ -163,28 +151,11 @@ public class TileEntityGrave extends AbstractTileEntityGrave
         else graveData = null;
     }
 
-    @NotNull
     @Override
     public CompoundNBT save(final CompoundNBT compound)
     {
         super.save(compound);
 
-        @NotNull final ListNBT inventoryTagList = new ListNBT();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            @NotNull final CompoundNBT inventoryCompound = new CompoundNBT();
-            final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack.isEmpty())
-            {
-                inventoryCompound.putBoolean(TAG_EMPTY, true);
-            }
-            else
-            {
-                stack.save(inventoryCompound);
-            }
-            inventoryTagList.add(inventoryCompound);
-        }
-        compound.put(TAG_INVENTORY, inventoryTagList);
         compound.putInt(TAG_DECAY_TIMER, decay_timer);
         compound.putBoolean(TAG_DECAYED, decayed);
 

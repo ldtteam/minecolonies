@@ -75,8 +75,18 @@ public final class StandardRequests
         public ITextComponent getShortDisplayString()
         {
             final IFormattableTextComponent combined = new NonSiblingFormattingTextComponent();
-            combined.append(new StringTextComponent(getRequest().getCount() + " "));
-            combined.append(getRequest().getStack().getHoverName());
+
+            if (getRequest().getMinimumCount() == getRequest().getCount())
+            {
+                combined.append(new StringTextComponent(getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+            else
+            {
+                combined.append(new StringTextComponent(getRequest().getMinimumCount() + "-" + getRequest().getCount() + " "));
+                combined.append(getRequest().getStack().getHoverName());
+            }
+
             return combined;
         }
 

@@ -279,4 +279,10 @@ public interface IBuildingView extends IRequester
      * @return the set of ids.
      */
     Set<Integer> getAllAssignedCitizens();
+
+    /**
+     * Check if the building currently allows assignment of citizens.
+     * @return true if so.
+     */
+    boolean allowsAssignment();
 }

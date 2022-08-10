@@ -35,7 +35,7 @@ public abstract class AbstractTileEntityGrave extends TileEntityRack implements 
 
     public AbstractTileEntityGrave(final TileEntityType<? extends AbstractTileEntityGrave> tileEntityTypeIn)
     {
-        super(tileEntityTypeIn);
+        super(tileEntityTypeIn, DEFAULT_SIZE * 2);
         decay_timer = DEFAULT_DECAY_TIMER;
         decayed = false;
     }

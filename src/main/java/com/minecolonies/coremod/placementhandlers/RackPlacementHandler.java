@@ -50,12 +50,16 @@ public class RackPlacementHandler implements IPlacementHandler
             return ActionProcessingResult.SUCCESS;
         }
 
-        TileEntity entity = world.getBlockEntity(pos);
-
         world.setBlock(pos, blockState, UPDATE_FLAG);
         if (tileEntityData != null)
         {
             handleTileEntityPlacement(tileEntityData, world, pos, settings);
+        }
+
+        final TileEntity entity  = world.getBlockEntity(pos);
+        if (entity instanceof TileEntityRack && !((TileEntityRack) entity).isSingle() && ((TileEntityRack) entity).getOtherChest() != null)
+        {
+            ((TileEntityRack) entity).updateBlockState();
         }
 
         return ActionProcessingResult.SUCCESS;
