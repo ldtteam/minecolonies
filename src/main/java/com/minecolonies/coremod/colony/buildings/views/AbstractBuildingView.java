@@ -18,7 +18,6 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowHutMinPlaceholder;
-import com.minecolonies.coremod.client.gui.WindowReactivateBuilding;
 import com.minecolonies.coremod.client.gui.huts.WindowHutWorkerModulePlaceholder;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
@@ -110,14 +109,14 @@ public abstract class AbstractBuildingView implements IBuildingView
     private IToken<?> rsDataStoreToken;
 
     /**
-     * The Schematic name of the building.
+     * The Schematic blueprint path of the building.
      */
-    private String schematicName;
+    private String path;
 
     /**
-     * The style of the building.
+     * The structure pack of the building.
      */
-    private String style;
+    private String pack;
 
     /**
      * The custom name of the building.
@@ -244,9 +243,9 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the schematic name.
      */
     @Override
-    public String getSchematicName()
+    public String getStructurePath()
     {
-        return schematicName;
+        return path;
     }
 
     /**
@@ -266,9 +265,9 @@ public abstract class AbstractBuildingView implements IBuildingView
      * @return the style string.
      */
     @Override
-    public String getStyle()
+    public String getStructurePack()
     {
-        return style;
+        return pack;
     }
 
     /**
@@ -392,8 +391,8 @@ public abstract class AbstractBuildingView implements IBuildingView
         buildingMaxLevel = buf.readInt();
         buildingDmPrio = buf.readInt();
         workOrderLevel = buf.readInt();
-        style = buf.readUtf(32767);
-        schematicName = buf.readUtf(32767);
+        pack = buf.readUtf(32767);
+        path = buf.readUtf(32767);
         parent = buf.readBlockPos();
         customName = buf.readUtf(32767);
 
@@ -564,7 +563,7 @@ public abstract class AbstractBuildingView implements IBuildingView
         try
         {
             final TextComponent component = new TextComponent("");
-            component.append(new TranslatableComponent(this.getCustomName().isEmpty() ? this.getSchematicName() : this.getCustomName()));
+            component.append(new TranslatableComponent(this.getCustomName().isEmpty() ? this.getBuildingType().getTranslationKey() : this.getCustomName()));
             if (getColony() == null || !getCitizensByRequest().containsKey(request.getId()))
             {
                 return component;

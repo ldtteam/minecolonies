@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -158,12 +159,12 @@ public abstract class AbstractBuildingContainer extends AbstractSchematicProvide
             final BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityColonyBuilding)
             {
-                ((TileEntityColonyBuilding) entity).setStyle(this.getStyle());
+                ((TileEntityColonyBuilding) entity).setStructurePack(StructurePacks.getStructurePack(this.getStructurePack()));
                 ((TileEntityColonyBuilding) entity).setMirror(isMirrored());
                 final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                 if (building != null)
                 {
-                    building.setStyle(this.getStyle());
+                    building.setStructurePack(this.getStructurePack());
                     building.setParent(getID());
                     addChild(pos);
                 }

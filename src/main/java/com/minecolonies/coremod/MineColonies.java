@@ -1,7 +1,7 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -10,7 +10,6 @@ import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.loot.ModLootConditions;
 import com.minecolonies.api.sounds.ModSoundEvents;
@@ -22,11 +21,11 @@ import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControl
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
+import com.minecolonies.coremod.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
 import com.minecolonies.coremod.proxy.ServerProxy;
-import com.minecolonies.coremod.structures.EmptyColonyStructure;
 import com.minecolonies.coremod.structures.MineColoniesStructures;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -43,7 +42,6 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -103,6 +101,8 @@ public class MineColonies
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
+
+        SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
     }
 
     /**
@@ -137,8 +137,6 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
-
         Network.getNetwork().registerCommonMessages();
 
         AdvancementTriggers.preInit();

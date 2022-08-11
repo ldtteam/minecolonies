@@ -955,7 +955,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     {
         if ((job.getWorkOrder() == null && job.getBlueprint() != null)
               || (structurePlacer != null && !structurePlacer.getB().hasBluePrint())
-              || (job.getWorkOrder() != null && job.getWorkOrder().getStructureName().contains("quarry")))
+              || (job.getWorkOrder() != null && job.getWorkOrder().getStructurePath().contains("quarry")))
         {
             job.setBlueprint(null);
             if (job.hasWorkOrder())

@@ -15,14 +15,13 @@ public interface IEventStructureManager
      * Spawns a temporary structure to place in the world, saves a backup of the previous blocks and restores them after the event ends.
      *
      * @param structure        structure thats going to be spawned
-     * @param schematicPath    path to the schematic
      * @param targetSpawnPoint position to spawn at
      * @param eventID          eventID to spawn for
      * @param rotations        structure rotations
      * @param mirror           structure mirror
      * @return true if successfully spawned
      */
-    boolean spawnTemporaryStructure(Blueprint structure, String schematicPath, BlockPos targetSpawnPoint, int eventID, int rotations, Mirror mirror);
+    boolean spawnTemporaryStructure(Blueprint structure, BlockPos targetSpawnPoint, int eventID, int rotations, Mirror mirror);
 
     /**
      * Restores backup schematics for the given event ID, may be more than one.

@@ -4,7 +4,6 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.BlockPosUtil;
@@ -13,7 +12,6 @@ import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.EnchanterStationsModuleView;
 import com.minecolonies.coremod.colony.buildings.moduleviews.WorkerBuildingModuleView;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingEnchanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.NotNull;
@@ -101,7 +99,7 @@ public class EnchanterStationModuleWindow extends AbstractModuleWindow
                 String text = "";
                 if (bView instanceof AbstractBuildingView)
                 {
-                    text += bView.getCustomName().isEmpty() ? bView.getSchematicName() : bView.getCustomName();
+                    text += bView.getCustomName().isEmpty() ? new TranslatableComponent(bView.getBuildingType().getTranslationKey()).getString() : bView.getCustomName();
                     text += " " + BlockPosUtil.getDistance2D(buildingView.getPosition(), bView.getPosition()) + "m";
                     rowPane.findPaneOfTypeByID(WORKER_NAME, Text.class).setText(text);
                     final Button switchButton = rowPane.findPaneOfTypeByID(BUTTON_SWITCH, Button.class);

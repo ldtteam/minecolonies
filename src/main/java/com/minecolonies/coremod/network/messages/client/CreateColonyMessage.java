@@ -1,17 +1,16 @@
 package com.minecolonies.coremod.network.messages.client;
 
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.network.IMessage;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
 import net.minecraft.ChatFormatting;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.stats.Stats;
@@ -24,7 +23,6 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
@@ -49,16 +47,28 @@ public class CreateColonyMessage implements IMessage
      */
     String colonyName;
 
+    /**
+     * The structure pack name.
+     */
+    String packName;
+
+    /**
+     * The structure path name.
+     */
+    String pathName;
+
     public CreateColonyMessage()
     {
         super();
     }
 
-    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName)
+    public CreateColonyMessage(final BlockPos townHall, boolean claim, final String colonyName, final String packName, final String pathName)
     {
         this.townHall = townHall;
         this.claim = claim;
         this.colonyName = colonyName;
+        this.packName = packName;
+        this.pathName = pathName;
     }
 
     @Override
@@ -67,6 +77,8 @@ public class CreateColonyMessage implements IMessage
         buf.writeBlockPos(townHall);
         buf.writeBoolean(claim);
         buf.writeUtf(colonyName);
+        buf.writeUtf(packName);
+        buf.writeUtf(pathName);
     }
 
     @Override
@@ -75,6 +87,8 @@ public class CreateColonyMessage implements IMessage
         townHall = buf.readBlockPos();
         claim = buf.readBoolean();
         colonyName = buf.readUtf(32767);
+        packName = buf.readUtf(32767);
+        pathName = buf.readUtf(32767);
     }
 
     @Nullable
@@ -95,15 +109,9 @@ public class CreateColonyMessage implements IMessage
             return;
         }
 
-        if (sender.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) <= 0 && !sender.isCreative() && !claim)
-        {
-            MessageUtils.format(MESSAGE_COLONY_START_SUPPLY_NEED).sendTo(sender);
-            return;
-        }
-
         final IColony colony = IColonyManager.getInstance().getClosestColony(world, townHall);
 
-        String style = Constants.DEFAULT_STYLE;
+        String pack = packName;
         final BlockEntity tileEntity = world.getBlockEntity(townHall);
 
         if (!(tileEntity instanceof TileEntityColonyBuilding))
@@ -113,15 +121,22 @@ public class CreateColonyMessage implements IMessage
         }
 
         final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-
-        if (!hut.getStyle().isEmpty())
+        if (hut.getStructurePack() != null && claim)
         {
-            style = hut.getStyle();
+            pack = hut.getStructurePack().getName();
         }
-        else if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
+
+        if (hut.getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()).contains(DEACTIVATED))
         {
             hut.reactivate();
+            if (hut.getStructurePack() != null)
+            {
+                pack = hut.getStructurePack().getName();
+            }
         }
+
+        hut.setStructurePack(StructurePacks.getStructurePack(pack));
+        hut.setBlueprintPath(pathName);
 
         if (MineColonies.getConfig().getServer().restrictColonyPlacement.get())
         {
@@ -154,7 +169,7 @@ public class CreateColonyMessage implements IMessage
 
         if (ownedColony == null)
         {
-            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
+            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, pack);
             IColonyManager.getInstance().getIColonyByOwner(world, sender).getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
             MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
             return;

@@ -7,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +45,16 @@ public interface IWorkOrder
     /**
      * Get the structure this work order should be using, if any.
      *
-     * @return the schematic name.
+     * @return the schematic path.
      */
-    String getStructureName();
+    String getStructurePath();
+
+    /**
+     * Get the structure this work order should be using, if any.
+     *
+     * @return the pack name.
+     */
+    String getStructurePack();
 
     /**
      * Get the current level of the structure of the work order.
@@ -137,7 +143,7 @@ public interface IWorkOrder
      *
      * @return the work order name.
      */
-    String getWorkOrderName();
+    String getTranslationKey();
 
     /**
      * The type of the work order.

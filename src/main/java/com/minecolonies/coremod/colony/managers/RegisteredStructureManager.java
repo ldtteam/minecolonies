@@ -584,20 +584,20 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                   tileEntity.getPosition()));
 
                 building.setIsMirrored(tileEntity.isMirrored());
-                if (!tileEntity.getStyle().isEmpty())
+                if (tileEntity.getStructurePack() != null)
                 {
-                    building.setStyle(tileEntity.getStyle());
+                    building.setStructurePack(tileEntity.getStructurePack().getName());
+                    building.setBlueprintPath(tileEntity.getBlueprintPath());
                 }
                 else
                 {
-                    building.setStyle(colony.getStyle());
+                    building.setStructurePack(colony.getStructurePack());
                 }
 
                 if (world != null && !(building instanceof IRSComponent))
                 {
                     building.onPlacement();
-
-                    ConstructionTapeHelper.placeConstructionTape(building.getCorners(), world);
+                    ConstructionTapeHelper.placeConstructionTape(building, world);
                 }
 
                 colony.getRequestManager().onProviderAddedToColony(building);

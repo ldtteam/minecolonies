@@ -111,7 +111,7 @@ public class ProgressManager implements IProgressManager
     @Override
     public void progressWorkOrderPlacement(final IWorkOrder workOrder)
     {
-        if (workOrder.getWorkOrderType() == WorkOrderType.BUILD && workOrder.getStructureName().contains("Builder"))
+        if (workOrder.getWorkOrderType() == WorkOrderType.BUILD && workOrder.getStructurePath().contains("builder"))
         {
             trigger(BUILT_ENQUEUED);
         }

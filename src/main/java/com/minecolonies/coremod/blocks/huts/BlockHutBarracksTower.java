@@ -3,7 +3,9 @@ package com.minecolonies.coremod.blocks.huts;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Block of the BarracksTower.
@@ -17,6 +19,12 @@ public class BlockHutBarracksTower extends AbstractBlockHut<BlockHutBarracksTowe
     {
         //No different from Abstract parent
         super();
+    }
+
+    @Override
+    public boolean isVisible(@Nullable final CompoundTag beData)
+    {
+        return false;
     }
 
     @NotNull

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.minimal;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -166,11 +166,11 @@ public class EntityAICitizenWander extends Goal
         }
 
         final BlockEntity blockEntity = citizen.level.getBlockEntity(leisureSite);
-        if (blockEntity instanceof IBlueprintDataProvider)
+        if (blockEntity instanceof IBlueprintDataProviderBE)
         {
             if (walkTo == null && citizen.getRandom().nextBoolean())
             {
-                citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProvider) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
+                citizen.getNavigation().moveToRandomPos(10, DEFAULT_SPEED, ((IBlueprintDataProviderBE) blockEntity).getInWorldCorners(), AbstractAdvancedPathNavigate.RestrictionType.XYZ);
             }
             if (walkTo == null && blockEntity instanceof TileEntityColonyBuilding && ((TileEntityColonyBuilding) blockEntity).getBuilding() instanceof BuildingLibrary && citizen.getRandom().nextInt(100) < 5)
             {
@@ -180,7 +180,7 @@ public class EntityAICitizenWander extends Goal
             {
                 if (walkTo == null)
                 {
-                    final Map<String, Set<BlockPos>> map = ((IBlueprintDataProvider) blockEntity).getWorldTagNamePosMap();
+                    final Map<String, Set<BlockPos>> map = ((IBlueprintDataProviderBE) blockEntity).getWorldTagNamePosMap();
                     final List<BlockPos> sittingPos = new ArrayList<>(map.getOrDefault(TAG_SITTING, Collections.emptySet()));
                     if (!sittingPos.isEmpty())
                     {

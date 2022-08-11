@@ -8,7 +8,6 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -20,6 +19,7 @@ public class WindowHutBuilderModule extends AbstractWindowWorkerModuleBuilding<B
     /**
      * The advancement location.
      */
+
     private static final ResourceLocation GUIDE_ADVANCEMENT = new ResourceLocation(Constants.MOD_ID, "minecolonies/check_out_guide");
 
     /**

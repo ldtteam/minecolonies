@@ -389,7 +389,7 @@ public interface IColonyView extends IColony
      *
      * @return the current default style.
      */
-    String getStyle();
+    String getStructurePack();
 
     /**
      * If currently being raided.

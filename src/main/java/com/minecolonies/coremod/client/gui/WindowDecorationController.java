@@ -2,27 +2,31 @@ package com.minecolonies.coremod.client.gui;
 
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.Text;
-import com.ldtteam.blockui.controls.TextField;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.storage.ClientFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
-import com.minecolonies.coremod.network.messages.server.DecorationControllerUpdateMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -33,19 +37,9 @@ import static com.minecolonies.api.util.constant.WindowConstants.*;
 public class WindowDecorationController extends AbstractWindowSkeleton
 {
     /**
-     * The max length of the name.
-     */
-    private static final int MAX_NAME_LENGTH = 200;
-
-    /**
      * Resource suffix of GUI xml file.
      */
     private static final String HUT_NAME_RESOURCE_SUFFIX = ":gui/windowdecorationcontroller.xml";
-
-    /**
-     * The id of the level input.
-     */
-    private static final String INPUT_LEVEL = "level";
 
     /**
      * The building associated to the GUI.
@@ -58,11 +52,6 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private final Level world = Minecraft.getInstance().level;
 
     /**
-     * If the player opening the GUI is an isCreative.
-     */
-    private boolean isCreative = Minecraft.getInstance().player.isCreative();
-
-    /**
      * Constructor for a hut rename entry window.
      *
      * @param b {@link AbstractBuilding}
@@ -71,79 +60,74 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + HUT_NAME_RESOURCE_SUFFIX);
         this.controller = (TileEntityDecorationController) world.getBlockEntity(b);
-        registerButton(BUTTON_BUILD, this::confirmClicked);
+        registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
-        registerButton(BUTTON_DONE, this::doneClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
 
-        final TextField textFieldName = findPaneOfTypeByID(INPUT_NAME, TextField.class);
-        textFieldName.setText(controller.getSchematicPath().replaceAll("\\d$", ""));
-
-        final TextField textFieldLevel = findPaneOfTypeByID(INPUT_LEVEL, TextField.class);
-        textFieldLevel.setText(String.valueOf(controller.getTier()));
+        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(new TextComponent(controller.getSchematicName()));
 
         final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getBlockPos());
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+        findPaneByID(BUTTON_REPAIR).hide();
+        findPaneByID(BUTTON_BUILD).hide();
 
         if (view != null)
         {
             final Optional<IWorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getLocation().equals(this.controller.getBlockPos())).findFirst();
+
+            int level = Utils.getBlueprintLevel(controller.getSchematicName());
             if (wo.isPresent())
             {
-                if (wo.get().getWorkOrderType() == WorkOrderType.BUILD)
-                {
-                    if (controller.getTier() == 0)
-                    {
-                        buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_BUILD));
-                    }
-                    else
-                    {
-                        buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_UPGRADE));
-                    }
-                    findPaneByID(BUTTON_REPAIR).hide();
-                }
-                else if (wo.get().getWorkOrderType() == WorkOrderType.BUILD)
+                findPaneByID(BUTTON_BUILD).show();
+
+                buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_BUILD));
+                if (wo.get().getWorkOrderType() == WorkOrderType.REPAIR)
                 {
                     buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_REPAIR));
-                    findPaneByID(BUTTON_REPAIR).hide();
                 }
             }
-        }
+            else
+            {
+                buttonBuild.setText(new TranslatableComponent(ACTION_BUILD));
 
-        if (controller.getTier() == 0)
-        {
-            findPaneByID(BUTTON_REPAIR).hide();
-        }
+                try
+                {
+                    final String cleanedPackName = this.controller.getPackName().replace(Minecraft.getInstance().player.getUUID().toString(), "");
+                    ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
+                      StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(this.controller.getSchematicPath())), (blueprint -> {
+                        if (blueprint != null)
+                        {
+                            final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+                            if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
+                            {
+                                findPaneByID(BUTTON_REPAIR).show();
+                            }
+                        }
+                    })));
 
-        LoadOnlyStructureHandler structure = null;
-        try
-        {
-            final String structureName = controller.getSchematicPath().replace("/structurize/", "").replaceAll("\\d$", "");
-            structure =
-              new LoadOnlyStructureHandler(world, b, structureName + (controller.getTier() + 1), new PlacementSettings(), true);
-        }
-        catch (final Exception e)
-        {
-            Log.getLogger().info("Unable to load structure: " + controller.getSchematicPath() + " for decoration controller!");
-        }
-
-        findPaneByID(LABEL_NO_UPGRADE).hide();
-        if (structure == null || !structure.hasBluePrint())
-        {
-            findPaneByID(BUTTON_BUILD).hide();
-            findPaneByID(LABEL_NO_UPGRADE).show();
-        }
-
-        if (!isCreative)
-        {
-            textFieldName.disable();
-            textFieldLevel.disable();
-            findPaneByID(BUTTON_DONE).hide();
-        }
-        else
-        {
-            findPaneOfTypeByID("nameLabel", Text.class).setText(new TranslatableComponent(WARNING_DECORATION_NAME_SCAN));
+                    if (level != -1)
+                    {
+                        final String path = this.controller.getSchematicPath().replace(level + ".blueprint", (level + 1) + ".blueprint");
+                        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(cleanedPackName,
+                          StructurePacks.getStructurePack(cleanedPackName).getPath().resolve(path)),
+                          (blueprint -> {
+                              if (blueprint != null)
+                              {
+                                  final BlockState blockState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
+                                  if (blockState.getBlock() == ModBlocks.blockDecorationPlaceholder)
+                                  {
+                                      findPaneByID(BUTTON_BUILD).show();
+                                  }
+                              }
+                          })));
+                    }
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Unable to retrieve blueprint");
+                }
+            }
         }
     }
 
@@ -156,49 +140,18 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     }
 
     /**
-     * Done is clicked to save the new settings.
-     */
-    private void doneClicked()
-    {
-        if (isCreative)
-        {
-            String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-
-            if (name.length() > MAX_NAME_LENGTH)
-            {
-                name = name.substring(0, MAX_NAME_LENGTH);
-                MessageUtils.format(WARNING_NAME_TOO_LONG, name).sendTo(Minecraft.getInstance().player);
-            }
-
-            final String levelString = findPaneOfTypeByID(INPUT_LEVEL, TextField.class).getText();
-            try
-            {
-                final int level = Integer.parseInt(levelString);
-                Network.getNetwork().sendToServer(new DecorationControllerUpdateMessage(controller.getBlockPos(), name, level));
-                controller.setSchematicPath(name + level);
-                controller.setTier(level);
-                close();
-            }
-            catch (final NumberFormatException ex)
-            {
-                Log.getLogger().warn("Error parsing number: " + levelString, ex);
-            }
-        }
-    }
-
-    /**
      * On confirm button.
      */
-    private void confirmClicked()
+    private void buildClicked()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-          controller.getSchematicName()
-            .substring(controller.getSchematicName().lastIndexOf("/") + 1)
-            .replaceAll("\\d$", ""),
-          controller.getSchematicPath()
-            .replaceAll("\\d$", ""),
-          controller.getTier() + 1,
-          world.dimension()));
+        final int level = Utils.getBlueprintLevel(this.controller.getSchematicName());
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD,
+          controller.getBlockPos(),
+          controller.getPackName(),
+          controller.getBlueprintPath().replace(level + ".blueprint", (level + 1) + ".blueprint"),
+          world.dimension(),
+          controller.getRotation(),
+          controller.getMirror()));
         close();
     }
 
@@ -207,14 +160,13 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(controller.getBlockPos(),
-          controller.getSchematicName()
-            .substring(controller.getSchematicName().lastIndexOf("/") + 1)
-            .replaceAll("\\d$", ""),
-          controller.getSchematicPath()
-            .replaceAll("\\d$", ""),
-          controller.getTier(),
-          world.dimension()));
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD,
+          controller.getBlockPos(),
+          controller.getPackName(),
+          controller.getSchematicPath(),
+          world.dimension(),
+          controller.getRotation(),
+          controller.getMirror()));
         close();
     }
 }

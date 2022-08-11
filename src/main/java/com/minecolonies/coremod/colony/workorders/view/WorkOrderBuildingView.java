@@ -33,7 +33,7 @@ public class WorkOrderBuildingView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        Component buildingComponent = customBuildingName.isEmpty() ? new TranslatableComponent(getWorkOrderName()) : new TextComponent(customBuildingName);
+        Component buildingComponent = customBuildingName.isEmpty() ? new TranslatableComponent(getTranslationKey()) : new TextComponent(customBuildingName);
 
         Component nameComponent;
         if (parentTranslationKey.isEmpty())

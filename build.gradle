@@ -20,7 +20,6 @@ plugins {
 }
 
 apply from: 'https://raw.githubusercontent.com/ldtteam/OperaPublicaCreator/main/gradle/mod.gradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 configurations {
     library
@@ -32,3 +31,4 @@ minecraft.runs.all {
         configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
     }
 }
+

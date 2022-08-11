@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Load only structure handler just to get dimensions etc from structures, not for placement.
@@ -25,13 +26,13 @@ public class LoadOnlyStructureHandler extends CreativeStructureHandler
      *
      * @param world          the world.
      * @param pos            the pos it is placed at.
-     * @param structureName  the name of the structure.
+     * @param blueprintFuture  the future of the structure.
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
+    public LoadOnlyStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprintFuture, final PlacementSettings settings, final boolean fancyPlacement)
     {
-        super(world, pos, structureName, settings, fancyPlacement);
+        super(world, pos, blueprintFuture, settings, fancyPlacement);
     }
 
     /**

@@ -115,7 +115,6 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage::new);
         registerMessage(++idx, ColonyViewRemoveBuildingMessage.class, ColonyViewRemoveBuildingMessage::new);
         registerMessage(++idx, PermissionsMessage.View.class, PermissionsMessage.View::new);
-        registerMessage(++idx, ColonyStylesMessage.class, ColonyStylesMessage::new);
         registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);
         registerMessage(++idx, ColonyViewRemoveWorkOrderMessage.class, ColonyViewRemoveWorkOrderMessage::new);
         registerMessage(++idx, UpdateChunkCapabilityMessage.class, UpdateChunkCapabilityMessage::new);
@@ -137,7 +136,6 @@ public class NetworkChannel
         registerMessage(++idx, TownHallRenameMessage.class, TownHallRenameMessage::new);
         registerMessage(++idx, MinerSetLevelMessage.class, MinerSetLevelMessage::new);
         registerMessage(++idx, RecallCitizenMessage.class, RecallCitizenMessage::new);
-        registerMessage(++idx, BuildToolPlaceMessage.class, BuildToolPlaceMessage::new);
         registerMessage(++idx, ToggleJobMessage.class, ToggleJobMessage::new);
         registerMessage(++idx, HireFireMessage.class, HireFireMessage::new);
         registerMessage(++idx, WorkOrderChangeMessage.class, WorkOrderChangeMessage::new);
@@ -162,7 +160,6 @@ public class NetworkChannel
         registerMessage(++idx, ChangeDeliveryPriorityMessage.class, ChangeDeliveryPriorityMessage::new);
         registerMessage(++idx, ForcePickupMessage.class, ForcePickupMessage::new);
         registerMessage(++idx, UpgradeWarehouseMessage.class, UpgradeWarehouseMessage::new);
-        registerMessage(++idx, BuildToolPasteMessage.class, BuildToolPasteMessage::new);
         registerMessage(++idx, TransferItemsToCitizenRequestMessage.class, TransferItemsToCitizenRequestMessage::new);
         registerMessage(++idx, UpdateRequestStateMessage.class, UpdateRequestStateMessage::new);
         registerMessage(++idx, BuildingSetStyleMessage.class, BuildingSetStyleMessage::new);
@@ -179,7 +176,6 @@ public class NetworkChannel
         registerMessage(++idx, HutRenameMessage.class, HutRenameMessage::new);
         registerMessage(++idx, BuildingHiringModeMessage.class, BuildingHiringModeMessage::new);
         registerMessage(++idx, DecorationBuildRequestMessage.class, DecorationBuildRequestMessage::new);
-        registerMessage(++idx, DecorationControllerUpdateMessage.class, DecorationControllerUpdateMessage::new);
         registerMessage(++idx, DirectPlaceMessage.class, DirectPlaceMessage::new);
         registerMessage(++idx, TeleportToColonyMessage.class, TeleportToColonyMessage::new);
         registerMessage(++idx, EnchanterWorkerSetMessage.class, EnchanterWorkerSetMessage::new);
@@ -222,6 +218,7 @@ public class NetworkChannel
         registerMessage(++idx, SyncPathReachedMessage.class, SyncPathReachedMessage::new);
         registerMessage(++idx, ReactivateBuildingMessage.class, ReactivateBuildingMessage::new);
         registerMessage(++idx, PlaySoundForCitizenMessage.class, PlaySoundForCitizenMessage::new);
+        registerMessage(++idx, OpenDecoWindowMessage.class, OpenDecoWindowMessage::new);
 
         //JEI Messages
         registerMessage(++idx, TransferRecipeCraftingTeachingMessage.class, TransferRecipeCraftingTeachingMessage::new);

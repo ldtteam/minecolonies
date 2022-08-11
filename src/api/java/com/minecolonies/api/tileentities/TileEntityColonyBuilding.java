@@ -1,10 +1,9 @@
 package com.minecolonies.api.tileentities;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.storage.StructurePackMeta;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -13,6 +12,7 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IBuildingContainer;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
+import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
 import com.minecolonies.api.util.*;
@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
@@ -60,6 +62,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     private static final String TAG_COLONY = "colony";
     private static final String TAG_MIRROR = "mirror";
     private static final String TAG_STYLE  = "style";
+    private static final String TAG_PACK   = "pack";
+    private static final String TAG_PATH   = "path";
 
     /**
      * The colony id.
@@ -84,7 +88,12 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     /**
      * The style of the building.
      */
-    private String style = "";
+    private String packMeta = "";
+
+    /**
+     * Path of the blueprint.
+     */
+    private String path = "";
 
     /**
      * The name of the building location.
@@ -95,6 +104,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * Create the combined inv wrapper for the building.
      */
     private LazyOptional<CombinedItemHandler> combinedInv;
+
+    /**
+     * Pending blueprint future.
+     */
+    private Future<Blueprint> pendingBlueprintFuture = null;
 
     /**
      * Default constructor used to create a new TileEntity via reflection. Do not use.
@@ -335,7 +349,59 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             colonyId = compound.getInt(TAG_COLONY);
         }
         mirror = compound.getBoolean(TAG_MIRROR);
-        style = compound.getString(TAG_STYLE);
+
+        String packName;
+        String path;
+        if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
+        {
+            packName = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
+
+            if (this.getSchematicName().isEmpty())
+            {
+                path = null;
+            }
+            else
+            {
+                final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
+                path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level
+                         + ".blueprint";
+            }
+        }
+        else
+        {
+            packName = compound.getString(TAG_PACK);
+            path = compound.getString(TAG_PATH);
+        }
+
+        if (packName == null || packName.isEmpty())
+        {
+            final List<String> tags = new ArrayList<>(getPositionedTags().getOrDefault(BlockPos.ZERO, new ArrayList<>()));
+            if (!tags.isEmpty())
+            {
+                tags.remove("deactivated");
+                if (!tags.isEmpty())
+                {
+                    packName = BlueprintMapping.getStyleMapping(tags.get(0));
+                    if (path == null || path.isEmpty())
+                    {
+                        path = BlueprintMapping.getPathMapping(tags.get(0), ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+                    }
+                }
+            }
+            else if (StructurePacks.selectedPack != null)
+            {
+                packName = StructurePacks.selectedPack.getName();
+            }
+        }
+
+        if (path == null || path.isEmpty() || path.contains("null"))
+        {
+            path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+        }
+
+        this.packMeta = packName;
+        this.path = path;
+
         registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
         buildingPos = worldPosition;
         single = true;
@@ -347,7 +413,8 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         super.saveAdditional(compound);
         compound.putInt(TAG_COLONY, colonyId);
         compound.putBoolean(TAG_MIRROR, mirror);
-        compound.putString(TAG_STYLE, style);
+        compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
+        compound.putString(TAG_PATH, path == null ? "" : path);
         compound.putString(TAG_BUILDING_TYPE, registryName.toString());
     }
 
@@ -372,6 +439,19 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         {
             updateColonyReferences();
         }
+
+        if (pendingBlueprintFuture != null && pendingBlueprintFuture.isDone())
+        {
+            try
+            {
+                processBlueprint(pendingBlueprintFuture.get());
+                pendingBlueprintFuture = null;
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     public boolean isUsableByPlayer(@NotNull final Player player)
@@ -388,7 +468,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public boolean hasAccessPermission(final Player player)
     {
-        //TODO This is called every tick the GUI is open. Is that bad?
+        // TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
     }
 
@@ -420,9 +500,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      * @return the string of it.
      */
     @Override
-    public String getStyle()
+    public StructurePackMeta getStructurePack()
     {
-        return this.style;
+        return StructurePacks.getStructurePack(this.packMeta);
     }
 
     /**
@@ -430,10 +510,33 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
      *
      * @param style the style to set.
      */
-    @Override
-    public void setStyle(final String style)
+    public void setStructurePack(final StructurePackMeta style)
     {
-        this.style = style;
+        this.packMeta = style.getName();
+    }
+
+    @Override
+    public void setBlueprintPath(final String path)
+    {
+        this.path = path;
+    }
+
+    @Override
+    public void setPackName(final String packName)
+    {
+        this.packMeta = packName;
+    }
+
+    @Override
+    public String getPackName()
+    {
+        return packMeta;
+    }
+
+    @Override
+    public String getBlueprintPath()
+    {
+        return path;
     }
 
     @Override
@@ -517,22 +620,51 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     {
         final List<String> tags = new ArrayList<>(this.getPositionedTags().get(BlockPos.ZERO));
         tags.remove(DEACTIVATED);
-        if (!tags.isEmpty())
+        if (tags.isEmpty())
         {
-            this.setStyle(tags.get(0));
+            Log.getLogger().error("Couldn't reactivate building because it's missing the essential tag data.");
+            return;
         }
 
-        String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, this.getStyle(), this.getSchematicName()).toString();
+        // First tag on those buildings always has to be the stylename.
+        String tagName = tags.get(0);
+        final String blueprintPath;
+        final String packName;
+        if (tagName.contains(":"))
+        {
+            final String[] split = tagName.split(":");
+            packName = split[0];
+            blueprintPath = split[1];
+        }
+        else
+        {
+            final String level = this.getSchematicName().substring(this.getSchematicName().length() - 1);
+            packName = BlueprintMapping.getStyleMapping(tagName);
+            blueprintPath = BlueprintMapping.getPathMapping(tagName, this.getSchematicName().substring(0, this.getSchematicName().length() - 1)) + level + ".blueprint";
+        }
 
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(level, this.getPosition(), structureName, new PlacementSettings(), true);
-        final Blueprint blueprint = structure.getBluePrint();
+        this.setStructurePack(StructurePacks.getStructurePack(packName));
+        this.pendingBlueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
+    }
 
-        final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
+    /**
+     * Process the blueprint to read relevant data.
+     * @param blueprint the queried blueprint.
+     */
+    private void processBlueprint(final Blueprint blueprint)
+    {
+        if (blueprint == null)
+        {
+            Log.getLogger().error("Invalid building details for reactivation");
+            return;
+        }
+
+        final BlockState structureState = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
         if (structureState != null)
         {
             if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(level.getBlockState(this.getPosition()).getBlock() instanceof AbstractBlockHut))
             {
-                Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
+                Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", blueprint.getName()));
                 return;
             }
             final int structureRotation = structureState.getValue(AbstractBlockHut.FACING).get2DDataValue();

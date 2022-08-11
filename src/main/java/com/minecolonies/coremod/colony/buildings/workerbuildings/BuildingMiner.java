@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
-import com.ldtteam.blockui.views.BOWindow;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
@@ -23,7 +20,6 @@ import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -36,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.*;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 
@@ -278,25 +275,28 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     public static void initStructure(final Node mineNode, final int rotateTimes, final BlockPos structurePos, final BuildingMiner buildingMiner, final Level world, final JobMiner job)
     {
-        final String style = buildingMiner.getStyle();
-        String requiredName = null;
-        int rotateCount = 0;
+        final String structurePack = buildingMiner.getStructurePack();
+        int rotateCount;
+        final boolean needsFallback;
+        final String style;
 
         if (mineNode == null)
         {
             rotateCount = getRotationFromVector(buildingMiner);
-            requiredName = getCorrectStyleLocation(style, Node.NodeType.SHAFT.getSchematicName(), world, buildingMiner);
+            style = Node.NodeType.SHAFT.getSchematicName();
+            needsFallback = needsFallBack(structurePack, style) ;
         }
 
         else
         {
             rotateCount = rotateTimes;
-            requiredName = getCorrectStyleLocation(style, mineNode.getStyle().getSchematicName(), world, buildingMiner);
+            style = mineNode.getStyle().getSchematicName();
+            needsFallback = needsFallBack(structurePack, style);
         }
 
-        if (requiredName != null &&  (job == null || job.getWorkOrder() == null))
+        if (job == null || job.getWorkOrder() == null)
         {
-            final WorkOrderMiner wo = new WorkOrderMiner(requiredName, requiredName, rotateCount, structurePos, false, buildingMiner.getPosition());
+            final WorkOrderMiner wo = new WorkOrderMiner(needsFallback ? DEFAULT_STYLE : structurePack, style + ".blueprint", style, rotateCount, structurePos, false, buildingMiner.getPosition());
             wo.setClaimedBy(buildingMiner.getPosition());
             buildingMiner.getColony().getWorkManager().addWorkOrder(wo, false);
             if (job != null)
@@ -342,21 +342,12 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
     /**
      * Get the correct style for the shaft. Return default back.
      *
-     * @param style the style to check.
+     * @param structurePacks the structurePacks to check.
      * @param shaft the shaft.
      * @return the correct location.
      */
-    private static String getCorrectStyleLocation(final String style, final String shaft, final Level world, final BuildingMiner buildingMiner)
+    private static boolean needsFallBack(final String structurePacks, final String shaft)
     {
-        final LoadOnlyStructureHandler
-          wrapper = new LoadOnlyStructureHandler(world, buildingMiner.getPosition(), Structures.SCHEMATICS_PREFIX + "/" + style + shaft, new PlacementSettings(), true);
-        if (wrapper.hasBluePrint())
-        {
-            return Structures.SCHEMATICS_PREFIX + "/" + style + shaft;
-        }
-        else
-        {
-            return Structures.SCHEMATICS_PREFIX + shaft;
-        }
+        return StructurePacks.getBlueprint(structurePacks, shaft + ".blueprint") == null;
     }
 }

@@ -1,7 +1,6 @@
 package com.minecolonies.api.advancements.place_structure;
 
 import com.google.gson.JsonObject;
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +23,7 @@ public class PlaceStructureTrigger extends AbstractCriterionTrigger<PlaceStructu
      * @param player the player the check regards
      * @param structureName the structure id of what was just placed
      */
-    public void trigger(final ServerPlayer player, final StructureName structureName)
+    public void trigger(final ServerPlayer player, final String structureName)
     {
         final PlaceStructureListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)

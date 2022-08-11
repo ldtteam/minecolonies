@@ -6,7 +6,6 @@ import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
 import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.datalistener.ResearchListener;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
-import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -40,7 +39,6 @@ public class FMLEventHandler
         if (event.getPlayer() instanceof ServerPlayer)
         {
             Network.getNetwork().sendToPlayer(new ServerUUIDMessage(), (ServerPlayer) event.getPlayer());
-            Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), (ServerPlayer) event.getPlayer());
 
             // This automatically reloads the owner of the colony if failed.
             IColonyManager.getInstance().getIColonyByOwner(((ServerPlayer) event.getPlayer()).getLevel(), event.getPlayer());
@@ -68,7 +66,8 @@ public class FMLEventHandler
         IColonyManager.getInstance().getRecipeManager().reset();
     }
 
-    public static void onServerStopped(final ServerStoppingEvent event)
+    @SubscribeEvent
+    public static void onServerStopped(@NotNull final ServerStoppingEvent event)
     {
         Pathfinding.shutdown();
     }
