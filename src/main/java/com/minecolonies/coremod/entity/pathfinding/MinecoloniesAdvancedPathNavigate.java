@@ -278,6 +278,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // The moveHelper won't move up if standing in a block with an empty bounding box (put grass, 1 layer snow, mushroom in front of a solid block and have them try jump up).
         if (!this.isDone())
         {
+            final int currentPathIndex = path.getNextNodeIndex();
             if (this.canUpdatePath())
             {
                 this.followThePath();
@@ -293,17 +294,30 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             }
 
             DebugPackets.sendPathFindingPacket(this.level, this.mob, this.path, this.maxDistanceToWaypoint);
+
             if (!this.isDone())
             {
-                Vec3 vector3d2 = this.path.getNextEntityPos(this.mob);
+                Vec3 vector3d2 = path.getNextEntityPos(mob);
                 BlockPos blockpos = new BlockPos(vector3d2);
-                if (WorldUtil.isEntityBlockLoaded(this.level, blockpos))
+
+                if (path.getNextNodeIndex() != currentPathIndex)
                 {
-                    this.mob.getMoveControl()
-                      .setWantedPosition(vector3d2.x,
-                        this.level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos),
-                        vector3d2.z,
-                        this.speedModifier);
+                    if (WorldUtil.isEntityBlockLoaded(level, blockpos))
+                    {
+                        mob.getMoveControl()
+                          .setWantedPosition(vector3d2.x,
+                            level.getBlockState(blockpos.below()).isAir() ? vector3d2.y : getSmartGroundY(this.level, blockpos),
+                            vector3d2.z,
+                            speedModifier);
+                    }
+                }
+                else
+                {
+                    mob.getMoveControl()
+                      .setWantedPosition(mob.getMoveControl().getWantedX(),
+                        mob.getMoveControl().getWantedY(),
+                        mob.getMoveControl().getWantedZ(),
+                        speedModifier);
                 }
             }
         }
@@ -321,8 +335,9 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     /**
      * Similar to WalkNodeProcessor.getGroundY but not broken.
      * This checks if the block below the position we're trying to move to reaches into the block above, if so, it has to aim a little bit higher.
+     *
      * @param world the world.
-     * @param pos the position to check.
+     * @param pos   the position to check.
      * @return the next y level to go to.
      */
     public static double getSmartGroundY(final BlockGetter world, final BlockPos pos)
@@ -560,7 +575,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
                 .getNextNodeIndex() + 1) : null;
 
 
-
             final BlockPos pos = new BlockPos(pEx.x, pEx.y, pEx.z);
             if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && level.getBlockState(pos).isLadder(level, pos, ourEntity))
             {
@@ -570,7 +584,7 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             {
                 return handleEntityInWater(oldIndex, pEx);
             }
-            else if (level.random.nextInt(10) == 0)
+            else if (level.random.nextInt(20) == 0)
             {
                 if (!pEx.isOnLadder() && pExNext != null && pExNext.isOnLadder())
                 {
@@ -614,16 +628,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         {
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getNode(this.getPath().getNextNodeIndex());
             PathPointExtended pExNext = getPath().getNodeCount() > this.getPath().getNextNodeIndex() + 1
-                                                ? (PathPointExtended) this.getPath()
-                                                                        .getNode(this.getPath()
-                                                                                                 .getNextNodeIndex() + 1): null;
+                                          ? (PathPointExtended) this.getPath()
+              .getNode(this.getPath()
+                .getNextNodeIndex() + 1) : null;
 
             if (pExNext != null && pEx.x == pExNext.x && pEx.z == pExNext.z)
             {
                 pExNext = getPath().getNodeCount() > this.getPath().getNextNodeIndex() + 2
                             ? (PathPointExtended) this.getPath()
-                                                    .getNode(this.getPath()
-                                                               .getNextNodeIndex() + 2): null;
+                  .getNode(this.getPath()
+                    .getNextNodeIndex() + 2) : null;
             }
 
             if (pEx.isOnRails() || pEx.isRailsExit())
@@ -965,7 +979,13 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     }
 
     @Override
-    public TreePathResult moveToTree(final BlockPos startRestriction, final BlockPos endRestriction, final double speed, final List<ItemStorage> excludedTrees, final int dyntreesize, final IColony colony)
+    public TreePathResult moveToTree(
+      final BlockPos startRestriction,
+      final BlockPos endRestriction,
+      final double speed,
+      final List<ItemStorage> excludedTrees,
+      final int dyntreesize,
+      final IColony colony)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(ourEntity);
         final BlockPos buildingPos = ((AbstractEntityCitizen) mob).getCitizenColonyHandler().getWorkBuilding().getPosition();
@@ -973,7 +993,16 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         final BlockPos furthestRestriction = BlockPosUtil.getFurthestCorner(start, startRestriction, endRestriction);
 
         final PathJobFindTree job =
-          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(mob), start, buildingPos, startRestriction, endRestriction, furthestRestriction, excludedTrees, dyntreesize, colony, ourEntity);
+          new PathJobFindTree(CompatibilityUtils.getWorldFromEntity(mob),
+            start,
+            buildingPos,
+            startRestriction,
+            endRestriction,
+            furthestRestriction,
+            excludedTrees,
+            dyntreesize,
+            colony,
+            ourEntity);
 
         return (TreePathResult) setPathJob(job, null, speed, true);
     }

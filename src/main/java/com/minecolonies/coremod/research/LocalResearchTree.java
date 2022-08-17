@@ -63,7 +63,7 @@ public class LocalResearchTree implements ILocalResearchTree
     @Override
     public boolean hasCompletedResearch(final ResourceLocation researchId)
     {
-        if(IGlobalResearchTree.getInstance().hasResearch(researchId))
+        if (IGlobalResearchTree.getInstance().hasResearch(researchId))
         {
             return isComplete.contains(researchId);
         }
@@ -160,7 +160,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 }
             }
             // We know the player has the items, so now we can remove them safely.
-            for(ItemStorage cost : research.getCostList())
+            for (ItemStorage cost : research.getCostList())
             {
                 final List<Integer> slotsWithMaterial = InventoryUtils.findAllSlotsInItemHandlerWith(playerInv,
                   stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, cost.getItemStack(), !cost.ignoreDamageValue(), !cost.ignoreNBT()));
@@ -168,7 +168,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 for (Integer slotNum : slotsWithMaterial)
                 {
                     amount = amount - playerInv.extractItem(slotNum, amount, false).getCount();
-                    if(amount <= 0)
+                    if (amount <= 0)
                     {
                         break;
                     }
@@ -180,7 +180,7 @@ public class LocalResearchTree implements ILocalResearchTree
         }
         else
         {
-            if(player.isCreative())
+            if (player.isCreative())
             {
                 if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchCreativeCompletion.get())
                 {
@@ -203,9 +203,10 @@ public class LocalResearchTree implements ILocalResearchTree
     public void attemptResetResearch(final Player player, final IColony colony, final ILocalResearch research)
     {
         // If in progress and get another request, cancel research, and remove it from the local tree.
-        if(research.getState() == ResearchState.IN_PROGRESS)
+        if (research.getState() == ResearchState.IN_PROGRESS)
         {
-            MessageUtils.format("com.minecolonies.coremod.research.stopped", MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
+            MessageUtils.format("com.minecolonies.coremod.research.stopped",
+                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
               .sendTo(player);
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
@@ -213,9 +214,9 @@ public class LocalResearchTree implements ILocalResearchTree
         // If complete, it's a request to undo the research.
         else if (research.getState() == ResearchState.FINISHED)
         {
-            for(ResourceLocation childIds : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getChildren())
+            for (ResourceLocation childIds : IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getChildren())
             {
-                if(researchTree.get(research.getBranch()).get(childIds) != null)
+                if (researchTree.get(research.getBranch()).get(childIds) != null)
                 {
                     MessageUtils.format("com.minecolonies.coremod.research.undo.haschilds").sendTo(player);
                     SoundUtils.playErrorSound(player, player.blockPosition());
@@ -223,7 +224,7 @@ public class LocalResearchTree implements ILocalResearchTree
                 }
             }
 
-            if(!player.isCreative())
+            if (!player.isCreative())
             {
                 final List<ItemStorage> costList = IGlobalResearchTree.getInstance().getResearchResetCosts();
                 final InvWrapper playerInv = new InvWrapper(player.getInventory());
@@ -234,7 +235,7 @@ public class LocalResearchTree implements ILocalResearchTree
                     if (count < cost.getAmount())
                     {
                         MessageUtils.format("com.minecolonies.coremod.research.costnotavailable",
-                                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())).sendTo(player);
+                          MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName())).sendTo(player);
                         SoundUtils.playErrorSound(player, player.blockPosition());
                         return;
                     }
@@ -254,7 +255,8 @@ public class LocalResearchTree implements ILocalResearchTree
                     }
                 }
             }
-            MessageUtils.format("com.minecolonies.coremod.research.undo", MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
+            MessageUtils.format("com.minecolonies.coremod.research.undo",
+                MutableComponent.create(IGlobalResearchTree.getInstance().getResearch(research.getBranch(), research.getId()).getName()))
               .sendTo(player);
             SoundUtils.playSuccessSound(player, player.blockPosition());
             removeResearch(research.getBranch(), research.getId());
@@ -265,8 +267,9 @@ public class LocalResearchTree implements ILocalResearchTree
 
     /**
      * Does the heavy lifting to remove research and, optionally, effects.
-     * @param branch            The research branch id.
-     * @param id                The research id.
+     *
+     * @param branch The research branch id.
+     * @param id     The research id.
      */
     private void removeResearch(final ResourceLocation branch, final ResourceLocation id)
     {
@@ -285,7 +288,8 @@ public class LocalResearchTree implements ILocalResearchTree
 
     /**
      * Resets effects for a specific colony.
-     * @param colony        The colony to reset research effects.
+     *
+     * @param colony The colony to reset research effects.
      */
     private void resetEffects(IColony colony)
     {
@@ -314,12 +318,15 @@ public class LocalResearchTree implements ILocalResearchTree
     @Override
     public void writeToNBT(final CompoundTag compound)
     {
-        @NotNull final ListTag
-          researchList = researchTree.values()
-                           .stream()
-                           .flatMap(map -> map.values().stream())
-                           .map(research -> StandardFactoryController.getInstance().serialize(research))
-                           .collect(NBTUtils.toListNBT());
+        final ListTag researchList = new ListTag();
+        for (final Map<ResourceLocation, ILocalResearch> researchMap : researchTree.values())
+        {
+            for (final ILocalResearch research : researchMap.values())
+            {
+                researchList.add(StandardFactoryController.getInstance().serialize(research));
+            }
+        }
+
         compound.put(TAG_RESEARCH_TREE, researchList);
     }
 
@@ -336,7 +343,7 @@ public class LocalResearchTree implements ILocalResearchTree
               /// region Updated ID helper.
               if (!MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
               {
-                  if(research.getBranch().getNamespace().contains("minecraft"))
+                  if (research.getBranch().getNamespace().contains("minecraft"))
                   {
                       final ResearchState currentState = research.getState();
                       final int progress = research.getProgress();
@@ -347,7 +354,7 @@ public class LocalResearchTree implements ILocalResearchTree
                   }
                   else
                   {
-                      if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                      if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
                       {
                           Log.getLogger().warn("Research " + research.getId() + " was in colony save file, but was not in CompatMap.");
                       }
@@ -361,14 +368,17 @@ public class LocalResearchTree implements ILocalResearchTree
                   // or to have a different research that was in a now-removed data pack.  But those will get just thrown away.
                   if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().hasResearch(research.getBranch(), research.getId()))
                   {
-                      for (final IResearchEffect<?> effect : MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearch(research.getBranch(), research.getId()).getEffects())
+                      for (final IResearchEffect<?> effect : MinecoloniesAPIProxy.getInstance()
+                        .getGlobalResearchTree()
+                        .getResearch(research.getBranch(), research.getId())
+                        .getEffects())
                       {
                           effects.applyEffect(effect);
                       }
                   }
                   else
                   {
-                      if(MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
+                      if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
                       {
                           Log.getLogger()
                             .warn("Research " + research.getId() + " was in colony save file, but not found as valid current research.  Progress on this research may be reset.");

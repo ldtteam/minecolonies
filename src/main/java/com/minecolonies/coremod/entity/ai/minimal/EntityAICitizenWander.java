@@ -89,7 +89,7 @@ public class EntityAICitizenWander extends Goal
         this.setFlags(EnumSet.of(Flag.MOVE));
 
         stateMachine = new TickRateStateMachine<>(IDLE, e -> Log.getLogger().warn("Wandering AI threw exception:", e));
-        stateMachine.addTransition(new TickingTransition<>(IDLE, () -> true, this::decide, 20));
+        stateMachine.addTransition(new TickingTransition<>(IDLE, () -> true, this::decide, 100));
         stateMachine.addTransition(new TickingTransition<>(GO_TO_LEISURE_SITE, () -> true, this::goToLeisureSite, 20));
         stateMachine.addTransition(new TickingTransition<>(WANDER_AT_LEISURE_SITE, () -> true, this::wanderAtLeisureSite, 20));
         stateMachine.addTransition(new TickingTransition<>(READ_A_BOOK, () -> true, this::readABook, 20));

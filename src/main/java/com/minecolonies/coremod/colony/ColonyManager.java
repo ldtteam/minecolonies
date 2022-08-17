@@ -577,10 +577,15 @@ public final class ColonyManager implements IColonyManager
             return null;
         }
 
-        return getAllColonies().stream()
-                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
-                 .findFirst()
-                 .orElse(null);
+        for (final IColony colony : getAllColonies())
+        {
+            if (colony.getPermissions().getOwner().equals(owner))
+            {
+                return colony;
+            }
+        }
+
+        return null;
     }
 
     @Override
