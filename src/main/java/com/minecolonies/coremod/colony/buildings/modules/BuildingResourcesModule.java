@@ -338,7 +338,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             return;
         }
 
-        final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getId(), TypeToken.of(Stack.class));
+        resourceloop:
         for (final Map.Entry<String, Integer> entry : requiredResources.getResourceMap().entrySet())
         {
             final ItemStorage itemStack = neededResources.get(entry.getKey());
@@ -347,35 +347,34 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 continue;
             }
 
-            boolean hasOpenRequest = false;
-            int count = InventoryUtils.getItemCountInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
-              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
+            int count = InventoryUtils.hasBuildingEnoughElseCount(building,
+              stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()), entry.getValue());
 
-            int totalAmount = neededResources.containsKey(entry.getKey()) ? neededResources.get(entry.getKey()).getAmount() : 0;
-            int workerInvCount =
-              InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
-            if ((workerInv && (count + workerInvCount) < entry.getValue())
-                  || (count < entry.getValue() && (count + workerInvCount) < totalAmount))
+            if (count >= entry.getValue())
             {
-                int requestCount = entry.getValue() - count - (workerInv ? workerInvCount : 0);
-                if (requestCount > 0)
-                {
-                    for (final IRequest<? extends Stack> request : list)
-                    {
-                        if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack()))
-                        {
-                            hasOpenRequest = true;
-                            break;
-                        }
-                    }
-                    if (hasOpenRequest)
-                    {
-                        break;
-                    }
+                continue;
+            }
 
-                    worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1));
+            if (workerInv)
+            {
+                count += InventoryUtils.getItemCountInItemHandler(worker.getInventory(), stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, itemStack.getItemStack()));
+                if (count >= entry.getValue())
+                {
+                    continue;
                 }
             }
+
+            int requestCount = entry.getValue() - count;
+            final ImmutableList<IRequest<? extends Stack>> list = building.getOpenRequestsOfType(worker.getId(), TypeToken.of(Stack.class));
+            for (final IRequest<? extends Stack> request : list)
+            {
+                if (ItemStackUtils.compareItemStacksIgnoreStackSize(request.getRequest().getStack(), itemStack.getItemStack()))
+                {
+                    continue resourceloop;
+                }
+            }
+
+            worker.createRequestAsync(new Stack(itemStack.getItemStack(), requestCount * ((AbstractBuildingStructureBuilder) building).getResourceBatchMultiplier(), 1));
         }
     }
 

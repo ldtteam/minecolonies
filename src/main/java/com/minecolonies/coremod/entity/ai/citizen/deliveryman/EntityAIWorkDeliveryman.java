@@ -67,7 +67,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Wait 5 seconds for the worker to decide what to do.
      */
-    private static final int PICKUP_DELAY = 2;
+    private static final int PICKUP_DELAY = 20 * 5;
 
     /**
      * The inventory's slot which is held in hand.
@@ -142,6 +142,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private IAIState pickup()
     {
+        setDelay(WALK_DELAY);
         final IRequest<? extends IDeliverymanRequestable> currentTask = job.getCurrentTask();
 
         if (!(currentTask instanceof PickupRequest))
@@ -163,7 +164,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final BlockPos pickupTarget = currentTask.getRequester().getLocation().getInDimensionLocation();
         if (pickupTarget != BlockPos.ZERO && !worker.isWorkerAtSiteWithMove(pickupTarget, MIN_DISTANCE_TO_WAREHOUSE))
         {
-            setDelay(WALK_DELAY);
             return PICKUP;
         }
 
@@ -196,6 +196,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return DUMPING;
         }
 
+        setDelay(5);
         currentSlot++;
         return PICKUP;
     }

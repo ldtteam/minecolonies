@@ -73,10 +73,13 @@ public class WorldUtil
     {
         if (world.getChunkSource() instanceof ServerChunkCache)
         {
-            final CompletableFuture<Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>>
-              future = ((ServerChunkCache) world.getChunkSource()).getChunkFuture(x, z, ChunkStatus.FULL, false);
+            final ChunkHolder holder = ((ServerChunkCache) world.getChunkSource()).chunkMap.visibleChunkMap.get(ChunkPos.asLong(x, z));
+            if (holder != null)
+            {
+                return holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().isPresent();
+            }
 
-            return future.isDone() && future.getNow(ChunkHolder.UNLOADED_CHUNK).left().isPresent();
+            return false;
         }
         return world.getChunk(x, z, ChunkStatus.FULL, false) != null;
     }
@@ -145,7 +148,7 @@ public class WorldUtil
     {
         if (world instanceof ServerLevel)
         {
-            return ((ServerLevel) world).isPositionEntityTicking(pos.getWorldPosition());
+            return isChunkLoaded(world, pos) && ((ServerLevel) world).isPositionEntityTicking(pos.getWorldPosition());
         }
         return isChunkLoaded(world, pos);
     }

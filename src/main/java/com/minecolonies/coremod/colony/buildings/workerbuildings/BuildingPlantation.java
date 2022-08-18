@@ -74,6 +74,11 @@ public class BuildingPlantation extends AbstractBuilding
     private final List<BlockPos> sand = new ArrayList<>();
 
     /**
+     * Cached list of soil positions
+     */
+    private List<PlantationSoilPosition> soilPositions = null;
+
+    /**
      * Instantiates a new plantation building.
      *
      * @param c the colony.
@@ -138,6 +143,13 @@ public class BuildingPlantation extends AbstractBuilding
         return compound;
     }
 
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        soilPositions = null;
+    }
+
     /**
      * Get a list of all the available working positions.
      *
@@ -145,7 +157,12 @@ public class BuildingPlantation extends AbstractBuilding
      */
     public List<PlantationSoilPosition> getAllSoilPositions()
     {
-        return getSoilPositions((tag, item) -> true);
+        if (soilPositions == null)
+        {
+            soilPositions = getSoilPositions((tag, item) -> true);
+        }
+
+        return soilPositions;
     }
 
     /**

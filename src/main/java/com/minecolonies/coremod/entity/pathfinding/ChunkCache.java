@@ -2,6 +2,8 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.Holder;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -67,7 +69,11 @@ public class ChunkCache implements LevelReader
             {
                 if (WorldUtil.isEntityChunkLoaded(world, new ChunkPos(k, l)))
                 {
-                    this.chunkArray[k - this.chunkX][l - this.chunkZ] = (LevelChunk) worldIn.getChunk(k, l, ChunkStatus.FULL, false);
+                    final ChunkHolder holder = ((ServerChunkCache) worldIn.getChunkSource()).chunkMap.visibleChunkMap.get(ChunkPos.asLong(k, l));
+                    if (holder != null)
+                    {
+                        this.chunkArray[k - this.chunkX][l - this.chunkZ] = holder.getFullChunkFuture().getNow(ChunkHolder.UNLOADED_LEVEL_CHUNK).left().orElse(null);
+                    }
                 }
             }
         }
