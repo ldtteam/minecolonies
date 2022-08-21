@@ -2,20 +2,29 @@ package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.StructureClientHandler;
-import com.ldtteam.structurize.helpers.Settings;
-import com.ldtteam.structurize.util.PlacementSettings;
-import com.minecolonies.api.util.BlockPosUtil;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.storage.rendering.RenderingCache;
+import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import net.minecraft.core.BlockPos;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import static com.minecolonies.api.util.constant.CitizenConstants.WAYPOINT_STRING;
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 
 public class ColonyWaypointRenderer
 {
     /**
      * Cached wayPointBlueprint.
      */
-    private static Blueprint wayPointTemplate;
+    private static BlueprintPreviewData wayPointTemplate;
+
+    /**
+     * Pending template to be loaded.
+     */
+    private static Future<Blueprint> pendingTemplate;
 
     /**
      * Renders waypoints of current colony.
@@ -24,24 +33,44 @@ public class ColonyWaypointRenderer
      */
     static void render(final WorldEventContext ctx)
     {
-        final Blueprint structure = Settings.instance.getActiveStructure();
-        if (structure != null && ctx.hasNearestColony() && Settings.instance.getStructureName() != null
-            && Settings.instance.getStructureName().contains(WAYPOINT_STRING))
+        final Blueprint structure = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
+        if (structure != null && structure.getFilePath().toString().contains(WAYPOINT_STRING) && ctx.nearestColony != null)
         {
+            if (wayPointTemplate == null && pendingTemplate == null)
+            {
+                pendingTemplate = StructurePacks.getBlueprintFuture(DEFAULT_STYLE, "infrastructure/roads/waypoint.blueprint");
+            }
+
+            if (pendingTemplate != null)
+            {
+                if (pendingTemplate.isDone())
+                {
+                    try
+                    {
+                        final BlueprintPreviewData tempPreviewData = new BlueprintPreviewData();
+                        tempPreviewData.setBlueprint(pendingTemplate.get());
+                        tempPreviewData.setPos(BlockPos.ZERO);
+                        wayPointTemplate = tempPreviewData;
+                        pendingTemplate = null;
+                    }
+                    catch (InterruptedException | ExecutionException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             if (wayPointTemplate == null)
             {
-                final PlacementSettings settings = new PlacementSettings(Settings.instance.getMirror(),
-                    BlockPosUtil.getRotationFromRotations(Settings.instance.getRotation()));
-
-                wayPointTemplate = new LoadOnlyStructureHandler(ctx.clientLevel,
-                    BlockPos.ZERO,
-                    "schematics/infrastructure/waypoint",
-                    settings,
-                    true).getBluePrint();
+                return;
             }
 
             StructureClientHandler.renderStructureAtPosList(
-                Settings.instance.getActiveStructure().hashCode() == wayPointTemplate.hashCode() ? Settings.instance.getActiveStructure()
+              RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint().hashCode() == wayPointTemplate.hashCode() ? RenderingCache.getOrCreateBlueprintPreviewData("blueprint")
                     : wayPointTemplate,
                 ctx.partialTicks,
                 new ArrayList<>(ctx.nearestColony.getWayPoints().keySet()),

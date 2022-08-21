@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
@@ -9,7 +7,6 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
-import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -66,29 +63,12 @@ public class WorkOrderBuilding extends AbstractWorkOrder
                 break;
         }
 
-        String schematicName;
         final int targetSchematicLevel = type == WorkOrderType.REMOVE ? building.getBuildingLevel() : targetLevel;
-        final BlockEntity buildingTE = building.getColony().getWorld().getBlockEntity(building.getID());
-        if (buildingTE instanceof AbstractTileEntityColonyBuilding)
-        {
-            if (!((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName().isEmpty())
-            {
-                schematicName = ((AbstractTileEntityColonyBuilding) buildingTE).getSchematicName()
-                  .replaceAll("\\d$", "") + targetSchematicLevel;
-            }
-            else
-            {
-                schematicName = building.getSchematicName() + targetSchematicLevel;
-            }
-        }
-        else
-        {
-            schematicName = building.getSchematicName() + targetSchematicLevel;
-        }
-
-        String structureName = new StructureName(Structures.SCHEMATICS_PREFIX, building.getStyle(), schematicName).toString();
+        String schemPath = building.getBlueprintPath().replace(".blueprint", "");
+        schemPath = schemPath.substring(0, schemPath.length() - 1) + targetSchematicLevel + ".blueprint";
         WorkOrderBuilding wo = new WorkOrderBuilding(
-          structureName,
+          building.getStructurePack(),
+          schemPath,
           building.getBuildingType().getTranslationKey(),
           type,
           building.getID(),
@@ -109,8 +89,9 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     }
 
     private WorkOrderBuilding(
-      String structureName,
-      String workOrderName,
+      String packName,
+      String path,
+      String translationKey,
       WorkOrderType workOrderType,
       BlockPos location,
       int rotation,
@@ -118,7 +99,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
       int currentLevel,
       int targetLevel)
     {
-        super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
+        super(packName, path, translationKey, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
     }
 
     public String getCustomName()
@@ -158,7 +139,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         String customParentName = getCustomParentName();
         String customName = getCustomName();
-        Component buildingComponent = customName.isEmpty() ? Component.translatable(getWorkOrderName()) : Component.literal(customName);
+        Component buildingComponent = customName.isEmpty() ? new TranslatableComponent(getTranslationKey()) : new TextComponent(customName);
 
         if (parentTranslationKey.isEmpty())
         {
@@ -273,11 +254,10 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         super.onCompleted(colony, citizen);
 
-        final StructureName structureName = new StructureName(this.getStructureName());
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, structureName, this.getTargetLevel()));
+                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, getStructurePath(), this.getTargetLevel()));
         }
     }
 

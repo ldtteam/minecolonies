@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.jobs;
 
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 
 /**
  * Common job object for all structure AIs.
@@ -140,9 +140,9 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                         {
                             final BlockPos tePos = getWorkOrder().getLocation().subtract(blueprint.getPrimaryBlockOffset()).offset(x, y, z);
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
-                            if (te instanceof IBlueprintDataProvider)
+                            if (te instanceof IBlueprintDataProviderBE)
                             {
-                                ((IBlueprintDataProvider) te).readSchematicDataFromNBT(compoundNBT);
+                                ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();
                             }

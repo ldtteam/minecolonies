@@ -15,7 +15,7 @@ public class WorkOrderDecorationView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        return getOrderTypePrefix(Component.translatable(getWorkOrderName()));
+        return getOrderTypePrefix(new TranslatableComponent(getTranslationKey()));
     }
 
     private Component getOrderTypePrefix(Component nameComponent)

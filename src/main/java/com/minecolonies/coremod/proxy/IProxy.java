@@ -41,20 +41,6 @@ public interface IProxy
     void showCitizenWindow(ICitizenDataView citizen);
 
     /**
-     * Opens a build tool window.
-     *
-     * @param pos coordinates.
-     */
-    void openBuildToolWindow(final BlockPos pos);
-
-    /**
-     * Opens a shape tool window.
-     *
-     * @param pos coordinates.
-     */
-    void openShapeToolWindow(final BlockPos pos);
-
-    /**
      * Open the suggestion window.
      *
      * @param pos   the position to open it at.
@@ -62,16 +48,6 @@ public interface IProxy
      * @param stack the itemStack.
      */
     void openSuggestionWindow(@NotNull BlockPos pos, @NotNull BlockState state, @NotNull final ItemStack stack);
-
-    /**
-     * Opens a build tool window for a specific structure.
-     *
-     * @param pos           the position.
-     * @param structureName the structure name.
-     * @param rotation      the rotation.
-     * @param groundstyle   one of the GROUNDSTYLE_ values.
-     */
-    void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle);
 
     /**
      * Opens a rally banner window.
@@ -100,14 +76,6 @@ public interface IProxy
       final BlockPos pos,
       final @Nullable BlockPos warehousePos,
       final @Nullable CompoundTag warehouseCompound);
-
-    /**
-     * Get the file representation of the additional schematics' folder.
-     *
-     * @return the folder for the schematic
-     */
-    @Nullable
-    File getSchematicsFolder();
 
     /**
      * Returns the recipe book from the player.

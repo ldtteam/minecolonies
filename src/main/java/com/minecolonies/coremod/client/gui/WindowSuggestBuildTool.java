@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.structurize.client.gui.WindowExtendedBuildTool;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.MessageUtils;
@@ -76,7 +77,7 @@ public class WindowSuggestBuildTool extends AbstractWindowSkeleton
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(Minecraft.getInstance().player.getInventory()), ModItems.buildTool.get()) != -1)
         {
             Network.getNetwork().sendToServer(new SwitchBuildingWithToolMessage(stack));
-            new WindowMinecoloniesBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
+            new WindowExtendedBuildTool(this.pos, GROUNDSTYLE_RELATIVE).open();
             return;
         }
         MessageUtils.format(WARNING_MISSING_BUILD_TOOL).sendTo(Minecraft.getInstance().player);

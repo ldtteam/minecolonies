@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.items;
 
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
-import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
+import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
@@ -10,6 +11,7 @@ import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowSupplies;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
-import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
 /**
@@ -34,26 +34,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE
  */
 public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
 {
-    /**
-     * The name of the structure
-     */
-    private static final String SUPPLY_CAMP_STRUCTURE_NAME = "supplycamp";
-
-    /**
-     * Offset south/west of the supply camp.
-     */
-    private static final int OFFSET_DISTANCE = 5;
-
-    /**
-     * Offset south/east of the supply camp.
-     */
-    private static final int OFFSET_LEFT = 0;
-
-    /**
-     * Offset y of the supply camp.
-     */
-    private static final int OFFSET_Y = 0;
-
     /**
      * Creates a new supplycamp deployer. The item is not stackable.
      *
@@ -109,32 +89,11 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
     {
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, SUPPLY_CAMP_STRUCTURE_NAME, 0, GROUNDSTYLE_LEGACY_CAMP);
+            new WindowSupplies(pos, "supplycamp").open();
             return;
         }
 
-        final BlockPos tempPos;
-        final int rotations;
-        switch (direction)
-        {
-            case SOUTH:
-                tempPos = pos.offset(OFFSET_LEFT, OFFSET_Y, OFFSET_DISTANCE);
-                rotations = ROTATE_THREE_TIMES;
-                break;
-            case NORTH:
-                tempPos = pos.offset(-OFFSET_LEFT, OFFSET_Y, -OFFSET_DISTANCE);
-                rotations = ROTATE_ONCE;
-                break;
-            case EAST:
-                tempPos = pos.offset(OFFSET_DISTANCE, OFFSET_Y, -OFFSET_LEFT);
-                rotations = ROTATE_TWICE;
-                break;
-            default:
-                tempPos = pos.offset(-OFFSET_DISTANCE, OFFSET_Y, OFFSET_LEFT);
-                rotations = ROTATE_0_TIMES;
-                break;
-        }
-        MineColonies.proxy.openBuildToolWindow(tempPos, SUPPLY_CAMP_STRUCTURE_NAME, rotations, GROUNDSTYLE_LEGACY_CAMP);
+        new WindowSupplies(pos, "supplycamp").open();
     }
 
     /**
@@ -157,10 +116,16 @@ public class ItemSupplyCampDeployer extends AbstractItemMinecolonies
             return true;
         }
 
-        final BlockPos zeroPos = pos.subtract(Settings.instance.getActiveStructure().getPrimaryBlockOffset());
-        final int sizeX = Settings.instance.getActiveStructure().getSizeX();
-        final int sizeZ = Settings.instance.getActiveStructure().getSizeZ();
-        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(Settings.instance.getActiveStructure(), 1) - 1;
+        final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint();
+        if (blueprint == null)
+        {
+            return false;
+        }
+
+        final BlockPos zeroPos = pos.subtract(blueprint.getPrimaryBlockOffset());
+        final int sizeX = blueprint.getSizeX();
+        final int sizeZ = blueprint.getSizeZ();
+        final int groundLevel = zeroPos.getY() + BlueprintTagUtils.getNumberOfGroundLevels(blueprint, 1) - 1;
 
         for (int z = zeroPos.getZ(); z < zeroPos.getZ() + sizeZ; z++)
         {

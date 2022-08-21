@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.colony.workorders;
 
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.util.PlacementSettings;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
-import com.minecolonies.api.util.LoadOnlyStructureHandler;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.colony.Colony;
@@ -36,7 +35,12 @@ import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
  */
 public class WorkManager implements IWorkManager
 {
-    private static final String                   TAG_WORK_ORDERS = "workOrders";
+    /**
+     * Workorder NBT tags.
+     */
+    private static final String TAG_WORK_ORDERS = "workOrders";
+    private static final String TAG_NEW_SYSTEM  = "newsystem";
+
     //  Once a second
     //private static final int    WORK_ORDER_FULFILL_INCREMENT = 1 * 20;
     /**
@@ -199,6 +203,7 @@ public class WorkManager implements IWorkManager
             list.add(orderCompound);
         }
         compound.put(TAG_WORK_ORDERS, list);
+        compound.putBoolean(TAG_NEW_SYSTEM, true);
     }
 
     /**
@@ -210,6 +215,13 @@ public class WorkManager implements IWorkManager
     public void read(@NotNull final CompoundTag compound)
     {
         workOrders.clear();
+
+        if (!compound.contains(TAG_NEW_SYSTEM))
+        {
+            // On the new system, we drop all current workorders to avoid any issues.
+            return;
+        }
+
         //  Work Orders
         final ListTag list = compound.getList(TAG_WORK_ORDERS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i)
@@ -248,7 +260,7 @@ public class WorkManager implements IWorkManager
         {
             for (final IWorkOrder or : workOrders.values())
             {
-                if (or.getLocation().equals(order.getLocation()) && or.getStructureName().equals(order.getStructureName()))
+                if (or.getLocation().equals(order.getLocation()) && or.getStructurePath().equals(order.getStructurePath()) && or.getStructurePack().equals(order.getStructurePack()))
                 {
                     Log.getLogger().warn("Avoiding adding duplicate workOrder");
                     removeWorkOrder(or);
@@ -270,17 +282,16 @@ public class WorkManager implements IWorkManager
 
         if (!readingFromNbt)
         {
-            final StructureName structureName = new StructureName(order.getStructureName());
             if (order instanceof WorkOrderBuilding)
             {
                 final int level = order.getTargetLevel();
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, level));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getStructurePath(), level));
             }
             else if (order instanceof WorkOrderDecoration)
             {
                 AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, structureName, 0));
+                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getStructurePath(), 0));
             }
         }
 
@@ -297,10 +308,11 @@ public class WorkManager implements IWorkManager
     private boolean isWorkOrderWithinColony(final IWorkOrder order)
     {
         final Level world = colony.getWorld();
+        final Blueprint blueprint = StructurePacks.getBlueprint(order.getStructurePack(), order.getStructurePath());
         final Tuple<BlockPos, BlockPos> corners
           = ColonyUtils.calculateCorners(order.getLocation(),
           world,
-          new LoadOnlyStructureHandler(world, order.getLocation(), order.getStructureName(), new PlacementSettings(), true).getBluePrint(),
+          blueprint,
           order.getRotation(),
           order.isMirrored());
 

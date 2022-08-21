@@ -83,7 +83,7 @@ public final class ColonyManager implements IColonyManager
     private boolean capLoaded = false;
 
     @Override
-    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String style)
+    public void createColony(@NotNull final Level w, final BlockPos pos, @NotNull final Player player, @NotNull final String colonyName, @NotNull final String pack)
     {
         final IColonyManagerCapability cap = w.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
         if (cap == null)
@@ -93,7 +93,7 @@ public final class ColonyManager implements IColonyManager
         }
 
         final IColony colony = cap.createColony(w, pos);
-        colony.setStyle(style);
+        colony.setStructurePack(pack);
 
         colony.setName(colonyName);
         colony.getPermissions().setOwner(player);

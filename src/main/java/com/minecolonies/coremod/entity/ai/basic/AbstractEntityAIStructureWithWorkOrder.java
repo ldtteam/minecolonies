@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
@@ -95,6 +95,11 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     public IAIState loadRequirements()
     {
+        if (loadingBlueprint)
+        {
+            return getState();
+        }
+
         if (!job.hasBlueprint() || structurePlacer == null)
         {
             loadStructure();
@@ -168,7 +173,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         final int tempRotation = workOrder.getRotation();
         final boolean removal = workOrder.getWorkOrderType() == WorkOrderType.REMOVE;
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored(), removal);
+        loadStructure(workOrder.getStructurePack(), workOrder.getStructurePath(), tempRotation, pos, workOrder.isMirrored(), removal);
         workOrder.setCleared(false);
         workOrder.setRequested(removal);
     }
@@ -344,7 +349,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
         else
         {
             // TODO: Preferably want to use the display name of the building (in order to respect custom name) however this will require an event rework so it stores text components rather than strings
-            String workOrderName = wo.getWorkOrderName();
+            String workOrderName = wo.getTranslationKey();
             sendCompletionMessage(wo);
 
             switch (wo.getWorkOrderType())
@@ -384,7 +389,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                         {
                             // Normally levels are done through the schematic data, but in case it is missing we do it manually here.
                             final BlockEntity te = worker.level.getBlockEntity(building.getID());
-                            if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProvider) te).getSchematicName().isEmpty())
+                            if (te instanceof AbstractTileEntityColonyBuilding && ((IBlueprintDataProviderBE) te).getSchematicName().isEmpty())
                             {
                                 building.onUpgradeComplete(wo.getTargetLevel());
                                 building.setBuildingLevel(wo.getTargetLevel());

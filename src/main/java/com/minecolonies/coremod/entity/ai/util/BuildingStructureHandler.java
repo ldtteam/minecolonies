@@ -2,12 +2,14 @@ package com.minecolonies.coremod.entity.ai.util;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.ToolType;
@@ -24,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.concurrent.Future;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.RUN_AWAY_SPEED;
 
@@ -72,19 +75,19 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
      *
      * @param world             the world.
      * @param worldPos          the pos it is placed at.
-     * @param structureName     the name of the structure.
+     * @param blueprintFuture   the structure.
      * @param settings          the placement settings.
      * @param entityAIStructure the AI handling this structure.
      */
     public BuildingStructureHandler(
       final Level world,
       final BlockPos worldPos,
-      final String structureName,
+      final Future<Blueprint> blueprintFuture,
       final PlacementSettings settings,
       final AbstractEntityAIStructure<J, B> entityAIStructure,
       final Stage[] stages)
     {
-        super(world, worldPos, structureName, settings);
+        super(world, worldPos, blueprintFuture, settings);
         setupBuilding();
         this.structureAI = entityAIStructure;
         this.stages = stages;
@@ -195,8 +198,8 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public void triggerSuccess(final BlockPos pos, final List<ItemStack> list, final boolean placement)
     {
-        final BlockState state = getBluePrint().getBlockState(pos);
         final BlockPos worldPos = getProgressPosInWorld(pos);
+        final BlockState state = getBluePrint().getBlockState(pos);
         if (building != null)
         {
             building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());
@@ -268,7 +271,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
     @Override
     public int getMaxBlocksCheckedPerCall()
     {
-        return 250;
+        return 10000;
     }
 
     @Override

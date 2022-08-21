@@ -1,0 +1,14 @@
+{
+  "icon": "medievaloak.png",
+  "name": "Medieval Oak",
+  "authors": [
+    "Carlansor"
+  ],
+  "desc": "Hear ye! A new castle emerges! Find a Good spot near a river and a forest and build your own medieval town! Alt townhall is a castle and regular one’s a manor, some buildings are better placed near water and mind the size of the university and library! Those usually go well placed together.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

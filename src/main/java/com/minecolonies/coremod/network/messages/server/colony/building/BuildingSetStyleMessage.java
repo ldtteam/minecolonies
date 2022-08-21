@@ -3,6 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -16,7 +17,7 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
     /**
      * The style to set.
      */
-    private String style;
+    private String structurePack;
 
     /**
      * Empty constructor used when registering the
@@ -30,24 +31,24 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
      * Creates object for the style of a building.
      *
      * @param building View of the building to read data from.
-     * @param style    style of the building.
+     * @param structurePack    style of the building.
      */
-    public BuildingSetStyleMessage(@NotNull final IBuildingView building, final String style)
+    public BuildingSetStyleMessage(@NotNull final IBuildingView building, final String structurePack)
     {
         super(building);
-        this.style = style;
+        this.structurePack = structurePack;
     }
 
     @Override
     public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-        style = buf.readUtf(32767);
+        structurePack = buf.readUtf(32767);
     }
 
     @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-        buf.writeUtf(style);
+        buf.writeUtf(structurePack);
     }
 
     @Override
@@ -58,6 +59,13 @@ public class BuildingSetStyleMessage extends AbstractBuildingServerMessage<IBuil
             return;
         }
 
-        building.setStyle(style);
+        if (building instanceof BuildingTownHall)
+        {
+            colony.setStructurePack(structurePack);
+        }
+        else
+        {
+            building.setStructurePack(structurePack);
+        }
     }
 }

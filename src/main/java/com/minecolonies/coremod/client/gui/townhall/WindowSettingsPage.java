@@ -4,11 +4,15 @@ import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.AbstractTextBuilder;
 import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.ButtonImage;
 import com.ldtteam.blockui.views.DropDownList;
+import com.ldtteam.structurize.client.gui.WindowSwitchPack;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.WindowBannerPicker;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.network.messages.server.colony.*;
+import com.minecolonies.coremod.network.messages.server.colony.building.BuildingSetStyleMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.ChatFormatting;
@@ -71,6 +75,9 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
         registerButton(BUTTON_TOGGLE_MOVE_IN, this::toggleMoveIn);
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
+        registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
+
+        findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(townHall.getColony().getStructurePack());
         registerButton("bannerPicker", this::openBannerPicker);
 
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
@@ -78,6 +85,17 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         this.initialTextureIndex = textureDropDownList.getSelectedIndex();
 
         checkFeatureUnlock();
+    }
+
+    /**
+     * Switch the structure style pack.
+     */
+    private void switchPack()
+    {
+        new WindowSwitchPack(() -> {
+            Network.getNetwork().sendToServer(new BuildingSetStyleMessage(building, StructurePacks.selectedPack.getName()));
+            return new WindowSettingsPage((BuildingTownHall.View) this.building);
+        }).open();
     }
 
     /**

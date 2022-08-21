@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.managers;
 
-import com.ldtteam.structurize.management.Structures;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.managers.interfaces.IColonyPackageManager;
 import com.minecolonies.api.colony.workorders.IWorkManager;
@@ -10,7 +9,6 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
-import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewWorkOrderMessage;
 import io.netty.buffer.Unpooled;
@@ -189,8 +187,6 @@ public class ColonyPackageManager implements IColonyPackageManager
             colony.getCitizenManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getVisitorManager().sendPackets(closeSubscribers, newSubscribers);
             colony.getBuildingManager().sendPackets(closeSubscribers, newSubscribers);
-
-            sendSchematicsPackets();
         }
 
         if (newSubscribers.isEmpty())
@@ -254,22 +250,6 @@ public class ColonyPackageManager implements IColonyPackageManager
 
             workManager.setDirty(false);
         }
-    }
-
-    @Override
-    public void sendSchematicsPackets()
-    {
-        if (Structures.isDirty() || !newSubscribers.isEmpty())
-        {
-            final Set<ServerPlayer> players = new HashSet<>();
-            if (isDirty)
-            {
-                players.addAll(closeSubscribers);
-            }
-            players.addAll(newSubscribers);
-            players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyStylesMessage(), player));
-        }
-        Structures.clearDirty();
     }
 
     @Override

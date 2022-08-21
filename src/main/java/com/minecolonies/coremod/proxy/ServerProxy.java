@@ -12,14 +12,6 @@ import java.io.File;
  */
 public class ServerProxy extends CommonProxy
 {
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        return new File(ServerLifecycleHooks.getCurrentServer().getServerDirectory()
-                          + "/" + Constants.MOD_ID);
-    }
-
     @Override
     public Level getWorld(final ResourceKey<Level> dimension)
     {

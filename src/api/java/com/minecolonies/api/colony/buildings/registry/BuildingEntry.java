@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.buildings.registry;
 
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;

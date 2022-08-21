@@ -22,8 +22,9 @@ public class WorkOrderDecoration extends AbstractWorkOrder
 {
     public static WorkOrderDecoration create(
       @NotNull final WorkOrderType type,
-      final String structureName,
-      final String workOrderName,
+      final String packName,
+      final String path,
+      final String translationKey,
       final BlockPos location,
       final int rotation,
       final boolean mirror,
@@ -44,8 +45,9 @@ public class WorkOrderDecoration extends AbstractWorkOrder
         }
 
         return new WorkOrderDecoration(
-          structureName,
-          workOrderName,
+          packName,
+          path,
+          translationKey,
           type,
           location,
           rotation,
@@ -63,10 +65,10 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     }
 
     private WorkOrderDecoration(
-      String structureName, String workOrderName, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
+      String packName, String path, final String translationKey, WorkOrderType workOrderType, BlockPos location, int rotation, boolean isMirrored, int currentLevel,
       int targetLevel)
     {
-        super(structureName, workOrderName, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
+        super(packName, path, translationKey, workOrderType, location, rotation, isMirrored, currentLevel, targetLevel);
     }
 
     /**
@@ -92,7 +94,7 @@ public class WorkOrderDecoration extends AbstractWorkOrder
     @Override
     public boolean isValid(final IColony colony)
     {
-        return super.isValid(colony) && this.getStructureName() != null;
+        return super.isValid(colony) && this.getStructurePath() != null && !this.getStructurePath().isEmpty();
     }
 
     /**

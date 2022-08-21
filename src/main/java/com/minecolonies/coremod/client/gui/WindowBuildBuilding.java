@@ -7,15 +7,12 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
-import com.ldtteam.structurize.helpers.Settings;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
+import com.ldtteam.structurize.storage.ClientFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
@@ -28,7 +25,6 @@ import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
@@ -39,14 +35,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.TriPredicate;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -245,7 +239,7 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         if (!building.getParent().equals(BlockPos.ZERO) && building.getColony().getBuilding(building.getParent()) != null)
         {
             styles = new ArrayList<>();
-            styles.add(building.getColony().getBuilding(building.getParent()).getStyle());
+            styles.add(building.getColony().getBuilding(building.getParent()).getStructurePack());
             if (!styles.isEmpty())
             {
                 stylesDropDownList.setSelectedIndex(0);
@@ -253,35 +247,18 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            if (building.getBuildingLevel() == 0)
-            {
-                styles = Structures.getStylesFor(building.getSchematicName());
-            }
-            else
-            {
-                styles = new ArrayList<>();
-                styles.add(building.getStyle());
-            }
+            styles = new ArrayList<>();
+            styles.add(building.getStructurePack());
 
             if (!styles.isEmpty())
             {
-                int newIndex = styles.indexOf(building.getStyle());
+                int newIndex = styles.indexOf(building.getStructurePack());
                 if (newIndex == -1)
                 {
                     newIndex = 0;
                 }
                 stylesDropDownList.setSelectedIndex(newIndex);
             }
-        }
-
-        final boolean enabled;
-        if (Settings.instance.isStaticSchematicMode())
-        {
-            enabled = false;
-        }
-        else
-        {
-            enabled = true;
         }
 
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).setEnabled(enabled);
@@ -302,7 +279,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
 
         final Level world = Minecraft.getInstance().level;
-        resources.clear();
 
         final IBuildingView parentBuilding = building.getColony().getBuilding(building.getParent());
         int nextLevel = building.getBuildingLevel();
@@ -311,72 +287,41 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
             nextLevel = building.getBuildingLevel() + 1;
         }
 
-        final BlockEntity tile = world.getBlockEntity(building.getID());
-        String schematicName = building.getSchematicName();
-        if (tile instanceof IBlueprintDataProvider)
-        {
-            if (!((IBlueprintDataProvider) tile).getSchematicName().isEmpty())
+        String name = building.getStructurePath().replace(".blueprint", "");
+        name = name.substring(0, name.length() - 1) + nextLevel + ".blueprint";
+        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(styles.get(stylesDropDownList.getSelectedIndex()), name), (blueprint -> {
+            resources.clear();
+            if (blueprint == null)
             {
-                schematicName = ((IBlueprintDataProvider) tile).getSchematicName().replaceAll("\\d$", "");
-            }
-        }
-
-        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, styles.get(stylesDropDownList.getSelectedIndex()),
-          schematicName + nextLevel);
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(world, building.getPosition(), sn.toString(), new PlacementSettings(), true);
-        final String md5 = Structures.getMD5(sn.toString());
-        if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))
-        {
-            if (!structure.hasBluePrint())
-            {
-                Log.getLogger().info("Template structure " + sn + " missing");
-            }
-            else
-            {
-                Log.getLogger().info("structure " + sn + " md5 error");
-            }
-
-            Log.getLogger().info("Request To Server for structure " + sn);
-            if (ServerLifecycleHooks.getCurrentServer() == null)
-            {
-                com.ldtteam.structurize.Network.getNetwork().sendToServer(new SchematicRequestMessage(sn.toString()));
+                findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
+                findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
+                findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
                 return;
             }
-            else
+
+            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
+            StructurePlacer placer = new StructurePlacer(new LoadOnlyStructureHandler(Minecraft.getInstance().level, building.getPosition(), blueprint, new PlacementSettings(), true));
+            StructurePhasePlacementResult result;
+            BlockPos progressPos = NULL_POS;
+
+            do
             {
-                Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen", new Exception());
+                result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
+
+                progressPos = result.getIteratorPos();
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    addNeededResource(stack, stack.getCount());
+                }
             }
-        }
+            while (result != null && result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
-        if (!structure.hasBluePrint())
-        {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
-            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
-            findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
-            return;
-        }
+            window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
+            updateResourceList();
 
-        structure.getBluePrint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(building.getRotation()), building.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, world);
-        StructurePlacer placer = new StructurePlacer(structure);
-        StructurePhasePlacementResult result;
-        BlockPos progressPos = NULL_POS;
+        })));
 
-        do
-        {
-            result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-              () -> placer.getIterator().increment(DONT_TOUCH_PREDICATE.and((info, pos, handler) -> false)), true);
-
-            progressPos = result.getIteratorPos();
-            for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-            {
-                addNeededResource(stack, stack.getCount());
-            }
-        }
-        while (result != null && result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
-
-
-        window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
-        updateResourceList();
     }
 
     /**

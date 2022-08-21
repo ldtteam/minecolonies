@@ -115,31 +115,7 @@ public abstract class CommonProxy implements IProxy
     }
 
     @Override
-    public void openBuildToolWindow(final BlockPos pos)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void openShapeToolWindow(final BlockPos pos)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
     public void openSuggestionWindow(@NotNull BlockPos pos, @NotNull BlockState state, @NotNull final ItemStack stack)
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-
-    @Override
-    public void openBuildToolWindow(final BlockPos pos, final String structureName, final int rotation, final int groundstyle)
     {
         /*
          * Intentionally left empty.
@@ -172,12 +148,6 @@ public abstract class CommonProxy implements IProxy
         /*
          * Intentionally left empty.
          */
-    }
-
-    @Override
-    public File getSchematicsFolder()
-    {
-        return null;
     }
 
     @NotNull
