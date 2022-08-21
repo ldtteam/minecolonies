@@ -103,7 +103,6 @@ public class BuildingEntry
             Validate.notNull(buildingProducer);
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
-            StructureName.HUTS.add(registryName.getPath());
 
             return new BuildingEntry(registryName, buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers, buildingModuleViewProducers);
         }

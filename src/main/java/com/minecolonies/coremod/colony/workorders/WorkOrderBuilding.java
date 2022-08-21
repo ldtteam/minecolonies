@@ -139,7 +139,7 @@ public class WorkOrderBuilding extends AbstractWorkOrder
     {
         String customParentName = getCustomParentName();
         String customName = getCustomName();
-        Component buildingComponent = customName.isEmpty() ? new TranslatableComponent(getTranslationKey()) : new TextComponent(customName);
+        Component buildingComponent = customName.isEmpty() ? Component.translatable(getTranslationKey()) : Component.literal(customName);
 
         if (parentTranslationKey.isEmpty())
         {

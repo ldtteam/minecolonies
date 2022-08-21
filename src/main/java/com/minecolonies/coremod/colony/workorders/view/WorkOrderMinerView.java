@@ -12,7 +12,7 @@ public class WorkOrderMinerView extends AbstractWorkOrderView
     @Override
     public Component getDisplayName()
     {
-        return new TranslatableComponent(getTranslationKey());
+        return Component.translatable(getTranslationKey());
     }
 
     @Override

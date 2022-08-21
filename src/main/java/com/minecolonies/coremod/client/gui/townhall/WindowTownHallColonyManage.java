@@ -105,7 +105,7 @@ public class WindowTownHallColonyManage extends AbstractWindowSkeleton
         else
         {
             findPaneOfTypeByID(TEXT_OWN, Text.class).setText(Component.translatable(MESSAGE_COLONY_NONE));
-            pack.setText(new TranslatableComponent(PACK_DESC, StructurePacks.selectedPack.getName()));
+            pack.setText(Component.translatable(PACK_DESC, StructurePacks.selectedPack.getName()));
 
             if (existingColony != null || !IColonyManager.getInstance().isFarEnoughFromColonies(world, pos))
             {

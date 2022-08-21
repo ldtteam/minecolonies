@@ -19,8 +19,7 @@ import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,7 +149,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             public void updateElement(final int index, final Pane rowPane)
             {
                 final ButtonImage buttonImage = rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, ButtonImage.class);
-                buttonImage.setText(new TextComponent(matchingPacks.get(index).getA()));
+                buttonImage.setText(Component.literal(matchingPacks.get(index).getA()));
                 if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() != null && RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint().equals(matchingPacks.get(index).getB()))
                 {
                     buttonImage.disable();
@@ -253,7 +252,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                 HighlightManager.addRenderBox(RENDER_BOX_CATEGORY, new HighlightManager.TimedBoxRenderData()
                   .setPos(error.getPos())
                   .setRemovalTimePoint(Minecraft.getInstance().level.getGameTime() + 120 * 20 * 60)
-                  .addText(new TranslatableComponent(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
+                  .addText(Component.translatable(PARTIAL_WARNING_SUPPLY_BUILDING_ERROR + error.getType().toString().toLowerCase()).getString())
                   .setColor(0xFF0000));
             }
         }

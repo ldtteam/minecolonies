@@ -77,7 +77,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
         registerButton(BUTTON_COLONY_SWITCH_STYLE, this::switchPack);
 
-        findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(townHall.getColony().getStructurePack());
+        findPaneOfTypeByID(BUTTON_COLONY_SWITCH_STYLE, ButtonImage.class).setText(Component.literal(townHall.getColony().getStructurePack()));
         registerButton("bannerPicker", this::openBannerPicker);
 
         colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());

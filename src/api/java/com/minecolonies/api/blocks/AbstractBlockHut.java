@@ -35,8 +35,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -382,13 +380,13 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
         final IColonyView colonyView = IColonyManager.getInstance().getClosestColonyView(level, pos);
         if (colonyView == null)
         {
-            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatable("com.minecolonies.coremod.hut.incolony").setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
         if (InventoryUtils.findFirstSlotInItemHandlerWith(new InvWrapper(player.getInventory()), this) == -1)
         {
-            requirements.add(new TranslatableComponent("com.minecolonies.coremod.hut.cost", new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
+            requirements.add(Component.translatable("com.minecolonies.coremod.hut.cost", Component.translatable("block." + Constants.MOD_ID + "." + getHutName())).setStyle((Style.EMPTY).withColor(ChatFormatting.RED)));
             return requirements;
         }
 
@@ -400,8 +398,8 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
 
         if (MinecoloniesAPIProxy.getInstance().getGlobalResearchTree().getResearchForEffect(effectId) != null)
         {
-            requirements.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
-            requirements.add(new TranslatableComponent(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
+            requirements.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_1, getName()));
+            requirements.add(Component.translatable(TranslationConstants.HUT_NEEDS_RESEARCH_TOOLTIP_2, getName()));
         }
 
         return requirements;
@@ -422,14 +420,14 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     public List<MutableComponent> getDesc()
     {
         final List<MutableComponent> desc = new ArrayList<>();
-        desc.add(new TranslatableComponent(getBuildingEntry().getTranslationKey() + ".desc"));
+        desc.add(Component.translatable(getBuildingEntry().getTranslationKey() + ".desc"));
         return desc;
     }
 
     @Override
     public Component getBlueprintDisplayName()
     {
-        return new TranslatableComponent("block." + Constants.MOD_ID + "." + getHutName());
+        return Component.translatable("block." + Constants.MOD_ID + "." + getHutName());
     }
 
     @Override

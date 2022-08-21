@@ -516,7 +516,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public Component getDisplayName()
     {
-        return new TranslatableComponent(getTranslationKey());
+        return Component.translatable(getTranslationKey());
     }
 
     /**

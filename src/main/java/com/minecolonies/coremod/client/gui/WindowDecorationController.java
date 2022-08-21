@@ -63,7 +63,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
 
-        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(new TextComponent(controller.getSchematicName()));
+        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(Component.literal(controller.getSchematicName()));
 
         final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getBlockPos());
 
@@ -80,15 +80,15 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             {
                 findPaneByID(BUTTON_BUILD).show();
 
-                buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_BUILD));
+                buttonBuild.setText(Component.translatable(ACTION_CANCEL_BUILD));
                 if (wo.get().getWorkOrderType() == WorkOrderType.REPAIR)
                 {
-                    buttonBuild.setText(new TranslatableComponent(ACTION_CANCEL_REPAIR));
+                    buttonBuild.setText(Component.translatable(ACTION_CANCEL_REPAIR));
                 }
             }
             else
             {
-                buttonBuild.setText(new TranslatableComponent(ACTION_BUILD));
+                buttonBuild.setText(Component.translatable(ACTION_BUILD));
 
                 try
                 {

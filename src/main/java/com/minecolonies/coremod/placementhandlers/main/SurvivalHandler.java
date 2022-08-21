@@ -29,7 +29,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
@@ -66,7 +65,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
     @Override
     public Component getDisplayName()
     {
-        return new TranslatableComponent("com.minecolonies.coremod.blueprint.placement");
+        return Component.translatable("com.minecolonies.coremod.blueprint.placement");
     }
 
     @Override
