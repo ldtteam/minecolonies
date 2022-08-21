@@ -60,16 +60,17 @@ project {
             }
         }
     }
-    subProjectsOrder = arrayListOf(RelativeId("UpgradeBetaRelease"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
+    subProjectsOrder = arrayListOf(RelativeId("Release"), RelativeId("UpgradeBetaRelease"), RelativeId("Beta"), RelativeId("UpgradeAlphaBeta"), RelativeId("Alpha"), RelativeId("OfficialPublications"), RelativeId("Branches"), RelativeId("PullRequests_2"))
 
-    subProject(Alpha)
+    subProject(Release)
+    subProject(UpgradeBetaRelease)
+    subProject(Beta)
     subProject(UpgradeAlphaBeta)
+    subProject(Alpha)
     subProject(OfficialPublications)
     subProject(Branches)
-    subProject(UpgradeBetaRelease)
     subProject(PullRequests_2)
 }
-
 
 object Alpha : Project({
     name = "Alpha"
@@ -135,16 +136,153 @@ object Alpha_Release : BuildType({
             successfulOnly = true
             branchFilter = ""
         }
-        commitStatusPublisher {
-            id = "BUILD_EXT_15"
-            enabled = false
-            vcsRootExtId = "${DslContext.settingsRoot.id}"
-            publisher = upsource {
-                serverUrl = "https://code-analysis.ldtteam.com"
-                projectId = "%Upsource.Project.Id%"
-                userName = "upsource"
-                password = "credentialsJSON:f19631a7-1bc1-4a66-88a0-dc2b9cd36734"
-            }
+    }
+
+    dependencies {
+        snapshot(OfficialPublications_CommonB) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
+
+object Beta : Project({
+    name = "Beta"
+    description = "Beta version builds of minecolonies"
+
+    buildType(Beta_Release)
+
+    params {
+        text("env.crowdinKey", "credentialsJSON:ce949f49-133c-4bb1-83d7-257c570d43aa", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        param("Current Minecraft Version", "main")
+        param("Default.Branch", "testing/%Current Minecraft Version%")
+        param("VCS.Branches", "+:refs/heads/testing/(*)")
+        param("env.CURSERELEASETYPE", "beta")
+        param("env.Version.Suffix", "-BETA")
+    }
+})
+
+object Beta_Release : BuildType({
+    templates(AbsoluteId("LetSDevTogether_BuildWithRelease"))
+    name = "Release"
+    description = "Releases the mod as Beta to CurseForge"
+
+    allowExternalStatus = true
+
+    params {
+        param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
+    }
+
+    vcs {
+        branchFilter = "+:*"
+    }
+
+    steps {
+        gradle {
+            name = "Compile"
+            id = "RUNNER_9"
+            tasks = "build createChangelog curseforge publish"
+            buildFile = "build.gradle"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+        }
+        stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9")
+    }
+
+    features {
+        vcsLabeling {
+            id = "BUILD_EXT_11"
+            vcsRootId = "${DslContext.settingsRoot.id}"
+            labelingPattern = "%env.Version%"
+            successfulOnly = true
+            branchFilter = ""
+        }
+    }
+
+    dependencies {
+        snapshot(OfficialPublications_CommonB) {
+            reuseBuilds = ReuseBuilds.NO
+            onDependencyFailure = FailureAction.FAIL_TO_START
+        }
+    }
+})
+
+object Release : Project({
+    name = "Release"
+    description = "Release version builds of minecolonies"
+
+    buildType(Release_Release)
+
+    params {
+        text("env.crowdinKey", "credentialsJSON:ce949f49-133c-4bb1-83d7-257c570d43aa", label = "Crowdin key", description = "The API key for crowdin to pull translations", allowEmpty = true)
+        param("Current Minecraft Version", "main")
+        param("Default.Branch", "release/%Current Minecraft Version%")
+        param("VCS.Branches", "+:refs/heads/release/(*)")
+        param("env.CURSERELEASETYPE", "release")
+        param("env.Version.Suffix", "-RELEASE")
+    }
+})
+
+object Release_Release : BuildType({
+    templates(AbsoluteId("LetSDevTogether_BuildWithRelease"))
+    name = "Release"
+    description = "Releases the mod as Release to CurseForge"
+
+    allowExternalStatus = true
+
+    params {
+        param("env.Version.Patch", "${OfficialPublications_CommonB.depParamRefs.buildNumber}")
+    }
+
+    vcs {
+        branchFilter = "+:*"
+    }
+
+    steps {
+        gradle {
+            name = "Compile"
+            id = "RUNNER_9"
+            tasks = "build createChangelog curseforge publish"
+            buildFile = "build.gradle"
+            enableStacktrace = true
+            dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
+            dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
+            dockerRunParameters = """
+                -v /opt/buildagent/gradle/caches:/home/gradle/.gradle/caches
+                -u 0
+            """.trimIndent()
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
+            param("org.jfrog.artifactory.selectedDeployableServer.publishBuildInfo", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
+            param("org.jfrog.artifactory.selectedDeployableServer.urlId", "2")
+            param("org.jfrog.artifactory.selectedDeployableServer.envVarsExcludePatterns", "*password*,*secret*")
+            param("org.jfrog.artifactory.selectedDeployableServer.resolvingRepo", "modding")
+            param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseFlag", "true")
+            param("org.jfrog.artifactory.selectedDeployableServer.targetRepo", "libraries")
+        }
+        stepsOrder = arrayListOf("RUNNER_85", "RUNNER_9")
+    }
+
+    features {
+        vcsLabeling {
+            id = "BUILD_EXT_11"
+            vcsRootId = "${DslContext.settingsRoot.id}"
+            labelingPattern = "%env.Version%"
+            successfulOnly = true
+            branchFilter = ""
         }
     }
 
@@ -204,7 +342,7 @@ object Branches_Build : BuildType({
             enableStacktrace = true
             dockerImagePlatform = GradleBuildStep.ImagePlatform.Linux
             dockerImage = "gradle:%env.GRADLE_VERSION%-%env.JDK_VERSION%"
-            dockerRunParameters = "-v /opt/share/buildsystem/gradle:/home/gradle/.gradle -u 0"
+            dockerRunParameters = "-v /opt/buildagent/buildsystem/gradle:/home/gradle/.gradle -u 0"
             param("org.jfrog.artifactory.selectedDeployableServer.deployReleaseText", "%Project.Type%")
             param("org.jfrog.artifactory.selectedDeployableServer.buildRetentionNumberOfBuilds", "300")
             param("org.jfrog.artifactory.selectedDeployableServer.defaultModuleVersionConfiguration", "GLOBAL")
