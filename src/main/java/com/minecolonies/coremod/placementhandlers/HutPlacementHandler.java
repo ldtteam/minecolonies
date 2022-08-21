@@ -66,7 +66,7 @@ public class HutPlacementHandler implements IPlacementHandler
                 {
                     if (pos.equals(centerPos))
                     {
-                        final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName() + ".blueprint"));
+                        final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
                         ((IBlueprintDataProviderBE) be).setBlueprintPath(location);
                     }
                     else if(!((IBlueprintDataProviderBE) be).getPositionedTags().getOrDefault(BlockPos.ZERO, Collections.emptyList()).contains("invisible"))
@@ -88,7 +88,7 @@ public class HutPlacementHandler implements IPlacementHandler
                         }
                         else
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath + ".blueprint");
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath);
                         }
                     }
                     ((IBlueprintDataProviderBE) be).setPackName(blueprint.getPackName());

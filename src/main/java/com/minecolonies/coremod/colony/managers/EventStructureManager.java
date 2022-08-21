@@ -19,6 +19,7 @@ import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
@@ -102,7 +103,7 @@ public class EventStructureManager implements IEventStructureManager
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
         final Path outputPath = new File(".").toPath().resolve(BLUEPRINT_FOLDER).resolve(STRUCTURE_BACKUP_FOLDER).resolve(Integer.toString(colony.getID())).resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath());
-        final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true, (short)structure.getSizeX(), (short) structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(),
+        final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint((ServerLevel) world, zeroPos, true, (short)structure.getSizeX(), (short) structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(),
           Optional.of(anchor)));
 
         StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath);
