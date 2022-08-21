@@ -62,7 +62,7 @@ public class BlueprintMapping
         foldersToHuts.put("craftsmanship/storage", Arrays.asList("deliveryman", "warehouse"));
 
         foldersToHuts.put("education", Arrays.asList("library", "school", "university"));
-        foldersToHuts.put("fundamentals", Arrays.asList("builder", "citizen", "cook", "hospital", "lumberjack", "miner", "tavern", "townhall"));
+        foldersToHuts.put("fundamentals", Arrays.asList("builder", "residence", "cook", "hospital", "lumberjack", "miner", "tavern", "townhall"));
         foldersToHuts.put("military", Arrays.asList("archery", "barracks", "barrackstower", "combatacademy", "guardtower"));
         foldersToHuts.put("mystic", Arrays.asList("enchanter", "netherworker", "mysticalsite", "graveyard"));
 
@@ -102,15 +102,15 @@ public class BlueprintMapping
         runForAlt(foldersToHuts, "medievaldarkoakalternative");
         runForAlt(foldersToHuts, "medievalsprucealternative");
         runForAlt(foldersToHuts, "fortressalternative");
+        runForAlt(foldersToHuts, "asianalternative");
 
-        pathMapping.put("asianalternative:citizen", "fundamentals/citizenalt");
-        pathMapping.put("asianalternative:guardtower", "military/guardtoweralt");
+        pathMapping.put(":home", "fundamentals/residence");
+        pathMapping.put(":citizen", "fundamentals/residence");
 
-        pathMapping.put("woodalternative:citizen", "fundamentals/citizenalt");
+        pathMapping.put("woodalternative:citizen", "fundamentals/altresidence");
         pathMapping.put("woodalternative:shepherd", "agriculture/husbandry/shepherdalt");
         pathMapping.put("woodalternative:deliveryman", "craftsmanship/storage/deliverymanalt");
         pathMapping.put("woodalternative:warehouse", "craftsmanship/storage/warehousealt");
-        pathMapping.put("stonealternative:citizen", "fundamentals/citizenalt");
 
         pathMapping.put("junglealternative:farmer", "agriculture/horticulture/farmeralt");
 
