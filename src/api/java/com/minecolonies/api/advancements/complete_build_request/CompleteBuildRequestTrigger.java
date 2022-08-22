@@ -1,7 +1,6 @@
 package com.minecolonies.api.advancements.complete_build_request;
 
 import com.google.gson.JsonObject;
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +21,7 @@ public class CompleteBuildRequestTrigger extends AbstractCriterionTrigger<Comple
      * @param structureName the structure that was just completed
      * @param level the level the structure got upgraded to, or 0
      */
-    public void trigger(final ServerPlayer player, final StructureName structureName, final int level)
+    public void trigger(final ServerPlayer player, final String structureName, final int level)
     {
         final CompleteBuildRequestListeners listeners = this.getListeners(player.getAdvancements());
         if (listeners != null)

@@ -7,6 +7,8 @@ import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.BlueprintPositionInfo;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -53,10 +55,8 @@ import net.minecraftforge.common.util.TriPredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -88,6 +88,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
      * If the structure state is currently reached limit rather than block placement.
      */
     protected boolean limitReached = false;
+
+    /**
+     * We're waiting for the blueprint to finish loading.
+     */
+    protected boolean loadingBlueprint = false;
 
     /**
      * Different item check result possibilities.
@@ -556,62 +561,70 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
     /**
      * Loads the structure given the name, rotation and position.
      *
-     * @param name        the name to retrieve  it.
+     * @param packName the pack name.
+     * @param blueprintPath the path of the blueprint.
      * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
      * @param isMirrored  is the structure mirroed?
      * @param removal     if removal step.
      */
-    public void loadStructure(@NotNull final String name, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
+    public void loadStructure(@NotNull final String packName, final String blueprintPath, final int rotateTimes, final BlockPos position, final boolean isMirrored, final boolean removal)
     {
-        final BuildingStructureHandler<J, B> structure;
-        IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
-        final BlockEntity entity = world.getBlockEntity(position);
+        final Future<Blueprint> blueprintFuture = StructurePacks.getBlueprintFuture(packName, blueprintPath);
+        this.loadingBlueprint = true;
 
-        if (removal)
-        {
-            structure = new BuildingStructureHandler<>(world,
-              position,
-              name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
-            building.setTotalStages(2);
-        }
-        else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
-                   (entity instanceof TileEntityDecorationController && ((TileEntityDecorationController) entity).getTier() > 0))
-        {
-            structure = new BuildingStructureHandler<>(world,
-              position,
-              name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-            building.setTotalStages(5);
-        }
-        else
-        {
-            structure = new BuildingStructureHandler<>(world,
-              position,
-              name,
-              new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
-              this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
-            building.setTotalStages(6);
-        }
+        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(blueprintFuture, world, (blueprint -> {
+            if (blueprint == null)
+            {
+                handleSpecificCancelActions();
+                Log.getLogger().warn("Couldn't find structure with name: " + blueprintPath + " in: " + packName + ". Aborting loading procedure");
+                this.loadingBlueprint = false;
+                return;
+            }
 
-        if (!structure.hasBluePrint())
-        {
-            handleSpecificCancelActions();
-            Log.getLogger().warn("Couldn't find structure with name: " + name + " aborting loading procedure");
-            return;
-        }
-        final MutableComponent jobName = Component.translatable(worker.getCitizenData().getJob().getJobRegistryEntry().getTranslationKey().toLowerCase());
-        job.setBlueprint(structure.getBluePrint());
-        job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
-        setStructurePlacer(structure);
+            final BuildingStructureHandler<J, B> structure;
+            IBuilding colonyBuilding = worker.getCitizenColonyHandler().getColony().getBuildingManager().getBuilding(position);
+            final BlockEntity entity = world.getBlockEntity(position);
 
-        if (getProgressPos() != null)
-        {
-            structure.setStage(getProgressPos().getB());
-        }
+            if (removal)
+            {
+                structure = new BuildingStructureHandler<>(world,
+                  position,
+                  blueprint,
+                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                  this, new BuildingStructureHandler.Stage[] {REMOVE_WATER, REMOVE});
+                building.setTotalStages(2);
+            }
+            else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
+                       (entity instanceof TileEntityDecorationController && Utils.getBlueprintLevel(((TileEntityDecorationController) entity).getSchematicName()) != -1))
+            {
+                structure = new BuildingStructureHandler<>(world,
+                  position,
+                  blueprint,
+                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                  this, new BuildingStructureHandler.Stage[] {BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                building.setTotalStages(5);
+            }
+            else
+            {
+                structure = new BuildingStructureHandler<>(world,
+                  position,
+                  blueprint,
+                  new PlacementSettings(isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(rotateTimes)),
+                  this, new BuildingStructureHandler.Stage[] {CLEAR, BUILD_SOLID, CLEAR_WATER, CLEAR_NON_SOLIDS, DECORATE, SPAWN});
+                building.setTotalStages(6);
+            }
+
+            job.setBlueprint(blueprint);
+            job.getBlueprint().rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotateTimes), isMirrored ? Mirror.FRONT_BACK : Mirror.NONE, world);
+            setStructurePlacer(structure);
+
+            if (getProgressPos() != null)
+            {
+                structure.setStage(getProgressPos().getB());
+            }
+            this.loadingBlueprint = false;
+        })));
     }
 
     /**

@@ -48,5 +48,11 @@
         </view>
     </dropdown>
 
-
+    <label label="$(com.minecolonies.coremod.gui.townhall.pickcolonystyle)" pos="276 140" size="148 11" textalign="MIDDLE" color="black"/>
+    <buttonimage id="colonyStylePicker"
+              size="86 17"
+              pos="306 154"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+              disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
+              textcolor="black"/>
 </window>

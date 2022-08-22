@@ -53,7 +53,7 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         Button buttonInfo = findPaneOfTypeByID(BUTTON_INFO, Button.class);
         if (buttonInfo != null)
         {
-            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getSchematicName() + ".0"));
+            buttonInfo.setVisible(I18n.exists(PARTIAL_INFO_TEXT + building.getBuildingType().getTranslationKey().replace("com.minecolonies.building.", "") + ".0"));
         }
     }
 

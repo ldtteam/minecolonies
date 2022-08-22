@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
@@ -18,7 +17,6 @@ import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderDecorationView;
 import com.minecolonies.coremod.colony.workorders.view.WorkOrderMinerView;
-import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
@@ -48,8 +46,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private static final String TAG_TH_PRIORITY         = "priority";
     private static final String TAG_CLAIMED_BY          = "claimedBy";
     private static final String TAG_CLAIMED_BY_BUILDING = "claimedByBuilding";
-    private static final String TAG_STRUCTURE_NAME      = "structureName";
-    private static final String TAG_WO_NAME             = "workOrderName";
+    private static final String TAG_STRUCTURE_PACK      = "structurePack";
+    private static final String TAG_STRUCTURE_PATH      = "structurePath";
+    private static final String TAG_TRANSLATION_KEY     = "translationKey";
     private static final String TAG_WO_TYPE             = "workOrderType";
     private static final String TAG_LOCATION            = "location";
     private static final String TAG_ROTATION            = "rotation";
@@ -60,15 +59,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     private static final String TAG_ITERATOR            = "iterator";
     private static final String TAG_IS_CLEARED          = "cleared";
     private static final String TAG_IS_REQUESTED        = "requested";
-
-    /**
-     * Old NBT tags for storage
-     */
-    private static final String TAG_BUILDING_OLD            = "building";
-    private static final String TAG_BUILDING_ROTATION_OLD   = "buildingRotation";
-    private static final String TAG_IS_MIRRORED_OLD         = "mirrored";
-    private static final String TAG_AMOUNT_OF_RESOURCES_OLD = "resQuantity";
-    private static final String TAG_UPGRADE_LEVEL_OLD       = "upgradeLevel";
 
     /**
      * Bimap of workOrder from string to class.
@@ -84,6 +74,11 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         addMapping("decoration", WorkOrderDecoration.class, WorkOrderDecorationView.class);
         addMapping("miner", WorkOrderMiner.class, WorkOrderMinerView.class);
     }
+
+    /**
+     * Translation key.
+     */
+    private String translationKey;
 
     /**
      * The ID of the work order.
@@ -103,12 +98,12 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     /**
      * The structurize schematic name.
      */
-    private String structureName;
+    private String packName;
 
     /**
      * The work order name.
      */
-    private String workOrderName;
+    private String path;
 
     /**
      * The work order type.
@@ -307,8 +302,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     protected AbstractWorkOrder(
-      String structureName,
-      String workOrderName,
+      String packName,
+      String path,
+      String translationKey,
       WorkOrderType workOrderType,
       BlockPos location,
       int rotation,
@@ -317,8 +313,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
       int targetLevel)
     {
         this();
-        this.structureName = structureName;
-        this.workOrderName = workOrderName;
+        this.packName = packName;
+        this.path = path;
+        this.translationKey = translationKey;
         this.workOrderType = workOrderType;
         this.location = location;
         this.rotation = rotation;
@@ -394,15 +391,21 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     }
 
     @Override
-    public final String getStructureName()
+    public final String getStructurePath()
     {
-        return structureName;
+        return path;
     }
 
     @Override
-    public final String getWorkOrderName()
+    public String getStructurePack()
     {
-        return workOrderName;
+        return packName;
+    }
+
+    @Override
+    public final String getTranslationKey()
+    {
+        return translationKey;
     }
 
     @Override
@@ -513,7 +516,7 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public Component getDisplayName()
     {
-        return Component.translatable(workOrderName);
+        return Component.translatable(getTranslationKey());
     }
 
     /**
@@ -556,9 +559,6 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     @Override
     public void read(@NotNull final CompoundTag compound, final IWorkManager manager)
     {
-        // TODO: In 1.19 remove this method call as this is purely for backwards compatibility with old class mappings
-        migrateOldNbt(compound, manager);
-
         id = compound.getInt(TAG_ID);
         if (compound.contains(TAG_TH_PRIORITY))
         {
@@ -581,8 +581,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             claimedBy = BlockPosUtil.read(compound, TAG_CLAIMED_BY_BUILDING);
         }
-        structureName = compound.getString(TAG_STRUCTURE_NAME);
-        workOrderName = compound.getString(TAG_WO_NAME);
+        packName = compound.getString(TAG_STRUCTURE_PACK);
+        path = compound.getString(TAG_STRUCTURE_PATH);
+        translationKey = compound.getString(TAG_TRANSLATION_KEY);
         workOrderType = WorkOrderType.values()[compound.getInt(TAG_WO_TYPE)];
         location = BlockPosUtil.read(compound, TAG_LOCATION);
         rotation = compound.getInt(TAG_ROTATION);
@@ -610,8 +611,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         {
             BlockPosUtil.write(compound, TAG_CLAIMED_BY_BUILDING, claimedBy);
         }
-        compound.putString(TAG_STRUCTURE_NAME, structureName);
-        compound.putString(TAG_WO_NAME, workOrderName);
+        compound.putString(TAG_STRUCTURE_PACK, packName);
+        compound.putString(TAG_STRUCTURE_PATH, path);
+        compound.putString(TAG_TRANSLATION_KEY, translationKey);
         compound.putInt(TAG_WO_TYPE, workOrderType.ordinal());
         BlockPosUtil.write(compound, TAG_LOCATION, location);
         compound.putInt(TAG_ROTATION, rotation);
@@ -636,8 +638,9 @@ public abstract class AbstractWorkOrder implements IWorkOrder
         buf.writeInt(id);
         buf.writeInt(priority);
         buf.writeBlockPos(claimedBy == null ? BlockPos.ZERO : claimedBy);
-        buf.writeUtf(structureName);
-        buf.writeUtf(workOrderName);
+        buf.writeUtf(packName);
+        buf.writeUtf(path);
+        buf.writeUtf(translationKey);
         buf.writeInt(workOrderType.ordinal());
         buf.writeBlockPos(location);
         buf.writeInt(rotation);
@@ -740,92 +743,5 @@ public abstract class AbstractWorkOrder implements IWorkOrder
     public boolean tooFarFromAnyBuilder(final IColony colony, final int level)
     {
         return false;
-    }
-
-    // TODO: In 1.19 remove this method as this is purely for backwards compatibility with old class mappings
-    private static void migrateOldNbt(final CompoundTag compound, IWorkManager manager)
-    {
-        // When the old TAG_BUILDING tag no longer exists in the compound NBT, it means the work order has already migrated
-        if (!compound.contains(TAG_BUILDING_OLD) && !compound.getString(TAG_TYPE).equals("removal"))
-        {
-            return;
-        }
-
-        // Migrate tags
-        // Re-write the location
-        BlockPosUtil.write(compound, TAG_LOCATION, BlockPosUtil.read(compound, TAG_BUILDING_OLD));
-        // Re-write the rotation
-        compound.putInt(TAG_ROTATION, compound.getInt(TAG_BUILDING_ROTATION_OLD));
-        // Re-write the mirrored state
-        compound.putBoolean(TAG_ROTATION, compound.getBoolean(TAG_BUILDING_ROTATION_OLD));
-        // Re-write the mirrored state
-        compound.putInt(TAG_AMOUNT_OF_RESOURCES, compound.getInt(TAG_AMOUNT_OF_RESOURCES_OLD));
-
-        // Re-write the current and upgrade level
-        int targetLevel = compound.getInt(TAG_UPGRADE_LEVEL_OLD);
-
-        // If the tag is removal it's indicating an old removal request
-        if (compound.getString(TAG_TYPE).equals("removal"))
-        {
-            compound.putString(TAG_TYPE, "building");
-            compound.putInt(TAG_WO_TYPE, WorkOrderType.REMOVE.ordinal());
-            compound.putInt(TAG_CURRENT_LEVEL, targetLevel);
-            compound.putInt(TAG_TARGET_LEVEL, 0);
-        }
-        else if (targetLevel == 1)
-        {
-            compound.putInt(TAG_WO_TYPE, WorkOrderType.BUILD.ordinal());
-            compound.putInt(TAG_CURRENT_LEVEL, 0);
-            compound.putInt(TAG_TARGET_LEVEL, targetLevel);
-        }
-        else if (targetLevel > 1)
-        {
-            IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
-            BlockEntity entity = manager.getColony().getWorld().getBlockEntity(BlockPosUtil.read(compound, TAG_LOCATION));
-
-            if (building != null)
-            {
-                if (building.getBuildingLevel() == targetLevel)
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
-                }
-                else
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
-                }
-            }
-            else if (entity instanceof TileEntityDecorationController)
-            {
-                TileEntityDecorationController dEntity = (TileEntityDecorationController) entity;
-                if (dEntity.getTier() == targetLevel)
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.REPAIR.ordinal());
-                }
-                else
-                {
-                    compound.putInt(TAG_WO_TYPE, WorkOrderType.UPGRADE.ordinal());
-                }
-            }
-            compound.putInt(TAG_TARGET_LEVEL, targetLevel);
-            compound.putInt(TAG_CURRENT_LEVEL, building.getBuildingLevel());
-        }
-
-        // Remove old NBT
-        compound.remove(TAG_BUILDING_OLD);
-        compound.remove(TAG_BUILDING_ROTATION_OLD);
-        compound.remove(TAG_IS_MIRRORED_OLD);
-        compound.remove(TAG_AMOUNT_OF_RESOURCES_OLD);
-        compound.remove(TAG_UPGRADE_LEVEL_OLD);
-
-        // Building specific info
-        IBuilding building = manager.getColony().getBuildingManager().getBuilding(BlockPosUtil.read(compound, TAG_LOCATION));
-        if (building != null)
-        {
-            final WorkOrderBuilding test = new WorkOrderBuilding();
-            test.setCustomName(building);
-            compound.putString("customName", test.getCustomName());
-            compound.putString("customParentName", test.getCustomParentName());
-            compound.putString("parentTranslationKey", test.getParentTranslationKey());
-        }
     }
 }

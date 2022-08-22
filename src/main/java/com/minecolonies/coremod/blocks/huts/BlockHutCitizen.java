@@ -28,4 +28,10 @@ public class BlockHutCitizen extends AbstractBlockHut<BlockHutCitizen>
     {
         return ModBuildings.home.get();
     }
+
+    @Override
+    public String getBlueprintName()
+    {
+        return "citizen";
+    }
 }

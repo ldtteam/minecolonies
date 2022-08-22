@@ -1,0 +1,14 @@
+{
+  "icon": "fortress.png",
+  "name": "Fortress",
+  "authors": [
+    "Aravan"
+  ],
+  "desc": "Every Monarch dreams of having the perfect capital city, where everyone works hard and everything is clean and organized. No pesky holes to fall into, no random heaps of dirt to detour around.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

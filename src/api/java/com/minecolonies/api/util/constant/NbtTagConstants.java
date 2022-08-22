@@ -148,6 +148,16 @@ public final class NbtTagConstants
     public static final String TAG_STYLE = "style";
 
     /**
+     * The tag to store the pack of the building.
+     */
+    public static final String TAG_PACK = "pack";
+
+    /**
+     * The tag to store the path of the building blueprint.
+     */
+    public static final String TAG_PATH = "path";
+
+    /**
      * The tag to store the texture style of the colonists.
      */
     public static final String TAG_COL_TEXT = "textstyle";

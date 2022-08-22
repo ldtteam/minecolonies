@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.registry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.registry.IBuildingRegistry;
@@ -52,9 +53,12 @@ public class BuildingDataManager implements IBuildingDataManager
     public IBuilding createFrom(final IColony colony, final BlockPos position, final ResourceLocation buildingName)
     {
         final BuildingEntry entry = IBuildingRegistry.getInstance().getValue(buildingName);
-
         if (entry == null)
         {
+            if (buildingName.getPath().equals("home"))
+            {
+                return ModBuildings.home.get().produceBuilding(position, colony);
+            }
             Log.getLogger().error(String.format("Unknown building type '%s'.", buildingName), new Exception());
             return null;
         }

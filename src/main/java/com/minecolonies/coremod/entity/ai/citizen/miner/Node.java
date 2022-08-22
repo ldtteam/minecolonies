@@ -388,22 +388,22 @@ public class Node
     public enum NodeType
     {
         //Main shaft
-        SHAFT("/miner/minermainshaft"),
+        SHAFT("infrastructure/mineshafts/minermainshaft"),
         //Node on the back of the ladder (Don't mine the ladder)
         LADDER_BACK(""),
         //Simple straight tunnel.
-        TUNNEL("/miner/minerx2top"),
+        TUNNEL("infrastructure/mineshafts/minerx2top"),
         //Crossroad structure
-        CROSSROAD("/miner/minerx4"),
+        CROSSROAD("infrastructure/mineshafts/minerx4"),
         //Bending tunnel
-        BEND_RIGHT("/miner/minerx2right"),
+        BEND_RIGHT("infrastructure/mineshafts/minerx2right"),
         //New node, undefined
         UNDEFINED(""),
-        BEND_LEFT("/miner/minerx2left"),
+        BEND_LEFT("infrastructure/mineshafts/minerx2left"),
         // Three way cross
-        CROSS_THREE_LEFT_RIGHT("/miner/minerx3leftright"),
-        CROSS_THREE_TOP_LEFT("/miner/minerx3topleft"),
-        CROSS_THREE_TOP_RIGHT("/miner/minerx3topright");
+        CROSS_THREE_LEFT_RIGHT("infrastructure/mineshafts/minerx3leftright"),
+        CROSS_THREE_TOP_LEFT("infrastructure/mineshafts/minerx3topleft"),
+        CROSS_THREE_TOP_RIGHT("infrastructure/mineshafts/minerx3topright");
 
         /**
          * List of all valid types.

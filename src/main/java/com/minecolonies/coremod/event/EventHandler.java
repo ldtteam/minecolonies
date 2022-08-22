@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.event;
 
-import com.ldtteam.structurize.helpers.Settings;
 import com.ldtteam.structurize.items.ModItems;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.interfaces.IRSComponentBlock;
@@ -568,61 +567,6 @@ public class EventHandler
                 }
                 return;
             }
-        }
-
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get())
-        {
-            if (event.getLevel().isClientSide())
-            {
-                if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
-                {
-                    final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getLevel(), event.getPos().relative(event.getFace()));
-                    if (view != null && Settings.instance.getStyle().isEmpty())
-                    {
-                        Settings.instance.setStyle(view.getStyle());
-                    }
-                    MineColonies.proxy.openBuildToolWindow(event.getPos().relative(event.getFace()));
-                }
-            }
-            event.setCanceled(true);
-        }
-
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.shapeTool.get())
-        {
-            if (event.getLevel().isClientSide())
-            {
-                if (event.getUseBlock() == Event.Result.DEFAULT && event.getFace() != null)
-                {
-                    MineColonies.proxy.openShapeToolWindow(event.getPos().relative(event.getFace()));
-                }
-            }
-            event.setCanceled(true);
-        }
-    }
-
-    /**
-     * Event when a player right-clicks with a build tool.
-     *
-     * @param event {@link PlayerInteractEvent.RightClickItem}
-     */
-    @SubscribeEvent
-    public static void onPlayerInteract(@NotNull final PlayerInteractEvent.RightClickItem event)
-    {
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.buildTool.get() && event.getLevel().isClientSide)
-        {
-            final IColonyView view = IColonyManager.getInstance().getClosestColonyView(event.getLevel(), event.getPos());
-            if (view != null && Settings.instance.getStyle().isEmpty())
-            {
-                Settings.instance.setStyle(view.getStyle());
-            }
-            MineColonies.proxy.openBuildToolWindow(null);
-            event.setCanceled(true);
-        }
-
-        if (!event.isCanceled() && event.getItemStack().getItem() == ModItems.shapeTool.get() && event.getLevel().isClientSide)
-        {
-            MineColonies.proxy.openShapeToolWindow(null);
-            event.setCanceled(true);
         }
     }
 

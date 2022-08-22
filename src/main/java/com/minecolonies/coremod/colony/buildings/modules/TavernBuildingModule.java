@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.modules;
 
 import com.ldtteam.blockui.views.BOWindow;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.stat.IStat;
@@ -371,7 +371,7 @@ public class TavernBuildingModule extends AbstractBuildingModule implements IDef
             return;
         }
 
-        final IBlueprintDataProvider te = building.getTileEntity();
+        final IBlueprintDataProviderBE te = building.getTileEntity();
         if (te != null)
         {
             initTags = true;

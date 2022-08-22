@@ -1,0 +1,14 @@
+{
+  "icon": "birch.png",
+  "name": "Urban Birch",
+  "authors": [
+    "Raycoms", "Aravan", "Cugo"
+  ],
+  "desc": "Start your colony in a beautiful birch forest with this modern style and live elegantly among your people.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

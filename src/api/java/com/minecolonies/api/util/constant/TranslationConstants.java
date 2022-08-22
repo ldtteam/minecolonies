@@ -607,7 +607,8 @@ public final class TranslationConstants
     public static final String WARNING_CRUSHER_DAILY_LIMIT                                          = "com.minecolonies.coremod.crusher.toomuch";
     @NonNls
     public static final String MESSAGE_RESEARCH_STARTED                                             = "com.minecolonies.coremod.research.started";
-
+    @NonNls
+    public static final String PACK_DESC                                                            = "com.minecolonies.coremod.gui.colony.packdesc";
     //<editor-fold desc="Partial keys">
 
     @NonNls
@@ -728,6 +729,13 @@ public final class TranslationConstants
     public static final String PERMISSION_DENIED   = "com.minecolonies.coremod.permission.no";
     @NonNls
     public static final String PERMISSION_OPEN_HUT = "tile.blockhut.messagenopermission";
+
+    //</editor-fold>
+
+    //<editor-fold desc="Structure handling related keys">
+
+    @NonNls
+    public static final String NO_CUSTOM_BUILDINGS = "com.minecolonies.coremod.structures.nocustomhuts";
 
     //</editor-fold>
 

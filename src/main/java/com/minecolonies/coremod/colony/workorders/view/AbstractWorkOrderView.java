@@ -30,12 +30,12 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
     /**
      * Its description.
      */
-    private String structureName;
+    private String packName;
 
     /**
      * The name of the work order.
      */
-    private String workOrderName;
+    private String structurePath;
 
     /**
      * The type (defined by an enum).
@@ -87,6 +87,11 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      */
     private boolean requested;
 
+    /**
+     * Translation key.
+     */
+    private String translationKey;
+
     public AbstractWorkOrderView()
     {
     }
@@ -125,14 +130,21 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
      * @return the value String.
      */
     @Override
-    public String getStructureName()
+    public String getPackName()
     {
-        return structureName.replaceAll("schematics/(?:decorations/)?", "");
+        return packName.replaceAll("schematics/(?:decorations/)?", "");
     }
 
-    public String getWorkOrderName()
+    @Override
+    public String getStructurePath()
     {
-        return workOrderName;
+        return structurePath;
+    }
+
+    @Override
+    public final String getTranslationKey()
+    {
+        return translationKey;
     }
 
     public WorkOrderType getWorkOrderType()
@@ -196,8 +208,9 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         id = buf.readInt();
         priority = buf.readInt();
         claimedBy = buf.readBlockPos();
-        structureName = buf.readUtf(32767);
-        workOrderName = buf.readUtf(32767);
+        packName = buf.readUtf(32767);
+        structurePath = buf.readUtf(32767);
+        translationKey = buf.readUtf(32767);
         workOrderType = WorkOrderType.values()[buf.readInt()];
         location = buf.readBlockPos();
         rotation = buf.readInt();

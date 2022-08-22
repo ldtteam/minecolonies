@@ -12,10 +12,16 @@
     <text id="owncolony" size="150 35" pos="25 60" color="black"/>
     <text id="creationpossible" size="150 35" pos="25 95" color="black"/>
 
-    <buttonimage id="delete" size="129 17" pos="25 150" textcolor="black" enabled="false"
+    <buttonimage id="delete" size="129 17" pos="25 150" textcolor="black" enabled="false" visible="false"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
                  disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
                  label="$(com.minecolonies.coremod.gui.colony.delete)"/>
+
+    <text id="pack" size="150 35" pos="25 128" color="black"/>
+    <buttonimage id="switch" size="129 17" pos="25 150" textcolor="black" enabled="true"
+                 source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"
+                 disabled="minecolonies:textures/gui/builderhut/builder_button_medium_large_disabled.png" disabledsize="129 17"
+                 label="$(structurize.gui.buildtool.switchpack)"/>
 
     <buttonimage id="create" size="129 17" pos="25 180" textcolor="black" enabled="false"
                  source="minecolonies:textures/gui/builderhut/builder_button_medium_large.png"

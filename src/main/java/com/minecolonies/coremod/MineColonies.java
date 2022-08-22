@@ -1,7 +1,7 @@
 package com.minecolonies.coremod;
 
+import com.ldtteam.structurize.storage.SurvivalBlueprintHandlers;
 import com.ldtteam.structurize.util.LanguageHandler;
-import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.IChunkmanagerCapability;
 import com.minecolonies.api.colony.IColonyTagCapability;
@@ -22,6 +22,7 @@ import com.minecolonies.coremod.colony.requestsystem.init.StandardFactoryControl
 import com.minecolonies.coremod.entity.mobs.EntityMercenary;
 import com.minecolonies.coremod.event.*;
 import com.minecolonies.coremod.placementhandlers.PlacementHandlerInitializer;
+import com.minecolonies.coremod.placementhandlers.main.SurvivalHandler;
 import com.minecolonies.coremod.proxy.ClientProxy;
 import com.minecolonies.coremod.proxy.CommonProxy;
 import com.minecolonies.coremod.proxy.IProxy;
@@ -118,6 +119,8 @@ public class MineColonies
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MineColoniesStructures.DEFERRED_REGISTRY_STRUCTURE.register(modEventBus);
+
+        SurvivalBlueprintHandlers.registerHandler(new SurvivalHandler());
     }
 
     @SubscribeEvent
@@ -141,8 +144,6 @@ public class MineColonies
     @SubscribeEvent
     public static void preInit(@NotNull final FMLCommonSetupEvent event)
     {
-        StructureLoadingUtils.addOriginMod(Constants.MOD_ID);
-
         Network.getNetwork().registerCommonMessages();
 
         AdvancementTriggers.preInit();

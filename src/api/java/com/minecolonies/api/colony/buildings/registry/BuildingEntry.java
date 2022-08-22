@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.buildings.registry;
 
-import com.ldtteam.structurize.management.StructureName;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
@@ -104,7 +103,6 @@ public class BuildingEntry
             Validate.notNull(buildingProducer);
             Validate.notNull(buildingViewProducer);
             Validate.notNull(registryName);
-            StructureName.HUTS.add(registryName.getPath());
 
             return new BuildingEntry(registryName, buildingBlock, buildingProducer, buildingViewProducer, buildingModuleProducers, buildingModuleViewProducers);
         }

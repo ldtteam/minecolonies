@@ -3,14 +3,15 @@ package com.minecolonies.coremod.items;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintTagUtils;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
-import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.creativetab.ModCreativeTabs;
+import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.client.gui.WindowSupplies;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.Item;
@@ -23,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
-import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.CANT_PLACE_COLONY_IN_OTHER_DIM;
 
 import net.minecraft.core.Direction;
@@ -128,34 +127,14 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                               ? SUPPLY_SHIP_STRUCTURE_NAME_NETHER
                               : SUPPLY_SHIP_STRUCTURE_NAME;
 
+
         if (pos == null)
         {
-            MineColonies.proxy.openBuildToolWindow(null, name, 0, GROUNDSTYLE_LEGACY_SHIP);
+            new WindowSupplies(pos, name).open();
             return;
         }
 
-        final BlockPos tempPos;
-        final int rotations;
-        switch (direction)
-        {
-            case SOUTH:
-                tempPos = pos.offset(OFFSET_LEFT, OFFSET_Y, OFFSET_DISTANCE);
-                rotations = ROTATE_THREE_TIMES;
-                break;
-            case NORTH:
-                tempPos = pos.offset(-OFFSET_LEFT, OFFSET_Y, -OFFSET_DISTANCE);
-                rotations = ROTATE_ONCE;
-                break;
-            case EAST:
-                tempPos = pos.offset(OFFSET_DISTANCE, OFFSET_Y, -OFFSET_LEFT);
-                rotations = ROTATE_TWICE;
-                break;
-            default:
-                tempPos = pos.offset(-OFFSET_DISTANCE, OFFSET_Y, OFFSET_LEFT);
-                rotations = ROTATE_0_TIMES;
-                break;
-        }
-        MineColonies.proxy.openBuildToolWindow(tempPos, name, rotations, GROUNDSTYLE_LEGACY_SHIP);
+        new WindowSupplies(pos, name).open();
     }
 
     /**
@@ -215,7 +194,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static void checkFluidAndNotInColony(final Level world, final BlockPos pos, @NotNull final List<PlacementError> placementErrorList, final Player placer)
     {
         final boolean isOverworld = WorldUtil.isOverworldType(world);
-        final boolean isWater = BlockUtils.isWater(world.getBlockState(pos));
+        final boolean isWater = SurfaceType.isWater(world, pos);
         final boolean notInAnyColony = hasPlacePermission(world, pos, placer);
         if (!isWater && isOverworld)
         {

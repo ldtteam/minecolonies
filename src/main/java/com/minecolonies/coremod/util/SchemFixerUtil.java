@@ -4,7 +4,6 @@ import com.google.common.io.Files;
 import com.ldtteam.structurize.api.util.BlockPosUtil;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.blueprints.v1.BlueprintUtil;
-import com.ldtteam.structurize.util.StructureLoadingUtils;
 import com.minecolonies.api.util.Log;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -12,13 +11,12 @@ import net.minecraft.nbt.NbtIo;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.*;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.*;
 
 /**
  * Util for modifying schematics
@@ -79,11 +77,7 @@ public class SchemFixerUtil
                 }
                 try
                 {
-                    FileInputStream inputStream = new FileInputStream(blueprintFile);
-                    byte[] data = StructureLoadingUtils.getStreamAsByteArray(inputStream);
-                    inputStream.close();
-                    CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(data));
-
+                    CompoundTag compoundNBT = NbtIo.readCompressed(new ByteArrayInputStream(java.nio.file.Files.readAllBytes(blueprintFile.toPath())));
                     final Blueprint blueprint = BlueprintUtil.readBlueprintFromNBT(compoundNBT);
                     if (fixSchematicNameAndCorners(blueprint))
                     {

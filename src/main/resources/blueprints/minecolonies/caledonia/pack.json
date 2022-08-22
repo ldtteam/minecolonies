@@ -1,0 +1,14 @@
+{
+  "icon": "caledonia.png",
+  "name": "Caledonia",
+  "authors": [
+    "Thaylar"
+  ],
+  "desc": "This is a placeholder until Thaylar tells me what to put here.",
+  "mods": [
+  "structurize",
+  "minecolonies"
+  ],
+  "version": "1",
+  "pack-format": "1"
+}

@@ -19,7 +19,7 @@ public interface IWorkOrderView
      *
      * @return the structure name.
      */
-    String getStructureName();
+    String getPackName();
 
     /**
      * Priority getter.
@@ -48,6 +48,18 @@ public interface IWorkOrderView
      * @param position the pos of the claiming worker.
      */
     void setClaimedBy(BlockPos position);
+
+    /**
+     * Get the path for querying the structure.
+     * @return the path.
+     */
+    String getStructurePath();
+
+    /**
+     * Get the display string of the structure.
+     * @return the file name.
+     */
+    String getTranslationKey();
 
     /**
      * Type getter.

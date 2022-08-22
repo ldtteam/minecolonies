@@ -7,37 +7,39 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.DropDownList;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
-import com.ldtteam.structurize.network.messages.SchematicRequestMessage;
+import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.BlockPlacementResult;
 import com.ldtteam.structurize.placement.StructurePhasePlacementResult;
 import com.ldtteam.structurize.placement.StructurePlacer;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
+import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.LoadOnlyStructureHandler;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingBuilderView;
-import com.minecolonies.coremod.network.messages.server.BuildToolPlaceMessage;
+import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
@@ -63,6 +65,26 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final List<Tuple<String, BlockPos>> builders = new ArrayList<>();
 
     /**
+     * Pack meta of the deco.
+     */
+    private final String packMeta;
+
+    /**
+     * Path of the blueprint in the pack.
+     */
+    private final String path;
+
+    /**
+     * Rotation.
+     */
+    private final Rotation rotation;
+
+    /**
+     * Mirror.
+     */
+    private final boolean mirror;
+
+    /**
      * Drop down list for builders.
      */
     private DropDownList buildersDropDownList;
@@ -73,29 +95,24 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final Map<String, ItemStorage> resources = new HashMap<>();
 
     /**
-     * Stores the message to be transmitted upon completion
-     */
-    private final BuildToolPlaceMessage placementMessage;
-
-    /**
-     * The name of the structure
-     */
-    private final StructureName structureName;
-
-    /**
      * The position of the decoration anchor
      */
     private final BlockPos structurePos;
 
     /**
+     * The blueprint future of this.
+     */
+    private Future<Blueprint> blueprintFuture;
+
+    /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(BuildToolPlaceMessage msg, BlockPos pos, StructureName structure)
+    public WindowBuildDecoration(final BlockPos pos, final String packMeta, final String path, final Rotation rotation, final boolean mirror)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        placementMessage = msg;
-        structureName = structure;
-        structurePos = pos;
+        this.packMeta = packMeta;
+        this.path = path;
+        this.structurePos = pos;
 
         registerButton(BUTTON_BUILD, this::confirmedBuild);
         registerButton(BUTTON_CANCEL, this::close);
@@ -106,12 +123,25 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
         findPaneOfTypeByID(BUTTON_PREVIOUS_STYLE_ID, Button.class).hide();
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).disable();
+        findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).hide();
+
+        blueprintFuture = StructurePacks.getBlueprintFuture(packMeta, path);
+        this.rotation = rotation;
+        this.mirror = mirror;
     }
 
     @Override
     public void onOpened()
     {
+        super.onOpened();
         updateBuilders();
+        updateResources();
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
         updateResources();
     }
 
@@ -125,15 +155,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         if (colony == null)
         {
-            if (structureName.getStyle().equals("supplycamp") || structureName.getStyle().equals("supplyship"))
-            {
-                MessageUtils.format(NO_COLONY_YET).sendTo(Minecraft.getInstance().player);
-            }
-            else
-            {
-                MessageUtils.format(OUT_OF_COLONY, structureName.getSchematic(), structurePos.getX(), structurePos.getZ()).sendTo(Minecraft.getInstance().player);
-            }
-
+            MessageUtils.format(OUT_OF_COLONY, path, structurePos.getX(), structurePos.getZ()).sendTo(Minecraft.getInstance().player);
             close();
             return;
         }
@@ -182,60 +204,50 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
      */
     private void updateResources()
     {
+        if (blueprintFuture == null || !blueprintFuture.isDone())
+        {
+            return;
+        }
+
         final Level world = Minecraft.getInstance().level;
         resources.clear();
 
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(
-                world,
-                structurePos,
-                structureName.toString(),
-                new PlacementSettings(),
-                true);
-
-        final String md5 = Structures.getMD5(structureName.toString());
-        if (!structure.hasBluePrint() || !structure.isCorrectMD5(md5))
+        try
         {
-            if (!structure.hasBluePrint())
-            {
-                Log.getLogger().info("Template structure " + structureName + " missing");
-            }
-            else
-            {
-                Log.getLogger().info("structure " + structureName + " md5 error");
-            }
+            final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(
+              world,
+              structurePos,
+              blueprintFuture.get(),
+              new PlacementSettings(),
+              true);
+            structure.getBluePrint().rotateWithMirror(rotation, mirror ? Mirror.FRONT_BACK : Mirror.NONE, Minecraft.getInstance().level);
 
-            Log.getLogger().info("Request To Server for structure " + structureName);
-            if (ServerLifecycleHooks.getCurrentServer() == null)
+            StructurePlacer placer = new StructurePlacer(structure);
+            StructurePhasePlacementResult result;
+            BlockPos progressPos = NULL_POS;
+
+            do
             {
-                com.ldtteam.structurize.Network.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
-                return;
+                result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
+                  () -> placer.getIterator().increment(), true);
+
+                progressPos = result.getIteratorPos();
+                for (final ItemStack stack : result.getBlockResult().getRequiredItems())
+                {
+                    addNeededResource(stack, stack.getCount());
+                }
             }
-            else
-            {
-                Log.getLogger().error("WindowMinecoloniesBuildTool: Need to download schematic on a standalone client/server. This should never happen", new Exception());
-            }
+            while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
+
+
+            window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
+            updateResourceList();
+            blueprintFuture = null;
         }
-
-        StructurePlacer placer = new StructurePlacer(structure);
-        StructurePhasePlacementResult result;
-        BlockPos progressPos = NULL_POS;
-
-        do
+        catch (final InterruptedException | ExecutionException ex)
         {
-            result = placer.executeStructureStep(world, null, progressPos, StructurePlacer.Operation.GET_RES_REQUIREMENTS,
-                    () -> placer.getIterator().increment(), true);
-
-            progressPos = result.getIteratorPos();
-            for (final ItemStack stack : result.getBlockResult().getRequiredItems())
-            {
-                addNeededResource(stack, stack.getCount());
-            }
+            // Noop
         }
-        while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
-
-
-        window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
-        updateResourceList();
     }
 
     /**
@@ -307,13 +319,9 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         });
     }
 
-    private void confirmedBuild ()
+    private void confirmedBuild()
     {
-        placementMessage.builder = buildersDropDownList.getSelectedIndex() == 0
-                ? BlockPos.ZERO
-                : builders.get(buildersDropDownList.getSelectedIndex()).getB();
-
-        Network.getNetwork().sendToServer(placementMessage);
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, packMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror));
         close();
     }
 }

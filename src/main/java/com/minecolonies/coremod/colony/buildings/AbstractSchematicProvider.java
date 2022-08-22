@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.google.common.collect.ImmutableSet;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.management.StructureName;
-import com.ldtteam.structurize.management.Structures;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -14,6 +12,7 @@ import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
+import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.*;
 import net.minecraft.core.BlockPos;
@@ -28,7 +27,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_INVALID_BUILDING;
 
@@ -57,7 +59,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * The building style.
      */
-    private String style = "wooden";
+    private String structurePack = DEFAULT_STYLE;
+
+    /**
+     * The building blueprint path.
+     */
+    private String path = "";
 
     /**
      * Height of the building.
@@ -93,7 +100,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     /**
      * Child schematics within this
      */
-    private Set<BlockPos> childSchematics = ImmutableSet.of();
+    private Set<BlockPos>     childSchematics = ImmutableSet.of();
+
+    /**
+     * Blueprint future for delayed info reading.
+     */
+    private Future<Blueprint> blueprintFuture;
 
     public AbstractSchematicProvider(final BlockPos pos, final IColony colony)
     {
@@ -126,19 +138,30 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
+    public String getBlueprintPath()
+    {
+        return path;
+    }
+
+    @Override
+    public void setBlueprintPath(final String path)
+    {
+        this.path = path;
+        getTileEntity().setBlueprintPath(path);
+        cachedRotation = -1;
+        this.markDirty();
+    }
+
+    @Override
     public CompoundTag serializeNBT()
     {
         final CompoundTag compound = new CompoundTag();
         BlockPosUtil.write(compound, TAG_LOCATION, location);
-        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + buildingLevel);
-        if (Structures.hasMD5(structureName))
-        {
-            compound.putString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName.toString()));
-        }
+
+        compound.putString(TAG_PACK, structurePack);
+        compound.putString(TAG_PATH, getBlueprintPath());
 
         compound.putInt(TAG_SCHEMATIC_LEVEL, buildingLevel);
-        compound.putString(TAG_STYLE, style);
-
         compound.putBoolean(TAG_MIRROR, isBuildingMirrored);
 
         getCorners();
@@ -160,8 +183,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void deserializeNBT(final CompoundTag compound)
     {
         buildingLevel = compound.getInt(TAG_SCHEMATIC_LEVEL);
-
-        style = compound.getString(TAG_STYLE);
 
         deserializerStructureInformationFrom(compound);
 
@@ -197,27 +218,31 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
     private void deserializerStructureInformationFrom(final CompoundTag compound)
     {
-        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        final int testLevel = buildingLevel == 0 ? 1 : buildingLevel;
-        final StructureName sn = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + testLevel);
-
-        if (!Structures.hasMD5(sn))
+        String packName;
+        String path;
+        if (compound.contains(TAG_STYLE) && !compound.getString(TAG_STYLE).isEmpty())
         {
-            final StructureName newStructureName = Structures.getStructureNameByMD5(md5);
-            if (newStructureName != null
-                  && newStructureName.getPrefix().equals(sn.getPrefix())
-                  && newStructureName.getSchematic().equals(sn.getSchematic()))
-            {
-                //We found the new location for the schematic, update the style accordingly
-                style = newStructureName.getStyle();
-                Log.getLogger().warn(String.format("AbstractBuilding.readFromNBT: %s have been moved to %s", sn, newStructureName));
-            }
+            packName = BlueprintMapping.getStyleMapping(compound.getString(TAG_STYLE));
+            path = BlueprintMapping.getPathMapping(compound.getString(TAG_STYLE), this.getSchematicName()) + buildingLevel  + ".blueprint";
+        }
+        else
+        {
+            packName = compound.getString(TAG_PACK);
+            path = compound.getString(TAG_PATH);
         }
 
-        if (style.isEmpty())
+        if (path == null || path.isEmpty())
         {
-            Log.getLogger().warn("Loaded empty style, setting to wooden");
-            style = "wooden";
+            path = BlueprintMapping.getPathMapping("", getBuildingType().getBuildingBlock().getBlueprintName()) + "1.blueprint";
+        }
+
+        this.structurePack = packName;
+        this.path = path;
+
+        if (structurePack == null || structurePack.isEmpty())
+        {
+            Log.getLogger().warn("Loaded empty style, setting to Default");
+            structurePack = DEFAULT_STYLE;
         }
     }
 
@@ -238,6 +263,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         this.lowerCorner = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
         this.higherCorner = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
+        if (this.getTileEntity() != null && !lowerCorner.equals(higherCorner))
+        {
+            this.getTileEntity().setSchematicCorners(lowerCorner.subtract(getPosition()), higherCorner.subtract(getPosition()));
+        }
     }
 
     @Override
@@ -338,21 +367,17 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
             return cachedRotation;
         }
 
-        final StructureName structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel));
         try
         {
-            final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName.toString(), new PlacementSettings(), true);
-
-            final Blueprint blueprint = structure.getBluePrint();
-
+            final Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path);
             if (blueprint != null)
             {
-                final BlockState structureState = structure.getBluePrint().getBlockInfoAsMap().get(structure.getBluePrint().getPrimaryBlockOffset()).getState();
+                final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
                 if (structureState != null)
                 {
                     if (!(structureState.getBlock() instanceof AbstractBlockHut) || !(colony.getWorld().getBlockState(this.location).getBlock() instanceof AbstractBlockHut))
                     {
-                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", structureName.toString()));
+                        Log.getLogger().error(String.format("Schematic %s doesn't have a correct Primary Offset", this.path));
                         return 0;
                     }
 
@@ -373,8 +398,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
         catch (Exception e)
         {
-            Log.getLogger().error(String.format("Failed to get rotation for %s: ", structureName.toString()), e);
-
+            Log.getLogger().error(String.format("Failed to get rotation for %s: ", this.path), e);
             return 0;
         }
 
@@ -386,7 +410,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
      */
     public void safeUpdateTEDataFromSchematic()
     {
-        if (buildingLevel <= 0)
+        if (buildingLevel <= 0 || blueprintFuture != null)
         {
             return;
         }
@@ -410,7 +434,33 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
         }
         catch (final Exception ex)
         {
-            MessageUtils.format(WARNING_INVALID_BUILDING, getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStyle()).sendTo(colony).forAllPlayers();
+            MessageUtils.format(WARNING_INVALID_BUILDING, getSchematicName(), getID().getX(), getID().getY(), getID().getZ(), getStructurePack()).sendTo(colony).forAllPlayers();
+        }
+    }
+
+    @Override
+    public void onColonyTick(final IColony colony)
+    {
+        if (blueprintFuture != null && blueprintFuture.isDone())
+        {
+            final Blueprint blueprint;
+            try
+            {
+                blueprint = blueprintFuture.get();
+                if (blueprint != null)
+                {
+                    blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
+                    final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+                    if (info.getTileEntityData() != null)
+                    {
+                        getTileEntity().readSchematicDataFromNBT(info.getTileEntityData());
+                    }
+                }
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -421,47 +471,43 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     private void unsafeUpdateTEDataFromSchematic(final TileEntityColonyBuilding te)
     {
         final String structureName;
+        final String packName;
         if (te.getSchematicName().isEmpty())
         {
-            structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, this.getSchematicName() + Math.max(1, buildingLevel)).toString();
+            structureName = path;
+            packName = structurePack;
         }
         else
         {
-            structureName = new StructureName(Structures.SCHEMATICS_PREFIX, style, te.getSchematicName()).toString();
+            structureName = te.getBlueprintPath();
+            packName = te.getStructurePack().getName();
         }
 
-        final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(colony.getWorld(), getPosition(), structureName, new PlacementSettings(), true);
-        final Blueprint blueprint = structure.getBluePrint();
-        blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(getRotation()), isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, colony.getWorld());
-        final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
-        if (info.getTileEntityData() != null)
-        {
-            te.readSchematicDataFromNBT(info.getTileEntityData());
-        }
+        blueprintFuture = StructurePacks.getBlueprintFuture(packName, structureName);
     }
 
     @Override
-    public String getStyle()
+    public String getStructurePack()
     {
         if (parentSchematic != BlockPos.ZERO)
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(parentSchematic);
             if (building != null)
             {
-                return building.getStyle();
+                return building.getStructurePack();
             }
         }
 
-        return style;
+        return structurePack;
     }
 
     @Override
-    public void setStyle(final String style)
+    public void setStructurePack(final String pack)
     {
-        this.style = style;
+        this.structurePack = pack;
         cachedRotation = -1;
         this.markDirty();
-        getTileEntity().setStyle(style);
+        getTileEntity().setStructurePack(StructurePacks.getStructurePack(pack));
     }
 
     @Override
@@ -518,9 +564,9 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     public void upgradeBuildingLevelToSchematicData()
     {
         final BlockEntity tileEntity = colony.getWorld().getBlockEntity(getID());
-        if (tileEntity instanceof IBlueprintDataProvider)
+        if (tileEntity instanceof IBlueprintDataProviderBE)
         {
-            final IBlueprintDataProvider blueprintDataProvider = (IBlueprintDataProvider) tileEntity;
+            final IBlueprintDataProviderBE blueprintDataProvider = (IBlueprintDataProviderBE) tileEntity;
             if (blueprintDataProvider.getSchematicName().isEmpty())
             {
                 return;
@@ -552,7 +598,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     }
 
     @Override
-    public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProvider blueprintDataProvider)
+    public void onUpgradeSchematicTo(final String oldSchematic, final String newSchematic, final IBlueprintDataProviderBE blueprintDataProvider)
     {
         upgradeBuildingLevelToSchematicData();
     }

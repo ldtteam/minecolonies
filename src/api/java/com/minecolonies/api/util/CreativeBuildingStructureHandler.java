@@ -1,8 +1,8 @@
 package com.minecolonies.api.util;
 
+import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.api.util.Log;
-import com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider;
 import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
@@ -30,8 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
-import static com.ldtteam.structurize.blocks.interfaces.IBlueprintDataProvider.TAG_BLUEPRINTDATA;
+import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
 
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
@@ -48,13 +49,28 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      *
      * @param world          the world.
      * @param pos            the pos it is placed at.
-     * @param structureName  the name of the structure.
+     * @param blueprint      the blueprint of the structure.
      * @param settings       the placement settings.
      * @param fancyPlacement if fancy or complete.
      */
-    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final String structureName, final PlacementSettings settings, final boolean fancyPlacement)
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Blueprint blueprint, final PlacementSettings settings, final boolean fancyPlacement)
     {
-        super(world, pos, structureName, settings, fancyPlacement);
+        super(world, pos, blueprint, settings, fancyPlacement);
+        setupBuilding();
+    }
+
+    /**
+     * The minecolonies specific creative structure placer.
+     *
+     * @param world          the world.
+     * @param pos            the pos it is placed at.
+     * @param blueprint      the blueprint of the structure.
+     * @param settings       the placement settings.
+     * @param fancyPlacement if fancy or complete.
+     */
+    public CreativeBuildingStructureHandler(final Level world, final BlockPos pos, final Future<Blueprint> blueprint, final PlacementSettings settings, final boolean fancyPlacement)
+    {
+        super(world, pos, blueprint, settings, fancyPlacement);
         setupBuilding();
     }
 
@@ -82,7 +98,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
             if (te != null)
             {
-                ((IBlueprintDataProvider) te).readSchematicDataFromNBT(teData);
+                ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(teData);
                 ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
                 te.setChanged();
             }
@@ -126,9 +142,9 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     /**
      * Load a structure into this world and place it in the right position and rotation.
      *
-     * @param worldObj       the world to load it in
-     * @param name           the structures name
-     * @param pos            coordinates
+     * @param worldObj       the world to load it in.
+     * @param future         the structures blueprint future.
+     * @param pos            coordinates.
      * @param rotation       the rotation.
      * @param mirror         the mirror used.
      * @param fancyPlacement if fancy or complete.
@@ -136,7 +152,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
      * @return the placed blueprint.
      */
     public static Blueprint loadAndPlaceStructureWithRotation(
-      final Level worldObj, @NotNull final String name,
+      final Level worldObj, @NotNull final Future<Blueprint> future,
       @NotNull final BlockPos pos, final Rotation rotation,
       @NotNull final Mirror mirror,
       final boolean fancyPlacement,
@@ -144,11 +160,9 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, name, new PlacementSettings(mirror, rotation), fancyPlacement);
+            @NotNull final IStructureHandler structure = new CreativeBuildingStructureHandler(worldObj, pos, future, new PlacementSettings(mirror, rotation), fancyPlacement);
             if (structure.hasBluePrint())
             {
-                structure.getBluePrint().rotateWithMirror(rotation, mirror, worldObj);
-
                 @NotNull final StructurePlacer instantPlacer = new StructurePlacer(structure);
                 Manager.addToQueue(new TickedWorldOperation(instantPlacer, player));
             }

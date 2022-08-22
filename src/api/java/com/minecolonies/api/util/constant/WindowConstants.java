@@ -100,6 +100,11 @@ public final class WindowConstants
     public static final String BUTTON_TOGGLE_PRINT_PROGRESS = "togglePrintProgress";
 
     /**
+     * Id of the toggle to switch colony styl.e
+     */
+    public static final String BUTTON_COLONY_SWITCH_STYLE = "colonyStylePicker";
+
+    /**
      * Id of the remove player button in the GUI.
      */
     public static final String BUTTON_REMOVE_PLAYER = "removePlayer";
@@ -1139,6 +1144,11 @@ public final class WindowConstants
      * Settings list ID.
      */
     public static final String LIST_SETTINGS = "settingslist";
+
+    /**
+     * Supplies window.
+     */
+    public static final String SUPPLIES_RESOURCE_SUFFIX = ":gui/windowsupplies.xml";
 
     /**
      * Private constructor to hide implicit public one.

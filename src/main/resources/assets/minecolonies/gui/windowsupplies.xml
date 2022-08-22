@@ -1,0 +1,12 @@
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../java/com/ldtteam/blockout/blockOut.xsd"
+        size="420 240" pause="false" lightbox="false">
+
+    <layout source="structurize:gui/layoutmanipulation.xml"/>
+
+    <list id="packs" size="100 75" pos="5 130">
+        <buttonimage id="toggle" size="86 17" label="" pos="0 0"
+                     source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+                     disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
+                     textcolor="black"/>
+    </list>
+</window>
