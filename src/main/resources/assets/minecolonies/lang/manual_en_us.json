@@ -27,6 +27,9 @@
   "minecolonies.config.neighborbuildingrendering": "Neighbor Building Rendering",
   "minecolonies.config.neighborbuildingrendering.comment": "By default, when placing a schematic near other buildings, the already-placed buildings will show as if they were at level 5 and have a blue outline around them. You can disable that by setting this to false.",
 
+  "minecolonies.config.neighborbuildingrange": "Neighbor Building Range",
+  "minecolonies.config.neighborbuildingrange.comment": "How close a building needs to be to another to be considered a neighbor, in blocks. 0 = intersecting, 1 = touching",
+
   "minecolonies.config.colonyteamborders": "Show Colony Borders in Team Colors",
   "minecolonies.config.colonyteamborders.comment": "When true, the colony borders shown when holding the build tool will be in the colony's team color. When false, the colony you're inside will be white and any other colony will be red.",
 

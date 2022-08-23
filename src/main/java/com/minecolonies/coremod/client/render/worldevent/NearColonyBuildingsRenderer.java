@@ -103,7 +103,8 @@ public class NearColonyBuildingsRenderer
         final Map<BlockPos, RenderData> newCache = new HashMap<>();
         final Blueprint blueprint = RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint();
         final BlockPos zeroPos = activePosition.subtract(blueprint.getPrimaryBlockOffset());
-        final AABB blueprintAABB = new AABB(zeroPos.offset(-1, -1, -1), zeroPos.offset(blueprint.getSizeX() , blueprint.getSizeY() , blueprint.getSizeZ() ));
+        final AABB blueprintAABB = new AABB(zeroPos, zeroPos.offset(blueprint.getSizeX() - 1, blueprint.getSizeY() - 1, blueprint.getSizeZ() - 1))
+                .inflate(1 + MinecoloniesAPIProxy.getInstance().getConfig().getClient().neighborbuildingrange.get());
 
         for (final IBuildingView buildingView : ctx.nearestColony.getBuildings())
         {
