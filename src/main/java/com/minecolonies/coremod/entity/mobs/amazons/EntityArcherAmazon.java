@@ -20,4 +20,10 @@ public class EntityArcherAmazon extends AbstractEntityAmazon implements IArcherA
     {
         super(type, worldIn);
     }
+
+    @Override
+    public double getAttackDelayModifier()
+    {
+        return 2;
+    }
 }
