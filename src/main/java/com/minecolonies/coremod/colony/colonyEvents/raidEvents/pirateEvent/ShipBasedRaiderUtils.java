@@ -72,7 +72,7 @@ public final class ShipBasedRaiderUtils
       final int shipRotation)
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(DEFAULT_STYLE,
-          "decorations/" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize), colony.getWorld(), (blueprint -> {
+          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize + ".blueprint"), colony.getWorld(), (blueprint -> {
 
             colony.getEventManager()
               .getStructureManager()
@@ -129,7 +129,7 @@ public final class ShipBasedRaiderUtils
         final Level world = colony.getWorld();
         final String shipSize = ShipSize.getShipForRaiderAmount(raidLevel).schematicPrefix + shipName;
 
-        final Blueprint blueprint = StructurePacks.getBlueprint(DEFAULT_STYLE, "decorations/" + SHIP_FOLDER + shipSize);
+        final Blueprint blueprint = StructurePacks.getBlueprint(DEFAULT_STYLE, "decorations" + SHIP_FOLDER + shipSize + ".blueprint");
         blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), Mirror.NONE, colony.getWorld());
 
         return canPlaceShipAt(spawnPoint, blueprint, world) || canPlaceShipAt(spawnPoint.below(), blueprint, world);

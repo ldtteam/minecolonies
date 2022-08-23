@@ -102,7 +102,13 @@ public class EventStructureManager implements IEventStructureManager
 
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
-        final Path outputPath = new File(".").toPath().resolve(BLUEPRINT_FOLDER).resolve(STRUCTURE_BACKUP_FOLDER).resolve(Integer.toString(colony.getID())).resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath());
+        final Path outputPath = new File(".").toPath()
+          .resolve(BLUEPRINT_FOLDER)
+          .resolve(STRUCTURE_BACKUP_FOLDER)
+          .resolve(Integer.toString(colony.getID()))
+          .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
+                                  .resolve(anchor.toString() + ".blueprint");
+
         final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint((ServerLevel) world, zeroPos, true, (short)structure.getSizeX(), (short) structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(),
           Optional.of(anchor)));
 
@@ -136,7 +142,7 @@ public class EventStructureManager implements IEventStructureManager
                   .resolve(STRUCTURE_BACKUP_FOLDER)
                   .resolve(Integer.toString(colony.getID()))
                   .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
-                  .resolve(entry.getKey().toString());
+                  .resolve(entry.getKey().toString() + ".blueprint");
 
                 final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
                 structure.getBluePrint().rotateWithMirror( Rotation.NONE, Mirror.NONE, colony.getWorld());
