@@ -5,6 +5,7 @@ import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.combat.threat.IThreatTableEntity;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
+import com.minecolonies.api.entity.mobs.IRangedMobEntity;
 import com.minecolonies.api.entity.pathfinding.PathResult;
 import com.minecolonies.api.util.EntityUtils;
 import com.minecolonies.coremod.MineColonies;
@@ -24,7 +25,7 @@ import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 /**
  * Raider AI for shooting arrows at a target
  */
-public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity> extends AttackMoveAI<T>
+public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTableEntity & IRangedMobEntity> extends AttackMoveAI<T>
 {
     /**
      * Max delay between attacks is 3s, aka 60 ticks.
@@ -149,7 +150,8 @@ public class RaiderRangedAI<T extends AbstractEntityMinecoloniesMob & IThreatTab
             return 10;
         }
 
-        return (int) Math.max(MIN_ATTACK_DELAY, MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().barbarianHordeDifficulty.get() * 4 * user.getDifficulty());
+        return (int) (Math.max(MIN_ATTACK_DELAY, MAX_ATTACK_DELAY - MineColonies.getConfig().getServer().barbarianHordeDifficulty.get() * 4 * user.getDifficulty())
+                        * user.getAttackDelayModifier());
     }
 
     @Override
