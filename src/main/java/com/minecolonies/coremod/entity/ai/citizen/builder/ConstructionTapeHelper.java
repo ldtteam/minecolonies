@@ -57,6 +57,7 @@ public final class ConstructionTapeHelper
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(building.getStructurePack(), building.getBlueprintPath()), world, (blueprint -> {
             final Tuple<BlockPos, BlockPos> corners = ColonyUtils.calculateCorners(building.getPosition(), world, blueprint, building.getRotation(), building.isMirrored());
+            building.setCorners(corners.getA(), corners.getB());
             placeConstructionTape(corners, world);
         })));
     }
