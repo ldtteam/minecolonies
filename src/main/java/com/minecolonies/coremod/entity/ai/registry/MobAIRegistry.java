@@ -54,7 +54,7 @@ public class MobAIRegistry implements IMobAIRegistry
           .registerNewAiTaskForMobs(PRIORITY_FIVE, mob -> new LookAtPlayerGoal(mob, Player.class, MAX_WATCH_DISTANCE))
           .registerNewAiTaskForMobs(PRIORITY_SIX, mob -> new LookAtPlayerGoal(mob, EntityCitizen.class, MAX_WATCH_DISTANCE))
           .registerNewStateAI(mob -> new RaiderMeleeAI<>(mob, mob.getAI()), mob -> !(mob instanceof IArcherMobEntity))
-          .registerNewStateAI(mob -> new RaiderRangedAI<>(mob, mob.getAI()), mob -> mob instanceof IRangedMobEntity)
+          .registerNewStateAI(mob -> new RaiderRangedAI(mob, mob.getAI()), mob -> mob instanceof IRangedMobEntity)
           .registerNewStateAI(mob -> new RaiderWalkAI(mob, mob.getAI()), mob -> true);
     }
 
