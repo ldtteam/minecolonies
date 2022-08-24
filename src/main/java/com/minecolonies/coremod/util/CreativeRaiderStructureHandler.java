@@ -117,7 +117,6 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
       final int colonyId)
     {
         super(world, pos, blueprint, settings, fancyPlacement);
-        blueprint.rotateWithMirror(settings.getRotation(), settings.getMirror(), world);
 
         this.event = event;
         this.colonyId = colonyId;
@@ -173,23 +172,20 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @param worldObj       the world to load it in
      * @param blueprintFuture the blueprint future
      * @param pos            coordinates
-     * @param rotation       the rotation.
-     * @param mirror         the mirror used.
      * @param fancyPlacement if fancy or complete.
      * @param colonyId       the colony id.
      * @param event          the raid event.
      * @param player         the placing player.
      */
-    public static void loadAndPlaceStructureWithRotation(
+    public static void loadAndPlaceStructure(
       final Level worldObj, @NotNull final Future<Blueprint> blueprintFuture,
-      @NotNull final BlockPos pos, final Rotation rotation,
-      @NotNull final Mirror mirror,
+      @NotNull final BlockPos pos,
       final boolean fancyPlacement, final int colonyId, final IColonyRaidEvent event,
       @Nullable final ServerPlayer player)
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, new PlacementSettings(mirror, rotation), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprintFuture, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
             Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)
@@ -204,23 +200,20 @@ public final class CreativeRaiderStructureHandler extends CreativeStructureHandl
      * @param worldObj       the world to load it in
      * @param blueprint the blueprint
      * @param pos            coordinates
-     * @param rotation       the rotation.
-     * @param mirror         the mirror used.
      * @param fancyPlacement if fancy or complete.
      * @param colonyId       the colony id.
      * @param event          the raid event.
      * @param player         the placing player.
      */
-    public static void loadAndPlaceStructureWithRotation(
+    public static void loadAndPlaceStructure(
       final Level worldObj, @NotNull final Blueprint blueprint,
-      @NotNull final BlockPos pos, final Rotation rotation,
-      @NotNull final Mirror mirror,
+      @NotNull final BlockPos pos,
       final boolean fancyPlacement, final int colonyId, final IColonyRaidEvent event,
       @Nullable final ServerPlayer player)
     {
         try
         {
-            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, new PlacementSettings(mirror, rotation), fancyPlacement, event, colonyId);
+            @NotNull final IStructureHandler structure = new CreativeRaiderStructureHandler(worldObj, pos, blueprint, new PlacementSettings(Mirror.NONE, Rotation.NONE), fancyPlacement, event, colonyId);
             Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), player));
         }
         catch (final IllegalStateException e)

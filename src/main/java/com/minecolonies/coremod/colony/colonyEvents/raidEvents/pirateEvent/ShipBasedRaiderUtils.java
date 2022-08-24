@@ -73,7 +73,7 @@ public final class ShipBasedRaiderUtils
     {
         ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(DEFAULT_STYLE,
           "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize + ".blueprint"), colony.getWorld(), (blueprint -> {
-
+            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
             colony.getEventManager()
               .getStructureManager()
               .spawnTemporaryStructure(blueprint,

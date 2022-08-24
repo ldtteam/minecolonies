@@ -7,6 +7,7 @@ import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
+import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
@@ -97,9 +98,7 @@ public class EventStructureManager implements IEventStructureManager
 
         final int y = BlueprintTagUtils.getNumberOfGroundLevels(structure, 4) - 1;
         final BlockPos spawnPos = targetSpawnPoint.offset(0, -y, 0).offset(structure.getPrimaryBlockOffset());
-
         final BlockPos zeroPos = spawnPos.subtract(structure.getPrimaryBlockOffset());
-
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
         final Path outputPath = new File(".").toPath()
@@ -116,11 +115,9 @@ public class EventStructureManager implements IEventStructureManager
 
         backupSchematics.put(anchor, eventID);
 
-        CreativeRaiderStructureHandler.loadAndPlaceStructureWithRotation(world,
+        CreativeRaiderStructureHandler.loadAndPlaceStructure(world,
           structure,
           spawnPos,
-          BlockPosUtil.getRotationFromRotations(rotations),
-          mirror,
           true, colony.getID(), (IColonyRaidEvent) eventManager.getEventByID(eventID), null);
 
         return true;
@@ -144,20 +141,21 @@ public class EventStructureManager implements IEventStructureManager
                   .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
                   .resolve(entry.getKey().toString() + ".blueprint");
 
-                final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
-                structure.getBluePrint().rotateWithMirror( Rotation.NONE, Mirror.NONE, colony.getWorld());
 
-                final StructurePlacer instantPlacer = new StructurePlacer(structure);
-                Manager.addToQueue(new TickedWorldOperation(instantPlacer, null));
+                ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(STRUCTURE_BACKUP_FOLDER, backupPath), colony.getWorld(), (blueprint -> {
+                    final IStructureHandler structure = new CreativeStructureHandler(colony.getWorld(), entry.getKey(), blueprint, new PlacementSettings(Mirror.NONE,  Rotation.NONE), true);
+                    Manager.addToQueue(new TickedWorldOperation(new StructurePlacer(structure), null));
 
-                try
-                {
-                    Files.delete(backupPath);
-                }
-                catch (Exception e)
-                {
-                    Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + backupPath.toString(), e);
-                }
+                    try
+                    {
+                        Files.delete(backupPath);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.getLogger().info("Minor issue: Failed at deleting a backup schematic at " + backupPath.toString(), e);
+                    }
+
+                })));
 
                 iterator.remove();
             }
