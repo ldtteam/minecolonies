@@ -28,11 +28,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 public class TileEntityDecorationController extends BlockEntity implements IBlueprintDataProviderBE, IRotatableBlockEntity
 {
     /**
-     * Tag to store the basic facing to NBT
-     */
-    private static final String TAG_FACING = "facing";
-
-    /**
      * The schematic name of the placerholder block.
      */
     private String schematicName = "";
@@ -184,6 +179,23 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             {
                 this.packName = DEFAULT_STYLE;
             }
+
+            if (this.schematicName.contains("/"))
+            {
+                final String[] splitName = this.schematicName.split("/");
+                this.schematicName = splitName[splitName.length - 1];
+            }
+            else if (this.schematicName.contains("\\"))
+            {
+                final String[] splitName = this.schematicName.split("\\\\");
+                this.schematicName = splitName[splitName.length - 1];
+            }
+
+            if (compound.contains(TAG_LEVEL))
+            {
+                this.schematicName += compound.getInt(TAG_LEVEL);
+            }
+
             this.schematicPath = StructurePacks.getStructurePack(this.packName).getSubPath(StructurePacks.findBlueprint(this.packName, schematicName));
         }
 
