@@ -61,7 +61,7 @@ public class WindowInfo extends AbstractWindowSkeleton
 
             final TextBuilder preText = textBuilder.get();
             Arrays.stream((translationPrefix + i).split("\\n"))
-                .map(Component::literal)
+                .map(Component::translatable)
                 .forEach(preText::appendNL);
             final Text text = preText.build();
             text.setPosition(0, 16);
