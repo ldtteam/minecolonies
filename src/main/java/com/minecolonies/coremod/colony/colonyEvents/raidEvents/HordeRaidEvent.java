@@ -17,6 +17,7 @@ import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.barbarianEvent.Horde;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.network.messages.client.PlayAudioMessage;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -351,7 +352,9 @@ public abstract class HordeRaidEvent implements IColonyRaidEvent, IColonyCampFir
 
         updateRaidBar();
 
-        MessageUtils.format(RAID_EVENT_MESSAGE + horde.getMessageID(), BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName()).sendTo(colony).forManagers();
+        MessageUtils.format(Component.translatable(RAID_EVENT_MESSAGE + horde.getMessageID(),
+                        BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+                .withStyle(ChatFormatting.DARK_RED)).sendTo(colony).forManagers();
 
         PlayAudioMessage audio = new PlayAudioMessage(horde.initialSize <= SMALL_HORDE_SIZE ? RaidSounds.WARNING_EARLY : RaidSounds.WARNING, SoundSource.RECORDS);
         PlayAudioMessage.sendToAll(getColony(), false, false, audio);

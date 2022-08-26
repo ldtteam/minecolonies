@@ -884,15 +884,15 @@
 
   "com.minecolonies.coremod.mourning": "There has been a death in %s. The citizens will mourn %s tomorrow out of respect.",
 
-  "event.minecolonies.raidmessage1": "§4Mysterious warriors have been spotted %s of %s!",
-  "event.minecolonies.raidmessage2": "§4Citizens report rumors of raiders %s of %s!",
-  "event.minecolonies.raidmessage3": "§4Buckle up cowboy! There's some darn raiders comin' from the %s tonight for %s!",
-  "event.minecolonies.raidmessage4": "§4A huge horde of raiders is comin' from %s toward %s, and they're not here to play!",
+  "event.minecolonies.raidmessage1": "Mysterious warriors have been spotted %s of %s!",
+  "event.minecolonies.raidmessage2": "Citizens report rumors of raiders %s of %s!",
+  "event.minecolonies.raidmessage3": "Buckle up cowboy! There's some darn raiders comin' from the %s tonight for %s!",
+  "event.minecolonies.raidmessage4": "A huge horde of raiders is comin' from %s toward %s, and they're not here to play!",
 
-  "event.minecolonies.raidmessage_p1": "§4Mysterious sailors have been spotted to the %s of %s! They sailed in on a small sloop, you should consider destroying it.",
-  "event.minecolonies.raidmessage_p2": "§4Citizens report rumors of pirates closing in %s of %s! They brought a ship, better destroy it.",
-  "event.minecolonies.raidmessage_p3": "§4Arr Comrade! There's some darn pirates from the %s comin' for %s tonight! They sailed 'ere and will continue attacking until we destroy their caravel.",
-  "event.minecolonies.raidmessage_p4": "§4A huge horde of pirates are sailin' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their galleon!",
+  "event.minecolonies.raidmessage_p1": "Mysterious sailors have been spotted to the %s of %s! They sailed in on a small sloop, you should consider destroying it.",
+  "event.minecolonies.raidmessage_p2": "Citizens report rumors of pirates closing in %s of %s! They brought a ship, better destroy it.",
+  "event.minecolonies.raidmessage_p3": "Arr Comrade! There's some darn pirates from the %s comin' for %s tonight! They sailed 'ere and will continue attacking until we destroy their caravel.",
+  "event.minecolonies.raidmessage_p4": "A huge horde of pirates are sailin' %s of %s and they're not here to play! Their rigorous waves will hit us unless we destroy their galleon!",
 
   "com.minecolonies.coremod.raid.amazon.name": "Amazons",
   "com.minecolonies.coremod.raid.egyptian.name": "Mummies",
