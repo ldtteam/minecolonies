@@ -217,10 +217,10 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
             updateRaidBar();
 
-            MessageUtils.format(Component.translatable(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID,
+            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID,
                                     BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
-                    .withStyle(ChatFormatting.DARK_RED))
-              .sendTo(colony).forManagers();
+                    .with(ChatFormatting.DARK_RED)
+                    .sendTo(colony).forManagers();
             colony.markDirty();
         })));
     }
