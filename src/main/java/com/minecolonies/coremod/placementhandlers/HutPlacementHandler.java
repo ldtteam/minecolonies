@@ -22,6 +22,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +86,7 @@ public class HutPlacementHandler implements IPlacementHandler
                             partialPath = pack.getSubPath(blueprint.getFilePath().resolve(((IBlueprintDataProviderBE) be).getSchematicName()));
                         }
 
-                        if (StructurePacks.findBlueprint(pack.getPath(), partialPath).isPresent())
+                        if (hasBlueprint(pack.getPath(), partialPath))
                         {
                             if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
                             {
@@ -111,6 +113,13 @@ public class HutPlacementHandler implements IPlacementHandler
         }
 
         return ActionProcessingResult.SUCCESS;
+    }
+
+    // TODO: move to equivalent method on StructurePacks
+    private static boolean hasBlueprint(final Path packBase, final String subPath)
+    {
+        final Path fullPath = packBase.resolve(subPath + ".blueprint");
+        return Files.exists(fullPath);
     }
 
     @Override
