@@ -93,7 +93,7 @@ public class EventStructureManager implements IEventStructureManager
         final Level world = colony.getWorld();
 
         final int y = BlueprintTagUtils.getNumberOfGroundLevels(structure, 4) - 1;
-        final BlockPos spawnPos = targetSpawnPoint.offset(0, -y, 0).offset(structure.getPrimaryBlockOffset());
+        final BlockPos spawnPos = targetSpawnPoint.below(y).above(structure.getPrimaryBlockOffset().getY());
         final BlockPos zeroPos = spawnPos.subtract(structure.getPrimaryBlockOffset());
         final BlockPos anchor = new BlockPos(zeroPos.getX() + structure.getSizeX() / 2, zeroPos.getY(), zeroPos.getZ() + structure.getSizeZ() / 2);
 
