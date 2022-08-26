@@ -17,15 +17,13 @@ import com.minecolonies.api.colony.managers.interfaces.IEventStructureManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -85,9 +83,7 @@ public class EventStructureManager implements IEventStructureManager
     public boolean spawnTemporaryStructure(
       final Blueprint structure,
       final BlockPos targetSpawnPoint,
-      final int eventID,
-      final int rotations,
-      final Mirror mirror)
+      final int eventID)
     {
         if (eventManager.getEventByID(eventID) == null)
         {
@@ -108,8 +104,8 @@ public class EventStructureManager implements IEventStructureManager
           .resolve(colony.getDimension().location().getNamespace() + colony.getDimension().location().getPath())
                                   .resolve(anchor.toString() + ".blueprint");
 
-        final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint((ServerLevel) world, zeroPos, true, (short)structure.getSizeX(), (short) structure.getSizeY(), (short) structure.getSizeZ(), anchor.toString(),
-          Optional.of(anchor)));
+        final CompoundTag bp = BlueprintUtil.writeBlueprintToNBT(BlueprintUtil.createBlueprint(world, zeroPos, true,
+                structure.getSizeX(), structure.getSizeY(), structure.getSizeZ(), anchor.toString(), Optional.of(anchor)));
 
         StructurePacks.storeBlueprint(STRUCTURE_BACKUP_FOLDER, bp, outputPath);
 
