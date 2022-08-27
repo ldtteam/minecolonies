@@ -280,18 +280,18 @@ public class WorkManager implements IWorkManager
             order.setID(topWorkOrderId);
         }
 
+        final int level = order.getTargetLevel();
         if (!readingFromNbt)
         {
             if (order instanceof WorkOrderBuilding)
             {
-                final int level = order.getTargetLevel();
-                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getStructurePath(), level));
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
+                  player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getFileName().replace(String.valueOf(level), ""), level));
             }
             else if (order instanceof WorkOrderDecoration)
             {
-                AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                              AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getStructurePath(), 0));
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
+                  player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getFileName().replace(String.valueOf(level), ""), level));
             }
         }
 
