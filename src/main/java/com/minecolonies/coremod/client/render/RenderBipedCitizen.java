@@ -1,28 +1,29 @@
 package com.minecolonies.coremod.client.render;
 
-import com.minecolonies.api.MinecoloniesAPIProxy;
-
 import com.minecolonies.api.client.render.modeltype.CitizenModel;
 import com.minecolonies.api.client.render.modeltype.IModelType;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.client.render.modeltype.registry.IModelTypeRegistry;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.apiimp.initializer.ModModelTypeInitializer;
-import com.minecolonies.coremod.client.render.worldevent.RenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.resources.ResourceLocation;
+
+import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
@@ -114,9 +115,9 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
       @NotNull final Component str,
       @NotNull final PoseStack matrixStack,
       @NotNull final MultiBufferSource buffer,
-      final int maxDistance)
+      final int packedLight)
     {
-        super.renderNameTag(entityIn, str, matrixStack, buffer, maxDistance);
+        super.renderNameTag(entityIn, str, matrixStack, buffer, packedLight);
 
         if (entityIn.getCitizenDataView() != null && entityIn.getCitizenDataView().hasVisibleInteractions())
         {
@@ -137,15 +138,16 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
 
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                VertexConsumer r = buffer.getBuffer(RenderTypes.getPrimitiveTex(texture));
+                VertexConsumer r = buffer.getBuffer(RenderType.entityCutout(texture));
 
-                final Matrix4f matrixA = matrixStack.last().pose();
-
-                r.vertex(matrixA, 0, 0, 0).uv(0, 0).endVertex();
-                r.vertex(matrixA, 0, 10, 0).uv(1, 0).endVertex();
-                r.vertex(matrixA, 10, 10, 0).uv(1, 1).endVertex();
-                r.vertex(matrixA, 10, 0, 0).uv(0, 1).endVertex();
-
+                final Matrix4f pose = matrixStack.last().pose();
+                final Matrix3f norm = matrixStack.last().normal();
+                
+                r.vertex(pose, 0, 0, 0).color(255, 255, 255, 255).uv(0, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
+                r.vertex(pose, 0, 10, 0).color(255, 255, 255, 255).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
+                r.vertex(pose, 10, 10, 0).color(255, 255, 255, 255).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
+                r.vertex(pose, 10, 0, 0).color(255, 255, 255, 255).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
+                
                 matrixStack.popPose();
             }
         }
