@@ -310,4 +310,15 @@ public interface IWorkOrder
      * @param job
      */
     boolean canBeMadeBy(final IJob<?> job);
+
+    /**
+     * Get the file name of the structure.
+     * Calculates the file name from the path.
+     * @return the name without the appendix.
+     */
+    default String getFileName()
+    {
+        final String[] split = getStructurePath().contains("\\") ? getStructurePath().split("\\\\") : getStructurePath().split("/");
+        return split[split.length - 1].replace(".blueprint", "");
+    }
 }

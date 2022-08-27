@@ -257,8 +257,8 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(colony, player ->
-                                                                          AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, getStructurePath(), this.getTargetLevel()));
+            AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
+              player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, getFileName().replace(".blueprint", "").replace(String.valueOf(this.getTargetLevel()), ""), this.getTargetLevel()));
         }
     }
 
