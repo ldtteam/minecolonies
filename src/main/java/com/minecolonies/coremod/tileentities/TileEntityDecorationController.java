@@ -170,7 +170,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         else
         {
             final String[] split = this.schematicPath.split("/");
-            if (split.length == 4)
+            if (split.length >= 4)
             {
                 this.packName = BlueprintMapping.getStyleMapping(split[2]);
             }
