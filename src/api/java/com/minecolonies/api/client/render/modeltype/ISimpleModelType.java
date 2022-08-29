@@ -26,7 +26,7 @@ public interface ISimpleModelType extends IModelType
      *
      * @return The base file name.
      */
-    ResourceLocation getTextureBase();
+    String getTextureBase();
 
     /**
      * The available amount of textures in this model type.
@@ -44,11 +44,9 @@ public interface ISimpleModelType extends IModelType
      */
     default ResourceLocation getTexture(@NotNull final AbstractEntityCitizen entityCitizen)
     {
-        final String namespace = getTextureBase().getNamespace();
-        final String path = getTextureBase().getPath();
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
-          path + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
+          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
             .get(DATA_TEXTURE_SUFFIX);
         final ResourceLocation modified = new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + entityCitizen.getEntityData().get(DATA_STYLE) + "/" + textureIdentifier + ".png");
         if (Minecraft.getInstance().getResourceManager().hasResource(modified))
@@ -56,20 +54,14 @@ public interface ISimpleModelType extends IModelType
             return modified;
         }
 
-        return new ResourceLocation(namespace, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
+        return new ResourceLocation(Constants.MOD_ID, BASE_FOLDER + DEFAULT_FOLDER + "/" + textureIdentifier + ".png");
     }
 
-    /**
-     * Gets the icon location for the face of a citizen
-     *
-     * @param entityCitizen
-     * @return location
-     */
     default ResourceLocation getTextureIcon(@NotNull final AbstractEntityCitizen entityCitizen)
     {
         final int moddedTextureId = (entityCitizen.getTextureId() % getNumTextures()) + 1;
         final String textureIdentifier =
-          getTextureBase().getPath() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
+          getTextureBase() + (entityCitizen.isFemale() ? "female" : "male") + moddedTextureId + entityCitizen.getRenderMetadata() + entityCitizen.getEntityData()
             .get(DATA_TEXTURE_SUFFIX);
         return new ResourceLocation(Constants.MOD_ID, "textures/entity_icon/citizen/" + entityCitizen.getEntityData().get(DATA_STYLE) + "/" + textureIdentifier + ".png");
     }
