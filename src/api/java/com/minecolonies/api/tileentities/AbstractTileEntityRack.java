@@ -54,10 +54,25 @@ public abstract class AbstractTileEntityRack extends TileEntity implements IName
      */
     protected ItemStackHandler inventory;
 
+    /**
+     * Create a new rack.
+     * @param tileEntityTypeIn the specific block entity type.
+     */
     public AbstractTileEntityRack(final TileEntityType<?> tileEntityTypeIn)
     {
         super(tileEntityTypeIn);
         inventory = createInventory(DEFAULT_SIZE);
+    }
+
+    /**
+     * Create a rack with a specific inventory size.
+     * @param tileEntityTypeIn the specific block entity type.
+     * @param size the ack size.
+     */
+    public AbstractTileEntityRack(final TileEntityType<?> tileEntityTypeIn, final int size)
+    {
+        super(tileEntityTypeIn);
+        inventory = createInventory(size);
     }
 
     /**

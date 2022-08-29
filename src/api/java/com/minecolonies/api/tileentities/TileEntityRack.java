@@ -76,11 +76,29 @@ public class TileEntityRack extends AbstractTileEntityRack
      */
     private LazyOptional<IItemHandler> lastOptional;
 
+    /**
+     * Create a new rack.
+     * @param type the specific block entity type.
+     */
     public TileEntityRack(final TileEntityType<? extends TileEntityRack> type)
     {
         super(type);
     }
 
+    /**
+     * Create a rack with a specific inventory size.
+     * @param type the specific block entity type.
+     * @param size the ack size.
+     */
+    public TileEntityRack(final TileEntityType<? extends TileEntityRack> type, final int size)
+    {
+        super(type, size);
+        this.size = ((size - DEFAULT_SIZE) / SLOT_PER_LINE);
+    }
+
+    /**
+     * Create a new default rack.
+     */
     public TileEntityRack()
     {
         super(MinecoloniesTileEntities.RACK);
@@ -648,5 +666,14 @@ public class TileEntityRack extends AbstractTileEntityRack
         }
 
         lastOptional = null;
+    }
+
+    /**
+     * Check if this is marked as a single rack.
+     * @return true if so.
+     */
+    public boolean isSingle()
+    {
+        return this.single;
     }
 }

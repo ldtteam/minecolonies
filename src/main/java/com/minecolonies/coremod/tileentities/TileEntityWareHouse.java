@@ -36,6 +36,7 @@ public class TileEntityWareHouse extends AbstractTileEntityWareHouse
     public TileEntityWareHouse()
     {
         super(MinecoloniesTileEntities.WAREHOUSE);
+        inWarehouse = true;
     }
 
     @Override
