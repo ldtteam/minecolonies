@@ -89,7 +89,7 @@ public class HutPlacementHandler implements IPlacementHandler
                         }
                         else
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath);
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath + ".blueprint");
                         }
                     }
                     ((IBlueprintDataProviderBE) be).setPackName(blueprint.getPackName());
