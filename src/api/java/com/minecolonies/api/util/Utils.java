@@ -93,7 +93,7 @@ public final class Utils
         Path resultPath = path;
         for (final String sub : splitPath(subPath))
         {
-            resultPath = path.resolve(sub);
+            resultPath = resultPath.resolve(sub);
         }
         return resultPath;
     }
