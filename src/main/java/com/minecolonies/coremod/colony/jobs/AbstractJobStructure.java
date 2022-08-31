@@ -2,9 +2,12 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
+import com.minecolonies.api.util.Utils;
+import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import net.minecraft.nbt.CompoundTag;
@@ -13,7 +16,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
+
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
 /**
  * Common job object for all structure AIs.
@@ -142,6 +148,13 @@ public abstract class AbstractJobStructure<AI extends AbstractAISkeleton<J>, J e
                             final BlockEntity te = getColony().getWorld().getBlockEntity(tePos);
                             if (te instanceof IBlueprintDataProviderBE)
                             {
+                                final CompoundTag tagData = compoundNBT.getCompound(TAG_BLUEPRINTDATA);
+                                final String schematicPath = tagData.getString(TAG_NAME);
+                                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
+
+                                tagData.putString(TAG_NAME, location);
+                                tagData.putString(NbtTagConstants.TAG_PACK, blueprint.getPackName());
+
                                 ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(compoundNBT);
                                 ((ServerLevel) getColony().getWorld()).getChunkSource().blockChanged(tePos);
                                 te.setChanged();

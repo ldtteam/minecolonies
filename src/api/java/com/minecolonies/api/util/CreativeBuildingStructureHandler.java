@@ -7,6 +7,7 @@ import com.ldtteam.structurize.management.Manager;
 import com.ldtteam.structurize.placement.StructurePlacer;
 import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.placement.structure.IStructureHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.TickedWorldOperation;
 import com.minecolonies.api.blocks.ModBlocks;
@@ -29,10 +30,13 @@ import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Future;
 
 import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE.TAG_BLUEPRINTDATA;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_PACK;
 
 /**
  * Minecolonies specific creative structure handler. Main difference related to registering blocks to colonies.
@@ -92,12 +96,20 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
         super.triggerSuccess(pos, list, placement);
         final BlockPos worldPos = getProgressPosInWorld(pos);
 
-        final CompoundTag teData = getBluePrint().getTileEntityData(worldPos, pos);
+        final Blueprint blueprint = getBluePrint();
+        final CompoundTag teData = blueprint.getTileEntityData(worldPos, pos);
         if (teData != null && teData.contains(TAG_BLUEPRINTDATA))
         {
             final BlockEntity te = getWorld().getBlockEntity(worldPos);
             if (te != null)
             {
+                final CompoundTag tagData = teData.getCompound(TAG_BLUEPRINTDATA);
+                final String schematicPath = tagData.getString(TAG_NAME);
+                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), schematicPath));
+
+                tagData.putString(TAG_NAME, location);
+                tagData.putString(TAG_PACK, blueprint.getPackName());
+
                 ((IBlueprintDataProviderBE) te).readSchematicDataFromNBT(teData);
                 ((ServerLevel) getWorld()).getChunkSource().blockChanged(worldPos);
                 te.setChanged();
@@ -106,7 +118,7 @@ public final class CreativeBuildingStructureHandler extends CreativeStructureHan
 
         if (building != null)
         {
-            building.registerBlockPosition(getBluePrint().getBlockState(pos), worldPos, this.getWorld());
+            building.registerBlockPosition(blueprint.getBlockState(pos), worldPos, this.getWorld());
         }
     }
 

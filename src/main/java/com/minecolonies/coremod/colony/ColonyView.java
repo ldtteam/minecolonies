@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.ldtteam.structurize.storage.StructurePacks;
+import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
@@ -824,7 +825,7 @@ public final class ColonyView implements IColonyView
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = buf.readUtf(32767);
-        if (isNewSubscription && StructurePacks.hasPack(this.style))
+        if (isNewSubscription && StructurePacks.hasPack(this.style) && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null)
         {
             StructurePacks.selectedPack = StructurePacks.getStructurePack(this.style);
         }
