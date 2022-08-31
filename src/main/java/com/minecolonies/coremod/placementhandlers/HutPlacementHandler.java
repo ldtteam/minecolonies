@@ -85,7 +85,8 @@ public class HutPlacementHandler implements IPlacementHandler
 
                         if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "1.blueprint");
+                            ((TileEntityColonyBuilding) be).setSchematicName("");
                         }
                         else
                         {
