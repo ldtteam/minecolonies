@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "pack-format": 1,
+  "desc": "Delve into the depths of the earth with this interconnecting style! If you like Lego, love Tetris and are obsessed with organization this is the style for you.",
+  "authors": [
+    "LadyShatana"
+  ],
+  "mods": [
+    "structurize",
+    "minecolonies"
+  ],
+  "name": "Cavern",
+  "icon": "cavern.png"
+}
