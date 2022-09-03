@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.placementhandlers;
 
+import com.ldtteam.domumornamentum.block.AbstractBlockDoor;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
@@ -33,7 +34,7 @@ public class DoDoorBlockPlacementHandler implements IPlacementHandler
     @Override
     public boolean canHandle(@NotNull final Level world, @NotNull final BlockPos pos, @NotNull final BlockState blockState)
     {
-        return blockState.getBlock() instanceof IMateriallyTexturedBlock && blockState.getBlock() instanceof DoorBlock;
+        return blockState.getBlock() instanceof IMateriallyTexturedBlock && blockState.getBlock() instanceof AbstractBlockDoor<?>;
     }
 
     @Override
