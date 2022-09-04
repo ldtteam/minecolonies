@@ -87,6 +87,12 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
     public abstract void setCitizenId(int id);
 
     @Override
+    public boolean canBeLeashed(Player player)
+    {
+        return false;
+    }
+
+    @Override
     public boolean canBeStuck()
     {
         return canBeStuck;
