@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.Network;
 import com.ldtteam.structurize.client.gui.AbstractBlueprintManipulationWindow;
 import com.ldtteam.structurize.client.gui.WindowSwitchPack;
@@ -105,6 +106,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
                 blueprint -> {
                     RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);
                     adjustToGroundOffset();
+                    findPaneOfTypeByID("tip", Text.class).setVisible(false);
                 }));
     }
 
