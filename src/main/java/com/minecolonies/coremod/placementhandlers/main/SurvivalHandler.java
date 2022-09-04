@@ -2,9 +2,7 @@ package com.minecolonies.coremod.placementhandlers.main;
 
 import com.ldtteam.structurize.blocks.interfaces.ILeveledBlueprintAnchorBlock;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
-import com.ldtteam.structurize.storage.ServerStructurePackLoader;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
@@ -15,10 +13,8 @@ import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.*;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
@@ -30,7 +26,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -39,16 +34,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
-
-import static com.minecolonies.api.util.constant.Constants.INSTANT_PLACEMENT;
-import static com.minecolonies.api.util.constant.Constants.PLACEMENT_NBT;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static com.minecolonies.api.util.constant.translation.ProgressTranslationConstants.PROGRESS_SUPPLY_CHEST_PLACED;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_CUSTOM_BUILDINGS;
+import static com.minecolonies.api.util.constant.TranslationConstants.WRONG_COLONY;
 
 /**
  * Minecolonies survival blueprint handler.
@@ -232,10 +222,6 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
             }
             SoundUtils.playSuccessSound(player, player.blockPosition());
         }
-        else if (blueprintPath.contains("supplycamp") || blueprintPath.contains("supplyship"))
-        {
-            handleSupplyPlacement((ServerPlayer) player, blueprintPath, blockPos, placementSettings, blueprint);
-        }
         else
         {
             if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof ILeveledBlueprintAnchorBlock)
@@ -257,79 +243,5 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         }
 
         Log.getLogger().warn("Handling Survival Placement in Colony");
-    }
-
-    /**
-     * Specific supplycamp placement.
-     * @param player the player trying to.
-     * @param blueprintPath the path of the blueprint.
-     * @param blockPos the position.
-     * @param placementSettings the placement settings.
-     * @param blueprint the blueprint.
-     */
-    private void handleSupplyPlacement(
-      final ServerPlayer player,
-      final String blueprintPath,
-      final @NotNull BlockPos blockPos,
-      final PlacementSettings placementSettings,
-      final Blueprint blueprint)
-    {
-        if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) > 0 && !MineColonies.getConfig().getServer().allowInfiniteSupplyChests.get()
-              && !isFreeInstantPlacementMH(player) && !player.isCreative())
-        {
-            MessageUtils.format(WARNING_SUPPLY_CHEST_ALREADY_PLACED).sendTo(player);
-            SoundUtils.playErrorSound(player, player.blockPosition());
-            return;
-        }
-
-        Predicate<ItemStack> searchPredicate = stack -> !stack.isEmpty();
-        if (blueprintPath.contains("supplyship"))
-        {
-            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyChest), true, false));
-        }
-        if (blueprintPath.contains("supplycamp"))
-        {
-            searchPredicate = searchPredicate.and(stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, new ItemStack(ModItems.supplyCamp), true, false));
-        }
-
-        if (isFreeInstantPlacementMH(player))
-        {
-            searchPredicate =
-              searchPredicate.and(
-                stack -> stack.hasTag() && stack.getTag().get(PLACEMENT_NBT) != null && stack.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT));
-        }
-
-        final int slot = InventoryUtils.findFirstSlotInItemHandlerNotEmptyWith(new InvWrapper(player.getInventory()), searchPredicate);
-
-        if (slot != -1 && !ItemStackUtils.isEmpty(player.getInventory().removeItemNoUpdate(slot)))
-        {
-            if (player.getStats().getValue(Stats.ITEM_USED.get(ModItems.supplyChest)) < 1)
-            {
-                MessageUtils.format(PROGRESS_SUPPLY_CHEST_PLACED).sendTo(player);
-                player.awardStat(Stats.ITEM_USED.get(ModItems.supplyChest), 1);
-                AdvancementTriggers.PLACE_SUPPLY.trigger(player);
-            }
-
-            SoundUtils.playSuccessSound(player, player.blockPosition());
-
-            StructurePlacementUtils.loadAndPlaceStructureWithRotation(player.level, blueprint,
-              blockPos, placementSettings.getRotation(), placementSettings.getMirror() != Mirror.NONE ? Mirror.FRONT_BACK : Mirror.NONE, true, player);
-        }
-        else
-        {
-            MessageUtils.format(WARNING_REMOVING_SUPPLY_CHEST).sendTo(player);
-        }
-    }
-
-    /**
-     * Whether the itemstack used allows a free placement.
-     *
-     * @param playerEntity the player to check
-     * @return whether the itemstack used allows a free placement.
-     */
-    private boolean isFreeInstantPlacementMH(ServerPlayer playerEntity)
-    {
-        final ItemStack mhItem = playerEntity.getMainHandItem();
-        return !ItemStackUtils.isEmpty(mhItem) && mhItem.getTag() != null && mhItem.getTag().getString(PLACEMENT_NBT).equals(INSTANT_PLACEMENT);
     }
 }
