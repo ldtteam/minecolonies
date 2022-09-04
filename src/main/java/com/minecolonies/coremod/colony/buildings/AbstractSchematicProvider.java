@@ -453,7 +453,12 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                     final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
                     if (info.getTileEntityData() != null)
                     {
-                        getTileEntity().readSchematicDataFromNBT(info.getTileEntityData());
+                        final CompoundTag teCompound = info.getTileEntityData().copy();
+                        teCompound.putString(TAG_PACK, blueprint.getPackName());
+                        final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
+                        teCompound.putString(TAG_NAME, location);
+
+                        getTileEntity().readSchematicDataFromNBT(teCompound);
                     }
                 }
             }

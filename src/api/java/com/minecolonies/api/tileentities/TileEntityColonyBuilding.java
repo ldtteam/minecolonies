@@ -49,6 +49,7 @@ import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
+import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_NAME;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -682,9 +683,16 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
             blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(rotation), this.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, level);
             final BlockInfo info = blueprint.getBlockInfoAsMap().getOrDefault(blueprint.getPrimaryBlockOffset(), null);
+
             if (info.getTileEntityData() != null)
             {
-                this.readSchematicDataFromNBT(info.getTileEntityData());
+                final CompoundTag teCompound = info.getTileEntityData().copy();
+                final CompoundTag tagData = teCompound.getCompound(TAG_BLUEPRINTDATA);
+
+                tagData.putString(TAG_PACK, blueprint.getPackName());
+                final String location = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(blueprint.getFileName()));
+                tagData.putString(TAG_NAME, location);
+                this.readSchematicDataFromNBT(teCompound);
             }
         }
     }

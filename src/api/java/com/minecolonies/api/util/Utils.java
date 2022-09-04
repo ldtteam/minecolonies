@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -65,6 +66,36 @@ public final class Utils
             }
         }
         return false;
+    }
+
+    /**
+     * Split path util.
+     * @param path the path string.
+     * @return the array.
+     */
+    public static String[] splitPath(final String path)
+    {
+        if (path.contains("\\"))
+        {
+            return path.split("\\\\");
+        }
+        return path.split("/");
+    }
+
+    /**
+     * Resolve a path with a sub path.
+     * @param path the path.
+     * @param subPath the sub path.
+     * @return the appended path.
+     */
+    public static Path resolvePath(final Path path, final String subPath)
+    {
+        Path resultPath = path;
+        for (final String sub : splitPath(subPath))
+        {
+            resultPath = path.resolve(sub);
+        }
+        return resultPath;
     }
 
     /**

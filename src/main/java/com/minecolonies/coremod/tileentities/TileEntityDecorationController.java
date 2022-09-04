@@ -5,6 +5,7 @@ import com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataProviderBE
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -161,6 +162,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         if (compound.contains(TAG_NAME))
         {
             this.schematicPath = compound.getString(TAG_NAME);
+            final String[] split = Utils.splitPath(this.schematicPath);
+            this.schematicName = split[split.length - 1];
         }
 
         if (compound.contains(TAG_PACK))
@@ -169,7 +172,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         }
         else
         {
-            final String[] split = this.schematicPath.split("/");
+            // This is only recovery handling for old structures, it shouldn't be called otherwise.
+            final String[] split = Utils.splitPath(this.schematicPath);
             if (split.length >= 4)
             {
                 this.packName = BlueprintMapping.getStyleMapping(split[2]);
@@ -180,14 +184,9 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
                 this.packName = DEFAULT_STYLE;
             }
 
-            if (this.schematicName.contains("/"))
+            if (this.schematicName.contains("/") || this.schematicName.contains("\\"))
             {
-                final String[] splitName = this.schematicName.split("/");
-                this.schematicName = splitName[splitName.length - 1];
-            }
-            else if (this.schematicName.contains("\\"))
-            {
-                final String[] splitName = this.schematicName.split("\\\\");
+                final String[] splitName = Utils.splitPath(this.schematicPath);
                 this.schematicName = splitName[splitName.length - 1];
             }
 

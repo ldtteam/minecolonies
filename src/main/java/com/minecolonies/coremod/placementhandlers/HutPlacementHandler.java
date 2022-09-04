@@ -11,6 +11,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -74,21 +75,22 @@ public class HutPlacementHandler implements IPlacementHandler
                         final String partialPath;
                         if (((IBlueprintDataProviderBE) be).getSchematicName().isEmpty())
                         {
-                            final String[] elements = ((IBlueprintDataProviderBE) be).getBlueprintPath().split("/");
+                            final String[] elements = Utils.splitPath(((IBlueprintDataProviderBE) be).getBlueprintPath());
                             partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(elements[elements.length - 1].replace(".blueprint", "")));
                         }
                         else
                         {
-                            partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(blueprint.getFilePath().resolve(((IBlueprintDataProviderBE) be).getSchematicName()));
+                            partialPath = StructurePacks.getStructurePack(blueprint.getPackName()).getSubPath(Utils.resolvePath(blueprint.getFilePath(), ((IBlueprintDataProviderBE) be).getSchematicName()));
                         }
 
                         if (!(world.getBlockEntity(centerPos) instanceof TileEntityColonyBuilding) && be instanceof TileEntityColonyBuilding)
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "0.blueprint");
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath.substring(0, partialPath.length() - 1) + "1.blueprint");
+                            ((TileEntityColonyBuilding) be).setSchematicName("");
                         }
                         else
                         {
-                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath);
+                            ((IBlueprintDataProviderBE) be).setBlueprintPath(partialPath + ".blueprint");
                         }
                     }
                     ((IBlueprintDataProviderBE) be).setPackName(blueprint.getPackName());
