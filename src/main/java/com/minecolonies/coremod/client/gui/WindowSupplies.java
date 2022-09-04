@@ -9,7 +9,9 @@ import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.gui.AbstractBlueprintManipulationWindow;
 import com.ldtteam.structurize.network.messages.BuildToolPlacementMessage;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
-import com.ldtteam.structurize.storage.*;
+import com.ldtteam.structurize.storage.ClientFutureProcessor;
+import com.ldtteam.structurize.storage.StructurePackMeta;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
 import com.minecolonies.api.util.MessageUtils;
@@ -17,6 +19,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.render.worldevent.HighlightManager;
 import com.minecolonies.coremod.items.ItemSupplyCampDeployer;
 import com.minecolonies.coremod.items.ItemSupplyChestDeployer;
+import com.minecolonies.coremod.placementhandlers.main.SuppliesHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -89,7 +92,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
         {
             RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
         }
-        updatePlacementOptions(type);
+        updateStyleOptions(type);
     }
 
     /**
@@ -118,7 +121,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
      * Update the different supplycamp/ship options in the dropdown.
      * @param type the type (camp or ship).
      */
-    public void updatePlacementOptions(final String type)
+    public void updateStyleOptions(final String type)
     {
         if (matchingPacks.isEmpty())
         {
@@ -184,6 +187,12 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     @Override
     protected void confirmClicked()
     {
+        handlePlacement(BuildToolPlacementMessage.HandlerType.Survival, SuppliesHandler.ID);
+    }
+
+    @Override
+    protected void handlePlacement(final BuildToolPlacementMessage.HandlerType handlerType, final String handlerId)
+    {
         final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
         if (previewData.getBlueprint() == null)
         {
@@ -212,8 +221,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               Minecraft.getInstance().player))
             {
                 Network.getNetwork()
-                  .sendToServer(new BuildToolPlacementMessage(BuildToolPlacementMessage.HandlerType.Survival,
-                    Constants.MOD_ID,
+                  .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
                     pack,
                       StructurePacks.getStructurePack(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
@@ -231,8 +239,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
               Minecraft.getInstance().player))
             {
                 Network.getNetwork()
-                  .sendToServer(new BuildToolPlacementMessage(BuildToolPlacementMessage.HandlerType.Survival,
-                    Constants.MOD_ID,
+                  .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
                     pack,
                     StructurePacks.getStructurePack(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
