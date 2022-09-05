@@ -121,7 +121,7 @@ public class PathJobFindWater extends AbstractPathJob
             }
         }
 
-        return !ponds.contains(new Tuple<>(n.pos, n.parent.pos)) && !pondsAreNear(ponds, n.pos);
+        return getResult().pond != null && !ponds.contains(new Tuple<>(n.pos, n.parent.pos)) && !pondsAreNear(ponds, n.pos);
     }
 
     /**
