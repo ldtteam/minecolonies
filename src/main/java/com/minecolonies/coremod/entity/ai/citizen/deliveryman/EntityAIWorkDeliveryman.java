@@ -66,9 +66,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int DECISION_DELAY = TICKS_SECOND * 5;
 
     /**
-     * Wait 5 seconds for the worker to decide what to do.
+     * Wait a few ticks for the worker to decide what to pick up.
      */
-    private static final int PICKUP_DELAY = 2;
+    private static final int PICKUP_DELAY = 5;
 
     /**
      * The inventory's slot which is held in hand.
@@ -225,11 +225,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return true;
         }
 
-        final ItemStack stack = handler.getStackInSlot(currentSlot);
+        ItemStack stack = handler.getStackInSlot(currentSlot);
 
-        if (stack.isEmpty())
+        while(stack.isEmpty())
         {
-            return false;
+            currentSlot++;
+            if (currentSlot >= handler.getSlots())
+            {
+                return true;
+            }
+            stack = handler.getStackInSlot(currentSlot);            
         }
 
         final int amount = workerRequiresItem(building, stack, alreadyKept);
