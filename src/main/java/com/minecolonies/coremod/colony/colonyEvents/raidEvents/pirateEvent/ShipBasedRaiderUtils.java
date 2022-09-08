@@ -2,21 +2,20 @@ package com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent;
 
 import com.google.common.collect.Lists;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyRaidEvent;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.Path;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,33 +55,20 @@ public final class ShipBasedRaiderUtils
      * Used to trigger a pirate event.
      *
      * @param targetSpawnPoint the target spawn point.
-     * @param world            the target world.
      * @param colony           the target colony.
-     * @param shipSize         the size of the ship.
+     * @param blueprint        the ship blueprint.
      * @param event            the raids event.
-     * @param shipRotation     the shiprotation.
      * @return true if successful.
      */
     public static boolean spawnPirateShip(
       final BlockPos targetSpawnPoint,
-      final Level world,
       final IColony colony,
-      final String shipSize,
-      final IColonyRaidEvent event,
-      final int shipRotation)
+      final Blueprint blueprint,
+      final IColonyRaidEvent event)
     {
-        ServerFutureProcessor.queueBlueprint(new ServerFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(DEFAULT_STYLE,
-          "decorations" + ShipBasedRaiderUtils.SHIP_FOLDER + shipSize + ".blueprint"), colony.getWorld(), (blueprint -> {
-            blueprint.rotateWithMirror(BlockPosUtil.getRotationFromRotations(shipRotation), Mirror.NONE, world);
-            colony.getEventManager()
-              .getStructureManager()
-              .spawnTemporaryStructure(blueprint,
-                targetSpawnPoint,
-                event.getID(),
-                shipRotation,
-                Mirror.NONE);
-        })));
-        return true;
+        return colony.getEventManager()
+                .getStructureManager()
+                .spawnTemporaryStructure(blueprint, targetSpawnPoint, event.getID());
     }
 
     /**

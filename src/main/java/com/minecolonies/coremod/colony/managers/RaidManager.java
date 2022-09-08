@@ -328,7 +328,7 @@ public class RaidManager implements IRaiderManager
             }
 
             // No rotation till spawners are moved into schematics
-            final int shipRotation = new Random().nextInt(3);
+            final int shipRotation = colony.getWorld().random.nextInt(4);
             final Holder<Biome> biome = colony.getWorld().getBiome(colony.getCenter());
             final int rand = colony.getWorld().random.nextInt(100);
             if ((raidType.isEmpty() && (biome.is(BiomeTags.IS_TAIGA) || rand < IGNORE_BIOME_CHANCE)
