@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.colony.colonyEvents.raidEvents;
 
-import com.ldtteam.structurize.placement.structure.CreativeStructureHandler;
 import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
@@ -12,11 +11,15 @@ import com.minecolonies.api.colony.colonyEvents.IColonyStructureSpawnEvent;
 import com.minecolonies.api.entity.mobs.AbstractEntityMinecoloniesMob;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.pathfinding.PathResult;
-import com.minecolonies.api.util.*;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.MessageUtils;
+import com.minecolonies.api.util.Tuple;
+import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipBasedRaiderUtils;
 import com.minecolonies.coremod.colony.colonyEvents.raidEvents.pirateEvent.ShipSize;
 import com.minecolonies.coremod.util.CreativeRaiderStructureHandler;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -206,7 +209,7 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
                 spawnPoint = spawnPoint.below();
             }
 
-            if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony.getWorld(), colony, shipSize.schematicPrefix + this.getShipDesc(), this, shipRotation))
+            if (!ShipBasedRaiderUtils.spawnPirateShip(spawnPoint, colony, structure.getBluePrint(), this))
             {
                 // Ship event not successfully started.
                 status = EventStatus.CANCELED;
@@ -215,8 +218,10 @@ public abstract class AbstractShipRaidEvent implements IColonyRaidEvent, IColony
 
             updateRaidBar();
 
-            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID, BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
-              .sendTo(colony).forManagers();
+            MessageUtils.format(RAID_EVENT_MESSAGE_PIRATE + shipSize.messageID,
+                                    BlockPosUtil.calcDirection(colony.getCenter(), spawnPoint), colony.getName())
+                    .with(ChatFormatting.DARK_RED)
+                    .sendTo(colony).forManagers();
             colony.markDirty();
         })));
     }

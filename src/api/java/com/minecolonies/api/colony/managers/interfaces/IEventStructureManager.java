@@ -1,9 +1,8 @@
 package com.minecolonies.api.colony.managers.interfaces;
 
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Mirror;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,11 +16,9 @@ public interface IEventStructureManager
      * @param structure        structure thats going to be spawned
      * @param targetSpawnPoint position to spawn at
      * @param eventID          eventID to spawn for
-     * @param rotations        structure rotations
-     * @param mirror           structure mirror
      * @return true if successfully spawned
      */
-    boolean spawnTemporaryStructure(Blueprint structure, BlockPos targetSpawnPoint, int eventID, int rotations, Mirror mirror);
+    boolean spawnTemporaryStructure(Blueprint structure, BlockPos targetSpawnPoint, int eventID);
 
     /**
      * Restores backup schematics for the given event ID, may be more than one.
