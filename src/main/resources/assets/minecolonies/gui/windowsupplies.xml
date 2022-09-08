@@ -3,10 +3,5 @@
 
     <layout source="structurize:gui/layoutmanipulation.xml"/>
 
-    <list id="packs" size="100 75" pos="5 5">
-        <buttonimage id="toggle" size="86 17" label="" pos="0 0"
-                     source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
-                     disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
-                     textcolor="black"/>
-    </list>
+    <button id="switch" source="structurize:textures/gui/buildtool/button_medium.png" label="$(structurize.gui.buildtool.switchpack)" size="86 17" pos="5 5" textcolor="black" texthovercolor="gray"/>
 </window>

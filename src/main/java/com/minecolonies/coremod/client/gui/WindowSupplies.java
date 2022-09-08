@@ -1,12 +1,9 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.ldtteam.blockui.Pane;
-import com.ldtteam.blockui.controls.Button;
-import com.ldtteam.blockui.controls.ButtonImage;
-import com.ldtteam.blockui.views.ScrollingList;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.structurize.Network;
-import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.client.gui.AbstractBlueprintManipulationWindow;
+import com.ldtteam.structurize.client.gui.WindowSwitchPack;
 import com.ldtteam.structurize.network.messages.BuildToolPlacementMessage;
 import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.ldtteam.structurize.storage.ClientFutureProcessor;
@@ -23,7 +20,6 @@ import com.minecolonies.coremod.placementhandlers.main.SuppliesHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,9 +27,9 @@ import java.util.List;
 
 import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_CAMP;
 import static com.ldtteam.structurize.api.util.constant.Constants.GROUNDSTYLE_LEGACY_SHIP;
+import static com.ldtteam.structurize.api.util.constant.GUIConstants.BUTTON_SWITCH_STYLE;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_WARNING_SUPPLY_BUILDING_ERROR;
 import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_BUILDING_BAD_BLOCKS;
-import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_TOGGLE;
 import static com.minecolonies.api.util.constant.WindowConstants.SUPPLIES_RESOURCE_SUFFIX;
 
 /**
@@ -41,16 +37,6 @@ import static com.minecolonies.api.util.constant.WindowConstants.SUPPLIES_RESOUR
  */
 public class WindowSupplies extends AbstractBlueprintManipulationWindow
 {
-    /**
-     * Drop down list for section.
-     */
-    private final ScrollingList packList;
-
-    /**
-     * The list of packs that contain a supplycamp.
-     */
-    private static final List<Tuple<String, Blueprint>> matchingPacks = new ArrayList<>();
-
     /**
      *  The displayed boxes category
      */
@@ -62,117 +48,66 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     private static String type;
 
     /**
+     * Current selected structure pack.
+     */
+    private static StructurePackMeta structurePack = null;
+
+    /**
      * Create a new supply tool window.
      * @param pos the pos its initiated at.
      */
     public WindowSupplies(@Nullable final BlockPos pos, final String type)
     {
         super(Constants.MOD_ID + SUPPLIES_RESOURCE_SUFFIX, pos, (type.equals("supplycamp") ? GROUNDSTYLE_LEGACY_CAMP : GROUNDSTYLE_LEGACY_SHIP), "supplies");
-        packList = findPaneOfTypeByID("packs", ScrollingList.class);
-        registerButton(BUTTON_TOGGLE, this::switchPack);
+
+        registerButton(BUTTON_SWITCH_STYLE, this::switchPackClicked);
 
         if (!type.equals(WindowSupplies.type))
         {
             HighlightManager.clearCategory(RENDER_BOX_CATEGORY);
             RenderingCache.removeBlueprint("supplies");
-            matchingPacks.clear();
         }
-        else if (!matchingPacks.isEmpty())
+        else if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
         {
-            if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
-            {
-                RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(matchingPacks.get(0).getB());
-            }
+            loadBlueprint();
         }
         WindowSupplies.type = type;
-
 
         if (pos != null)
         {
             RenderingCache.getOrCreateBlueprintPreviewData("supplies").setPos(pos);
         }
-        updateStyleOptions(type);
     }
 
     /**
-     * Add the matching pack to the list.
-     * @param name the name of the pack.
-     * @param blueprint the fitting blueprint.
+     * Opens the switch style window.
      */
-    private void addOption(final String name, final Blueprint blueprint)
+    private void switchPackClicked()
     {
-        if (matchingPacks.isEmpty())
+        new WindowSwitchPack(() ->
         {
-            if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() == null)
-            {
-                RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);
-            }
-            matchingPacks.add(new Tuple<>(name, blueprint));
-        }
-        else
-        {
-            matchingPacks.add(new Tuple<>(name, blueprint));
-            packList.refreshElementPanes();
-        }
+            final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
+            previewData.setBlueprint(null);
+            return new WindowSupplies(previewData.getPos(), type);
+        }).open();
     }
 
     /**
-     * Update the different supplycamp/ship options in the dropdown.
-     * @param type the type (camp or ship).
+     * Try to load the appropriate supply blueprint for the selected pack, if there is one
      */
-    public void updateStyleOptions(final String type)
+    private void loadBlueprint()
     {
-        if (matchingPacks.isEmpty())
-        {
-            for (final StructurePackMeta packName : StructurePacks.getPackMetas())
-            {
-                ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(StructurePacks.getBlueprintFuture(packName.getName(),
-                  "decorations/supplies/" + type + ".blueprint"), (blueprint -> {
-                    if (blueprint != null)
-                    {
-                        addOption(packName.getName(), blueprint);
-                    }
-                })));
-            }
-        }
+        RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(null);
 
-        packList.setDataProvider(new ScrollingList.DataProvider()
-        {
-            /**
-             * The number of rows of the list.
-             * @return the number.
-             */
-            @Override
-            public int getElementCount()
-            {
-                return matchingPacks.size();
-            }
+        structurePack = StructurePacks.selectedPack;
 
-            @Override
-            public void updateElement(final int index, final Pane rowPane)
-            {
-                final ButtonImage buttonImage = rowPane.findPaneOfTypeByID(BUTTON_TOGGLE, ButtonImage.class);
-                buttonImage.setText(Component.literal(matchingPacks.get(index).getA()));
-                if (RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint() != null && RenderingCache.getOrCreateBlueprintPreviewData("supplies").getBlueprint().equals(matchingPacks.get(index).getB()))
-                {
-                    buttonImage.disable();
-                }
-                else
-                {
-                    buttonImage.enable();
-                }
-            }
-        });
-    }
-
-    /**
-     * Select a pack.
-     * @param button the clicked button.
-     */
-    private void switchPack(final Button button)
-    {
-        RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(matchingPacks.get(this.packList.getListElementIndexByPane(button)).getB());
-        adjustToGroundOffset();
+        ClientFutureProcessor.queueBlueprint(new ClientFutureProcessor.BlueprintProcessingData(
+                StructurePacks.getBlueprintFuture(structurePack.getName(), "decorations/supplies/" + type + ".blueprint"),
+                blueprint -> {
+                    RenderingCache.getOrCreateBlueprintPreviewData("supplies").setBlueprint(blueprint);
+                    adjustToGroundOffset();
+                    findPaneOfTypeByID("tip", Text.class).setVisible(false);
+                }));
     }
 
     @Override
@@ -193,21 +128,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
     protected void handlePlacement(final BuildToolPlacementMessage.HandlerType handlerType, final String handlerId)
     {
         final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
-        if (previewData.getBlueprint() == null)
-        {
-            return;
-        }
-
-        String pack = "";
-        for (final Tuple<String, Blueprint> element : matchingPacks)
-        {
-            if (element.getB().equals(previewData.getBlueprint()))
-            {
-                pack = element.getA();
-            }
-        }
-
-        if (pack.isEmpty())
+        if (structurePack == null || previewData.getBlueprint() == null)
         {
             return;
         }
@@ -221,8 +142,8 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             {
                 Network.getNetwork()
                   .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
-                    pack,
-                      StructurePacks.getStructurePack(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
+                          structurePack.getName(),
+                          structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
                     previewData.getRotation(),
                     previewData.getMirror()));
@@ -239,8 +160,8 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             {
                 Network.getNetwork()
                   .sendToServer(new BuildToolPlacementMessage(handlerType, handlerId,
-                    pack,
-                    StructurePacks.getStructurePack(pack).getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
+                          structurePack.getName(),
+                          structurePack.getSubPath(previewData.getBlueprint().getFilePath().resolve(previewData.getBlueprint().getFileName() + ".blueprint")),
                     previewData.getPos(),
                     previewData.getRotation(),
                     previewData.getMirror()));
