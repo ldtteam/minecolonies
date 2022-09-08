@@ -267,7 +267,7 @@ public class Tree
                     continue;
                 }
 
-                if (stack.is(ItemTags.SAPLINGS))
+                if (stack.is(ItemTags.SAPLINGS) || (isDynamicTree() && Compatibility.isDynamicTreeSapling(stack)))
                 {
                     IColonyManager.getInstance().getCompatibilityManager().connectLeafToSapling(blockState, stack);
                     return stack;
