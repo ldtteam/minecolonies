@@ -40,7 +40,7 @@ public class PathJobRandomPos extends AbstractPathJob
     /**
      * Random pathing rand.
      */
-    private static RandomSource random = RandomSource.create();
+    private static final RandomSource random = RandomSource.createThreadSafe();
 
     /**
      * Minimum distance to the goal.
