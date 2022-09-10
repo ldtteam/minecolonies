@@ -71,6 +71,8 @@ public class SpearEntity extends ThrownTrident implements ICustomAttackSound
         super(ModEntities.SPEAR, world);
         this.weapon = thrownWeapon.copy();
         this.setOwner(thrower);
+        this.setPos(thrower.getX(), thrower.getEyeY() - 0.1, thrower.getZ());
+        this.shootFromRotation(thrower, thrower.getXRot(), thrower.getYRot(), 0.0F, 2.5F, 1.0F);
         getAddEntityPacket();
     }
 
