@@ -125,7 +125,8 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).disable();
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).hide();
 
-        blueprintFuture = StructurePacks.getBlueprintFuture(packMeta, path);
+        final String cleanedPackName = packMeta.replace(Minecraft.getInstance().player.getUUID().toString(), "");
+        blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
         this.rotation = rotation;
         this.mirror = mirror;
     }
