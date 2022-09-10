@@ -31,6 +31,11 @@ public class OpenDecoWindowMessage implements IMessage
     String packName;
 
     /**
+     * If this is a client-only pack.
+     */
+    Boolean clientPack;
+
+    /**
      * The rotation.
      */
     private Rotation rotation;
@@ -51,11 +56,12 @@ public class OpenDecoWindowMessage implements IMessage
      * @param packName the pack of the deco.
      * @param path the path in the pack.
      */
-    public OpenDecoWindowMessage(final BlockPos pos, final String packName, final String path, final Rotation rotation, final Mirror mirror)
+    public OpenDecoWindowMessage(final BlockPos pos, final Boolean clientPack, final String packName, final String path, final Rotation rotation, final Mirror mirror)
     {
         this.pos = pos;
         this.path = path;
         this.packName = packName;
+        this.clientPack = clientPack;
         this.rotation = rotation;
         this.mirror = mirror != Mirror.NONE;
     }
@@ -66,6 +72,7 @@ public class OpenDecoWindowMessage implements IMessage
         buf.writeBlockPos(this.pos);
         buf.writeUtf(this.path);
         buf.writeUtf(this.packName);
+        buf.writeBoolean(this.clientPack);
         buf.writeBoolean(this.mirror);
         buf.writeInt(this.rotation.ordinal());
     }
@@ -76,6 +83,7 @@ public class OpenDecoWindowMessage implements IMessage
         this.pos = buf.readBlockPos();
         this.path = buf.readUtf(32767);
         this.packName = buf.readUtf(32767);
+        this.clientPack = buf.readBoolean();
         this.mirror = buf.readBoolean();
         this.rotation = Rotation.values()[buf.readInt()];
     }
@@ -90,6 +98,6 @@ public class OpenDecoWindowMessage implements IMessage
     @Override
     public void onExecute(final NetworkEvent.Context ctxIn, final boolean isLogicalServer)
     {
-        new WindowBuildDecoration(pos, packName, path, rotation, mirror).open();
+        new WindowBuildDecoration(pos, clientPack, packName, path, rotation, mirror).open();
     }
 }
