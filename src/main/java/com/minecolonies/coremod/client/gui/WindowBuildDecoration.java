@@ -65,14 +65,9 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     private final List<Tuple<String, BlockPos>> builders = new ArrayList<>();
 
     /**
-     * Pack meta of the deco (client side).
+     * Pack meta of the deco.
      */
-    private final String clientPackMeta;
-
-    /**
-     * Pack meta of the deco (server side).
-     */
-    private final String serverPackMeta;
+    private final String packMeta;
 
     /**
      * Path of the blueprint in the pack.
@@ -112,11 +107,10 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
     /**
      * Constructs the decoration build confirmation dialog
      */
-    public WindowBuildDecoration(final BlockPos pos, final Boolean clientPack, final String packMeta, final String path, final Rotation rotation, final boolean mirror)
+    public WindowBuildDecoration(final BlockPos pos, final String packMeta, final String path, final Rotation rotation, final boolean mirror)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
-        this.clientPackMeta = clientPack ? packMeta.substring(Minecraft.getInstance().player.getUUID().toString().length()) : packMeta;
-        this.serverPackMeta = packMeta;
+        this.packMeta = packMeta;
         this.path = path;
         this.structurePos = pos;
 
@@ -131,7 +125,8 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).disable();
         findPaneOfTypeByID(DROPDOWN_STYLE_ID, DropDownList.class).hide();
 
-        blueprintFuture = StructurePacks.getBlueprintFuture(clientPackMeta, path);
+        final String cleanedPackName = packMeta.replace(Minecraft.getInstance().player.getUUID().toString(), "");
+        blueprintFuture = StructurePacks.getBlueprintFuture(cleanedPackName, path);
         this.rotation = rotation;
         this.mirror = mirror;
     }
@@ -327,7 +322,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
     private void confirmedBuild()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, serverPackMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror));
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, packMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror));
         close();
     }
 }

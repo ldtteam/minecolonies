@@ -229,16 +229,16 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
                 int level = Utils.getBlueprintLevel(blueprint.getFileName().replace(".blueprint", ""));
                 if (level == -1)
                 {
-                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, clientPack, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
                 }
                 else
                 {
-                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, clientPack, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                    Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath.replace(level + ".blueprint", "1.blueprint"), placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
                 }
             }
             else
             {
-                Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, clientPack, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
+                Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
             }
         }
 
