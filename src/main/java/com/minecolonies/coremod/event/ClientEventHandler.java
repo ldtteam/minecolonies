@@ -69,10 +69,6 @@ public class ClientEventHandler
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderWorldLastEvent(@NotNull final RenderLevelStageEvent event)
     {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
-        {
-            return;
-        }
         WorldEventContext.INSTANCE.renderWorldLastEvent(event);
     }
 

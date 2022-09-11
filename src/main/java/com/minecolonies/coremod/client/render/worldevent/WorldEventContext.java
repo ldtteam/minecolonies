@@ -35,6 +35,7 @@ public class WorldEventContext
     ItemStack mainHandItem;
     @Nullable
     IColonyView nearestColony;
+
     /**
      * In chunks
      */
@@ -55,17 +56,21 @@ public class WorldEventContext
         poseStack.pushPose();
         poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 
-        ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
-
-        NearColonyBuildingsRenderer.render(this);
-        ColonyWaypointRenderer.render(this);
-        ColonyPatrolPointRenderer.render(this);
-        GuardTowerRallyBannerRenderer.render(this);
-        HighlightManager.render(this);
-        PathfindingDebugRenderer.render(this);
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
+        {
+            ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
+            NearColonyBuildingsRenderer.render(this);
+            ColonyWaypointRenderer.render(this);
+            ColonyPatrolPointRenderer.render(this);
+            GuardTowerRallyBannerRenderer.render(this);
+            PathfindingDebugRenderer.render(this);
+        }
+        else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS)
+        {
+            HighlightManager.render(this);
+        }
 
         bufferSource.endBatch();
-
         poseStack.popPose();
     }
 
