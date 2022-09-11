@@ -5,14 +5,15 @@ import com.minecolonies.api.crafting.CompostRecipe;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Disease;
 import com.minecolonies.api.util.Tuple;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,6 +31,25 @@ public interface ICompatibilityManager
      * @param recipeManager The vanilla recipe manager.
      */
     void discover(@NotNull final RecipeManager recipeManager);
+
+    /**
+     * Transfer server-discovered item lists to client, to avoid double-handling (and
+     * potentially getting different answers).
+     *
+     * @param buf serialization buffer
+     */
+    void serialize(@NotNull final FriendlyByteBuf buf);
+
+    /**
+     * Receive and update lists based on incoming server discovery data.
+     *
+     * Note: anything based purely on the registries and configs can be safely recalculated here.
+     *       But anything based on tags or recipes must be updated purely via the packet,
+     *       because this can be called before the client has the latest tags/recipes.
+     *
+     * @param buf deserialization buffer
+     */
+    void deserialize(@NotNull final FriendlyByteBuf buf);
 
     /**
      * Gets the sapling matching a leave.

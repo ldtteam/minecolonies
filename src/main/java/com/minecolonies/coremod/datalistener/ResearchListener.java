@@ -1,24 +1,25 @@
 package com.minecolonies.coremod.datalistener;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.research.effects.IResearchEffect;
 import com.minecolonies.api.util.Log;
-
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.coremod.research.GlobalResearch;
 import com.minecolonies.coremod.research.GlobalResearchBranch;
 import com.minecolonies.coremod.research.ResearchEffectCategory;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,8 @@ import java.util.Map;
 
 import static com.minecolonies.coremod.research.GlobalResearch.*;
 import static com.minecolonies.coremod.research.GlobalResearchBranch.*;
-import static com.minecolonies.coremod.research.ResearchEffectCategory.*;
+import static com.minecolonies.coremod.research.ResearchEffectCategory.RESEARCH_EFFECT_LEVELS_PROP;
+import static com.minecolonies.coremod.research.ResearchEffectCategory.RESEARCH_EFFECT_PROP;
 
 /**
  * Loader for Json-based researches
@@ -81,18 +83,6 @@ public class ResearchListener extends SimpleJsonResourceReloadListener
         parseResearchBranches(object, researchTree);
 
         Log.getLogger().info("Loaded " + researchMap.values().size() + " recipes for " + researchTree.getBranches().size() + " research branches");
-
-        // For dedicated servers, send to any connected players.  On startup, this will be no-one.
-        // But it is possible to reload data packs live, and while not supported it's something to handle.
-        // This event fires early enough on the server start lifecycle that server isn't initialized.
-        // We only need to send to players during a data pack reload event during live play.
-        if(server != null)
-        {
-            for (ServerPlayer player : server.getPlayerList().getPlayers())
-            {
-                researchTree.sendGlobalResearchTreePackets(player);
-            }
-        }
     }
 
     /**
