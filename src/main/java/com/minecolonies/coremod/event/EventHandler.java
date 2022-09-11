@@ -12,7 +12,6 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.items.ModTags;
-import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.Tuple;
@@ -26,7 +25,6 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.VisitorSpawnedEvent;
-import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.interactionhandling.RecruitmentInteraction;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
@@ -403,9 +401,6 @@ public class EventHandler
                     ItemBannerRallyGuards.broadcastPlayerToRally(stack, player.getLevel(), player);
                 }
             }
-
-            IGlobalResearchTree.getInstance().sendGlobalResearchTreePackets((ServerPlayer) event.getPlayer());
-            CustomRecipeManager.getInstance().sendCustomRecipeManagerPackets((ServerPlayer) event.getPlayer());
         }
     }
 
