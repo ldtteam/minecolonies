@@ -55,4 +55,21 @@
               source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
               disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
               textcolor="black"/>
+
+    <label label="$(com.minecolonies.coremod.gui.townhall.picknamestyle)" pos="276 180" size="148 11" textalign="MIDDLE" color="black"/>
+    <dropdown id="nameStylePicker"
+              size="86 17"
+              pos="306 194"
+              maxContentHeight="30"
+              dropDownSize="86 30"
+              source="minecolonies:textures/gui/builderhut/builder_button_medium.png"
+              disabled="minecolonies:textures/gui/builderhut/builder_button_medium_dark.png"
+              textcolor="black"
+              scrollbarOffset="9 0"
+              dropfixx="30"
+              enabled="false">
+        <view size="100% 15">
+            <buttonimage id="button" size="86 17" pos="0 0" source="minecolonies:textures/gui/builderhut/builder_button_medium.png" textcolor="black"/>
+        </view>
+    </dropdown>
 </window>

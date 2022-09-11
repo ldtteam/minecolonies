@@ -322,7 +322,7 @@ public interface ICitizenData extends ICivilianData
      * @param firstParentName name of the first parent.
      * @param secondParentName name of the second parent.
      */
-    void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName);
+    void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName, final CitizenNameFile nameFile);
 
     /**
      * Check if the two citizens are related.
