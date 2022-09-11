@@ -1176,7 +1176,7 @@
   "advancements.minecolonies.build.town_hall.title": "The Centerpiece",
   "advancements.minecolonies.build.town_hall.description": "Construct the Town Hall. There are only a couple of benefits currently, but it's a cool centerpiece!",
   "advancements.minecolonies.colony_population_5.title": "Hometown",
-  "advancements.minecolonies.colony_population_5.description": "Time for more citizens! Children may be born when two citizens of opposite gender are in the same house during the night. Children need to be fed and sleep well to grow up.",
+  "advancements.minecolonies.colony_population_5.description": "Time for more citizens! Children may only be born when there is open space in one of the buildings. Children need to be fed and sleep well to grow up.",
   "advancements.minecolonies.build.warehouse.title": "Central Storage",
   "advancements.minecolonies.build.warehouse.description": "Need some automation? Build a Warehouse to store materials in a central location!",
   "advancements.minecolonies.build.delivery_person.title": "Special Delivery",
