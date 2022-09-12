@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
-import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
-
 public class RenderTypes
 {
     /**

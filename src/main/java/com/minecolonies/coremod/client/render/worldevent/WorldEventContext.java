@@ -64,13 +64,14 @@ public class WorldEventContext
             ColonyPatrolPointRenderer.render(this);
             GuardTowerRallyBannerRenderer.render(this);
             PathfindingDebugRenderer.render(this);
+
+            bufferSource.endBatch();
         }
         else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS)
         {
             HighlightManager.render(this);
         }
 
-        bufferSource.endBatch();
         poseStack.popPose();
     }
 
