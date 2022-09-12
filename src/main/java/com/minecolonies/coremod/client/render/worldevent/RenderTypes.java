@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
-import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
-
 public class RenderTypes
 {
     /**
@@ -23,7 +21,7 @@ public class RenderTypes
         return InnerRenderTypes.ENTITY_CUTOUT_FRONT.apply(resLoc);
     }
 
-    private static final class InnerRenderTypes extends RenderType
+    public static final class InnerRenderTypes extends RenderType
     {
         private InnerRenderTypes(final String nameIn,
             final VertexFormat formatIn,
@@ -49,5 +47,6 @@ public class RenderTypes
               .createCompositeState(true);
             return create("entity_cutout", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, rendertype$compositestate);
         });
+
     }
 }

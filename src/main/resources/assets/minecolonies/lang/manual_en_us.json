@@ -84,22 +84,6 @@
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionon": "Restriction (on)",
   "com.minecolonies.coremod.gui.workerhuts.togglerestrictionoff": "Restriction (off)",
 
-  "minecolonies.config.names": "Name Settings",
-  "minecolonies.config.names.comment": "All configuration items related to the citizen names",
-
-  "minecolonies.config.usemiddleinitial": "Middle Initial",
-  "minecolonies.config.usemiddleinitial.comment": "Should citizens have a middle initial?",
-
-  "minecolonies.config.useeasternnameorder": "Eastern Name Order",
-  "minecolonies.config.useeasternnameorder.comment": "Should new citizens use the Eastern name order (with their surname first)?",
-
-  "minecolonies.config.malefirstnames": "Male First Names",
-  "minecolonies.config.malefirstnames.comment": "Male first names to be used for colonists",
-  "minecolonies.config.femalefirstnames": "Female First Names",
-  "minecolonies.config.femalefirstnames.comment": "Female first names to be used for colonists",
-  "minecolonies.config.lastnames": "Last Names",
-  "minecolonies.config.lastnames.comment": "Last names to be used for colonists",
-
   "minecolonies.config.initialcitizenamount": "Initital Citizen Count",
   "minecolonies.config.initialcitizenamount.comment": "Amount of initial citizens.",
   "minecolonies.config.builderplaceconstructiontape": "Construction Tape Placement",
@@ -1192,7 +1176,7 @@
   "advancements.minecolonies.build.town_hall.title": "The Centerpiece",
   "advancements.minecolonies.build.town_hall.description": "Construct the Town Hall. There are only a couple of benefits currently, but it's a cool centerpiece!",
   "advancements.minecolonies.colony_population_5.title": "Hometown",
-  "advancements.minecolonies.colony_population_5.description": "Time for more citizens! Children may be born when two citizens of opposite gender are in the same house during the night. Children need to be fed and sleep well to grow up.",
+  "advancements.minecolonies.colony_population_5.description": "Time for more citizens! Children may only be born when there is open space in one of the buildings. Children need to be fed and sleep well to grow up.",
   "advancements.minecolonies.build.warehouse.title": "Central Storage",
   "advancements.minecolonies.build.warehouse.description": "Need some automation? Build a Warehouse to store materials in a central location!",
   "advancements.minecolonies.build.delivery_person.title": "Special Delivery",
@@ -2058,6 +2042,7 @@
   "com.minecolonies.coremod.gui.workerhuts.miner": "Mine",
   "com.minecolonies.coremod.gui.workerhuts.miner.repair.enqueued": "Added the repair request to the queue of the miner. Miner will pick it up once the current task is finished.",
   "com.minecolonies.coremod.gui.townhall.picktexturestyle": "Pick Citizen Style",
+  "com.minecolonies.coremod.gui.townhall.picknamestyle": "Pick Naming Convention",
   "com.minecolonies.core.townhall.patreon": "Feature Limited to Contributors and Donors",
   "com.minecolonies.coremod.gui.chat.drcat": "Miau, mew, mau, meee, mew, hiss, nyan, mew!!! brrrrrrrrrbrrrrrrbrrrrr",
   "com.minecolonies.coremod.gui.chat.kedamono": "I am the Kedamono Dragon, I have traveled far and seek a fair place to reside. Do you have enough beds for me?",

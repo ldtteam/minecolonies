@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.client.render.worldevent;
 
 import com.ldtteam.structurize.util.WorldRenderMacros;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,13 +45,15 @@ public class HighlightManager
                     continue;
                 }
 
-                WorldRenderMacros.renderLineBox(ctx.bufferSource.getBuffer(
-                    WorldRenderMacros.GLINT_LINES_WITH_WIDTH), ctx.poseStack, boxRenderData.pos, boxRenderData.argbColor, 0.01f);
-
+                final MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+                WorldRenderMacros.renderLineBox(buffer.getBuffer(
+                    WorldRenderMacros.GLINT_LINES_WITH_WIDTH), ctx.poseStack, boxRenderData.pos, boxRenderData.argbColor, 0.025f);
                 if (!boxRenderData.text.isEmpty())
                 {
-                    WorldRenderMacros.renderDebugText(boxRenderData.pos, boxRenderData.text, ctx.poseStack, true, 3, ctx.bufferSource);
+                   WorldRenderMacros.renderDebugText(boxRenderData.pos, boxRenderData.text, ctx.poseStack, true, 3, buffer);
                 }
+                buffer.endBatch();
+
             }
 
             if (boxes.isEmpty())
