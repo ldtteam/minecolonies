@@ -1,10 +1,8 @@
 package com.minecolonies.api.compatibility;
 
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.RecipeStorage;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -12,13 +10,6 @@ import java.util.function.Predicate;
  */
 public interface IFurnaceRecipes
 {
-    /**
-     * Set the map. This is called from the client side message.
-     *
-     * @param map the map to set.
-     */
-    void setMap(final Map<ItemStorage, RecipeStorage> map);
-
     /**
      * Get the smelting result for a certain itemStack.
      *
