@@ -348,6 +348,6 @@ public class BuildingMiner extends AbstractBuildingStructureBuilder
      */
     private static boolean needsFallBack(final String structurePacks, final String shaft)
     {
-        return StructurePacks.getBlueprint(structurePacks, shaft + ".blueprint") == null;
+        return StructurePacks.getBlueprint(structurePacks, shaft + ".blueprint", true) == null;
     }
 }
