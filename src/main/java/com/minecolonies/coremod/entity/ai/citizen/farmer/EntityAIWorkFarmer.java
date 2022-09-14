@@ -838,7 +838,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
     @Override
     protected List<ItemStack> increaseBlockDrops(final List<ItemStack> drops)
     {
-        if (worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING) > 0)
+        final double increaseCrops = worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING);
+        if (increaseCrops == 0)
         {
             return drops;
         }
@@ -847,7 +848,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         for (final ItemStack stack : drops)
         {
             final ItemStack drop = stack.copy();
-            if (worker.getRandom().nextDouble() < worker.getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(FARMING))
+            if (worker.getRandom().nextDouble() < increaseCrops)
             {
                 drop.setCount(drop.getCount() * 2);
             }
