@@ -201,6 +201,7 @@ public class NetworkChannel
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
         registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
+        registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);

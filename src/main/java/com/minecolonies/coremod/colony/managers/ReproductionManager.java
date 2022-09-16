@@ -168,7 +168,7 @@ public class ReproductionManager implements IReproductionManager
             }
 
             newCitizen.setParents(firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
-            newCitizen.generateName(random, firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName());
+            newCitizen.generateName(random, firstParent == null ? "" : firstParent.getName(), secondParent == null ? "" : secondParent.getName(), colony.getCitizenNameFile());
 
             module.assignCitizen(newCitizen);
 
