@@ -197,6 +197,7 @@ public class NetworkChannel
         registerMessage(++idx, CourierHiringModeMessage.class, CourierHiringModeMessage::new);
         registerMessage(++idx, QuarryHiringModeMessage.class, QuarryHiringModeMessage::new);
         registerMessage(++idx, ToggleRecipeMessage.class, ToggleRecipeMessage::new);
+        registerMessage(++idx, ColonyNameStyleMessage.class, ColonyNameStyleMessage::new);
 
         //Client side only
         registerMessage(++idx, BlockParticleEffectMessage.class, BlockParticleEffectMessage::new);
@@ -205,7 +206,7 @@ public class NetworkChannel
         registerMessage(++idx, LocalizedParticleEffectMessage.class, LocalizedParticleEffectMessage::new);
         registerMessage(++idx, UpdateChunkRangeCapabilityMessage.class, UpdateChunkRangeCapabilityMessage::new);
         registerMessage(++idx, OpenSuggestionWindowMessage.class, OpenSuggestionWindowMessage::new);
-        registerMessage(++idx, UpdateClientWithRecipesMessage.class, UpdateClientWithRecipesMessage::new);
+        registerMessage(++idx, UpdateClientWithCompatibilityMessage.class, UpdateClientWithCompatibilityMessage::new);
         registerMessage(++idx, CircleParticleEffectMessage.class, CircleParticleEffectMessage::new);
         registerMessage(++idx, StreamParticleEffectMessage.class, StreamParticleEffectMessage::new);
         registerMessage(++idx, SleepingParticleMessage.class, SleepingParticleMessage::new);

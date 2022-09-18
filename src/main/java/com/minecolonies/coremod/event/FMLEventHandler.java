@@ -2,6 +2,7 @@ package com.minecolonies.coremod.event;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
 import com.minecolonies.coremod.datalistener.CustomVisitorListener;
 import com.minecolonies.coremod.datalistener.ResearchListener;
@@ -52,6 +53,7 @@ public class FMLEventHandler
         event.addListener(new CrafterRecipeListener());
         event.addListener(new ResearchListener());
         event.addListener(new CustomVisitorListener());
+        event.addListener(new CitizenNameListener());
     }
 
     @SubscribeEvent

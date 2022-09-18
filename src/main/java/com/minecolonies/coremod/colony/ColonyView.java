@@ -28,6 +28,7 @@ import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
@@ -222,6 +223,16 @@ public final class ColonyView implements IColonyView
     private final IGraveManager graveManager = new GraveManagerView();
 
     /**
+     * The list of name files.
+     */
+    private List<String> nameFileIds = new ArrayList<>();
+
+    /**
+     * The name style of the colony citizens.
+     */
+    private String nameStyle;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -292,6 +303,12 @@ public final class ColonyView implements IColonyView
         buf.writeBoolean(colony.canMoveIn());
         buf.writeUtf(colony.getTextureStyleId());
 
+        buf.writeUtf(colony.getNameStyle());
+        buf.writeInt(CitizenNameListener.nameFileMap.size());
+        for (final String nameFileIndex : CitizenNameListener.nameFileMap.keySet())
+        {
+            buf.writeUtf(nameFileIndex);
+        }
         //  Citizens are sent as a separate packet
 
         if (colony.getRequestManager() != null && (colony.getRequestManager().isDirty() || hasNewSubscribers))
@@ -778,6 +795,7 @@ public final class ColonyView implements IColonyView
         freeBlocks.clear();
         wayPoints.clear();
         lastSpawnPoints.clear();
+        nameFileIds.clear();
 
         final int blockListSize = buf.readInt();
         for (int i = 0; i < blockListSize; i++)
@@ -802,6 +820,13 @@ public final class ColonyView implements IColonyView
         this.manualHousing = buf.readBoolean();
         this.moveIn = buf.readBoolean();
         this.textureStyle = buf.readUtf(32767);
+
+        this.nameStyle = buf.readUtf(32767);
+        final int nameFileIdSize = buf.readInt();
+        for (int i = 0; i < nameFileIdSize; i++)
+        {
+            nameFileIds.add(buf.readUtf(32767));
+        }
 
         if (buf.readBoolean())
         {
@@ -1398,7 +1423,7 @@ public final class ColonyView implements IColonyView
     @Override
     public void setStructurePack(final String style)
     {
-        // Not needed.
+        this.style = style;
     }
 
     @Override
@@ -1507,5 +1532,30 @@ public final class ColonyView implements IColonyView
     public ICitizenDataView getVisitor(final int citizenId)
     {
         return visitors.get(citizenId);
+    }
+
+    @Override
+    public void setNameStyle(final String style)
+    {
+        this.nameStyle = style;
+        this.markDirty();
+    }
+
+    @Override
+    public String getNameStyle()
+    {
+        return this.nameStyle;
+    }
+
+    @Override
+    public List<String> getNameFileIds()
+    {
+        return this.nameFileIds;
+    }
+
+    @Override
+    public CitizenNameFile getCitizenNameFile()
+    {
+        return CitizenNameListener.nameFileMap.getOrDefault(nameStyle, CitizenNameListener.nameFileMap.get("default"));
     }
 }

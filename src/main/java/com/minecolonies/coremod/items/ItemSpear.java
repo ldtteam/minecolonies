@@ -57,7 +57,7 @@ public class ItemSpear extends TridentItem
                 {
                     stack.hurtAndBreak(1, playerEntity, playerEntity1 -> playerEntity1.broadcastBreakEvent(entityLiving.getUsedItemHand()));
                     SpearEntity spearEntity = new SpearEntity(worldIn, playerEntity, stack);
-                    spearEntity.shootFromRotation(playerEntity, playerEntity.getXRot(), playerEntity.getYRot(), 0.0F, 2.5F, 1.0F);
+
                     if (playerEntity.getAbilities().instabuild)
                     {
                         spearEntity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;

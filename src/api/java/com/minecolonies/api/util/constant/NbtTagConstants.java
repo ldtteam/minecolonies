@@ -163,6 +163,11 @@ public final class NbtTagConstants
     public static final String TAG_COL_TEXT = "textstyle";
 
     /**
+     * The tag to store the name style of the colonists.
+     */
+    public static final String TAG_COL_NAME_STYLE = "namestyle";
+
+    /**
      * Tag to store if raidable to a colony.
      */
     public static final String TAG_RAIDABLE = "raidable";
