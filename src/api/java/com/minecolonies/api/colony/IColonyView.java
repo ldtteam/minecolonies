@@ -421,4 +421,10 @@ public interface IColonyView extends IColony
      * @return citizen data for visitor
      */
     ICitizenDataView getVisitor(int citizenId);
+
+    /**
+     * Get a list of all available citizen name style options.
+     * @return the list of options.
+     */
+    List<String> getNameFileIds();
 }

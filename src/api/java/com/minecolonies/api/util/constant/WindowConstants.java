@@ -360,6 +360,11 @@ public final class WindowConstants
     public static final String DROPDOWN_TEXT_ID = "textureStylePicker";
 
     /**
+     * This drop down list is used to choose which name style should be used.
+     */
+    public static final String DROPDOWN_NAME_ID = "nameStylePicker";
+
+    /**
      * This button is used to set the texture.
      */
     public static final String BUTTON_TEXTURE_SET = "switchstyle";

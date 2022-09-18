@@ -443,4 +443,24 @@ public interface IColony
      * @return the string id of the style.
      */
     String getTextureStyleId();
+
+    /**
+     * Get the colony name style.
+     *
+     * @return the string id of the style.
+     */
+    String getNameStyle();
+
+    /**
+     * Set the colony name style.
+     *
+     * @param style the string id of the style.
+     */
+    void setNameStyle(final String style);
+
+    /**
+     * Get the matching citizen name file of the colony .
+     * @return the matching file.
+     */
+    CitizenNameFile getCitizenNameFile();
 }

@@ -2,10 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.ColonyState;
-import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
@@ -32,6 +29,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.WorkManager;
+import com.minecolonies.coremod.datalistener.CitizenNameListener;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import net.minecraft.ChatFormatting;
@@ -317,6 +315,11 @@ public class Colony implements IColony
      * The texture set of the colony.
      */
     private String textureStyle = "default";
+
+    /**
+     * The colony name style.
+     */
+    private String nameStyle = "default";
 
     /**
      * Constructor for a newly created Colony.
@@ -815,6 +818,10 @@ public class Colony implements IColony
         {
             this.textureStyle = compound.getString(TAG_COL_TEXT);
         }
+        if (compound.contains(TAG_COL_NAME_STYLE))
+        {
+            this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
+        }
         this.colonyTag = compound;
     }
 
@@ -918,6 +925,8 @@ public class Colony implements IColony
         compound.put(TAG_FLAG_PATTERNS, colonyFlag);
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
+        compound.putString(TAG_COL_NAME_STYLE, nameStyle);
+
         this.colonyTag = compound;
 
         isActive = false;
@@ -1076,7 +1085,7 @@ public class Colony implements IColony
      * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
      * run.
      *
-     * @param event {@link TickEvent.WorldTickEvent}
+     * @param event {@link TickEvent.LevelTickEvent}
      */
     @Override
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
@@ -1864,6 +1873,25 @@ public class Colony implements IColony
     public String getTextureStyleId()
     {
         return this.textureStyle;
+    }
+
+    @Override
+    public void setNameStyle(final String style)
+    {
+        this.nameStyle = style;
+        this.markDirty();
+    }
+
+    @Override
+    public String getNameStyle()
+    {
+        return this.nameStyle;
+    }
+
+    @Override
+    public CitizenNameFile getCitizenNameFile()
+    {
+        return CitizenNameListener.nameFileMap.getOrDefault(nameStyle, CitizenNameListener.nameFileMap.get("default"));
     }
 
     /**

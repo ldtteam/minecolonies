@@ -110,7 +110,7 @@ public class BlockHutTownHall extends AbstractBlockHut<BlockHutTownHall>
             validTownHallBreak = true;
         }
         final float def = super.getDestroyProgress(state, player, player.level, pos);
-        return MineColonies.getConfig().getServer().pvp_mode.get() ? def / 12 : def / 10;
+        return MineColonies.getConfig().getServer().pvp_mode.get() ? def / 12 : def;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.minecolonies.api.MinecoloniesAPIProxy;
+import com.minecolonies.api.colony.CitizenNameFile;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -337,12 +338,12 @@ public class CitizenData implements ICitizenData
      * Returns a random element in a list.
      *
      * @param rand  Random object.
-     * @param array Array to select from.
+     * @param list Array to select from.
      * @return Random element from array.
      */
-    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
+    private static String getRandomElement(@NotNull final Random rand, @NotNull final List<String> list)
     {
-        return array[rand.nextInt(array.length)];
+        return list.get(rand.nextInt(list.size()));
     }
 
     /**
@@ -404,7 +405,7 @@ public class CitizenData implements ICitizenData
         female = random.nextBoolean();
         textureSuffix = SUFFIXES.get(random.nextInt(SUFFIXES.size()));
         paused = false;
-        name = generateName(random, female, getColony());
+        name = generateName(random, female, getColony(), getColony().getCitizenNameFile());
         textureId = random.nextInt(255);
 
         saturation = MAX_SATURATION;
@@ -488,7 +489,7 @@ public class CitizenData implements ICitizenData
      * @param colony the colony.
      * @return Name of the citizen.
      */
-    public static String generateName(@NotNull final Random rand, final boolean female, final IColony colony)
+    public static String generateName(@NotNull final Random rand, final boolean female, final IColony colony, final CitizenNameFile nameFile)
     {
         String citizenName;
         final String firstName;
@@ -497,30 +498,34 @@ public class CitizenData implements ICitizenData
 
         if (female)
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().femaleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.femalefirstNames);
         }
         else
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().maleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.maleFirstNames);
         }
 
         middleInitial = String.valueOf(getRandomLetter(rand));
-        lastName = getRandomElement(rand, MineColonies.getConfig().getServer().lastNames.get().toArray(new String[0]));
+        lastName = getRandomElement(rand, nameFile.surnames);
 
-        if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        if (nameFile.order == CitizenNameFile.NameOrder.EASTERN)
         {
             //For now, don't include middle names, as their rules (and presence) vary heavily by region.
             citizenName = String.format("%s %s", lastName, firstName);
         }
         else
         {
-            if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+            if (nameFile.parts == 3)
             {
                 citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
             }
-            else
+            else if (nameFile.parts == 2)
             {
                 citizenName = String.format("%s %s", firstName, lastName);
+            }
+            else
+            {
+                citizenName = firstName;
             }
         }
 
@@ -530,7 +535,7 @@ public class CitizenData implements ICitizenData
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
-                citizenName = generateName(rand, female, colony);
+                citizenName = generateName(rand, female, colony, nameFile);
                 break;
             }
         }
@@ -543,7 +548,7 @@ public class CitizenData implements ICitizenData
      *
      * @param rand Random object.
      */
-    public void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName)
+    public void generateName(@NotNull final Random rand, final String firstParentName, final String secondParentName, final CitizenNameFile nameFile)
     {
         String nameA = firstParentName;
         String nameB = secondParentName;
@@ -555,12 +560,12 @@ public class CitizenData implements ICitizenData
 
         if (firstParentName == null || firstParentName.isEmpty())
         {
-            nameA = generateName(rand, rand.nextBoolean(), colony);
+            nameA = generateName(rand, rand.nextBoolean(), colony, nameFile);
         }
 
         if (secondParentName == null || secondParentName.isEmpty())
         {
-            nameB = generateName(rand, rand.nextBoolean(), colony);
+            nameB = generateName(rand, rand.nextBoolean(), colony, nameFile);
         }
 
         final String[] firstParentNameSplit = nameA.split(" ");
@@ -568,25 +573,25 @@ public class CitizenData implements ICitizenData
 
         if (firstParentNameSplit.length <= 1)
         {
-            generateName(rand, "", secondParentName);
+            generateName(rand, "", secondParentName, nameFile);
             return;
         }
 
         if (secondParentNameSplit.length <= 1)
         {
-            generateName(rand, firstParentName, "");
+            generateName(rand, firstParentName, "", nameFile);
             return;
         }
 
         int lastNameIndexFirst = 1;
         int lastNameIndexSecond = 1;
 
-        if (MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        if (nameFile.order == CitizenNameFile.NameOrder.EASTERN)
         {
             lastNameIndexFirst = 0;
             lastNameIndexSecond = 0;
         }
-        else if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+        else if (nameFile.parts == 3)
         {
             lastNameIndexFirst = firstParentNameSplit.length <= 2 ? 1 : 2;
             lastNameIndexSecond = secondParentNameSplit.length <= 2 ? 1 : 2;
@@ -605,27 +610,31 @@ public class CitizenData implements ICitizenData
 
         if (female)
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().femaleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.femalefirstNames);
         }
         else
         {
-            firstName = getRandomElement(rand, MineColonies.getConfig().getServer().maleFirstNames.get().toArray(new String[0]));
+            firstName = getRandomElement(rand, nameFile.maleFirstNames);
         }
 
-        if(MineColonies.getConfig().getServer().useEasternNameOrder.get())
+        if (nameFile.order == CitizenNameFile.NameOrder.EASTERN)
         {
             //For now, don't include middle names, as their rules (and presence) vary heavily by region.
             citizenName = String.format("%s %s", lastName, firstName);
         }
         else
         {
-            if (MineColonies.getConfig().getServer().useMiddleInitial.get())
+            if (nameFile.parts == 3)
             {
                 citizenName = String.format("%s %s. %s", firstName, middleInitial, lastName);
             }
-            else
+            else if (nameFile.parts == 2)
             {
                 citizenName = String.format("%s %s", firstName, lastName);
+            }
+            else
+            {
+                citizenName = firstName;
             }
         }
 
@@ -635,7 +644,7 @@ public class CitizenData implements ICitizenData
             if (citizen != null && citizen.getName().equals(citizenName))
             {
                 // Oops - recurse this function and try again
-                generateName(rand, firstParentName, secondParentName);
+                generateName(rand, firstParentName, secondParentName, nameFile);
                 return;
             }
         }
@@ -670,7 +679,7 @@ public class CitizenData implements ICitizenData
     public void setGenderAndGenerateName(final boolean isFemale)
     {
         this.female = isFemale;
-        this.name = generateName(random, isFemale, getColony());
+        this.name = generateName(random, isFemale, getColony(), getColony().getCitizenNameFile());
         markDirty();
     }
 
@@ -1212,7 +1221,7 @@ public class CitizenData implements ICitizenData
 
         if (name.isEmpty())
         {
-            name = generateName(random, isFemale(), getColony());
+            name = generateName(random, isFemale(), getColony(), getColony().getCitizenNameFile());
         }
 
         if (nbtTagCompound.getAllKeys().contains(TAG_ASLEEP))

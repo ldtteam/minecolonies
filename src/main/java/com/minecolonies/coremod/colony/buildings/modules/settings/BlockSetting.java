@@ -138,6 +138,7 @@ public class BlockSetting implements ISetting
               return block.getShape(state, new SingleStateBlockGetter(state), BlockPos.ZERO, CollisionContext.empty()).equals(Shapes.block()) && state.getMaterial().blocksMotion();
           }, (stack, qty) -> {
             value = (BlockItem) stack.getItem();
+            settingsModuleView.getSetting(new SettingKey(key.getType(), key.getUniqueId())).updateSetting(this);
             settingsModuleView.trigger(key);
         }, false).open());
     }

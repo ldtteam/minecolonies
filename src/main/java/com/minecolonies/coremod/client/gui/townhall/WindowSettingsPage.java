@@ -52,9 +52,19 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     private DropDownList textureDropDownList;
 
     /**
+     * Drop down list for name style.
+     */
+    private DropDownList nameStyleDropDownList;
+
+    /**
      * The initial texture index.
      */
     private int initialTextureIndex;
+
+    /**
+     * The initial texture index.
+     */
+    private int initialNamePackIndex;
 
     /**
      * Constructor for the town hall window.
@@ -64,7 +74,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     public WindowSettingsPage(final BuildingTownHall.View townHall)
     {
         super(townHall, "layoutsettings.xml");
-        initColorPicker();
+        initDropDowns();
 
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
         registerButton(BUTTON_TOGGLE_HOUSING, this::toggleHousing);
@@ -72,9 +82,12 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         registerButton(BUTTON_TOGGLE_PRINT_PROGRESS, this::togglePrintProgress);
         registerButton("bannerPicker", this::openBannerPicker);
 
-        colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
-        textureDropDownList.setSelectedIndex(TEXTURE_PACKS.indexOf(townHall.getColony().getTextureStyleId()));
+        this.colorDropDownList.setSelectedIndex(townHall.getColony().getTeamColonyColor().ordinal());
+        this.textureDropDownList.setSelectedIndex(TEXTURE_PACKS.indexOf(townHall.getColony().getTextureStyleId()));
         this.initialTextureIndex = textureDropDownList.getSelectedIndex();
+
+        this.nameStyleDropDownList.setSelectedIndex(townHall.getColony().getNameFileIds().indexOf(townHall.getColony().getNameStyle()));
+        this.initialNamePackIndex = nameStyleDropDownList.getSelectedIndex();
 
         checkFeatureUnlock();
     }
@@ -82,7 +95,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     /**
      * Initialise the previous/next and drop down list for style.
      */
-    private void initColorPicker()
+    private void initDropDowns()
     {
         registerButton(BUTTON_PREVIOUS_COLOR_ID, this::previousStyle);
         registerButton(BUTTON_NEXT_COLOR_ID, this::nextStyle);
@@ -128,6 +141,23 @@ public class WindowSettingsPage extends AbstractWindowTownHall
                 return TEXTURE_PACKS.get(index);
             }
         });
+
+        nameStyleDropDownList = findPaneOfTypeByID(DROPDOWN_NAME_ID, DropDownList.class);
+        nameStyleDropDownList.setHandler(this::toggleNameFile);
+        nameStyleDropDownList.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return building.getColony().getNameFileIds().size();
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                return building.getColony().getNameFileIds().get(index);
+            }
+        });
     }
 
     /**
@@ -140,6 +170,19 @@ public class WindowSettingsPage extends AbstractWindowTownHall
         if (dropDownList.getSelectedIndex() != initialTextureIndex)
         {
             Network.getNetwork().sendToServer(new ColonyTextureStyleMessage(building.getColony(), TEXTURE_PACKS.get(dropDownList.getSelectedIndex())));
+        }
+    }
+
+    /**
+     * Toggle the dropdownlist with the selected index to change the texture of the colonists.
+     *
+     * @param dropDownList the toggle dropdown list.
+     */
+    private void toggleNameFile(final DropDownList dropDownList)
+    {
+        if (dropDownList.getSelectedIndex() != initialNamePackIndex)
+        {
+            Network.getNetwork().sendToServer(new ColonyNameStyleMessage(building.getColony(), building.getColony().getNameFileIds().get(dropDownList.getSelectedIndex())));
         }
     }
 
@@ -308,17 +351,26 @@ public class WindowSettingsPage extends AbstractWindowTownHall
     public void onUpdate()
     {
         super.onUpdate();
-        final Pane pane = findPaneByID(DROPDOWN_TEXT_ID);
+        final Pane textPane = findPaneByID(DROPDOWN_TEXT_ID);
+        final Pane namePane = findPaneByID(DROPDOWN_NAME_ID);
+
         if (isFeatureUnlocked.get())
         {
-            pane.enable();
+            textPane.enable();
+            namePane.enable();
         }
         else
         {
-            pane.disable();
-            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(pane);
+            textPane.disable();
+            namePane.disable();
+
+            AbstractTextBuilder.TooltipBuilder hoverText = PaneBuilders.tooltipBuilder().hoverPane(textPane);
             hoverText.append(new TranslatableComponent("com.minecolonies.core.townhall.patreon")).paragraphBreak();
             hoverText.build();
+
+            AbstractTextBuilder.TooltipBuilder hoverText2 = PaneBuilders.tooltipBuilder().hoverPane(namePane);
+            hoverText2.append(new TranslatableComponent("com.minecolonies.core.townhall.patreon")).paragraphBreak();
+            hoverText2.build();
         }
     }
 
