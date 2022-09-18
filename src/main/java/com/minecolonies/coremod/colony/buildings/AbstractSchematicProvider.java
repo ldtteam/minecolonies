@@ -369,7 +369,7 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         try
         {
-            final Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path);
+            final Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
             if (blueprint != null)
             {
                 final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
@@ -394,6 +394,10 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
                     }
                     return cachedRotation;
                 }
+            }
+            else
+            {
+                Log.getLogger().error(String.format("Failed to get rotation for %s: ", this.path));
             }
         }
         catch (Exception e)
