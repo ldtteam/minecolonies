@@ -1,6 +1,8 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
+import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
+import com.ldtteam.domumornamentum.block.vanilla.TrapdoorBlock;
 import com.minecolonies.api.blocks.AbstractBlockBarrel;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
@@ -9,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -128,6 +131,11 @@ public enum SurfaceType
         }
 
         if (fluidState == null || fluidState.isEmpty())
+        {
+            return false;
+        }
+
+        if (state.getBlock() instanceof TrapdoorBlock || state.getBlock() instanceof PanelBlock && !state.getValue(TrapdoorBlock.OPEN) && state.getValue(TrapdoorBlock.HALF) == Half.TOP)
         {
             return false;
         }
