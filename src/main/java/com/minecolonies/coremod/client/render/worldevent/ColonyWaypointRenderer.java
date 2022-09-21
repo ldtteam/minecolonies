@@ -38,7 +38,7 @@ public class ColonyWaypointRenderer
         {
             if (wayPointTemplate == null && pendingTemplate == null)
             {
-                pendingTemplate = StructurePacks.getBlueprintFuture(DEFAULT_STYLE, "infrastructure/roads/waypoint.blueprint");
+                pendingTemplate = StructurePacks.getBlueprintFuture(DEFAULT_STYLE, "infrastructure/misc/waypoint.blueprint");
             }
 
             if (pendingTemplate != null)
