@@ -413,6 +413,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
                     {
                         worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
                     }
+                    return INVENTORY_FULL;
                 }
                 else
                 {
