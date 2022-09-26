@@ -125,6 +125,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(SOFT_SHOES).setTranslatedName("Farmers will no longer trample crops"));
         effects.add(new ResearchEffect(FISH_TREASURE).setTranslatedName("Fishers can find treasure outside the ocean"));
         effects.add(new ResearchEffect(NETHER_LOG).setTranslatedName("Adds expedition log to Nether Mine"));
+        effects.add(new ResearchEffect(MASKS).setTranslatedName("Reduce disease transmission"));
+        effects.add(new ResearchEffect(VACCINES).setTranslatedName("Citizens are longer immune after treatment"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -445,6 +447,24 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp6.png"))
           .addItemCost(Items.HAY_BLOCK, 256)
           .addEffect(HEALTH_BOOST, 6)
+          .addToList(r);
+
+        final Research masks = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/masks"), CIVIL).setParentResearch(firstAid2)
+          .setTranslatedName("Masks")
+          .setTranslatedSubtitle("Solidarity")
+          .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp4.png"))
+          .addBuildingRequirement(ModBuildings.LIBRARY_ID, 3)
+          .addItemCost(Items.WHITE_WOOL, 32)
+          .addEffect(MASKS, 3)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/vaccines"), CIVIL).setParentResearch(masks)
+          .setTranslatedName("Vaccines")
+          .setTranslatedSubtitle("Obvious Measurements")
+          .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp5.png"))
+          .addBuildingRequirement(ModBuildings.HOSPITAL_ID, 3)
+          .addItemCost(Items.EGG, 64)
+          .addEffect(VACCINES, 3)
           .addToList(r);
 
         final Research circus = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/circus"), CIVIL).setParentResearch(firstAid)
