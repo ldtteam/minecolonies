@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "effects": [
+    {
+      "minecolonies:effects/masks": 3
+    }
+  ],
+  "icon": "minecolonies:textures/icons/research/hp4.png",
+  "parentResearch": "minecolonies:civilian/firstaid2",
+  "requirements": [
+    {
+      "building": "library",
+      "level": 3
+    },
+    {
+      "item": "minecraft:white_wool",
+      "quantity": 32
+    }
+  ],
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.masks.subtitle"
+}

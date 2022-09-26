@@ -1,0 +1,22 @@
+{
+  "branch": "minecolonies:civilian",
+  "effects": [
+    {
+      "minecolonies:effects/vaccines": 3
+    }
+  ],
+  "icon": "minecolonies:textures/icons/research/hp5.png",
+  "parentResearch": "minecolonies:civilian/masks",
+  "requirements": [
+    {
+      "building": "hospital",
+      "level": 3
+    },
+    {
+      "item": "minecraft:egg",
+      "quantity": 64
+    }
+  ],
+  "researchLevel": 4,
+  "subtitle": "com.minecolonies.research.civilian.vaccines.subtitle"
+}
