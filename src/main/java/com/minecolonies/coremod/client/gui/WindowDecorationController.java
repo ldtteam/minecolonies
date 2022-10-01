@@ -12,9 +12,7 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -141,14 +139,11 @@ public class WindowDecorationController extends AbstractWindowSkeleton
     private void buildClicked()
     {
         final int level = Utils.getBlueprintLevel(this.controller.getSchematicPath());
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD,
-          controller.getBlockPos(),
-          controller.getPackName(),
-          controller.getBlueprintPath().replace(level + ".blueprint", (level + 1) + ".blueprint"),
-          world.dimension(),
-          controller.getRotation(),
-          controller.getMirror()));
+
         close();
+        new WindowBuildDecoration(controller.getBlockPos(), controller.getPackName(),
+                controller.getSchematicPath().replace(level + ".blueprint", (level + 1) + ".blueprint"),
+                controller.getRotation(), controller.getMirror()).open();
     }
 
     /**
@@ -156,13 +151,9 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD,
-          controller.getBlockPos(),
-          controller.getPackName(),
-          controller.getSchematicPath(),
-          world.dimension(),
-          controller.getRotation(),
-          controller.getMirror()));
         close();
+        new WindowBuildDecoration(controller.getBlockPos(), controller.getPackName(),
+                controller.getSchematicPath(),
+                controller.getRotation(), controller.getMirror()).open();
     }
 }
