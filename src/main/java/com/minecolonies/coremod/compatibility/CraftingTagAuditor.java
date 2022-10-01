@@ -107,11 +107,15 @@ public class CraftingTagAuditor
         {
             writeItemData(writer, item);
 
-            item.getTags().forEach(t -> {
+            item.getTags()
+                    .map(t -> t.location().toString())
+                    .sorted()
+                    .forEach(t ->
+            {
                 try
                 {
                     writer.write(',');
-                    writer.write(t.location().toString());
+                    writer.write(t);
                 }
                 catch (IOException e)
                 {
