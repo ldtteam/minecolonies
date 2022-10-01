@@ -9,6 +9,7 @@ import com.minecolonies.api.colony.permissions.Rank;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.network.PacketUtils;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.Registry;
@@ -401,6 +402,7 @@ public class PermissionsMessage
             if (colony != null && colony.getPermissions().hasPermission(ctxIn.getSender(), Action.EDIT_PERMISSIONS) && colony.getWorld() != null)
             {
                 colony.getPermissions().addPlayer(id, playerName, colony.getPermissions().getRank(colony.getPermissions().NEUTRAL_RANK_ID));
+                SoundUtils.playSuccessSound(ctxIn.getSender(), ctxIn.getSender().blockPosition());
             }
             else
             {
