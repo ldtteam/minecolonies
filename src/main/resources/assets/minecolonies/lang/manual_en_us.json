@@ -1558,7 +1558,7 @@
   "com.minecolonies.coremod.jei.sawmill": "Crafts most things that are made primarily from wood.",
   "com.minecolonies.coremod.jei.shepherd": "Fluffy rainbow factory.",
   "com.minecolonies.coremod.jei.sifter": "Extracts more valuable resources from common ones, but rarely. The mesh lasts a while, but can eventually break.",
-  "com.minecolonies.coremod.jei.smelter": "Smelts ore (double or triple at higher levels).",
+  "com.minecolonies.coremod.jei.smelter": "Breaks ore blocks with fortune (based on level), and smelts as needed.",
   "com.minecolonies.coremod.jei.stonemason": "Crafts things made from various kinds of stone.",
   "com.minecolonies.coremod.jei.stonesmeltery": "Smelts various kinds of stone and terracotta.",
   "com.minecolonies.coremod.jei.swineherder": "Just happy with pigs in mud.",
