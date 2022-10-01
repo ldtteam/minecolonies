@@ -426,6 +426,8 @@ public final class TranslationConstants
     @NonNls
     public static final String ACTION_BUILD                                                         = "com.minecolonies.coremod.gui.workerhuts.build";
     @NonNls
+    public static final String ACTION_UPGRADE                                                       = "com.minecolonies.coremod.gui.workerhuts.upgrade";
+    @NonNls
     public static final String TEXT_PICKUP_PRIORITY                                                 = "com.minecolonies.coremod.gui.workerhuts.buildprio";
     @NonNls
     public static final String TEXT_PICKUP_PRIORITY_NEVER                                           = "com.minecolonies.coremod.gui.workerhuts.deliveryprio.never";

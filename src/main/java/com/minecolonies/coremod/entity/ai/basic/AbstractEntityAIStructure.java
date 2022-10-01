@@ -596,7 +596,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJobStructure<?
                 building.setTotalStages(2);
             }
             else if ((colonyBuilding != null && (colonyBuilding.getBuildingLevel() > 0 || colonyBuilding.hasParent())) ||
-                       (entity instanceof TileEntityDecorationController && Utils.getBlueprintLevel(((TileEntityDecorationController) entity).getSchematicName()) != -1))
+                       (entity instanceof TileEntityDecorationController && Utils.getBlueprintLevel(((TileEntityDecorationController) entity).getSchematicPath()) != -1))
             {
                 structure = new BuildingStructureHandler<>(world,
                   position,
