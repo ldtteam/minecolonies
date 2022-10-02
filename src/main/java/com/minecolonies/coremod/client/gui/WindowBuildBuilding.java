@@ -48,6 +48,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
+import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_BUILD;
+import static com.minecolonies.api.util.constant.TranslationConstants.ACTION_UPGRADE;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
 /**
@@ -148,12 +150,12 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         }
         else
         {
-            buttonBuild.setText(Component.translatable("com.minecolonies.coremod.gui.workerhuts.upgrade"));
+            buttonBuild.setText(Component.translatable(ACTION_UPGRADE));
         }
 
         if (building.isDeconstructed())
         {
-            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatable("com.minecolonies.coremod.gui.workerhuts.build"));
+            findPaneOfTypeByID(BUTTON_REPAIR, Button.class).setText(Component.translatable(ACTION_BUILD));
             findPaneOfTypeByID(BUTTON_PICKUP_BUILDING, Button.class).show();
         }
     }

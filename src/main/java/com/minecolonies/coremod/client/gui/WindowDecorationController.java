@@ -12,20 +12,15 @@ import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Utils;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.network.messages.server.DecorationBuildRequestMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
@@ -63,7 +58,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
 
-        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(Component.literal(controller.getSchematicName()));
+        findPaneOfTypeByID(LABEL_NAME, Text.class).setText(Component.literal(controller.getSchematicPath()));
 
         final IColonyView view = IColonyManager.getInstance().getClosestColonyView(world, controller.getBlockPos());
 
@@ -75,7 +70,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
         {
             final Optional<IWorkOrderView> wo = view.getWorkOrders().stream().filter(w -> w.getLocation().equals(this.controller.getBlockPos())).findFirst();
 
-            int level = Utils.getBlueprintLevel(controller.getSchematicName());
+            int level = Utils.getBlueprintLevel(controller.getSchematicPath());
             if (wo.isPresent())
             {
                 findPaneByID(BUTTON_BUILD).show();
@@ -88,7 +83,7 @@ public class WindowDecorationController extends AbstractWindowSkeleton
             }
             else
             {
-                buttonBuild.setText(Component.translatable(ACTION_BUILD));
+                buttonBuild.setText(Component.translatable(ACTION_UPGRADE));
 
                 try
                 {
@@ -143,15 +138,12 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void buildClicked()
     {
-        final int level = Utils.getBlueprintLevel(this.controller.getSchematicName());
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD,
-          controller.getBlockPos(),
-          controller.getPackName(),
-          controller.getBlueprintPath().replace(level + ".blueprint", (level + 1) + ".blueprint"),
-          world.dimension(),
-          controller.getRotation(),
-          controller.getMirror()));
+        final int level = Utils.getBlueprintLevel(this.controller.getSchematicPath());
+
         close();
+        new WindowBuildDecoration(controller.getBlockPos(), controller.getPackName(),
+                controller.getSchematicPath().replace(level + ".blueprint", (level + 1) + ".blueprint"),
+                controller.getRotation(), controller.getMirror()).open();
     }
 
     /**
@@ -159,13 +151,9 @@ public class WindowDecorationController extends AbstractWindowSkeleton
      */
     private void repairClicked()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD,
-          controller.getBlockPos(),
-          controller.getPackName(),
-          controller.getSchematicPath(),
-          world.dimension(),
-          controller.getRotation(),
-          controller.getMirror()));
         close();
+        new WindowBuildDecoration(controller.getBlockPos(), controller.getPackName(),
+                controller.getSchematicPath(),
+                controller.getRotation(), controller.getMirror()).open();
     }
 }
