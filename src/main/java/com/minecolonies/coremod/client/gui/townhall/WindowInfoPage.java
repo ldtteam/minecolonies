@@ -2,7 +2,8 @@ package com.minecolonies.coremod.client.gui.townhall;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
-import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.controls.Button;
+import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.ICitizenDataView;
@@ -23,7 +24,6 @@ import com.minecolonies.coremod.colony.colonyEvents.citizenEvents.CitizenDiedEve
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.RoundingMode;
@@ -233,10 +233,7 @@ public class WindowInfoPage extends AbstractWindowTownHall
                     nameLabel.setText(Component.literal(event.getName() + (event.getId() == null ? " <fake>" : "")));
                     rowPane.findPaneOfTypeByID(POS_LABEL, Text.class).setText(Component.literal(event.getPosition().getX() + " " + event.getPosition().getY() + " " + event.getPosition().getZ()));
 
-                    if (event.getId() == null)
-                    {
-                        rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).hide();
-                    }
+                    rowPane.findPaneOfTypeByID(BUTTON_ADD_PLAYER_OR_FAKEPLAYER, Button.class).setVisible(event.getId() != null);
 
                     actionLabel.setText(Component.translatable(KEY_TO_PERMISSIONS + event.getAction().toString().toLowerCase(Locale.US)));
                 }
