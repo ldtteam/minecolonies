@@ -26,6 +26,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -488,6 +489,11 @@ public class Tree
      */
     private static boolean supposedToCut(final LevelReader world, final List<ItemStorage> treesToNotCut, final BlockPos leafPos)
     {
+        if (world.getBlockState(leafPos).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
+        {
+            return false;
+        }
+
         final ItemStack sap = IColonyManager.getInstance().getCompatibilityManager().getSaplingForLeaf(world.getBlockState(leafPos));
 
         if (sap == null)
@@ -586,8 +592,13 @@ public class Tree
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getMaterial().equals(Material.LEAVES))
+                    final BlockPos leaf = new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z);
+                    if (world.getBlockState(leaf).getMaterial().equals(Material.LEAVES))
                     {
+                        if (world.getBlockState(leaf).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
+                        {
+                            continue;
+                        }
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)
                         {
@@ -734,7 +745,10 @@ public class Tree
                     if (world.getBlockState(leaf).getMaterial() == Material.LEAVES || world.getBlockState(leaf).is(BlockTags.WART_BLOCKS)
                           || world.getBlockState(leaf).getBlock() == Blocks.SHROOMLIGHT)
                     {
-                        leaves.add(leaf);
+                        if (!world.getBlockState(leaf).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false))
+                        {
+                            leaves.add(leaf);
+                        }
                     }
                 }
             }
