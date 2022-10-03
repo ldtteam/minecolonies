@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,20 +160,23 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public void readSchematicDataFromNBT(CompoundTag compound)
     {
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
-        if (compound.contains(TAG_NAME))
+        final CompoundTag blueprintDataProvider = compound.getCompound(TAG_BLUEPRINTDATA);
+        if (compound.contains(TAG_PACK)) // New structure
         {
-            this.schematicPath = compound.getString(TAG_NAME);
-            final String[] split = Utils.splitPath(this.schematicPath);
-            this.schematicName = split[split.length - 1].replace(".blueprint", "");
-        }
-
-        if (compound.contains(TAG_PACK))
-        {
-            this.packName = compound.getString(TAG_PACK);
+            // path is the folder containing the schematic
+            final String path = blueprintDataProvider.getString(TAG_NAME);
+            this.schematicPath = path + File.separator + this.schematicName + ".blueprint";
         }
         else
         {
             // This is only recovery handling for old structures, it shouldn't be called otherwise.
+            if (compound.contains(TAG_NAME))
+            {
+                this.schematicPath = compound.getString(TAG_NAME);
+                final String[] split = Utils.splitPath(this.schematicPath);
+                this.schematicName = split[split.length - 1].replace(".blueprint", "");
+            }
+
             final String[] split = Utils.splitPath(this.schematicPath);
             if (split.length >= 4)
             {
@@ -187,7 +191,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             if (this.schematicName.contains("/") || this.schematicName.contains("\\"))
             {
                 final String[] splitName = Utils.splitPath(this.schematicPath);
-                this.schematicName = splitName[splitName.length - 1];
+                this.schematicName = splitName[splitName.length - 1].replace(".blueprint", "");
             }
 
             if (compound.contains(TAG_LEVEL))
@@ -203,6 +207,16 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
             {
                 this.schematicPath = this.schematicName;
             }
+
+            if (!this.schematicPath.endsWith(".blueprint"))
+            {
+                this.schematicPath = this.schematicPath + ".blueprint";
+            }
+        }
+
+        if (blueprintDataProvider.contains(TAG_PACK))
+        {
+            this.packName = blueprintDataProvider.getString(TAG_PACK);
         }
 
         if (this.packName == null)
