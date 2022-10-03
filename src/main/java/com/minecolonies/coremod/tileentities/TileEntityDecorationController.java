@@ -163,7 +163,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         {
             this.schematicPath = compound.getString(TAG_NAME);
             final String[] split = Utils.splitPath(this.schematicPath);
-            this.schematicName = split[split.length - 1];
+            this.schematicName = split[split.length - 1].replace(".blueprint", "");
         }
 
         if (compound.contains(TAG_PACK))
@@ -220,6 +220,11 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         this.mirror = compound.getBoolean(TAG_MIRROR);
         this.schematicPath = compound.getString(TAG_NAME);
         this.packName = compound.getString(TAG_PACK);
+
+        if (!this.schematicPath.endsWith(".blueprint"))
+        {
+            this.schematicPath = this.schematicPath + ".blueprint";
+        }
     }
 
     @Override
@@ -244,6 +249,10 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public void setBlueprintPath(final String filePath)
     {
         this.schematicPath = filePath;
+        if (!this.schematicPath.endsWith(".blueprint"))
+        {
+            this.schematicPath = this.schematicPath + ".blueprint";
+        }
     }
 
     @Override

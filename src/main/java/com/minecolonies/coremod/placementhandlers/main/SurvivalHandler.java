@@ -226,7 +226,7 @@ public class SurvivalHandler implements ISurvivalBlueprintHandler
         {
             if (blueprint.getBlockState(blueprint.getPrimaryBlockOffset()).getBlock() instanceof ILeveledBlueprintAnchorBlock)
             {
-                int level = Utils.getBlueprintLevel(blueprint.getFileName().replace(".blueprint", ""));
+                int level = Utils.getBlueprintLevel(blueprint.getFileName());
                 if (level == -1)
                 {
                     Network.getNetwork().sendToPlayer(new OpenDecoWindowMessage(blockPos, packName, blueprintPath, placementSettings.getRotation(), placementSettings.mirror), (ServerPlayer) player);
