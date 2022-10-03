@@ -428,7 +428,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.chopping"));
 
-        if (job.getTree().hasLogs() || (job.getTree().hasLeaves() && job.getTree().isNetherTree()) || checkedInHut)
+        final boolean shouldBreakLeaves = building.shouldDefoliate() || job.getTree().isNetherTree();
+
+        if (job.getTree().hasLogs() || (shouldBreakLeaves && job.getTree().hasLeaves()) || checkedInHut)
         {
             if (!walkToTree(job.getTree().getStumpLocations().get(0)))
             {
@@ -440,7 +442,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
         }
 
-        if (!job.getTree().hasLogs() && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
+        if (!job.getTree().hasLogs() && (!shouldBreakLeaves || !job.getTree().hasLeaves()))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -507,7 +509,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             job.getTree().pollNextLog();
             worker.decreaseSaturationForContinuousAction();
         }
-        else if (job.getTree().hasLeaves() && job.getTree().isNetherTree())
+        else if (job.getTree().hasLeaves() && shouldBreakLeaves)
         {
             final BlockPos leaf = job.getTree().peekNextLeaf();
             if (!mineBlock(leaf, workFrom))

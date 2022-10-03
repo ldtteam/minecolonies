@@ -53,6 +53,7 @@ public class BuildingLumberjack extends AbstractBuilding
      */
     public static final ISettingKey<BoolSetting> REPLANT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "replant"));
     public static final ISettingKey<BoolSetting> RESTRICT = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "restrict"));
+    public static final ISettingKey<BoolSetting> DEFOLIATE = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "defoliate"));
     public static final ISettingKey<DynamicTreesSetting> DYNAMIC_TREES_SIZE = new SettingKey<>(DynamicTreesSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "dynamictreeharvestsize"));
 
     /**
@@ -210,6 +211,16 @@ public class BuildingLumberjack extends AbstractBuilding
     public boolean shouldReplant()
     {
         return getSetting(REPLANT).getValue();
+    }
+
+    /**
+     * Whether or not the LJ should break all the leaves, not just the ones directly in the way.
+     *
+     * @return true if so.
+     */
+    public boolean shouldDefoliate()
+    {
+        return getSetting(DEFOLIATE).getValue();
     }
 
     /**
