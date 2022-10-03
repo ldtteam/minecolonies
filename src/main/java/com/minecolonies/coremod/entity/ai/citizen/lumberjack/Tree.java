@@ -35,7 +35,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,9 +139,9 @@ public class Tree
      *
      * @param world  The world where the tree is in.
      * @param log    the position of the found log.
-     * @param colony the colony the tree is in.
+     * @param colony the colony to search for buildings, or null if we don't care.
      */
-    public Tree(@NotNull final Level world, @NotNull final BlockPos log, final IColony colony)
+    public Tree(@NotNull final Level world, @NotNull final BlockPos log, @Nullable final IColony colony)
     {
         final BlockState block = BlockPosUtil.getBlockState(world, log);
         if (block.is(BlockTags.LOGS) || Compatibility.isSlimeBlock(block.getBlock()) || Compatibility.isDynamicBlock(block.getBlock()))
@@ -615,8 +614,9 @@ public class Tree
      * Searches all logs that belong to the tree.
      *
      * @param world The world where the blocks are in.
+     * @param colony the colony to search for buildings, or null if we don't care.
      */
-    public void findLogs(@NotNull final Level world, final IColony colony)
+    public void findLogs(@NotNull final Level world, @Nullable final IColony colony)
     {
         addAndSearch(world, location, colony);
         woodBlocks.sort((c1, c2) -> (int) (c1.distSqr(location) - c2.distSqr(location)));
@@ -647,8 +647,9 @@ public class Tree
      *
      * @param world The world the log is in.
      * @param log   the log to add.
+     * @param colony the colony to search for buildings, or null if we don't care.
      */
-    private void addAndSearch(@NotNull final Level world, @NotNull final BlockPos log, final IColony colony)
+    private void addAndSearch(@NotNull final Level world, @NotNull final BlockPos log, @Nullable final IColony colony)
     {
         if (woodBlocks.size() >= MineColonies.getConfig().getServer().maxTreeSize.get())
         {
@@ -676,11 +677,14 @@ public class Tree
             topLog = log;
         }
 
-        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        if (colony != null)
         {
-            if (building.isInBuilding(log))
+            for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
             {
-                return;
+                if (building.isInBuilding(log))
+                {
+                    return;
+                }
             }
         }
 
@@ -971,26 +975,15 @@ public class Tree
     }
 
     /**
-     * Calculates with a colony if the position is inside the colony and if it is inside a building.
-     *
-     * @param pos    the position.
-     * @param colony the colony.
-     * @return return false if not inside the colony or if inside a building.
-     */
-    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony)
-    {
-        return checkIfInColonyAndNotInBuilding(pos, colony, colony.getWorld());
-    }
-
-    /**
-     * Calculates with a colony if the position is inside the colony and if it is inside a building.
+     * Calculates with a colony if the position is inside the colony and optionally if it is inside a building.
      *
      * @param pos    the position.
      * @param colony the colony.
      * @param world  the world to use
-     * @return return false if not inside the colony or if inside a building.
+     * @param allowInsideBuilding if false, also checks that the tree is not inside a building.
+     * @return return false if not inside the colony or optionally if inside a building.
      */
-    public static boolean checkIfInColonyAndNotInBuilding(final BlockPos pos, final IColony colony, final LevelReader world)
+    public static boolean checkIfInColony(final BlockPos pos, final IColony colony, final LevelReader world, final boolean allowInsideBuilding)
     {
         final ChunkAccess chunk = world.getChunk(pos);
         if (!(chunk instanceof LevelChunk))
@@ -1004,8 +997,8 @@ public class Tree
             return false;
         }
 
-        // Dynamic tree's are never part of buildings
-        if (Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
+        // Dynamic trees are never part of buildings
+        if (allowInsideBuilding || Compatibility.isDynamicBlock(world.getBlockState(pos).getBlock()))
         {
             return true;
         }

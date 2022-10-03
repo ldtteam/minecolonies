@@ -326,6 +326,14 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
+     * @return true if a restricted area has been defined.
+     */
+    public boolean isRestricted()
+    {
+        return restrictionType != AbstractAdvancedPathNavigate.RestrictionType.NONE;
+    }
+
+    /**
      * Generates a good path starting location for the entity to path from, correcting for the following conditions. - Being in water: pathfinding in water occurs along the
      * surface; adjusts position to surface. - Being in a fence space: finds correct adjacent position which is not a fence space, to prevent starting path. from within the fence
      * block.
