@@ -593,7 +593,7 @@ public class CitizenData implements ICitizenData
             else
             {
                 lastName = eastern ? secondParentNameSplit[0] : nameB.replace(secondParentNameSplit[0], "").trim();
-x            }
+            }
         }
         else
         {
