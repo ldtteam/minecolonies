@@ -553,7 +553,7 @@ public class CitizenData implements ICitizenData
 
         String citizenName;
         final String firstName;
-        final String middleInitial;
+        String middleInitial = "";
         final String lastName;
 
         if (firstParentName == null || firstParentName.isEmpty())
