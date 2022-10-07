@@ -1,0 +1,21 @@
+{
+  "parts": 2,
+  "order": "WESTERN",
+  "male_firstname": [
+    "Þorsteinn", "Þórðr", "Þorkell", "Þorbiorn", "Þórir", "Þorgeirr", "Helgi", "Þórarinn", "Ketill", "Biorn", "Þorgrímr", "Grímr", "Þórólfr", "Þorgils", "Einarr", "Eyvindr", "Þorvaldr", "Ormr", "Þormóðr", "Oddr", "Þorleifr", "Úlfr", "Brandr", "Hrólfr", "Óláfr", "Ásgeirr", "Bárðr", "Eyiólfr", "Halldórr", "Hallr", "Hrafn", "Sigurðr", "Atli", "Ásbiorn", "Ingialdr","Eysteinn", "Skeggi", "Snorri", "Arnórr", "Hróaldr",
+    "Steinn", "Steinólfr", "Qnundr","Ásmundr", "Biarni", "Boðvarr", "Illugi", "Jorundr", "Már", "Þóroddr","Eirikr", "Hildir", "Þorfinnr", "Þrándr", "Qrn", "Auðun","Egill", "Guðmundr", "Gunnarr", "Heriólfr", "Sigmundr", "Þorlákr", "Héðinn","Ófeigr", "Vémundr", "Þorbrandr", "Qzurr","Án", "Jón", "Kolbeinn", "Kollr", "Solvi", "Þorleikr", "Þorvarðr", "Þróndr", "Olvir", "Ornólfr", "Ari","Eilifr", "Finnr", "Geirmundr", "Gizurr",
+    "Hallsteinn", "Haraldr", "Kiallakr", "Kolli", "Loftr", "Sturla", "Þórhallr", "Flosi", "Geirmundr", "Gizurr", "Hallsteinn", "Haraldr", "Kiallakr", "Kolli", "Loftr", "Sturla", "Þórhallr", "Flosi", "Gísli", "Guðlaugr", "Gunnsteinn", "Hallvarðr", "Hólmsteinn", "Hrappr", "Hóskuldr","Óleifr", "Refr", "Surtr", "Sveinbiorn", "Torfi", "Þorbergr", "Arngrímr", "Álfr", "Bergþórr", "Bersi", "Glúmr", "Hallbiorn", "Hámundr",
+    "Hogni", "Kári", "Óttarr", "Sighvatr", "Steingrímr", "Þorberger"
+
+  ],
+  "female_firstname": [
+    "Þuríðr", "Þorgerðr", "Þórdís", "Helga", "Þórunn", "Guðrún", "Þóra", "Valgerðr", "Yngvildr", "Vigdís", "Þorbiorg", "Jórunn", "Steinunn", "Þorkatla", "Halldóra", "Gróa", "Halla", "Álof Ástríðr", "Hallbera", "Þorlaug", "Hallveig", "Herdís", "Rannveig","Æsa", "Ingibiorg", "Sigríðr", "Þórhildr", "Arnóra", "Gunnhildr", "Þórarna", "Ásdís", "Guðríðr", "Hallgerðr", "Hlíf", "Kolfinna", "Salgerðr", "Þórný"
+  ],
+  "surnames": [
+    "Inn gamli", "Goði", "Inn hvíti", "Inn sterki", "Inn auðgi", "Inn rauði", "Inn spaki", "Inn svarti", "Inn digri", "Inn rammi", "Viga", "Inn fróði", "Bersir", "Smiðr", "Inn goði", "Inn helgi", "Skáld", "Austmaðr", "Inn halti", "Inn hávi", "Hólmgongu", "Inn mikli", "Inn mjóvi", "Inn ríki", "Inn skjálgi", "Vikingr in auða", "Dala", "Inn fagri", "Hálmi", "Hjalti", "Kappi", "Krákalambil", "Mjąksiglandi", "Tungu", "Þurs",
+    "Inn austrœni", "Beigaldi bíldr", "Blákinn", "Blundr", "Bloōruskalli", "Brún", "Brækir", "Inn danski", "Dúfunef gjallandi", "Inn grái", "Gyðja Hafr", "Inn hamrammi", "Háleyski", "Heljarskinn", "Hestr holbarki", "Holmðr", "Hrogn", "Inn gamli", "Goði", "Inn hvíti", "Inn sterki", "Inn auðgi", "Inn rauði", "Inn spaki Inn svarti", "Inn digri", "Inn rammi", "Viga", "Inn fróði", "Bersir", "Smiðr", "Inn goði", "Inn helgi",
+    "Skáld", "Austmaðr", "Inn halti", "Inn hávi", "Hólmgongu", "Inn mikli", "Inn mjóvi", "Inn ríki", "Inn skjálgi", "Vikingr in auða", "Dala", "Inn fagri", "Hálmi", "Hjalti", "Kappi", "Mjąksiglandi", "Tungu", "Þurs", "Inn austrœni", "Beigaldibíldr", "Blákinn", "Blundr", "Bloōruskalli", "Brún", "Brækir", "Inn danski", "Dúfunefgjallandi", "Inn grái", "Gyðja Hafr", "Inn hamrammi", "Háleyski",
+    "Heljarskinn", "Hestr holbarki", "Holmðr", "Hrogn", "Inn gamli", "Goði", "Inn hvíti", "Inn sterki", "Inn auðgi", "Inn rauði", "Inn spaki", "Inn svarti", "Inn digri", "Inn rammi", "Viga", "Inn fróði", "Bersir", "Smiðr", "Inn goði", "Inn helgi", "Skáld", "Austmaðr", "Inn halti", "Inn hávi", "Hólmgongu", "Inn mikli Inn mjóvi", "Inn ríki", "Inn skjálgi", "Vikingr in auða", "Dala", "Inn fagri", "Hálmi", "Hjalti",
+    "Kappi", "Mjąksiglandi", "Tungu", "Þurs", "Inn austrœni", "Beigaldi bíldr", "Blákinn", "Blundr", "Bloōruskalli", "Brún", "Brækir", "Inn danski", "Dúfunef gjallandi", "Inn grái", "Gyðja Hafr", "Inn hamrammi", "Háleyski", "Heljarskinn", "Hestrholbarki", "Holmðr", "Hrogn"
+  ]
+}

@@ -555,7 +555,7 @@ public class CitizenData implements ICitizenData
 
         String citizenName;
         final String firstName;
-        final String middleInitial;
+        String middleInitial = "";
         final String lastName;
 
         if (firstParentName == null || firstParentName.isEmpty())
@@ -583,29 +583,31 @@ public class CitizenData implements ICitizenData
             return;
         }
 
-        int lastNameIndexFirst = 1;
-        int lastNameIndexSecond = 1;
-
-        if (nameFile.order == CitizenNameFile.NameOrder.EASTERN)
-        {
-            lastNameIndexFirst = 0;
-            lastNameIndexSecond = 0;
-        }
-        else if (nameFile.parts == 3)
-        {
-            lastNameIndexFirst = firstParentNameSplit.length <= 2 ? 1 : 2;
-            lastNameIndexSecond = secondParentNameSplit.length <= 2 ? 1 : 2;
-        }
+        final boolean eastern = nameFile.order == CitizenNameFile.NameOrder.EASTERN;
 
         if (random.nextBoolean())
         {
-            middleInitial = firstParentNameSplit[lastNameIndexFirst].substring(0, 1);
-            lastName = secondParentNameSplit[lastNameIndexSecond];
+            if (nameFile.parts == 3)
+            {
+                middleInitial = firstParentNameSplit[eastern? 0 : firstParentNameSplit.length - 1].substring(0, 1);
+                lastName = secondParentNameSplit[eastern ? 0 : secondParentNameSplit.length - 1];
+            }
+            else
+            {
+                lastName = eastern ? secondParentNameSplit[0] : nameB.replace(secondParentNameSplit[0], "").trim();
+            }
         }
         else
         {
-            middleInitial = secondParentNameSplit[lastNameIndexSecond].substring(0, 1);
-            lastName = firstParentNameSplit[lastNameIndexFirst];
+            if (nameFile.parts == 3)
+            {
+                middleInitial = secondParentNameSplit[eastern ? 0 : secondParentNameSplit.length - 1].substring(0, 1);
+                lastName = firstParentNameSplit[eastern ? 0 : firstParentNameSplit.length - 1];
+            }
+            else
+            {
+                lastName = eastern ? firstParentNameSplit[0] : nameA.replace(firstParentNameSplit[0], "").trim();
+            }
         }
 
         if (female)
