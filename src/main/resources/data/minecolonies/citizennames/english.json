@@ -1,0 +1,23 @@
+{
+  "parts": 3,
+  "order": "WESTERN",
+  "male_firstname": [
+   "Richard", "Adam", "Geoffrey", "Peter", "John", "Walter", "Roger", "Simon", "Alexande",  "Gilbert", "Hugh", "Henry", "Nicholas", "Osbert", "Samson", "Thomas", "Warin", "Warin", "Waring", "Warinnus", "Alan", "Anselm", "Bartholomeus", "Bartolomew", "Benedict", "Herveus", "Hubert", "Huricus", "Michael", "Norman", "Oger", "Reinerus", "Stephen", "Alfridus", "Aluric", "Anandus", "Angot",
+	"Arnaldus", "Baldwin", "Brian", "Clement","Edward","Elwin","Elyas", "Folclune", "Freburn", "Gerard", "Godfrey", "Herbert", "Hereward", "Huhtred", "Ivo", "Jordan", "Leurmr", "Ludovic", "Manaser", "Martin", "Maurice", "Nigellus", "Odo", "Philip", "Raunulph", "Reginald", "Roscelyn", "Stanild",
+	"Thurbarius", "Wachel", "Wimerius", "Robertus", "Willelmus", "Nicholaus", "Henricus", "Hamelinus", "Johannes", "Theobaldus", "Thomas", "Gilbertus", "Gilebertus", "Hugo", "Rogerus", "Uthredus", "Wthredus", "Mauricius", "Ricardus", "Serlonus", "Serlo", "Urbanus", "Walterus", "Baldwinus", "Galfridus", "Helyas", "Herbertus", "Heribertus", "Radulphus", "Stephanus",
+	"Uganus", "Abraham", "Adam", "Alueredus", "Dilectus", "Dunewaldus","Ernulfus", "Gerardus", "Gundulfus", "Herewaldus", "Herveus", "Hillarius", "Hubertus", "Jacobus", "Jocelinus", "Manaser", "Morganus", "Nigellus", "Rodbertus", "Ruelen", "Sampson"
+
+  ],
+  "female_firstname": [
+    "Alice", "Matilda", "Agnes","Emma", "Gunilda", "Gunilde", "Gunnilda", "Margery", "Wimar", "Wimarc", "Wymarc", "Wymarcha", "Sara", "Sarah", "Amice", "Amicia", "Avice", "Avicia", "Beatrice", "Christiana", "Christina", "Cristiana", "Cristina", "Denise", "Joan", "Cecilia", "Cecily", "Gillian", "Isabel", "Isabella", "Larica", "Clarice", "Claricia","Emelota","Eva", "Helen", "Mabel", "Margaret",
+	"Sibyl", "Sybil", "Alina", "Constance", "Custance","Ede", "Lota","Edith", "Julian", "Juliana", "Katherine", "Maisenta", "Scolastica", "Seilda", "Agatha", "Albreda", "Ascelina", "Ascelota", "Auwenilda", "Cenota", "Clementia","Eda","Ede", "Lina","Elena","Eustachia", "Gillota", "Goda", "Gundreda", "Heloise", "Hodierna", "Idonea", "Imeina", "Isolda", "Mariota", "Olive", "Oresia", "Osanna", "Pelagia",
+	"Petronilla", "Philippa", "Roesia", "Rosamund", "Rose", "Sabina", "Susan", "Swanekil", "Swanekilda", "Theophania"
+  ],
+  "surnames": [
+   "Bangornensis", "Bathoniensis", "Bigod", "Biseth", "Capellanus", "Cycestrensis", "De Bende", "Nges", "De Bende", "Ngis", "De Bercherola", "De Bohun", "De Bude", "Forde", "De Evereus", "De Gloucestria", "De Haya", "De Hesdine", "De Jureio", "De Laceio", "De Landr", "De Langforde", "De Lettrintone", "De Londonia", "De Mech", "De Peke", "De Pennune", "De Saloppesburia", "De Sancto", "Hyllario", "De Canus",
+	"Elyensis", "Filius-Hamonis", "Filius-Loemeri", "Filius-Morgani", "Filius-Roberti", "Filius-Uvenad", "Filius-Walteri", "Hereforde", "Nsis", "Marescallo", "Norr", "Roffensis", "Sacerdos", "Saresbiriensis", "Burne", "Abraham", "Acland", "Adam", "Alyn", "Alynton", "Artor", "Attewyll", "Attwyll", "Atwyll", "Auger", "Averye", "Baker", "Bampfeld", "Batyn", "Beer", "Bere", "Bence", "Bense", "Benett",
+	"Berde",  "Berdon", "Bereman", "Bernard", "Burnard", "Bertelet", "Bertelett", "Betty", "Betyn", "Bevys", "Blake", "Blamie", "Blewet", "Blewett", "Blome", "Blynne", "Bokelond", "Bokeram", "Bokyngham", "Bonefaunt", "Bonewyle", "Bounde", "Bowde",  "Bowdon", "Bowhaye", "Bowryng", "Brabon", "Brende",  "Brian", "Brounscomb", "Brow", "Browghton", "Browne", "Brydde", "Llyngton", "Brymsdon", "Budde",
+	"Buktofte", "Burgeis", "Burneby", "Bury", "Bustard", "Bykyngton", "Byllynges", "Bynkys", "Calwode", "Ley", "Camell", "Cannell", "Carreu", "Cause", "Chalvedon", "Chambernon", "Champeons", "Charlis", "Chepman", "Cholmore", "Chubb", "Chubbe", "Chudde", "Ley", "Chudley", "Claissh", "Cleffe", "Clerk", "Clerke", "Clew", "Cleyhanger", "Clyff", "Clyffe", "Clyfton", "Code", "Coke", "Colchet", "Colchett", "Coley",
+	"Coll", "Colle", "Colshull", "Colsshull", "Colyn", "Cornelis", "Cornyssh", "Coryer", "Cosyn", "Cote", "Coteler", "Coterell"
+  ]
+}
