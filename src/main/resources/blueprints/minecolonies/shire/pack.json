@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "pack-format": 1,
+  "desc": "Wating on Daddy_P1G...",
+  "authors": [
+    "Daddy_P1G",
+    "JohnReiher",
+    "others"
+  ],
+  "mods": [
+    "structurize",
+    "minecolonies"
+  ],
+  "name": "Shire",
+  "icon": "shire.png"
+}
