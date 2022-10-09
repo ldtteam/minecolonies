@@ -14,7 +14,7 @@
             <label id="action" size="140 12" pos="1 1" color="black"/>
             <label id="name" size="100 12" pos="1 12" color="blue"/>
             <label id="pos" size="70 12" pos="1 24" color="black"/>
-            <button id="addfakeplayer" size="35 12" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 12"/>
+            <button id="addfakeplayer" size="35 14" label="$(com.minecolonies.coremod.gui.townhall.add)" pos="105 10"/>
         </box>
     </list>
 
