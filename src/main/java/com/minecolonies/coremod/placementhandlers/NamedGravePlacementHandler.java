@@ -1,21 +1,20 @@
 package com.minecolonies.coremod.placementhandlers;
 
 import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler;
+import com.ldtteam.structurize.util.BlockUtils;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.coremod.blocks.BlockMinecoloniesNamedGrave;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
 
 public class NamedGravePlacementHandler implements IPlacementHandler
 {
@@ -57,6 +56,10 @@ public class NamedGravePlacementHandler implements IPlacementHandler
       @Nullable final CompoundTag tileEntityData,
       final boolean complete)
     {
+        if (complete)
+        {
+            return Collections.singletonList(BlockUtils.getItemStackFromBlockState(blockState));
+        }
         return Collections.emptyList();
     }
 }
