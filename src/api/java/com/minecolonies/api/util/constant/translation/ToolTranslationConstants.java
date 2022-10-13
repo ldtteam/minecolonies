@@ -45,6 +45,8 @@ public class ToolTranslationConstants
     public static final String TOOL_RALLY_BANNER_DEACTIVATED = "item.minecolonies.banner_rally_guards.deactivated";
     @NonNls
     public static final String TOOL_RALLY_BANNER_NO_GUARDS   = "item.minecolonies.banner_rally_guards.activated.noguards";
+    @NonNls
+    public static final String TOOL_RALLY_BANNER_NEEDS_RESEARCH   = "item.minecolonies.banner_rally_guards.activated.needsresearch";
 
     @NonNls
     public static final String TOOL_GENERIC_SCROLL_HIGHLIGHT_DESCRIPTION = "item.minecolonies.scroll_highlight.tip";

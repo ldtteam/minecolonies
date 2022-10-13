@@ -20,6 +20,7 @@ import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobRandomPos;
@@ -46,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.minecolonies.api.research.util.ResearchConstants.ARCHER_USE_ARROWS;
+import static com.minecolonies.api.research.util.ResearchConstants.TELESCOPE;
 import static com.minecolonies.api.util.constant.CitizenConstants.GUARD_HEALTH_MOD_BUILDING_NAME;
 import static com.minecolonies.api.util.constant.CitizenConstants.LOW_SATURATION;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
@@ -565,7 +567,10 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
         final IColony colonyAtPosition = IColonyManager.getInstance().getColonyByPosFromDim(rallyLocation.getDimension(), rallyLocation.getInDimensionLocation());
         if (colonyAtPosition == null || colonyAtPosition.getID() != colony.getID())
         {
-            outOfRange = true;
+            if (getColony().getResearchManager().getResearchEffects().getEffectStrength(TELESCOPE) <= 0 || BlockPosUtil.getDistance2D(rallyLocation.getInDimensionLocation(), colony.getCenter()) > 500)
+            {
+                outOfRange = true;
+            }
         }
 
         if (rallyLocation instanceof EntityLocation)
@@ -601,6 +606,15 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
             // But, in exchange, the player does not have to reactivate the banner so often, and it also works
             // if the user moves the banner around in the inventory.
             return null;
+        }
+        else if (rallyLocation instanceof StaticLocation)
+        {
+            if (outOfRange)
+            {
+                MessageUtils.format(WARNING_RALLYING_POINT_OUT_OF_RANGE).sendTo(colony.getImportantMessageEntityPlayers());
+                setRallyLocation(null);
+                return null;
+            }
         }
 
         return rallyLocation;
