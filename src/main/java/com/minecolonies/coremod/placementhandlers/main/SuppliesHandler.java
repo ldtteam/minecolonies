@@ -3,6 +3,7 @@ package com.minecolonies.coremod.placementhandlers.main;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.placement.StructurePlacementUtils;
 import com.ldtteam.structurize.storage.ISurvivalBlueprintHandler;
+import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.items.ModItems;
@@ -27,8 +28,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_REMOVING_SUPPLY_CHEST;
-import static com.minecolonies.api.util.constant.TranslationConstants.WARNING_SUPPLY_CHEST_ALREADY_PLACED;
+import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.util.constant.translation.ProgressTranslationConstants.PROGRESS_SUPPLY_CHEST_PLACED;
 
 public class SuppliesHandler implements ISurvivalBlueprintHandler
@@ -66,6 +66,13 @@ public class SuppliesHandler implements ISurvivalBlueprintHandler
             final BlockPos blockPos,
             final PlacementSettings placementSettings)
     {
+        if (clientPack || !StructurePacks.hasPack(packName))
+        {
+            MessageUtils.format(NO_CUSTOM_CAMPS).sendTo(playerArg);
+            SoundUtils.playErrorSound(playerArg, playerArg.blockPosition());
+            return;
+        }
+
         final ServerPlayer player = (ServerPlayer) playerArg;
 
         blueprint.rotateWithMirror(placementSettings.rotation, placementSettings.mirror == Mirror.NONE ? Mirror.NONE : Mirror.FRONT_BACK, world);

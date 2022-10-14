@@ -298,7 +298,7 @@
   "item.minecolonies.banner_rally_guards.activated.noguards": "You have rallied your army...of none. Good luck!",
   "item.minecolonies.banner_rally_guards.deactivated": "You have dismissed your army. Your Guards will return to regular duty.",
   "item.minecolonies.banner_rally_guards.outofrange": "Your Guards will not rally so far away, they are sworn to protect their families! The disappointed Guards are going home now.",
-
+  "item.minecolonies.banner_rally_guards.activated.needsresearch": "You guards couldn't understand this command, maybe you have to research this at the University first.",
   "item.minecolonies.bread_dough": "Bread Dough",
   "item.minecolonies.cookie_dough": "Cookie Dough",
   "item.minecolonies.cake_batter": "Cake Batter",
@@ -2338,6 +2338,7 @@
   "com.minecolonies.building.alchemist.desc": "Either Brews Potions Or Trouble. Witch is It?",
   "com.minecolonies.building.quarry.desc": "It's a Big Hole. That's Its Hole Purpose. At Least You Get What Was in It.",
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
+  "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
   "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
   "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s"
 }

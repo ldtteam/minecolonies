@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.items;
 
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.api.blocks.ModBlocks;
+import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -13,6 +16,7 @@ import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
+import com.minecolonies.coremod.colony.requestsystem.locations.StaticLocation;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,6 +43,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.minecolonies.api.research.util.ResearchConstants.STANDARD;
+import static com.minecolonies.api.research.util.ResearchConstants.TELESCOPE;
 import static com.minecolonies.api.util.constant.Constants.TAG_COMPOUND;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RALLIED_GUARDTOWERS;
@@ -110,12 +116,71 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
                 }
             }
         }
+        else if (context.getLevel().getBlockState(context.getClickedPos()).getBlock().equals(ModBlocks.blockColonyBanner))
+        {
+            if (context.getLevel().isClientSide())
+            {
+                return InteractionResult.SUCCESS;
+            }
+
+            final IColony colony = getColony(compound, context.getLevel());
+            if (colony != null && colony.getPermissions().hasPermission(player, Action.RALLY_GUARDS))
+            {
+                if (colony.getResearchManager().getResearchEffects().getEffectStrength(STANDARD) <= 0)
+                {
+                    MessageUtils.format(TOOL_RALLY_BANNER_NEEDS_RESEARCH).sendTo(context.getPlayer());
+                    return InteractionResult.FAIL;
+                }
+
+                final int numGuards =
+                  broadcastPlayerToRally(banner, context.getPlayer().getCommandSenderWorld(), new StaticLocation(context.getClickedPos(), context.getLevel().dimension()));
+                if (numGuards > 0)
+                {
+                    MessageUtils.format(TOOL_RALLY_BANNER_ACTIVATED, numGuards).sendTo(context.getPlayer());
+                }
+                else
+                {
+                    MessageUtils.format(TOOL_RALLY_BANNER_NO_GUARDS).sendTo(context.getPlayer());
+                }
+            }
+        }
         else
         {
             handleRightClick(banner, context.getPlayer());
         }
 
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Get the colony from the compound data.
+     * @param compound the compound to get it from.
+     * @return the colony or null if not found.
+     */
+    @Nullable
+    private static IColony getColony(final CompoundTag compound, final Level world)
+    {
+        final ListTag guardTowersListNBT = compound.getList(TAG_RALLIED_GUARDTOWERS, TAG_COMPOUND);
+        if (guardTowersListNBT == null)
+        {
+            Log.getLogger().error("Compound corrupt, missing TAG_RALLIED_GUARDTOWERS");
+            return null;
+        }
+
+        final List<ILocation> resultList = new ArrayList<>(guardTowersListNBT.size());
+        for (final Tag guardTowerNBT : guardTowersListNBT)
+        {
+            ILocation location = StandardFactoryController.getInstance().deserialize((CompoundTag) guardTowerNBT);
+            if (location.getDimension().equals(world.dimension()))
+            {
+                final IBuilding building = getGuardBuilding(world, location.getInDimensionLocation());
+                if (building != null)
+                {
+                    return building.getColony();
+                }
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -200,16 +265,21 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         else
         {
             compound.putBoolean(TAG_IS_ACTIVE, true);
-            final int numGuards = broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), playerIn);
 
-            if (numGuards > 0)
-            {
-                MessageUtils.format(TOOL_RALLY_BANNER_ACTIVATED, numGuards).sendTo(playerIn);
-            }
-            else
-            {
-                MessageUtils.format(TOOL_RALLY_BANNER_NO_GUARDS).sendTo(playerIn);
-            }
+           final IColony colony = getColony(compound, playerIn.getLevel());
+           if (colony != null && colony.getPermissions().hasPermission(playerIn, Action.RALLY_GUARDS))
+           {
+               final int numGuards = broadcastPlayerToRally(banner, playerIn.getCommandSenderWorld(), playerIn == null ? null : new EntityLocation(playerIn.getUUID()));
+
+               if (numGuards > 0)
+               {
+                   MessageUtils.format(TOOL_RALLY_BANNER_ACTIVATED, numGuards).sendTo(playerIn);
+               }
+               else
+               {
+                   MessageUtils.format(TOOL_RALLY_BANNER_NO_GUARDS).sendTo(playerIn);
+               }
+           }
         }
     }
 
@@ -217,10 +287,9 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
      * Broadcasts the player all the guardtowers rallied by the item are supposed to follow.
      *
      * @param banner   The banner that should broadcast
-     * @param playerIn The player to follow. Can be null, if the towers should revert to "normal" mode
      * @return The number of guards rallied
      */
-    public static int broadcastPlayerToRally(final ItemStack banner, final Level worldIn, @Nullable final Player playerIn)
+    public static int broadcastPlayerToRally(final ItemStack banner, final Level worldIn, @Nullable final ILocation rallyLocation)
     {
         if (worldIn.isClientSide())
         {
@@ -229,13 +298,13 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
         }
 
         @Nullable ILocation rallyTarget = null;
-        if (!isActive(banner) || playerIn == null)
+        if (!isActive(banner) || rallyLocation == null)
         {
             rallyTarget = null;
         }
         else
         {
-            rallyTarget = new EntityLocation(playerIn.getUUID());
+            rallyTarget = rallyLocation;
         }
 
         int numGuards = 0;
@@ -249,7 +318,7 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
 
             // If the building is null, it means that guardtower has been moved/destroyed since being added.
             // Safely ignore this case, the player must remove the tower from the rallying list manually.
-            if (building != null && (playerIn == null || building.getColony().getPermissions().hasPermission(playerIn, Action.RALLY_GUARDS)))
+            if (building != null)
             {
                 building.setRallyLocation(rallyTarget);
                 numGuards += building.getAllAssignedCitizen().size();
