@@ -1,0 +1,21 @@
+{
+  "branch": "minecolonies:combat",
+  "effects": [
+    {
+      "minecolonies:effects/standard": 3
+    }
+  ],
+  "icon": "minecolonies:banner_rally_guards",
+  "parentResearch": "minecolonies:combat/telescope",
+  "requirements": [
+    {
+      "building": "barracks",
+      "level": 4
+    },
+    {
+      "item": "minecraft:emerald",
+      "quantity": 32
+    }
+  ],
+  "researchLevel": 5
+}

@@ -157,6 +157,8 @@ public final class ResearchConstants
     public static final ResourceLocation NETHER_LOG        = new ResourceLocation(Constants.MOD_ID, "effects/netherexpeditionlog");
     public static final ResourceLocation MASKS             = new ResourceLocation(Constants.MOD_ID, "effects/masks");
     public static final ResourceLocation VACCINES          = new ResourceLocation(Constants.MOD_ID, "effects/vaccines");
+    public static final ResourceLocation TELESCOPE          = new ResourceLocation(Constants.MOD_ID, "effects/telescope");
+    public static final ResourceLocation STANDARD          = new ResourceLocation(Constants.MOD_ID, "effects/standard");
 
     /**
      * Private constructor to hide implicit public one.

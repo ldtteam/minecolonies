@@ -293,7 +293,7 @@
   "item.minecolonies.banner_rally_guards.activated.noguards": "You have rallied your army...of none. Good luck!",
   "item.minecolonies.banner_rally_guards.deactivated": "You have dismissed your army. Your Guards will return to regular duty.",
   "item.minecolonies.banner_rally_guards.outofrange": "Your Guards will not rally so far away, they are sworn to protect their families! The disappointed Guards are going home now.",
-
+  "item.minecolonies.banner_rally_guards.activated.needsresearch": "You guards couldn't understand this command, maybe you have to research this at the University first.",
   "item.minecolonies.bread_dough": "Bread Dough",
   "item.minecolonies.cookie_dough": "Cookie Dough",
   "item.minecolonies.cake_batter": "Cake Batter",

@@ -127,6 +127,8 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(NETHER_LOG).setTranslatedName("Adds expedition log to Nether Mine"));
         effects.add(new ResearchEffect(MASKS).setTranslatedName("Reduce disease transmission"));
         effects.add(new ResearchEffect(VACCINES).setTranslatedName("Citizens are immune for longer after treatment"));
+        effects.add(new ResearchEffect(TELESCOPE).setTranslatedName("Farther rallying banner range"));
+        effects.add(new ResearchEffect(STANDARD).setTranslatedName("Place Rallying Banner at location"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -1044,6 +1046,22 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.DIAMOND_HELMET)
           .addItemCost(Items.DIAMOND, 64)
           .addEffect(ARMOR_DURABILITY, 6)
+          .addToList(r);
+
+        final Research telescope = new Research(new ResourceLocation(Constants.MOD_ID, "combat/telescope"), COMBAT).setParentResearch(ironSkin)
+          .setTranslatedName("Telescope")
+          .setIcon(ModItems.bannerRallyGuards)
+          .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
+          .addItemCost(Items.EMERALD, 16)
+          .addEffect(TELESCOPE, 3)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "combat/standard"), COMBAT).setParentResearch(telescope)
+          .setTranslatedName("Standard")
+          .setIcon(ModItems.bannerRallyGuards)
+          .addBuildingRequirement(ModBuildings.BARRACKS_ID, 4)
+          .addItemCost(Items.EMERALD, 32)
+          .addEffect(STANDARD, 3)
           .addToList(r);
 
         final Research regeneration = new Research(new ResourceLocation(Constants.MOD_ID, "combat/regeneration"), COMBAT).setParentResearch(improvedLeather)
