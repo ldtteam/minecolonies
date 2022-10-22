@@ -48,11 +48,6 @@ public final class ColonyManagerConstants
     public static final String FILENAME_COLONY_DELETED = "colony%d.dat.deleted";
 
     /**
-     * Distance in chunks to load immediately after creating the colony.
-     */
-    public static final int DISTANCE_TO_LOAD_IMMEDIATELY = 5;
-
-    /**
      * The damage source used to kill citizens.
      */
     public static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
