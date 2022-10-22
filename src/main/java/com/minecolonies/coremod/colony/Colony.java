@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 import com.ldtteam.structurize.util.LanguageHandler;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.ColonyState;
@@ -8,6 +9,8 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
 import com.minecolonies.api.colony.buildings.IBuilding;
+import com.minecolonies.api.colony.busevents.ColonyStateEvent;
+import com.minecolonies.api.colony.busevents.ColonyTickEvent;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.permissions.Rank;
@@ -21,14 +24,12 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.research.IResearchManager;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.NbtTagConstants;
 import com.minecolonies.api.util.constant.Suppression;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.managers.*;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.pvp.AttackingPlayer;
@@ -36,6 +37,8 @@ import com.minecolonies.coremod.colony.requestsystem.management.manager.Standard
 import com.minecolonies.coremod.colony.workorders.WorkManager;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
+import com.minecolonies.coremod.quests.IQuestManager;
+import com.minecolonies.coremod.quests.QuestManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -68,8 +71,7 @@ import java.util.*;
 import static com.minecolonies.api.colony.ColonyState.*;
 import static com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateConstants.MAX_TICKRATE;
 import static com.minecolonies.api.util.constant.ColonyConstants.*;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_STYLE;
-import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.MineColonies.CLOSE_COLONY_CAP;
@@ -155,6 +157,11 @@ public class Colony implements IColony
      * The progress manager of the colony.
      */
     private final IProgressManager progressManager = new ProgressManager(this);
+
+    /**
+     * Quest manager for this colony
+     */
+    private IQuestManager questManager;
 
     /**
      * The Positions which players can freely interact.
@@ -257,7 +264,7 @@ public class Colony implements IColony
     /**
      * If the colony is dirty.
      */
-    private boolean isActive = true;
+    private boolean isDirty = true;
 
     /**
      * The colony team color.
@@ -297,6 +304,11 @@ public class Colony implements IColony
     private int forceLoadTimer = 0;
 
     /**
+     * The colony's event bus
+     */
+    private final EventBus colonyBus = new EventBus(MOD_ID);
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -310,6 +322,7 @@ public class Colony implements IColony
         center = c;
         this.permissions = new Permissions(this);
         requestManager = new StandardRequestManager(this);
+        questManager = new QuestManager(this, colonyBus);
     }
 
     /**
@@ -318,8 +331,9 @@ public class Colony implements IColony
      * @param id    The current id for the colony.
      * @param world The world the colony exists in.
      */
-    protected Colony(final int id, @Nullable final World world)
+    private Colony(final int id, @Nullable final World world)
     {
+        questManager = new QuestManager(this, colonyBus);
         this.id = id;
         if (world != null)
         {
@@ -353,6 +367,27 @@ public class Colony implements IColony
      */
     private ColonyState updateState()
     {
+        final ColonyState state = calculateColonyState();
+
+        if (getState() == ACTIVE && state != ACTIVE)
+        {
+            colonyBus.post(new ColonyStateEvent(this, false));
+        }
+        else if (getState() != ACTIVE && state == ACTIVE)
+        {
+            colonyBus.post(new ColonyStateEvent(this, true));
+        }
+
+        return state;
+    }
+
+    /**
+     * Calculates the state the colony is in
+     *
+     * @return state
+     */
+    private ColonyState calculateColonyState()
+    {
         if (world == null)
         {
             return INACTIVE;
@@ -361,13 +396,13 @@ public class Colony implements IColony
 
         if (!packageManager.getCloseSubscribers().isEmpty() || (loadedChunks.size() > 40 && !packageManager.getImportantColonyPlayers().isEmpty()))
         {
-            isActive = true;
+            isDirty = true;
             return ACTIVE;
         }
 
         if (!packageManager.getImportantColonyPlayers().isEmpty())
         {
-            isActive = true;
+            isDirty = true;
             return UNLOADED;
         }
 
@@ -413,6 +448,9 @@ public class Colony implements IColony
         eventManager.onColonyTick(this);
         buildingManager.onColonyTick(this);
         workManager.onColonyTick(this);
+        questManager.onColonyTick();
+
+        getColonyBus().post(new ColonyTickEvent(this));
 
         final long currTime = System.currentTimeMillis();
         if (lastOnlineTime != 0)
@@ -890,7 +928,7 @@ public class Colony implements IColony
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         this.colonyTag = compound;
 
-        isActive = false;
+        isDirty = false;
         return compound;
     }
 
@@ -1216,7 +1254,7 @@ public class Colony implements IColony
     public void markDirty()
     {
         packageManager.setDirty();
-        isActive = true;
+        isDirty = true;
     }
 
     @Override
@@ -1577,7 +1615,7 @@ public class Colony implements IColony
     {
         try
         {
-            if (this.colonyTag == null || this.isActive)
+            if (this.colonyTag == null || this.isDirty)
             {
                 this.write(new CompoundNBT());
             }
@@ -1729,16 +1767,16 @@ public class Colony implements IColony
      * @return the list of pattern-color pairs
      */
     @Override
-    public ListNBT getColonyFlag() { return colonyFlag; }
+    public ListNBT getColonyFlag() { return colonyFlag;}
 
     /**
      * Set the colony to be active.
      *
      * @param isActive if active.
      */
-    public void setActive(final boolean isActive)
+    public void setDirty(final boolean dirty)
     {
-        this.isActive = isActive;
+        this.isDirty = dirty;
     }
 
     /**
@@ -1828,5 +1866,11 @@ public class Colony implements IColony
     public boolean isDay()
     {
         return isDay;
+    }
+
+    @Override
+    public EventBus getColonyBus()
+    {
+        return colonyBus;
     }
 }

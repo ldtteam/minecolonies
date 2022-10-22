@@ -12,6 +12,7 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.*;
+import com.minecolonies.api.colony.busevents.BuildingUpgradeEvent;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.data.IRequestSystemBuildingDataStore;
@@ -1073,6 +1074,8 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
                 ((IBuildingEventsModule) module).onUpgradeComplete(newLevel);
             }
         }
+
+        colony.getColonyBus().post(new BuildingUpgradeEvent(colony));
     }
 
     @Override

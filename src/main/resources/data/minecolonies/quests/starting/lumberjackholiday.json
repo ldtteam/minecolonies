@@ -1,0 +1,56 @@
+{
+  "category": "guide",
+  "triggers": [
+    {
+      "id": "minecolonies:buildingupgrade",
+      "name": "barracks",
+      "level": 1
+    },
+    {
+      "id": "minecolonies:random",
+      "chance": 5
+    }
+  ],
+
+  "location": {
+    "building": "trigger or lumberjack",
+    "job": "forester",
+    "citizen": "trigger or chosen"
+
+  },
+
+  "repeatingtimes": 2,
+  "pre-quests:": [
+    "minecolonies:starting/lumberjackholiday",
+    "minecolonies:starting/lumberjackholiday"
+  ],
+
+  "followup-quests": [
+    "minecolonies:starting/lumberjackholiday",
+    "minecolonies:starting/lumberjackholiday"
+  ],
+
+  "effects": [
+    {
+      "id": "minecolonies:workeridle",
+      "days": 5
+    },
+    {
+      "id": "minecolonies:tracktreechop",
+      "block": "minecraft:oak_log",
+      "count": 5
+    }
+  ],
+  "rewards": [
+    {
+      "id": "minecolonies:itemreward",
+      "items": [
+        {
+          "id": "minecraft:apple",
+          "nbt": "",
+          "count": 5
+        }
+      ]
+    }
+  ]
+}

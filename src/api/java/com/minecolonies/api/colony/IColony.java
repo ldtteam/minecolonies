@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.google.common.eventbus.EventBus;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -407,4 +408,6 @@ public interface IColony
      * @return true if so.
      */
     boolean isActive();
+
+    EventBus getColonyBus();
 }

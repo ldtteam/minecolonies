@@ -4,11 +4,11 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.commands.EntryPoint;
 import com.minecolonies.coremod.datalistener.CrafterRecipeListener;
+import com.minecolonies.coremod.datalistener.QuestJsonListener;
 import com.minecolonies.coremod.entity.pathfinding.Pathfinding;
 import com.minecolonies.coremod.network.messages.client.ColonyStylesMessage;
 import com.minecolonies.coremod.network.messages.client.ServerUUIDMessage;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -58,6 +58,7 @@ public class FMLEventHandler
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event)
     {
         event.getServer().getResourceManager().addReloadListener(new CrafterRecipeListener());
+        event.getServer().getResourceManager().addReloadListener(new QuestJsonListener());
     }
 
     @SubscribeEvent

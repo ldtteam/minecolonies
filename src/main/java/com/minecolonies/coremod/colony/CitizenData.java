@@ -1231,4 +1231,9 @@ public class CitizenData implements ICitizenData
         nextRespawnPos = pos;
     }
 
+    @Override
+    public void setIdleDays(final int days)
+    {
+
+    }
 }

@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * Data for all civilians of a colony, can be citizen/trader/visitor etc
  */
-public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>
+public interface ICivilianData extends ICitizen, INBTSerializable<CompoundNBT>, IQuestGiver
 {
     /**
      * Return the entity instance of the civilian data. Respawn the civilian if needed.

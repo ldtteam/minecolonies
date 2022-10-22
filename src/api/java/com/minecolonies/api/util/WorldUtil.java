@@ -192,13 +192,8 @@ public class WorldUtil
         if ((flags & 2) != 0)
         {
             flags -= 2;
-            final boolean result = world.setBlockState(pos, state, flags);
-            if (result)
-            {
-                ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
-            }
-
-            return result;
+            ((ServerWorld) world).getChunkProvider().markBlockChanged(pos);
+            return world.setBlockState(pos, state, flags);
         }
         else
         {

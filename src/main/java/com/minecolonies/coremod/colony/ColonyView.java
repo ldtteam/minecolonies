@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.eventbus.EventBus;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
@@ -581,13 +582,19 @@ public final class ColonyView implements IColonyView
         return true;
     }
 
+    @Override
+    public EventBus getColonyBus()
+    {
+        return null;
+    }
+
     /**
      * Sets if citizens can move in.
      *
      * @param newMoveIn true if citizens can move in.
      */
     @Override
-    public void setMoveIn(final boolean newMoveIn) { this.moveIn = newMoveIn; }
+    public void setMoveIn(final boolean newMoveIn) {this.moveIn = newMoveIn;}
 
     /**
      * Get the town hall View for this ColonyView.
