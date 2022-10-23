@@ -803,7 +803,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         {
             requestWorkOrder(WorkOrderType.BUILD, builder);
         }
-        else if (getBuildingLevel() < getMaxBuildingLevel() && (parentBuilding == null || getBuildingLevel() < parentBuilding.getBuildingLevel()))
+        else if (getBuildingLevel() < getMaxBuildingLevel() && (parentBuilding == null || getBuildingLevel() < parentBuilding.getBuildingLevel() || parentBuilding.getBuildingLevel() >= parentBuilding.getMaxBuildingLevel()))
         {
             requestWorkOrder(WorkOrderType.UPGRADE, builder);
         }
