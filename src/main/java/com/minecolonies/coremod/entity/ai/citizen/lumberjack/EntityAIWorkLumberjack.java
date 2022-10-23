@@ -20,22 +20,23 @@ import com.minecolonies.coremod.entity.pathfinding.MinecoloniesAdvancedPathNavig
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.AbstractPathJob;
 import com.minecolonies.coremod.entity.pathfinding.pathjobs.PathJobMoveToWithPassable;
 import com.minecolonies.coremod.util.WorkerUtil;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,13 +48,6 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
-
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.NetherrackBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The lumberjack AI class.
@@ -388,12 +382,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
         }
         else
         {
-            job.setTree(new Tree(world, pathResult.treeLocation, building.getColony()));
+            job.setTree(new Tree(world, pathResult.treeLocation, building.shouldRestrict() ? null : building.getColony()));
 
             // Check if tree creation was successful
             if (job.getTree().isTree())
             {
-                job.getTree().findLogs(world, building.getColony());
+                job.getTree().findLogs(world, building.shouldRestrict() ? null : building.getColony());
                 return LUMBERJACK_CHOP_TREE;
             }
             else
@@ -434,7 +428,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
     {
         worker.getCitizenStatusHandler().setLatestStatus(Component.translatable("com.minecolonies.coremod.status.chopping"));
 
-        if (job.getTree().hasLogs() || (job.getTree().hasLeaves() && job.getTree().isNetherTree()) || checkedInHut)
+        final boolean shouldBreakLeaves = building.shouldDefoliate() || job.getTree().isNetherTree();
+
+        if (job.getTree().hasLogs() || (shouldBreakLeaves && job.getTree().hasLeaves()) || checkedInHut)
         {
             if (!walkToTree(job.getTree().getStumpLocations().get(0)))
             {
@@ -446,7 +442,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             }
         }
 
-        if (!job.getTree().hasLogs() && (!job.getTree().isNetherTree() || !(job.getTree().hasLeaves())))
+        if (!job.getTree().hasLogs() && (!shouldBreakLeaves || !job.getTree().hasLeaves()))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -513,7 +509,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
             job.getTree().pollNextLog();
             worker.decreaseSaturationForContinuousAction();
         }
-        else if (job.getTree().hasLeaves() && job.getTree().isNetherTree())
+        else if (job.getTree().hasLeaves() && shouldBreakLeaves)
         {
             final BlockPos leaf = job.getTree().peekNextLeaf();
             if (!mineBlock(leaf, workFrom))
