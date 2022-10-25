@@ -15,8 +15,10 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.compatibility.newstruct.BlueprintMapping;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerBuildingInventory;
-import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.Log;
+import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -185,6 +187,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             building = colony.getBuildingManager().getBuilding(getPosition());
             if (building != null && (getLevel() == null || !getLevel().isClientSide))
             {
+                registryName = building.getBuildingType().getRegistryName();
                 building.setTileEntity(this);
             }
         }
@@ -264,7 +267,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket()
     {
-        return  ClientboundBlockEntityDataPacket.create(this);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @NotNull
@@ -404,7 +407,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         this.packMeta = packName;
         this.path = path;
 
-        registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        if (compound.contains(TAG_BUILDING_TYPE))
+        {
+            registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
+        }
         buildingPos = worldPosition;
         single = true;
     }
@@ -417,7 +423,10 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         compound.putBoolean(TAG_MIRROR, mirror);
         compound.putString(TAG_PACK, packMeta == null ? "" : packMeta);
         compound.putString(TAG_PATH, path == null ? "" : path);
-        compound.putString(TAG_BUILDING_TYPE, registryName.toString());
+        if (registryName != null)
+        {
+            compound.putString(TAG_BUILDING_TYPE, registryName.toString());
+        }
     }
 
     @Override
@@ -651,6 +660,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
     /**
      * Process the blueprint to read relevant data.
+     *
      * @param blueprint the queried blueprint.
      */
     private void processBlueprint(final Blueprint blueprint)
