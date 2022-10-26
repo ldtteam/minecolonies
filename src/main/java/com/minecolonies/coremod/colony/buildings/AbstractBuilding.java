@@ -16,6 +16,7 @@ import com.minecolonies.api.colony.buildings.ISchematicProvider;
 import com.minecolonies.api.colony.buildings.modules.*;
 import com.minecolonies.api.colony.buildings.modules.settings.ISetting;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.busevents.BuildingUpgradeEvent;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
@@ -969,6 +970,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         getModules(IBuildingEventsModule.class).forEach(module -> module.onUpgradeComplete(newLevel));
         colony.getResearchManager().checkAutoStartResearch();
+        colony.getColonyBus().post(new BuildingUpgradeEvent(colony));
     }
 
     @Override

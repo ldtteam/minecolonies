@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.eventbus.EventBus;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.minecolonies.api.colony.*;
@@ -646,6 +647,12 @@ public final class ColonyView implements IColonyView
     public String getTextureStyleId()
     {
         return this.textureStyle;
+    }
+
+    @Override
+    public EventBus getColonyBus()
+    {
+        return null;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.minecolonies.api.colony;
 
+import com.google.common.eventbus.EventBus;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -462,4 +463,6 @@ public interface IColony
      * @return the matching file.
      */
     CitizenNameFile getCitizenNameFile();
+
+    EventBus getColonyBus();
 }

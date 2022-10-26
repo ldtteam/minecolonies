@@ -1,0 +1,31 @@
+{
+  "questid": "Apples",
+  "triggers": [
+    {
+      "id": "minecolonies:buildingupgrade",
+      "level": 2,
+      "name": "Sawmill",
+      "conditions": [
+        {},
+        {}
+      ]
+    },
+    {
+      "id": "random",
+      "chance": 20,
+      "conditions": [
+        {},
+        {}
+      ]
+    }
+
+  ],
+  "tasks": [
+    {
+      "id": "bringItem",
+      "item": "10xWheat",
+      "count": 10
+    }
+  ],
+  "rewards": []
+}

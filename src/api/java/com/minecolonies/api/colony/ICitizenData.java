@@ -370,4 +370,11 @@ public interface ICitizenData extends ICivilianData
     {
         return false;
     }
+
+    /**
+     * Sets the citizen idle for a certain amount of days
+     *
+     * @param days amount of days
+     */
+    void setIdleDays(int days);
 }

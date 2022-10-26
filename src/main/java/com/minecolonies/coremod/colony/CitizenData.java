@@ -1614,4 +1614,9 @@ public class CitizenData implements ICitizenData
     {
         this.parents = new Tuple<>(firstParent, secondParent);
     }
+    @Override
+    public void setIdleDays(final int days)
+    {
+
+    }
 }
