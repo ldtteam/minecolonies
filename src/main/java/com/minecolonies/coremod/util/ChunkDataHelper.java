@@ -131,7 +131,7 @@ public final class ChunkDataHelper
     public static void claimColonyChunks(final Level world, final boolean add, final int id, final BlockPos center)
     {
         final int range = getConfig().getServer().initialColonySize.get();
-        staticClaimInRange(id, add, center, range, world, false);
+        staticClaimInRange(id, add, center, add ? range : range * 2, world, false);
     }
 
     /**
@@ -278,21 +278,15 @@ public final class ChunkDataHelper
         }
 
         final LevelChunk centralChunk = world.getChunkAt(center);
-        tryClaim(world, center, add, colonyId, chunkManager, forceOwnerChange);
 
-        final int chunkX = centralChunk.getPos().x;
-        final int chunkZ = centralChunk.getPos().z;
+        final int chunkXMax = centralChunk.getPos().x;
+        final int chunkZMax = centralChunk.getPos().z;
 
-        for (int i = chunkX - range; i <= chunkX + range; i++)
+        for (int chunkPosX = chunkXMax - range; chunkPosX <= chunkXMax + range; chunkPosX++)
         {
-            for (int j = chunkZ - range; j <= chunkZ + range; j++)
+            for (int chunkPosZ = chunkZMax - range; chunkPosZ <= chunkZMax + range; chunkPosZ++)
             {
-                if (i == chunkX && j == chunkZ)
-                {
-                    continue;
-                }
-
-                tryClaim(world, new BlockPos(i * BLOCKS_PER_CHUNK, 0, j * BLOCKS_PER_CHUNK), add, colonyId, chunkManager, forceOwnerChange);
+                tryClaim(world, new BlockPos(chunkPosX * BLOCKS_PER_CHUNK, 0, chunkPosZ * BLOCKS_PER_CHUNK), add, colonyId, chunkManager, forceOwnerChange);
             }
         }
     }
@@ -318,7 +312,7 @@ public final class ChunkDataHelper
         if (!WorldUtil.isBlockLoaded(world, chunkBlockPos))
         {
             final ChunkLoadStorage newStorage = new ChunkLoadStorage(id, ChunkPos.asLong(chunkBlockPos), add, world.dimension().location(), forceOwnerChange);
-            chunkManager.addChunkStorage(SectionPos.blockToSectionCoord(chunkBlockPos.getX()), SectionPos.blockToSectionCoord(chunkBlockPos.getX()), newStorage);
+            chunkManager.addChunkStorage(SectionPos.blockToSectionCoord(chunkBlockPos.getX()), SectionPos.blockToSectionCoord(chunkBlockPos.getZ()), newStorage);
             return false;
         }
 
