@@ -299,6 +299,7 @@ public final class ModBuildingsInitializer
                                     .addBuildingModuleProducer(() -> new SettingsModule()
                                                                        .with(BuildingLumberjack.REPLANT, new BoolSetting(true))
                                                                        .with(BuildingLumberjack.RESTRICT, new BoolSetting(false))
+                                                                       .with(BuildingLumberjack.DEFOLIATE, new BoolSetting(false))
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting())
                                                                        .with(BuildingLumberjack.DYNAMIC_TREES_SIZE, new DynamicTreesSetting())
                                                                        .with(AbstractBuilding.USE_SHEARS, new BoolSetting(true)), () -> SettingsModuleView::new)
