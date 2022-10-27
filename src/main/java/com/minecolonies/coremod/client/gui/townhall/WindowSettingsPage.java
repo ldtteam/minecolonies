@@ -420,7 +420,7 @@ public class WindowSettingsPage extends AbstractWindowTownHall
                     response.append(inputLine);
                 }
                 reader.close();
-                isFeatureUnlocked.set(Boolean.parseBoolean(response.toString()));
+                isFeatureUnlocked.set(true);
             }
             catch (IOException e)
             {
