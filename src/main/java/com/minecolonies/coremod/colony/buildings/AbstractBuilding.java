@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import com.ldtteam.structurize.blueprints.v1.Blueprint;
 import com.ldtteam.structurize.storage.StructurePacks;
-import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.ICitizenData;
@@ -63,8 +62,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
@@ -333,7 +332,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     @Override
     public void onPlacement()
     {
-        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, true, getPosition(), getClaimRadius(getBuildingLevel()), getCorners());
     }
 
     /**
@@ -425,7 +424,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
             world.updateNeighbourForOutputSignal(this.getPosition(), block);
         }
 
-        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()));
+        ChunkDataHelper.claimBuildingChunks(colony, false, this.getID(), getClaimRadius(getBuildingLevel()), getCorners());
         ConstructionTapeHelper.removeConstructionTape(getCorners(), world);
 
         getModules(IBuildingEventsModule.class).forEach(IBuildingEventsModule::onDestroyed);
@@ -939,7 +938,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
     public void onUpgradeComplete(final int newLevel)
     {
         cachedRotation = -1;
-        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel));
+        ChunkDataHelper.claimBuildingChunks(colony, true, this.getID(), this.getClaimRadius(newLevel), getCorners());
         recheckGuardBuildingNear = true;
 
         ConstructionTapeHelper.removeConstructionTape(getCorners(), colony.getWorld());
