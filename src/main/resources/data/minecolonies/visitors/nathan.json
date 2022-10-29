@@ -4,7 +4,7 @@
   "name": "Nathan Reeves",
   "chance": 0.001,
   "storylangkey": "com.minecolonies.coremod.gui.chat.nathan",
-  "recruitcost": "minecraft:iron_Ingot",
+  "recruitcost": "minecraft:iron_ingot",
   "recruitcostcount": 16,
   "gender": "male"
 }

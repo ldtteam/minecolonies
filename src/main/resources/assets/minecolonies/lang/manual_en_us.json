@@ -1102,7 +1102,7 @@
   "com.minecolonies.coremod.gui.colony.delete.cancel": "§2Don't delete!",
   "com.minecolonies.coremod.gui.colony.create": "Create new colony",
   "com.minecolonies.coremod.gui.colony.create.notileentity": "Missing tile entity for the Town Hall block, try placing it down again!",
-  "com.minecolonies.coremod.gui.colony.create.failed": "Colony creation failed, try somewhere else!",
+  "com.minecolonies.coremod.gui.colony.create.failed": "Oopsy, just noticed you already got a colony. Please try again!",
   "com.minecolonies.coremod.gui.colony.denied.existing": "§l§4There is an existing colony you own, delete it before creating a new one.",
   "com.minecolonies.coremod.gui.colony.denied.existingandabandon": "§4There is an existing colony you own, delete or abandon it before creating a new one.",
   "com.minecolonies.coremod.gui.colony.denied.tooclose": "§l§4 Colony %s is too close.",
