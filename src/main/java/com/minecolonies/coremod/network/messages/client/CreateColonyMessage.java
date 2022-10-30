@@ -160,6 +160,8 @@ public class CreateColonyMessage implements IMessage
             return;
         }
 
+        ownedColony.getPackageManager().sendColonyViewPackets();
+        ownedColony.getPackageManager().sendPermissionsPackets();
         MessageUtils.format(WARNING_COLONY_FOUNDING_FAILED).with(ChatFormatting.BOLD, ChatFormatting.DARK_RED).sendTo(sender);
     }
 }

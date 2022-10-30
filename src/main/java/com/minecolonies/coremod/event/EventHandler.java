@@ -390,6 +390,8 @@ public class EventHandler
                       || colony.getPermissions().hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
                     colony.getPackageManager().addImportantColonyPlayer(player);
+                    colony.getPackageManager().sendColonyViewPackets();
+                    colony.getPackageManager().sendPermissionsPackets();
                 }
             }
 
