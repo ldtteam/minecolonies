@@ -31,7 +31,7 @@ public class StatisticsManager implements IStatisticsManager
     /**
      * The current stats of the colony.
      */
-    private final Map<String, List<Long>> stats = new HashMap<>();
+    private final Map<String, Map<Short, Integer>> stats = new HashMap<>();
 
     /**
      * Create a new stat manager.
@@ -43,40 +43,46 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
-    public void increment(final String id)
+    public void increment(final @NotNull String id)
     {
-        stats.computeIfAbsent(id, k -> new ArrayList<>()).add(colony.getWorld().getGameTime());
+        incrementBy(id, 1);
     }
 
     @Override
-    public int getStatTotal(final String id)
+    public void incrementBy(final @NotNull String id, int qty)
     {
-        return stats.getOrDefault(id, new ArrayList<>()).size();
+        final Map<Short, Integer> innerMap = stats.computeIfAbsent(id, k -> new HashMap<>());
+        innerMap.put(colony.getDay(), innerMap.getOrDefault(colony.getDay(), 0) + qty);
     }
 
     @Override
-    public int getStatSince(final String id, final long time)
+    public int getStatTotal(final @NotNull String id)
     {
-        final List<Long> stats = this.stats.getOrDefault(id, new ArrayList<>());
-        int count = 0;
-        for (int i = stats.size() - 1; i >= 0; i--)
+        final Map<Short, Integer> stats = this.stats.getOrDefault(id, new HashMap<>());
+        int totalCount = 0;
+        for (final int count : stats.values())
         {
-            if (stats.get(i) >= time)
-            {
-                count++;
-            }
-            else
-            {
-                break;
-            }
+            totalCount += count;
+        }
+        return totalCount;
+    }
+
+    @Override
+    public int getStatsInPeriod(final @NotNull String id, final short startDay, final short endDay)
+    {
+        final Map<Short, Integer> stats = this.stats.getOrDefault(id, new HashMap<>());
+        int count = 0;
+        for (short day = startDay; day <= endDay; day++)
+        {
+            count += stats.get(day);
         }
         return count;
     }
 
     @Override
-    public Map<String, List<Long>> getStats()
+    public @NotNull Set<String> getStatTypes()
     {
-        return stats;
+        return stats.keySet();
     }
 
     @Override
@@ -94,6 +100,33 @@ public class StatisticsManager implements IStatisticsManager
     }
 
     @Override
+    public void writeToNBT(@NotNull final CompoundTag compound)
+    {
+        final ListTag statManagerNBT = new ListTag();
+        for (final Map.Entry<String, Map<Short, Integer>> stat : stats.entrySet())
+        {
+            final CompoundTag statCompound = new CompoundTag();
+            statCompound.putString(TAG_ID, stat.getKey());
+
+            final ListTag statNBT = new ListTag();
+            for (final Map.Entry<Short, Integer> dailyStats : stat.getValue().entrySet())
+            {
+                final CompoundTag timeStampTag = new CompoundTag();
+
+                timeStampTag.putShort(TAG_TIME, dailyStats.getKey());
+                timeStampTag.putInt(TAG_QUANTITY, dailyStats.getValue());
+
+                statNBT.add(timeStampTag);
+            }
+
+            statCompound.put(TAG_STAT, statNBT);
+            statManagerNBT.add(statCompound);
+        }
+
+        compound.put(TAG_STAT_MANAGER, statManagerNBT);
+    }
+
+    @Override
     public void readFromNBT(@NotNull final CompoundTag compound)
     {
         if (compound.contains(TAG_STAT_MANAGER))
@@ -104,37 +137,18 @@ public class StatisticsManager implements IStatisticsManager
                 final CompoundTag statCompound = statsNbts.getCompound(i);
                 final String id = statCompound.getString(TAG_ID);
                 final ListTag timeStampNbts = statCompound.getList(TAG_STAT, Tag.TAG_COMPOUND);
-                final List<Long> timeStamps = new ArrayList<>();
+                final Map<Short, Integer> timeStamps = new HashMap<>();
                 for (int j = 0; j < timeStampNbts.size(); j++)
                 {
-                    timeStamps.add(timeStampNbts.getCompound(i).getLong(TAG_TIME));
+                    final CompoundTag compoundTag = timeStampNbts.getCompound(j);
+                    final short day = compoundTag.getShort(TAG_TIME);
+                    final int qty = compoundTag.getInt(TAG_QUANTITY);
+
+                    timeStamps.put(day, qty);
                 }
 
                 stats.put(id, timeStamps);
             }
         }
-    }
-
-    @Override
-    public void writeToNBT(@NotNull final CompoundTag compound)
-    {
-        final ListTag statManagerNBT = new ListTag();
-        for (final Map.Entry<String, List<Long>> stats : stats.entrySet())
-        {
-            final CompoundTag statCompound = new CompoundTag();
-            statCompound.putString(TAG_ID, stats.getKey());
-
-            final ListTag statNBT = new ListTag();
-            for (final long timeStamp : stats.getValue())
-            {
-                final CompoundTag timeStampTag = new CompoundTag();
-                timeStampTag.putLong(TAG_TIME, timeStamp);
-                statNBT.add(timeStampTag);
-            }
-            statCompound.put(TAG_STAT, statNBT);
-            statManagerNBT.add(statCompound);
-        }
-
-        compound.put(TAG_STAT_MANAGER, statManagerNBT);
     }
 }

@@ -29,7 +29,7 @@
                  label="$(com.minecolonies.coremod.gui.townhalltab.workorders)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
     <buttonimage id="happiness1" size="204 17" pos="58 43" source="minecolonies:textures/gui/bookmark_ribbon_01.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.townhalltab.happiness)"
+                 label="$(com.minecolonies.coremod.gui.townhalltab.stats)"
                  textalign="MIDDLE_LEFT" textoffset="35 2" textcolor="White" textdisabledcolor="DarkGray"/>
 
     <buttonimage id="infoExt" pos="-17 73" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"

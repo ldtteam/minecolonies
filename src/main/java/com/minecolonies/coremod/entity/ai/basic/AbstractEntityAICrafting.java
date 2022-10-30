@@ -44,6 +44,7 @@ import java.util.function.Predicate;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_CRAFTED;
 import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
@@ -471,6 +472,7 @@ public abstract class AbstractEntityAICrafting<J extends AbstractJobCrafter<?, J
             // Fallback security blanket. Normally, the craft() method should have dealt with the request.
             if (currentRequest.getState() == RequestState.IN_PROGRESS)
             {
+                worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_CRAFTED, job.getMaxCraftingCount());
                 job.finishRequest(true);
                 worker.getCitizenExperienceHandler().addExperience(currentRequest.getRequest().getCount() / 2.0);
             }

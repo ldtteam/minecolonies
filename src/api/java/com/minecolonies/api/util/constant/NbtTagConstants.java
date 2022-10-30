@@ -168,6 +168,11 @@ public final class NbtTagConstants
     public static final String TAG_COL_NAME_STYLE = "namestyle";
 
     /**
+     * The tag to store the day progress.
+     */
+    public static final String COLONY_DAY = "colonyday";
+
+    /**
      * Tag to store if raidable to a colony.
      */
     public static final String TAG_RAIDABLE = "raidable";

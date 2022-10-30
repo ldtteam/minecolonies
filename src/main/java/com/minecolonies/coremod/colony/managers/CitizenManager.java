@@ -611,6 +611,7 @@ public class CitizenManager implements ICitizenManager
             {
                 citizen.getCitizenMournHandler().removeDeceasedCitizen(data.getName());
             }
+            citizen.onDeath(data.getId());
         }
     }
 

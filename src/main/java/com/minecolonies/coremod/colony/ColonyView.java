@@ -1572,4 +1572,10 @@ public final class ColonyView implements IColonyView
     {
         return statisticManager;
     }
+
+    @Override
+    public short getDay()
+    {
+        return 0;
+    }
 }

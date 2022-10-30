@@ -328,6 +328,11 @@ public class Colony implements IColony
     private String nameStyle = "default";
 
     /**
+     * Current day of the colony.
+     */
+    private short day = 0;
+
+    /**
      * Constructor for a newly created Colony.
      *
      * @param id The id of the colony to create.
@@ -583,6 +588,7 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
+            day++;
             citizenManager.onWakeUp();
         }
         return false;
@@ -834,6 +840,7 @@ public class Colony implements IColony
         {
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
+        this.day = compound.getShort(COLONY_DAY);
         this.colonyTag = compound;
     }
 
@@ -940,6 +947,7 @@ public class Colony implements IColony
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
         compound.putString(TAG_COL_NAME_STYLE, nameStyle);
+        compound.putShort(COLONY_DAY, day);
 
         this.colonyTag = compound;
 
@@ -1917,10 +1925,16 @@ public class Colony implements IColony
     /**
      * Check if we need to update the view's chunk ticket info
      *
-     * @return
+     * @return true if dirty.
      */
     public boolean isTicketedChunksDirty()
     {
         return ticketedChunksDirty;
+    }
+
+    @Override
+    public short getDay()
+    {
+        return day;
     }
 }
