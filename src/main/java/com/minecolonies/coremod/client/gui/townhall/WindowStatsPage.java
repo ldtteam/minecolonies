@@ -5,10 +5,11 @@ import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
@@ -18,16 +19,16 @@ import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule
 /**
  * BOWindow for the town hall.
  */
-public class WindowHappinessPage extends AbstractWindowTownHall
+public class WindowStatsPage extends AbstractWindowTownHall
 {
     /**
      * Constructor for the town hall window.
      *
      * @param townHall {@link BuildingTownHall.View}.
      */
-    public WindowHappinessPage(final BuildingTownHall.View townHall)
+    public WindowStatsPage(final BuildingTownHall.View townHall)
     {
-        super(townHall, "layouthappiness.xml");
+        super(townHall, "layoutstats.xml");
     }
 
     /**
@@ -38,10 +39,11 @@ public class WindowHappinessPage extends AbstractWindowTownHall
     {
         super.onOpened();
         updateHappiness();
+        updateStats();
     }
 
     /**
-     * Update the display for the happiness
+     * Update the display for the happiness.
      */
     private void updateHappiness()
     {
@@ -68,7 +70,7 @@ public class WindowHappinessPage extends AbstractWindowTownHall
             label.setSize(136, 11);
             label.setPosition(25, yPos);
             label.setColors(BLACK);
-            label.setText(Component.translatable(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
+            label.setText(new TranslatableComponent(PARTIAL_HAPPINESS_MODIFIER_NAME + entry.getKey()));
 
             if (value > 1.0)
             {
@@ -88,15 +90,26 @@ public class WindowHappinessPage extends AbstractWindowTownHall
             }
             pane.addChild(image);
             pane.addChild(label);
-            PaneBuilders.tooltipBuilder().hoverPane(label).append(Component.translatable("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
+            PaneBuilders.tooltipBuilder().hoverPane(label).append(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.happiness.desc." + entry.getKey())).build();
 
             yPos += 12;
+        }
+    }
+
+    /**
+     * Update the display for the stats.
+     */
+    private void updateStats()
+    {
+        for (final Map.Entry<String, List<Long>> entry : building.getColony().getStatisticsManager().getStats().entrySet())
+        {
+
         }
     }
 
     @Override
     protected String getWindowId()
     {
-        return BUTTON_HAPPINESS;
+        return BUTTON_STATS;
     }
 }

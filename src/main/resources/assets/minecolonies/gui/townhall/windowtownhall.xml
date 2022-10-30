@@ -51,7 +51,7 @@
                  label="$(com.minecolonies.coremod.gui.townhalltab.workorders)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
     <buttonimage id="happinessExt" pos="-17 217" size="104 14" source="minecolonies:textures/gui/bookmark_medium_ribbon_01.png" visible="false"
-                 label="$(com.minecolonies.coremod.gui.townhalltab.happiness)"
+                 label="$(com.minecolonies.coremod.gui.townhalltab.stats)"
                  textalign="MIDDLE_LEFT" textcolor="White" textoffset="8 1"/>
 
     <buttonimage id="infopage" size="17 17" pos="62 71" onHoverId="infoExt"

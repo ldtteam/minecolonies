@@ -462,4 +462,11 @@ public interface IColony
      * @return the matching file.
      */
     CitizenNameFile getCitizenNameFile();
+
+    /**
+     * Get the statistics manager of the colony.
+     *
+     * @return the statistics manager.
+     */
+    IStatisticsManager getStatisticsManager();
 }

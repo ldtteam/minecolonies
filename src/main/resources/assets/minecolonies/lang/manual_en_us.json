@@ -1866,7 +1866,7 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+  "com.minecolonies.coremod.gui.townhalltab.stats": "Statistics",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
   "block.minecolonies.blockconstructiontape": "Construction Tape",

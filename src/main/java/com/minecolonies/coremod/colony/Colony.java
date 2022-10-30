@@ -174,6 +174,11 @@ public class Colony implements IColony
     private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
+     * Event manager of the colony.
+     */
+    private final IStatisticsManager statisticManager = new StatisticsManager(this);
+
+    /**
      * The Positions which players can freely interact.
      */
     private final Set<BlockPos> freePositions = new HashSet<>();
@@ -731,6 +736,8 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
+        statisticManager.readFromNBT(compound);
+
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.getAllKeys().contains(TAG_RESEARCH))
@@ -884,6 +891,8 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        statisticManager.writeToNBT(compound);
+
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
@@ -1090,7 +1099,7 @@ public class Colony implements IColony
      * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
      * run.
      *
-     * @param event {@link TickEvent.LevelTickEvent}
+     * @param event {@link TickEvent.WorldTickEvent}
      */
     @Override
     public void onWorldTick(@NotNull final TickEvent.LevelTickEvent event)
@@ -1553,6 +1562,12 @@ public class Colony implements IColony
     public IEventManager getEventManager()
     {
         return eventManager;
+    }
+
+    @Override
+    public IStatisticsManager getStatisticsManager()
+    {
+        return statisticManager;
     }
 
     @Override
