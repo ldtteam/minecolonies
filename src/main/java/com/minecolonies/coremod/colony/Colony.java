@@ -1107,7 +1107,7 @@ public class Colony implements IColony
      * Any per-world-tick logic should be performed here. NOTE: If the Colony's world isn't loaded, it won't have a world tick. Use onServerTick for logic that should _always_
      * run.
      *
-     * @param event {@link TickEvent.WorldTickEvent}
+     * @param event {@link TickEvent.LevelTickEvent}
      */
     @Override
     public void onWorldTick(@NotNull final TickEvent.LevelTickEvent event)
