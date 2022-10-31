@@ -212,6 +212,7 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
                     {
                         citizenToServe.get(0).getCitizenData().increaseSaturation(stack.getItem().getFoodProperties().getNutrition() / 2.0);
                     }
+                    worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FOOD_SERVED);
                 }
             }
 
