@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.managers;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.managers.interfaces.IStatisticsManager;
+import it.unimi.dsi.fastutil.shorts.Short2IntOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -31,7 +32,7 @@ public class StatisticsManager implements IStatisticsManager
     /**
      * The current stats of the colony.
      */
-    private final Map<String, Map<Short, Integer>> stats = new HashMap<>();
+    private final Map<String, Short2IntOpenHashMap> stats = new HashMap<>();
 
     /**
      * Create a new stat manager.
@@ -51,14 +52,14 @@ public class StatisticsManager implements IStatisticsManager
     @Override
     public void incrementBy(final @NotNull String id, int qty)
     {
-        final Map<Short, Integer> innerMap = stats.computeIfAbsent(id, k -> new HashMap<>());
+        final Map<Short, Integer> innerMap = stats.computeIfAbsent(id, k -> new Short2IntOpenHashMap());
         innerMap.put(colony.getDay(), innerMap.getOrDefault(colony.getDay(), 0) + qty);
     }
 
     @Override
     public int getStatTotal(final @NotNull String id)
     {
-        final Map<Short, Integer> stats = this.stats.getOrDefault(id, new HashMap<>());
+        final Map<Short, Integer> stats = this.stats.getOrDefault(id, new Short2IntOpenHashMap());
         int totalCount = 0;
         for (final int count : stats.values())
         {
@@ -70,7 +71,7 @@ public class StatisticsManager implements IStatisticsManager
     @Override
     public int getStatsInPeriod(final @NotNull String id, final short startDay, final short endDay)
     {
-        final Map<Short, Integer> stats = this.stats.getOrDefault(id, new HashMap<>());
+        final Map<Short, Integer> stats = this.stats.getOrDefault(id, new Short2IntOpenHashMap());
         int count = 0;
         for (short day = startDay; day <= endDay; day++)
         {
@@ -103,7 +104,7 @@ public class StatisticsManager implements IStatisticsManager
     public void writeToNBT(@NotNull final CompoundTag compound)
     {
         final ListTag statManagerNBT = new ListTag();
-        for (final Map.Entry<String, Map<Short, Integer>> stat : stats.entrySet())
+        for (final Map.Entry<String, Short2IntOpenHashMap> stat : stats.entrySet())
         {
             final CompoundTag statCompound = new CompoundTag();
             statCompound.putString(TAG_ID, stat.getKey());
@@ -137,7 +138,7 @@ public class StatisticsManager implements IStatisticsManager
                 final CompoundTag statCompound = statsNbts.getCompound(i);
                 final String id = statCompound.getString(TAG_ID);
                 final ListTag timeStampNbts = statCompound.getList(TAG_STAT, Tag.TAG_COMPOUND);
-                final Map<Short, Integer> timeStamps = new HashMap<>();
+                final Short2IntOpenHashMap timeStamps = new Short2IntOpenHashMap();
                 for (int j = 0; j < timeStampNbts.size(); j++)
                 {
                     final CompoundTag compoundTag = timeStampNbts.getCompound(j);
