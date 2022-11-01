@@ -483,7 +483,7 @@ public class EntityAIEatTask extends Goal
                 if (InventoryUtils.transferFoodUpToSaturation(buildingWorker,
                   citizen.getInventoryCitizen(),
                   GET_YOURSELF_SATURATION,
-                  stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)))
+                  stack -> CAN_EAT.test(stack) && canEat(citizen.getCitizenData(), stack)) > 0)
                 {
                     return EAT;
                 }

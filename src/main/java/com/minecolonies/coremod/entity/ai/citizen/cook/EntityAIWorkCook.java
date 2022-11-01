@@ -226,12 +226,13 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             return getState();
         }
 
-        if (!InventoryUtils.transferFoodUpToSaturation(worker, handler, building.getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack, citizenToServe.isEmpty() ? null : citizenToServe.get(0))))
+        final int count = InventoryUtils.transferFoodUpToSaturation(worker, handler, building.getBuildingLevel() * SATURATION_TO_SERVE, stack -> CAN_EAT.test(stack) && canEat(stack, citizenToServe.isEmpty() ? null : citizenToServe.get(0)));
+        if (count <= 0)
         {
             removeFromQueue();
             return getState();
         }
-        worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FOOD_SERVED);
+        worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(FOOD_SERVED, count);
 
         if (!citizenToServe.isEmpty() && citizenToServe.get(0).getCitizenData() != null)
         {
