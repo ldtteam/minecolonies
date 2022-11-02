@@ -42,7 +42,7 @@ public interface IStatisticsManager
      * @param dayEnd the end day.
      * @return the count.
      */
-    int getStatsInPeriod(@NotNull String id, final short dayStart, final short dayEnd);
+    int getStatsInPeriod(@NotNull String id, final int dayStart, final int dayEnd);
 
     /**
      * Serialize to bytebuf.

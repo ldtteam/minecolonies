@@ -474,5 +474,5 @@ public interface IColony
      * Get the current day of the colony.
      * @return the current day progress of the colony.
      */
-    short getDay();
+    int getDay();
 }

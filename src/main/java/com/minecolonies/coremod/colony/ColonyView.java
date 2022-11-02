@@ -1574,7 +1574,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public short getDay()
+    public int getDay()
     {
         return 0;
     }

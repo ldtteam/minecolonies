@@ -330,7 +330,7 @@ public class Colony implements IColony
     /**
      * Current day of the colony.
      */
-    private short day = 0;
+    private int day = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -840,7 +840,7 @@ public class Colony implements IColony
         {
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
-        this.day = compound.getShort(COLONY_DAY);
+        this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
     }
 
@@ -947,7 +947,7 @@ public class Colony implements IColony
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
         compound.putString(TAG_COL_NAME_STYLE, nameStyle);
-        compound.putShort(COLONY_DAY, day);
+        compound.putInt(COLONY_DAY, day);
 
         this.colonyTag = compound;
 
@@ -1933,7 +1933,7 @@ public class Colony implements IColony
     }
 
     @Override
-    public short getDay()
+    public int getDay()
     {
         return day;
     }
