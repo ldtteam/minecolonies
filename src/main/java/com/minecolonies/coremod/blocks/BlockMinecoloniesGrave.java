@@ -106,18 +106,17 @@ public class BlockMinecoloniesGrave extends AbstractBlockMinecoloniesGrave<Block
             return super.getStateForPlacement(context);
         }
 
-        return getPlacementState(state, entity, pos);
+        return getPlacementState(state, pos);
     }
 
     /**
      * Get the statement ready.
      *
      * @param state  the state to place.
-     * @param entity the tileEntity.
      * @param pos    the position.
      * @return the next state.
      */
-    public static BlockState getPlacementState(final BlockState state, final BlockEntity entity, final BlockPos pos)
+    public static BlockState getPlacementState(final BlockState state, final BlockPos pos)
     {
         return state.setValue(VARIANT, GraveType.DEFAULT);
     }
