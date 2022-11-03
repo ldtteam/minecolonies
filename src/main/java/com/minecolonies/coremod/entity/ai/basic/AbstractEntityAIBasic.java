@@ -533,7 +533,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @return NEEDS_ITEM
      */
     @NotNull
-    private IAIState waitForRequests()
+    protected IAIState waitForRequests()
     {
         delay = DELAY_RECHECK;
         updateWorkerStatusFromRequests();

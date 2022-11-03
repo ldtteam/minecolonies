@@ -35,8 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.ldtteam.structurize.placement.AbstractBlueprintIterator.NULL_POS;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.IDLE;
-import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.PICK_UP_RESIDUALS;
+import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
 import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_ENTITY_BUILDER_BUILD_START;
 
@@ -196,6 +195,17 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     }
 
     @Override
+    protected IAIState waitForRequests()
+    {
+        if (job.hasWorkOrder() && building.getNeededResources().isEmpty())
+        {
+            return START_BUILDING;
+        }
+
+        return super.waitForRequests();
+    }
+
+    @Override
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
@@ -231,9 +241,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
-                                                                                                                                                             .getState()
-                                                                                                                                                             .getBlock()))),
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> !info.getBlockInfo().getState().getMaterial().isSolid() || isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
@@ -253,9 +263,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                   requestProgress,
                   StructurePlacer.Operation.GET_RES_REQUIREMENTS,
                   () -> placer.getIterator()
-                          .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
-                                                                                                                                                             .getState()
-                                                                                                                                                             .getBlock()))),
+                    .increment(DONT_TOUCH_PREDICATE.or((info, pos, handler) -> info.getBlockInfo().getState().getMaterial().isSolid() && !isDecoItem(info.getBlockInfo()
+                      .getState()
+                      .getBlock()))),
                   false);
                 requestProgress = result.getIteratorPos();
 
