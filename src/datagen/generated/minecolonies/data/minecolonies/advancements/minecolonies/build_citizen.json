@@ -3,7 +3,7 @@
   "criteria": {
     "citizens_hut": {
       "conditions": {
-        "hut_name": "citizen",
+        "hut_name": "residence",
         "level": 1
       },
       "trigger": "minecolonies:complete_build_request"
