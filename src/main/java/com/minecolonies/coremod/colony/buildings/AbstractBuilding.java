@@ -93,7 +93,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.Suppression.GENERIC_WILDCARD;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
@@ -1150,7 +1150,7 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
         final BlockEntity entity = colony.getWorld().getBlockEntity(getID());
         if (entity != null)
         {
-            final LazyOptional<IItemHandler> handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null);
+            final LazyOptional<IItemHandler> handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
             handler.ifPresent(handlers::add);
         }
 

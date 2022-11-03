@@ -24,7 +24,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +31,7 @@ import java.util.*;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_CURR_STAGE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_TOTAL_STAGES;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * The structureBuilder building.
@@ -144,7 +143,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
 
                 if (building.getTileEntity() != null)
                 {
-                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                    resource.addAvailable(InventoryUtils.getItemCountInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
                       stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                 }
 
@@ -152,7 +151,7 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
                 {
                     for (final IBuilding station : ((IJobWithExternalWorkStations) data.getJob()).getWorkStations())
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                        resource.addAvailable(InventoryUtils.getItemCountInItemHandler(station.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
                           stack -> ItemStackUtils.compareItemStacksIgnoreStackSize(stack, resource.getItemStack(), true, true)));
                     }
                 }
