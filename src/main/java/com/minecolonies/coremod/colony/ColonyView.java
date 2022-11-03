@@ -33,6 +33,7 @@ import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.server.colony.ColonyFlagChangeMessage;
 import com.minecolonies.coremod.network.messages.server.colony.TownHallRenameMessage;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -850,7 +851,11 @@ public final class ColonyView implements IColonyView
         this.mercenaryLastUseTime = buf.readLong();
 
         this.style = buf.readUtf(32767);
-        if (isNewSubscription && StructurePacks.hasPack(this.style) && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null)
+        if (isNewSubscription
+              && StructurePacks.hasPack(this.style)
+              && RenderingCache.getOrCreateBlueprintPreviewData("blueprint").getBlueprint() == null
+              && this.isCoordInColony(world, Minecraft.getInstance().player.blockPosition())
+        )
         {
             StructurePacks.selectedPack = StructurePacks.getStructurePack(this.style);
         }
