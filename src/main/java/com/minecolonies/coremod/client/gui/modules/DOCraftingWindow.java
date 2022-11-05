@@ -10,31 +10,26 @@ import com.ldtteam.domumornamentum.block.MateriallyTexturedBlockManager;
 import com.ldtteam.domumornamentum.client.model.data.MaterialTextureData;
 import com.ldtteam.domumornamentum.recipe.ModRecipeTypes;
 import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecipe;
-import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.requestable.IConcreteDeliverable;
+import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
-import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowSelectRes;
-import com.minecolonies.coremod.colony.buildings.moduleviews.CraftingModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.DOCraftingModuleView;
 import com.minecolonies.coremod.network.messages.server.colony.building.worker.AddRemoveRecipeMessage;
+import com.minecolonies.coremod.util.DomumOrnamentumUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 
@@ -72,21 +66,17 @@ public class DOCraftingWindow extends AbstractModuleWindow
     /**
      * The module view.
      */
-    private final CraftingModuleView craftingModuleView;
-
-    @Nullable private final ICraftingBuildingModule fakeModule;
+    private final DOCraftingModuleView craftingModuleView;
 
     /**
      * Constructor for the minimum stock window view.
      *
      * @param building class extending
      */
-    public DOCraftingWindow(final IBuildingView building, final CraftingModuleView view)
+    public DOCraftingWindow(final IBuildingView building, final DOCraftingModuleView view)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.craftingModuleView = view;
-
-        this.fakeModule = createFakeCraftingModule();
 
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
@@ -97,101 +87,20 @@ public class DOCraftingWindow extends AbstractModuleWindow
         registerButton(BUTTON_REQUEST, this::showRequests);
     }
 
-    /**
-     * Creates a new crafting module of the correct type but not connected to the building (since we can't get the
-     * real module from the view, and we're on client side anyway.  But this is safe because JEI does it too).
-     */
-    private ICraftingBuildingModule createFakeCraftingModule()
-    {
-        for (final Supplier<IBuildingModule> producer : buildingView.getBuildingType().getModuleProducers())
-        {
-            final IBuildingModule module = producer.get();
-
-            if (module instanceof final ICraftingBuildingModule crafting &&
-                    craftingModuleView.getId().equals(crafting.getId()))
-            {
-                return crafting;
-            }
-        }
-
-        // this shouldn't happen, but...
-        return null;
-    }
-
     private void showRequests()
     {
-        new WindowSelectRequest(this.buildingView,
-                this::matchingRequest, this::reopenWithRequest).open();
+        new WindowSelectRequest(this.buildingView, new ArrayList<>(this.craftingModuleView.getLearnableRequests()),
+                this::reopenWithRequest).open();
     }
 
-    /**
-     * Extracts the Domum Ornamentum block type from the stack.
-     * @param stack the stack to inspect.
-     * @return the {@link IMateriallyTexturedBlock}, or null if the stack doesn't have one.
-     */
-    @Nullable
-    private IMateriallyTexturedBlock getDoBlock(@NotNull final ItemStack stack)
+    private void reopenWithRequest(@Nullable final IToken<?> requestId)
     {
-        return stack.getItem() instanceof BlockItem bi &&
-                bi.getBlock() instanceof IMateriallyTexturedBlock doBlock ? doBlock : null;
-    }
-
-    /**
-     * Extracts the first acceptable Domum Ornamentum stack from the given request.
-     * @param request the request to inspect.
-     * @return the first acceptable DO stack, or empty if this isn't a request for a DO block.
-     */
-    @NotNull
-    private ItemStack getRequestedDoStack(@NotNull final IRequest<?> request)
-    {
-        if (request.getRequest() instanceof IConcreteDeliverable deliverable)
-        {
-            for (final ItemStack stack : deliverable.getRequestedItems())
-            {
-                if (getDoBlock(stack) != null)
-                {
-                    return stack;
-                }
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    @NotNull
-    private MaterialTextureData getTextureData(@NotNull final ItemStack stack)
-    {
-        if (!stack.hasTag()) return MaterialTextureData.EMPTY;
-        final CompoundTag tag = stack.getOrCreateTag().getCompound("textureData");
-        return MaterialTextureData.deserializeFromNBT(tag);
-    }
-
-    private boolean matchingRequest(@NotNull final IRequest<?> request)
-    {
-        final ItemStack stack = getRequestedDoStack(request);
-        if (stack.isEmpty()) return false;
-
-        final MaterialTextureData textureData = getTextureData(stack);
-        if (fakeModule == null || textureData.isEmpty()) return false;
-
-        final OptionalPredicate<ItemStack> validator = fakeModule.getIngredientValidator();
-        for (final Block block : textureData.getTexturedComponents().values())
-        {
-            if (validator.test(new ItemStack(block)).orElse(false))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void reopenWithRequest(@Nullable final IRequest<?> request)
-    {
+        final IRequest<?> request = requestId == null ? null : buildingView.getColony().getRequestManager().getRequestForToken(requestId);
         if (request != null)
         {
-            final ItemStack stack = getRequestedDoStack(request);
-            final IMateriallyTexturedBlock block = getDoBlock(stack);
-            final MaterialTextureData textureData = getTextureData(stack);
+            final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
+            final IMateriallyTexturedBlock block = DomumOrnamentumUtils.getBlock(stack);
+            final MaterialTextureData textureData = DomumOrnamentumUtils.getTextureData(stack);
             if (block != null && !textureData.isEmpty())     // should always be true due to predicate, but hey you never know...
             {
                 int slot = 0;
@@ -227,7 +136,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         for (final ArchitectsCutterRecipe recipe : list)
         {
             final ItemStack result = recipe.assemble(inputInventory).copy();
-            final IMateriallyTexturedBlock doBlock = getDoBlock(result);
+            final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null)
             {
                 final int components = doBlock.getComponents().size();
@@ -340,7 +249,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         for (final ArchitectsCutterRecipe recipe : list)
         {
             final ItemStack result = recipe.assemble(inputInventory).copy();
-            final IMateriallyTexturedBlock doBlock = getDoBlock(result);
+            final IMateriallyTexturedBlock doBlock = DomumOrnamentumUtils.getBlock(result);
             if (doBlock != null && doBlock.getComponents().size() == inputCount)
             {
                 filteredList.add(recipe);
