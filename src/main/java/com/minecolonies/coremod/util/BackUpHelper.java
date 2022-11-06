@@ -449,7 +449,8 @@ public final class BackUpHelper
                         ChunkDataHelper.claimBuildingChunks(loadedColony,
                           true,
                           building.getPosition(),
-                          building.getClaimRadius(building.getBuildingLevel()));
+                          building.getClaimRadius(building.getBuildingLevel()),
+                          building.getCorners());
                     }
                 }
             }
