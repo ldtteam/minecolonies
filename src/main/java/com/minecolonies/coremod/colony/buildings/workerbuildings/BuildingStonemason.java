@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -89,10 +90,19 @@ public class BuildingStonemason extends AbstractBuilding
             super(jobEntry);
         }
 
+        /**
+         * See {@link ICraftingBuildingModule#getIngredientValidator}.
+         * @return the validator
+         */
+        public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON);
+        }
+
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_STONEMASON);
+            return getStaticIngredientValidator();
         }
     }
 }

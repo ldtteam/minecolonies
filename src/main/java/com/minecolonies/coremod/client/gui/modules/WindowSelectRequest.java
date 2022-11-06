@@ -8,7 +8,10 @@ import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
+import com.minecolonies.api.colony.requestsystem.resolver.player.IPlayerRequestResolver;
+import com.minecolonies.api.colony.requestsystem.resolver.retrying.IRetryingRequestResolver;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -20,8 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.colony.requestsystem.requests.AbstractRequest.MISSING;
@@ -33,8 +39,8 @@ public class WindowSelectRequest extends AbstractModuleWindow
 {
     private static final String RESOURCE_STRING = ":gui/layouthuts/layoutselectrequest.xml";
 
-    private final List<IToken<?>> requestIds;
-    private final Consumer<IToken<?>> reopenWithRequest;
+    private final Predicate<IRequest<?>> predicate;
+    private final Consumer<IRequest<?>> reopenWithRequest;
 
     private final ScrollingList requestsList;
     private int lifeCount = 0;
@@ -42,16 +48,16 @@ public class WindowSelectRequest extends AbstractModuleWindow
     /**
      * Construct window.
      * @param building the building to check for requests
-     * @param requestIds the ids of requests to be displayed
+     * @param predicate predicate returning true if this is a selectable request
      * @param reopenWithRequest called after clicking select or cancel, with the request or null respectively.
      *                          not called if the player hits ESC or clicks a different tab
      */
     public WindowSelectRequest(final IBuildingView building,
-                               final List<IToken<?>> requestIds,
-                               final Consumer<@Nullable IToken<?>> reopenWithRequest)
+                               final Predicate<IRequest<?>> predicate,
+                               final Consumer<@Nullable IRequest<?>> reopenWithRequest)
     {
         super(building, Constants.MOD_ID + RESOURCE_STRING);
-        this.requestIds = requestIds;
+        this.predicate = predicate;
         this.reopenWithRequest = reopenWithRequest;
 
         this.requestsList = findPaneOfTypeByID("requests", ScrollingList.class);
@@ -78,6 +84,42 @@ public class WindowSelectRequest extends AbstractModuleWindow
         updateRequests();
     }
 
+    private List<IRequest<?>> getOpenRequests()
+    {
+        final List<IRequest<?>> requests = new ArrayList<>();
+
+        final IRequestManager requestManager = buildingView.getColony().getRequestManager();
+        final IPlayerRequestResolver resolver = requestManager.getPlayerResolver();
+        final IRetryingRequestResolver retryingRequestResolver = requestManager.getRetryingRequestResolver();
+
+        final Set<IToken<?>> requestTokens = new HashSet<>();
+        requestTokens.addAll(resolver.getAllAssignedRequests());
+        requestTokens.addAll(retryingRequestResolver.getAllAssignedRequests());
+
+        for (final IToken<?> token : requestTokens)
+        {
+            IRequest<?> request = requestManager.getRequestForToken(token);
+
+            while (request != null)
+            {
+                if (requests.contains(request))
+                {
+                    break;
+                }
+
+                if (predicate.test(request))
+                {
+                    requests.add(request);
+                }
+
+                //noinspection ConstantConditions
+                request = request.hasParent() ? requestManager.getRequestForToken(request.getParent()) : null;
+            }
+        }
+
+        return requests;
+    }
+
     private void cancel()
     {
         this.reopenWithRequest.accept(null);
@@ -90,10 +132,11 @@ public class WindowSelectRequest extends AbstractModuleWindow
     private void select(@NotNull final Button button)
     {
         final int row = requestsList.getListElementIndexByPane(button);
+        final List<IRequest<?>> requests = getOpenRequests();
 
-        if (row >= 0 && row < requestIds.size())
+        if (row >= 0 && row < requests.size())
         {
-            this.reopenWithRequest.accept(requestIds.get(row));
+            this.reopenWithRequest.accept(requests.get(row));
         }
     }
 
@@ -109,14 +152,7 @@ public class WindowSelectRequest extends AbstractModuleWindow
             @Override
             public int getElementCount()
             {
-                if (requests == null)
-                {
-                    requests = new ArrayList<>();
-                    for (final IToken<?> requestId : requestIds)
-                    {
-                        requests.add(buildingView.getColony().getRequestManager().getRequestForToken(requestId));
-                    }
-                }
+                requests = getOpenRequests();
                 return requests.size();
             }
 

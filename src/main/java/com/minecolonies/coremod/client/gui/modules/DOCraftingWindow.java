@@ -13,10 +13,10 @@ import com.ldtteam.domumornamentum.recipe.architectscutter.ArchitectsCutterRecip
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
-import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TypeConstants;
 import com.minecolonies.coremod.Network;
@@ -30,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,6 +70,11 @@ public class DOCraftingWindow extends AbstractModuleWindow
     private final DOCraftingModuleView craftingModuleView;
 
     /**
+     * The ingredient validator.
+     */
+    private final OptionalPredicate<ItemStack> validator;
+
+    /**
      * Constructor for the minimum stock window view.
      *
      * @param building class extending
@@ -78,6 +84,7 @@ public class DOCraftingWindow extends AbstractModuleWindow
         super(building, Constants.MOD_ID + RESOURCE_STRING);
         this.craftingModuleView = view;
 
+        validator = craftingModuleView.getIngredientValidator();
         resourceList = this.window.findPaneOfTypeByID("resourcesstock", ScrollingList.class);
 
         registerButton(BLOCK1_ADD, this::addBlock1);
@@ -89,13 +96,30 @@ public class DOCraftingWindow extends AbstractModuleWindow
 
     private void showRequests()
     {
-        new WindowSelectRequest(this.buildingView, new ArrayList<>(this.craftingModuleView.getLearnableRequests()),
-                this::reopenWithRequest).open();
+        new WindowSelectRequest(this.buildingView, this::matchingRequest, this::reopenWithRequest).open();
     }
 
-    private void reopenWithRequest(@Nullable final IToken<?> requestId)
+    private boolean matchingRequest(@NotNull final IRequest<?> request)
     {
-        final IRequest<?> request = requestId == null ? null : buildingView.getColony().getRequestManager().getRequestForToken(requestId);
+        final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
+        if (stack.isEmpty()) return false;
+
+        final MaterialTextureData textureData = DomumOrnamentumUtils.getTextureData(stack);
+        if (textureData.isEmpty()) return false;
+
+        for (final Block block : textureData.getTexturedComponents().values())
+        {
+            if (validator.test(new ItemStack(block)).orElse(false))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void reopenWithRequest(@Nullable final IRequest<?> request)
+    {
         if (request != null)
         {
             final ItemStack stack = DomumOrnamentumUtils.getRequestedStack(request);
