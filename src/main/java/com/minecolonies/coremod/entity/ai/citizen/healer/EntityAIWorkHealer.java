@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -147,7 +147,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                 if (!InventoryUtils.isItemHandlerFull(citizen.getInventoryCitizen()))
                 {
                     if (hasCureInInventory(disease, worker.getInventoryCitizen()) ||
-                          hasCureInInventory(disease, building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null)))
+                          hasCureInInventory(disease, building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null)))
                     {
                         this.currentPatient = patient;
                         return CURE;
@@ -159,7 +159,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
                     {
                         if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::sameItem))
                         {
-                            if (InventoryUtils.getItemCountInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null),
+                            if (InventoryUtils.getItemCountInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null),
                               stack -> stack.sameItem(cure)) >= cure.getCount())
                             {
                                 needsCurrently = new Tuple<>(stack -> stack.sameItem(cure), cure.getCount());
@@ -267,7 +267,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
         for (final ItemStack cure : IColonyManager.getInstance().getCompatibilityManager().getDisease(diseaseName).getCure())
         {
             if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), cure::sameItem)
-                  && !InventoryUtils.hasItemInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), cure::sameItem))
+                  && !InventoryUtils.hasItemInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null), cure::sameItem))
             {
                 boolean hasRequest = false;
                 for (final IRequest<? extends Stack> request : list)
@@ -336,7 +336,7 @@ public class EntityAIWorkHealer extends AbstractEntityAIInteract<JobHealer, Buil
 
         if (!hasCureInInventory(disease, worker.getInventoryCitizen()))
         {
-            if (hasCureInInventory(disease, building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null)))
+            if (hasCureInInventory(disease, building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null)))
             {
                 for (final ItemStack cure : disease.getCure())
                 {

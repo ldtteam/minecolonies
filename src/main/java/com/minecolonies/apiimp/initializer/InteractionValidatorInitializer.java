@@ -36,7 +36,7 @@ import static com.minecolonies.coremod.colony.buildings.workerbuildings.Building
 import static com.minecolonies.coremod.entity.ai.citizen.smelter.EntityAIWorkSmelter.ORE_LIST;
 import static com.minecolonies.coremod.util.WorkerUtil.getLastLadder;
 import static com.minecolonies.coremod.util.WorkerUtil.isThereCompostedLand;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * Class containing initializer for all the validator predicates.
@@ -81,7 +81,7 @@ public class InteractionValidatorInitializer
                       final IBuilding building = colony.getBuildingManager().getBuilding(pos);
                       if (building != null)
                       {
-                          final IItemHandler inv = building.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);
+                          final IItemHandler inv = building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
                           if (inv != null)
                           {
                               return InventoryUtils.openSlotCount(inv) > 0;

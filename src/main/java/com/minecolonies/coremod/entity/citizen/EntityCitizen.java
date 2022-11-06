@@ -88,6 +88,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -1886,7 +1887,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (capability == ForgeCapabilities.ITEM_HANDLER)
         {
             final ICitizenData data = getCitizenData();
             if (data == null)
