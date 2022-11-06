@@ -173,6 +173,11 @@ public class Colony implements IColony
     private final IProgressManager progressManager = new ProgressManager(this);
 
     /**
+     * Event manager of the colony.
+     */
+    private final IStatisticsManager statisticManager = new StatisticsManager(this);
+
+    /**
      * The Positions which players can freely interact.
      */
     private final Set<BlockPos> freePositions = new HashSet<>();
@@ -320,6 +325,11 @@ public class Colony implements IColony
      * The colony name style.
      */
     private String nameStyle = "default";
+
+    /**
+     * Current day of the colony.
+     */
+    private int day = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -577,6 +587,7 @@ public class Colony implements IColony
         else if (!isDay && WorldUtil.isDayTime(world))
         {
             isDay = true;
+            day++;
             citizenManager.onWakeUp();
         }
         return false;
@@ -730,6 +741,8 @@ public class Colony implements IColony
         }
 
         eventManager.readFromNBT(compound);
+        statisticManager.readFromNBT(compound);
+
         eventDescManager.deserializeNBT(compound.getCompound(NbtTagConstants.TAG_EVENT_DESC_MANAGER));
 
         if (compound.getAllKeys().contains(TAG_RESEARCH))
@@ -822,6 +835,7 @@ public class Colony implements IColony
         {
             this.nameStyle = compound.getString(TAG_COL_NAME_STYLE);
         }
+        this.day = compound.getInt(COLONY_DAY);
         this.colonyTag = compound;
     }
 
@@ -879,6 +893,8 @@ public class Colony implements IColony
 
         progressManager.write(compound);
         eventManager.writeToNBT(compound);
+        statisticManager.writeToNBT(compound);
+
         compound.put(NbtTagConstants.TAG_EVENT_DESC_MANAGER, eventDescManager.serializeNBT());
         raidManager.write(compound);
 
@@ -926,6 +942,7 @@ public class Colony implements IColony
         compound.putLong(TAG_LAST_ONLINE, lastOnlineTime);
         compound.putString(TAG_COL_TEXT, textureStyle);
         compound.putString(TAG_COL_NAME_STYLE, nameStyle);
+        compound.putInt(COLONY_DAY, day);
 
         this.colonyTag = compound;
 
@@ -1551,6 +1568,12 @@ public class Colony implements IColony
     }
 
     @Override
+    public IStatisticsManager getStatisticsManager()
+    {
+        return statisticManager;
+    }
+
+    @Override
     public IReproductionManager getReproductionManager()
     {
         return reproductionManager;
@@ -1897,10 +1920,16 @@ public class Colony implements IColony
     /**
      * Check if we need to update the view's chunk ticket info
      *
-     * @return
+     * @return true if dirty.
      */
     public boolean isTicketedChunksDirty()
     {
         return ticketedChunksDirty;
+    }
+
+    @Override
+    public int getDay()
+    {
+        return day;
     }
 }

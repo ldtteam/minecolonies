@@ -39,6 +39,8 @@ import java.util.List;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.research.util.ResearchConstants.MORE_ORES;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.BLOCKS_MINED;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ORES_MINED;
 import static com.minecolonies.api.util.constant.TranslationConstants.INVALID_MINESHAFT;
 import static com.minecolonies.api.util.constant.TranslationConstants.NEEDS_BETTER_HUT;
 import static com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner.FILL_BLOCK;
@@ -948,6 +950,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(IColonyManager.getInstance().getCompatibilityManager().getRandomLuckyOre(chance),
               worker.getInventoryCitizen());
         }
+
+        if (IColonyManager.getInstance().getCompatibilityManager().isOre(blockToMine))
+        {
+            building.getColony().getStatisticsManager().increment(ORES_MINED);
+        }
+        building.getColony().getStatisticsManager().increment(BLOCKS_MINED);
     }
 
     @Override

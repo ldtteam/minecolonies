@@ -5,6 +5,7 @@ import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,22 +13,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
+import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_STATS_MODIFIER_NAME;
 import static com.minecolonies.api.util.constant.WindowConstants.*;
 import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule.BLACK;
 
 /**
  * BOWindow for the town hall.
  */
-public class WindowHappinessPage extends AbstractWindowTownHall
+public class WindowStatsPage extends AbstractWindowTownHall
 {
     /**
      * Constructor for the town hall window.
      *
      * @param townHall {@link BuildingTownHall.View}.
      */
-    public WindowHappinessPage(final BuildingTownHall.View townHall)
+    public WindowStatsPage(final BuildingTownHall.View townHall)
     {
-        super(townHall, "layouthappiness.xml");
+        super(townHall, "layoutstats.xml");
     }
 
     /**
@@ -38,10 +40,11 @@ public class WindowHappinessPage extends AbstractWindowTownHall
     {
         super.onOpened();
         updateHappiness();
+        updateStats();
     }
 
     /**
-     * Update the display for the happiness
+     * Update the display for the happiness.
      */
     private void updateHappiness()
     {
@@ -56,7 +59,15 @@ public class WindowHappinessPage extends AbstractWindowTownHall
         }
 
         final View pane = findPaneOfTypeByID("happinesspage", View.class);
-        int yPos = 62;
+        final Text titleLabel = new Text();
+        titleLabel.setSize(136, 11);
+        titleLabel.setPosition(25, 42);
+        titleLabel.setColors(BLACK);
+        titleLabel.setText(new TranslatableComponent("com.minecolonies.coremod.gui.townhall.currenthappiness"));
+        pane.addChild(titleLabel);
+
+
+        int yPos = 60;
         for (final Map.Entry<String, Double> entry : happinessMap.entrySet())
         {
             final double value = entry.getValue() / building.getColony().getCitizenCount();
@@ -94,9 +105,30 @@ public class WindowHappinessPage extends AbstractWindowTownHall
         }
     }
 
+    /**
+     * Update the display for the stats.
+     */
+    private void updateStats()
+    {
+        final View pane = findPaneOfTypeByID("statspage", View.class);
+        int yPos = 65;
+
+        for (final String entry : building.getColony().getStatisticsManager().getStatTypes())
+        {
+            final Text label = new Text();
+            label.setSize(136, 11);
+            label.setPosition(25, yPos);
+            label.setColors(BLACK);
+            label.setText(new TranslatableComponent(PARTIAL_STATS_MODIFIER_NAME + entry, building.getColony().getStatisticsManager().getStatTotal(entry)));
+            pane.addChild(label);
+
+            yPos += 12;
+        }
+    }
+
     @Override
     protected String getWindowId()
     {
-        return BUTTON_HAPPINESS;
+        return BUTTON_STATS;
     }
 }

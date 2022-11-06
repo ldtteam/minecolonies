@@ -52,7 +52,7 @@ public final class WindowConstants
     /**
      * Id of the button displaying the Happiness in the GUI
      */
-    public static final String BUTTON_HAPPINESS = "happiness";
+    public static final String BUTTON_STATS = "happiness";
 
     /**
      * Id of the recall button in the GUI.

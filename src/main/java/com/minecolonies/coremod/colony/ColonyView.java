@@ -23,6 +23,7 @@ import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.managers.ResearchManager;
+import com.minecolonies.coremod.colony.managers.StatisticsManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.StandardRequestManager;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
@@ -232,6 +233,11 @@ public final class ColonyView implements IColonyView
     private String nameStyle;
 
     /**
+     * Statistic manager associated to the view.
+     */
+    private IStatisticsManager statisticManager = new StatisticsManager(this);
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -417,6 +423,7 @@ public final class ColonyView implements IColonyView
         final CompoundTag graveTag = new CompoundTag();
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
+        colony.getStatisticsManager().serialize(buf);
     }
 
     /**
@@ -888,7 +895,7 @@ public final class ColonyView implements IColonyView
         }
 
         this.graveManager.read(buf.readNbt());
-
+        this.statisticManager.deserialize(buf);
         return null;
     }
 
@@ -1552,5 +1559,17 @@ public final class ColonyView implements IColonyView
     public CitizenNameFile getCitizenNameFile()
     {
         return CitizenNameListener.nameFileMap.getOrDefault(nameStyle, CitizenNameListener.nameFileMap.get("default"));
+    }
+
+    @Override
+    public IStatisticsManager getStatisticsManager()
+    {
+        return statisticManager;
+    }
+
+    @Override
+    public int getDay()
+    {
+        return 0;
     }
 }

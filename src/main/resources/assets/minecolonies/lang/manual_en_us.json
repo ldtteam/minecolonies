@@ -1862,7 +1862,7 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+  "com.minecolonies.coremod.gui.townhalltab.stats": "Statistics",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
   "block.minecolonies.blockconstructiontape": "Construction Tape",
@@ -2279,6 +2279,16 @@
   "com.minecolonies.coremod.gui.home.liveshere": "Lives here",
   "com.minecolonies.coremod.gui.home.new": "Works %d blocks from here",
   "com.minecolonies.coremod.setting.minecolonies:crushermode": "Crusher Mode:",
-  "com.minecolonies.coremod.setting.minecolonies:dailylimit": "Daily Limit:"
+  "com.minecolonies.coremod.setting.minecolonies:dailylimit": "Daily Limit:",
 
+  "com.minecolonies.coremod.gui.townhall.stats.trees_cut": "Cut Down Trees: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.death": "Citizen Deaths: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.ores_mined": "Mined Ores: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.birth": "Citizen Births: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.blocks_mined": "Mined Blocks: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.blocks_placed": "Placed Blocks: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.mobs_killed": "Killed Mobs: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.items_crafted": "Crafted Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d"
 }
