@@ -7,7 +7,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingWareHou
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import com.minecolonies.coremod.util.SortingUtils;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
@@ -51,7 +51,7 @@ public class SortWarehouseMessage extends AbstractBuildingServerMessage<Building
     {
         if (building.getBuildingLevel() >= REQUIRED_LEVEL_TO_SORT_WAREHOUSE)
         {
-            building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).ifPresent(inv -> SortingUtils.sort((CombinedItemHandler) inv));
+            building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(inv -> SortingUtils.sort((CombinedItemHandler) inv));
         }
     }
 }

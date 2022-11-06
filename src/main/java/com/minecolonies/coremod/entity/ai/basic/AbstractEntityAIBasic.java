@@ -51,7 +51,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +68,7 @@ import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 /**
  * This class provides basic ai functionality.
@@ -532,7 +531,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
      * @return NEEDS_ITEM
      */
     @NotNull
-    private IAIState waitForRequests()
+    protected IAIState waitForRequests()
     {
         delay = DELAY_RECHECK;
         updateWorkerStatusFromRequests();
@@ -776,7 +775,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             final BlockEntity entity = world.getBlockEntity(pos);
             if (entity instanceof TileEntityRack && ((TileEntityRack) entity).hasItemStack(is, 1, false))
             {
-                entity.getCapability(ITEM_HANDLER_CAPABILITY, null)
+                entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null)
                       .ifPresent((handler) ->  InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(handler, (stack) -> ItemStackUtils.compareItemStacksIgnoreStackSize(is, stack), getInventory()));
                 return true;
             }
@@ -1003,7 +1002,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
 
                     if (((TileEntityRack) entity).hasItemStack(toolPredicate))
                     {
-                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).orElseGet(null), toolPredicate, worker.getInventoryCitizen()))
+                        if (InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), toolPredicate, worker.getInventoryCitizen()))
                         {
                             return true;
                         }
@@ -1160,7 +1159,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob<?, J>, B exten
             if (amount > 0)
             {
                 final ItemStack activeStack = getInventory().extractItem(slotAt, amount, false);
-                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null));
+                InventoryUtils.transferItemStackIntoNextBestSlotInItemHandler(activeStack, getBuildingToDump().getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null));
                 hasDumpedItems = true;
             }
         }

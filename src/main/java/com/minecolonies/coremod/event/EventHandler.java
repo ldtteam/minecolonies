@@ -389,6 +389,8 @@ public class EventHandler
                       || colony.getPermissions().hasPermission(player, Action.RECEIVE_MESSAGES_FAR_AWAY))
                 {
                     colony.getPackageManager().addImportantColonyPlayer(player);
+                    colony.getPackageManager().sendColonyViewPackets();
+                    colony.getPackageManager().sendPermissionsPackets();
                 }
             }
 
@@ -677,7 +679,7 @@ public class EventHandler
                  || LocalDateTime.now().getDayOfMonth() == 1 && LocalDateTime.now().getMonth() == Month.NOVEMBER
                  || LocalDateTime.now().getDayOfMonth() == 2 && LocalDateTime.now().getMonth() == Month.NOVEMBER))
         {
-            RenderBipedCitizen.isItGhostTime = true;
+            RenderBipedCitizen.isItGhostTime = false;
         }
     }
 

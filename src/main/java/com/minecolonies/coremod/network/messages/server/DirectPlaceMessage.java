@@ -112,6 +112,8 @@ public class DirectPlaceMessage implements IMessage
         final ServerPlayer player = ctxIn.getSender();
         final Level world = player.getCommandSenderWorld();
         final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
+        InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
+
         if ((colony == null && state.getBlock() == ModBlocks.blockHutTownHall) || (colony != null && colony.getPermissions().hasPermission(player, Action.MANAGE_HUTS)))
         {
             final CompoundTag compound = stack.getTag();
@@ -135,7 +137,6 @@ public class DirectPlaceMessage implements IMessage
                     String fullPath = blueprint.getFilePath().toString();
                     fullPath = fullPath.replace(StructurePacks.selectedPack.getPath().toString() + "/", "");
                     ((TileEntityColonyBuilding) tileEntity).setBlueprintPath(fullPath + "/" + blueprint.getFileName().substring(0, blueprint.getFileName().length() - 1) + "1.blueprint");
-                    InventoryUtils.reduceStackInItemHandler(new InvWrapper(player.getInventory()), stack);
                     state.getBlock().setPlacedBy(world, pos, state, player, stack);
 
                     if (compound != null && compound.contains(TAG_OTHER_LEVEL))
