@@ -15,9 +15,11 @@ import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.constant.ColonyManagerConstants.UNABLE_TO_FIND_WORLD_CAP_TEXT;
@@ -139,14 +141,21 @@ public final class ChunkDataHelper
      * <p>
      * --- This is only for dynamic claiming ---
      *
-     * @param colony the colony to claim for
-     * @param add    if add or remove.
-     * @param center the center position of the colony.
-     * @param range  the range to claim.
+     * @param colony  the colony to claim for
+     * @param add     if add or remove.
+     * @param center  the center position of the colony.
+     * @param range   the range to claim.
+     * @param corners also (un)claim all chunks intersecting this box (if not null)
      */
-    public static void claimBuildingChunks(final IColony colony, final boolean add, final BlockPos center, final int range)
+    public static void claimBuildingChunks(final IColony colony, final boolean add, final BlockPos center, final int range,
+                                           @Nullable final Tuple<BlockPos, BlockPos> corners)
     {
         buildingClaimInRange(colony, add, range, center, false);
+
+        if (corners != null)
+        {
+            buildingClaimBox(colony, center, add, corners);
+        }
     }
 
     /**
@@ -203,7 +212,7 @@ public final class ChunkDataHelper
      * @param center the center position to be claimed.
      * @param force  whether to ignore restrictions.
      */
-    public static void buildingClaimInRange(
+    private static void buildingClaimInRange(
       final IColony colony,
       final boolean add,
       final int range,
@@ -250,6 +259,47 @@ public final class ChunkDataHelper
         {
             final IBuilding building = colony.getBuildingManager().getBuilding(center);
             MessageUtils.format(COLONY_SIZE_CHANGE, range, building.getSchematicName()).sendTo(colony).forManagers();
+        }
+    }
+
+    /**
+     * (Un)Claim all chunks within the given box for a specific building.
+     *
+     * @param colony  the colony to claim for
+     * @param anchor  the building anchor to claim for
+     * @param add     if claim or unclaim.
+     * @param corners the box.
+     */
+    private static void buildingClaimBox(
+            final IColony colony,
+            final BlockPos anchor,
+            final boolean add,
+            final Tuple<BlockPos, BlockPos> corners)
+    {
+        final Level world = colony.getWorld();
+        final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
+        if (chunkManager == null)
+        {
+            Log.getLogger().error(UNABLE_TO_FIND_WORLD_CAP_TEXT, new Exception());
+            return;
+        }
+
+        final int maxColonySize = getConfig().getServer().maxColonySize.get();
+        final BlockPos colonyCenterCompare = new BlockPos(colony.getCenter().getX(), 0, colony.getCenter().getZ());
+
+        for (final ChunkPos chunk : ChunkPos.rangeClosed(new ChunkPos(corners.getA()), new ChunkPos(corners.getB())).toList())
+        {
+            final BlockPos pos = chunk.getWorldPosition();
+            if (maxColonySize != 0 && pos.distSqr(colonyCenterCompare) > Math.pow(maxColonySize * BLOCKS_PER_CHUNK, 2))
+            {
+                Log.getLogger()
+                        .debug(
+                                "Tried to claim chunk at pos X:" + pos.getX() + " Z:" + pos.getZ() + " too far away from the colony:" + colony.getID() + " center:" + colony.getCenter()
+                                        + " max is config workingRangeTownHall ^2");
+                continue;
+            }
+
+            tryClaimBuilding(world, pos, add, colony, anchor, chunkManager);
         }
     }
 
