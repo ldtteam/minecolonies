@@ -14,7 +14,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -162,7 +162,7 @@ public class EntityAIConcreteMixer extends AbstractEntityAICrafting<JobConcreteM
             return START_WORKING;
         }
 
-        if (InventoryUtils.hasItemInItemHandler(building.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElseGet(null), CONCRETE))
+        if (InventoryUtils.hasItemInItemHandler(building.getCapability(ForgeCapabilities.ITEM_HANDLER).orElseGet(null), CONCRETE))
         {
             needsCurrently = new Tuple<>(CONCRETE, STACKSIZE);
             return GATHERING_REQUIRED_MATERIALS;

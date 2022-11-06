@@ -34,20 +34,19 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_DELIVERED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Delivers item at needs.
@@ -214,7 +213,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        final IItemHandler handler = building.getCapability(ITEM_HANDLER_CAPABILITY, null).orElse(null);
+        final IItemHandler handler = building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElse(null);
         if (handler == null)
         {
             return false;
@@ -379,7 +378,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
 
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
-
+            final int count = stack.getCount();
             if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
@@ -392,14 +391,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (targetBuilding instanceof AbstractBuilding)
             {
                 insertionResultStack = InventoryUtils.forceItemStackToItemHandler(
-                  targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
+                  targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null), stack, ((IBuilding) targetBuilding)::isItemStackInRequest);
             }
             else
             {
                 // Buildings that are not inherently part of the request system, but just receive a delivery, cannot have their items replaced.
                 // Therefore, the keep-predicate always returns true.
                 insertionResultStack =
-                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(ITEM_HANDLER_CAPABILITY, null).orElseGet(null),
+                  InventoryUtils.forceItemStackToItemHandler(targetBuilding.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElseGet(null),
                     stack,
                     itemStack -> true);
             }
@@ -437,6 +436,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Insert the result back into the inventory so we do not lose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
+            worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount());
         }
 
         if (!extracted)
@@ -455,7 +455,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.decreaseSaturationForContinuousAction();
         worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
-
         return success ? START_WORKING : DUMPING;
     }
 
@@ -563,7 +562,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if ((entity instanceof TileEntityColonyBuilding && InventoryUtils.hasBuildingEnoughElseCount(((TileEntityColonyBuilding) entity).getBuilding(), new ItemStorage(is), is.getCount()) >= is.getCount()) ||
               (entity instanceof TileEntityRack && ((TileEntityRack) entity).getCount(new ItemStorage(is)) >= is.getCount()))
         {
-            final IItemHandler handler = entity.getCapability(ITEM_HANDLER_CAPABILITY, null).resolve().orElse(null);
+            final IItemHandler handler = entity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
             if (handler != null)
             {
                 return InventoryUtils.transferItemStackIntoNextFreeSlotFromItemHandler(handler,

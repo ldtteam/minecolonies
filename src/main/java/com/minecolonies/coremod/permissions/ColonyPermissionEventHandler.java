@@ -194,7 +194,7 @@ public class ColonyPermissionEventHandler
     public void on(final BlockEvent.BreakEvent event)
     {
         final LevelAccessor world = event.getLevel();
-        if (!MineColonies.getConfig().getServer().enableColonyProtection.get() || world.isClientSide())
+        if (world.isClientSide())
         {
             return;
         }
@@ -204,6 +204,12 @@ public class ColonyPermissionEventHandler
             @Nullable final IBuilding building = IColonyManager.getInstance().getBuilding(event.getPlayer().level, event.getPos());
             if (building == null)
             {
+                return;
+            }
+
+            if (!MineColonies.getConfig().getServer().enableColonyProtection.get())
+            {
+                building.destroy();
                 return;
             }
 
@@ -230,6 +236,10 @@ public class ColonyPermissionEventHandler
         }
         else if (event.getState().getBlock() instanceof BlockDecorationController)
         {
+            if (checkEventCancelation(Action.BREAK_HUTS, event.getPlayer(), event.getPlayer().getCommandSenderWorld(), event, event.getPos()))
+            {
+                return;
+            }
             colony.getBuildingManager().removeLeisureSite(event.getPos());
         }
         else

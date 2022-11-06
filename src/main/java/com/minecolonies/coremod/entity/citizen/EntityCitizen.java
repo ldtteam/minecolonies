@@ -88,6 +88,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -106,6 +107,7 @@ import static com.minecolonies.api.util.ItemStackUtils.ISFOOD;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.Constants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.DEATH;
 import static com.minecolonies.api.util.constant.Suppression.INCREMENT_AND_DECREMENT_OPERATORS_SHOULD_NOT_BE_USED_IN_A_METHOD_CALL_OR_MIXED_WITH_OTHER_OPERATORS_IN_AN_EXPRESSION;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
@@ -1796,6 +1798,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             {
                 citizenColonyHandler.getColony().getCitizenManager().updateCitizenMourn(citizenData, true);
             }
+            getCitizenColonyHandler().getColony().getStatisticsManager().increment(DEATH);
 
             if (!isInvisible())
             {
@@ -1886,7 +1889,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction facing)
     {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (capability == ForgeCapabilities.ITEM_HANDLER)
         {
             final ICitizenData data = getCitizenData();
             if (data == null)

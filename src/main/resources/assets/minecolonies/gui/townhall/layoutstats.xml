@@ -1,5 +1,5 @@
 <window size="524 243" pause="false" lightbox="false">
-
     <layout source="minecolonies:gui/townhall/windowtownhall.xml"/>
-    <view size="200 243" id="happinesspage" pos="100 0"/>
+    <view size="200 243" id="statspage" pos="90 0"/>
+    <view size="200 243" id="happinesspage" pos="280 0"/>
 </window>

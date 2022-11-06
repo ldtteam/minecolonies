@@ -3,7 +3,7 @@
   "criteria": {
     "build_tool_place_town_hall": {
       "conditions": {
-        "hut_name": "townhall"
+        "hut_name": "blockhuttownhall"
       },
       "trigger": "minecolonies:structure_placed"
     }

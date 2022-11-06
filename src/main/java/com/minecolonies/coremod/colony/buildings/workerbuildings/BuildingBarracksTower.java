@@ -106,7 +106,7 @@ public class BuildingBarracksTower extends AbstractBuildingGuards
         {
             return;
         }
-        ChunkDataHelper.claimBuildingChunks(colony, true, barracks, barrack.getClaimRadius(newLevel));
+        ChunkDataHelper.claimBuildingChunks(colony, true, barracks, barrack.getClaimRadius(newLevel), barrack.getCorners());
 
         if (newLevel == barrack.getMaxBuildingLevel())
         {
