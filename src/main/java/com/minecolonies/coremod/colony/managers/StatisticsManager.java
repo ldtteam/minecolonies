@@ -52,7 +52,7 @@ public class StatisticsManager implements IStatisticsManager
     @Override
     public void incrementBy(final @NotNull String id, int qty)
     {
-        final Int2IntLinkedOpenHashMap innerMap = stats.computeIfAbsent(id, k -> new Int2IntLinkedOpenHashMap(-1));
+        final Int2IntLinkedOpenHashMap innerMap = stats.computeIfAbsent(id, k -> new Int2IntLinkedOpenHashMap());
         innerMap.addTo(colony.getDay(), qty);
     }
 
