@@ -48,6 +48,7 @@ import java.util.Objects;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.items.ModTags.fungi;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.TREE_CUT;
 
 /**
  * The lumberjack AI class.
@@ -459,6 +460,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
                 checkedInHut = false;
             }
 
+            building.getColony().getStatisticsManager().increment(TREE_CUT);
             worker.getCitizenExperienceHandler().addExperience(XP_PER_TREE);
             incrementActionsDoneAndDecSaturation();
             workFrom = null;

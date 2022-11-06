@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.ITEMS_DELIVERED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
 /**
@@ -377,7 +378,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
 
             final ItemStack stack = workerInventory.extractItem(i, Integer.MAX_VALUE, false);
-
+            final int count = stack.getCount();
             if (ItemStackUtils.isEmpty(stack))
             {
                 continue;
@@ -435,6 +436,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 //Insert the result back into the inventory so we do not lose it.
                 workerInventory.insertItem(i, insertionResultStack, false);
             }
+            worker.getCitizenColonyHandler().getColony().getStatisticsManager().incrementBy(ITEMS_DELIVERED, count - insertionResultStack.getCount());
         }
 
         if (!extracted)
@@ -453,7 +455,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         worker.decreaseSaturationForContinuousAction();
         worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, SLOT_HAND);
         job.finishRequest(true);
-
         return success ? START_WORKING : DUMPING;
     }
 

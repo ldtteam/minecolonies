@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -2966,7 +2965,7 @@ public class InventoryUtils
      * @param foodPredicate      food choosing predicate
      * @return true if any food was transferred
      */
-    public static boolean transferFoodUpToSaturation(
+    public static int transferFoodUpToSaturation(
       final ICapabilityProvider source,
       final IItemHandler target,
       final int requiredSaturation,
@@ -2975,7 +2974,7 @@ public class InventoryUtils
         Set<IItemHandler> handlers = getItemHandlersFromProvider(source);
 
         int foundSaturation = 0;
-
+        int transferedItems = 0;
         for (final IItemHandler handler : handlers)
         {
             for (int i = 0; i < handler.getSlots(); i++)
@@ -3007,6 +3006,7 @@ public class InventoryUtils
                         foundSaturation = requiredSaturation;
                     }
 
+                    transferedItems += extractedFood.getCount();
                     if (!ItemStackUtils.isEmpty(extractedFood))
                     {
                         if (!addItemStackToItemHandler(target, extractedFood))
@@ -3024,13 +3024,13 @@ public class InventoryUtils
 
                     if (foundSaturation >= requiredSaturation)
                     {
-                        return true;
+                        return transferedItems;
                     }
                 }
             }
         }
 
-        return foundSaturation > 0;
+        return transferedItems;
     }
 
     /**

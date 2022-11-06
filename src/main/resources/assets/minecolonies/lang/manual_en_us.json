@@ -1866,7 +1866,7 @@
   "com.minecolonies.coremod.gui.townhalltab.citizens": "Citizens",
   "com.minecolonies.coremod.gui.townhalltab.settings": "Settings",
   "com.minecolonies.coremod.gui.townhalltab.workorders": "Work Orders",
-  "com.minecolonies.coremod.gui.townhalltab.happiness": "Happiness",
+  "com.minecolonies.coremod.gui.townhalltab.stats": "Statistics",
 
   "block.minecolonies.barrel_block": "Compost Barrel",
   "block.minecolonies.blockconstructiontape": "Construction Tape",
@@ -2340,5 +2340,16 @@
   "com.minecolonies.coremod.structures.nocustomhuts": "The builder never heard of this blueprint for this building. Are you sure you handled this correctly?",
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
   "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
-  "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s"
+  "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s",
+
+  "com.minecolonies.coremod.gui.townhall.stats.trees_cut": "Cut Down Trees: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.death": "Citizen Deaths: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.birth": "Citizen Births: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.ores_mined": "Mined Ores: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.blocks_mined": "Mined Blocks: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.blocks_placed": "Placed Blocks: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.mobs_killed": "Killed Mobs: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.items_crafted": "Crafted Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d"
 }

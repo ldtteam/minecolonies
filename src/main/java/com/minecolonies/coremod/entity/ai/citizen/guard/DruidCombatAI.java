@@ -41,6 +41,7 @@ import java.util.function.BiPredicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.DRUID_USE_POTIONS;
 import static com.minecolonies.api.util.constant.GuardConstants.*;
+import static com.minecolonies.api.util.constant.StatisticsConstants.MOBS_KILLED;
 import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIFight.SPEED_LEVEL_BONUS;
 
 /**
@@ -341,5 +342,6 @@ public class DruidCombatAI extends AttackMoveAI<EntityCitizen>
     {
         parentAI.incrementActionsDoneAndDecSaturation();
         user.getCitizenExperienceHandler().addExperience(EXP_PER_MOB_DEATH);
+        user.getCitizenColonyHandler().getColony().getStatisticsManager().increment(MOBS_KILLED);
     }
 }
