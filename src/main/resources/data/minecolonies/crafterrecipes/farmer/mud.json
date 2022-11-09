@@ -1,0 +1,18 @@
+{
+  "type" : "recipe",
+  "crafter": "farmer_crafting",
+  "inputs": [
+    {
+      "item" : "minecraft:dirt",
+      "count": 1
+    },
+    {
+      "item" : "minecraft:potion{Potion:\"minecraft:water\"}",
+      "count": 1
+    }
+  ],
+  "result": "minecraft:mud",
+  "count": 1,
+  "loot-table" : "minecolonies:recipes/mud",
+  "intermediate" : "minecraft:air"
+}

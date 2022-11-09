@@ -170,7 +170,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterIngredientExclusions.get(TagConstants.CRAFTING_BAKER));
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_BAKER));
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_BAKER))
-                .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE);
+                .add(Items.BREAD, Items.CAKE, Items.COOKIE, Items.PUMPKIN_PIE)
+                .add(Items.PACKED_MUD);
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_BLACKSMITH))
                 .addTags(Tags.Items.NUGGETS, Tags.Items.INGOTS)
@@ -232,7 +233,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .add(Items.MELON)
                 .add(Items.COARSE_DIRT)
                 .add(Items.FERMENTED_SPIDER_EYE)
-                .add(Items.GLISTERING_MELON_SLICE);
+                .add(Items.GLISTERING_MELON_SLICE)
+                .add(Items.MUD_BRICKS, Items.PACKED_MUD, Items.MUDDY_MANGROVE_ROOTS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_FARMER));
 
         tag(ModTags.crafterIngredient.get(TagConstants.CRAFTING_FLETCHER))
@@ -333,7 +335,8 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
                 .addTag(Tags.Items.DUSTS_REDSTONE)
                 .addTag(Tags.Items.STRING);
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_SAWMILL))
-                .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem());
+                .add(ModBlocks.blockBarrel.asItem(), ModBlocks.blockHutCrusher.asItem())
+                .addTags(ItemTags.CHEST_BOATS);
         tag(ModTags.crafterProductExclusions.get(TagConstants.CRAFTING_SAWMILL))
                 .addTag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .add(Items.MAGMA_CREAM);
