@@ -92,6 +92,12 @@ public class BuildingMechanic extends AbstractBuilding
             return item instanceof MinecartItem
                      || (item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof HopperBlock);
         }
+
+        @Override
+        protected int getMaxRecipes()
+        {
+            return super.getMaxRecipes() + 5;     // grant a few extra to offset all the built-in recipes
+        }
     }
 
     public static class DOCraftingModule extends AbstractDOCraftingBuildingModule
