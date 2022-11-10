@@ -9,8 +9,6 @@ import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
-
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -119,6 +117,7 @@ public final class GenericRecipeUtils
                 recipe.getGridSize(),
                 recipe.getIntermediate(),
                 recipe.getLootTable(),
+                recipe.getRequiredTool(),
                 recipe.getRestrictions(),
                 recipe.getLevelSort());
     }

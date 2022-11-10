@@ -108,6 +108,8 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
     {
         final ResourceLocation id = recipe.getRecipeId();
 
+        addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y - 20, false);
+
         int x = outputSlotX;
         int y = outputSlotY;
         IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
@@ -189,6 +191,7 @@ public class GenericRecipeCategory extends JobBasedRecipeCategory<IGenericRecipe
                 x += this.slot.getWidth() + 2;
             }
         }
+        addToolSlot(builder, recipe.getRequiredTool(), x, y, false);
 
         boolean showLootTooltip = true;
         if (drops.isEmpty())
