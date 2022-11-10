@@ -88,4 +88,20 @@ public interface IFactory<Input, Output>
      */
     @NotNull
     Output deserialize(@NotNull IFactoryController controller, @NotNull FriendlyByteBuf buffer) throws Throwable;
+
+    /**
+     * Helper for {@link #getNewInstance} to check the number and types of all parameters
+     * @param context the context
+     * @param types the types of all parameters expected in the context
+     * @return true if all types matched; false if any did not
+     */
+    static boolean checkContext(final Object[] context, final Class<?>... types)
+    {
+        if (context.length != types.length) return false;
+        for (int index = 0; index < context.length; ++index)
+        {
+            if (!types[index].isInstance(context[index])) return false;
+        }
+        return true;
+    }
 }

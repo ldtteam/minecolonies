@@ -5,25 +5,23 @@ import com.minecolonies.api.colony.requestsystem.factory.FactoryVoidInput;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minecolonies.api.util.constant.Constants.PARAMS_CUSTOM_RECIPE;
-import static com.minecolonies.api.util.constant.Constants.PARAMS_CUSTOM_RECIPE_MGR;
 import static com.minecolonies.coremod.colony.crafting.CustomRecipe.*;
 
 /**
@@ -33,15 +31,24 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 {
     private final static String CUSTOM_RECIPE_ID_PROP = "id";
 
+    private static boolean checkContext(final Object[] context, final Class<?>... types)
+    {
+        if (context.length != types.length) return false;
+        for (int index = 0; index < context.length; ++index)
+        {
+            if (!types[index].isInstance(context[index])) return false;
+        }
+        return true;
+    }
 
     @NotNull
     @Override
     public CustomRecipe getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, final Object... context)
       throws IllegalArgumentException
     {
-        if (context.length != PARAMS_CUSTOM_RECIPE && context.length != PARAMS_CUSTOM_RECIPE_MGR)
+        if (context.length != 15)
         {
-            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only " + PARAMS_CUSTOM_RECIPE + " or " + PARAMS_CUSTOM_RECIPE_MGR + "are allowed!");
+            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. Only 15 are allowed!");
         }
         if (!(context[0] instanceof String))
         {
@@ -57,22 +64,38 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             throw new IllegalArgumentException("Unsupported context - Invalid ResourceLocation");
         }
-        if(!((context[9]) instanceof List) ||
-             !((context[11]) instanceof List) ||
-             !((context[12]) instanceof List))
+        if(!((context[10]) instanceof List) ||
+             !((context[12]) instanceof List) ||
+             !((context[13]) instanceof List))
         {
             throw new IllegalArgumentException("Unsupported context - Invalid Item Information");
         }
 
-        return getNewInstance((String)context[0], (int)context[1], (int)context[2], (boolean)context[3], (boolean)context[4], (ResourceLocation)context[5], (ResourceLocation)context[6], (ResourceLocation)context[7],
-          (ResourceLocation)context[8], (List<ItemStorage>)context[9], (ItemStack)context[10], (List<ItemStack>) context[11],  (List<ItemStack>) context[12], (Block) context[13]);
+        final String crafter = (String)context[0];
+        final int minBldgLevel = (int)context[1];
+        final int maxBldgLevel = (int)context[2];
+        final boolean mustExist = (boolean)context[3];
+        final boolean showTooltip = (boolean)context[4];
+        final ResourceLocation recipeId = (ResourceLocation)context[5];
+        final ResourceLocation researchReq = (ResourceLocation)context[6];
+        final ResourceLocation researchExclude = (ResourceLocation)context[7];
+        final ResourceLocation lootTable = (ResourceLocation)context[8];
+        final IToolType requiredTool = (IToolType)context[9];
+        final List<ItemStorage> inputs = (List<ItemStorage>)context[10];
+        final ItemStack primaryOutput = (ItemStack)context[11];
+        final List<ItemStack> secondaryOutput = (List<ItemStack>)context[12];
+        final List<ItemStack> altOutputs = (List<ItemStack>)context[13];
+        final Block intermediate = (Block)context[14];
+
+        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude,
+          lootTable, requiredTool, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     private CustomRecipe getNewInstance(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      final ResourceLocation researchReq, final ResourceLocation researchExclude, final ResourceLocation lootTable, final List<ItemStorage> inputs,
-      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, final Block intermediate)
+                                        final ResourceLocation researchReq, final ResourceLocation researchExclude, final ResourceLocation lootTable, final IToolType toolType, final List<ItemStorage> inputs,
+                                        final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, final Block intermediate)
     {
-        return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
+        return new CustomRecipe(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, toolType, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     @NotNull
@@ -112,6 +135,10 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         if(recipe.getLootTable() != null)
         {
             compound.putString(RECIPE_LOOTTABLE_PROP, recipe.getLootTable().toString());
+        }
+        if(recipe.getRequiredTool() != ToolType.NONE)
+        {
+            compound.putString(RECIPE_TOOL_PROP, recipe.getRequiredTool().getName());
         }
         compound.putInt(RECIPE_BUILDING_MIN_LEVEL_PROP, recipe.getMinBuildingLevel());
         compound.putInt(RECIPE_BUILDING_MAX_LEVEL_PROP, recipe.getMaxBuildingLevel());
@@ -191,6 +218,11 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             lootTable = null;
         }
+        IToolType requiredTool = ToolType.NONE;
+        if(nbt.hasUUID(RECIPE_TOOL_PROP))
+        {
+            requiredTool = ToolType.getToolType(nbt.getAsString());
+        }
         final int minBldgLevel = nbt.getInt(RECIPE_BUILDING_MIN_LEVEL_PROP);
         final int maxBldgLevel = nbt.getInt(RECIPE_BUILDING_MAX_LEVEL_PROP);
         final boolean mustExist = nbt.getBoolean(RECIPE_MUST_EXIST);
@@ -228,7 +260,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 
         final Block intermediate = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(nbt.get(RECIPE_INTERMEDIATE_PROP).getAsString()));
 
-        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
+        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, requiredTool, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     @Override
@@ -253,6 +285,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             packetBuffer.writeResourceLocation(recipe.getLootTable());
         }
+        packetBuffer.writeUtf(recipe.getRequiredTool().getName());
         packetBuffer.writeVarInt(recipe.getMinBuildingLevel());
         packetBuffer.writeVarInt(recipe.getMaxBuildingLevel());
         packetBuffer.writeBoolean(recipe.getMustExist());
@@ -309,6 +342,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         {
             lootTable = null;
         }
+        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
         final int minBldgLevel = buffer.readVarInt();
         final int maxBldgLevel = buffer.readVarInt();
         final boolean mustExist = buffer.readBoolean();
@@ -332,7 +366,7 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
         
         final Block intermediate = ForgeRegistries.BLOCKS.getValue(buffer.readResourceLocation());
 
-        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
+        return getNewInstance(crafter, minBldgLevel, maxBldgLevel, mustExist, showTooltip, recipeId, researchReq, researchExclude, lootTable, requiredTool, inputs, primaryOutput, secondaryOutput, altOutputs, intermediate);
     }
 
     @Override
