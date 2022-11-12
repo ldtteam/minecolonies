@@ -66,6 +66,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     protected BlockPos requestProgress = null;
 
     /**
+     * Variable telling us if we already recalculated the list.
+     * We don't want to persist this anywhere on purpose.
+     */
+    private boolean recalculated = false;
+
+    /**
      * Initialize the builder and add all his tasks.
      *
      * @param job the job he has.
@@ -202,8 +208,9 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected IAIState waitForRequests()
     {
-        if (job.hasWorkOrder() && building.getNeededResources().isEmpty())
+        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !recalculated)
         {
+            recalculated = true;
             return START_BUILDING;
         }
 
