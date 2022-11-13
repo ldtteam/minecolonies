@@ -210,7 +210,6 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !recalculated)
         {
-            recalculated = true;
             return START_BUILDING;
         }
 
@@ -305,10 +304,12 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
                 {
                     requestState = RequestStage.SOLID;
                     requestProgress = null;
+                    recalculated = true;
                     return true;
                 }
                 return false;
             default:
+                recalculated = true;
                 return true;
         }
     }
