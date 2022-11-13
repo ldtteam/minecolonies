@@ -39,6 +39,8 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(Blocks.TUBE_CORAL_BLOCK)
                 .add(Blocks.BELL)
                 .add(Blocks.LANTERN)
+                .add(ModBlocks.blockWoodenGate)
+                .add(ModBlocks.blockIronGate)
                 .addTag(BlockTags.BANNERS)
                 .addTag(BlockTags.SIGNS)
                 .addTag(BlockTags.CAMPFIRES);
