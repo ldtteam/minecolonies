@@ -1,10 +1,10 @@
 package com.minecolonies.api.compatibility.dynamictrees;
 
-import com.ferreusveritas.dynamictrees.blocks.branches.BranchBlock;
-import com.ferreusveritas.dynamictrees.blocks.branches.TrunkShellBlock;
-import com.ferreusveritas.dynamictrees.blocks.leaves.DynamicLeavesBlock;
-import com.ferreusveritas.dynamictrees.items.Seed;
-import com.ferreusveritas.dynamictrees.trees.Family;
+import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
+import com.ferreusveritas.dynamictrees.block.branch.TrunkShellBlock;
+import com.ferreusveritas.dynamictrees.block.leaves.DynamicLeavesBlock;
+import com.ferreusveritas.dynamictrees.item.Seed;
+import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.minecolonies.api.util.Log;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
