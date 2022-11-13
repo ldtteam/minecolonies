@@ -741,26 +741,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
     }
 
     @Override
-    public void setPos(final double x, final double y, final double z)
-    {
-        super.setPos(x, y, z);
-        if (level.isClientSide)
-        {
-            return;
-        }
-
-        if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
-        {
-            remove(RemovalReason.DISCARDED);
-
-            if (getCitizenData() != null && citizenColonyHandler.getColony() != null)
-            {
-                citizenColonyHandler.getColony().getVisitorManager().removeCivilian(getCitizenData());
-            }
-        }
-    }
-
-    @Override
     public void queueSound(final @NotNull SoundEvent soundEvent, final BlockPos pos, final int length, final int repetitions)
     {
 
