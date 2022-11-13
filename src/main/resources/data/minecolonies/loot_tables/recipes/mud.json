@@ -1,0 +1,21 @@
+{
+  "pools": [
+    {
+      "name": "minecolonies:recipes/mud",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "empty",
+          "weight": 100,
+          "quality": -1
+        },
+        {
+          "type": "item",
+          "weight": 0,
+          "quality": 1,
+          "name": "minecraft:glass_bottle"
+        }
+      ]
+    }
+  ]
+}
