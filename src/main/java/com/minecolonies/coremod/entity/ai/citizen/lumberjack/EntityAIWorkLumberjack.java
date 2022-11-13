@@ -441,7 +441,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAICrafting<JobLumberja
 
         if (job.getTree().hasLogs() || (shouldBreakLeaves && job.getTree().hasLeaves()) || checkedInHut)
         {
-            if (!walkToTree(job.getTree().getStumpLocations().get(0)))
+            if (!walkToTree(job.getTree().getStumpLocations().isEmpty() ? job.getTree().getLocation() : job.getTree().getStumpLocations().get(0)))
             {
                 if (checkIfStuck())
                 {
