@@ -12,6 +12,8 @@
     "minecraft:tube_coral_block",
     "minecraft:bell",
     "minecraft:lantern",
+    "minecolonies:gate_wood",
+    "minecolonies:gate_iron",
     "#minecraft:banners",
     "#minecraft:signs",
     "#minecraft:campfires"
