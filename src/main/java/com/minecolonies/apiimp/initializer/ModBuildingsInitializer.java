@@ -330,7 +330,7 @@ public final class ModBuildingsInitializer
                                  .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.SAWMILL_ID))
                                  .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.sawmill.get(), Skill.Knowledge, Skill.Dexterity, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                  .addBuildingModuleProducer(() -> new BuildingSawmill.CraftingModule(ModJobs.sawmill.get()), () -> CraftingModuleView::new)
-                                 .addBuildingModuleProducer(() -> new BuildingSawmill.DOCraftingModule(ModJobs.sawmill.get()), () -> DOCraftingModuleView::new)
+                                 .addBuildingModuleProducer(() -> new BuildingSawmill.DOCraftingModule(ModJobs.sawmill.get()), () -> () -> new DOCraftingModuleView(BuildingSawmill.DOCraftingModule::getStaticIngredientValidator))
                                  .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                  .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
 
@@ -383,7 +383,7 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.STONE_MASON_ID))
                                     .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.stoneMason.get(), Skill.Creativity, Skill.Dexterity, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingStonemason.CraftingModule(ModJobs.stoneMason.get()), () -> CraftingModuleView::new)
-                                    .addBuildingModuleProducer(() -> new BuildingStonemason.DOCraftingModule(ModJobs.stoneMason.get()), () -> DOCraftingModuleView::new)
+                                    .addBuildingModuleProducer(() -> new BuildingStonemason.DOCraftingModule(ModJobs.stoneMason.get()), () -> () -> new DOCraftingModuleView(BuildingStonemason.DOCraftingModule::getStaticIngredientValidator))
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                     .createBuildingEntry());
@@ -501,7 +501,7 @@ public final class ModBuildingsInitializer
                                      .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.GLASSBLOWER_ID))
                                      .addBuildingModuleProducer(() -> new BuildingGlassblower.CraftingModule(ModJobs.glassblower.get()), () -> CraftingModuleView::new)
                                      .addBuildingModuleProducer(() -> new BuildingGlassblower.SmeltingModule(ModJobs.glassblower.get()), () -> CraftingModuleView::new)
-                                     .addBuildingModuleProducer(() -> new BuildingGlassblower.DOCraftingModule(ModJobs.glassblower.get()), () -> DOCraftingModuleView::new)
+                                     .addBuildingModuleProducer(() -> new BuildingGlassblower.DOCraftingModule(ModJobs.glassblower.get()), () -> () -> new DOCraftingModuleView(BuildingGlassblower.DOCraftingModule::getStaticIngredientValidator))
                                      .addBuildingModuleProducer(FurnaceUserModule::new)
                                      .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.glassblower.get(), Skill.Creativity, Skill.Focus, false, (b) -> 1, Skill.Focus, Skill.Creativity), () -> WorkerBuildingModuleView::new)
                                      .addBuildingModuleProducer(() -> new ItemListModule(FUEL_LIST), () -> () -> new ItemListModuleView(FUEL_LIST, RequestSystemTranslationConstants.REQUESTS_TYPE_BURNABLE, false,
@@ -532,7 +532,7 @@ public final class ModBuildingsInitializer
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.FLETCHER_ID))
                                   .addBuildingModuleProducer(() -> new BuildingFletcher.CraftingModule(ModJobs.fletcher.get()), () -> CraftingModuleView::new)
                                   .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.fletcher.get(), Skill.Dexterity, Skill.Creativity, true, (b) -> 1, Skill.Creativity, Skill.Dexterity), () -> WorkerBuildingModuleView::new)
-                                  .addBuildingModuleProducer(() -> new BuildingFletcher.DOCraftingModule(ModJobs.fletcher.get()), () -> DOCraftingModuleView::new)
+                                  .addBuildingModuleProducer(() -> new BuildingFletcher.DOCraftingModule(ModJobs.fletcher.get()), () -> () -> new DOCraftingModuleView(BuildingFletcher.DOCraftingModule::getStaticIngredientValidator))
                                   .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                   .createBuildingEntry());
@@ -554,7 +554,7 @@ public final class ModBuildingsInitializer
                                   .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.MECHANIC_ID))
                                   .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.mechanic.get(), Skill.Knowledge, Skill.Agility, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                   .addBuildingModuleProducer(() -> new BuildingMechanic.CraftingModule(ModJobs.mechanic.get()), () -> CraftingModuleView::new)
-                                  .addBuildingModuleProducer(() -> new BuildingMechanic.DOCraftingModule(ModJobs.mechanic.get()), () -> DOCraftingModuleView::new)
+                                  .addBuildingModuleProducer(() -> new BuildingMechanic.DOCraftingModule(ModJobs.mechanic.get()), () -> () -> new DOCraftingModuleView(BuildingMechanic.DOCraftingModule::getStaticIngredientValidator))
                                   .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                   .addBuildingModuleProducer(() -> new SettingsModule().with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
                                   .createBuildingEntry());

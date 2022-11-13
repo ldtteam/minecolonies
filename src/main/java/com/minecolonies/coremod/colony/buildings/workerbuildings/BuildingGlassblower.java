@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -13,8 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
-import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_GLASSBLOWER;
-import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_GLASSBLOWER_SMELTING;
+import static com.minecolonies.api.util.constant.TagConstants.*;
 
 /**
  * Class of the glassblower building.
@@ -125,10 +125,19 @@ public class BuildingGlassblower extends AbstractBuilding
             super(jobEntry);
         }
 
+        /**
+         * See {@link ICraftingBuildingModule#getIngredientValidator}.
+         * @return the validator
+         */
+        public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
+        {
+            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER);
+        }
+
         @Override
         public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
         {
-            return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_GLASSBLOWER);
+            return getStaticIngredientValidator();
         }
     }
 }
