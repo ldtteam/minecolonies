@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
-
 public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
 {
     public DefaultBlockLootTableProvider(@NotNull DataGenerator dataGenerator)
@@ -51,11 +49,13 @@ public class DefaultBlockLootTableProvider extends SimpleLootTableProvider
         saveBlock(ModBlocks.blockRack, registrar);
         saveBlock(ModBlocks.blockWayPoint, registrar);
         saveBlock(ModBlocks.blockBarrel, registrar);
-        saveBlock(ModBlocks.blockDecorationPlaceholder, registrar);
         saveBlock(ModBlocks.blockScarecrow, registrar);
         saveBlock(ModBlocks.blockColonyBanner, registrar);
         saveBlock(ModBlocks.blockIronGate, registrar);
         saveBlock(ModBlocks.blockWoodenGate, registrar);
+
+        // intentionally no drops -- creative only
+        //saveBlock(ModBlocks.blockDecorationPlaceholder, registrar);
 
         saveBannerBlock(Blocks.BLACK_BANNER, registrar);
         saveBannerBlock(Blocks.BLUE_BANNER, registrar);
