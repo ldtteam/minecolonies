@@ -25,6 +25,8 @@ public class GatherDataHandler
         final LootTables lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
         final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
         generator.addProvider(true, new DefaultBlockLootTableProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultEntityLootProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultSupplyLootProvider(generator.getPackOutput()));
         generator.addProvider(true, new DefaultAdvancementsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(true, new DefaultSoundProvider(generator));
         generator.addProvider(true, blockTagsProvider);
