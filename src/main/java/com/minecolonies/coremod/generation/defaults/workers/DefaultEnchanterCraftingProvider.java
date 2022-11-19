@@ -1,9 +1,10 @@
-package com.minecolonies.coremod.generation.defaults;
+package com.minecolonies.coremod.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.CachedOutput;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 public class DefaultEnchanterCraftingProvider implements DataProvider
@@ -396,12 +398,14 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
         @Override
         protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
         {
+            final String enchanter = ModJobs.ENCHANTER_ID.getPath();
+
             final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
                     new ItemStack(ModItems.ancientTome), true, true));
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
             {
-                CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath() + "_custom", "tome" + buildingLevel)
+                CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "tome" + buildingLevel)
                         .minBuildingLevel(buildingLevel)
                         .maxBuildingLevel(buildingLevel)
                         .inputs(tome)
@@ -409,6 +413,43 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                         .lootTable(new ResourceLocation(MOD_ID, "recipes/enchanter" + buildingLevel))
                         .build(consumer);
             }
+
+            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_tp")
+                    .inputs(List.of(new ItemStorage(new ItemStack(Items.PAPER, 3)),
+                            new ItemStorage(new ItemStack(Items.COMPASS)),
+                            new ItemStorage(new ItemStack(com.ldtteam.structurize.items.ModItems.buildTool.get()))))
+                    .result(new ItemStack(ModItems.scrollColonyTP, 3))
+                    .showTooltip(true)
+                    .build(consumer);
+
+            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_area_tp")
+                    .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3))))
+                    .result(new ItemStack(ModItems.scrollColonyAreaTP))
+                    .minBuildingLevel(2)
+                    .showTooltip(true)
+                    .build(consumer);
+
+            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_guard_help")
+                    .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP)),
+                            new ItemStorage(new ItemStack(Items.LAPIS_LAZULI, 5)),
+                            new ItemStorage(new ItemStack(Items.ENDER_PEARL)),
+                            new ItemStorage(new ItemStack(Items.PAPER))))
+                    .result(new ItemStack(ModItems.scrollGuardHelp, 2))
+                    .minBuildingLevel(3)
+                    .minResearchId(ResearchConstants.MORE_SCROLLS)
+                    .showTooltip(true)
+                    .build(consumer);
+
+            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_highlight")
+                    .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3)),
+                            new ItemStorage(new ItemStack(Items.GLOWSTONE_DUST, 6)),
+                            new ItemStorage(new ItemStack(Items.PAPER, 2))))
+                    .result(new ItemStack(ModItems.scrollHighLight, 5))
+                    .minBuildingLevel(3)
+                    .minResearchId(ResearchConstants.MORE_SCROLLS)
+                    .showTooltip(true)
+                    .build(consumer);
+
         }
     }
 

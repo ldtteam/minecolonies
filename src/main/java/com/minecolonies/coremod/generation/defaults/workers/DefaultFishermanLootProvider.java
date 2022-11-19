@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.generation.defaults;
+package com.minecolonies.coremod.generation.defaults.workers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
