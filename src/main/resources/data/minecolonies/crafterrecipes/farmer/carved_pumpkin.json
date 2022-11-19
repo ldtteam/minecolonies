@@ -9,5 +9,6 @@
   ],
   "result": "minecraft:carved_pumpkin",
   "count": 1,
+  "tool": "axe",
   "intermediate" : "minecraft:air"
 }
