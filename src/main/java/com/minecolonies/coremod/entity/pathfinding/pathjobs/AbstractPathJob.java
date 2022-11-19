@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.pathfinding.pathjobs;
 
+import com.ldtteam.domumornamentum.block.AbstractBlock;
 import com.ldtteam.domumornamentum.block.decorative.FloatingCarpetBlock;
 import com.ldtteam.domumornamentum.block.decorative.PanelBlock;
 import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
@@ -37,8 +39,10 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.property.Properties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -343,14 +347,15 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final LivingEntity entity)
     {
-        @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
+         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()),
           Mth.floor(entity.getY()),
           Mth.floor(entity.getZ()));
         final Level level = entity.level;
         BlockState bs = level.getBlockState(pos);
         // 1 Up when we're standing within this collision shape
         final VoxelShape collisionShape = bs.getCollisionShape(level, pos);
-        if (bs.getMaterial().blocksMotion() && collisionShape.max(Direction.Axis.Y) > 0)
+        final boolean isFineToStandIn = canStandInSolidBlock(bs);
+        if (bs.getMaterial().blocksMotion() && !isFineToStandIn && collisionShape.max(Direction.Axis.Y) > 0)
         {
             final double relPosX = Math.abs(entity.getX() % 1);
             final double relPosZ = Math.abs(entity.getZ() % 1);
@@ -369,8 +374,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         BlockState down = level.getBlockState(pos.below());
-        while (!bs.getMaterial().blocksMotion() && !down.getMaterial().blocksMotion() && !down.getBlock().isLadder(down, level, pos.below(), entity) && down.getFluidState()
-          .isEmpty())
+        while (canStandInSolidBlock(bs) && canStandInSolidBlock(down) && !down.getBlock().isLadder(down, level, pos.below(), entity) && down.getFluidState().isEmpty())
         {
             pos.move(Direction.DOWN, 1);
             bs = down;
@@ -392,32 +396,47 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bs = level.getBlockState(pos);
             }
         }
-        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || bs.getMaterial().isSolid())
+        else if (b instanceof FenceBlock || b instanceof WallBlock || b instanceof AbstractBlockMinecoloniesDefault || (bs.getMaterial().isSolid() && !canStandInSolidBlock(bs)))
         {
             //Push away from fence
             final double dX = entity.getX() - Math.floor(entity.getX());
             final double dZ = entity.getZ() - Math.floor(entity.getZ());
 
-            if (dX < ONE_SIDE)
+            if (dX < HALF_A_BLOCK && dZ < HALF_A_BLOCK)
             {
-                pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
+                if (dZ < dX)
+                {
+                    pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
+                }
+                else
+                {
+                    pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
+                }
             }
-            else if (dX > OTHER_SIDE)
+            else
             {
-                pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
-            }
-
-            if (dZ < ONE_SIDE)
-            {
-                pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
-            }
-            else if (dZ > OTHER_SIDE)
-            {
-                pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
+                if (dZ > dX)
+                {
+                    pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
+                }
+                else
+                {
+                    pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
+                }
             }
         }
 
         return pos.immutable();
+    }
+
+    /**
+     * Check if this a valid state to stand in.
+     * @param state the state to check.
+     * @return true if so.
+     */
+    private static boolean canStandInSolidBlock(final BlockState state)
+    {
+       return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || state.getBlock() instanceof PanelBlock || !state.getBlock().properties.hasCollision;
     }
 
     /**
@@ -1395,7 +1414,8 @@ public abstract class AbstractPathJob implements Callable<Path>
                              || block.getBlock() instanceof PressurePlateBlock
                              || block.getBlock() instanceof BlockDecorationController
                              || block.getBlock() instanceof SignBlock
-                             || block.getBlock() instanceof AbstractBannerBlock;
+                             || block.getBlock() instanceof AbstractBannerBlock
+                             || !block.getBlock().properties.hasCollision;
                 }
             }
             else if (block.getBlock() instanceof FireBlock || block.getBlock() instanceof SweetBerryBushBlock || block.getBlock() instanceof PowderSnowBlock)

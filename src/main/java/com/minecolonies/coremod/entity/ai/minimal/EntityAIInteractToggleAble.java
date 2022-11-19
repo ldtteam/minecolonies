@@ -84,7 +84,7 @@ public class EntityAIInteractToggleAble extends Goal
     /**
      * Execution timer for occasionally checking for toggleables
      */
-    private int executeTimerSlow = 100;
+    private int executeTimerSlow = 60;
 
     /**
      * Offset delay to prevent toggling at exactly the same rates
