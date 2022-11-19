@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.generation.defaults;
+package com.minecolonies.coremod.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -36,11 +36,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
-
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
 
 public class DefaultNetherWorkerLootProvider implements DataProvider
 {
@@ -261,7 +259,7 @@ public class DefaultNetherWorkerLootProvider implements DataProvider
                 final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, levels.get(i).build());
                 final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
 
-                CustomRecipeBuilder.create(ModJobs.NETHERWORKER_ID.getPath() + "_custom", "trip" + buildingLevel)
+                CustomRecipeBuilder.create(ModJobs.NETHERWORKER_ID.getPath(), MODULE_CUSTOM, "trip" + buildingLevel)
                         .minBuildingLevel(buildingLevel)
                         .maxBuildingLevel(buildingLevel)
                         .inputs(inputs)
@@ -271,7 +269,7 @@ public class DefaultNetherWorkerLootProvider implements DataProvider
             }
 
             // and also a lava bucket recipe for good measure
-            CustomRecipeBuilder.create(ModJobs.NETHERWORKER_ID.getPath() + "_custom", "lava")
+            CustomRecipeBuilder.create(ModJobs.NETHERWORKER_ID.getPath(), MODULE_CUSTOM, "lava")
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(Items.BUCKET))))
                     .result(new ItemStack(Items.LAVA_BUCKET))
                     .build(consumer);

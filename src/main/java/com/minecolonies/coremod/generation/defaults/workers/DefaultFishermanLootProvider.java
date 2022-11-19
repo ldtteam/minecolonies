@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.generation.defaults;
+package com.minecolonies.coremod.generation.defaults.workers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -22,8 +22,6 @@ import net.minecraft.world.level.storage.loot.predicates.AlternativeLootItemCond
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
 
 /**
  * Datagen for fisherman loot tables

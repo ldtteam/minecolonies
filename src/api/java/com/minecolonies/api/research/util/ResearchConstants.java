@@ -159,10 +159,16 @@ public final class ResearchConstants
     public static final ResourceLocation VACCINES          = new ResourceLocation(Constants.MOD_ID, "effects/vaccines");
     public static final ResourceLocation TELESCOPE          = new ResourceLocation(Constants.MOD_ID, "effects/telescope");
     public static final ResourceLocation STANDARD          = new ResourceLocation(Constants.MOD_ID, "effects/standard");
-
     public static final ResourceLocation MORE_AIR          = new ResourceLocation(Constants.MOD_ID, "effects/air");
-
     public static final ResourceLocation MIN_ORDER         = new ResourceLocation(Constants.MOD_ID, "effects/min_order");
+
+    //Recipe unlocks
+    public static final ResourceLocation THE_END           = new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock");
+    public static final ResourceLocation MORE_SCROLLS      = new ResourceLocation(Constants.MOD_ID, "effects/morescrollsunlock");
+    public static final ResourceLocation SIFTER_STRING     = new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock");
+    public static final ResourceLocation SIFTER_FLINT      = new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock");
+    public static final ResourceLocation SIFTER_IRON       = new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock");
+    public static final ResourceLocation SIFTER_DIAMOND    = new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock");
 
     /**
      * Private constructor to hide implicit public one.

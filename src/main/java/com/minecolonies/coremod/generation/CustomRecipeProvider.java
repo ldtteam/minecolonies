@@ -80,17 +80,17 @@ public abstract class CustomRecipeProvider implements DataProvider
         private final ResourceLocation id;
         private Block intermediate = Blocks.AIR;
 
-        private CustomRecipeBuilder(final String crafter, final String id)
+        private CustomRecipeBuilder(final String crafter, final String module, final String id)
         {
             this.json.addProperty(CustomRecipe.RECIPE_TYPE_PROP, CustomRecipe.RECIPE_TYPE_RECIPE);
-            this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter);
+            this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter + "_" + module);
             this.id = new ResourceLocation(Constants.MOD_ID, crafter + "/" + id);
         }
 
         @NotNull
-        public static CustomRecipeBuilder create(final String crafter, final String id)
+        public static CustomRecipeBuilder create(final String crafter, final String module, final String id)
         {
-            return new CustomRecipeBuilder(crafter, id);
+            return new CustomRecipeBuilder(crafter, module, id);
         }
 
         @NotNull
@@ -103,10 +103,12 @@ public abstract class CustomRecipeProvider implements DataProvider
         @NotNull
         public CustomRecipeBuilder result(@NotNull final ItemStack result)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, ForgeRegistries.ITEMS.getKey(result.getItem()).toString());
-            if (result.getCount() != 1)
+            final JsonObject jsonItemStack = stackAsJson(result);
+
+            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, jsonItemStack.get(ITEM_PROP).getAsString());
+            if (jsonItemStack.has(COUNT_PROP))
             {
-                this.json.addProperty(COUNT_PROP, result.getCount());
+                this.json.add(COUNT_PROP, jsonItemStack.get(COUNT_PROP));
             }
             return this;
         }
@@ -198,25 +200,31 @@ public abstract class CustomRecipeProvider implements DataProvider
         }
 
         @NotNull
+        private JsonObject stackAsJson(final ItemStack stack)
+        {
+            final JsonObject jsonItemStack = new JsonObject();
+            String name = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
+            // this could be incorrect for items with both damage and other NBT,
+            // but that should be rare, and this avoids some annoyance.
+            if (stack.hasTag() && !stack.isDamageableItem())
+            {
+                name += stack.getTag().toString();
+            }
+            jsonItemStack.addProperty(ITEM_PROP, name);
+            if (stack.getCount() != 1)
+            {
+                jsonItemStack.addProperty(COUNT_PROP, stack.getCount());
+            }
+            return jsonItemStack;
+        }
+
+        @NotNull
         private JsonArray stackAsJson(final List<ItemStack> itemStacks)
         {
             final JsonArray jsonItemStacks = new JsonArray();
             for (final ItemStack itemStack : itemStacks)
             {
-                final JsonObject jsonItemStack = new JsonObject();
-                String name = ForgeRegistries.ITEMS.getKey(itemStack.getItem()).toString();
-                // this could be incorrect for items with both damage and other NBT,
-                // but that should be rare, and this avoids some annoyance.
-                if (itemStack.hasTag() && !itemStack.isDamageableItem())
-                {
-                    name += itemStack.getTag().toString();
-                }
-                jsonItemStack.addProperty(ITEM_PROP, name);
-                if (itemStack.getCount() != 1)
-                {
-                    jsonItemStack.addProperty(COUNT_PROP, itemStack.getCount());
-                }
-                jsonItemStacks.add(jsonItemStack);
+                jsonItemStacks.add(stackAsJson(itemStack));
             }
             return jsonItemStacks;
         }
@@ -227,23 +235,18 @@ public abstract class CustomRecipeProvider implements DataProvider
             final JsonArray jsonItemStorages = new JsonArray();
             for (final ItemStorage itemStorage : itemStorages)
             {
-                final ItemStack stack = itemStorage.getItemStack();
-                final JsonObject jsonItemStorage = new JsonObject();
-                String name = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
-                // this could be incorrect for items with both damage and other NBT,
-                // but that should be rare, and this avoids some annoyance.
-                if (stack.hasTag() && !stack.isDamageableItem())
+                final JsonObject jsonItemStorage = stackAsJson(itemStorage.getItemStack());
+                if (itemStorage.getAmount() == 1)
                 {
-                    name += stack.getTag().toString();
+                    jsonItemStorage.remove(COUNT_PROP);
                 }
-                jsonItemStorage.addProperty(ITEM_PROP, name);
+                else
+                {
+                    jsonItemStorage.addProperty(COUNT_PROP, itemStorage.getAmount());
+                }
                 if (itemStorage.ignoreNBT())
                 {
                     jsonItemStorage.addProperty(MATCHTYPE_PROP, MATCH_NBTIGNORE);
-                }
-                if (itemStorage.getAmount() != 1)
-                {
-                    jsonItemStorage.addProperty(COUNT_PROP, itemStorage.getAmount());
                 }
                 jsonItemStorages.add(jsonItemStorage);
             }

@@ -1,9 +1,8 @@
-package com.minecolonies.coremod.generation.defaults;
+package com.minecolonies.coremod.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.DyeColor;
@@ -14,14 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 
 /** Datagen for concrete mixer crafterrecipes */
 public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
@@ -61,12 +59,12 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             final List<ItemStorage> customInput = new ArrayList<>(input);
             customInput.add(new ItemStorage(new ItemStack(dye)));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(powder).getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(),  MODULE_CUSTOM, ForgeRegistries.ITEMS.getKey(powder).getPath())
                     .inputs(customInput)
                     .result(new ItemStack(powder, 8))
                     .build(consumer);
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(concrete).getPath())
+            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath(), MODULE_CUSTOM, ForgeRegistries.ITEMS.getKey(concrete).getPath())
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)

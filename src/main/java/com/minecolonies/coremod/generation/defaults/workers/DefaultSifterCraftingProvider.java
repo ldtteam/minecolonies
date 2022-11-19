@@ -1,21 +1,21 @@
-package com.minecolonies.coremod.generation.defaults;
+package com.minecolonies.coremod.generation.defaults.workers;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -35,10 +35,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTING;
+import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
 
 public class DefaultSifterCraftingProvider implements DataProvider
 {
@@ -313,7 +312,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
                     final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
                     final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
 
-                    CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath() + "_custom", name)
+                    CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath(), MODULE_CUSTOM, name)
                             .inputs(Stream.of(
                                     new ItemStorage(new ItemStack(inputEntry.getKey())),
                                     new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
@@ -326,6 +325,27 @@ public class DefaultSifterCraftingProvider implements DataProvider
                             .build(consumer);
                 }
             }
+
+            // also mesh recipes for everyone else
+            mesh(consumer, ModJobs.FLETCHER_ID, Items.STRING, ModItems.sifterMeshString, ResearchConstants.SIFTER_STRING);
+            mesh(consumer, ModJobs.STONEMASON_ID, Items.FLINT, ModItems.sifterMeshFlint, ResearchConstants.SIFTER_FLINT);
+            mesh(consumer, ModJobs.BLACKSMITH_ID, Items.IRON_INGOT, ModItems.sifterMeshIron, ResearchConstants.SIFTER_IRON);
+            mesh(consumer, ModJobs.MECHANIC_ID, Items.DIAMOND, ModItems.sifterMeshDiamond, ResearchConstants.SIFTER_DIAMOND);
+        }
+
+        private void mesh(@NotNull final Consumer<FinishedRecipe> consumer,
+                          @NotNull final ResourceLocation job,
+                          @NotNull final ItemLike input,
+                          @NotNull final ItemLike output,
+                          @NotNull final ResourceLocation research)
+        {
+            CustomRecipeBuilder.create(job.getPath(), MODULE_CRAFTING,
+                            ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
+                    .inputs(List.of(new ItemStorage(new ItemStack(input))))
+                    .result(new ItemStack(output))
+                    .minResearchId(research)
+                    .showTooltip(true)
+                    .build(consumer);
         }
     }
 
