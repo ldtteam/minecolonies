@@ -21,6 +21,10 @@
                  source="minecolonies:textures/gui/builderhut/builder_button_small.png"
                  label="$(com.minecolonies.coremod.gui.docrafting.switch)"/>
 
+    <buttonimage id="request" size="16 16" pos="155 54"
+                 source="minecolonies:textures/gui/citizen/detail_button.png"
+                 tooltip="$(com.minecolonies.coremod.gui.citizen.requesttitle)"/>
+
     <list id="resourcesstock" size="170 100" pos="13 100">
         <box size="100% 17" linewidth="1">
             <itemicon id="resourceIcon" size="17 17" pos="0 0"/>

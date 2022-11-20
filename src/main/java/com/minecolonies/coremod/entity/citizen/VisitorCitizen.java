@@ -27,7 +27,6 @@ import com.minecolonies.coremod.network.messages.client.ItemParticleEffectMessag
 import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -56,8 +55,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INFO_COLONY_VISITOR_DIED;
 import static com.minecolonies.api.util.constant.TranslationConstants.MESSAGE_INTERACTION_VISITOR_FOOD;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAIInteractToggleAble.*;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 /**
  * Visitor citizen entity
@@ -522,10 +519,9 @@ public class VisitorCitizen extends AbstractEntityCitizen
         currentlyFleeing = fleeing;
     }
 
-    @javax.annotation.Nullable
+    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(
-      final int id, final Inventory playerInventory, final Player playerEntity)
+    public AbstractContainerMenu createMenu(final int id, final Inventory playerInventory, final Player playerEntity)
     {
         return new ContainerCitizenInventory(id, playerInventory, citizenColonyHandler.getColonyId(), citizenId);
     }
@@ -643,9 +639,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
         entityData.define(DATA_CITIZEN_ID, citizenId);
     }
 
-    /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons. use this to react to sunlight and start to burn.
-     */
     @Override
     public void aiStep()
     {
@@ -672,6 +665,10 @@ public class VisitorCitizen extends AbstractEntityCitizen
         else
         {
             citizenColonyHandler.registerWithColony(citizenColonyHandler.getColonyId(), citizenId);
+            if (tickCount % 500 == 0)
+            {
+                this.setCustomNameVisible(MineColonies.getConfig().getServer().alwaysRenderNameTag.get());
+            }
         }
     }
 
@@ -739,28 +736,6 @@ public class VisitorCitizen extends AbstractEntityCitizen
             if (ItemStackUtils.getSize(itemstack) > 0)
             {
                 citizenItemHandler.entityDropItem(itemstack);
-            }
-        }
-    }
-
-    // TODO:REMOVE DEBUG
-    @Override
-    public void setPos(final double x, final double y, final double z)
-    {
-        super.setPos(x, y, z);
-        if (level.isClientSide)
-        {
-            return;
-        }
-
-        if (citizenStatusHandler != null && x < 1 && x > -1 && z < 1 && z > -1)
-        {
-            Log.getLogger().error("Visitor entity set to zero pos, report to mod author:", new Exception());
-            remove(RemovalReason.DISCARDED);
-
-            if (getCitizenData() != null && citizenColonyHandler.getColony() != null)
-            {
-                citizenColonyHandler.getColony().getVisitorManager().removeCivilian(getCitizenData());
             }
         }
     }

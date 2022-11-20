@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -112,8 +113,11 @@ public class BuildingMechanic extends AbstractBuilding
             super(jobEntry);
         }
 
-        @Override
-        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
+        /**
+         * See {@link ICraftingBuildingModule#getIngredientValidator}.
+         * @return the validator
+         */
+        public @NotNull static OptionalPredicate<ItemStack> getStaticIngredientValidator()
         {
             final OptionalPredicate<ItemStack> sawmill = CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_SAWMILL)
                     .combine(stack -> Optional.of(stack.is(ItemTags.PLANKS) || stack.is(ItemTags.LOGS)));
@@ -126,6 +130,12 @@ public class BuildingMechanic extends AbstractBuilding
 
             // mechanic accepts every ingredient not otherwise handled
             return OptionalPredicate.of(handled.negate());
+        }
+
+        @Override
+        public @NotNull OptionalPredicate<ItemStack> getIngredientValidator()
+        {
+            return getStaticIngredientValidator();
         }
     }
 }
