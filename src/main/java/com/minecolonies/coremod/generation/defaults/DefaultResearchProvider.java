@@ -129,6 +129,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(VACCINES).setTranslatedName("Citizens are immune for longer after treatment"));
         effects.add(new ResearchEffect(TELESCOPE).setTranslatedName("Farther rallying banner range"));
         effects.add(new ResearchEffect(STANDARD).setTranslatedName("Place Rallying Banner at location"));
+        effects.add(new ResearchEffect(MORE_AIR).setTranslatedName("Citizens can stay longer underwater"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -656,11 +657,19 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addToList(r);
 
         // Primary Research #5
-        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/ambition"), CIVIL).setTranslatedName("Ambition")
+        final Research ambition = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/ambition"), CIVIL).setTranslatedName("Ambition")
           .setSortOrder(5)
           .setIcon(ModBlocks.blockHutMysticalSite.asItem())
           .addItemCost(Items.DIAMOND, 1)
           .addEffect(ModBuildings.mysticalSite.getBuildingBlock(), 1)
+          .addToList(r);
+
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/air"), CIVIL).setTranslatedName("Scuba")
+          .setParentResearch(ambition)
+          .setSortOrder(1)
+          .setIcon(Items.POTION)
+          .addItemCost(Items.HEART_OF_THE_SEA, 1)
+          .addEffect(MORE_AIR, 1)
           .addToList(r);
 
         // Primary Research #6

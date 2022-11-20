@@ -13,7 +13,6 @@ import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.compatibility.Compatibility;
-import com.minecolonies.api.configuration.ServerConfiguration;
 import com.minecolonies.api.entity.CustomGoalSelector;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.Status;
@@ -66,6 +65,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.CombatRules;
@@ -85,6 +85,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
@@ -762,7 +763,22 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             lastChunk = currentChunk;
             EventHandler.onEnteringChunkEntity(this, currentChunk);
         }
+
+        if (this.isEyeInFluid(FluidTags.WATER) && !this.level.getBlockState(new BlockPos(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN))
+        {
+            this.moveTo(this.position().add(random.nextBoolean() ? 1 : 0, 0, random.nextBoolean() ? 1 : 0));
+        }
         return false;
+    }
+
+    @Override
+    public int getMaxAirSupply()
+    {
+        if (getCitizenColonyHandler() != null && getCitizenColonyHandler().getColony() != null && getCitizenColonyHandler().getColony().getResearchManager().getResearchEffects().getEffectStrength(MORE_AIR) > 0)
+        {
+            return super.getMaxAirSupply() * 2;
+        }
+        return super.getMaxAirSupply();
     }
 
     /**

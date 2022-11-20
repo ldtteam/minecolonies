@@ -336,7 +336,20 @@ public class EntityAIWorkCook extends AbstractEntityAIUsesFurnace<JobCook, Build
             }
         }
 
-        if (!citizenToServe.isEmpty())
+        if (!playerToServe.isEmpty())
+        {
+            final Predicate<ItemStack> foodPredicate = stack -> ItemStackUtils.CAN_EAT.test(stack) && !isItemStackForAssistant(stack);
+            if (!InventoryUtils.hasItemInItemHandler(worker.getInventoryCitizen(), foodPredicate))
+            {
+                if (InventoryUtils.hasItemInProvider(building, foodPredicate))
+                {
+                    needsCurrently = new Tuple<>(foodPredicate, STACKSIZE);
+                    return GATHERING_REQUIRED_MATERIALS;
+                }
+            }
+        }
+
+        if (!citizenToServe.isEmpty() || !playerToServe.isEmpty())
         {
             return COOK_SERVE_FOOD_TO_CITIZEN;
         }
