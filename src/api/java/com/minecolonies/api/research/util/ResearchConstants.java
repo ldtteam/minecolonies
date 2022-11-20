@@ -160,6 +160,8 @@ public final class ResearchConstants
     public static final ResourceLocation TELESCOPE          = new ResourceLocation(Constants.MOD_ID, "effects/telescope");
     public static final ResourceLocation STANDARD          = new ResourceLocation(Constants.MOD_ID, "effects/standard");
 
+    public static final ResourceLocation MORE_AIR          = new ResourceLocation(Constants.MOD_ID, "effects/air");
+
     /**
      * Private constructor to hide implicit public one.
      */
