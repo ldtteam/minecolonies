@@ -31,16 +31,6 @@ public class CustomRecipeFactory implements IFactory<FactoryVoidInput, CustomRec
 {
     private final static String CUSTOM_RECIPE_ID_PROP = "id";
 
-    private static boolean checkContext(final Object[] context, final Class<?>... types)
-    {
-        if (context.length != types.length) return false;
-        for (int index = 0; index < context.length; ++index)
-        {
-            if (!types[index].isInstance(context[index])) return false;
-        }
-        return true;
-    }
-
     @NotNull
     @Override
     public CustomRecipe getNewInstance(@NotNull final IFactoryController factoryController, @NotNull final FactoryVoidInput factoryVoidInput, final Object... context)
