@@ -62,6 +62,7 @@ dependencies {
         runtimeOnly fg.deobf("flat:journeymap:${project.jmapMcVersion}-${project.jmapVersion}")
     }
 
+    compileOnly fg.deobf("us.dynmap:DynmapCoreAPI:${project.dynmapApiVersion}")
     apiCompileOnly fg.deobf("us.dynmap:DynmapCoreAPI:${project.dynmapApiVersion}")
     if (project.hasProperty("runWithDynmap") && project.runWithDynmap.toBoolean()) {
         runtimeOnly fg.deobf("flat:dynmap:${project.dynmapMcVersion}-${project.dynmapVersion}")
