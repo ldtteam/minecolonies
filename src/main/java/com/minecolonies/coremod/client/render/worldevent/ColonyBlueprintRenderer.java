@@ -38,6 +38,11 @@ import static com.ldtteam.structurize.items.ModItems.buildTool;
 public class ColonyBlueprintRenderer
 {
     /**
+     * An arbitrary not-null-but-invalid position.
+     */
+    private static final BlockPos INVALID_POS = BlockPos.ZERO.below(500);
+
+    /**
      * The cached map of blueprints that are rendered.
      */
     private static Map<BlockPos, RenderData> blueprintCache = new HashMap<>();
@@ -115,15 +120,18 @@ public class ColonyBlueprintRenderer
                 StructureClientHandler.renderStructureAtPos(buildingData.blueprint, ctx.partialTicks, position, ctx.poseStack);
             }
 
-            WorldRenderMacros.renderLineBox(ctx.bufferSource.getBuffer(WorldRenderMacros.LINES_WITH_WIDTH),
-                    ctx.poseStack,
-                    buildingData.box().getPos1(),
-                    buildingData.box().getPos2(),
-                    0,
-                    0,
-                    255,
-                    255,
-                    0.08f);
+            if (buildingData.box().getPos1() != INVALID_POS)
+            {
+                WorldRenderMacros.renderLineBox(ctx.bufferSource.getBuffer(WorldRenderMacros.LINES_WITH_WIDTH),
+                        ctx.poseStack,
+                        buildingData.box().getPos1(),
+                        buildingData.box().getPos2(),
+                        0,
+                        0,
+                        255,
+                        255,
+                        0.08f);
+            }
 
             buildingData.box().getAnchor().ifPresent(pos ->
             {
@@ -170,7 +178,15 @@ public class ColonyBlueprintRenderer
                 pendingBlueprints.poll();
                 if (data.blueprint() == null)
                 {
-                    newCache.remove(data.pos());
+                    if (data.boxOnly() && data.hasAnchor())     // render only the anchor
+                    {
+                        final BoxPreviewData box = new BoxPreviewData(INVALID_POS, INVALID_POS, Optional.of(data.pos()));
+                        newCache.put(data.pos(), new RenderData(null, box));
+                    }
+                    else
+                    {
+                        newCache.remove(data.pos());
+                    }
                     continue;
                 }
                 final Blueprint localBlueprint = data.blueprint().get();
@@ -327,6 +343,7 @@ public class ColonyBlueprintRenderer
             // ideally we'd check based on the bounding box, but we don't know that until we load the blueprints
             final double range = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getClient().buildgogglerange.get());
 
+            // show work orders
             final Map<BlockPos, Supplier<PendingRenderData>> desired = new HashMap<>();
             for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
             {
@@ -341,6 +358,20 @@ public class ColonyBlueprintRenderer
                                 workOrder.getWorkOrderType() == WorkOrderType.REMOVE,
                                 workOrder instanceof WorkOrderBuildingView);
                     });
+                }
+            }
+
+            // and also just the anchor pos for unbuilt non-work-orders, to help find lost huts
+            for (final IBuildingView building : ctx.nearestColony.getBuildings())
+            {
+                if (!desired.containsKey(building.getPosition()) &&
+                        building.getBuildingLevel() == 0 &&
+                        building.getBuildingMaxLevel() > 0 &&
+                        building.getPosition().distSqr(ctx.clientPlayer.blockPosition()) < range)
+                {
+                    desired.put(building.getPosition(), () ->
+                            new PendingRenderData(null, building.getPosition(), new PlacementSettings(),
+                                    true, true));
                 }
             }
 
