@@ -5,6 +5,7 @@ import com.ldtteam.structurize.client.StructureClientHandler;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.storage.rendering.RenderingCache;
 import com.ldtteam.structurize.storage.rendering.types.BlueprintPreviewData;
+import com.ldtteam.structurize.storage.rendering.types.BoxPreviewData;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.minecolonies.api.MinecoloniesAPIProxy;
@@ -16,6 +17,7 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MathUtils;
+import com.minecolonies.coremod.colony.workorders.view.WorkOrderBuildingView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
@@ -115,13 +117,21 @@ public class ColonyBlueprintRenderer
 
             WorldRenderMacros.renderLineBox(ctx.bufferSource.getBuffer(WorldRenderMacros.LINES_WITH_WIDTH),
                     ctx.poseStack,
-                    buildingData.boxStartPos,
-                    buildingData.boxEndPos,
+                    buildingData.box().getPos1(),
+                    buildingData.box().getPos2(),
                     0,
                     0,
                     255,
                     255,
                     0.08f);
+
+            buildingData.box().getAnchor().ifPresent(pos ->
+            {
+                if (ctx.clientPlayer.isShiftKeyDown())
+                {
+                    WorldRenderMacros.renderRedGlintLineBox(WorldRenderMacros.getBufferSource(), ctx.poseStack, pos, pos, 0.02f);
+                }
+            });
         }
     }
 
@@ -182,16 +192,17 @@ public class ColonyBlueprintRenderer
                     final BlockPos primaryOffset = localBlueprint.getPrimaryBlockOffset();
                     final BlockPos boxStartPos = data.pos().subtract(primaryOffset);
                     final BlockPos size = new BlockPos(localBlueprint.getSizeX(), localBlueprint.getSizeY(), localBlueprint.getSizeZ());
-                    final BlockPos boxEndPos = boxStartPos.offset(size).subtract(new BlockPos(1, 1, 1));
+                    final BlockPos boxEndPos = boxStartPos.offset(size).offset(-1, -1, -1);
+                    final BoxPreviewData box = new BoxPreviewData(boxStartPos, boxEndPos, data.hasAnchor() ? Optional.of(data.pos()) : Optional.empty());
 
                     localBlueprint.setRenderSource(data.pos());
                     if (data.boxOnly())
                     {
-                        newCache.put(data.pos(), new RenderData(null, boxStartPos, boxEndPos));
+                        newCache.put(data.pos(), new RenderData(null, box));
                     }
                     else
                     {
-                        newCache.put(data.pos(), new RenderData(blueprintPreviewData, boxStartPos, boxEndPos));
+                        newCache.put(data.pos(), new RenderData(blueprintPreviewData, box));
                     }
 
                     // only process one real blueprint per call
@@ -226,14 +237,14 @@ public class ColonyBlueprintRenderer
     /**
      * Holds blueprint renderdata (loaded).
      */
-    private record RenderData(BlueprintPreviewData blueprint, BlockPos boxStartPos, BlockPos boxEndPos)
+    private record RenderData(BlueprintPreviewData blueprint, BoxPreviewData box)
     {
     }
 
     /**
      * Holds blueprint renderdata (pending load).
      */
-    private record PendingRenderData(Future<Blueprint> blueprint, BlockPos pos, PlacementSettings settings, boolean boxOnly)
+    private record PendingRenderData(Future<Blueprint> blueprint, BlockPos pos, PlacementSettings settings, boolean boxOnly, boolean hasAnchor)
     {
     }
 
@@ -288,7 +299,8 @@ public class ColonyBlueprintRenderer
                             final Future<Blueprint> localBlueprint = StructurePacks.getBlueprintFuture(structurePack, schemPath);
                             return new PendingRenderData(localBlueprint, currentPosition,
                                     new PlacementSettings(buildingView.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE, BlockPosUtil.getRotationFromRotations(buildingView.getRotation())),
-                                    buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel());
+                                    buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel(),
+                                    true);
                         });
                     }
                 }
@@ -326,7 +338,8 @@ public class ColonyBlueprintRenderer
                         return new PendingRenderData(localBlueprint, workOrder.getLocation(),
                                 new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
                                         BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
-                                workOrder.getWorkOrderType() == WorkOrderType.REMOVE);
+                                workOrder.getWorkOrderType() == WorkOrderType.REMOVE,
+                                workOrder instanceof WorkOrderBuildingView);
                     });
                 }
             }
