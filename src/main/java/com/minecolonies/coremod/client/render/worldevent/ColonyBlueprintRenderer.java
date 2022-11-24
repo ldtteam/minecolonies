@@ -43,6 +43,11 @@ public class ColonyBlueprintRenderer
     private static final BlockPos INVALID_POS = BlockPos.ZERO.below(500);
 
     /**
+     * Min distance for player to move before we recheck cache.
+     */
+    private static final double CACHE_RESET_RANGE = 12.5F;
+
+    /**
      * The cached map of blueprints that are rendered.
      */
     private static Map<BlockPos, RenderData> blueprintCache = new HashMap<>();
@@ -50,14 +55,9 @@ public class ColonyBlueprintRenderer
     private static BlockPos lastCacheRebuild = null;
 
     /**
-     * Set of already requested structures.
-     */
-    public static Set<String> alreadyRequestedStructures = new HashSet<>();
-
-    /**
      * Blueprints we're still loading.
      */
-    private static Queue<PendingRenderData> pendingBlueprints = new LinkedList<>();
+    private static final Queue<PendingRenderData> pendingBlueprints = new LinkedList<>();
 
     /**
      * Rendering rules.  Order matters.
@@ -80,7 +80,6 @@ public class ColonyBlueprintRenderer
         if (!ctx.hasNearestColony())
         {
             blueprintCache.clear();
-            alreadyRequestedStructures.clear();
             lastCacheRebuild = null;
             return;
         }
@@ -97,16 +96,20 @@ public class ColonyBlueprintRenderer
         if (activeRules.isEmpty())
         {
             blueprintCache.clear();
-            alreadyRequestedStructures.clear();
             lastCacheRebuild = null;
             return;
         }
 
-        if (lastCacheRebuild == null || Minecraft.getInstance().level.getGameTime() % 20 == 0)
+        final BlockPos activePosition = ctx.clientPlayer.blockPosition();
+        if (lastCacheRebuild == null || !lastCacheRebuild.closerThan(activePosition, CACHE_RESET_RANGE))
         {
-            final BlockPos activePosition = ctx.clientPlayer.blockPosition();
             rebuildCache(ctx, activeRules);
             lastCacheRebuild = activePosition;
+        }
+
+        if (Minecraft.getInstance().level.getGameTime() % 20 == 0)
+        {
+            processPendingBlueprints();
         }
 
         for (final Map.Entry<BlockPos, RenderData> entry : blueprintCache.entrySet())
@@ -165,7 +168,11 @@ public class ColonyBlueprintRenderer
                 pendingBlueprints.add(entry.getValue().get());
             }
         }
+        blueprintCache = newCache;
+    }
 
+    private static void processPendingBlueprints()
+    {
         while (!pendingBlueprints.isEmpty())
         {
             final PendingRenderData data = pendingBlueprints.peek();
@@ -181,20 +188,20 @@ public class ColonyBlueprintRenderer
                     if (data.boxOnly() && data.hasAnchor())     // render only the anchor
                     {
                         final BoxPreviewData box = new BoxPreviewData(INVALID_POS, INVALID_POS, Optional.of(data.pos()));
-                        newCache.put(data.pos(), new RenderData(null, box));
+                        blueprintCache.put(data.pos(), new RenderData(null, box));
                     }
                     else
                     {
-                        newCache.remove(data.pos());
+                        blueprintCache.remove(data.pos());
                     }
                     continue;
                 }
                 final Blueprint localBlueprint = data.blueprint().get();
                 if (localBlueprint == null)
                 {
-                    newCache.remove(data.pos());
+                    blueprintCache.remove(data.pos());
                 }
-                else if (newCache.containsKey(data.pos()))
+                else if (blueprintCache.containsKey(data.pos()))
                 {
                     final BlueprintPreviewData blueprintPreviewData = new BlueprintPreviewData();
                     blueprintPreviewData.setBlueprint(localBlueprint);
@@ -214,11 +221,11 @@ public class ColonyBlueprintRenderer
                     localBlueprint.setRenderSource(data.pos());
                     if (data.boxOnly())
                     {
-                        newCache.put(data.pos(), new RenderData(null, box));
+                        blueprintCache.put(data.pos(), new RenderData(null, box));
                     }
                     else
                     {
-                        newCache.put(data.pos(), new RenderData(blueprintPreviewData, box));
+                        blueprintCache.put(data.pos(), new RenderData(blueprintPreviewData, box));
                     }
 
                     // only process one real blueprint per call
@@ -230,8 +237,6 @@ public class ColonyBlueprintRenderer
                 //Noop
             }
         }
-
-        blueprintCache = newCache;
     }
 
     /**
