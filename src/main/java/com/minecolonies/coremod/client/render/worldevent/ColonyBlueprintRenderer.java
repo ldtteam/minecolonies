@@ -60,6 +60,7 @@ public class ColonyBlueprintRenderer
     static
     {
         renderRules.add(new NearBuildPreview());
+        renderRules.add(new BuildGoggles());
     }
 
     /**
@@ -290,6 +291,43 @@ public class ColonyBlueprintRenderer
                                     buildingView.getBuildingLevel() >= buildingView.getBuildingMaxLevel());
                         });
                     }
+                }
+            }
+
+            return desired;
+        }
+    }
+
+    /**
+     * Render work orders near the player wearing build goggles.
+     */
+    private static class BuildGoggles implements IRenderBlueprintRule
+    {
+        @Override
+        public boolean isEnabled(final WorldEventContext ctx)
+        {
+            return ctx.clientPlayer.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.buildGoggles);
+        }
+
+        @Override
+        public Map<BlockPos, Supplier<PendingRenderData>> getDesiredBlueprints(final WorldEventContext ctx)
+        {
+            // ideally we'd check based on the bounding box, but we don't know that until we load the blueprints
+            final double range = MathUtils.square(MinecoloniesAPIProxy.getInstance().getConfig().getClient().buildgogglerange.get());
+
+            final Map<BlockPos, Supplier<PendingRenderData>> desired = new HashMap<>();
+            for (final IWorkOrderView workOrder : ctx.nearestColony.getWorkOrders())
+            {
+                if (workOrder.getLocation().distSqr(ctx.clientPlayer.blockPosition()) < range)
+                {
+                    desired.put(workOrder.getLocation(), () ->
+                    {
+                        final Future<Blueprint> localBlueprint = StructurePacks.getBlueprintFuture(workOrder.getPackName(), workOrder.getStructurePath());
+                        return new PendingRenderData(localBlueprint, workOrder.getLocation(),
+                                new PlacementSettings(workOrder.isMirrored() ? Mirror.FRONT_BACK : Mirror.NONE,
+                                        BlockPosUtil.getRotationFromRotations(workOrder.getRotation())),
+                                workOrder.getWorkOrderType() == WorkOrderType.REMOVE);
+                    });
                 }
             }
 

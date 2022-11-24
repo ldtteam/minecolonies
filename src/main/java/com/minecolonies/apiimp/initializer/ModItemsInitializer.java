@@ -129,6 +129,7 @@ public final class ModItemsInitializer
         ModItems.sifterMeshDiamond = new ItemSifterMesh("sifter_mesh_diamond", new Item.Properties().durability(2000).setNoRepair());
 
         ModItems.magicpotion = new ItemMagicPotion("magicpotion", ModCreativeTabs.MINECOLONIES, new Item.Properties());
+        ModItems.buildGoggles = new ItemBuildGoggles("build_goggles", ModCreativeTabs.MINECOLONIES, new Item.Properties());
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplychestdeployer"), ModItems.supplyChest);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
@@ -188,6 +189,7 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "sifter_mesh_diamond"), ModItems.sifterMeshDiamond);
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "magicpotion"), ModItems.magicpotion);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "build_goggles"), ModItems.buildGoggles);
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "barbarianegg"), new SpawnEggItem(ModEntities.BARBARIAN,
           PRIMARY_COLOR_BARBARIAN,
