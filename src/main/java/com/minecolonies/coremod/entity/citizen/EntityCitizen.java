@@ -236,6 +236,11 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     private       int         interactionCooldown = 0;
 
     /**
+     * Cache the entire team object.
+     */
+    private Team cachedTeam;
+
+    /**
      * The entities states
      */
     private enum EntityState implements IState
@@ -1952,12 +1957,21 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
             return null;
         }
 
-        if (level.isClientSide)
+        if (cachedTeam != null)
         {
-            return level.getScoreboard().getPlayerTeam(this.cachedTeamName);
+            return cachedTeam;
         }
 
-        return level.getScoreboard().getPlayerTeam(getScoreboardName());
+        if (level.isClientSide)
+        {
+            cachedTeam = level.getScoreboard().getPlayerTeam(this.cachedTeamName);
+        }
+        else
+        {
+            cachedTeam = level.getScoreboard().getPlayerTeam(getScoreboardName());
+        }
+
+        return cachedTeam;
     }
 
     @Override
