@@ -118,6 +118,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
         registerButton(BUTTON_CANCEL, this::close);
 
         findPaneOfTypeByID(BUTTON_BUILD, Button.class).setText(Component.translatable(ACTION_BUILD));
+        findPaneOfTypeByID(BUTTON_BUILD, Button.class).hide();
         findPaneOfTypeByID(BUTTON_DECONSTRUCT_BUILDING, Button.class).hide();
         findPaneOfTypeByID(BUTTON_REPAIR, Button.class).hide();
         findPaneOfTypeByID(BUTTON_NEXT_STYLE_ID, Button.class).hide();
@@ -215,6 +216,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
         try
         {
+            if (blueprintFuture.get() == null)
+            {
+                blueprintFuture = null;
+                return;
+            }
             final LoadOnlyStructureHandler structure = new LoadOnlyStructureHandler(
               world,
               structurePos,
@@ -240,7 +246,7 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
             }
             while (result.getBlockResult().getResult() != BlockPlacementResult.Result.FINISHED);
 
-
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).show();
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
             updateResourceList();
             blueprintFuture = null;
