@@ -322,7 +322,11 @@ public class WindowBuildDecoration extends AbstractWindowSkeleton
 
     private void confirmedBuild()
     {
-        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, packMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror));
+        final BlockPos builder = buildersDropDownList.getSelectedIndex() == 0
+                ? BlockPos.ZERO
+                : builders.get(buildersDropDownList.getSelectedIndex()).getB();
+
+        Network.getNetwork().sendToServer(new DecorationBuildRequestMessage(WorkOrderType.BUILD, structurePos, packMeta, path, Minecraft.getInstance().level.dimension(), rotation, mirror, builder));
         close();
     }
 }

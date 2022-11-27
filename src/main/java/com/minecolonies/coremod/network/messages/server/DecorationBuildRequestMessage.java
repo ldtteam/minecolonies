@@ -4,12 +4,14 @@ import com.ldtteam.structurize.storage.ServerFutureProcessor;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.colony.workorders.WorkOrderType;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.blocks.BlockDecorationController;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderDecoration;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,6 +72,11 @@ public class DecorationBuildRequestMessage implements IMessage
     private WorkOrderType workOrderType;
 
     /**
+     * The builder, or ZERO to auto-assign.
+     */
+    private BlockPos builder;
+
+    /**
      * Empty constructor used when registering the
      */
     public DecorationBuildRequestMessage()
@@ -85,7 +92,7 @@ public class DecorationBuildRequestMessage implements IMessage
      * @param path        blueprint path.
      * @param dimension   the dimension we're executing on.
      */
-    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final Rotation rotation, final boolean mirror)
+    public DecorationBuildRequestMessage(final WorkOrderType workOrderType, @NotNull final BlockPos pos, final String packName, final String path, final ResourceKey<Level> dimension, final Rotation rotation, final boolean mirror, final BlockPos builder)
     {
         super();
         this.workOrderType = workOrderType;
@@ -95,6 +102,7 @@ public class DecorationBuildRequestMessage implements IMessage
         this.dimension = dimension;
         this.rotation = rotation;
         this.mirror = mirror;
+        this.builder = builder;
     }
 
     @Override
@@ -107,6 +115,7 @@ public class DecorationBuildRequestMessage implements IMessage
         this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         this.mirror = buf.readBoolean();
         this.rotation = Rotation.values()[buf.readInt()];
+        this.builder = buf.readBlockPos();
     }
 
     @Override
@@ -119,6 +128,7 @@ public class DecorationBuildRequestMessage implements IMessage
         buf.writeUtf(this.dimension.location().toString());
         buf.writeBoolean(this.mirror);
         buf.writeInt(this.rotation.ordinal());
+        buf.writeBlockPos(this.builder);
     }
 
     @Nullable
@@ -167,33 +177,27 @@ public class DecorationBuildRequestMessage implements IMessage
               final String displayName = split[split.length - 1].replace(".blueprint", "");
 
               final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
-              if (structureState != null)
+              final WorkOrderType type = structureState != null && !(structureState.getBlock() instanceof BlockDecorationController)
+                      ? WorkOrderType.BUILD : workOrderType;
+
+              final WorkOrderDecoration order = WorkOrderDecoration.create(
+                  type,
+                  packName,
+                  path,
+                  WordUtils.capitalizeFully(displayName),
+                  pos,
+                  rotation.ordinal(),
+                  mirror,
+                  0);
+
+              if (!builder.equals(BlockPos.ZERO))
               {
-                  if (!(structureState.getBlock() instanceof BlockDecorationController))
+                  final IBuilding building = colony.getBuildingManager().getBuilding(builder);
+                  if (building instanceof AbstractBuildingStructureBuilder)
                   {
-                      colony.getWorkManager().addWorkOrder(
-                        WorkOrderDecoration.create(
-                          WorkOrderType.BUILD,
-                          packName,
-                          path,
-                          WordUtils.capitalizeFully(displayName),
-                          pos,
-                          rotation.ordinal(),
-                          mirror,
-                          0), false);
-                      return;
+                      order.setClaimedBy(builder);
                   }
               }
-
-              WorkOrderDecoration order = WorkOrderDecoration.create(
-                workOrderType,
-                packName,
-                path,
-                WordUtils.capitalizeFully(displayName),
-                pos,
-                rotation.ordinal(),
-                mirror,
-                0);
 
               colony.getWorkManager().addWorkOrder(order, false);
           })));
