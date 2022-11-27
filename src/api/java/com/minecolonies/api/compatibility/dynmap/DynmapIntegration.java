@@ -25,10 +25,10 @@ public class DynmapIntegration
         this.colonySet = colonySetInternal;
 
         var colonies = IMinecoloniesAPI.getInstance().getColonyManager().getAllColonies();
-        colonies.forEach(this::createColonyMarker);
+        colonies.forEach(this::createColony);
     }
 
-    private void createColonyMarker(final IColony colony)
+    public void createColony(final IColony colony)
     {
         var colonyId = getColonyId(colony);
         var levelData = (ServerLevelData) colony.getWorld().getLevelData();
@@ -104,6 +104,17 @@ public class DynmapIntegration
         // Thus, we manually have to extract the RGB bits.
         var darkerColor = new Color(color).darker();
         return (darkerColor.getRed() & 0xff) << 16 | (darkerColor.getGreen() & 0xff) << 8 | darkerColor.getBlue() & 0xff;
+    }
+
+    public void deleteColony(final IColony colony)
+    {
+        var colonyId = getColonyId(colony);
+        var colonyMarker = colonySet.findAreaMarker(colonyId);
+
+        if (colonyMarker != null)
+        {
+            colonyMarker.deleteMarker();
+        }
     }
 
     public void updateName(final IColony colony)

@@ -33,6 +33,32 @@ public class DynmapProxy
     }
 
     /**
+     * Update which triggers generation for a new colony.
+     *
+     * @param colony The colony to create.
+     */
+    public void updateColonyCreated(final IColony colony)
+    {
+        if (isDynmapPresent() && integration != null)
+        {
+            integration.createColony(colony);
+        }
+    }
+
+    /**
+     * Update which triggers generation for a new colony.
+     *
+     * @param colony The colony to create.
+     */
+    public void updateColonyDeleted(final IColony colony)
+    {
+        if (isDynmapPresent() && integration != null)
+        {
+            integration.deleteColony(colony);
+        }
+    }
+
+    /**
      * Update the name for a given colony, only works if Dynmap is present and as soon as the Dynmap compat is active.
      *
      * @param colony The colony to update the name for.

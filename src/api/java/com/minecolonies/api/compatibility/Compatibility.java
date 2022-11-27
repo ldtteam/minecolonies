@@ -29,16 +29,16 @@ import static com.minecolonies.api.util.constant.Constants.HARVESTCRAFTMODID;
 public final class Compatibility
 {
 
-    private Compatibility()
-    {
-        throw new IllegalAccessError("Utility class");
-    }
-
-    public static IBeehiveCompat   beeHiveCompat = new IBeehiveCompat() {};
+    public static IBeehiveCompat   beeHiveCompat      = new IBeehiveCompat() {};
     public static SlimeTreeProxy   tinkersSlimeCompat = new SlimeTreeProxy();
     public static TinkersToolProxy tinkersCompat      = new TinkersToolProxy();
     public static DynamicTreeProxy dynamicTreesCompat = new DynamicTreeProxy();
     public static DynmapProxy      dynmapCompat       = new DynmapProxy();
+
+    private Compatibility()
+    {
+        throw new IllegalAccessError("Utility class");
+    }
 
     /**
      * This method checks to see if STACK is able to mine anything. It goes through all compatibility checks.
@@ -120,11 +120,12 @@ public final class Compatibility
 
     /**
      * Check if a certain item stack is a tinkers tool of the given tool type.
-     * @param stack the stack to check for.
+     *
+     * @param stack    the stack to check for.
      * @param toolType the tool type.
      * @return true if so.
      */
-    public static boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType) { return tinkersCompat.isTinkersTool(stack, toolType); }
+    public static boolean isTinkersTool(@Nullable final ItemStack stack, IToolType toolType) {return tinkersCompat.isTinkersTool(stack, toolType);}
 
     /**
      * Calculate the actual attack damage of the tinkers weapon.
@@ -347,5 +348,25 @@ public final class Compatibility
     public static void updateColonyCitizenCount(final IColony colony)
     {
         dynmapCompat.updateColonyCitizenCount(colony);
+    }
+
+    /**
+     * Update for a new colony
+     *
+     * @param colony The colony
+     */
+    public static void colonyCreated(final IColony colony)
+    {
+        dynmapCompat.updateColonyCreated(colony);
+    }
+
+    /**
+     * Update for a deleted colony
+     *
+     * @param colony The colony which is about to get deleted
+     */
+    public static void colonyDeleted(final IColony colony)
+    {
+        dynmapCompat.updateColonyDeleted(colony);
     }
 }
