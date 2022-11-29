@@ -76,6 +76,20 @@ public interface IWorkOrderView
     BlockPos getLocation();
 
     /**
+     * Get the current rotation of the building
+     *
+     * @return the location
+     */
+    int getRotation();
+
+    /**
+     * Whether the current building is mirrored
+     *
+     * @return the location
+     */
+    boolean isMirrored();
+
+    /**
      * Get a text component containing the display name of the work order which can be shown on the GUI
      *
      * @return the text component
