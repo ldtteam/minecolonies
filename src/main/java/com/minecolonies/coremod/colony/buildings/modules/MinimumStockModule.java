@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MINIMUM_STOCK;
+import static com.minecolonies.api.research.util.ResearchConstants.MIN_ORDER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_QUANTITY;
 
 /**
@@ -119,10 +120,11 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                     continue;
                 }
 
-                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(itemStack, true), entry.getValue() * itemStack.getMaxStackSize());
-                final int delta = (entry.getValue() * itemStack.getMaxStackSize()) - count;
+                final int target = entry.getValue() * itemStack.getMaxStackSize();
+                final int count = InventoryUtils.hasBuildingEnoughElseCount(this.building, new ItemStorage(itemStack, true), target);
+                final int delta = target - count;
                 final IToken<?> request = getMatchingRequest(itemStack, list);
-                if (delta > 0)
+                if (delta > (building.getColony().getResearchManager().getResearchEffects().getEffectStrength(MIN_ORDER) > 0 ? target / 4 : 0))
                 {
                     if (request == null)
                     {
@@ -131,7 +133,7 @@ public class MinimumStockModule extends AbstractBuildingModule implements IMinim
                         building.createRequest(stack, false);
                     }
                 }
-                else if (request != null)
+                else if (request != null && delta <= 0)
                 {
                     building.getColony().getRequestManager().updateRequestState(request, RequestState.CANCELLED);
                 }
