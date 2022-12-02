@@ -2,12 +2,12 @@ package com.minecolonies.coremod.colony.requestsystem.resolvers;
 
 import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IRequestable;
+import com.minecolonies.api.colony.requestsystem.requestable.deliveryman.Delivery;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
@@ -15,19 +15,17 @@ import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.modules.CourierAssignmentModule;
-import com.minecolonies.coremod.colony.buildings.modules.DeliverymanAssignmentModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingDeliveryman;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.colony.requestsystem.resolvers.core.AbstractRequestResolver;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Resolver which resolves requests to it given deliverymen. Resolving is based on how well a request fits a dman, evaluated through request scores.
@@ -202,5 +200,65 @@ public abstract class DeliverymenRequestResolver<R extends IRequestable> extends
       @NotNull final IRequestManager manager, @NotNull final IRequest<?> request)
     {
         return Component.translatable(TranslationConstants.COM_MINECOLONIES_COREMOD_JOB_DELIVERYMAN);
+    }
+
+    /**
+     * Try to rebalance the queues of current dman requests linked to this warehouse
+     */
+    public void rebalanceCurrentRequests(@NotNull final IRequestManager manager)
+    {
+        // ideally we'd do a little work each tick to spread out the load, but sadly the colony tick only happens every ~25s
+        final Set<IRequest<?>> alreadyMoved = new HashSet<>();
+        final List<ICitizenData> workers = getResolveAbleDeliverymen(manager);
+        for (final ICitizenData worker : workers)
+        {
+            final JobDeliveryman workerJob = (JobDeliveryman) worker.getJob();
+            final List<IToken<?>> taskQueue = workerJob.getTaskQueue();     // assumed immutable copy, not live list
+            final boolean isWorking = worker.isWorking() && !worker.isPaused();
+
+            // don't attempt to reassign the current task unless the worker isn't actually working
+            for (int requestIndex = isWorking ? 1 : 0; requestIndex < taskQueue.size(); ++requestIndex)
+            {
+                final IRequest<?> request = manager.getRequestForToken(taskQueue.get(requestIndex));
+                if (request == null || alreadyMoved.contains(request)) { continue; }
+                if (isWorking && request.getRequest() instanceof Delivery)
+                {
+                    if (workerJob.getTaskListWithSameDestination((IRequest<? extends Delivery>) request).size() > 1)
+                    {
+                        // don't reassign if we already have multiple requests for the same route
+                        continue;
+                    }
+                }
+
+                JobDeliveryman bestJob = null;
+                Tuple<Double, Integer> bestScore = new Tuple<>(Double.MAX_VALUE, requestIndex);
+
+                for (final ICitizenData other : workers)
+                {
+                    if (other == worker || !(other.isWorking() && !other.isPaused())) { continue; }
+                    final JobDeliveryman otherJob = (JobDeliveryman) other.getJob();
+
+                    final Tuple<Double, Integer> score = otherJob.getScoreForDelivery(request);
+                    // don't reassign if it would end up further down the queue, unless we're not working
+                    if ((!isWorking || score.getB() < requestIndex) && score.getA() < bestScore.getA())
+                    {
+                        bestScore = score;
+                        bestJob = otherJob;
+                    }
+                }
+
+                if (bestJob != null)
+                {
+                    workerJob.onTaskDeletion(request.getId());
+                    bestJob.addRequest(request.getId(), bestScore.getB());
+                    alreadyMoved.add(request);
+
+                    Log.getLogger().info("Reassigned {} from {} to {}",
+                            request.getShortDisplayString().getString(),
+                            workerJob.getCitizen().getName(),
+                            bestJob.getCitizen().getName());
+                }
+            }
+        }
     }
 }
