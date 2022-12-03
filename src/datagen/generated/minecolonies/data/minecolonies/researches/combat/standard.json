@@ -1,12 +1,8 @@
 {
   "branch": "minecolonies:combat",
-  "effects": [
-    {
-      "minecolonies:effects/standard": 3
-    }
-  ],
-  "icon": "minecolonies:banner_rally_guards",
   "parentResearch": "minecolonies:combat/telescope",
+  "researchLevel": 5,
+  "icon": "minecolonies:banner_rally_guards",
   "requirements": [
     {
       "building": "barracks",
@@ -17,5 +13,9 @@
       "quantity": 32
     }
   ],
-  "researchLevel": 5
+  "effects": [
+    {
+      "minecolonies:effects/standard": 3
+    }
+  ]
 }

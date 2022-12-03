@@ -19,13 +19,13 @@
   ],
   "additional-output": [
     {
+      "item": "minecraft:gold_ingot"
+    },
+    {
       "item": "minecraft:rotten_flesh"
     },
     {
       "item": "minecraft:gold_nugget"
-    },
-    {
-      "item": "minecraft:gold_ingot"
     },
     {
       "item": "minecraft:netherrack"
@@ -46,16 +46,10 @@
       "item": "minecraft:red_mushroom"
     },
     {
-      "item": "minecraft:crimson_fungus"
-    },
-    {
       "item": "minecraft:soul_soil"
     },
     {
       "item": "minecraft:porkchop"
-    },
-    {
-      "item": "minecraft:leather"
     },
     {
       "item": "minecraft:glowstone"
@@ -64,22 +58,28 @@
       "item": "minecraft:crimson_nylium"
     },
     {
+      "item": "minecraft:crimson_fungus"
+    },
+    {
       "item": "minecraft:crimson_stem"
     },
     {
       "item": "minecraft:magma_cream"
     },
     {
-      "item": "minecraft:ghast_tear"
+      "item": "minecraft:leather"
     },
     {
       "item": "minecraft:gunpowder"
     },
     {
-      "item": "minecraft:ender_pearl"
+      "item": "minecraft:nether_wart"
     },
     {
-      "item": "minecraft:nether_wart"
+      "item": "minecraft:ghast_tear"
+    },
+    {
+      "item": "minecraft:ender_pearl"
     },
     {
       "item": "minecraft:blaze_rod"
