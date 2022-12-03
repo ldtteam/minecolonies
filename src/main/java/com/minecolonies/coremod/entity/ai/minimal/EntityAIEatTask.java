@@ -147,7 +147,7 @@ public class EntityAIEatTask extends Goal
 
         stateMachine = new TickRateStateMachine<>(IDLE, e -> Log.getLogger().warn("Eating AI threw exception:", e));
 
-        stateMachine.addTransition(new TickingTransition<>(IDLE, this::shouldEat, () -> CHECK_FOR_FOOD, 20));
+        stateMachine.addTransition(new TickingTransition<>(IDLE, this::shouldEat, () -> CHECK_FOR_FOOD, 60));
         stateMachine.addTransition(new TickingTransition<>(CHECK_FOR_FOOD, () -> true, this::getFood, 20));
         stateMachine.addTransition(new TickingTransition<>(GO_TO_HUT, () -> true, this::goToHut, 20));
         stateMachine.addTransition(new TickingTransition<>(EAT, () -> true, this::eat, 20));
@@ -204,7 +204,7 @@ public class EntityAIEatTask extends Goal
             }
 
             waitingTicks++;
-            if (waitingTicks >= SECONDS_A_MINUTE * MINUTES_BETWEEN_FOOD_CHECKS || citizenData.getWorkBuilding() == null)
+            if (waitingTicks >= SECONDS_A_MINUTE / 3 * MINUTES_BETWEEN_FOOD_CHECKS || citizenData.getWorkBuilding() == null)
             {
                 waitingTicks = 0;
                 return true;
