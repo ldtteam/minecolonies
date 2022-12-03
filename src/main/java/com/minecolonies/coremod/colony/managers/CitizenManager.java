@@ -533,7 +533,6 @@ public class CitizenManager implements ICitizenManager
     public boolean tickCitizenData()
     {
         this.getCitizens().forEach(ICitizenData::tick);
-        Log.getLogger().warn("Tick");
         return false;
     }
 
