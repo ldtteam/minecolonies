@@ -494,6 +494,18 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
+        ShapedRecipeBuilder.shaped(ModItems.buildGoggles)
+                .pattern("NIN")
+                .pattern("GTG")
+                .pattern("L L")
+                .define('N', Items.GOLD_NUGGET)
+                .define('I', Items.IRON_INGOT)
+                .define('G', Items.GLASS_PANE)
+                .define('L', Items.LEATHER)
+                .define('T', buildTool.get())
+                .unlockedBy("has_build_tool", has(buildTool.get()))
+                .save(consumer);
+
         ShapedRecipeBuilder.shaped(shapeTool.get())
                 .pattern("  X")
                 .pattern(" S ")

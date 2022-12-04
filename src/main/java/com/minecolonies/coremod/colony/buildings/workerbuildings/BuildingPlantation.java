@@ -269,7 +269,7 @@ public class BuildingPlantation extends AbstractBuilding
                         new ItemStack(entry.getKey(), entry.getValue().getMinimumLength() + 1),
                         Collections.emptyList(),
                         Collections.singletonList(Collections.singletonList(new ItemStack(entry.getKey()))),
-                        1, Blocks.AIR, null, Collections.emptyList(), -1));
+                        1, Blocks.AIR, null, ToolType.NONE, Collections.emptyList(), -1));
             }
 
             return recipes;

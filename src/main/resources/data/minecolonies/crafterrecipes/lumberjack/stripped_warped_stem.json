@@ -19,5 +19,6 @@
   ],
   "result": "minecraft:stripped_warped_stem",
   "count": 1,
+  "tool": "axe",
   "intermediate" : "minecraft:air"
 }
