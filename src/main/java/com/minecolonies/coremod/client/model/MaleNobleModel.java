@@ -71,6 +71,6 @@ public class MaleNobleModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("SailorHat1").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("SailorHat1").visible = displayHat(entity);
     }
 }

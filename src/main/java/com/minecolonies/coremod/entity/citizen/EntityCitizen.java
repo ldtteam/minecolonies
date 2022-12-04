@@ -793,9 +793,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     {
         final ItemStack hat = getItemBySlot(EquipmentSlot.HEAD);
         if (LocalDate.now(Clock.systemDefaultZone()).getMonth() == Month.DECEMBER
-              && MineColonies.getConfig().getServer().holidayFeatures.get()
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobStudent)
-              && !(getCitizenJobHandler().getColonyJob() instanceof JobNetherWorker))
+              && MineColonies.getConfig().getServer().holidayFeatures.get())
         {
             if (hat.isEmpty())
             {
