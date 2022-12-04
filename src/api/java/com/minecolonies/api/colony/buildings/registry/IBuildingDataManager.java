@@ -1,16 +1,17 @@
 package com.minecolonies.api.colony.buildings.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
 
 /**
  * Helper manager to analyse and process the registry for {@link BuildingEntry}.
@@ -60,4 +61,11 @@ public interface IBuildingDataManager
      * @return The {@link IBuildingView} with the data loaded from the {@link ByteBuf}.
      */
     IBuildingView createViewFrom(final IColonyView colony, final BlockPos position, final FriendlyByteBuf networkBuffer);
+
+    /**
+     * Opens the building browser window for the specific building type.  Client side only.
+     *
+     * @param block The building block.
+     */
+    void openBuildingBrowser(final AbstractBlockHut<?> block);
 }

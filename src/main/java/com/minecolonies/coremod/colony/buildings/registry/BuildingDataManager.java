@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.registry;
 
+import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -11,10 +12,12 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.Log;
+import com.minecolonies.coremod.client.gui.WindowBuildingBrowser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_BUILDING_TYPE;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
@@ -84,5 +87,11 @@ public class BuildingDataManager implements IBuildingDataManager
         }
 
         return view;
+    }
+
+    @Override
+    public void openBuildingBrowser(@NotNull final AbstractBlockHut<?> block)
+    {
+        new WindowBuildingBrowser(block).open();
     }
 }
