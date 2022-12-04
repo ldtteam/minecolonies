@@ -11,11 +11,13 @@ import com.minecolonies.api.colony.requestsystem.token.IToken;
 import com.minecolonies.api.crafting.*;
 import com.minecolonies.api.research.IGlobalResearchTree;
 import com.minecolonies.api.util.ItemStackUtils;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,6 +95,11 @@ public class CustomRecipe
      * The property namefor the result loottable
      */
     public static final String RECIPE_LOOTTABLE_PROP = "loot-table";
+
+    /**
+     * The property name for the required tool
+     */
+    public static final String RECIPE_TOOL_PROP = "tool";
 
     /**
      * The property name for the intermediate block ID
@@ -200,6 +207,11 @@ public class CustomRecipe
     private ResourceLocation lootTable;
 
     /**
+     * The tool required to craft this recipe
+     */
+    private IToolType requiredTool = ToolType.NONE;
+
+    /**
      * Cache of the recipe storage for performance
      */
     private RecipeStorage cachedRecipeStorage;
@@ -254,6 +266,11 @@ public class CustomRecipe
         if (recipeJson.has(RECIPE_LOOTTABLE_PROP))
         {
             recipe.lootTable = new ResourceLocation(recipeJson.get(RECIPE_LOOTTABLE_PROP).getAsString());
+        }
+
+        if (recipeJson.has(RECIPE_TOOL_PROP))
+        {
+            recipe.requiredTool = ToolType.getToolType(recipeJson.get(RECIPE_TOOL_PROP).getAsString());
         }
 
         if (recipeJson.has(RECIPE_SECONDARY_PROP))
@@ -350,14 +367,15 @@ public class CustomRecipe
      * @param researchReq       Research ID that the colony must have to begin the research.
      * @param researchExclude   Research ID that will cause buildings in the colony to remove the recipe, if learned.
      * @param lootTable         The loot table's resource location, if one is present.
+     * @param requiredTool      The tool required for this craft, if any.  (In addition to any tools inferred from the recipe itself.)
      * @param inputs            The consumed items, as ItemStorages.
      * @param primaryOutput     The primary output of the recipe.
      * @param secondaryOutput   The secondary outputs of the recipe. Most often items like buckets or tools.
      * @param altOutputs        Alternative outputs of the recipe.  Used to allow one taught recipe to result in multiple effective choices for the request system.
      */
     public CustomRecipe(final String crafter, final int minBldgLevel, final int maxBldgLevel, final boolean mustExist, final boolean showTooltip, final ResourceLocation recipeId,
-      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, @Nullable final ResourceLocation lootTable, final List<ItemStorage> inputs,
-      final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
+      @Nullable final ResourceLocation researchReq, @Nullable final ResourceLocation researchExclude, @Nullable final ResourceLocation lootTable, final IToolType requiredTool,
+      final List<ItemStorage> inputs, final ItemStack primaryOutput, final List<ItemStack> secondaryOutput, final List<ItemStack> altOutputs, Block intermediate)
     {
         this.crafter = crafter;
         this.recipeId = recipeId;
@@ -372,6 +390,7 @@ public class CustomRecipe
         this.secondary = secondaryOutput;
         this.altOutputs = altOutputs;
         this.lootTable = lootTable;
+        this.requiredTool = requiredTool;
         this.intermediate = intermediate;
     }
 
@@ -437,6 +456,16 @@ public class CustomRecipe
     public ResourceLocation getLootTable()
     {
         return lootTable;
+    }
+
+    /**
+     * Get the required tool, if any.
+     * @return the tool required to perform this craft
+     */
+    @NotNull
+    public IToolType getRequiredTool()
+    {
+        return requiredTool;
     }
 
     /**
@@ -586,7 +615,8 @@ public class CustomRecipe
                     ModRecipeTypes.CLASSIC_ID,
                     null, //alternate outputs
                     secondary, //secondary output
-                    lootTable
+                    lootTable,
+                    requiredTool
                     );
             }
             else
@@ -602,7 +632,8 @@ public class CustomRecipe
                     ModRecipeTypes.MULTI_OUTPUT_ID,
                     altOutputs, //alternate outputs
                     secondary, //secondary output
-                    lootTable
+                    lootTable,
+                    requiredTool
                     );
             }
             IRecipeManager recipeManager = IColonyManager.getInstance().getRecipeManager();
@@ -619,7 +650,7 @@ public class CustomRecipe
     @Override
     public int hashCode()
     {
-        return Objects.hash(result, researchId, excludedResearchId, lootTable, inputs);
+        return Objects.hash(result, researchId, excludedResearchId, lootTable, requiredTool, inputs);
     }
 
     @Override
@@ -641,6 +672,7 @@ public class CustomRecipe
             && Objects.equals(researchId, that.researchId)
             && Objects.equals(excludedResearchId, that.excludedResearchId)
             && Objects.equals(lootTable, that.lootTable)
+            && Objects.equals(requiredTool, that.requiredTool)
             && inputs.equals(that.inputs);
     }
 
