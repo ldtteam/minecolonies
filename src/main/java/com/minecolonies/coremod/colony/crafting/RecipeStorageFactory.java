@@ -8,18 +8,19 @@ import com.minecolonies.api.crafting.IRecipeStorageFactory;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModRecipeTypes;
 import com.minecolonies.api.crafting.RecipeStorage;
+import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -72,6 +73,11 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
      */
     private static final String LOOT_TAG = "loot-table";
 
+    /**
+     * Compound tag for Tool
+     */
+    private static final String TOOL_TAG = "tool";
+
     @NotNull
     @Override
     public TypeToken<RecipeStorage> getFactoryOutputType()
@@ -93,14 +99,15 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
       @NotNull final List<ItemStorage> input,
       final int gridSize,
       @NotNull final ItemStack primaryOutput,
-      final Block intermediate, 
+      final Block intermediate,
       final ResourceLocation source,
       final ResourceLocation type,
       final List<ItemStack> altOutputs,
       final List<ItemStack> secOutputs,
-      final ResourceLocation lootTable)
+      final ResourceLocation lootTable,
+      @NotNull final IToolType requiredTool)
     {
-        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable);
+        return new RecipeStorage(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
     }
 
     @NotNull
@@ -151,6 +158,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         {
             compound.putString(LOOT_TAG, recipeStorage.getLootTable().toString());
         }
+
+        compound.putString(TOOL_TAG, recipeStorage.getRequiredTool().getName());
 
         return compound;
     }
@@ -206,7 +215,9 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ResourceLocation lootTable = nbt.contains(LOOT_TAG) ? new ResourceLocation(nbt.getString(LOOT_TAG)) : null; 
 
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
+        final IToolType requiredTool = nbt.contains(TOOL_TAG) ? ToolType.getToolType(nbt.getString(TOOL_TAG)) : ToolType.NONE;
+
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
 
     @Override
@@ -231,6 +242,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         packetBuffer.writeVarInt(input.getCraftingToolsAndSecondaryOutputs().size());
         input.getCraftingToolsAndSecondaryOutputs().forEach(stack -> packetBuffer.writeItem(stack));
+
+        packetBuffer.writeUtf(input.getRequiredTool().getName());
 
         packetBuffer.writeBoolean(input.getLootTable() != null);
         if(input.getLootTable() != null)
@@ -277,6 +290,8 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
             secOutputs.add(buffer.readItem());
         }
 
+        final IToolType requiredTool = ToolType.getToolType(buffer.readUtf());
+
         ResourceLocation lootTable = null;
         if(buffer.readBoolean())
         {
@@ -290,7 +305,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
         }
 
         final IToken<?> token = controller.deserialize(buffer);
-        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable);
+        return this.getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs.isEmpty() ? null : altOutputs, secOutputs.isEmpty() ? null : secOutputs, lootTable, requiredTool);
     }
 
     @Override

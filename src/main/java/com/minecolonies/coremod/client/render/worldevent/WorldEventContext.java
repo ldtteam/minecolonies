@@ -59,7 +59,7 @@ public class WorldEventContext
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
         {
             ColonyBorderRenderer.render(this); // renders directly (not into bufferSource)
-            NearColonyBuildingsRenderer.render(this);
+            ColonyBlueprintRenderer.render(this);
             ColonyWaypointRenderer.render(this);
             ColonyPatrolPointRenderer.render(this);
             GuardTowerRallyBannerRenderer.render(this);

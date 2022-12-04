@@ -30,6 +30,9 @@
   "minecolonies.config.neighborbuildingrange": "Neighbor Building Range",
   "minecolonies.config.neighborbuildingrange.comment": "How close a building needs to be to another to be considered a neighbor, in blocks. -1 = intersecting, 0 = touching",
 
+  "minecolonies.config.buildgogglerange": "Build Goggles Range",
+  "minecolonies.config.buildgogglerange.comment": "How close (in blocks) you need to be to see work orders while wearing the Build Goggles.",
+
   "minecolonies.config.colonyteamborders": "Show Colony Borders in Team Colors",
   "minecolonies.config.colonyteamborders.comment": "When true, the colony borders shown when holding the build tool will be in the colony's team color. When false, the colony you're inside will be white and any other colony will be red.",
 
@@ -1030,6 +1033,8 @@
   "com.minecolonies.coremod.cook.serve.player": "%s: Here Governor, take this food!",
 
   "item.minecolonies.santa_hat": "Santa Hat",
+  "item.minecolonies.build_goggles": "Builder's Goggles",
+  "item.minecolonies.build_goggles.lore": "They do nothing!",
 
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
