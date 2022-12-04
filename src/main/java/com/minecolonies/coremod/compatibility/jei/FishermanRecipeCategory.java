@@ -3,6 +3,7 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.minecolonies.api.colony.buildings.ModBuildings;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.loot.ModLootTables;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -12,7 +13,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -53,9 +53,7 @@ public class FishermanRecipeCategory extends JobBasedRecipeCategory<FishermanRec
                           @NotNull final FishingRecipe recipe,
                           @NotNull final IFocusGroup focuses)
     {
-        builder.addSlot(RecipeIngredientRole.CATALYST, WIDTH - 18, CITIZEN_Y - 20)
-                .setBackground(this.slot, -1, -1)
-                .addItemStack(new ItemStack(Items.FISHING_ROD));
+        addToolSlot(builder, ToolType.FISHINGROD, WIDTH - 18, CITIZEN_Y - 20, true);
 
         if (!recipe.getDrops().isEmpty())
         {

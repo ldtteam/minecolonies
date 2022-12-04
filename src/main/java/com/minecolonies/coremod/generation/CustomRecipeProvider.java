@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.generation;
 
 import com.google.common.collect.Sets;
-import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -9,29 +8,27 @@ import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -118,6 +115,16 @@ public abstract class CustomRecipeProvider implements DataProvider
         public CustomRecipeBuilder lootTable(@NotNull final ResourceLocation lootTable)
         {
             this.json.addProperty(CustomRecipe.RECIPE_LOOTTABLE_PROP, lootTable.toString());
+            return this;
+        }
+
+        @NotNull
+        public CustomRecipeBuilder requiredTool(@NotNull final IToolType toolType)
+        {
+            if (toolType != ToolType.NONE)
+            {
+                this.json.addProperty(CustomRecipe.RECIPE_TOOL_PROP, toolType.getName());
+            }
             return this;
         }
 

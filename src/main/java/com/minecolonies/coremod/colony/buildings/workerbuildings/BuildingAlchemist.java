@@ -265,16 +265,16 @@ public class BuildingAlchemist extends AbstractBuilding
             // growing mistletoe
             recipes.add(new GenericRecipe(null, new ItemStack(ModItems.mistletoe),
                     Collections.emptyList(),
-                    Collections.singletonList(Collections.singletonList(new ItemStack(Items.SHEARS))),
+                    Collections.emptyList(),
                     1, Blocks.OAK_LEAVES,
-                    null, Collections.emptyList(), -1));
+                    null, ToolType.SHEARS, Collections.emptyList(), -1));
 
             // growing netherwart
             recipes.add(new GenericRecipe(null, new ItemStack(Items.NETHER_WART, 4),
                     Collections.emptyList(),
                     Collections.singletonList(Collections.singletonList(new ItemStack(Items.NETHER_WART))),
                     1, Blocks.SOUL_SAND,
-                    null, Collections.emptyList(), -1));
+                    null, ToolType.NONE, Collections.emptyList(), -1));
 
             return recipes;
         }

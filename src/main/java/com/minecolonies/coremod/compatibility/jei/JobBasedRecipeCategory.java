@@ -3,18 +3,24 @@ package com.minecolonies.coremod.compatibility.jei;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
 import com.minecolonies.api.entity.ModEntities;
+import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.Constants;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotTooltipCallback;
@@ -22,6 +28,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IModIdHelper;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
@@ -155,6 +162,34 @@ public abstract class JobBasedRecipeCategory<T> implements IRecipeCategory<T>
     public List<T> findRecipes(@NotNull final Map<CraftingType, List<IGenericRecipe>> vanilla)
     {
         return Collections.emptyList();
+    }
+
+    /**
+     * Creates a display slot for the specified tool
+     * @param builder        the layout builder
+     * @param requiredTool   the required tool
+     * @param x              the horizontal coordinate
+     * @param y              the vertical
+     * @param withBackground true to display a slot background when present (no background is shown when no tool)
+     */
+    protected void addToolSlot(@NotNull final IRecipeLayoutBuilder builder,
+                               @NotNull final IToolType requiredTool,
+                               final int x, final int y, final boolean withBackground)
+    {
+        final IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.CATALYST, x, y).setSlotName("tool");
+
+        if (requiredTool != ToolType.NONE)
+        {
+            if (withBackground)
+            {
+                slot.setBackground(this.slot, -1, -1);
+            }
+
+            slot.addItemStacks(MinecoloniesAPIProxy.getInstance().getColonyManager().getCompatibilityManager().getListOfAllItems().stream()
+                    .filter(stack -> ItemStackUtils.isTool(stack, requiredTool))
+                    .sorted(Comparator.comparing(stack -> ItemStackUtils.getMiningLevel(stack, requiredTool)))
+                    .toList());
+        }
     }
 
     @Override
