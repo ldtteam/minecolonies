@@ -369,7 +369,11 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
 
         try
         {
-            final Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
+            Blueprint blueprint = StructurePacks.getBlueprint(this.structurePack, this.path, true);
+            if (blueprint == null && this.path.endsWith("0.blueprint"))
+            {
+                blueprint = StructurePacks.getBlueprint(this.structurePack, this.path.replace("0.blueprint", "1.blueprint"), true);
+            }
             if (blueprint != null)
             {
                 final BlockState structureState = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset()).getState();
