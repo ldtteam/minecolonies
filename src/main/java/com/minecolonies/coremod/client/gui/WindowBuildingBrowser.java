@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
+import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
@@ -11,7 +12,9 @@ import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.IOPool;
+import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -51,14 +54,29 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     @SuppressWarnings("ConstantConditions") private static final int COLOR_INVISIBLE       = ChatFormatting.DARK_BLUE.getColor();
     @SuppressWarnings("ConstantConditions") private static final int COLOR_INVISIBLE_CHILD = ChatFormatting.BLUE.getColor();
 
+    private static final Map<AbstractBlockHut<?>, List<BuildingInfo>> buildingCache = new HashMap<>();
+
     private final AbstractBlockHut<?> block;
     private List<BuildingInfo> buildings;
     private Future<List<BuildingInfo>> futureBuildings;
 
+    /**
+     * Construct the window
+     * @param block the hut to display styles for
+     */
     public WindowBuildingBrowser(@NotNull final AbstractBlockHut<?> block)
     {
         super(WINDOW_RESOURCE.toString());
         this.block = block;
+    }
+
+    /**
+     * Clears the blueprint information cache.  Called on logout.  (So it won't report things
+     * scanned this session, but that's probably the least interesting anyway.)
+     */
+    public static void clearCache()
+    {
+        buildingCache.clear();
     }
 
     @Override
@@ -174,10 +192,22 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     @NotNull
     private List<BuildingInfo> discoverBuildings()
     {
-        final List<BuildingInfo> buildings = new ArrayList<>();
+        List<BuildingInfo> cached = buildingCache.get(block);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        rebuildCache();
+
+        return buildingCache.computeIfAbsent(block, k -> new ArrayList<>());
+    }
+
+    private void rebuildCache()
+    {
         if (!StructurePacks.waitUntilFinishedLoading())
         {
-            return buildings;
+            return;
         }
 
         // to reduce total search time, kick work off to several worker threads (currently 4 threads ~= 5s on a decent CPU and slow disk)
@@ -188,7 +218,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             thread.setUncaughtExceptionHandler((thread1, throwable) -> Log.getLogger().error("Minecolonies Building Browser errored! ", throwable));
             return thread;
         });
-        final Map<StructurePackMeta, Future<List<BuildingInfo>>> packFutures = StructurePacks.getPackMetas().stream()
+        final Map<StructurePackMeta, Future<Map<AbstractBlockHut<?>, List<BuildingInfo>>>> packFutures = StructurePacks.getPackMetas().stream()
                 .collect(Collectors.toMap(pack -> pack, pack -> packPool.submit(() -> discoverBuildings(pack))));
         while (!futureBuildings.isCancelled() && packFutures.values().stream().anyMatch(f -> !f.isDone()))
         {
@@ -199,33 +229,43 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             catch (InterruptedException e)
             {
                 packPool.shutdown();
-                return buildings;
+                return;
             }
         }
         packPool.shutdown();
 
-        for (final Future<List<BuildingInfo>> futureBuildings : packFutures.entrySet().stream()
+        if (futureBuildings.isCancelled())
+        {
+            return;
+        }
+
+        buildingCache.clear();
+        for (final Future<Map<AbstractBlockHut<?>, List<BuildingInfo>>> futureBuildings : packFutures.entrySet().stream()
                 .sorted(Comparator.comparing(entry -> entry.getKey().getName()))
                 .map(Map.Entry::getValue).toList())
         {
             try
             {
-                buildings.addAll(futureBuildings.get());
+                for (final Map.Entry<AbstractBlockHut<?>, List<BuildingInfo>> entry : futureBuildings.get().entrySet())
+                {
+                    buildingCache.merge(entry.getKey(), entry.getValue(), (prev, next) ->
+                            ImmutableList.<BuildingInfo>builder().addAll(prev).addAll(next).build());
+                }
             }
             catch (InterruptedException | ExecutionException e)
             {
                 // ignore
             }
         }
-
-        return buildings;
     }
 
     @NotNull
-    private List<BuildingInfo> discoverBuildings(@NotNull final StructurePackMeta pack)
+    private Map<AbstractBlockHut<?>, List<BuildingInfo>> discoverBuildings(@NotNull final StructurePackMeta pack)
     {
+        final Collection<BuildingEntry> buildingTypes = MinecoloniesAPIProxy.getInstance().getBuildingRegistry().getValues();
+
         final boolean isCreative = Minecraft.getInstance().player.isCreative();
-        final List<BuildingInfo> buildings = new ArrayList<>();
+        final Map<AbstractBlockHut<?>, List<BuildingInfo>> buildings = new HashMap<>();
         try
         {
             try (final Stream<Path> paths = Files.walk(pack.getPath()))
@@ -239,16 +279,22 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
                         if (blueprint != null)
                         {
                             final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-                            if (anchor.is(block))
+                            for (final BuildingEntry buildingType : buildingTypes)
                             {
-                                if (isCreative || !isInvisible(blueprint))
+                                final AbstractBlockHut<?> block = buildingType.getBuildingBlock();
+                                if (anchor.is(block))
                                 {
-                                    buildings.add(BuildingInfo.create(pack, blueprint, false));
+                                    if (isCreative || !isInvisible(blueprint))
+                                    {
+                                        buildings.computeIfAbsent(block, k -> new ArrayList<>())
+                                                .add(BuildingInfo.create(pack, blueprint, false));
+                                    }
                                 }
-                            }
-                            else if (Arrays.stream(blueprint.getPalette()).anyMatch(p -> p.is(block)))
-                            {
-                                buildings.add(BuildingInfo.create(pack, blueprint, true));
+                                else if (Arrays.stream(blueprint.getPalette()).anyMatch(p -> p.is(block)))
+                                {
+                                    buildings.computeIfAbsent(block, k -> new ArrayList<>())
+                                            .add(BuildingInfo.create(pack, blueprint, true));
+                                }
                             }
                         }
                     }
@@ -260,7 +306,8 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             Log.getLogger().error("Error loading blueprints for {}: ", pack.getName(), e);
         }
 
-        return BuildingInfo.flattenLevels(buildings);
+        buildings.replaceAll((k, v) -> BuildingInfo.flattenLevels(v));
+        return buildings;
     }
 
     // copied from WindowExtendedBuildTool -- todo move to utility class in Structurize
