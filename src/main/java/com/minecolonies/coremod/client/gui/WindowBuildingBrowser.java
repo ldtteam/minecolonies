@@ -16,7 +16,6 @@ import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -124,6 +123,9 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID("loading", Text.class).hide();
 
+        final List<BuildingInfo> visibleBuildings = mc.player.isCreative() ? buildings
+                : buildings.stream().filter(b -> !b.isInvisible()).toList();
+
         final ScrollingList buildingList = findPaneOfTypeByID("buildings", ScrollingList.class);
         buildingList.enable();
         buildingList.show();
@@ -136,7 +138,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             @Override
             public int getElementCount()
             {
-                return buildings.size();
+                return visibleBuildings.size();
             }
 
             /**
@@ -147,7 +149,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final BuildingInfo building = buildings.get(index);
+                final BuildingInfo building = visibleBuildings.get(index);
                 final Text packLabel = rowPane.findPaneOfTypeByID("packName", Text.class);
                 final Text nameLabel = rowPane.findPaneOfTypeByID("buildingName", Text.class);
                 final Text sizeLabel = rowPane.findPaneOfTypeByID("buildingSize", Text.class);
@@ -264,7 +266,6 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     {
         final Collection<BuildingEntry> buildingTypes = MinecoloniesAPIProxy.getInstance().getBuildingRegistry().getValues();
 
-        final boolean isCreative = Minecraft.getInstance().player.isCreative();
         final Map<AbstractBlockHut<?>, List<BuildingInfo>> buildings = new HashMap<>();
         try
         {
@@ -284,11 +285,8 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
                                 final AbstractBlockHut<?> block = buildingType.getBuildingBlock();
                                 if (anchor.is(block))
                                 {
-                                    if (isCreative || !isInvisible(blueprint))
-                                    {
-                                        buildings.computeIfAbsent(block, k -> new ArrayList<>())
-                                                .add(BuildingInfo.create(pack, blueprint, false));
-                                    }
+                                    buildings.computeIfAbsent(block, k -> new ArrayList<>())
+                                            .add(BuildingInfo.create(pack, blueprint, false));
                                 }
                                 else if (Arrays.stream(blueprint.getPalette()).anyMatch(p -> p.is(block)))
                                 {
@@ -308,30 +306,6 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
 
         buildings.replaceAll((k, v) -> BuildingInfo.flattenLevels(v));
         return buildings;
-    }
-
-    // copied from WindowExtendedBuildTool -- todo move to utility class in Structurize
-    private static boolean isInvisible(@NotNull final Blueprint blueprint)
-    {
-        final BlockInfo anchor = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset());
-        if (anchor.getState().getBlock() instanceof IInvisibleBlueprintAnchorBlock invis &&
-                !invis.isVisible(anchor.getTileEntityData()))
-        {
-            return true;
-        }
-
-        assert !anchor.hasTileEntityData() || anchor.getTileEntityData() != null;   // quiet warnings
-        if (anchor.hasTileEntityData() && anchor.getTileEntityData().contains(TAG_BLUEPRINTDATA))
-        {
-            final Map<BlockPos, List<String>> tagMap = IBlueprintDataProviderBE.readTagPosMapFrom(anchor.getTileEntityData());
-            final List<String> anchorTags = tagMap.computeIfAbsent(BlockPos.ZERO, k -> new ArrayList<>());
-            if (anchorTags.contains(INVISIBLE_TAG))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private record BuildingInfo(StructurePackMeta pack, String path, Set<Integer> levels, BlockPos size, boolean isParent, boolean isInvisible)
@@ -359,7 +333,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             path = path + '/' + name;
             final BlockPos size = new BlockPos(blueprint.getSizeX(), blueprint.getSizeY(), blueprint.getSizeZ());
 
-            return new BuildingInfo(pack, path, levels, size, isParent, WindowBuildingBrowser.isInvisible(blueprint));
+            return new BuildingInfo(pack, path, levels, size, isParent, isInvisible(blueprint));
         }
 
         /**
@@ -387,6 +361,30 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
                     .max(Comparator.naturalOrder())
                     .get();     // sizes *should* be all the same, but technically don't have to be...
             return new BuildingInfo(first.pack, first.path, levels, size, first.isParent, first.isInvisible);
+        }
+
+        // copied from WindowExtendedBuildTool -- todo move to utility class in Structurize
+        private static boolean isInvisible(@NotNull final Blueprint blueprint)
+        {
+            final BlockInfo anchor = blueprint.getBlockInfoAsMap().get(blueprint.getPrimaryBlockOffset());
+            if (anchor.getState().getBlock() instanceof IInvisibleBlueprintAnchorBlock invis &&
+                    !invis.isVisible(anchor.getTileEntityData()))
+            {
+                return true;
+            }
+
+            assert !anchor.hasTileEntityData() || anchor.getTileEntityData() != null;   // quiet warnings
+            if (anchor.hasTileEntityData() && anchor.getTileEntityData().contains(TAG_BLUEPRINTDATA))
+            {
+                final Map<BlockPos, List<String>> tagMap = IBlueprintDataProviderBE.readTagPosMapFrom(anchor.getTileEntityData());
+                final List<String> anchorTags = tagMap.computeIfAbsent(BlockPos.ZERO, k -> new ArrayList<>());
+                if (anchorTags.contains(INVISIBLE_TAG))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
