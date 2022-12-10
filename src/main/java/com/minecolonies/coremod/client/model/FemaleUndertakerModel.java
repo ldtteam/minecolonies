@@ -72,6 +72,6 @@ public class FemaleUndertakerModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("TopHat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("TopHat").visible = displayHat(entity);
     }
 }
