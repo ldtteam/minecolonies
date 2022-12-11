@@ -162,6 +162,8 @@ public final class ResearchConstants
 
     public static final ResourceLocation MORE_AIR          = new ResourceLocation(Constants.MOD_ID, "effects/air");
 
+    public static final ResourceLocation MIN_ORDER         = new ResourceLocation(Constants.MOD_ID, "effects/min_order");
+
     /**
      * Private constructor to hide implicit public one.
      */
