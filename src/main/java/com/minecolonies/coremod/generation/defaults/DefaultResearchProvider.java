@@ -130,6 +130,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(TELESCOPE).setTranslatedName("Farther rallying banner range"));
         effects.add(new ResearchEffect(STANDARD).setTranslatedName("Place Rallying Banner at location"));
         effects.add(new ResearchEffect(MORE_AIR).setTranslatedName("Citizens can stay longer underwater"));
+        effects.add(new ResearchEffect(MIN_ORDER).setTranslatedName("Buildings wait a bit longer before placing orders"));
 
         // Building-focused unlocks are derived from the block hut name.  Do not manually add ResourceLocations as a string, as some building blocks have surprising names.
         effects.add(new ResearchEffect(ModBuildings.archery.getBuildingBlock()).setTranslatedName("Unlocks Archery"));
@@ -383,6 +384,16 @@ public class DefaultResearchProvider extends AbstractResearchProvider
                                  .addItemCost(Items.VINE, 64)
                                  .addEffect(VINES, 1)
                                  .addToList(r);
+        new Research(new ResourceLocation(Constants.MOD_ID, "civilian/moq"), CIVIL).setParentResearch(rails)
+                .setTranslatedName("Minimum Order Quantity")
+                .setTranslatedSubtitle("Work smarter, not harder.")
+                .setSortOrder(10)
+                .setIcon(ModItems.clipboard)
+                .addBuildingRequirement(ModBuildings.DELIVERYMAN_ID, 9)
+                .addItemCost(ModItems.clipboard, 1)
+                .addItemCost(Items.BOOK, 16)
+                .addEffect(MIN_ORDER, 1)
+                .addToList(r);
         final Research agile = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/agile"), CIVIL).setParentResearch(nimble)
                                  .setTranslatedName("Agile")
                                  .setTranslatedSubtitle("So this is how it feels to be young again...")
