@@ -311,9 +311,9 @@ public final class Compatibility
     }
 
     /**
-     * Update the colony name
+     * Called whenever a colony it's name is changed.
      *
-     * @param colony The colony
+     * @param colony The colony.
      */
     public static void updateColonyName(final IColony colony)
     {
@@ -321,9 +321,9 @@ public final class Compatibility
     }
 
     /**
-     * Update the colony team color
+     * Called whenever a colony it's team color is changed.
      *
-     * @param colony The colony
+     * @param colony The colony.
      */
     public static void updateColonyTeamColor(final IColony colony)
     {
@@ -331,9 +331,9 @@ public final class Compatibility
     }
 
     /**
-     * Update the colony name
+     * Called whenever a colony it's borders change (due to building (de)construction)
      *
-     * @param colony The colony
+     * @param colony The colony.
      */
     public static void updateColonyBorders(final IColony colony)
     {
@@ -341,9 +341,9 @@ public final class Compatibility
     }
 
     /**
-     * Update the colony citizen count
+     * Called whenever a colony it's amount of citizens changes (includes citizen born, tavern hired, resurrected from death and death itself).
      *
-     * @param colony The colony
+     * @param colony The colony.
      */
     public static void updateColonyCitizenCount(final IColony colony)
     {
@@ -351,9 +351,9 @@ public final class Compatibility
     }
 
     /**
-     * Update for a new colony
+     * Called whenever a new colony is created.
      *
-     * @param colony The colony
+     * @param colony The colony.
      */
     public static void colonyCreated(final IColony colony)
     {
@@ -361,9 +361,9 @@ public final class Compatibility
     }
 
     /**
-     * Update for a deleted colony
+     * Called whenever a colony is about to get deleted.
      *
-     * @param colony The colony which is about to get deleted
+     * @param colony The colony which is about to get deleted.
      */
     public static void colonyDeleted(final IColony colony)
     {

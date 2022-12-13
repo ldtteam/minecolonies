@@ -1,5 +1,8 @@
 package com.minecolonies.api.compatibility.dynmap;
 
+/**
+ * A small set of constant declarations that the Dynmap plugin uses to handle content towards Dynmap it's map system.
+ */
 public final class Constants
 {
     public static final String DYNMAP_COLONY_MARKER_SET_ID      = "minecolonies:colony_markers";

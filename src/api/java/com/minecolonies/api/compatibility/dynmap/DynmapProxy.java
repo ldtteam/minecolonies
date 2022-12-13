@@ -3,6 +3,11 @@ package com.minecolonies.api.compatibility.dynmap;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.util.Log;
 
+/**
+ * The Dynmap integration proxy, contains all the top level methods to talk to Dynmap.
+ * By default, this class does nothing unless the {@link DynmapCompat} class is used to override this class.
+ * This will cause {@link DynmapProxy#isDynmapPresent()} to return true.
+ */
 public class DynmapProxy
 {
     private DynmapIntegration integration;

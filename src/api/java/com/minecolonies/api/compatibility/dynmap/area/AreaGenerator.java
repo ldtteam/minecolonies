@@ -8,19 +8,27 @@ import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * The Dynmap area generator, responsible for turning a collection of chunks into an
+ * array of X and Z points in order for Dynmap to generate an area marker.
+ */
 public class AreaGenerator
 {
-    private AreaGenerator()
-    {
-    }
+    private AreaGenerator() {}
 
+    /**
+     * Generate an area based on a collection of chunks by using an {@link Area} from AWT geometry classes.
+     *
+     * @param chunks A collection of chunks.
+     * @return A {@link ColonyArea} instance containing an array of X and Z coordinates.
+     */
     public static ColonyArea generateAreaFromChunks(Collection<ChunkPos> chunks)
     {
-        var holes = new ArrayList<ColonyArea>();
+        ArrayList<ColonyArea> holes = new ArrayList<>();
         ColonyArea colonyArea = null;
 
-        var area = createArea(chunks);
-        var iterator = area.getPathIterator(null);
+        Area area = createArea(chunks);
+        PathIterator iterator = area.getPathIterator(null);
         final double[] points = new double[6];
         while (!iterator.isDone())
         {
@@ -47,7 +55,7 @@ public class AreaGenerator
             throw new IllegalArgumentException("Generator could not create an area, did you pass an empty list of chunks?");
         }
 
-        for (var hole : holes)
+        for (ColonyArea hole : holes)
         {
             colonyArea.addHole(hole);
         }
