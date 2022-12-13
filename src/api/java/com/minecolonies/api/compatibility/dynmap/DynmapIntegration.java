@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import static com.minecolonies.api.compatibility.dynmap.Constants.*;
+import static com.minecolonies.api.compatibility.dynmap.DynmapConstants.*;
 
 /**
  * The core integration class for Dynmap, contains all the logic from generating and modifying markers.
