@@ -15,4 +15,9 @@ public final class StatisticsConstants
     public static final String ITEMS_DELIVERED = "items_delivered";
     public static final String ITEMS_CRAFTED   = "items_crafted";
     public static final String FOOD_SERVED     = "food_served";
+    public static final String CITIZENS_HEALED = "citizens_healed";
+    public static final String CROPS_HARVESTED = "crops_harvested";
+    public static final String LAND_TILLED     = "land_tilled";
+    public static final String FISH_CAUGHT     = "fish_caught";
+
 }

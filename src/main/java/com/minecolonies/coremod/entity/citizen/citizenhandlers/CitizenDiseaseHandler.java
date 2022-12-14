@@ -18,6 +18,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.VACCINES;
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_DISEASE;
 import static com.minecolonies.api.util.constant.CitizenConstants.TAG_IMMUNITY;
 import static com.minecolonies.api.util.constant.Constants.ONE_HUNDRED_PERCENT;
+import static com.minecolonies.api.util.constant.StatisticsConstants.CITIZENS_HEALED;
 
 /**
  * Handler taking care of citizens getting stuck.
@@ -182,6 +183,8 @@ public class CitizenDiseaseHandler implements ICitizenDiseaseHandler
             {
                 immunityTicks = IMMUNITY_TIME;
             }
+
+            citizen.getCitizenColonyHandler().getColony().getStatisticsManager().increment(CITIZENS_HEALED);
         }
     }
 }

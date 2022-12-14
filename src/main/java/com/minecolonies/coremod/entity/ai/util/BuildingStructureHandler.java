@@ -221,7 +221,6 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
         {
             structureAI.getWorker().getCitizenColonyHandler().getColony().addWayPoint(worldPos, state);
         }
-        structureAI.getWorker().getCitizenColonyHandler().getColony().getStatisticsManager().increment(BLOCKS_PLACED);
     }
 
     @Override
@@ -234,6 +233,7 @@ public class BuildingStructureHandler<J extends AbstractJobStructure<?, J>, B ex
             for (final ItemStack stack : list)
             {
                 structureAI.reduceNeededResources(stack);
+                structureAI.getWorker().getCitizenColonyHandler().getColony().getStatisticsManager().increment(BLOCKS_PLACED);
             }
         }
     }

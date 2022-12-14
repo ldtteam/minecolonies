@@ -42,6 +42,7 @@ import java.util.List;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
+import static com.minecolonies.api.util.constant.StatisticsConstants.FISH_CAUGHT;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
 import static com.minecolonies.api.util.constant.TranslationConstants.WATER_TOO_FAR;
 import static com.minecolonies.coremod.entity.NewBobberEntity.XP_PER_CATCH;
@@ -434,6 +435,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman, B
         {
             playCaughtFishSound();
             this.incrementActionsDoneAndDecSaturation();
+            worker.getCitizenColonyHandler().getColony().getStatisticsManager().increment(FISH_CAUGHT);
 
             if (worker.getRandom().nextDouble() < CHANCE_NEW_POND)
             {
