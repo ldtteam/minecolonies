@@ -234,8 +234,15 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
         this.mirror = compound.getBoolean(TAG_MIRROR);
-        this.schematicPath = compound.getString(TAG_PATH);
-        this.schematicPath = compound.getString(TAG_NAME);
+        if(compound.contains(TAG_PATH))
+        {
+            this.schematicPath = compound.getString(TAG_PATH);
+        }
+
+        if(compound.contains(TAG_NAME))
+        {
+            this.schematicName = compound.getString(TAG_NAME);
+        }
         this.packName = compound.getString(TAG_PACK);
 
         if (!this.schematicPath.endsWith(".blueprint"))
