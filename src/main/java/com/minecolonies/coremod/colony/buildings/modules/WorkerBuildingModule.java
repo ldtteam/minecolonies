@@ -77,7 +77,7 @@ public class WorkerBuildingModule extends AbstractAssignedCitizenModule implemen
     @Override
     public boolean assignCitizen(final ICitizenData citizen)
     {
-        if (citizen.getWorkBuilding() != null)
+        if (citizen.getWorkBuilding() != null && citizen.getEntity().isPresent() && !citizen.getEntity().get().getCitizenDiseaseHandler().isSick())
         {
             for (final WorkerBuildingModule module : citizen.getWorkBuilding().getModules(WorkerBuildingModule.class))
             {
