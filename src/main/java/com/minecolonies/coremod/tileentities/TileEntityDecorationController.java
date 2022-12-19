@@ -242,6 +242,12 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         if(compound.contains(TAG_NAME))
         {
             this.schematicName = compound.getString(TAG_NAME);
+            if (this.schematicPath == null || this.schematicPath.isEmpty())
+            {
+                //Setup for recovery
+                this.schematicPath = this.schematicName;
+                this.schematicName = "";
+            }
         }
         this.packName = compound.getString(TAG_PACK);
 
