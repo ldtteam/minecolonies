@@ -109,8 +109,8 @@ public class MaleAlchemistModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("glasses").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
-        head.getChild("PointHat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("glasses").visible = isWorking(entity);
+        head.getChild("PointHat").visible = displayHat(entity);
         body.getChild("Potion1").visible = entity.getPose() != Pose.SLEEPING;
         body.getChild("IngredientPouch").visible = entity.getPose() != Pose.SLEEPING;    }
 }

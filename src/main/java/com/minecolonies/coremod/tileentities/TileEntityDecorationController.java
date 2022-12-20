@@ -106,6 +106,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     public void setSchematicName(final String s)
     {
         this.schematicName = s;
+        setChanged();
     }
 
     /**
@@ -154,6 +155,7 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
     {
         corner1 = pos1;
         corner2 = pos2;
+        setChanged();
     }
 
     @Override
@@ -232,7 +234,21 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         IBlueprintDataProviderBE.super.readSchematicDataFromNBT(compound);
         this.rotation = Rotation.values()[compound.getInt(TAG_ROTATION)];
         this.mirror = compound.getBoolean(TAG_MIRROR);
-        this.schematicPath = compound.getString(TAG_NAME);
+        if(compound.contains(TAG_PATH))
+        {
+            this.schematicPath = compound.getString(TAG_PATH);
+        }
+
+        if(compound.contains(TAG_NAME))
+        {
+            this.schematicName = compound.getString(TAG_NAME);
+            if (this.schematicPath == null || this.schematicPath.isEmpty())
+            {
+                //Setup for recovery
+                this.schematicPath = this.schematicName;
+                this.schematicName = "";
+            }
+        }
         this.packName = compound.getString(TAG_PACK);
 
         if (!this.schematicPath.endsWith(".blueprint"))
@@ -248,7 +264,8 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         writeSchematicDataToNBT(compound);
         compound.putInt(TAG_ROTATION, this.rotation.ordinal());
         compound.putBoolean(TAG_MIRROR, this.mirror);
-        compound.putString(TAG_NAME, (schematicName == null || schematicName.isEmpty()) ? "" : schematicPath);
+        compound.putString(TAG_NAME, schematicName == null ? "" : schematicName);
+        compound.putString(TAG_PATH, schematicPath == null ? "" : schematicPath);
         compound.putString(TAG_PACK, (packName == null || packName.isEmpty()) ? "" : packName);
     }
 
@@ -267,12 +284,14 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         {
             this.schematicPath = this.schematicPath + ".blueprint";
         }
+        setChanged();
     }
 
     @Override
     public void setPackName(final String packName)
     {
         this.packName = packName;
+        setChanged();
     }
 
     @NotNull

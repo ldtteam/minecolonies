@@ -154,6 +154,18 @@ public abstract class AbstractCivilianEntity extends AgeableMob implements Npc, 
         return soundManager;
     }
 
+    @Override
+    protected void removeFrost()
+    {
+
+    }
+
+    @Override
+    protected void tryAddFrost()
+    {
+
+    }
+
     /**
      * Prevent citizens and visitors from travelling to other dimensions through portals.
      */

@@ -3,10 +3,10 @@ package com.minecolonies.coremod.client.gui.modules;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.*;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.crafting.ItemStorage;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
@@ -196,11 +196,17 @@ public class WindowListRecipes extends AbstractModuleWindow
                 }
 
                 final Text intermediate = rowPane.findPaneOfTypeByID("intermediate", Text.class);
-                if(recipe.getIntermediate() != Blocks.AIR)
+                intermediate.setVisible(false);
+                if(recipe.getRequiredTool() != ToolType.NONE)
+                {
+                    intermediate.setText(recipe.getRequiredTool().getDisplayName());
+                    intermediate.setVisible(true);
+                }
+                else if(recipe.getIntermediate() != Blocks.AIR)
                 {
                     intermediate.setText(recipe.getIntermediate().getName());
+                    //intermediate.setVisible(true);
                 }
-                intermediate.setVisible(false);
 
                 if (module.isDisabled(recipe))
                 {

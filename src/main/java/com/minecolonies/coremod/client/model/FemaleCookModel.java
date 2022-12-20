@@ -79,6 +79,6 @@ public class FemaleCookModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         body.getChild("skirt").visible = entity.getPose() != Pose.SLEEPING;
-        head.getChild("BakerHat").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("BakerHat").visible = isWorking(entity) && displayHat(entity);
     }
 }

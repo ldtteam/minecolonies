@@ -67,6 +67,6 @@ public class MaleApiaryModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("RoundHat").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("RoundHat").visible = isWorking(entity) && displayHat(entity);
     }
 }
