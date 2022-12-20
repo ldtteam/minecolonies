@@ -1,15 +1,18 @@
 package com.minecolonies.coremod.client.gui.townhall;
 
+import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.*;
+import com.ldtteam.blockui.views.DropDownList;
+import com.ldtteam.blockui.views.ScrollingList;
 import com.ldtteam.blockui.views.View;
 import com.minecolonies.api.colony.ICitizenDataView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_HAPPINESS_MODIFIER_NAME;
 import static com.minecolonies.api.util.constant.TranslationConstants.PARTIAL_STATS_MODIFIER_NAME;
@@ -21,6 +24,29 @@ import static com.minecolonies.coremod.client.gui.modules.WindowBuilderResModule
  */
 public class WindowStatsPage extends AbstractWindowTownHall
 {
+    /**
+     * Map of intervals.
+     */
+    private static final LinkedHashMap<String, Integer> INTERVAL = new LinkedHashMap<>();
+
+    static
+    {
+        INTERVAL.put("com.minecolonies.coremod.gui.interval.yesterday", 1);
+        INTERVAL.put("com.minecolonies.coremod.gui.interval.lastweek", 7);
+        INTERVAL.put("com.minecolonies.coremod.gui.interval.100days", 100);
+        INTERVAL.put("com.minecolonies.coremod.gui.interval.alltime", -1);
+    }
+
+    /**
+     * Drop down list for interval.
+     */
+    private DropDownList intervalDropdown;
+
+    /**
+     * Current selected interval.
+     */
+    public String selectedInterval = "com.minecolonies.coremod.gui.interval.yesterday";
+
     /**
      * Constructor for the town hall window.
      *
@@ -109,19 +135,67 @@ public class WindowStatsPage extends AbstractWindowTownHall
      */
     private void updateStats()
     {
-        final View pane = findPaneOfTypeByID("statspage", View.class);
-        int yPos = 65;
+        final @NotNull List<String> stats = new ArrayList<>(building.getColony().getStatisticsManager().getStatTypes());
 
-        for (final String entry : building.getColony().getStatisticsManager().getStatTypes())
+        findPaneOfTypeByID("stats", ScrollingList.class).setDataProvider(new ScrollingList.DataProvider()
         {
-            final Text label = new Text();
-            label.setSize(136, 11);
-            label.setPosition(25, yPos);
-            label.setColors(BLACK);
-            label.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + entry, building.getColony().getStatisticsManager().getStatTotal(entry)));
-            pane.addChild(label);
+            /**
+             * The number of rows of the list.
+             * @return the number.
+             */
+            @Override
+            public int getElementCount()
+            {
+                return stats.size();
+            }
 
-            yPos += 12;
+            /**
+             * Inserts the elements into each row.
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
+             */
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                int stat = building.getColony().getStatisticsManager().getStatTotal(stats.get(index));
+                int interval = INTERVAL.get(selectedInterval);
+                if (interval > 0)
+                {
+                    stat = building.getColony().getStatisticsManager().getStatsInPeriod(stats.get(index), building.getColony().getDay() - interval, building.getColony().getDay());
+                }
+
+                final Text resourceLabel = rowPane.findPaneOfTypeByID("desc", Text.class);
+                resourceLabel.setText(Component.translatable(PARTIAL_STATS_MODIFIER_NAME + stats.get(index), stat));
+            }
+        });
+
+        intervalDropdown = findPaneOfTypeByID(DROPDOWN_INTERVAL_ID, DropDownList.class);
+        intervalDropdown.setHandler(this::onDropDownListChanged);
+
+        intervalDropdown.setDataProvider(new DropDownList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return INTERVAL.size();
+            }
+
+            @Override
+            public String getLabel(final int index)
+            {
+                return Component.translatable((String) INTERVAL.keySet().toArray()[index]).getString();
+            }
+        });
+        intervalDropdown.setSelectedIndex(new ArrayList<>(INTERVAL.keySet()).indexOf(selectedInterval));
+    }
+
+    private void onDropDownListChanged(final DropDownList dropDownList)
+    {
+        final String temp = (String) INTERVAL.keySet().toArray()[dropDownList.getSelectedIndex()];
+        if (!temp.equals(selectedInterval))
+        {
+            selectedInterval = temp;
+            updateStats();
         }
     }
 

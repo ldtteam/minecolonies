@@ -2357,5 +2357,13 @@
   "com.minecolonies.coremod.gui.townhall.stats.mobs_killed": "Killed Mobs: %d",
   "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
   "com.minecolonies.coremod.gui.townhall.stats.items_crafted": "Crafted Items: %d",
-  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d"
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.citizens_healed": "Citzens Healed: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.crops_harvested": "Crops Harvested: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.land_tilled": "Land Tilled: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.fish_caught": "Fish Caught: %d",
+  "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
+  "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
+  "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
+  "com.minecolonies.coremod.gui.interval.alltime": "All Time"
 }

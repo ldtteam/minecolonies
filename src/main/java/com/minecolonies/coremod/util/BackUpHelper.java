@@ -335,7 +335,8 @@ public final class BackUpHelper
 
         @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
-        @NotNull final File saveDir = new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir =
+          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
         for (final IColony colony : IColonyManager.getInstance().getAllColonies())
         {
             final CompoundTag colonyCompound = new CompoundTag();
@@ -368,7 +369,8 @@ public final class BackUpHelper
      */
     public static void loadAllBackups()
     {
-        @NotNull final File saveDir = new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir =
+          new File(net.minecraftforge.server.ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.ROOT).toFile(), FILENAME_MINECOLONIES_PATH);
 
         ServerLifecycleHooks.getCurrentServer().levels.keySet().forEach(dimensionType -> {
             for (int i = 1; i <= IColonyManager.getInstance().getTopColonyId() + 1; i++)
@@ -443,20 +445,29 @@ public final class BackUpHelper
                 final int id = chunk.getCapability(CLOSE_COLONY_CAP, null).map(IColonyTagCapability::getOwningColony).orElse(0);
                 if (id != colonyId)
                 {
-                    ChunkDataHelper.claimColonyChunks(colonyWorld, true, loadedColony.getID(), loadedColony.getCenter());
-                    for (final IBuilding building : loadedColony.getBuildingManager().getBuildings().values())
-                    {
-                        ChunkDataHelper.claimBuildingChunks(loadedColony,
-                          true,
-                          building.getPosition(),
-                          building.getClaimRadius(building.getBuildingLevel()),
-                          building.getCorners());
-                    }
+                    reclaimChunks(loadedColony);
                 }
             }
         }
 
         Log.getLogger().warn("Successfully restored colony:" + colonyId);
+    }
+
+    /**
+     * Reclaims chunks for a colony
+     * @param colony
+     */
+    public static void reclaimChunks(final IColony colony)
+    {
+        ChunkDataHelper.claimColonyChunks(colony.getWorld(), true, colony.getID(), colony.getCenter());
+        for (final IBuilding building : colony.getBuildingManager().getBuildings().values())
+        {
+            ChunkDataHelper.claimBuildingChunks(colony,
+              true,
+              building.getPosition(),
+              building.getClaimRadius(building.getBuildingLevel()),
+              building.getCorners());
+        }
     }
 
     /**
