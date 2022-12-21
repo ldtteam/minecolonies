@@ -11,11 +11,10 @@ import com.minecolonies.coremod.entity.ai.combat.AttackMoveAI;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.util.NamedDamageSource;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.network.chat.Component;
 
 import static com.minecolonies.api.entity.mobs.RaiderMobUtils.MOB_ATTACK_DAMAGE;
 
@@ -82,7 +81,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
     @Override
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return target instanceof EntityCitizen || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
+        return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override
