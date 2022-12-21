@@ -12,6 +12,7 @@ import com.minecolonies.api.research.IGlobalResearch;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
+import com.minecolonies.coremod.client.gui.WindowBuildingBrowser;
 import com.minecolonies.coremod.client.render.worldevent.ColonyBorderRenderer;
 import com.minecolonies.coremod.client.render.worldevent.WorldEventContext;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
@@ -76,6 +77,7 @@ public class ClientEventHandler
     public static void onPlayerLogout(@NotNull final ClientPlayerNetworkEvent.LoggingOut event)
     {
         ColonyBorderRenderer.cleanup();
+        WindowBuildingBrowser.clearCache();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
