@@ -1,0 +1,34 @@
+{
+  "branch": "minecolonies:technology",
+  "parentResearch": "minecolonies:technology/letitgrow",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.technology.takingdivinglessons.subtitle",
+  "icon": "minecraft:vine",
+  "requirements": [
+    {
+      "building": "plantation",
+      "level": 2
+    },
+    {
+      "item": "minecraft:kelp",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:seagrass",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:sea_pickle",
+      "quantity": 16
+    },
+    {
+      "item": "minecraft:tube_coral",
+      "quantity": 16
+    }
+  ],
+  "effects": [
+    {
+      "minecolonies:effects/plantationsea": 1
+    }
+  ]
+}
