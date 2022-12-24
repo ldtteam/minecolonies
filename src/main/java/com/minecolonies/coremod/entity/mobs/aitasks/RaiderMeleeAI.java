@@ -81,7 +81,7 @@ public class RaiderMeleeAI<T extends AbstractEntityMinecoloniesMob & IThreatTabl
     @Override
     protected boolean isAttackableTarget(final LivingEntity target)
     {
-        return target instanceof EntityCitizen || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
+        return (target instanceof EntityCitizen && !target.isInvisible()) || (target instanceof Player && !((Player) target).isCreative() && !target.isSpectator());
     }
 
     @Override
