@@ -10,6 +10,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -153,11 +154,12 @@ public class CreateColonyMessage implements IMessage
         if (ownedColony == null)
         {
             IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
-            var createdColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
-            colony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+            final IColony createdColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
+            createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
             MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
 
-            if (isLogicalServer) {
+            if (isLogicalServer)
+            {
                 Compatibility.colonyCreated(createdColony);
             }
             return;
