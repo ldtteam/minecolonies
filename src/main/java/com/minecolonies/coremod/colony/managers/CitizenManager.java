@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.managers.interfaces.ICitizenManager;
+import com.minecolonies.api.compatibility.Compatibility;
 import com.minecolonies.api.entity.ModEntities;
 import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -28,14 +29,13 @@ import com.minecolonies.coremod.colony.jobs.JobUndertaker;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewCitizenViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveCitizenMessage;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -319,6 +319,8 @@ public class CitizenManager implements ICitizenManager
         citizenData.initForNewCivilian();
         citizens.put(citizenData.getId(), citizenData);
 
+        Compatibility.updateColonyCitizenCount(colony);
+
         return citizenData;
     }
 
@@ -345,6 +347,9 @@ public class CitizenManager implements ICitizenManager
         citizenData.onResurrect();
         citizens.put(citizenData.getId(), citizenData);
         spawnOrCreateCitizen(citizenData, world, spawnPos);
+
+        Compatibility.updateColonyCitizenCount(colony);
+
         return citizenData;
     }
 
@@ -378,6 +383,8 @@ public class CitizenManager implements ICitizenManager
         calculateMaxCitizens();
         markDirty();
         colony.markDirty();
+
+        Compatibility.updateColonyCitizenCount(colony);
     }
 
     @Override

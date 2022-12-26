@@ -9,4 +9,5 @@ project.ext.customChangelogHeader = "\n" +
         "- JEI: ${project.jei_version} (or above)\n" +
         "- Dynamic Trees: ${project.dynamicTreesVersion} (or above)\n" +
         "- Journeymap: ${project.jmapVersion} (or above)\n" +
+        "- Dynmap: ${project.dynmapVersion} (or above)\n" +
         "\n"
