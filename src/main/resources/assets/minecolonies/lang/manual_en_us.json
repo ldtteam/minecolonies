@@ -573,8 +573,10 @@
   "com.minecolonies.coremod.gui.workerhuts.workerassigned": "Assigned Workers:",
   "com.minecolonies.coremod.gui.workerhuts.manage": "Manage Workers",
   "com.minecolonies.coremod.gui.inventory.scarecrow": "Scarecrow",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields": "Fields",
-  "com.minecolonies.coremod.gui.workerhuts.farmerhut.assignmentmode": "Assign Fields to Farmer:",
+  "com.minecolonies.coremod.gui.fieldlist.fields": "Fields",
+  "com.minecolonies.coremod.gui.fieldlist.assignmentmode": "Assign fields to worker",
+  "com.minecolonies.coremod.gui.fieldlist.fieldcount": "%d/%d fields in use",
+  "com.minecolonies.coremod.gui.fieldlist.plantcount": "%d/%d types of plants",
 
   "com.minecolonies.coremod.job.undertaker": "Undertaker",
   "com.minecolonies.coremod.gui.workerhuts.graveyard.graves": "Graves to retrieve",

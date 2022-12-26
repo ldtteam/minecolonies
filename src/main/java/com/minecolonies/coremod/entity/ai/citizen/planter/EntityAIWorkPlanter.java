@@ -1,32 +1,33 @@
 package com.minecolonies.coremod.entity.ai.citizen.planter;
 
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
-import com.minecolonies.api.entity.pathfinding.AbstractAdvancedPathNavigate;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
+import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
+import com.minecolonies.coremod.colony.interactionhandling.StandardInteraction;
 import com.minecolonies.coremod.colony.jobs.JobPlanter;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting;
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
-import static com.minecolonies.api.util.constant.Constants.DEFAULT_SPEED;
+import static com.minecolonies.api.util.constant.TranslationConstants.NO_FREE_FIELDS;
 
 /**
  * Planter AI class.
@@ -39,19 +40,12 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private static final int MAX_BLOCKS_MINED = 64;
 
     /**
-     * The quantity to request.
-     */
-    private static final Integer PLANT_TO_REQUEST = 16;
-
-    /**
      * Xp per harvesting block
      */
     private static final double XP_PER_HARVEST = 1;
 
-    /**
-     * The current farm pos to take care of.
-     */
-    private BuildingPlantation.PlantationSoilPosition plantableSoilPos;
+    @Nullable
+    private BlockPos currentWorkingPosition;
 
     /**
      * Constructor for the planter.
@@ -62,225 +56,180 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     {
         super(job);
         super.registerTargets(
-          new AITarget(PLANTATION_MOVE_TO_SOIL, this::moveToSoil, TICKS_20),
-          new AITarget(PLANTATION_CHECK_SOIL, this::checkSoil, TICKS_20),
-          new AITarget(PLANTATION_CLEAR_OBSTACLE, this::clearObstacle, TICKS_20),
-          new AITarget(PLANTATION_FARM, this::farm, TICKS_20),
-          new AITarget(PLANTATION_PLANT, this::plant, TICKS_20));
+          new AITarget(PREPARING, this::prepareForFieldWork, TICKS_20),
+          new AITarget(PLANTATION_MOVE_TO_FIELD, this::moveToField, TICKS_20),
+          new AITarget(PLANTATION_WORK_FIELD, this::workField, TICKS_20 * 3));
         worker.setCanPickUpLoot(true);
+    }
+
+    private IAIState prepareForFieldWork()
+    {
+        if (building == null || building.getBuildingLevel() < 1)
+        {
+            return PREPARING;
+        }
+
+        if (!job.getTaskQueue().isEmpty() || getActionsDoneUntilDumping() <= job.getActionsDone())
+        {
+            return START_WORKING;
+        }
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
+
+        FieldModule module = building.getFirstModuleOccurance(FieldModule.class);
+        if (module.hasNoFields())
+        {
+            if (worker.getCitizenData() != null)
+            {
+                worker.getCitizenData().triggerInteraction(new StandardInteraction(new TranslatableComponent(NO_FREE_FIELDS), ChatPriority.BLOCKING));
+            }
+            worker.getCitizenData().setIdleAtJob(true);
+            return PREPARING;
+        }
+        worker.getCitizenData().setIdleAtJob(false);
+
+        // If the planter has no currentField and there is no field which needs work, check fields.
+        if (module.getCurrentField() == null && module.getFieldToWorkOn() == null)
+        {
+            return IDLE;
+        }
+
+        PlantationField currentPlantationField = getCurrentField();
+        if (currentPlantationField != null && currentPlantationField.needsWork())
+        {
+            return PLANTATION_MOVE_TO_FIELD;
+        }
+
+        return START_WORKING;
+    }
+
+    /**
+     * Start moving the AI towards a specific field to start working on said field.
+     *
+     * @return next state to go to.
+     */
+    private IAIState moveToField()
+    {
+        PlantationField currentPlantationField = getCurrentField();
+        if (currentPlantationField == null)
+        {
+            return PREPARING;
+        }
+
+        if (walkToBlock(currentPlantationField.getPosition().above(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY * 2))
+        {
+            return getState();
+        }
+
+        return PLANTATION_WORK_FIELD;
+    }
+
+    /**
+     * Start moving the AI towards a specific field to start working on said field.
+     *
+     * @return next state to go to.
+     */
+    private IAIState workField()
+    {
+        PlantationField currentPlantationField = getCurrentField();
+        if (currentPlantationField == null)
+        {
+            return PREPARING;
+        }
+
+        PlantationModule planterModule = PlantationModuleRegistry.getPlantationModule(currentPlantationField.getPlantationFieldType());
+        if (planterModule == null)
+        {
+            throw new IllegalStateException("Planter AI could not load module for field, plantation type is likely null.");
+        }
+
+        if (currentWorkingPosition == null)
+        {
+            currentWorkingPosition = planterModule.getNextWorkingPosition(currentPlantationField);
+        }
+
+        if (currentWorkingPosition != null)
+        {
+            return switch (planterModule.workField(currentPlantationField, this, currentWorkingPosition))
+                     {
+                         // Either when the AI has harvested, planted, cleared the position, failed to compute or simply nothing to do, return to the decision state.
+                         case INVALID, NONE, HARVESTED, PLANTED, CLEARED ->
+                         {
+                             // Reset the current working position so that next working iteration a new field/position will be selected.
+                             currentWorkingPosition = null;
+                             yield PREPARING;
+                         }
+                         // When the AI requires items move the AI into the GATHERING_REQUIRED_MATERIALS state to pick up the requested items.
+                         case REQUIRES_ITEMS -> GATHERING_REQUIRED_MATERIALS;
+                         // Either when the AI is moving to, harvesting or clearing a position, keep working on that position.
+                         case MOVING, HARVESTING, PLANTING, CLEARING -> PLANTATION_WORK_FIELD;
+                     };
+        }
+        else
+        {
+            return PREPARING;
+        }
+    }
+
+    @Nullable
+    private PlantationField getCurrentField()
+    {
+        FieldModule fieldModule = building.getFirstModuleOccurance(FieldModule.class);
+        if (fieldModule.getCurrentField() instanceof PlantationField field)
+        {
+            return field;
+        }
+        return null;
+    }
+
+    @Override
+    protected int getActionRewardForCraftingSuccess()
+    {
+        return MAX_BLOCKS_MINED;
     }
 
     @Override
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(getState() == CRAFT
-                                   || getState() == PLANTATION_FARM
-                                   || getState() == PLANTATION_PLANT
-                                   || getState() == PLANTATION_CHECK_SOIL
-                                   || getState() == PLANTATION_MOVE_TO_SOIL
-                                   || getState() == PLANTATION_CLEAR_OBSTACLE ? RENDER_META_WORKING : "");
+                                   || getState() == PLANTATION_WORK_FIELD
+                                   || getState() == PLANTATION_MOVE_TO_FIELD ? RENDER_META_WORKING : "");
     }
 
-    /**
-     * Plant something for the current state.
-     *
-     * @return the next state to go to.
-     */
-    private IAIState plant()
+    @Override
+    protected IAIState decide()
     {
-        if (plantableSoilPos == null)
+        final IAIState nextState = super.decide();
+        if (nextState != START_WORKING && nextState != IDLE)
         {
-            return START_WORKING;
+            return nextState;
         }
 
-        if (walkToBlock(plantableSoilPos.getPosition().above()))
+        if (wantInventoryDumped())
         {
+            // Wait to dump before continuing.
             return getState();
         }
 
-        final ItemStack currentStack = new ItemStack(plantableSoilPos.getCombination().getItem());
-        final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
-        if (plantInInv <= 0)
+        if (job.getTaskQueue().isEmpty())
         {
-            return START_WORKING;
+            return PREPARING;
         }
 
-        if (world.setBlockAndUpdate(plantableSoilPos.getPosition().above(), BlockUtils.getBlockStateFromStack(currentStack)))
+        if (job.getCurrentTask() == null)
         {
-            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);
+            return PREPARING;
         }
 
-        return START_WORKING;
-    }
-
-    /**
-     * Plantation has encountered a non-allowed block on a farming position, remove it.
-     *
-     * @return next state to go to.
-     */
-    private IAIState clearObstacle()
-    {
-        if (plantableSoilPos == null)
+        if (currentRequest != null && currentRecipeStorage != null)
         {
-            return START_WORKING;
+            return QUERY_ITEMS;
         }
 
-        if (isItemPositionAir(plantableSoilPos))
-        {
-            return START_WORKING;
-        }
-
-        if (walkToBlock(plantableSoilPos.getPosition().above()))
-        {
-            return getState();
-        }
-
-        if (!holdEfficientTool(world.getBlockState(plantableSoilPos.getPosition().above()), plantableSoilPos.getPosition().above()))
-        {
-            return START_WORKING;
-        }
-
-        if (positionHasInvalidBlock(plantableSoilPos))
-        {
-            mineBlock(plantableSoilPos.getPosition().above());
-            return getState();
-        }
-
-        return START_WORKING;
-    }
-
-    /**
-     * Farm some plants.
-     *
-     * @return next state to go to.
-     */
-    private IAIState farm()
-    {
-        if (plantableSoilPos == null)
-        {
-            return START_WORKING;
-        }
-
-        if (isItemPositionAir(plantableSoilPos))
-        {
-            return START_WORKING;
-        }
-
-        if (walkToBlock(plantableSoilPos.getPosition().above()))
-        {
-            return getState();
-        }
-
-        if (!holdEfficientTool(world.getBlockState(plantableSoilPos.getPosition().above()), plantableSoilPos.getPosition().above()))
-        {
-            return START_WORKING;
-        }
-
-        if (!positionHasInvalidBlock(plantableSoilPos))
-        {
-            mineBlock(plantableSoilPos.getPosition().above());
-            return getState();
-        }
-
-        for (final ItemEntity item : world.getEntitiesOfClass(ItemEntity.class,
-          new AABB(worker.blockPosition()).expandTowards(4.0F, 1.0F, 4.0F).expandTowards(-4.0F, -1.0F, -4.0F)))
-        {
-            if (item != null)
-            {
-                worker.getCitizenItemHandler().tryPickupItemEntity(item);
-            }
-        }
-
-        worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
-
-        return START_WORKING;
-    }
-
-    /**
-     * Check the selected soil on what to do.
-     *
-     * @return next state to go to.
-     */
-    private IAIState checkSoil()
-    {
-        if (plantableSoilPos == null)
-        {
-            return START_WORKING;
-        }
-
-        final BuildingPlantation plantation = building;
-        final List<Item> availablePlants = plantation.getAvailablePlants();
-
-        if (isItemPositionAir(plantableSoilPos))
-        {
-            final Item currentItem = plantableSoilPos.getCombination().getItem();
-            final ItemStack currentStack = new ItemStack(currentItem);
-
-            if (!availablePlants.contains(currentItem))
-            {
-                return START_WORKING;
-            }
-
-            final int plantInInv = InventoryUtils.getItemCountInItemHandler((worker.getInventoryCitizen()), itemStack -> itemStack.sameItem(currentStack));
-            final int plantInBuilding = InventoryUtils.getCountFromBuilding(building, itemStack -> itemStack.sameItem(currentStack));
-            if (plantInInv + plantInBuilding <= 0)
-            {
-                requestPlantable(currentItem);
-                return START_WORKING;
-            }
-
-            if (plantInInv == 0 && plantInBuilding > 0)
-            {
-                needsCurrently = new Tuple<>(itemStack -> itemStack.sameItem(currentStack), Math.min(plantInBuilding, PLANT_TO_REQUEST));
-                return GATHERING_REQUIRED_MATERIALS;
-            }
-
-            return PLANTATION_PLANT;
-        }
-        else
-        {
-            if (positionHasInvalidBlock(plantableSoilPos))
-            {
-                return PLANTATION_CLEAR_OBSTACLE;
-            }
-
-            if (isSufficientHeight(plantableSoilPos) || !availablePlants.contains(plantableSoilPos.getCombination().getItem()))
-            {
-                return PLANTATION_FARM;
-            }
-        }
-
-        return START_WORKING;
-    }
-
-    /**
-     * Move towards the selected soil.
-     *
-     * @return next state to go to.
-     */
-    private IAIState moveToSoil()
-    {
-        if (plantableSoilPos == null)
-        {
-            return START_WORKING;
-        }
-
-        if (walkToBlock(plantableSoilPos.getPosition().above(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY * 2))
-        {
-            return getState();
-        }
-
-        return PLANTATION_CHECK_SOIL;
+        return GET_RECIPE;
     }
 
     @Override
     protected int getActionsDoneUntilDumping()
-    {
-        return MAX_BLOCKS_MINED;
-    }
-
-    @Override
-    protected int getActionRewardForCraftingSuccess()
     {
         return MAX_BLOCKS_MINED;
     }
@@ -291,96 +240,58 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         return BuildingPlantation.class;
     }
 
-    @Override
-    protected IAIState decide()
+    public boolean planterWalkToBlock(final BlockPos blockPos)
     {
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
-        if (!job.getTaskQueue().isEmpty() && job.getCurrentTask() != null)
-        {
-            return getNextCraftingState();
-        }
-
-        if (!building.isInBuilding(worker.blockPosition()) && walkToBuilding())
-        {
-            return START_WORKING;
-        }
-
-        if (job.getActionsDone() >= getActionsDoneUntilDumping())
-        {
-            // Wait to dump before continuing.
-            return getState();
-        }
-
-        final BuildingPlantation plantation = building;
-        final List<BuildingPlantation.PlantationSoilPosition> soilPositions = plantation.getAllSoilPositions();
-
-        if (soilPositions.isEmpty())
-        {
-            Log.getLogger().warn("Planter building returned 0 available soil positions, schematic is " + plantation.getSchematicName() + ", please report this to the developer!");
-            return START_WORKING;
-        }
-
-        final int soilPositionIndex = worker.getRandom().nextInt(soilPositions.size());
-
-        plantableSoilPos = soilPositions.get(soilPositionIndex);
-        return PLANTATION_MOVE_TO_SOIL;
+        return walkToBlock(blockPos, CitizenConstants.DEFAULT_RANGE_FOR_DELAY / 2);
     }
 
-    /**
-     * Async request for paper to the colony.
-     *
-     * @param current the current plantable.
-     */
-    private void requestPlantable(final Item current)
+    public PlantationModule.PlanterMineBlockResult planterMineBlock(final BlockPos blockPos, boolean isHarvest)
     {
-        if (!building.hasWorkerOpenRequestsFiltered(worker.getCitizenData().getId(),
-          q -> q.getRequest() instanceof Stack && ((Stack) q.getRequest()).getStack().getItem() == current))
+        boolean mineResult = mineBlock(blockPos);
+
+        if (!holdEfficientTool(world.getBlockState(blockPos), blockPos))
         {
-            worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(current, PLANT_TO_REQUEST)));
+            return PlantationModule.PlanterMineBlockResult.NO_TOOL;
         }
-    }
 
-    /**
-     * Check if the position is air.
-     *
-     * @param plantationSoilPosition the item position data.
-     * @return true if so.
-     */
-    private boolean isItemPositionAir(final BuildingPlantation.PlantationSoilPosition plantationSoilPosition)
-    {
-        Block foundBlock = world.getBlockState(plantationSoilPosition.getPosition().above(1)).getBlock();
-        return foundBlock instanceof AirBlock;
-    }
-
-    /**
-     * Check if the position has a valid plant.
-     *
-     * @param plantationSoilPosition the item position data.
-     * @return true if so.
-     */
-    private boolean positionHasInvalidBlock(final BuildingPlantation.PlantationSoilPosition plantationSoilPosition)
-    {
-        Block foundBlock = world.getBlockState(plantationSoilPosition.getPosition().above(1)).getBlock();
-        return plantationSoilPosition.getCombination().getBlock() != foundBlock;
-    }
-
-    /**
-     * Check if the plant at pos it at least x blocks high.
-     *
-     * @param plantationSoilPosition the item position data.
-     * @return true if so.
-     */
-    private boolean isSufficientHeight(final BuildingPlantation.PlantationSoilPosition plantationSoilPosition)
-    {
-        BlockPos position = plantationSoilPosition.getPosition();
-        int minLength = plantationSoilPosition.getCombination().getMinimumLength();
-        for (int i = 1; i <= minLength; i++)
+        if (mineResult)
         {
-            if (world.getBlockState(position.above(i)).getBlock() != plantationSoilPosition.getCombination().getBlock())
+            worker.getCitizenItemHandler().pickupItems();
+
+            if (isHarvest)
             {
-                return false;
+                worker.getCitizenExperienceHandler().addExperience(XP_PER_HARVEST);
             }
         }
-        return true;
+
+        return mineResult ? PlantationModule.PlanterMineBlockResult.MINED : PlantationModule.PlanterMineBlockResult.MINING;
+    }
+
+    public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest)
+    {
+        ItemStack currentStack = new ItemStack(item);
+        int plantInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.sameItem(currentStack));
+        if (plantInInv <= 0)
+        {
+            int plantInBuilding = InventoryUtils.getCountFromBuilding(building, itemStack -> itemStack.sameItem(currentStack));
+            if (plantInBuilding <= 0)
+            {
+                worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(item, numberToRequest)));
+            }
+            needsCurrently = new Tuple<>(it -> !it.isEmpty() && it.getItem().equals(item), numberToRequest);
+
+            return false;
+        }
+
+        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), item));
+
+        if (world.setBlockAndUpdate(blockToPlaceAt, BlockUtils.getBlockStateFromStack(currentStack)))
+        {
+            InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);
+            worker.getCitizenItemHandler().removeHeldItem();
+            return true;
+        }
+
+        return false;
     }
 }

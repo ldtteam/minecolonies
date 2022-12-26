@@ -1,19 +1,19 @@
-package com.minecolonies.coremod.network.messages.server.colony.building.farmer;
+package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
+import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Message which handles the assignment of fields to farmers.
+ * Message which handles the assignment of fields of the building.
  */
-public class AssignFieldMessage extends AbstractBuildingServerMessage<BuildingFarmer>
+public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
 {
     private boolean  assign;
     private BlockPos field;
@@ -41,32 +41,30 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<BuildingFa
     }
 
     @Override
-    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
-    {
-
-        assign = buf.readBoolean();
-        field = buf.readBlockPos();
-    }
-
-    @Override
     public void toBytesOverride(@NotNull final FriendlyByteBuf buf)
     {
-
         buf.writeBoolean(assign);
         buf.writeBlockPos(field);
     }
 
     @Override
+    public void fromBytesOverride(@NotNull final FriendlyByteBuf buf)
+    {
+        assign = buf.readBoolean();
+        field = buf.readBlockPos();
+    }
+
+    @Override
     public void onExecute(
-      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final BuildingFarmer building)
+      final NetworkEvent.Context ctxIn, final boolean isLogicalServer, final IColony colony, final IBuilding building)
     {
         if (assign)
         {
-            building.getFirstOptionalModuleOccurance(FarmerFieldModule.class).ifPresent(m -> m.assignField(field));
+            building.getFirstOptionalModuleOccurance(FieldModule.class).ifPresent(m -> m.assignField(field));
         }
         else
         {
-            building.getFirstOptionalModuleOccurance(FarmerFieldModule.class).ifPresent(m -> m.freeField(field));
+            building.getFirstOptionalModuleOccurance(FieldModule.class).ifPresent(m -> m.freeField(field));
         }
     }
 }

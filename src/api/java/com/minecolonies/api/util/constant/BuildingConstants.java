@@ -111,6 +111,7 @@ public final class BuildingConstants
      * String tag to identify a leisure decoration.
      */
     public static final String LEISURE = "leisure";
+
     /**
      * Private constructor to hide implicit public one.
      */

@@ -1,35 +1,39 @@
 package com.minecolonies.coremod.client.gui.containers;
 
 import com.google.common.collect.Lists;
+import com.minecolonies.api.colony.ICitizen;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.inventory.container.ContainerField;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
-import com.minecolonies.coremod.network.messages.server.FieldPlotResizeMessage;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
+import com.minecolonies.coremod.network.messages.server.colony.building.fields.FieldPlotResizeMessage;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.*;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.core.Direction;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.locale.Language;
+import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -67,13 +71,13 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     /**
      * Tile entity of the scarecrow.
      */
-    private final AbstractScarecrowTileEntity tileEntity;
+    private final AbstractTileEntityScarecrow tileEntity;
 
     /**
-     * The values to render on each directional button, indicating the size of the field
-     * S, W, N, E.
+     * The field view class.
      */
-    private final int[] radii = new int[4];
+    @Nullable
+    private FarmField.View farmField;
 
     /**
      * Create the field GUI.
@@ -86,6 +90,11 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     {
         super(container, playerInventory, iTextComponent);
         this.tileEntity = container.getTileEntity();
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(tileEntity.getLevel(), tileEntity.getBlockPos());
+        if (colony != null && colony.getField(tileEntity.getBlockPos()) instanceof FarmField.View field)
+        {
+            this.farmField = field;
+        }
     }
 
     @Override
@@ -99,7 +108,6 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         {
             int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
             int yFromPolar = (int) Math.cos(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
-            this.radii[dir.get2DDataValue()] = tileEntity.getRadius(dir);
 
             // Some magic numbering to get the offsets right
             DirectionalButton db = new DirectionalButton(
@@ -107,7 +115,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               centerY - 40 + yFromPolar - 12,
               BUTTON_SIDE_LENGTH,
               BUTTON_SIDE_LENGTH,
-              new TextComponent(String.valueOf(this.radii[dir.get2DDataValue()])),
+              new TextComponent(String.valueOf(this.farmField.getRadius(dir))),
               dir
             );
             this.addRenderableWidget(db);
@@ -115,24 +123,30 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     }
 
     @Override
+    public void render(@NotNull final PoseStack stack, int x, int y, float z)
+    {
+        this.renderBackground(stack);
+        super.render(stack, x, y, z);
+        this.renderTooltip(stack, x, y);
+    }
+
+    @Override
     protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
-        if (!tileEntity.getOwner().isEmpty())
+        if (farmField != null && farmField.isTaken())
         {
-            this.font.draw(stack, new TranslatableComponent(WORKER_FIELD, tileEntity.getOwner()), X_OFFSET, -Y_OFFSET * 2, 16777215 /* WHITE */);
+            ICitizen citizen = farmField.getColonyView().getCitizen(Objects.requireNonNull(farmField.getOwnerId()));
+            this.font.draw(stack, new TranslatableComponent(WORKER_FIELD, citizen.getName()), X_OFFSET, -Y_OFFSET * 2F, 16777215 /* WHITE */);
         }
 
         this.font.draw(stack, new TranslatableComponent(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
         for (Widget widget : this.renderables)
         {
-            if (widget instanceof AbstractWidget)
+            if (widget instanceof AbstractWidget abstractWidget && abstractWidget.isMouseOver(mouseX, mouseY))
             {
-                if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
-                {
-                    ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
-                    break;
-                }
+                abstractWidget.renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
+                break;
             }
         }
     }
@@ -153,14 +167,6 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         final int marginHorizontal = (width - imageWidth) / 2;
         final int marginVertical = (height - imageHeight) / 2;
         blit(stack, marginHorizontal, marginVertical, 0, 0, imageWidth, imageHeight);
-    }
-
-    @Override
-    public void render(@NotNull final PoseStack stack, int x, int y, float z)
-    {
-        this.renderBackground(stack);
-        super.render(stack, x, y, z);
-        this.renderTooltip(stack, x, y);
     }
 
     /**
@@ -194,24 +200,58 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         }
 
         @Override
+        protected boolean clicked(final double p_93681_, final double p_93682_)
+        {
+            return super.clicked(p_93681_, p_93682_);
+        }
+
+        @Override
         public boolean mouseClicked(final double mouseX, final double mouseY, final int button)
         {
             if (this.clicked(mouseX, mouseY))
             {
-                int index = this.direction.get2DDataValue();
                 int delta = this.isValidClickButton(button) ? 1 : -1;
 
                 // Perform the cycle
-                radii[index] = (radii[index] + delta) % (ScarecrowTileEntity.getMaxRange() + 1);
-                if (radii[index] < 0) radii[index] = ScarecrowTileEntity.getMaxRange();
+                int newRadius = (farmField.getRadius(this.direction) + delta) % (farmField.getMaxRadius() + 1);
+                if (newRadius < 0)
+                {
+                    newRadius = farmField.getMaxRadius();
+                }
+                farmField.setRadius(this.direction, newRadius);
 
-                this.setMessage(new TextComponent(String.valueOf(radii[index])));
-                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(radii[index], this.direction, tileEntity.getBlockPos()));
+                this.setMessage(new TextComponent(String.valueOf(newRadius)));
+                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(newRadius, this.direction, tileEntity.getBlockPos()));
 
                 return true;
             }
 
             return false;
+        }
+
+        @Override
+        public void renderButton(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
+        {
+            Minecraft minecraft = Minecraft.getInstance();
+            Font fontrenderer = minecraft.font;
+
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+            RenderSystem.setShaderTexture(0, TEXTURE);
+
+            int i = this.getYImage(this.isHovered);
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            this.blit(stack, this.x, this.y, getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
+            this.renderBg(stack, minecraft, mouseX, mouseY);
+            int j = getFGColor();
+            drawCenteredString(stack,
+              fontrenderer, this.getMessage(),
+              this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
+              this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
+              j | Mth.ceil(this.alpha * 255.0F) << 24
+            );
         }
 
         /**
@@ -254,31 +294,6 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                     return axis == Direction.Axis.X ? +2 : 0;
             }
             return 0;
-        }
-
-        @Override
-        public void renderButton(@NotNull final PoseStack stack, int mouseX, int mouseY, float partialTicks)
-        {
-            Minecraft minecraft = Minecraft.getInstance();
-            Font fontrenderer = minecraft.font;
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-            RenderSystem.setShaderTexture(0, TEXTURE);
-
-            int i = this.getYImage(this.isHovered);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.blit(stack, this.x, this.y, getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
-            this.renderBg(stack, minecraft, mouseX, mouseY);
-            int j = getFGColor();
-            drawCenteredString(stack,
-              fontrenderer, this.getMessage(),
-              this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
-              this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
-              j | Mth.ceil(this.alpha * 255.0F) << 24
-            );
         }
 
         @Override

@@ -3,6 +3,8 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
@@ -22,6 +24,7 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.buildings.views.AbstractBuildingView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldRegistry;
 import com.minecolonies.coremod.colony.managers.ResearchManager;
 import com.minecolonies.coremod.colony.managers.StatisticsManager;
 import com.minecolonies.coremod.colony.permissions.PermissionsView;
@@ -37,7 +40,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -69,19 +71,58 @@ public final class ColonyView implements IColonyView
     private static final int REQUEST_MANAGER_MAX_SIZE = 700000;
 
     //  General Attributes
-    private final int                            id;
-    private final Map<Integer, IWorkOrderView>   workOrders  = new HashMap<>();
+    private final int                          id;
+    private final Map<Integer, IWorkOrderView> workOrders = new HashMap<>();
+
     //  Administration/permissions
     @NotNull
-    private final PermissionsView                permissions = new PermissionsView();
+    private final PermissionsView permissions = new PermissionsView();
+
     @NotNull
-    private final Map<BlockPos, IBuildingView>   buildings   = new HashMap<>();
+    private final Map<BlockPos, IBuildingView> buildings = new HashMap<>();
+
+    @NotNull
+    private final Map<BlockPos, IFieldView> fields = new HashMap<>();
+
     //  Citizenry
     @NotNull
-    private final Map<Integer, ICitizenDataView> citizens    = new HashMap<>();
-    private       Map<Integer, IVisitorViewData> visitors    = new HashMap<>();
-    private       String                         name        = "Unknown";
-    private       ResourceKey<Level>                            dimensionId;
+    private final Map<Integer, ICitizenDataView> citizens = new HashMap<>();
+
+    /**
+     * Last barbarian spawnpoints.
+     */
+    private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
+
+    /**
+     * The Positions which players can freely interact.
+     */
+    private final Set<BlockPos> freePositions = new HashSet<>();
+
+    /**
+     * The Blocks which players can freely interact with.
+     */
+    private final Set<Block> freeBlocks = new HashSet<>();
+
+    /**
+     * The Set of waypoints.
+     */
+    private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
+
+    /**
+     * The research effects of the colony.
+     */
+    private final IResearchManager manager;
+
+    /**
+     * The grave manager on the client side.
+     */
+    private final IGraveManager graveManager = new GraveManagerView();
+
+    private Map<Integer, IVisitorViewData> visitors = new HashMap<>();
+
+    private String name = "Unknown";
+
+    private ResourceKey<Level> dimensionId;
 
     /**
      * Colony team color.
@@ -91,11 +132,10 @@ public final class ColonyView implements IColonyView
     /**
      * The colony flag (set to plain white as default)
      */
-    private ListTag        colonyFlag      = new BannerPattern.Builder()
-        .addPattern(BannerPattern.BASE, DyeColor.WHITE)
-        .toListTag();
-
-    private BlockPos center = BlockPos.ZERO;
+    private ListTag  colonyFlag = new BannerPattern.Builder()
+                                    .addPattern(BannerPattern.BASE, DyeColor.WHITE)
+                                    .toListTag();
+    private BlockPos center     = BlockPos.ZERO;
 
     /**
      * Defines if workers are hired manually or automatically.
@@ -130,26 +170,6 @@ public final class ColonyView implements IColonyView
      * Check if the colony has a warehouse.
      */
     private boolean hasColonyWarehouse;
-
-    /**
-     * Last barbarian spawnpoints.
-     */
-    private final List<BlockPos> lastSpawnPoints = new ArrayList<>();
-
-    /**
-     * The Positions which players can freely interact.
-     */
-    private final Set<BlockPos> freePositions = new HashSet<>();
-
-    /**
-     * The Blocks which players can freely interact with.
-     */
-    private final Set<Block> freeBlocks = new HashSet<>();
-
-    /**
-     * The Set of waypoints.
-     */
-    private final Map<BlockPos, BlockState> wayPoints = new HashMap<>();
 
     /**
      * The overall happiness of the colony.
@@ -202,25 +222,16 @@ public final class ColonyView implements IColonyView
     private List<CompactColonyReference> feuds;
 
     /**
-     * The research effects of the colony.
-     */
-    private final IResearchManager manager;
-
-    /**
      * Whether spies are active and highlight enemy positions.
      */
-    private boolean   spiesEnabled;
+    private boolean spiesEnabled;
+
     private Set<Long> ticketedChunks = new HashSet<>();
 
     /**
      * The texture style of the colony citizens.
      */
     private String textureStyle;
-
-    /**
-     * The grave manager on the client side.
-     */
-    private final IGraveManager graveManager = new GraveManagerView();
 
     /**
      * The list of name files.
@@ -447,219 +458,6 @@ public final class ColonyView implements IColonyView
     {
         return new ArrayList<>(freeBlocks);
     }
-
-    /**
-     * Add a new free to interact position.
-     *
-     * @param pos position to add.
-     */
-    @Override
-    public void addFreePosition(@NotNull final BlockPos pos)
-    {
-        freePositions.add(pos);
-    }
-
-    /**
-     * Add a new free to interact block.
-     *
-     * @param block block to add.
-     */
-    @Override
-    public void addFreeBlock(@NotNull final Block block)
-    {
-        freeBlocks.add(block);
-    }
-
-    /**
-     * Remove a free to interact position.
-     *
-     * @param pos position to remove.
-     */
-    @Override
-    public void removeFreePosition(@NotNull final BlockPos pos)
-    {
-        freePositions.remove(pos);
-    }
-
-    /**
-     * Remove a free to interact block.
-     *
-     * @param block state to remove.
-     */
-    @Override
-    public void removeFreeBlock(@NotNull final Block block)
-    {
-        freeBlocks.remove(block);
-    }
-
-    @Override
-    public void setCanBeAutoDeleted(final boolean canBeDeleted)
-    {
-
-    }
-
-    /**
-     * Returns the dimension ID of the view.
-     *
-     * @return dimension ID of the view.
-     */
-    @Override
-    public ResourceKey<Level> getDimension()
-    {
-        return dimensionId;
-    }
-
-    /**
-     * Getter for the manual hiring or not.
-     *
-     * @return the boolean true or false.
-     */
-    @Override
-    public boolean isManualHiring()
-    {
-        return manualHiring;
-    }
-
-    /**
-     * Sets if workers should be hired manually.
-     *
-     * @param manualHiring true if manually.
-     */
-    @Override
-    public void setManualHiring(final boolean manualHiring)
-    {
-        this.manualHiring = manualHiring;
-    }
-
-    @Override
-    public CompoundTag write(final CompoundTag colonyCompound)
-    {
-        return new CompoundTag();
-    }
-
-    @Override
-    public void read(final CompoundTag compound)
-    {
-        //Noop
-    }
-
-    /**
-     * Getter for the manual housing or not.
-     *
-     * @return the boolean true or false.
-     */
-    @Override
-    public boolean isManualHousing()
-    {
-        return manualHousing;
-    }
-
-    /**
-     * Sets if houses should be assigned manually.
-     *
-     * @param manualHousing true if manually.
-     */
-    @Override
-    public void setManualHousing(final boolean manualHousing)
-    {
-        this.manualHousing = manualHousing;
-    }
-
-    @Override
-    public void addWayPoint(final BlockPos pos, final BlockState newWayPointState)
-    {
-
-    }
-
-    @Override
-    public boolean isValidAttackingGuard(final AbstractEntityCitizen entity)
-    {
-        return false;
-    }
-
-    /**
-     * Getter for letting citizens move in or not.
-     *
-     * @return the boolean true or false.
-     */
-    @Override
-    public boolean canMoveIn()
-    {
-        return moveIn;
-    }
-
-    /**
-     * Tries to use a given amount of additional growth-time for childs.
-     *
-     * @param amount amount to use
-     * @return true if used up.
-     */
-    @Override
-    public boolean useAdditionalChildTime(final int amount)
-    {
-        return false;
-    }
-
-    @Override
-    public void updateHasChilds()
-    {
-    }
-
-    @Override
-    public void addLoadedChunk(final long chunkPos, final LevelChunk chunk)
-    {
-
-    }
-
-    @Override
-    public void removeLoadedChunk(final long chunkPos)
-    {
-
-    }
-
-    @Override
-    public int getLoadedChunkCount()
-    {
-        return 0;
-    }
-
-    @Override
-    public ColonyState getState()
-    {
-        return null;
-    }
-
-    @Override
-    public boolean isActive()
-    {
-        return true;
-    }
-
-    @Override
-    public Set<Long> getTicketedChunks()
-    {
-        return ticketedChunks;
-    }
-
-    @Override
-    public void setTextureStyle(final String style)
-    {
-        this.textureStyle = style;
-    }
-
-    @Override
-    public String getTextureStyleId()
-    {
-        return this.textureStyle;
-    }
-
-    /**
-     * Sets if citizens can move in.
-     *
-     * @param newMoveIn true if citizens can move in.
-     */
-    @Override
-    public void setMoveIn(final boolean newMoveIn) {this.moveIn = newMoveIn;}
 
     /**
      * Get the town hall View for this ColonyView.
@@ -1036,11 +834,9 @@ public final class ColonyView implements IColonyView
      *
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.
-     * @return null == no response.
      */
     @Override
-    @Nullable
-    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final FriendlyByteBuf buf)
     {
         if (buildings.containsKey(buildingId))
         {
@@ -1061,8 +857,27 @@ public final class ColonyView implements IColonyView
                 }
             }
         }
+    }
 
-        return null;
+    /**
+     * Update a ColonyView's fields given a network data ColonyView update packet. This uses a full-replacement - fields do not get updated and are instead overwritten.
+     *
+     * @param position location of the field.
+     * @param buf      buffer containing ColonyBuilding information.
+     */
+    @Override
+    public void handleColonyFieldViewMessage(final BlockPos position, final FieldStructureType type, @NotNull final FriendlyByteBuf buf)
+    {
+        if (fields.containsKey(position))
+        {
+            fields.get(position).deserialize(buf);
+        }
+        else
+        {
+            final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
+            field.deserialize(buf);
+            fields.put(field.getPosition(), field);
+        }
     }
 
     /**
@@ -1087,17 +902,6 @@ public final class ColonyView implements IColonyView
         Network.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
     }
 
-    /**
-     * Getter for the overall happiness.
-     *
-     * @return the happiness, a double.
-     */
-    @Override
-    public double getOverallHappiness()
-    {
-        return overallHappiness;
-    }
-
     @Override
     public BlockPos getCenter()
     {
@@ -1109,25 +913,6 @@ public final class ColonyView implements IColonyView
     {
         return name;
     }
-
-    /**
-     * Getter for the team colony color.
-     *
-     * @return the color.
-     */
-    @Override
-    public ChatFormatting getTeamColonyColor()
-    {
-        return teamColonyColor;
-    }
-
-    /**
-     * Getter for the pattern list of the colony flag
-     *
-     * @return the ListNBT of flag (banner) patterns
-     */
-    @Override
-    public ListTag getColonyFlag() { return colonyFlag; }
 
     /**
      * Sets the name of the view.
@@ -1146,6 +931,17 @@ public final class ColonyView implements IColonyView
     public IPermissions getPermissions()
     {
         return permissions;
+    }
+
+    /**
+     * Add a new free to interact position.
+     *
+     * @param pos position to add.
+     */
+    @Override
+    public void addFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.add(pos);
     }
 
     @Override
@@ -1183,41 +979,6 @@ public final class ColonyView implements IColonyView
     public boolean hasWarehouse()
     {
         return hasColonyWarehouse;
-    }
-
-    @Override
-    public boolean hasBuilding(final String name, final int level, final boolean singleBuilding)
-    {
-        int sum = 0;
-        for (final IBuildingView building : buildings.values())
-        {
-            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
-            {
-                if (singleBuilding)
-                {
-                    if (building.getBuildingLevel() >= level)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    sum += building.getBuildingLevel();
-
-                    if (sum >= level)
-                    {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isDay()
-    {
-        return false;
     }
 
     @Override
@@ -1276,11 +1037,26 @@ public final class ColonyView implements IColonyView
          */
     }
 
-    @NotNull
+    /**
+     * Getter for the overall happiness.
+     *
+     * @return the happiness, a double.
+     */
     @Override
-    public List<Player> getMessagePlayerEntities()
+    public double getOverallHappiness()
     {
-        return new ArrayList<>();
+        return overallHappiness;
+    }
+
+    /**
+     * Get the style of the colony.
+     *
+     * @return the current default style.
+     */
+    @Override
+    public String getStyle()
+    {
+        return style;
     }
 
     @Override
@@ -1291,41 +1067,32 @@ public final class ColonyView implements IColonyView
          */
     }
 
+    /**
+     * Returns the dimension ID of the view.
+     *
+     * @return dimension ID of the view.
+     */
     @Override
-    public void onWorldLoad(@NotNull final Level w)
+    public ResourceKey<Level> getDimension()
     {
-
+        return dimensionId;
     }
 
     @Override
-    public void onWorldUnload(@NotNull final Level w)
+    public boolean isRemote()
     {
-
+        return true;
     }
 
+    /**
+     * Getter for the team colony color.
+     *
+     * @return the color.
+     */
     @Override
-    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    public ChatFormatting getTeamColonyColor()
     {
-
-    }
-
-    @NotNull
-    @Override
-    public IWorkManager getWorkManager()
-    {
-        return null;
-    }
-
-    @Override
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
-    {
-
-    }
-
-    @Override
-    public Map<BlockPos, BlockState> getWayPoints()
-    {
-        return wayPoints;
+        return teamColonyColor;
     }
 
     /**
@@ -1350,49 +1117,6 @@ public final class ColonyView implements IColonyView
         return printProgress;
     }
 
-    @Override
-    public boolean isRemote()
-    {
-        return true;
-    }
-
-    @Override
-    public CompoundTag getColonyTag()
-    {
-        return null;
-    }
-
-    @Override
-    public boolean isColonyUnderAttack()
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isValidAttackingPlayer(final Player entity)
-    {
-        return false;
-    }
-
-    @Override
-    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final Player followPlayer)
-    {
-
-    }
-
-    @Override
-    public void setColonyColor(final ChatFormatting color)
-    {
-
-    }
-
-    @Override
-    public void setColonyFlag(ListTag colonyFlag)
-    {
-        this.colonyFlag = colonyFlag;
-        Network.getNetwork().sendToServer(new ColonyFlagChangeMessage(this, colonyFlag));
-    }
-
     /**
      * Get a list of all buildings.
      *
@@ -1404,23 +1128,143 @@ public final class ColonyView implements IColonyView
         return new ArrayList<>(buildings.values());
     }
 
-    @NotNull
+    /**
+     * Add a new free to interact block.
+     *
+     * @param block block to add.
+     */
     @Override
-    public List<Player> getImportantMessageEntityPlayers()
+    public void addFreeBlock(@NotNull final Block block)
     {
-        return new ArrayList<>();
+        freeBlocks.add(block);
+    }
+
+    @Override
+    public boolean isRaiding()
+    {
+        return this.isUnderRaid;
+    }
+
+    @Override
+    public List<CompactColonyReference> getAllies()
+    {
+        return allies;
+    }
+
+    @Override
+    public List<CompactColonyReference> getFeuds()
+    {
+        return feuds;
+    }
+
+    @Override
+    public boolean areSpiesEnabled()
+    {
+        return spiesEnabled;
+    }
+
+    @Override
+    public ICitizenDataView getVisitor(final int citizenId)
+    {
+        return visitors.get(citizenId);
+    }
+
+    @Override
+    public List<String> getNameFileIds()
+    {
+        return this.nameFileIds;
+    }
+
+    @Override
+    public IFieldView getField(final BlockPos position)
+    {
+        return fields.get(position);
     }
 
     /**
-     * Get the style of the colony.
+     * Remove a free to interact position.
      *
-     * @return the current default style.
+     * @param pos position to remove.
      */
     @Override
-    public String getStyle()
+    public void removeFreePosition(@NotNull final BlockPos pos)
     {
-        return style;
+        freePositions.remove(pos);
     }
+
+    /**
+     * Remove a free to interact block.
+     *
+     * @param block state to remove.
+     */
+    @Override
+    public void removeFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.remove(block);
+    }
+
+    /**
+     * Getter for the manual hiring or not.
+     *
+     * @return the boolean true or false.
+     */
+    @Override
+    public boolean isManualHiring()
+    {
+        return manualHiring;
+    }
+
+    /**
+     * Sets if workers should be hired manually.
+     *
+     * @param manualHiring true if manually.
+     */
+    @Override
+    public void setManualHiring(final boolean manualHiring)
+    {
+        this.manualHiring = manualHiring;
+    }
+
+    /**
+     * Getter for the manual housing or not.
+     *
+     * @return the boolean true or false.
+     */
+    @Override
+    public boolean isManualHousing()
+    {
+        return manualHousing;
+    }
+
+    /**
+     * Sets if houses should be assigned manually.
+     *
+     * @param manualHousing true if manually.
+     */
+    @Override
+    public void setManualHousing(final boolean manualHousing)
+    {
+        this.manualHousing = manualHousing;
+    }
+
+    /**
+     * Getter for letting citizens move in or not.
+     *
+     * @return the boolean true or false.
+     */
+    @Override
+    public boolean canMoveIn()
+    {
+        return moveIn;
+    }
+
+    /**
+     * Sets if citizens can move in.
+     *
+     * @param newMoveIn true if citizens can move in.
+     */
+    @Override
+    public void setMoveIn(final boolean newMoveIn) {this.moveIn = newMoveIn;}
 
     @Override
     public void setStyle(final String style)
@@ -1435,15 +1279,15 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public IGraveManager getGraveManager()
-    {
-        return this.graveManager;
-    }
-
-    @Override
     public ICitizenManager getCitizenManager()
     {
         return null;
+    }
+
+    @Override
+    public IGraveManager getGraveManager()
+    {
+        return this.graveManager;
     }
 
     @Override
@@ -1489,15 +1333,9 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public boolean isRaiding()
+    public IResearchManager getResearchManager()
     {
-        return this.isUnderRaid;
-    }
-
-    @Override
-    public long getMercenaryUseTime()
-    {
-        return mercenaryLastUseTime;
+        return manager;
     }
 
     @Override
@@ -1507,40 +1345,235 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public List<CompactColonyReference> getAllies()
+    public long getMercenaryUseTime()
     {
-        return allies;
+        return mercenaryLastUseTime;
     }
 
     @Override
-    public List<CompactColonyReference> getFeuds()
+    public CompoundTag getColonyTag()
     {
-        return feuds;
+        return null;
     }
 
     @Override
-    public IResearchManager getResearchManager()
+    public boolean isColonyUnderAttack()
     {
-        return manager;
+        return false;
     }
 
     @Override
-    public boolean areSpiesEnabled()
+    public boolean isValidAttackingPlayer(final Player entity)
     {
-        return spiesEnabled;
+        return false;
     }
 
     @Override
-    public ICitizenDataView getVisitor(final int citizenId)
+    public boolean isValidAttackingGuard(final AbstractEntityCitizen entity)
     {
-        return visitors.get(citizenId);
+        return false;
     }
 
     @Override
-    public void setNameStyle(final String style)
+    public void setColonyColor(final ChatFormatting color)
     {
-        this.nameStyle = style;
-        this.markDirty();
+
+    }
+
+    @Override
+    public void onWorldLoad(@NotNull final Level w)
+    {
+
+    }
+
+    @Override
+    public void onWorldUnload(@NotNull final Level w)
+    {
+
+    }
+
+    @Override
+    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    {
+
+    }
+
+    @NotNull
+    @Override
+    public IWorkManager getWorkManager()
+    {
+        return null;
+    }
+
+    @Override
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    {
+
+    }
+
+    @Override
+    public boolean hasBuilding(final String name, final int level, final boolean singleBuilding)
+    {
+        int sum = 0;
+        for (final IBuildingView building : buildings.values())
+        {
+            if (building.getBuildingType().getRegistryName().getPath().equalsIgnoreCase(name))
+            {
+                if (singleBuilding)
+                {
+                    if (building.getBuildingLevel() >= level)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    sum += building.getBuildingLevel();
+
+                    if (sum >= level)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Getter for the pattern list of the colony flag
+     *
+     * @return the ListNBT of flag (banner) patterns
+     */
+    @Override
+    public ListTag getColonyFlag() {return colonyFlag;}
+
+    @Override
+    public boolean isDay()
+    {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public List<Player> getMessagePlayerEntities()
+    {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Map<BlockPos, BlockState> getWayPoints()
+    {
+        return wayPoints;
+    }
+
+    @Override
+    public void setColonyFlag(ListTag colonyFlag)
+    {
+        this.colonyFlag = colonyFlag;
+        Network.getNetwork().sendToServer(new ColonyFlagChangeMessage(this, colonyFlag));
+    }
+
+    @Override
+    public void addWayPoint(final BlockPos pos, final BlockState newWayPointState)
+    {
+
+    }
+
+    @Override
+    public void addGuardToAttackers(final AbstractEntityCitizen entityCitizen, final Player followPlayer)
+    {
+
+    }
+
+    @Override
+    public void setCanBeAutoDeleted(final boolean canBeDeleted)
+    {
+
+    }
+
+    @Override
+    public CompoundTag write(final CompoundTag colonyCompound)
+    {
+        return new CompoundTag();
+    }
+
+    @Override
+    public void read(final CompoundTag compound)
+    {
+        //Noop
+    }
+
+    @NotNull
+    @Override
+    public List<Player> getImportantMessageEntityPlayers()
+    {
+        return new ArrayList<>();
+    }
+
+    /**
+     * Tries to use a given amount of additional growth-time for childs.
+     *
+     * @param amount amount to use
+     * @return true if used up.
+     */
+    @Override
+    public boolean useAdditionalChildTime(final int amount)
+    {
+        return false;
+    }
+
+    @Override
+    public void updateHasChilds()
+    {
+    }
+
+    @Override
+    public void addLoadedChunk(final long chunkPos, final LevelChunk chunk)
+    {
+
+    }
+
+    @Override
+    public void removeLoadedChunk(final long chunkPos)
+    {
+
+    }
+
+    @Override
+    public int getLoadedChunkCount()
+    {
+        return 0;
+    }
+
+    @Override
+    public ColonyState getState()
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isActive()
+    {
+        return true;
+    }
+
+    @Override
+    public Set<Long> getTicketedChunks()
+    {
+        return ticketedChunks;
+    }
+
+    @Override
+    public void setTextureStyle(final String style)
+    {
+        this.textureStyle = style;
+    }
+
+    @Override
+    public String getTextureStyleId()
+    {
+        return this.textureStyle;
     }
 
     @Override
@@ -1550,9 +1583,10 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public List<String> getNameFileIds()
+    public void setNameStyle(final String style)
     {
-        return this.nameFileIds;
+        this.nameStyle = style;
+        this.markDirty();
     }
 
     @Override

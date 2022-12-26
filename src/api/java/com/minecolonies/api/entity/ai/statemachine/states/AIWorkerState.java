@@ -600,15 +600,11 @@ public enum AIWorkerState implements IAIState
     /*
 ### Plantation related ###
      */
-    PLANTATION_MOVE_TO_SOIL(true),
+    PLANTATION_MOVE_TO_FIELD(true),
 
-    PLANTATION_CHECK_SOIL(true),
+    PLANTATION_MOVE_TO_POSITION(true),
 
-    PLANTATION_CLEAR_OBSTACLE(true),
-
-    PLANTATION_FARM(true),
-
-    PLANTATION_PLANT(true),
+    PLANTATION_WORK_FIELD(true),
 
     /*
 ### Beekeeper ###

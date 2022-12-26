@@ -1,24 +1,30 @@
 package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.permissions.*;
+import com.minecolonies.api.colony.permissions.ColonyPlayer;
+import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.requester.IRequester;
 import com.minecolonies.api.colony.workorders.IWorkOrderView;
 import com.minecolonies.api.network.IMessage;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.scores.PlayerTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public interface IColonyView extends IColony
 {
@@ -35,83 +41,6 @@ public interface IColonyView extends IColony
      * @return the list of free to interact blocks.
      */
     List<Block> getFreeBlocks();
-
-    /**
-     * Add a new free to interact position.
-     *
-     * @param pos position to add.
-     */
-    void addFreePosition(@NotNull BlockPos pos);
-
-    /**
-     * Add a new free to interact block.
-     *
-     * @param block block to add.
-     */
-    void addFreeBlock(@NotNull Block block);
-
-    /**
-     * Remove a free to interact position.
-     *
-     * @param pos position to remove.
-     */
-    void removeFreePosition(@NotNull BlockPos pos);
-
-    /**
-     * Remove a free to interact block.
-     *
-     * @param block state to remove.
-     */
-    void removeFreeBlock(@NotNull Block block);
-
-    /**
-     * Returns the dimension ID of the view.
-     *
-     * @return dimension ID of the view.
-     */
-    ResourceKey<Level> getDimension();
-
-    /**
-     * Getter for the manual hiring or not.
-     *
-     * @return the boolean true or false.
-     */
-    boolean isManualHiring();
-
-    /**
-     * Sets if workers should be hired manually.
-     *
-     * @param manualHiring true if manually.
-     */
-    void setManualHiring(boolean manualHiring);
-
-    /**
-     * Getter for the manual housing or not.
-     *
-     * @return the boolean true or false.
-     */
-    boolean isManualHousing();
-
-    /**
-     * Sets if houses should be assigned manually.
-     *
-     * @param manualHousing true if manually.
-     */
-    void setManualHousing(boolean manualHousing);
-
-    /**
-     * Getter for letting citizens move in or not.
-     *
-     * @return the boolean true or false.
-     */
-    boolean canMoveIn();
-
-    /**
-     * Sets if citizens can move in.
-     *
-     * @param newMoveIn true if citizens can move in.
-     */
-    void setMoveIn(boolean newMoveIn);
 
     /**
      * Get the town hall View for this ColonyView.
@@ -224,7 +153,8 @@ public interface IColonyView extends IColony
 
     /**
      * Handles visitor view messages
-     * @param refresh if all need to be refreshed.
+     *
+     * @param refresh         if all need to be refreshed.
      * @param visitorViewData the new data to set
      */
     void handleColonyViewVisitorMessage(final FriendlyByteBuf visitorViewData, final boolean refresh);
@@ -261,10 +191,17 @@ public interface IColonyView extends IColony
      *
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.
-     * @return null == no response.
      */
-    @Nullable
-    IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
+    void handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull FriendlyByteBuf buf);
+
+    /**
+     * Update a ColonyView's fields given a network data ColonyView update packet. This uses a full-replacement - fields do not get updated and are instead overwritten.
+     *
+     * @param position location of the field.
+     * @param type     the type of the field.
+     * @param buf      buffer containing ColonyBuilding information.
+     */
+    void handleColonyFieldViewMessage(BlockPos position, FieldStructureType type, FriendlyByteBuf buf);
 
     /**
      * Update a players permissions.
@@ -280,25 +217,11 @@ public interface IColonyView extends IColony
      */
     void removePlayer(UUID player);
 
-    /**
-     * Getter for the overall happiness.
-     *
-     * @return the happiness, a double.
-     */
-    double getOverallHappiness();
-
     @Override
     BlockPos getCenter();
 
     @Override
     String getName();
-
-    /**
-     * Getter for the team colony color.
-     *
-     * @return the color.
-     */
-    ChatFormatting getTeamColonyColor();
 
     /**
      * Sets the name of the view.
@@ -309,7 +232,12 @@ public interface IColonyView extends IColony
 
     @NotNull
     @Override
-    IPermissions getPermissions();
+    IPermissions getPermissions();    /**
+     * Add a new free to interact position.
+     *
+     * @param pos position to add.
+     */
+    void addFreePosition(@NotNull BlockPos pos);
 
     @Override
     boolean isCoordInColony(@NotNull Level w, @NotNull BlockPos pos);
@@ -357,8 +285,39 @@ public interface IColonyView extends IColony
     @Override
     void removeVisitingPlayer(Player player);
 
+    /**
+     * Getter for the overall happiness.
+     *
+     * @return the happiness, a double.
+     */
+    double getOverallHappiness();
+
+    /**
+     * Get the style of the colony.
+     *
+     * @return the current default style.
+     */
+    String getStyle();
+
     @Override
     void addVisitingPlayer(Player player);
+
+    /**
+     * Returns the dimension ID of the view.
+     *
+     * @return dimension ID of the view.
+     */
+    ResourceKey<Level> getDimension();
+
+    @Override
+    boolean isRemote();
+
+    /**
+     * Getter for the team colony color.
+     *
+     * @return the color.
+     */
+    ChatFormatting getTeamColonyColor();
 
     /**
      * Get a list of all barb spawn positions in the colony view.
@@ -374,22 +333,17 @@ public interface IColonyView extends IColony
      */
     boolean isPrintingProgress();
 
-    @Override
-    boolean isRemote();
-
     /**
      * Get a list of all buildings.
      *
      * @return a list of their views.
      */
-    List<IBuildingView> getBuildings();
-
-    /**
-     * Get the style of the colony.
+    List<IBuildingView> getBuildings();    /**
+     * Add a new free to interact block.
      *
-     * @return the current default style.
+     * @param block block to add.
      */
-    String getStyle();
+    void addFreeBlock(@NotNull Block block);
 
     /**
      * If currently being raided.
@@ -424,7 +378,75 @@ public interface IColonyView extends IColony
 
     /**
      * Get a list of all available citizen name style options.
+     *
      * @return the list of options.
      */
     List<String> getNameFileIds();
+
+    /**
+     * The position of the field.
+     *
+     * @param position the position where the field is supposed to be.
+     */
+    IFieldView getField(BlockPos position);
+
+
+
+
+
+    /**
+     * Remove a free to interact position.
+     *
+     * @param pos position to remove.
+     */
+    void removeFreePosition(@NotNull BlockPos pos);
+
+    /**
+     * Remove a free to interact block.
+     *
+     * @param block state to remove.
+     */
+    void removeFreeBlock(@NotNull Block block);
+
+    /**
+     * Getter for the manual hiring or not.
+     *
+     * @return the boolean true or false.
+     */
+    boolean isManualHiring();
+
+    /**
+     * Sets if workers should be hired manually.
+     *
+     * @param manualHiring true if manually.
+     */
+    void setManualHiring(boolean manualHiring);
+
+    /**
+     * Getter for the manual housing or not.
+     *
+     * @return the boolean true or false.
+     */
+    boolean isManualHousing();
+
+    /**
+     * Sets if houses should be assigned manually.
+     *
+     * @param manualHousing true if manually.
+     */
+    void setManualHousing(boolean manualHousing);
+
+    /**
+     * Getter for letting citizens move in or not.
+     *
+     * @return the boolean true or false.
+     */
+    boolean canMoveIn();
+
+    /**
+     * Sets if citizens can move in.
+     *
+     * @param newMoveIn true if citizens can move in.
+     */
+    void setMoveIn(boolean newMoveIn);
 }

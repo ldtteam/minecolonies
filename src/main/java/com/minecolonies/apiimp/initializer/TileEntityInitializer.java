@@ -17,8 +17,11 @@ public class TileEntityInitializer
     @SubscribeEvent
     public static void registerTileEntity(final RegistryEvent.Register<BlockEntityType<?>> event)
     {
-        MinecoloniesTileEntities.SCARECROW = BlockEntityType.Builder.of(ScarecrowTileEntity::new, ModBlocks.blockScarecrow).build(null);
+        MinecoloniesTileEntities.SCARECROW = BlockEntityType.Builder.of(TileEntityScarecrow::new, ModBlocks.blockScarecrow).build(null);
         MinecoloniesTileEntities.SCARECROW.setRegistryName(Constants.MOD_ID, "scarecrow");
+
+        MinecoloniesTileEntities.PLANTATION_FIELD = BlockEntityType.Builder.of(TileEntityPlantationField::new, ModBlocks.blockPlantationField).build(null);
+        MinecoloniesTileEntities.PLANTATION_FIELD.setRegistryName(Constants.MOD_ID, "plantationfield");
 
         MinecoloniesTileEntities.BARREL = BlockEntityType.Builder.of(TileEntityBarrel::new, ModBlocks.blockBarrel).build(null);
         MinecoloniesTileEntities.BARREL.setRegistryName(Constants.MOD_ID, "barrel");
@@ -59,6 +62,7 @@ public class TileEntityInitializer
 
         event.getRegistry().registerAll(
           MinecoloniesTileEntities.SCARECROW,
+          MinecoloniesTileEntities.PLANTATION_FIELD,
           MinecoloniesTileEntities.BARREL,
           MinecoloniesTileEntities.BUILDING,
           MinecoloniesTileEntities.DECO_CONTROLLER,

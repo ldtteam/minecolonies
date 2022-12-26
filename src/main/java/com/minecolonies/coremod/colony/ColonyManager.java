@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
@@ -120,93 +121,6 @@ public final class ColonyManager implements IColonyManager
     public void deleteColonyByDimension(final int id, final boolean canDestroy, final ResourceKey<Level> dimension)
     {
         deleteColony(getColonyByDimension(id, dimension), canDestroy);
-    }
-
-    /**
-     * Delete a colony and purge all buildings and citizens.
-     *
-     * @param iColony    the colony to destroy.
-     * @param canDestroy if the building outlines should be destroyed as well.
-     */
-    private void deleteColony(@Nullable final IColony iColony, final boolean canDestroy)
-    {
-        if (!(iColony instanceof Colony))
-        {
-            return;
-        }
-
-        final Colony colony = (Colony) iColony;
-        final int id = colony.getID();
-        final Level world = colony.getWorld();
-
-        if (world == null)
-        {
-            Log.getLogger().warn("Deleting Colony " + id + " errored: World is Null");
-            return;
-        }
-
-        try
-        {
-            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
-            Log.getLogger().info("Removing citizens for " + id);
-            for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
-            {
-                Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.die(CONSOLE_DAMAGE_SOURCE));
-            }
-
-            Log.getLogger().info("Removing buildings for " + id);
-            for (final IBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
-            {
-                try
-                {
-                    final BlockPos location = building.getPosition();
-                    Log.getLogger().info("Delete Building at " + location);
-                    if (canDestroy)
-                    {
-                        building.deconstruct();
-                    }
-                    building.destroy();
-                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
-                    {
-                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
-                        world.removeBlock(location, false);
-                    }
-                }
-                catch (final Exception ex)
-                {
-                    Log.getLogger().warn("Something went wrong deleting a building while deleting the colony!", ex);
-                }
-            }
-
-            try
-            {
-                MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
-            }
-            catch (final NullPointerException e)
-            {
-                Log.getLogger().warn("Can't unregister the event handler twice");
-            }
-
-            Log.getLogger().info("Deleting colony: " + colony.getID());
-
-            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
-            if (cap == null)
-            {
-                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
-                return;
-            }
-
-            cap.deleteColony(id);
-            BackUpHelper.markColonyDeleted(colony.getID(), colony.getDimension());
-            colony.getImportantMessageEntityPlayers()
-              .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()), (ServerPlayer) player));
-            Log.getLogger().info("Successfully deleted colony: " + id);
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
-        }
     }
 
     @Override
@@ -380,12 +294,6 @@ public final class ColonyManager implements IColonyManager
         return w.isClientSide ? getColonyView(w, pos) : getColonyByPosFromWorld(w, pos);
     }
 
-    @Override
-    public void openReactivationWindow(final BlockPos pos)
-    {
-        new WindowReactivateBuilding(pos).open();
-    }
-
     /**
      * Get Colony that contains a given (x, y, z).
      *
@@ -541,44 +449,6 @@ public final class ColonyManager implements IColonyManager
     public IColony getIColonyByOwner(@NotNull final Level w, final UUID owner)
     {
         return w.isClientSide ? getColonyViewByOwner(owner, w.dimension()) : getColonyByOwner(owner);
-    }
-
-    /**
-     * Returns a ColonyView with specific owner.
-     *
-     * @param owner     UUID of the owner.
-     * @param dimension the dimension id.
-     * @return ColonyView.
-     */
-    private IColony getColonyViewByOwner(final UUID owner, final ResourceKey<Level> dimension)
-    {
-        if (colonyViews.containsKey(dimension))
-        {
-            for (@NotNull final IColonyView c : colonyViews.get(dimension))
-            {
-                final ColonyPlayer p = c.getPlayers().get(owner);
-                if (p != null && p.getRank().equals(c.getPermissions().getRankOwner()))
-                {
-                    return c;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private IColony getColonyByOwner(@Nullable final UUID owner)
-    {
-        if (owner == null)
-        {
-            return null;
-        }
-
-        return getAllColonies().stream()
-                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
-                 .findFirst()
-                 .orElse(null);
     }
 
     @Override
@@ -814,6 +684,20 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
+    public void handleColonyFieldViewMessage(final int colonyId, final BlockPos position, FieldStructureType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    {
+        final IColonyView view = getColonyView(colonyId, dim);
+        if (view != null)
+        {
+            view.handleColonyFieldViewMessage(position, type, buf);
+        }
+        else
+        {
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId), new Exception());
+        }
+    }
+
+    @Override
     public void handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
@@ -887,5 +771,136 @@ public final class ColonyManager implements IColonyManager
     public void resetColonyViews()
     {
         colonyViews.clear();
+    }
+
+    @Override
+    public void openReactivationWindow(final BlockPos pos)
+    {
+        new WindowReactivateBuilding(pos).open();
+    }
+
+    /**
+     * Returns a ColonyView with specific owner.
+     *
+     * @param owner     UUID of the owner.
+     * @param dimension the dimension id.
+     * @return ColonyView.
+     */
+    private IColony getColonyViewByOwner(final UUID owner, final ResourceKey<Level> dimension)
+    {
+        if (colonyViews.containsKey(dimension))
+        {
+            for (@NotNull final IColonyView c : colonyViews.get(dimension))
+            {
+                final ColonyPlayer p = c.getPlayers().get(owner);
+                if (p != null && p.getRank().equals(c.getPermissions().getRankOwner()))
+                {
+                    return c;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private IColony getColonyByOwner(@Nullable final UUID owner)
+    {
+        if (owner == null)
+        {
+            return null;
+        }
+
+        return getAllColonies().stream()
+                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
+                 .findFirst()
+                 .orElse(null);
+    }
+
+    /**
+     * Delete a colony and purge all buildings and citizens.
+     *
+     * @param iColony    the colony to destroy.
+     * @param canDestroy if the building outlines should be destroyed as well.
+     */
+    private void deleteColony(@Nullable final IColony iColony, final boolean canDestroy)
+    {
+        if (!(iColony instanceof Colony))
+        {
+            return;
+        }
+
+        final Colony colony = (Colony) iColony;
+        final int id = colony.getID();
+        final Level world = colony.getWorld();
+
+        if (world == null)
+        {
+            Log.getLogger().warn("Deleting Colony " + id + " errored: World is Null");
+            return;
+        }
+
+        try
+        {
+            ChunkDataHelper.claimColonyChunks(world, false, id, colony.getCenter());
+            Log.getLogger().info("Removing citizens for " + id);
+            for (final ICitizenData citizenData : new ArrayList<>(colony.getCitizenManager().getCitizens()))
+            {
+                Log.getLogger().info("Kill Citizen " + citizenData.getName());
+                citizenData.getEntity().ifPresent(entityCitizen -> entityCitizen.die(CONSOLE_DAMAGE_SOURCE));
+            }
+
+            Log.getLogger().info("Removing buildings for " + id);
+            for (final IBuilding building : new ArrayList<>(colony.getBuildingManager().getBuildings().values()))
+            {
+                try
+                {
+                    final BlockPos location = building.getPosition();
+                    Log.getLogger().info("Delete Building at " + location);
+                    if (canDestroy)
+                    {
+                        building.deconstruct();
+                    }
+                    building.destroy();
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                    {
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                        world.removeBlock(location, false);
+                    }
+                }
+                catch (final Exception ex)
+                {
+                    Log.getLogger().warn("Something went wrong deleting a building while deleting the colony!", ex);
+                }
+            }
+
+            try
+            {
+                MinecraftForge.EVENT_BUS.unregister(colony.getEventHandler());
+            }
+            catch (final NullPointerException e)
+            {
+                Log.getLogger().warn("Can't unregister the event handler twice");
+            }
+
+            Log.getLogger().info("Deleting colony: " + colony.getID());
+
+            final IColonyManagerCapability cap = world.getCapability(COLONY_MANAGER_CAP, null).resolve().orElse(null);
+            if (cap == null)
+            {
+                Log.getLogger().warn(MISSING_WORLD_CAP_MESSAGE);
+                return;
+            }
+
+            cap.deleteColony(id);
+            BackUpHelper.markColonyDeleted(colony.getID(), colony.getDimension());
+            colony.getImportantMessageEntityPlayers()
+              .forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewRemoveMessage(colony.getID(), colony.getDimension()), (ServerPlayer) player));
+            Log.getLogger().info("Successfully deleted colony: " + id);
+        }
+        catch (final RuntimeException e)
+        {
+            Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
+        }
     }
 }

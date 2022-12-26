@@ -5,30 +5,85 @@ import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
  * Interface for the managers for registered structures.
- * Buildings, Fields, Decorations, etc.
+ * Buildings, Decorations, etc.
  */
 public interface IRegisteredStructureManager
 {
+    /**
+     * Get all the fields
+     *
+     * @param type the field type.
+     * @return an unmodifiable collection of all fields.
+     */
+    @NotNull Collection<IField> getFields(FieldStructureType type);
+
+    /**
+     * Get a specific field on the given location.
+     *
+     * @param type the field type.
+     * @param pos  the position the field is supposed to be in.
+     * @return the field, if any.
+     */
+    @Nullable
+    IField getField(FieldStructureType type, BlockPos pos);
+
+    /**
+     * Gets any free field in the colony, if any, and return it.
+     *
+     * @param type the field type.
+     * @return the free field, if any.
+     */
+    @Nullable IField getFreeField(FieldStructureType type);
+
+    /**
+     * Add a new field to the building manager.
+     *
+     * @param type     the field type.
+     * @param position the unique position of the field.
+     * @param field    the new field to add.
+     */
+    void addField(FieldStructureType type, BlockPos position, IField field);
+
+    /**
+     * Update a field, given its type and position, using a consumer function.
+     *
+     * @param type           the field type.
+     * @param position       the unique position of the field.
+     * @param modifyFunction the function to execute in which the field can be modified.
+     */
+    void updateField(FieldStructureType type, BlockPos position, Consumer<IField> modifyFunction);
+
+    /**
+     * Remove a field from the field collection.
+     *
+     * @param type     the field type.
+     * @param position the unique position of the field.
+     */
+    void removeField(FieldStructureType type, BlockPos position);
+
     /**
      * Read the buildings from NBT.
      *
@@ -80,12 +135,14 @@ public interface IRegisteredStructureManager
 
     /**
      * Get the leisure site positions.
+     *
      * @return the list.
      */
     List<BlockPos> getLeisureSites();
 
     /**
      * Get the first building matching the conditions.
+     *
      * @param predicate the predicate matching the building.
      * @return the position or null.
      */
@@ -94,18 +151,21 @@ public interface IRegisteredStructureManager
 
     /**
      * Register a new leisure site.
+     *
      * @param pos the position of it.
      */
     void addLeisureSite(BlockPos pos);
 
     /**
      * Remove a leisure site.
+     *
      * @param pos the position of it.
      */
     void removeLeisureSite(BlockPos pos);
 
     /**
      * Get the closest warehouse relative to a position.
+     *
      * @param pos the position,.
      * @return the closest warehouse.
      */
@@ -126,6 +186,13 @@ public interface IRegisteredStructureManager
      * @return the townhall building.
      */
     ITownHall getTownHall();
+
+    /**
+     * Set the townhall building.
+     *
+     * @param building the building to set.
+     */
+    void setTownHall(@Nullable final ITownHall building);
 
     /**
      * Get the maximum level among built mystical sites
@@ -163,35 +230,7 @@ public interface IRegisteredStructureManager
      * @param <B>        Building class.
      * @return the building with the specified id.
      */
-    @Nullable
-    <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
-
-    /**
-     * Getter for a unmodifiable version of the farmerFields list.
-     *
-     * @return list of fields and their id.
-     */
-    @NotNull
-    List<BlockPos> getFields();
-
-    /**
-     * Creates a field from a tile entity and adds it to the colony.
-     *
-     * @param tileEntity the scarecrow which contains the inventory.
-     * @param pos        Position where the field has been placed.
-     * @param world      the world of the field.
-     */
-    void addNewField(final AbstractScarecrowTileEntity tileEntity, final BlockPos pos, final Level world);
-
-    /**
-     * Returns a field which has not been taken yet.
-     *
-     * @param owner id of the owner of the field.
-     * @param world the world it is in.
-     * @return a field if there is one available, else null.
-     */
-    @Nullable
-    AbstractScarecrowTileEntity getFreeField(final int owner, final Level world);
+    @Nullable <B extends IBuilding> B getBuilding(final BlockPos buildingId, @NotNull final Class<B> type);
 
     /**
      * Remove a IBuilding from the Colony (when it is destroyed).
@@ -217,16 +256,9 @@ public interface IRegisteredStructureManager
     IBuilding addNewBuilding(@NotNull final AbstractTileEntityColonyBuilding tileEntity, final Level world);
 
     /**
-     * Removes a field from the farmerFields list.
-     *
-     * @param pos the position-id.
-     */
-    void removeField(final BlockPos pos);
-
-    /**
      * Calculate a good cook for a certain citizen.
      *
-     * @param citizen the citizen.
+     * @param citizen  the citizen.
      * @param building the type of building.
      * @return the Position of it.
      */
@@ -235,7 +267,7 @@ public interface IRegisteredStructureManager
     /**
      * Calculate a good building for a certain pos.
      *
-     * @param pos the pos.
+     * @param pos      the pos.
      * @param building the building class type.
      * @return the Position of it.
      */
@@ -259,17 +291,11 @@ public interface IRegisteredStructureManager
 
     /**
      * Event once a guard building changed at a certain level.
+     *
      * @param guardBuilding the guard building.
-     * @param newLevel the level of it.
+     * @param newLevel      the level of it.
      */
     void guardBuildingChangedAt(IBuilding guardBuilding, int newLevel);
-
-    /**
-     * Set the townhall building.
-     *
-     * @param building the building to set.
-     */
-    void setTownHall(@Nullable final ITownHall building);
 
     /**
      * Removes a warehouse from the BuildingManager
@@ -311,6 +337,7 @@ public interface IRegisteredStructureManager
 
     /**
      * Check if the chunk position it within of the building zone of the colony.
+     *
      * @param chunk the chunk to check
      * @return true if within.
      */
@@ -318,6 +345,7 @@ public interface IRegisteredStructureManager
 
     /**
      * Get a house with a spare bed.
+     *
      * @return the house or null.
      */
     IBuilding getHouseWithSpareBed();
@@ -332,6 +360,7 @@ public interface IRegisteredStructureManager
 
     /**
      * Get a random leisure site to go to.
+     *
      * @return the position of it.
      */
     BlockPos getRandomLeisureSite();

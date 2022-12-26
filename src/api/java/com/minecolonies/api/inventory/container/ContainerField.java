@@ -1,21 +1,19 @@
 package com.minecolonies.api.inventory.container;
 
-import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.ModContainers;
-import com.minecolonies.api.tileentities.AbstractScarecrowTileEntity;
+import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.ItemStackUtils;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -35,28 +33,9 @@ public class ContainerField extends AbstractContainerMenu
     private final IItemHandler inventory;
 
     /**
-     * The colony.
-     */
-    private final IColony colony;
-
-    /**
      * The tile entity.
      */
-    private final AbstractScarecrowTileEntity tileEntity;
-
-    /**
-     * Deserialize packet buffer to container instance.
-     *
-     * @param windowId     the id of the window.
-     * @param inv          the player inventory.
-     * @param packetBuffer network buffer
-     * @return new instance
-     */
-    public static ContainerField fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
-    {
-        final BlockPos tePos = packetBuffer.readBlockPos();
-        return new ContainerField(windowId, inv, tePos);
-    }
+    private final AbstractTileEntityScarecrow tileEntity;
 
     /**
      * Constructs the GUI with the player.
@@ -76,8 +55,7 @@ public class ContainerField extends AbstractContainerMenu
             pos = pos.below();
         }
 
-        this.colony = IColonyManager.getInstance().getColonyByPosFromWorld(world, pos);
-        this.tileEntity = ((AbstractScarecrowTileEntity) world.getBlockEntity(pos));
+        this.tileEntity = ((AbstractTileEntityScarecrow) world.getBlockEntity(pos));
         this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
@@ -110,6 +88,37 @@ public class ContainerField extends AbstractContainerMenu
         }
     }
 
+    /**
+     * Get the assigned tile entity.
+     *
+     * @return the tile.
+     */
+    public AbstractTileEntityScarecrow getTileEntity()
+    {
+        return tileEntity;
+    }
+
+    /**
+     * Deserialize packet buffer to container instance.
+     *
+     * @param windowId     the id of the window.
+     * @param inv          the player inventory.
+     * @param packetBuffer network buffer
+     * @return new instance
+     */
+    public static ContainerField fromFriendlyByteBuf(final int windowId, final Inventory inv, final FriendlyByteBuf packetBuffer)
+    {
+        final BlockPos tePos = packetBuffer.readBlockPos();
+        return new ContainerField(windowId, inv, tePos);
+    }
+
+    /**
+     * Get the plant which is put in the inventory slot of the field container.
+     *
+     * @return the plant, if any.
+     */
+    public Item getPlant() {return inventory.getStackInSlot(0).getItem();}
+
     @NotNull
     @Override
     public ItemStack quickMoveStack(@NotNull final Player playerIn, final int index)
@@ -117,7 +126,7 @@ public class ContainerField extends AbstractContainerMenu
         ItemStack transfer = ItemStackUtils.EMPTY;
         Slot slot = this.slots.get(index);
 
-        if (slot == null || !slot.hasItem())
+        if (!slot.hasItem())
         {
             return transfer;
         }
@@ -145,20 +154,6 @@ public class ContainerField extends AbstractContainerMenu
     @Override
     public boolean stillValid(@NotNull final Player playerIn)
     {
-        if (colony == null)
-        {
-            return false;
-        }
-        return colony.getPermissions().hasPermission(playerIn, Action.ACCESS_HUTS);
-    }
-
-    /**
-     * Get the assigned tile entity.
-     *
-     * @return the tile.
-     */
-    public AbstractScarecrowTileEntity getTileEntity()
-    {
-        return tileEntity;
+        return tileEntity.canOpenMenu(playerIn);
     }
 }

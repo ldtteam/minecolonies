@@ -2,6 +2,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -10,18 +12,19 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.FarmerFieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -37,7 +40,8 @@ public class BuildingFarmer extends AbstractBuilding
     /**
      * The beekeeper mode.
      */
-    public static final ISettingKey<BoolSetting> FERTILIZE = new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "fertilize"));
+    public static final ISettingKey<BoolSetting> FERTILIZE =
+      new SettingKey<>(BoolSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "fertilize"));
 
     /**
      * Descriptive string of the profession.
@@ -80,14 +84,13 @@ public class BuildingFarmer extends AbstractBuilding
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        for (FarmerFieldModule module : getModules(FarmerFieldModule.class))
+        for (FieldModule module : getModules(FieldModule.class))
         {
-            for (final BlockPos field : module.getFarmerFields())
+            for (final IField field : module.getFields())
             {
-                final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
-                if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
+                if (field instanceof FarmField farmField && farmField.getPlant() != null)
                 {
-                    final ItemStack seedStack = ((ScarecrowTileEntity) scareCrow).getSeed();
+                    final ItemStack seedStack = new ItemStack(farmField.getPlant());
                     toKeep.put(seedStack::sameItem, new Tuple<>(64, true));
                 }
             }
@@ -95,17 +98,39 @@ public class BuildingFarmer extends AbstractBuilding
         return toKeep;
     }
 
-    @NotNull
     @Override
-    public String getSchematicName()
+    public boolean canEat(final ItemStack stack)
     {
-        return FARMER;
+        for (FieldModule module : getModules(FieldModule.class))
+        {
+            for (final IField field : module.getFields())
+            {
+                if (field instanceof FarmField farmField && farmField.getPlant() != null &&
+                      ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(farmField.getPlant()), stack))
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (stack.getItem() == Items.WHEAT)
+        {
+            return false;
+        }
+        return super.canEat(stack);
     }
 
     @Override
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
+    }
+
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return FARMER;
     }
 
     /**
@@ -116,29 +141,34 @@ public class BuildingFarmer extends AbstractBuilding
         return getSetting(FERTILIZE).getValue();
     }
 
-    @Override
-    public boolean canEat(final ItemStack stack)
+    /**
+     * Field module implementation for the plantation.
+     */
+    public static class FarmerFieldModule extends FieldModule
     {
-        for (FarmerFieldModule module : getModules(FarmerFieldModule.class))
+        @Override
+        protected int getMaxFieldCount()
         {
-            for (final BlockPos field : module.getFarmerFields())
-            {
-                final BlockEntity scareCrow = getColony().getWorld().getBlockEntity(field);
-                if (scareCrow instanceof ScarecrowTileEntity && !ItemStackUtils.isEmpty(((ScarecrowTileEntity) scareCrow).getSeed()))
-                {
-                    if (ItemStackUtils.compareItemStacksIgnoreStackSize(((ScarecrowTileEntity) scareCrow).getSeed(), stack))
-                    {
-                        return false;
-                    }
-                }
-            }
+            return building.getBuildingLevel();
         }
 
-        if (stack.getItem() == Items.WHEAT)
+        @Override
+        protected int getMaxConcurrentPlants()
         {
-            return false;
+            return building.getBuildingLevel();
         }
-        return super.canEat(stack);
+
+        @Override
+        protected Collection<IField> getFields(final IColony colony)
+        {
+            return colony.getBuildingManager().getFields(FieldStructureType.FARMER_FIELDS);
+        }
+
+        @Override
+        protected @Nullable IField getFreeField(final IColony colony)
+        {
+            return colony.getBuildingManager().getFreeField(FieldStructureType.FARMER_FIELDS);
+        }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
@@ -158,13 +188,16 @@ public class BuildingFarmer extends AbstractBuilding
         public OptionalPredicate<ItemStack> getIngredientValidator()
         {
             return CraftingUtils.getIngredientValidatorBasedOnTags(CRAFTING_FARMER)
-                    .combine(super.getIngredientValidator());
+                     .combine(super.getIngredientValidator());
         }
 
         @Override
         public boolean isRecipeCompatible(@NotNull final IGenericRecipe recipe)
         {
-            if (!super.isRecipeCompatible(recipe)) return false;
+            if (!super.isRecipeCompatible(recipe))
+            {
+                return false;
+            }
             return CraftingUtils.isRecipeCompatibleBasedOnTags(recipe, CRAFTING_FARMER).orElse(false);
         }
     }

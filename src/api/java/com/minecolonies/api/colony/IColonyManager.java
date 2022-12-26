@@ -3,13 +3,14 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -366,6 +367,18 @@ public interface IColonyManager
     void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
+     * Returns result of {@link IColonyView#handleColonyFieldViewMessage(BlockPos, FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
+     * #getColonyView(int, ResourceKey)} is null, returns null.
+     *
+     * @param colonyId ID of the colony.
+     * @param position the position of the field.
+     * @param type     the type of the field.
+     * @param buf      {@link FriendlyByteBuf} with field data.
+     * @param dim      the dimension.
+     */
+    void handleColonyFieldViewMessage(int colonyId, BlockPos position, FieldStructureType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
+
+    /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
      * #getColonyView(int, ResourceKey)} is null, returns null.
      *
@@ -436,6 +449,7 @@ public interface IColonyManager
 
     /**
      * Open the new reactivation window.
+     *
      * @param pos the pos to open it at.
      */
     void openReactivationWindow(final BlockPos pos);
