@@ -17,12 +17,10 @@ import com.minecolonies.api.advancements.place_supply.PlaceSupplyCriterionInstan
 import com.minecolonies.api.advancements.undertaker_totem.UndertakerTotemCriterionInstance;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.ModBuildings;
+import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.WindowConstants;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.DisplayInfo;
-import net.minecraft.advancements.FrameType;
-import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.PlacedBlockTrigger;
 import net.minecraft.data.DataGenerator;
@@ -97,15 +95,13 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement placeTownHall = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutTownHall,"place_townhall"))
-                .addCriterion("build_tool_place_town_hall",
-                        new PlaceStructureCriterionInstance(ModBuildings.TOWNHALL_ID))
+                .addCriterion("build_tool_place_town_hall", placeStructure(ModBuildings.townHall.get()))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "place_townhall"), fileHelper);
 
         final Advancement startBuilder = Advancement.Builder.advancement()
                 .parent(placeTownHall)
                 .display(make(FrameType.TASK, ModBlocks.blockConstructionTape,"create_build_request_1_builder"))
-                .addCriterion("builder_request",
-                        new CreateBuildRequestCriterionInstance(ModBuildings.BUILDER_ID, 1))
+                .addCriterion("builder_request", createBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "start_builder"), fileHelper);
 
         final Advancement fulfillRequest = Advancement.Builder.advancement()
@@ -121,50 +117,44 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildBuilder = Advancement.Builder.advancement()
                 .parent(fulfillRequest)
                 .display(make(FrameType.GOAL, ModBlocks.blockHutBuilder,"build.builder"))
-                .addCriterion("builders_hut",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BUILDER_ID, 1))
+                .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_builder"), fileHelper);
 
         final Advancement buildBuilder2 = Advancement.Builder.advancement()
                 .parent(buildBuilder)
                 .display(make(FrameType.GOAL, ModBlocks.blockHutBuilder, "complete_build_request_2_builder"))
-                .addCriterion("builders_hut",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BUILDER_ID, 2))
+                .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 2))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_builder_2"), fileHelper);
 
         final Advancement buildGuardTower = Advancement.Builder.advancement()
                 .parent(buildBuilder)
                 .display(make(FrameType.TASK, ModBlocks.blockHutGuardTower, "build.guard_tower"))
-                .addCriterion("guard_tower",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.GUARD_TOWER_ID, 1))
+                .addCriterion("guard_tower", completeBuildRequest(ModBuildings.guardTower.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_guard_tower"), fileHelper);
 
         final Advancement buildMysticalSite = Advancement.Builder.advancement()
                 .parent(buildBuilder)
                 .display(make(FrameType.TASK, ModBlocks.blockHutMysticalSite, "build.mysticalsite"))
-                .addCriterion("mysticalsite",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.MYSTICAL_SITE_ID, 1))
+                .addCriterion("mysticalsite", completeBuildRequest(ModBuildings.mysticalSite.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_mysticalsite"), fileHelper);
 
         final Advancement buildMysticalSite5 = Advancement.Builder.advancement()
                 .parent(buildMysticalSite)
                 .display(make(FrameType.CHALLENGE, ModBlocks.blockHutMysticalSite, "build.mysticalsite_5"))
-                .addCriterion("mysticalsite",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.MYSTICAL_SITE_ID, 5))
+                .addCriterion("mysticalsite", completeBuildRequest(ModBuildings.mysticalSite.get(), 5))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_mysticalsite_5"), fileHelper);
 
         final Advancement buildTavern = Advancement.Builder.advancement()
                 .parent(buildBuilder)
                 .display(make(FrameType.TASK, ModBlocks.blockHutTavern, "build.tavern"))
-                .addCriterion("tavern",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.TAVERN_ID, 1))
+                .addCriterion("tavern", completeBuildRequest(ModBuildings.tavern.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_tavern"), fileHelper);
 
         final Advancement buildCitizen = Advancement.Builder.advancement()
                 .parent(buildTavern)
                 .display(make(FrameType.TASK, ModBlocks.blockHutHome, "build.citizen"))
                 .addCriterion("citizens_hut",
-                        new CompleteBuildRequestCriterionInstance("citizen", 1))
+                        new CompleteBuildRequestCriterionInstance(ModBuildings.HOME_ID, 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_citizen"), fileHelper);
 
         final Advancement buildTownHall = Advancement.Builder.advancement()
@@ -177,8 +167,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildTownHall5 = Advancement.Builder.advancement()
                 .parent(buildTownHall)
                 .display(make(FrameType.CHALLENGE, ModBlocks.blockHutTownHall, "complete_build_request_5_town_hall"))
-                .addCriterion("town_hall",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.TOWNHALL_ID, 5))
+                .addCriterion("town_hall", completeBuildRequest(ModBuildings.townHall.get(), 5))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_town_hall_5"), fileHelper);
 
         final Advancement buildingAddRecipeTorch = Advancement.Builder.advancement()
@@ -268,8 +257,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                         Component.translatable("advancements.minecolonies.root.production.description"),
                         new ResourceLocation("structurize:textures/blocks/cactus/cactus_planks.png"),
                         FrameType.TASK, false, false, false)
-                .addCriterion("builders_hut",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BUILDER_ID, 1))
+                .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "root"), fileHelper);
 
         // --- food ---
@@ -277,15 +265,13 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildCook = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutCook, "build.cook"))
-                .addCriterion("cook",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.COOK_ID, 1))
+                .addCriterion("cook", completeBuildRequest(ModBuildings.cook.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_cook"), fileHelper);
 
         final Advancement buildBaker = Advancement.Builder.advancement()
                 .parent(buildCook)
                 .display(make(FrameType.TASK, ModBlocks.blockHutBaker, "build.baker"))
-                .addCriterion("bakery",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BAKERY_ID, 1))
+                .addCriterion("bakery", completeBuildRequest(ModBuildings.bakery.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_baker"), fileHelper);
 
         // --- logistics ---
@@ -293,15 +279,13 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildWarehouse = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutWareHouse, "build.warehouse"))
-                .addCriterion("warehouse",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.WAREHOUSE_ID, 1))
+                .addCriterion("warehouse", completeBuildRequest(ModBuildings.wareHouse.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_warehouse"), fileHelper);
 
         final Advancement buildDeliveryPerson = Advancement.Builder.advancement()
                 .parent(buildWarehouse)
                 .display(make(FrameType.TASK, ModBlocks.blockHutDeliveryman, "build.delivery_person"))
-                .addCriterion("delivery_person",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.DELIVERYMAN_ID, 1))
+                .addCriterion("delivery_person", completeBuildRequest(ModBuildings.deliveryman.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_delivery_person"), fileHelper);
 
         final Advancement postAndStash = Advancement.Builder.advancement()
@@ -316,15 +300,13 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildLibrary = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutLibrary, "build.library"))
-                .addCriterion("library",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.LIBRARY_ID, 1))
+                .addCriterion("library", completeBuildRequest(ModBuildings.library.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_library"), fileHelper);
 
         final Advancement buildEnchanter = Advancement.Builder.advancement()
                 .parent(buildLibrary)
                 .display(make(FrameType.TASK, ModBlocks.blockHutEnchanter, "build.enchanter"))
-                .addCriterion("enchanter",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.ENCHANTER_ID, 1))
+                .addCriterion("enchanter", completeBuildRequest(ModBuildings.enchanter.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_enchanter"), fileHelper);
 
         // --- crafting ---
@@ -332,64 +314,55 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildSawmill = Advancement.Builder.advancement()
                 .parent(buildDeliveryPerson)
                 .display(make(FrameType.TASK, ModBlocks.blockHutSawmill, "build.sawmill"))
-                .addCriterion("sawmill",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SAWMILL_ID, 1))
+                .addCriterion("sawmill", completeBuildRequest(ModBuildings.sawmill.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_sawmill"), fileHelper);
 
         final Advancement buildBlacksmith = Advancement.Builder.advancement()
                 .parent(buildSawmill)
                 .display(make(FrameType.TASK, ModBlocks.blockHutBlacksmith, "build.blacksmith"))
-                .addCriterion("blacksmith",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BLACKSMITH_ID, 1))
+                .addCriterion("blacksmith", completeBuildRequest(ModBuildings.blacksmith.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_blacksmith"), fileHelper);
 
         final Advancement buildSmeltery = Advancement.Builder.advancement()
                 .parent(buildSawmill)
                 .display(make(FrameType.TASK, ModBlocks.blockHutSmeltery, "build.smeltery"))
-                .addCriterion("smeltery",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SMELTERY_ID, 1))
+                .addCriterion("smeltery", completeBuildRequest(ModBuildings.smeltery.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_smeltery"), fileHelper);
 
         final Advancement buildSmeltery3 = Advancement.Builder.advancement()
                 .parent(buildSmeltery)
                 .display(make(FrameType.TASK, ModBlocks.blockHutSmeltery, "build.smeltery_3"))
-                .addCriterion("smeltery",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SMELTERY_ID, 3))
+                .addCriterion("smeltery", completeBuildRequest(ModBuildings.smeltery.get(), 3))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_smeltery_3"), fileHelper);
 
         final Advancement buildSmeltery5 = Advancement.Builder.advancement()
                 .parent(buildSmeltery3)
                 .display(make(FrameType.TASK, ModBlocks.blockHutSmeltery, "build.smeltery_5"))
-                .addCriterion("smeltery",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SMELTERY_ID, 5))
+                .addCriterion("smeltery", completeBuildRequest(ModBuildings.smeltery.get(), 5))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_smeltery_5"), fileHelper);
 
         final Advancement buildStoneSmeltery = Advancement.Builder.advancement()
                 .parent(buildSawmill)
                 .display(make(FrameType.TASK, ModBlocks.blockHutStoneSmeltery, "build.stone_smeltery"))
-                .addCriterion("stone_smeltery",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.STONE_SMELTERY_ID, 1))
+                .addCriterion("stone_smeltery", completeBuildRequest(ModBuildings.stoneSmelter.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_stone_smeltery"), fileHelper);
 
         final Advancement buildStoneMason = Advancement.Builder.advancement()
                 .parent(buildSawmill)
                 .display(make(FrameType.TASK, ModBlocks.blockHutStonemason, "build.stonemason"))
-                .addCriterion("stonemason",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.STONE_MASON_ID, 1))
+                .addCriterion("stonemason", completeBuildRequest(ModBuildings.stoneMason.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_stonemason"), fileHelper);
 
         final Advancement buildCrusher = Advancement.Builder.advancement()
                 .parent(buildSawmill)
                 .display(make(FrameType.TASK, ModBlocks.blockHutCrusher, "build.crusher"))
-                .addCriterion("crusher",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.CRUSHER_ID, 1))
+                .addCriterion("crusher", completeBuildRequest(ModBuildings.crusher.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_crusher"), fileHelper);
 
         final Advancement buildSifter = Advancement.Builder.advancement()
                 .parent(buildSawmill)
                 .display(make(FrameType.TASK, ModBlocks.blockHutSifter, "build.sifter"))
-                .addCriterion("sifter",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SIFTER_ID, 1))
+                .addCriterion("sifter", completeBuildRequest(ModBuildings.sifter.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_sifter"), fileHelper);
 
         final Advancement buildingAddRecipeDoor = Advancement.Builder.advancement()
@@ -414,8 +387,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildFarmer = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutFarmer, "build.farmer"))
-                .addCriterion("farmer",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.FARMER_ID, 1))
+                .addCriterion("farmer", completeBuildRequest(ModBuildings.farmer.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_farmer"), fileHelper);
 
         final Advancement maxFields = Advancement.Builder.advancement()
@@ -427,22 +399,19 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildFisherman = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutFisherman, "build.fisherman"))
-                .addCriterion("fisherman",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.FISHERMAN_ID, 1))
+                .addCriterion("fisherman", completeBuildRequest(ModBuildings.fisherman.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_fisherman"), fileHelper);
 
         final Advancement buildLumberjack = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutLumberjack, "build.lumberjack"))
-                .addCriterion("lumberjack",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.LUMBERJACK_ID, 1))
+                .addCriterion("lumberjack", completeBuildRequest(ModBuildings.lumberjack.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_lumberjack"), fileHelper);
 
         final Advancement buildMiner = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutMiner, "build.miner"))
-                .addCriterion("miner",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.MINER_ID, 1))
+                .addCriterion("miner", completeBuildRequest(ModBuildings.miner.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_miner"), fileHelper);
 
         final Advancement deepMine = Advancement.Builder.advancement()
@@ -454,30 +423,23 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
         final Advancement buildComposter = Advancement.Builder.advancement()
                 .parent(buildFarmer)
                 .display(make(FrameType.TASK, ModBlocks.blockHutComposter, "build.composter"))
-                .addCriterion("composter",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.COMPOSTER_ID, 1))
+                .addCriterion("composter", completeBuildRequest(ModBuildings.composter.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_composter"), fileHelper);
 
         final Advancement buildFlorist = Advancement.Builder.advancement()
                 .parent(buildComposter)
                 .display(make(FrameType.TASK, ModBlocks.blockHutFlorist, "build.florist"))
-                .addCriterion("florist",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.FLORIST_ID, 1))
+                .addCriterion("florist", completeBuildRequest(ModBuildings.florist.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_florist"), fileHelper);
 
         final Advancement buildAllHerders = Advancement.Builder.advancement()
                 .parent(buildFarmer)
                 .display(make(FrameType.GOAL, ModBlocks.blockHutShepherd, "build.herders"))
-                .addCriterion("sheep",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SHEPHERD_ID, 1))
-                .addCriterion("cows",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.COWBOY_ID, 1))
-                .addCriterion("chickens",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.CHICKENHERDER_ID, 1))
-                .addCriterion("pigs",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.SWINE_HERDER_ID, 1))
-                .addCriterion("rabbits",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.RABBIT_ID, 1))
+                .addCriterion("sheep", completeBuildRequest(ModBuildings.shepherd.get(), 1))
+                .addCriterion("cows", completeBuildRequest(ModBuildings.cowboy.get(), 1))
+                .addCriterion("chickens", completeBuildRequest(ModBuildings.chickenHerder.get(), 1))
+                .addCriterion("pigs", completeBuildRequest(ModBuildings.swineHerder.get(), 1))
+                .addCriterion("rabbits", completeBuildRequest(ModBuildings.rabbitHutch.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_all_herders"), fileHelper);
     }
 
@@ -492,36 +454,31 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                         Component.translatable("advancements.minecolonies.root.military.description"),
                         new ResourceLocation("textures/block/stone_bricks.png"),
                         FrameType.TASK, true, false, false)
-                .addCriterion("guardtower",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.GUARD_TOWER_ID, 1))
+                .addCriterion("guardtower", completeBuildRequest(ModBuildings.guardTower.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "root"), fileHelper);
 
         final Advancement buildArchery = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutArchery, "build.archery"))
-                .addCriterion("archery",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.ARCHERY_ID, 1))
+                .addCriterion("archery", completeBuildRequest(ModBuildings.archery.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_archery"), fileHelper);
 
         final Advancement buildCombatAcademy = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutCombatAcademy, "build.combat_academy"))
-                .addCriterion("combat_academy",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.COMBAT_ACADEMY_ID, 1))
+                .addCriterion("combat_academy", completeBuildRequest(ModBuildings.combatAcademy.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_combat_academy"), fileHelper);
 
         final Advancement buildBarracks = Advancement.Builder.advancement()
                 .parent(root)
                 .display(make(FrameType.TASK, ModBlocks.blockHutBarracks, "build.barracks"))
-                .addCriterion("barracks",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BARRACKS_ID, 1))
+                .addCriterion("barracks", completeBuildRequest(ModBuildings.barracks.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_barracks"), fileHelper);
 
         final Advancement buildBarracksTower = Advancement.Builder.advancement()
                 .parent(buildBarracks)
                 .display(make(FrameType.TASK, ModBlocks.blockHutBarracksTower, "build.barracks_tower"))
-                .addCriterion("barracks_tower",
-                        new CompleteBuildRequestCriterionInstance(ModBuildings.BARRACKS_TOWER_ID, 1))
+                .addCriterion("barracks_tower", completeBuildRequest(ModBuildings.barracksTower.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_barracks_tower"), fileHelper);
 
         final Advancement buildAllBarracksTowers = Advancement.Builder.advancement()
@@ -572,5 +529,23 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
     private static ItemPredicate[] item(@NotNull final ItemLike item)
     {
         return new ItemPredicate[] { ItemPredicate.Builder.item().of(item).build() };
+    }
+
+    @NotNull
+    private static CriterionTriggerInstance placeStructure(@NotNull final BuildingEntry building)
+    {
+        return new PlaceStructureCriterionInstance(building.getBuildingBlock().getBlueprintName());
+    }
+
+    @NotNull
+    private static CriterionTriggerInstance createBuildRequest(@NotNull final BuildingEntry building, final int level)
+    {
+        return new CreateBuildRequestCriterionInstance(building.getBuildingBlock().getBlueprintName(), level);
+    }
+
+    @NotNull
+    private static CriterionTriggerInstance completeBuildRequest(@NotNull final BuildingEntry building, final int level)
+    {
+        return new CompleteBuildRequestCriterionInstance(building.getBuildingBlock().getBlueprintName(), level);
     }
 }
