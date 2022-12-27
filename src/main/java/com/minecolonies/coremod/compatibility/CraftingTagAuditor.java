@@ -15,8 +15,11 @@ import com.minecolonies.coremod.colony.buildings.modules.SimpleCraftingModule;
 import com.minecolonies.coremod.colony.crafting.CustomRecipeManager;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.minecolonies.coremod.colony.crafting.RecipeAnalyzer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +54,8 @@ public class CraftingTagAuditor
     public static void doRecipeAudit(@NotNull final MinecraftServer server,
                                      @NotNull final CustomRecipeManager customRecipeManager)
     {
-        createFile("tag audit", server, "tag_audit.csv", writer -> doTagAudit(writer, server));
+        createFile("item tag audit", server, "tag_item_audit.csv", writer -> doItemTagAudit(writer, server));
+        createFile("block tag audit", server, "tag_block_audit.csv", writer -> doBlockTagAudit(writer, server));
         createFile("recipe audit", server, "recipe_audit.csv", writer -> doRecipeAudit(writer, server, customRecipeManager));
         createFile("domum audit", server, "domum_audit.csv", writer -> doDomumAudit(writer, server));
     }
@@ -96,8 +100,8 @@ public class CraftingTagAuditor
         return items;
     }
 
-    private static void doTagAudit(@NotNull final BufferedWriter writer,
-                                   @NotNull final MinecraftServer server) throws IOException
+    private static void doItemTagAudit(@NotNull final BufferedWriter writer,
+                                       @NotNull final MinecraftServer server) throws IOException
     {
         writeItemHeaders(writer);
         writer.write(",tags...");
@@ -121,6 +125,41 @@ public class CraftingTagAuditor
                 {
                     e.printStackTrace();
                 }
+            });
+            writer.newLine();
+        }
+    }
+
+    private static void doBlockTagAudit(@NotNull final BufferedWriter writer,
+                                        @NotNull final MinecraftServer server) throws IOException
+    {
+        writer.write("block,name,tags...");
+        writer.newLine();
+
+        for (final Map.Entry<ResourceKey<Block>, Block> entry : ForgeRegistries.BLOCKS.getEntries())
+        {
+            writer.write(entry.getKey().location().toString());
+            writer.write(',');
+            writer.write('"');
+            writer.write(Component.translatable(entry.getValue().getDescriptionId()).getString().replace("\"", "\"\""));
+            writer.write('"');
+            ForgeRegistries.BLOCKS.tags().getReverseTag(entry.getValue()).ifPresent(tags ->
+            {
+                tags.getTagKeys()
+                        .map(t -> t.location().toString())
+                        .sorted()
+                        .forEach(t ->
+                        {
+                            try
+                            {
+                                writer.write(',');
+                                writer.write(t);
+                            }
+                            catch (IOException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        });
             });
             writer.newLine();
         }
