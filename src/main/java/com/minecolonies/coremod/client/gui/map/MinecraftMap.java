@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui.map;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
+import com.ldtteam.blockui.controls.Image;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
@@ -71,36 +72,14 @@ public class MinecraftMap extends Pane
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
      */
-    /*@Override
-    public void drawSelf(final PoseStack ms, final double mx, final double my)
-    {
-        ms.pushPose();
-        super.drawSelf(ms, mx, my);
-        //ms.translate(x, y, 0.0d);
-
-        if (stack != null && stack.getItem() == Items.FILLED_MAP)
-        {
-            final MultiBufferSource.BufferSource buffer = WorldRenderMacros.getBufferSource();
-            mc.gameRenderer.getMapRenderer().render(ms, buffer, MapItem.getMapId(stack), MapItem.getSavedData(stack, mc.level), false, 15728640);
-
-            buffer.endBatch();
-        }
-        ms.popPose();
-    }*/
-
-    /**
-     * Draw this image on the GUI.
-     *
-     * @param mx Mouse x (relative to parent)
-     * @param my Mouse y (relative to parent)
-     */
     @Override
     public void drawSelf(final PoseStack ms, final double mx, final double my)
     {
         ms.pushPose();
         super.drawSelf(ms, mx, my);
-        //ms.translate(x, y, 0.0d);
+        ms.translate(x, y, 0.0d);
 
+        ms.scale(this.getWidth() / 128.0f, this.getHeight() / 128.0f, 1.0f);
         if (mapData != null)
         {
             final MultiBufferSource.BufferSource buffer = WorldRenderMacros.getBufferSource();

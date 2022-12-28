@@ -72,6 +72,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private Map<ICitizenDataView, Pane>             citizens       = new HashMap<>();
     private Map<IBuildingView, ItemIcon>            buildings      = new HashMap<>();
     private Map<ColonyListMessage.ColonyInfo, View> coloniesImages = new HashMap<>();
+    private List<MinecraftMap>                      maps           = new ArrayList<>();
 
     /**
      * building reference of the view
@@ -107,28 +108,37 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         dragView.setFocus();
         dragView.setWindow(this);
         parent.addChild(dragView);
+        addMaps();
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
         addCitizens(building.getColony());
         addCenterPos();
         Network.getNetwork().sendToServer(new ColonyListMessage());
-        addMaps();
     }
 
     private void addMaps()
     {
+        for (final MinecraftMap map : maps)
+        {
+            dragView.removeChild(map);
+        }
+
+        maps.clear();
+
         for (final MapItemSavedData mapData : ((BuildingTownHall.View) building).getMapDataList())
         {
-            final MinecraftMap mapImage = new MinecraftMap();
-            //todo actually send over the map data itself, and handle that, thats better
+            if (mapData.scale != 0)
+            {
+                continue;
+            }
 
-            //todo this is the centered position!
-            mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.x+128, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.z+128)).getZ());
+            final MinecraftMap mapImage = new MinecraftMap();
+            mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.x - 64, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.z - 64)).getZ());
             mapImage.setMapData(mapData);
-            mapImage.setSize((int) (128/currentScale), (int) (128/currentScale));
-            //todo scale size!
-            mapImage.setID("blah");
-            dragView.addChild(mapImage);
+            mapImage.setSize((int) (512*currentScale), (int) (512*currentScale));
+            mapImage.setID("map" + mapData.x + "-" + mapData.z);
+            dragView.addChildFirst(mapImage);
+            maps.add(mapImage);
         }
     }
 
@@ -183,8 +193,6 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             updateBuildingView(buildingView);
         }
 
-        addMaps();
-
         if (currentScale < COLONY_DETAIL_SCALE)
         {
             // Hide small icons
@@ -219,6 +227,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             }
         }
 
+        addMaps();
         findPaneOfTypeByID("scale", Text.class).setText(new TextComponent(scaleformet.format(1 / currentScale) + "x"));
     }
 
