@@ -3,8 +3,14 @@ package com.minecolonies.coremod.client.gui.map;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
 import com.ldtteam.blockui.views.View;
+import com.ldtteam.structurize.util.WorldRenderMacros;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MapItem;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -137,8 +143,8 @@ public class ZoomDragMap extends View
         final float renderScale = (float) Mth.clamp(scale, 0.26219988382999904, 6d);
         ms.scale(renderScale, renderScale, 1.0f);
         super.drawSelf(ms, calcRelativeX(mx), calcRelativeY(my));
-        ms.popPose();
 
+        ms.popPose();
         scissorsEnd(ms);
     }
 

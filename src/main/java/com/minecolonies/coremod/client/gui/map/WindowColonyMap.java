@@ -17,6 +17,7 @@ import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyListMessage;
 import net.minecraft.client.Minecraft;
@@ -25,6 +26,9 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -108,6 +112,24 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         addCitizens(building.getColony());
         addCenterPos();
         Network.getNetwork().sendToServer(new ColonyListMessage());
+        addMaps();
+    }
+
+    private void addMaps()
+    {
+        for (final MapItemSavedData mapData : ((BuildingTownHall.View) building).getMapDataList())
+        {
+            final MinecraftMap mapImage = new MinecraftMap();
+            //todo actually send over the map data itself, and handle that, thats better
+
+            //todo this is the centered position!
+            mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.x+128, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.z+128)).getZ());
+            mapImage.setMapData(mapData);
+            mapImage.setSize((int) (128/currentScale), (int) (128/currentScale));
+            //todo scale size!
+            mapImage.setID("blah");
+            dragView.addChild(mapImage);
+        }
     }
 
     /**
@@ -160,6 +182,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         {
             updateBuildingView(buildingView);
         }
+
+        addMaps();
 
         if (currentScale < COLONY_DETAIL_SCALE)
         {

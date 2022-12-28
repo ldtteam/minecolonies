@@ -4,10 +4,10 @@ import com.ldtteam.blockui.Loader;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.View;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyListMessage;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.MapItem;
 
 /**
  * Represents a colony by size, returns the used image corresponding for each size.
