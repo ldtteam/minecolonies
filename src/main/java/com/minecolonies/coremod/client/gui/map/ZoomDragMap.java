@@ -110,6 +110,15 @@ public class ZoomDragMap extends View
         computeContentSize();
     }
 
+    public void addChildFirst(final Pane child)
+    {
+        child.setWindow(getWindow());
+        children.add(0, child);
+        adjustChild(child);
+        child.setParentView(this);
+        computeContentSize();
+    }
+
     /**
      * Compute the height in pixels of the container.
      */
