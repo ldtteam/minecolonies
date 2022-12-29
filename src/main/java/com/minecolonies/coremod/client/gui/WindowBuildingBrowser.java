@@ -14,11 +14,13 @@ import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.IOPool;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,9 +55,9 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     @SuppressWarnings("ConstantConditions") private static final int COLOR_INVISIBLE       = ChatFormatting.DARK_BLUE.getColor();
     @SuppressWarnings("ConstantConditions") private static final int COLOR_INVISIBLE_CHILD = ChatFormatting.BLUE.getColor();
 
-    private static final Map<AbstractBlockHut<?>, List<BuildingInfo>> buildingCache = new HashMap<>();
+    private static final Map<Block, List<BuildingInfo>> buildingCache = new HashMap<>();
 
-    private final AbstractBlockHut<?> block;
+    private final Block block;
     private List<BuildingInfo> buildings;
     private Future<List<BuildingInfo>> futureBuildings;
 
@@ -63,7 +65,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
      * Construct the window
      * @param block the hut to display styles for
      */
-    public WindowBuildingBrowser(@NotNull final AbstractBlockHut<?> block)
+    public WindowBuildingBrowser(@NotNull final Block block)
     {
         super(WINDOW_RESOURCE.toString());
         this.block = block;
@@ -83,7 +85,14 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     {
         super.onOpened();
 
-        findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(block.getBlueprintDisplayName());
+        if (block instanceof AbstractBlockHut<?> hutBlock)
+        {
+            findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(hutBlock.getBlueprintDisplayName());
+        }
+        else
+        {
+            findPaneOfTypeByID(LABEL_CONSTRUCTION_NAME, Text.class).setText(block.getName());
+        }
 
         futureBuildings = IOPool.submit(this::discoverBuildings);
     }
@@ -220,7 +229,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             thread.setUncaughtExceptionHandler((thread1, throwable) -> Log.getLogger().error("Minecolonies Building Browser errored! ", throwable));
             return thread;
         });
-        final Map<StructurePackMeta, Future<Map<AbstractBlockHut<?>, List<BuildingInfo>>>> packFutures = StructurePacks.getPackMetas().stream()
+        final Map<StructurePackMeta, Future<Map<Block, List<BuildingInfo>>>> packFutures = StructurePacks.getPackMetas().stream()
                 .collect(Collectors.toMap(pack -> pack, pack -> packPool.submit(() -> discoverBuildings(pack))));
         while (!futureBuildings.isCancelled() && packFutures.values().stream().anyMatch(f -> !f.isDone()))
         {
@@ -242,13 +251,13 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
         }
 
         buildingCache.clear();
-        for (final Future<Map<AbstractBlockHut<?>, List<BuildingInfo>>> futureBuildings : packFutures.entrySet().stream()
+        for (final Future<Map<Block, List<BuildingInfo>>> futureBuildings : packFutures.entrySet().stream()
                 .sorted(Comparator.comparing(entry -> entry.getKey().getName()))
                 .map(Map.Entry::getValue).toList())
         {
             try
             {
-                for (final Map.Entry<AbstractBlockHut<?>, List<BuildingInfo>> entry : futureBuildings.get().entrySet())
+                for (final Map.Entry<Block, List<BuildingInfo>> entry : futureBuildings.get().entrySet())
                 {
                     buildingCache.merge(entry.getKey(), entry.getValue(), (prev, next) ->
                             ImmutableList.<BuildingInfo>builder().addAll(prev).addAll(next).build());
@@ -262,11 +271,11 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     }
 
     @NotNull
-    private Map<AbstractBlockHut<?>, List<BuildingInfo>> discoverBuildings(@NotNull final StructurePackMeta pack)
+    private Map<Block, List<BuildingInfo>> discoverBuildings(@NotNull final StructurePackMeta pack)
     {
         final Collection<BuildingEntry> buildingTypes = MinecoloniesAPIProxy.getInstance().getBuildingRegistry().getValues();
 
-        final Map<AbstractBlockHut<?>, List<BuildingInfo>> buildings = new HashMap<>();
+        final Map<Block, List<BuildingInfo>> buildings = new HashMap<>();
         try
         {
             try (final Stream<Path> paths = Files.walk(pack.getPath()))
@@ -282,18 +291,9 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
                             final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
                             for (final BuildingEntry buildingType : buildingTypes)
                             {
-                                final AbstractBlockHut<?> block = buildingType.getBuildingBlock();
-                                if (anchor.is(block))
-                                {
-                                    buildings.computeIfAbsent(block, k -> new ArrayList<>())
-                                            .add(BuildingInfo.create(pack, blueprint, false));
-                                }
-                                else if (Arrays.stream(blueprint.getPalette()).anyMatch(p -> p.is(block)))
-                                {
-                                    buildings.computeIfAbsent(block, k -> new ArrayList<>())
-                                            .add(BuildingInfo.create(pack, blueprint, true));
-                                }
+                                classifyBlueprint(pack, buildings, blueprint, anchor, buildingType.getBuildingBlock());
                             }
+                            classifyBlueprint(pack, buildings, blueprint, anchor, ModBlocks.blockScarecrow);
                         }
                     }
                 });
@@ -306,6 +306,24 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
 
         buildings.replaceAll((k, v) -> BuildingInfo.flattenLevels(v));
         return buildings;
+    }
+
+    private void classifyBlueprint(@NotNull final StructurePackMeta pack,
+                                   @NotNull final Map<Block, List<BuildingInfo>> buildings,
+                                   @NotNull final Blueprint blueprint,
+                                   @NotNull final BlockState anchor,
+                                   @NotNull final Block block)
+    {
+        if (anchor.is(block))
+        {
+            buildings.computeIfAbsent(block, k -> new ArrayList<>())
+                    .add(BuildingInfo.create(pack, blueprint, false));
+        }
+        else if (Arrays.stream(blueprint.getPalette()).anyMatch(p -> p.is(block)))
+        {
+            buildings.computeIfAbsent(block, k -> new ArrayList<>())
+                    .add(BuildingInfo.create(pack, blueprint, true));
+        }
     }
 
     private record BuildingInfo(StructurePackMeta pack, String path, Set<Integer> levels, BlockPos size, boolean isParent, boolean isInvisible)
