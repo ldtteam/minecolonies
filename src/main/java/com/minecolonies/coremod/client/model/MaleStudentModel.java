@@ -88,7 +88,7 @@ public class MaleStudentModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 
-        final boolean working = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        final boolean working = isWorking(entity);
         final boolean studying = entity.getRenderMetadata().contains(RENDER_META_STUDYING);
 
         rightArm.getChild("book").visible = entity.getRenderMetadata().contains(RENDER_META_BOOK);

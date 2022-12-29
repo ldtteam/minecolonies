@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +16,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel<AbstractEntityCitizen>
 {
+    /**
+     * Working render meta.
+     */
+    private static final String RENDER_META_WORKING = "working";
+
     public CitizenModel(final ModelPart part)
     {
         super(part, RenderType::entityCutoutNoCull);
@@ -49,5 +55,25 @@ public class CitizenModel<T extends AbstractEntityCitizen> extends HumanoidModel
     public float getActualRotation(@NotNull final AbstractEntityCitizen entity)
     {
         return 0;
+    }
+
+    /**
+     * Check if the citizen is supposed to be working.
+     * @param citizen the citizen entity to check.
+     * @return true if so.
+     */
+    public boolean isWorking(final AbstractEntityCitizen citizen)
+    {
+        return citizen.getRenderMetadata().contains(RENDER_META_WORKING);
+    }
+
+    /**
+     * Check if the hat should be displayed.
+     * @param citizen the citizen entity to check.
+     * @return true if so.
+     */
+    public boolean displayHat(final AbstractEntityCitizen citizen)
+    {
+        return citizen.getPose() != Pose.SLEEPING && citizen.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
     }
 }

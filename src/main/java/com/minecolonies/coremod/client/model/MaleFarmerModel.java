@@ -82,6 +82,6 @@ public class MaleFarmerModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         head.getChild("straw").visible = entity.getPose() != Pose.SLEEPING;
-        body.getChild("seedBox").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        body.getChild("seedBox").visible = entity.getPose() != Pose.SLEEPING && isWorking(entity);
     }
 }

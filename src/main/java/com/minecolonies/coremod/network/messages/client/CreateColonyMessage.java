@@ -145,7 +145,7 @@ public class CreateColonyMessage implements IMessage
 
         if (colony != null && !IColonyManager.getInstance().isFarEnoughFromColonies(world, townHall))
         {
-            MessageUtils.format( MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
+            MessageUtils.format(MESSAGE_COLONY_CREATE_DENIED_TOO_CLOSE, colony.getName()).sendTo(sender);
             return;
         }
 
@@ -153,14 +153,16 @@ public class CreateColonyMessage implements IMessage
 
         if (ownedColony == null)
         {
-            IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
-            final IColony createdColony = IColonyManager.getInstance().getIColonyByOwner(world, sender);
-            createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
-            MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
-
-            if (isLogicalServer)
+            IColony createdColony = IColonyManager.getInstance().createColony(world, townHall, sender, colonyName, style);
+            if (createdColony != null)
             {
-                Compatibility.colonyCreated(createdColony);
+                createdColony.getBuildingManager().addNewBuilding((TileEntityColonyBuilding) tileEntity, world);
+                MessageUtils.format(MESSAGE_COLONY_FOUNDED).with(ChatFormatting.GOLD).sendTo(sender);
+
+                if (isLogicalServer)
+                {
+                    Compatibility.colonyCreated(createdColony);
+                }
             }
             return;
         }

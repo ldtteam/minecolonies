@@ -87,7 +87,7 @@ public class FemaleFarmerModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        body.getChild("seedBox").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING);
-        head.getChild("LassCap").visible = entity.getPose() != Pose.SLEEPING;
+        body.getChild("seedBox").visible = entity.getPose() != Pose.SLEEPING && isWorking(entity);
+        head.getChild("LassCap").visible = displayHat(entity);
     }
 }

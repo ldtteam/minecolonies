@@ -1,12 +1,10 @@
 {
   "branch": "minecolonies:civilian",
-  "effects": [
-    {
-      "minecolonies:effects/min_order": 1
-    }
-  ],
-  "icon": "minecolonies:clipboard",
   "parentResearch": "minecolonies:civilian/rails",
+  "researchLevel": 3,
+  "subtitle": "com.minecolonies.research.civilian.moq.subtitle",
+  "sortOrder": 10,
+  "icon": "minecolonies:clipboard",
   "requirements": [
     {
       "building": "deliveryman",
@@ -21,7 +19,9 @@
       "quantity": 16
     }
   ],
-  "researchLevel": 3,
-  "sortOrder": 10,
-  "subtitle": "com.minecolonies.research.civilian.moq.subtitle"
+  "effects": [
+    {
+      "minecolonies:effects/min_order": 1
+    }
+  ]
 }

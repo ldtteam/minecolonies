@@ -99,6 +99,6 @@ public class FemaleTeacherModel extends CitizenModel<AbstractEntityCitizen>
         head.getChild("glasses").visible = entity.getPose() != Pose.SLEEPING;
         head.getChild("HairExtension").visible = entity.getPose() != Pose.SLEEPING;
         body.getChild("dress").visible = entity.getPose() != Pose.SLEEPING;
-        body.getChild("bag").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        body.getChild("bag").visible = entity.getPose() != Pose.SLEEPING && isWorking(entity);
     }
 }

@@ -100,7 +100,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
       .getCompatibilityManager()
       .getEdibles(building.getBuildingLevel() - 1)
       .stream()
-      .map(item -> item.getItemStack())
+      .map(ItemStorage::getItemStack)
       .collect(Collectors.toList());
 
     /**
@@ -248,6 +248,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
 
         if (!hasItemsAvailable)
         {
+            setDelay(60);
             return IDLE;
         }
 
@@ -255,6 +256,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (portal == null)
         {
             Log.getLogger().warn("--- Missing Portal Tag In Nether Worker Building! Aborting Operation! ---");
+            setDelay(120);
             return IDLE;
         }
 
@@ -271,6 +273,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
         if (missingAxe || missingPick || missingShovel || missingSword || missingLighter)
         {
             worker.getCitizenData().setIdleAtJob(true);
+            setDelay(60);
             return IDLE;
         }
 
@@ -299,6 +302,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             if (!building.isReadyForTrip())
             {
                 worker.getCitizenData().setIdleAtJob(false);
+                setDelay(120);
                 return IDLE;
             }
             if (walkTo != null || walkToBuilding())
@@ -316,6 +320,7 @@ public class EntityAIWorkNether extends AbstractEntityAICrafting<JobNetherWorker
             {
                 currentRecipeStorage = null;
                 worker.getCitizenData().setIdleAtJob(true);
+                setDelay(60);
                 return IDLE;
             }
             if (checkResult != CRAFT)
