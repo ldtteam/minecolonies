@@ -871,6 +871,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
             else
             {
                 final MinerLevel currentLevel = module.getCurrentLevel();
+                if (currentLevel == null)
+                {
+                    Log.getLogger().error("The mine state of the mine at: " + building.getID().toShortString() + " got corrupted. Trying to recover from this somehow....");
+                    // This can only happen if something with the state got broken. Returning here is the safest option, it will potentially recover.
+                    return;
+                }
 
                 currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
                 module.setActiveNode(null);
