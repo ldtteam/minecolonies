@@ -107,7 +107,7 @@ public class FemaleNobleModle extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         head.getChild("SimpleHat").visible = entity.getPose() != Pose.SLEEPING;
-        head.getChild("Hat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("Hat").visible = displayHat(entity);
         body.getChild("NobleDress").visible = entity.getPose() != Pose.SLEEPING;
         body.getChild("handbag").visible = entity.getPose() != Pose.SLEEPING;
     }
