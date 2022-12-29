@@ -12,16 +12,15 @@ import com.ldtteam.structurize.storage.StructurePackMeta;
 import com.ldtteam.structurize.storage.StructurePacks;
 import com.ldtteam.structurize.util.BlockInfo;
 import com.ldtteam.structurize.util.IOPool;
-import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.blocks.AbstractBlockHut;
-import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
+import com.minecolonies.api.blocks.interfaces.IBuildingBrowsableBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -221,6 +220,8 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             return;
         }
 
+        final List<Block> browsableBlocks = findBrowsableBlocks();
+
         // to reduce total search time, kick work off to several worker threads (currently 4 threads ~= 5s on a decent CPU and slow disk)
         final ExecutorService packPool = Executors.newFixedThreadPool(WORKER_THREADS, runnable ->
         {
@@ -230,7 +231,7 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
             return thread;
         });
         final Map<StructurePackMeta, Future<Map<Block, List<BuildingInfo>>>> packFutures = StructurePacks.getPackMetas().stream()
-                .collect(Collectors.toMap(pack -> pack, pack -> packPool.submit(() -> discoverBuildings(pack))));
+                .collect(Collectors.toMap(pack -> pack, pack -> packPool.submit(() -> discoverBuildings(pack, browsableBlocks))));
         while (!futureBuildings.isCancelled() && packFutures.values().stream().anyMatch(f -> !f.isDone()))
         {
             try
@@ -271,10 +272,9 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
     }
 
     @NotNull
-    private Map<Block, List<BuildingInfo>> discoverBuildings(@NotNull final StructurePackMeta pack)
+    private Map<Block, List<BuildingInfo>> discoverBuildings(@NotNull final StructurePackMeta pack,
+                                                             @NotNull final List<Block> browsableBlocks)
     {
-        final Collection<BuildingEntry> buildingTypes = MinecoloniesAPIProxy.getInstance().getBuildingRegistry().getValues();
-
         final Map<Block, List<BuildingInfo>> buildings = new HashMap<>();
         try
         {
@@ -289,11 +289,10 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
                         if (blueprint != null)
                         {
                             final BlockState anchor = blueprint.getBlockState(blueprint.getPrimaryBlockOffset());
-                            for (final BuildingEntry buildingType : buildingTypes)
+                            for (final Block block : browsableBlocks)
                             {
-                                classifyBlueprint(pack, buildings, blueprint, anchor, buildingType.getBuildingBlock());
+                                classifyBlueprint(pack, buildings, blueprint, anchor, block);
                             }
-                            classifyBlueprint(pack, buildings, blueprint, anchor, ModBlocks.blockScarecrow);
                         }
                     }
                 });
@@ -306,6 +305,14 @@ public class WindowBuildingBrowser extends AbstractWindowSkeleton
 
         buildings.replaceAll((k, v) -> BuildingInfo.flattenLevels(v));
         return buildings;
+    }
+
+    @NotNull
+    private static List<Block> findBrowsableBlocks()
+    {
+        return ForgeRegistries.BLOCKS.getValues().stream()
+                .filter(block -> block instanceof IBuildingBrowsableBlock)
+                .toList();
     }
 
     private void classifyBlueprint(@NotNull final StructurePackMeta pack,

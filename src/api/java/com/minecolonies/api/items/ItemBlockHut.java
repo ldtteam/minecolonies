@@ -1,11 +1,12 @@
 package com.minecolonies.api.items;
 
 import com.minecolonies.api.blocks.AbstractBlockHut;
+import net.minecraft.world.item.BlockItem;
 
 /**
  * A custom item class for hut blocks.
  */
-public class ItemBlockHut extends ItemBlockBuildingSearchable
+public class ItemBlockHut extends BlockItem
 {
     /**
      * This items block.
