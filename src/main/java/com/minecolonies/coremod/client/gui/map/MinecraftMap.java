@@ -2,12 +2,7 @@ package com.minecolonies.coremod.client.gui.map;
 
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.PaneParams;
-import com.ldtteam.blockui.controls.Image;
-import com.ldtteam.structurize.util.WorldRenderMacros;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.MaterialColor;
@@ -16,15 +11,10 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 /**
  * Simple minecraft map element.
  */
-public class MinecraftMap extends Pane
+public class MinecraftMap extends Pane implements AutoCloseable
 {
-    /**
-     * The map object associated to the rendering.
-     */
-    private MapItemSavedData mapData = null;
-
     private DynamicTexture texture;
-    private RenderType renderType;
+    private ResourceLocation textureResLoc;
 
     /**
      * Default Constructor.
@@ -46,24 +36,25 @@ public class MinecraftMap extends Pane
 
     /**
      * Set the fitting map data.
-     * @param data the mapData to set.
+     * @param mapData the mapData to set.
      */
-    public void setMapData(final MapItemSavedData data)
+    public void setMapData(final MapItemSavedData mapData)
     {
-        this.mapData = data;
-        this.texture = new DynamicTexture(128, 128, true);
+        if (texture != null)
+        {
+            freeTexture();
+        }
 
-        for(int i = 0; i < 128; ++i) {
-            for(int j = 0; j < 128; ++j) {
-                int k = j + i * 128;
-                this.texture.getPixels().setPixelRGBA(j, i, MaterialColor.getColorFromPackedId(mapData.colors[k]));
+        texture = new DynamicTexture(128, 128, false);
+
+        for(int y = 0; y < 128; ++y) {
+            for(int x = 0; x < 128; ++x) {
+                texture.getPixels().setPixelRGBA(x, y, MaterialColor.getColorFromPackedId(mapData.colors[x + y * 128]));
             }
         }
 
-        ResourceLocation resourcelocation = mc.gameRenderer.getMapRenderer().textureManager.register("map/" + mapData.hashCode(), this.texture);
-        this.renderType = RenderType.text(resourcelocation);
-
-        this.texture.upload();
+        texture.upload();
+        textureResLoc = mc.textureManager.register("minecolonies_map/" + id, texture);
     }
 
     /**
@@ -75,25 +66,27 @@ public class MinecraftMap extends Pane
     @Override
     public void drawSelf(final PoseStack ms, final double mx, final double my)
     {
-        ms.pushPose();
-        super.drawSelf(ms, mx, my);
-        ms.translate(x, y, 0.0d);
-
-        ms.scale(this.getWidth() / 128.0f, this.getHeight() / 128.0f, 1.0f);
-        if (mapData != null)
+        if (textureResLoc != null)
         {
-            final MultiBufferSource.BufferSource buffer = WorldRenderMacros.getBufferSource();
-
-
-            Matrix4f matrix4f = ms.last().pose();
-            VertexConsumer vertexconsumer = buffer.getBuffer(this.renderType);
-            vertexconsumer.vertex(matrix4f, 0.0F, 128.0F, -0.01F).color(255, 255, 255, 255).uv(0.0F, 1.0F).uv2(15728640).endVertex();
-            vertexconsumer.vertex(matrix4f, 128.0F, 128.0F, -0.01F).color(255, 255, 255, 255).uv(1.0F, 1.0F).uv2(15728640).endVertex();
-            vertexconsumer.vertex(matrix4f, 128.0F, 0.0F, -0.01F).color(255, 255, 255, 255).uv(1.0F, 0.0F).uv2(15728640).endVertex();
-            vertexconsumer.vertex(matrix4f, 0.0F, 0.0F, -0.01F).color(255, 255, 255, 255).uv(0.0F, 0.0F).uv2(15728640).endVertex();
-
-            buffer.endBatch();
+            blit(ms, textureResLoc, x, y, width, height);
         }
-        ms.popPose();
+    }
+
+    private void freeTexture()
+    {
+        if (textureResLoc != null)
+        {
+            texture.close();
+            mc.textureManager.release(textureResLoc);
+
+            texture = null;
+            textureResLoc = null;
+        }
+    }
+
+    @Override
+    public void close()
+    {
+        freeTexture();
     }
 }

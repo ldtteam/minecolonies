@@ -26,8 +26,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.MapItem;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.text.DecimalFormat;
@@ -121,6 +119,7 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         for (final MinecraftMap map : maps)
         {
             dragView.removeChild(map);
+            map.close();
         }
 
         maps.clear();
@@ -134,9 +133,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
 
             final MinecraftMap mapImage = new MinecraftMap();
             mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.x - 64, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.z - 64)).getZ());
+            mapImage.setID("map" + mapData.x + "-" + mapData.z);
             mapImage.setMapData(mapData);
             mapImage.setSize((int) (512*currentScale), (int) (512*currentScale));
-            mapImage.setID("map" + mapData.x + "-" + mapData.z);
             dragView.addChildFirst(mapImage);
             maps.add(mapImage);
         }
@@ -378,5 +377,12 @@ public class WindowColonyMap extends AbstractWindowSkeleton
           dragView.getWidth() / 2.0 - ((playerPos.getX() - worldPos.getX()) * 4 / Math.max(1, Math.log(Math.abs(playerPos.getX() - worldPos.getX()) / 1000f))) * currentScale,
           0,
           dragView.getHeight() / 2.0 - ((playerPos.getZ() - worldPos.getZ()) * 4 / Math.max(1, Math.log(Math.abs(playerPos.getZ() - worldPos.getZ()) / 1000f))) * currentScale);
+    }
+
+    @Override
+    public void onClosed()
+    {
+        super.onClosed();
+        maps.forEach(MinecraftMap::close);
     }
 }
