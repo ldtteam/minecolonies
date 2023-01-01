@@ -159,6 +159,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     {
         fields.get(type).put(position, field);
         isFieldsDirty = true;
+        isBuildingsDirty = true;
         colony.markDirty();
     }
 

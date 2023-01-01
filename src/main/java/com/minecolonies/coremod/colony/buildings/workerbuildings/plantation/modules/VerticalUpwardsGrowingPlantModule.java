@@ -4,17 +4,46 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.Plantati
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
-public class VerticalGrowingPlantModule extends PlantationModule
+/**
+ * Plantation module for plants that grow vertically upwards, similar to sugar cane.
+ * For a plant to fit this module it needs the following requirements.
+ * - Grow vertically without any outcroppings.
+ * - Grow uninterrupted (no gaps in between the plant).
+ * - Must break all blocks above when a lower block is destroyed.
+ */
+public class VerticalUpwardsGrowingPlantModule extends PlantationModule
 {
+    /**
+     * The minimum length this plant should grow to before considered harvestable.
+     */
     private final int minimumPlantLength;
 
-    public VerticalGrowingPlantModule(final String fieldTag, final String workTag, final Block block, final int maxPlants, final int plantsToRequest, final int minimumPlantLength)
+    /**
+     * Default constructor.
+     *
+     * @param fieldTag               the tag of the field anchor block.
+     * @param workTag                the tag of the working positions.
+     * @param block                  the block which is harvested.
+     * @param maxPlants              the maximum allowed plants.
+     * @param plantsToRequest        the amount of plants to request when the planter has none left.
+     * @param requiredResearchEffect the research effect required before this field type can be used.
+     * @param minimumPlantLength     the minimum length for this plant to grow to before it can be harvested.
+     */
+    private VerticalUpwardsGrowingPlantModule(
+      final String fieldTag,
+      final String workTag,
+      final Block block,
+      final int maxPlants,
+      final int plantsToRequest,
+      final ResourceLocation requiredResearchEffect,
+      final int minimumPlantLength)
     {
-        super(fieldTag, workTag, block, maxPlants, plantsToRequest);
+        super(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect);
         this.minimumPlantLength = minimumPlantLength;
     }
 
@@ -92,7 +121,7 @@ public class VerticalGrowingPlantModule extends PlantationModule
     /**
      * Responsible for checking if the planting position is blocked by a foreign block which does not belong there.
      * This includes every block except the required block, this also include {@link Blocks#AIR}, however this condition
-     * should be previously checked through {@link VerticalGrowingPlantModule#isPositionEmpty}.
+     * should be previously checked through {@link VerticalUpwardsGrowingPlantModule#isPositionEmpty}.
      *
      * @param field            the field to check for.
      * @param plantingPosition the specific position to check for.
@@ -105,7 +134,7 @@ public class VerticalGrowingPlantModule extends PlantationModule
 
     /**
      * Responsible for checking if the plant has reached the minimum plant height.
-     * Only checks the block which is {@link VerticalGrowingPlantModule#minimumPlantLength} above the working position
+     * Only checks the block which is {@link VerticalUpwardsGrowingPlantModule#minimumPlantLength} above the working position
      * because the assumption is made this is a continuous growing plant (which cannot have holes, like sugar cane which breaks completely if one block is removed).
      *
      * @param field            the field to check for.
@@ -129,5 +158,44 @@ public class VerticalGrowingPlantModule extends PlantationModule
         }
 
         return null;
+    }
+
+    public static class Builder extends PlantationModule.Builder<VerticalUpwardsGrowingPlantModule.Builder>
+    {
+        /**
+         * The minimum length this plant should grow to before considered harvestable.
+         * Defaults to 3.
+         */
+        private int minimumPlantLength = 3;
+
+        /**
+         * Default constructor.
+         *
+         * @param fieldTag the tag of the field anchor block.
+         * @param workTag  the tag of the working positions.
+         * @param block    the block which is harvested.
+         */
+        public Builder(final String fieldTag, final String workTag, final Block block)
+        {
+            super(fieldTag, workTag, block);
+        }
+
+        /**
+         * Sets the minimum length plants should be before the plants can be harvested.
+         *
+         * @param minimumPlantLength the minimum plant length.
+         * @return the builder instance.
+         */
+        public Builder withMinimumPlantLength(int minimumPlantLength)
+        {
+            this.minimumPlantLength = minimumPlantLength;
+            return this;
+        }
+
+        @Override
+        public PlantationModule build()
+        {
+            return new VerticalUpwardsGrowingPlantModule(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect, minimumPlantLength);
+        }
     }
 }

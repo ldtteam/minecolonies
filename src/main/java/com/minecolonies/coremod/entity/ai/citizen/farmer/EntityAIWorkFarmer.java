@@ -184,6 +184,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         final FieldModule module = building.getFirstModuleOccurance(FieldModule.class);
+        module.claimFields();
+
         if (module.getFields().size() == building.getMaxBuildingLevel())
         {
             AdvancementUtils.TriggerAdvancementPlayersForColony(building.getColony(), AdvancementTriggers.MAX_FIELDS::trigger);
@@ -194,8 +196,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
 
         if (amountOfCompostInBuilding + amountOfCompostInInv <= 0)
         {
-            if (building.requestFertilizer() && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(),
-              TypeToken.of(StackList.class)))
+            if (building.requestFertilizer() && !building.hasWorkerOpenRequestsOfType(worker.getCitizenData().getId(), TypeToken.of(StackList.class)))
             {
                 final List<ItemStack> compostAbleItems = new ArrayList<>();
                 compostAbleItems.add(new ItemStack(ModItems.compost, 1));
@@ -220,14 +221,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         worker.getCitizenData().setIdleAtJob(false);
 
-        //If the farmer has no currentField and there is no field which needs work, check fields.
-        if (module.getCurrentField() == null && module.getFieldToWorkOn() == null)
-        {
-            return IDLE;
-        }
-
-        final IField currentIField = module.getCurrentField();
-        if (currentIField instanceof FarmField farmField && currentIField.needsWork())
+        // Get the next field to work on, if any.
+        final IField fieldToWork = module.getFieldToWorkOn();
+        if (fieldToWork instanceof FarmField farmField)
         {
             if (farmField.getFieldStage() == FarmField.Stage.PLANTED && checkIfShouldExecute(farmField, pos -> this.findHarvestableSurface(pos) != null))
             {
@@ -243,6 +239,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             }
             farmField.nextState();
         }
+
         return PREPARING;
     }
 

@@ -721,10 +721,6 @@ public final class TranslationConstants
     public static final String LABEL_SWITCH                  = "com.minecolonies.coremod.gui.workerhuts.switch";
     @NonNls
     public static final String LABEL_HOUSE_ASSIGNED_CITIZENS = "com.minecolonies.coremod.gui.home.assigned";
-    @NonNls
-    public static final String LABEL_FIELD_LIST_FIELD_COUNT  = "com.minecolonies.coremod.gui.fieldlist.fieldcount";
-    @NonNls
-    public static final String LABEL_FIELD_LIST_PLANT_COUNT  = "com.minecolonies.coremod.gui.fieldlist.plantcount";
 
     //</editor-fold>
 

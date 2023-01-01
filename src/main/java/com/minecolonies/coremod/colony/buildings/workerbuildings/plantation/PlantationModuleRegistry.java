@@ -1,24 +1,20 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.VerticalGrowingPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.VerticalUpwardsGrowingPlantModule;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
 
+import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
+
+/**
+ * Registry class for all different plantation module types.
+ */
 public class PlantationModuleRegistry
 {
-    /**
-     * The default quantity to request.
-     */
-    private static final Integer DEFAULT_MAX_PLANTS        = 20;
-    /**
-     * The default quantity to request.
-     */
-    private static final Integer DEFAULT_PLANTS_TO_REQUEST = 16;
-
     /**
      * Map containing the field types as well as the modules belonging to it.
      */
@@ -52,11 +48,16 @@ public class PlantationModuleRegistry
         if (plantationModules.isEmpty())
         {
             plantationModules.put(PlantationFieldType.SUGAR_CANE,
-              new VerticalGrowingPlantModule("sugar_field", "sugar", Blocks.SUGAR_CANE, DEFAULT_MAX_PLANTS, DEFAULT_PLANTS_TO_REQUEST, 3));
+              new VerticalUpwardsGrowingPlantModule.Builder("sugar_field", "sugar", Blocks.SUGAR_CANE)
+                .build());
             plantationModules.put(PlantationFieldType.CACTUS,
-              new VerticalGrowingPlantModule("cactus_field", "cactus", Blocks.CACTUS, DEFAULT_MAX_PLANTS, DEFAULT_PLANTS_TO_REQUEST, 3));
+              new VerticalUpwardsGrowingPlantModule.Builder("cactus_field", "cactus", Blocks.CACTUS)
+                .build());
             plantationModules.put(PlantationFieldType.BAMBOO,
-              new VerticalGrowingPlantModule("bamboo_field", "bamboo", Blocks.BAMBOO, DEFAULT_MAX_PLANTS, DEFAULT_PLANTS_TO_REQUEST, 6));
+              new VerticalUpwardsGrowingPlantModule.Builder("bamboo_field", "bamboo", Blocks.BAMBOO)
+                .withMinimumPlantLength(6)
+                .withRequiredResearchEffect(PLANTATION_JUNGLE)
+                .build());
         }
     }
 

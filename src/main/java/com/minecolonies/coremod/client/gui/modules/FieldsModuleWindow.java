@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui.modules;
 
 import com.ldtteam.blockui.Pane;
+import com.ldtteam.blockui.PaneBuilders;
 import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
@@ -13,13 +14,13 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_FIELD_COUNT;
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_PLANT_COUNT;
 
 /**
  * BOWindow for the farmer hut.
@@ -148,9 +149,9 @@ public class FieldsModuleWindow extends AbstractModuleWindow
         findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class)
           .setText(new TranslatableComponent(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
-          .setText(new TranslatableComponent(LABEL_FIELD_LIST_FIELD_COUNT, moduleView.getAmountOfOwnedFields(), moduleView.getMaxFieldCount()));
+          .setText(new TranslatableComponent(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getAmountOfOwnedFields(), moduleView.getMaxFieldCount()));
         findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
-          .setText(new TranslatableComponent(LABEL_FIELD_LIST_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
+          .setText(new TranslatableComponent(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
     }
 
     @Override
@@ -174,7 +175,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
                 final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getPosition(), buildingView.getPosition())));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
-                final boolean canAddField = moduleView.canAddField();
+                final boolean canAddField = moduleView.canAddField(field);
 
                 final ICitizen owner = field.getOwnerId() != null ? buildingView.getColony().getCitizen(field.getOwnerId()) : null;
                 final Component ownerText = owner == null
@@ -189,6 +190,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
 
                 final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
                 assignButton.setEnabled(moduleView.assignFieldManually());
+                assignButton.setHoverPane(null);
                 assignButton.show();
 
                 if (owner != null && !buildingView.getAllAssignedCitizens().contains(owner.getId()))
@@ -208,6 +210,15 @@ public class FieldsModuleWindow extends AbstractModuleWindow
                         if (!canAddField)
                         {
                             assignButton.disable();
+
+                            BaseComponent warningTooltip = moduleView.getFieldWarningTooltip(field);
+                            if (warningTooltip != null && moduleView.assignFieldManually())
+                            {
+                                PaneBuilders.tooltipBuilder()
+                                  .append(warningTooltip.withStyle(ChatFormatting.RED))
+                                  .hoverPane(assignButton)
+                                  .build();
+                            }
                         }
                     }
                 }

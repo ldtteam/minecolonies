@@ -62,7 +62,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      * The field the citizen is currently working on.
      */
     @Nullable
-    private IField currentIField;
+    private IField currentField;
 
     /**
      * The field the citizen worked on the last morning (first).
@@ -93,14 +93,33 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
         }
     }
 
+    /**
+     * Util method that obtains a field instance from its respective block position
+     *
+     * @param position the position.
+     * @return the field instance or null.
+     */
+    private Optional<IField> getFieldFromPosition(BlockPos position)
+    {
+        return getFields(building.getColony()).stream().filter(f -> f.getPosition().equals(position)).findFirst();
+    }
+
+    /**
+     * Getter to obtain the fields this module should process.
+     *
+     * @param colony the current colony.
+     * @return a collection of fields.
+     */
+    protected abstract Collection<IField> getFields(IColony colony);
+
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
         final ListTag fieldTagList = new ListTag();
-        for (final IField f : fields)
+        for (final IField field : fields)
         {
             final CompoundTag fieldCompound = new CompoundTag();
-            BlockPosUtil.write(fieldCompound, TAG_FIELDS_BLOCKPOS, f.getPosition());
+            BlockPosUtil.write(fieldCompound, TAG_FIELDS_BLOCKPOS, field.getPosition());
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_FIELDS, fieldTagList);
@@ -121,7 +140,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
 
         final List<IField> allFields = new ArrayList<>(getFields(building.getColony()));
         final List<IField> cleanedFields = new ArrayList<>();
-        final List<IField> ownedIFields = new ArrayList<>();
+        final List<IField> ownedFields = new ArrayList<>();
 
         final WorkerBuildingModule module = building.getFirstModuleOccurance(WorkerBuildingModule.class);
         for (final IField field : allFields)
@@ -131,7 +150,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
                 if (module.getAssignedCitizen().isEmpty() || ((Integer) module.getFirstCitizen().getId()).equals(field.getOwnerId()))
                 {
                     cleanedFields.add(field);
-                    ownedIFields.add(field);
+                    ownedFields.add(field);
                     size++;
                 }
             }
@@ -149,7 +168,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
             field.serializeToView(buf);
         }
 
-        buf.writeInt(ownedIFields.size());
+        buf.writeInt(ownedFields.size());
         buf.writeInt(getMaxFieldCount());
         buf.writeInt(getMaxConcurrentPlants());
     }
@@ -169,25 +188,6 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
     protected abstract int getMaxConcurrentPlants();
 
     /**
-     * Util method that obtains a field instance from its respective block position
-     *
-     * @param position the position.
-     * @return the field instance or null.
-     */
-    private Optional<IField> getFieldFromPosition(BlockPos position)
-    {
-        return getFields(building.getColony()).stream().filter(f -> f.getPosition().equals(position)).findFirst();
-    }
-
-    /**
-     * Getter to obtain the fields this module should process.
-     *
-     * @param colony the current colony.
-     * @return a collection of fields.
-     */
-    protected abstract Collection<IField> getFields(IColony colony);
-
-    /**
      * Getter of the current field.
      *
      * @return a field object.
@@ -195,17 +195,50 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
     @Nullable
     public IField getCurrentField()
     {
-        return currentIField;
+        return currentField;
     }
 
     /**
-     * Retrieves a random field to work on for the citizen.
+     * Retrieves the field to work on for the citizen, as long as the current field has work, it will keep returning that field.
+     * Else it will retrieve a random field to work on for the citizen.
      * This method will also automatically claim any fields that are not in use if the building is on automatic assignment mode.
      *
      * @return a field to work on.
      */
     @Nullable
     public IField getFieldToWorkOn()
+    {
+        if (currentField != null && currentField.needsWork())
+        {
+            return currentField;
+        }
+
+        final List<IField> ownedFields = new ArrayList<>(this.fields);
+        Collections.shuffle(ownedFields);
+
+        if (!ownedFields.isEmpty())
+        {
+            if (ownedFields.get(0).equals(lastField))
+            {
+                Collections.shuffle(ownedFields);
+            }
+            lastField = ownedFields.get(0);
+        }
+        for (final IField field : ownedFields)
+        {
+            if (field.needsWork())
+            {
+                currentField = field;
+                return field;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Attempt to automatically claim free fields, if possible and if any fields are available.
+     */
+    public void claimFields()
     {
         if (getFields().size() < building.getBuildingLevel() && !shouldAssignManually)
         {
@@ -215,27 +248,6 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
                 assignField(freeField);
             }
         }
-
-        final List<IField> ownedIFields = new ArrayList<>(this.fields);
-        Collections.shuffle(ownedIFields);
-
-        if (!ownedIFields.isEmpty())
-        {
-            if (ownedIFields.get(0).equals(lastField))
-            {
-                Collections.shuffle(ownedIFields);
-            }
-            lastField = ownedIFields.get(0);
-        }
-        for (final IField field : ownedIFields)
-        {
-            if (field.needsWork())
-            {
-                currentIField = field;
-                return field;
-            }
-        }
-        return null;
     }
 
     /**
@@ -265,7 +277,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      */
     public void assignField(final IField field)
     {
-        if (!canAddField(fields.size(), plants.size(), getMaxFieldCount(), getMaxConcurrentPlants()))
+        if (!canAddField(field))
         {
             return;
         }
@@ -281,6 +293,17 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
     }
 
     /**
+     * Check if a field can be added to the building.
+     *
+     * @param field the field which is being added.
+     * @return true if the field can be added.
+     */
+    public boolean canAddField(IField field)
+    {
+        return checkFieldConditions(fields.size(), plants.size(), getMaxFieldCount(), getMaxConcurrentPlants());
+    }
+
+    /**
      * Utility method to see if a field can be still be assigned.
      *
      * @param amountOfFields      the amount of fields the module currently contains.
@@ -289,11 +312,33 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      * @param maxConcurrentPlants the maximum amount of concurrent plants the building supports.
      * @return true if all conditions pass.
      */
-    public static boolean canAddField(int amountOfFields, int amountOfPlants, int maxFieldCount, int maxConcurrentPlants)
+    public static boolean checkFieldConditions(int amountOfFields, int amountOfPlants, int maxFieldCount, int maxConcurrentPlants)
     {
-        final boolean exceedsTotalFields = amountOfFields >= maxFieldCount;
-        final boolean exceedsTotalConcurrentPlants = amountOfPlants >= maxConcurrentPlants;
-        return !exceedsTotalFields && !exceedsTotalConcurrentPlants;
+        return checkFieldCount(amountOfFields, maxFieldCount) && checkPlantCount(amountOfPlants, maxConcurrentPlants);
+    }
+
+    /**
+     * Checks if the amount of fields is lower than the maximum allowed fields.
+     *
+     * @param amountOfFields the amount of fields.
+     * @param maxFieldCount  the maximum amount of fields.
+     * @return true if so.
+     */
+    public static boolean checkFieldCount(int amountOfFields, int maxFieldCount)
+    {
+        return amountOfFields < maxFieldCount;
+    }
+
+    /**
+     * Checks if the amount of fields is lower than the maximum allowed fields.
+     *
+     * @param amountOfPlants      the amount of plants.
+     * @param maxConcurrentPlants the maximum amount of concurrent plants.
+     * @return true if so.
+     */
+    public static boolean checkPlantCount(int amountOfPlants, int maxConcurrentPlants)
+    {
+        return amountOfPlants < maxConcurrentPlants;
     }
 
     /**
@@ -301,7 +346,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      *
      * @param position position of the field.
      */
-    public void assignField(final BlockPos position)
+    public final void assignField(final BlockPos position)
     {
         getFieldFromPosition(position).ifPresent(this::assignField);
     }
@@ -311,7 +356,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      *
      * @return true if he should.
      */
-    public boolean assignManually()
+    public final boolean assignManually()
     {
         return shouldAssignManually;
     }
@@ -321,7 +366,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      *
      * @return true if he has none.
      */
-    public boolean hasNoFields()
+    public final boolean hasNoFields()
     {
         return fields.isEmpty();
     }
@@ -331,7 +376,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      *
      * @param assignManually true if assignment should be manual.
      */
-    public void setAssignManually(final boolean assignManually)
+    public final void setAssignManually(final boolean assignManually)
     {
         this.shouldAssignManually = assignManually;
     }
@@ -341,7 +386,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
      *
      * @param position the position a field that needs to be freed.
      */
-    public void freeField(final BlockPos position)
+    public final void freeField(final BlockPos position)
     {
         getFieldFromPosition(position).ifPresent(this::freeField);
     }
@@ -361,9 +406,9 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
             building.getColony().getWorld().getBlockState(field.getPosition()),
             BLOCK_UPDATE_FLAG);
 
-        if (currentIField != null && currentIField.equals(field))
+        if (currentField != null && currentField.equals(field))
         {
-            currentIField = null;
+            currentField = null;
         }
     }
 }

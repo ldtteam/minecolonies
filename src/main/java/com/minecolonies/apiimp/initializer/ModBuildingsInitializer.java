@@ -234,7 +234,7 @@ public final class ModBuildingsInitializer
                                 .addBuildingModuleProducer(() -> new SettingsModule()
                                                                    .with(BuildingFarmer.FERTILIZE, new BoolSetting(true))
                                                                    .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)
-                                .addBuildingModuleProducer(BuildingFarmer.FarmerFieldModule::new, () -> FieldModuleView::new)
+                                .addBuildingModuleProducer(BuildingFarmer.FarmerFieldModule::new, () -> BuildingFarmer.FarmerFieldModuleView::new)
                                 .addBuildingModuleProducer(MinimumStockModule::new, () -> MinimumStockModuleView::new)
                                 .createBuildingEntry();
 
@@ -569,7 +569,7 @@ public final class ModBuildingsInitializer
                                     .setRegistryName(new ResourceLocation(Constants.MOD_ID, ModBuildings.PLANTATION_ID))
                                     .addBuildingModuleProducer(() -> new CraftingWorkerBuildingModule(ModJobs.planter, Skill.Agility, Skill.Dexterity, false, (b) -> 1), () -> WorkerBuildingModuleView::new)
                                     .addBuildingModuleProducer(() -> new BuildingPlantation.CraftingModule(ModJobs.planter), () -> CraftingModuleView::new)
-                                    .addBuildingModuleProducer(BuildingPlantation.PlantationFieldModule::new, () -> FieldModuleView::new)
+                                    .addBuildingModuleProducer(BuildingPlantation.PlantationFieldModule::new, () -> BuildingPlantation.PlantationFieldModuleView::new)
                                     .addBuildingModuleViewProducer(() -> CrafterTaskModuleView::new)
                                     .addBuildingModuleProducer(() -> new SettingsModule()
                                                                        .with(AbstractCraftingBuildingModule.RECIPE_MODE, new CrafterRecipeSetting()), () -> SettingsModuleView::new)

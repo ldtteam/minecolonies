@@ -11,18 +11,23 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldReg
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.*;
+
 /**
  * Client side version of the abstract class to list all fields (assigned) to a building.
  */
-public class FieldModuleView extends AbstractBuildingModuleView
+public abstract class FieldModuleView extends AbstractBuildingModuleView
 {
     /**
      * Checks if fields should be assigned manually.
@@ -92,7 +97,7 @@ public class FieldModuleView extends AbstractBuildingModuleView
     @Override
     public String getDesc()
     {
-        return "com.minecolonies.coremod.gui.workerhuts.farmerhut.fields";
+        return BUILDING_TAB_FIELDS;
     }
 
     /**
@@ -172,7 +177,7 @@ public class FieldModuleView extends AbstractBuildingModuleView
      */
     public void assignField(final IFieldView field)
     {
-        if (buildingView != null && canAddField())
+        if (buildingView != null && canAddField(field))
         {
             Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getPosition()));
 
@@ -192,11 +197,12 @@ public class FieldModuleView extends AbstractBuildingModuleView
     /**
      * Check to see if a new field can be assigned to the worker.
      *
+     * @param field the field which is being added.
      * @return true if so.
      */
-    public boolean canAddField()
+    public boolean canAddField(IFieldView field)
     {
-        return FieldModule.canAddField(amountOfOwnedFields, workedPlants.size(), maxFieldCount, maxConcurrentPlants);
+        return FieldModule.checkFieldConditions(amountOfOwnedFields, workedPlants.size(), maxFieldCount, maxConcurrentPlants);
     }
 
     /**
@@ -218,6 +224,26 @@ public class FieldModuleView extends AbstractBuildingModuleView
                 calculateWorkedPlants();
             }
         }
+    }
+
+    /**
+     * Get a warning text component for the specific field whenever this field cannot be assigned for any reason.
+     *
+     * @param field the field in question.
+     * @return a text component that should be shown if there is a problem for the specific field, else null.
+     */
+    @Nullable
+    public BaseComponent getFieldWarningTooltip(IFieldView field)
+    {
+        if (!FieldModule.checkFieldCount(amountOfOwnedFields, maxFieldCount))
+        {
+            return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
+        }
+        else if (!FieldModule.checkPlantCount(workedPlants.size(), maxConcurrentPlants))
+        {
+            return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
+        }
+        return null;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.citizen.planter;
 
 import com.ldtteam.structurize.util.BlockUtils;
+import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
@@ -76,6 +77,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         FieldModule module = building.getFirstModuleOccurance(FieldModule.class);
+        module.claimFields();
+
         if (module.hasNoFields())
         {
             if (worker.getCitizenData() != null)
@@ -87,14 +90,9 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
         worker.getCitizenData().setIdleAtJob(false);
 
-        // If the planter has no currentField and there is no field which needs work, check fields.
-        if (module.getCurrentField() == null && module.getFieldToWorkOn() == null)
-        {
-            return IDLE;
-        }
-
-        PlantationField currentPlantationField = getCurrentField();
-        if (currentPlantationField != null && currentPlantationField.needsWork())
+        // Get the next field to work on, if any.
+        final IField fieldToWork = module.getFieldToWorkOn();
+        if (fieldToWork != null)
         {
             return PLANTATION_MOVE_TO_FIELD;
         }
@@ -283,7 +281,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return false;
         }
 
-        worker.getCitizenItemHandler().setHeldItem(InteractionHand.MAIN_HAND, InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), item));
+        worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
 
         if (world.setBlockAndUpdate(blockToPlaceAt, BlockUtils.getBlockStateFromStack(currentStack)))
         {

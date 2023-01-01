@@ -2,8 +2,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -142,7 +143,7 @@ public class BuildingFarmer extends AbstractBuilding
     }
 
     /**
-     * Field module implementation for the plantation.
+     * Field module implementation for the farmer.
      */
     public static class FarmerFieldModule extends FieldModule
     {
@@ -169,6 +170,13 @@ public class BuildingFarmer extends AbstractBuilding
         {
             return colony.getBuildingManager().getFreeField(FieldStructureType.FARMER_FIELDS);
         }
+    }
+
+    /**
+     * Field module view implementation for the farmer.
+     */
+    public static class FarmerFieldModuleView extends FieldModuleView
+    {
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting
