@@ -84,7 +84,7 @@ public class FemaleArcherModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("WoodsmanHat").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("WoodsmanHat").visible = isWorking(entity) && displayHat(entity);
         body.getChild("quiver").visible = entity.getRenderMetadata().contains(RENDER_META_ARROW);
     }
 }

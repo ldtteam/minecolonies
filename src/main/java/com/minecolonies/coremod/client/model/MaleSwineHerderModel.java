@@ -94,7 +94,7 @@ public class MaleSwineHerderModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("RoundHat").visible = entity.getPose() != Pose.SLEEPING;
-        body.getChild("carrotBag").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_CARROT) && entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        head.getChild("RoundHat").visible = displayHat(entity);
+        body.getChild("carrotBag").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_CARROT) && isWorking(entity);
     }
 }

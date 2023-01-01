@@ -79,7 +79,7 @@ public class MaleCowHerderModel extends CitizenModel<AbstractEntityCitizen>
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         rightLeg.getChild("bucketwithHandle").visible = entity.getRenderMetadata().contains(RENDER_META_BUCKET);
-        head.getChild("RoundHat").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("RoundHat").visible = displayHat(entity);
         head.getChild("straw").visible = entity.getPose() != Pose.SLEEPING;
     }
 }

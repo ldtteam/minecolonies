@@ -214,13 +214,15 @@ public class EntityAIVisitor extends Goal
             return true;
         }
 
+        if (citizen.getNavigation().isInProgress() || citizen.getVehicle() instanceof SittingEntity)
+        {
+            return false;
+        }
+
         final BlockPos moveTo = ((VisitorData) citizen.getCitizenData()).getSittingPosition();
         if (citizen.isWorkerAtSiteWithMove(moveTo, 1))
         {
-            if (citizen.getVehicle() == null)
-            {
-                SittingEntity.sitDown(moveTo, citizen, actionTimeoutCounter);
-            }
+            SittingEntity.sitDown(moveTo, citizen, actionTimeoutCounter);
         }
         return false;
     }
