@@ -32,6 +32,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -325,8 +326,21 @@ public class ClientEventHandler
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onUseItem(@NotNull final PlayerInteractEvent.RightClickItem event)
     {
+        if (!event.getLevel().isClientSide())
+        {
+            return;
+        }
+
         if (event.getHand() == InteractionHand.MAIN_HAND && event.getItemStack().getItem() instanceof BlockItem blockItem)
         {
+            // due to a Forge bug, this event still triggers on right-clicking a block (and there are no properties on
+            // the event itself to distinguish the two cases, even though there are likely-sounding ones), so we need
+            // to filter that out
+            if (Minecraft.getInstance().hitResult != null && Minecraft.getInstance().hitResult.getType() != HitResult.Type.MISS)
+            {
+                return;
+            }
+
             final Block block = blockItem.getBlock();
 
             if (block instanceof IBuildingBrowsableBlock browsable && browsable.shouldBrowseBuildings(event))
