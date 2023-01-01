@@ -6,7 +6,6 @@ import com.ldtteam.structurize.placement.structure.AbstractStructureHandler;
 import com.ldtteam.structurize.util.PlacementSettings;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.MinecoloniesAPIProxy;
-import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.blocks.interfaces.ITickableBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -24,7 +23,6 @@ import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.*;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -62,12 +60,12 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -75,8 +73,6 @@ import static com.ldtteam.structurize.blockentities.interfaces.IBlueprintDataPro
 import static com.minecolonies.api.util.constant.BuildingConstants.DEACTIVATED;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -233,7 +229,7 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
                     return InteractionResult.FAIL;
                 }
 
-                if (building == null && !cap.getAllClaimingBuildings().values().contains(pos))
+                if (building == null && cap.getAllClaimingBuildings().values().stream().flatMap(Collection::stream).noneMatch(p -> p.equals(pos)))
                 {
                     IColonyManager.getInstance().openReactivationWindow(pos);
                     return InteractionResult.SUCCESS;
