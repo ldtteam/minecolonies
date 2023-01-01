@@ -1,7 +1,6 @@
 package com.minecolonies.api.colony.buildings.registry;
 
 import com.minecolonies.api.IMinecoloniesAPI;
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.IBuilding;
@@ -12,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
 /**
  * Helper manager to analyse and process the registry for {@link BuildingEntry}.
@@ -67,5 +67,5 @@ public interface IBuildingDataManager
      *
      * @param block The building block.
      */
-    void openBuildingBrowser(final AbstractBlockHut<?> block);
+    void openBuildingBrowser(final Block block);
 }
