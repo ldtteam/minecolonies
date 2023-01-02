@@ -20,6 +20,7 @@ import com.minecolonies.coremod.client.gui.AbstractWindowSkeleton;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyListMessage;
+import com.minecolonies.coremod.network.messages.server.colony.OpenInventoryMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.COLOR_TEXT_FULFILLED;
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_EXIT;
+import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_INVENTORY;
 
 public class WindowColonyMap extends AbstractWindowSkeleton
 {
@@ -88,6 +90,11 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     private double currentScale = 0;
 
     /**
+     * Check if it has maps.
+     */
+    private boolean hasMaps = false;
+
+    /**
      * Constructor for the skeleton class of the windows.
      *
      * @param building The building the info window is for.
@@ -106,15 +113,31 @@ public class WindowColonyMap extends AbstractWindowSkeleton
         dragView.setFocus();
         dragView.setWindow(this);
         parent.addChild(dragView);
-        addMaps();
+        if (addMaps())
+        {
+            addCitizens(building.getColony());
+            addCenterPos();
+        }
 
         registerButton(BUTTON_EXIT, () -> building.openGui(false));
-        addCitizens(building.getColony());
-        addCenterPos();
+        registerButton(BUTTON_INVENTORY, this::inventoryClicked);
+
         Network.getNetwork().sendToServer(new ColonyListMessage());
     }
 
-    private void addMaps()
+    /**
+     * Action when a button opening an inventory is clicked.
+     */
+    private void inventoryClicked()
+    {
+        Network.getNetwork().sendToServer(new OpenInventoryMessage(building));
+    }
+
+    /**
+     * Add the map. Return false if has no maps.
+     * @return true if so.
+     */
+    private boolean addMaps()
     {
         for (final MinecraftMap map : maps)
         {
@@ -131,6 +154,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
                 continue;
             }
 
+            hasMaps = true;
+
             final MinecraftMap mapImage = new MinecraftMap();
             mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.x - 64, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.z - 64)).getZ());
             mapImage.setID("map" + mapData.x + "-" + mapData.z);
@@ -139,6 +164,9 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             dragView.addChildFirst(mapImage);
             maps.add(mapImage);
         }
+
+        findPaneByID("warning").setVisible(!hasMaps);
+        return hasMaps;
     }
 
     /**
@@ -156,19 +184,22 @@ public class WindowColonyMap extends AbstractWindowSkeleton
     {
         super.onUpdate();
 
-        for (Map.Entry<ICitizenDataView, Pane> entry : citizens.entrySet())
+        if (hasMaps)
         {
-            final EntityCitizen citizen = (EntityCitizen) building.getColony().getWorld().getEntity(entry.getKey().getEntityId());
-            if (citizen != null)
+            for (Map.Entry<ICitizenDataView, Pane> entry : citizens.entrySet())
             {
-                entry.getValue().setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
+                final EntityCitizen citizen = (EntityCitizen) building.getColony().getWorld().getEntity(entry.getKey().getEntityId());
+                if (citizen != null)
+                {
+                    entry.getValue().setPosition(worldPosToUIPos(citizen.blockPosition()).getX(), worldPosToUIPos(citizen.blockPosition()).getZ());
+                }
             }
-        }
 
-        if (currentScale != dragView.getScale())
-        {
-            currentScale = dragView.getScale();
-            updateScale();
+            if (currentScale != dragView.getScale())
+            {
+                currentScale = dragView.getScale();
+                updateScale();
+            }
         }
     }
 

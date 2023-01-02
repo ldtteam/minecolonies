@@ -161,6 +161,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
                         if (building != null)
                         {
                             building.overruleNextOpenRequestWithStack(stack);
+                            building.markDirty();
                         }
                     }
                 }

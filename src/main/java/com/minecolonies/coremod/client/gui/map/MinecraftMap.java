@@ -47,8 +47,10 @@ public class MinecraftMap extends Pane implements AutoCloseable
 
         texture = new DynamicTexture(128, 128, false);
 
-        for(int y = 0; y < 128; ++y) {
-            for(int x = 0; x < 128; ++x) {
+        for (int y = 0; y < 128; ++y)
+        {
+            for (int x = 0; x < 128; ++x)
+            {
                 texture.getPixels().setPixelRGBA(x, y, MaterialColor.getColorFromPackedId(mapData.colors[x + y * 128]));
             }
         }
