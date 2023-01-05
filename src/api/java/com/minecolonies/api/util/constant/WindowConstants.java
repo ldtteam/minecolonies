@@ -355,6 +355,11 @@ public final class WindowConstants
     public static final String BUTTON_PREVIOUS_COLOR_ID = "previousColor";
 
     /**
+     * This drop down list is used to choose an interval.
+     */
+    public static final String DROPDOWN_INTERVAL_ID = "intervals";
+
+    /**
      * This drop down list is used to choose which Color should be used.
      */
     public static final String DROPDOWN_COLOR_ID = "colorPicker";
