@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/cake_batter"
+    "layer0": "minecolonies:item/cake_batter"
   },
   "display": {
     "thirdperson_lefthand": {

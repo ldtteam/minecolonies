@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecolonies:items/pirate_chest"
+    "layer0": "minecolonies:item/pirate_chest"
   }
 }

@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/iron_scimitar"
+    "layer0": "minecolonies:item/iron_scimitar"
   },
   "display": {
     "thirdperson_righthand": {

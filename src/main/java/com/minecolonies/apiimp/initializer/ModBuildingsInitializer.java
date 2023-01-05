@@ -613,7 +613,7 @@ public final class ModBuildingsInitializer
                                                                       .with(AbstractBuilding.BREEDING, new BoolSetting(true))
                                                                       .with(BuildingBeekeeper.MODE, new BeekeeperCollectionSetting(BuildingBeekeeper.HONEYCOMB, BuildingBeekeeper.HONEY, BuildingBeekeeper.BOTH)), () -> SettingsModuleView::new)
                                    .addBuildingModuleProducer(() -> new ItemListModule(BUILDING_FLOWER_LIST),  () -> () -> new ItemListModuleView(BUILDING_FLOWER_LIST, RequestSystemTranslationConstants.REQUEST_TYPE_FLOWERS, false,
-                                     (buildingView) -> CompatibilityManager.getAllBeekeeperFlowers()))
+                                     (buildingView) -> IColonyManager.getInstance().getCompatibilityManager().getAllBeekeeperFlowers()))
                                    .addBuildingModuleViewProducer(() -> () -> new ToolModuleView(ModItems.scepterBeekeeper))
                                    .addBuildingModuleProducer(BuildingBeekeeper.HerdingModule::new)
                                    .createBuildingEntry());

@@ -5,8 +5,8 @@
     <image source="minecolonies:textures/gui/citizen/colonist_paper_sketch.png" pos="150 0" size="152 145"/>
     <image size="82 16" source="minecolonies:textures/gui/citizen/colonist_text_decor_down.png" pos="190 9"/>
     <image source="minecolonies:textures/gui/citizen/colonist_wax_male.png" pos="160 110" size="30 30"/>
-    <image source="minecolonies:textures/items/moneygold.png" pos="170 60" size="20 20"/>
-    <image source="minecolonies:textures/items/moneygold.png" pos="170 90" size="20 20"/>
+    <image source="minecolonies:textures/item/moneygold.png" pos="170 60" size="20 20"/>
+    <image source="minecolonies:textures/item/moneygold.png" pos="170 90" size="20 20"/>
     <image source="minecraft:textures/item/diamond_sword.png" pos="200 60" size="40 40"/>
 
     <button id="done" size="200 20" pos="110 170" label="$(com.minecolonies.coremod.gui.townhall.mercenaryhire)"/>

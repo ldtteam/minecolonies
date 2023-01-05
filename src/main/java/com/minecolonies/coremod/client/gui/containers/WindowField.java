@@ -13,6 +13,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -126,11 +127,22 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
 
         for (Renderable widget : this.renderables)
         {
-            if (widget instanceof AbstractWidget)
+            if (widget instanceof DirectionalButton)
             {
                 if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
                 {
-                    // todo 1.19.3 fix this! ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
+                    // Don't render while they are dragging a stack around
+                    if (!menu.getCarried().isEmpty())
+                    {
+                        return;
+                    }
+                    List<FormattedText> lines = Lists.newArrayList(
+                      Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + ((DirectionalButton) widget).direction.getSerializedName()),
+                      Component.translatable(((DirectionalButton) widget).getDirectionalTranslationKey())
+                        .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
+                    );
+
+                    WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
                     break;
                 }
             }
@@ -280,24 +292,6 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
               j | Mth.ceil(this.alpha * 255.0F) << 24
             );
         }
-
-        /*@Override
-        public void renderToolTip(@NotNull final PoseStack stack, int mouseX, int mouseY)
-        {
-            // Don't render while they are dragging a stack around
-            if (!menu.getCarried().isEmpty())
-            {
-                return;
-            }
-            todo 1.19.3 fix this!
-            List<FormattedText> lines = Lists.newArrayList(
-              Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + this.direction.getSerializedName()),
-              Component.translatable(getDirectionalTranslationKey())
-                .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
-            );
-
-            WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
-        }*/
 
         /**
          * Calculates where the player is and the appropriate relative direction

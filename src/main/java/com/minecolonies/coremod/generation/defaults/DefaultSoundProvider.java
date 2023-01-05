@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
-import static com.ldtteam.datagenerators.sounds.SoundsJson.createSoundJson;
+import static com.minecolonies.coremod.generation.SoundsJson.createSoundJson;
 
 public class DefaultSoundProvider implements DataProvider
 {

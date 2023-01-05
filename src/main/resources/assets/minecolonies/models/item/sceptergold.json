@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/sceptergold"
+    "layer0": "minecolonies:item/sceptergold"
   },
   "display": {
     "thirdperson": {

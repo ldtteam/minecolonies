@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/banner_rally_guards"
+    "layer0": "minecolonies:item/banner_rally_guards"
   },
   "display": {
     "thirdperson": {

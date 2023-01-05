@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.compatibility.CompatibilityManager;
@@ -194,7 +195,7 @@ public class BuildingBeekeeper extends AbstractBuilding
                 // todo: if we use this in AI then it should use the item list module settings from the building instead.
             }
 
-            return CompatibilityManager.getAllBeekeeperFlowers().stream()
+            return IColonyManager.getInstance().getCompatibilityManager().getAllBeekeeperFlowers().stream()
               .map(flower -> new ItemStack(flower.getItem(), 2))
               .collect(Collectors.toList());
         }

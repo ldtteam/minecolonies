@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "minecolonies:items/milky_bread"
+        "layer0": "minecolonies:item/milky_bread"
     }
 }

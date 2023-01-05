@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "minecolonies:items/compost.png"
+    "layer0": "minecolonies:item/compost.png"
   },
   "display": {
     "thirdperson": {

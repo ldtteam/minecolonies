@@ -138,7 +138,6 @@ public abstract class AbstractResearchProvider implements DataProvider
     {
         return this.generator.getPackOutput()
                  .getOutputFolder(PackOutput.Target.DATA_PACK)
-                 .resolve(Constants.MOD_ID)
                  .resolve(namespace)
                  .resolve("researches")
                  .resolve(path + ".json");

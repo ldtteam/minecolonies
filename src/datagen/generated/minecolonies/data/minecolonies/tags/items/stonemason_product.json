@@ -1,14 +1,5 @@
 {
   "values": [
-    "#domum_ornamentum:brick_items",
-    "#domum_ornamentum:extra_block_items",
-    "#forge:stone",
-    "#forge:cobblestone",
-    "#forge:sandstone",
-    "#minecraft:stone_bricks",
-    "#minecraft:slabs",
-    "#minecraft:stairs",
-    "#minecraft:walls",
     "minecraft:polished_deepslate",
     "minecraft:deepslate_bricks",
     "minecraft:deepslate_tiles",
@@ -37,6 +28,15 @@
     "minecraft:waxed_oxidized_cut_copper",
     "minecraft:waxed_weathered_cut_copper",
     "minecraft:magma_block",
-    "minecraft:snow"
+    "minecraft:snow",
+    "#domum_ornamentum:brick_items",
+    "#domum_ornamentum:extra_block_items",
+    "#forge:stone",
+    "#forge:cobblestone",
+    "#forge:sandstone",
+    "#minecraft:stone_bricks",
+    "#minecraft:slabs",
+    "#minecraft:stairs",
+    "#minecraft:walls"
   ]
 }

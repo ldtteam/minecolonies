@@ -1,8 +1,8 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "minecolonies:items/pharaohscepter",
-    "particle": "minecolonies:items/pharaohscepter"
+    "0": "minecolonies:item/pharaohscepter",
+    "particle": "minecolonies:item/pharaohscepter"
   },
   "elements": [
     {

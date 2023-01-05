@@ -2,7 +2,7 @@
   "ambientocclusion": false,
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecolonies:items/scarecrow"
+    "layer0": "minecolonies:item/scarecrow"
   },
   "display": {
     "thirdperson": {

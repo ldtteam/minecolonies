@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/raw_pumpkin_pie"
+    "layer0": "minecolonies:item/raw_pumpkin_pie"
   },
   "display": {
     "thirdperson_lefthand": {

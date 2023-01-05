@@ -1,11 +1,5 @@
 {
   "values": [
-    "#forge:crops",
-    "#forge:eggs",
-    "#minecraft:flowers",
-    "#minecraft:fishes",
-    "#minecraft:leaves",
-    "#minecraft:wool",
     "minecraft:rotten_flesh",
     "minecraft:brown_mushroom",
     "minecraft:red_mushroom",
@@ -31,6 +25,12 @@
     "minecraft:rabbit_foot",
     "minecraft:fermented_spider_eye",
     "minecraft:nether_wart_block",
-    "minecraft:warped_wart_block"
+    "minecraft:warped_wart_block",
+    "#forge:crops",
+    "#forge:eggs",
+    "#minecraft:flowers",
+    "#minecraft:fishes",
+    "#minecraft:leaves",
+    "#minecraft:wool"
   ]
 }

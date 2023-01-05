@@ -116,7 +116,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Set of all beekeeper flowers.
      */
-    private static Set<ItemStorage> beekeeperflowers;
+    private final Set<ItemStorage> beekeeperflowers = new HashSet<>();
 
     /**
      * Set of all possible diseases.
@@ -172,7 +172,7 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Mapping of itemstorage to creativemodetab.
      */
-    private Map<ItemStorage, CreativeModeTab> creativeModeTabMap;
+    private final Map<ItemStorage, CreativeModeTab> creativeModeTabMap = new HashMap<>();
 
     /**
      * Instantiates the compatibilityManager.
@@ -940,7 +940,7 @@ public class CompatibilityManager implements ICompatibilityManager
      * 
      * @return a set of the flowers.
      */
-    public static Set<ItemStorage> getAllBeekeeperFlowers()
+    public Set<ItemStorage> getAllBeekeeperFlowers()
     {
         return beekeeperflowers;
     }

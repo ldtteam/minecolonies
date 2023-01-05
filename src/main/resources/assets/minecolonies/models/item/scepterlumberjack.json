@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/scepterlumberjack"
+    "layer0": "minecolonies:item/scepterlumberjack"
   },
   "display": {
     "thirdperson": {

@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/chiefsword"
+    "layer0": "minecolonies:item/chiefsword"
   }
 }

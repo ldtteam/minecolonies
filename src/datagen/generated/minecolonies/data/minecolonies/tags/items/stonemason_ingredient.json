@@ -1,15 +1,5 @@
 {
   "values": [
-    "#forge:stone",
-    "#forge:cobblestone",
-    "#forge:end_stones",
-    "#forge:sandstone",
-    "#minecolonies:concrete",
-    "#domum_ornamentum:brick_items",
-    "#domum_ornamentum:extra_block_items",
-    "#minecraft:stairs",
-    "#minecraft:slabs",
-    "#minecraft:walls",
     "minecraft:netherrack",
     "minecraft:nether_brick",
     "minecraft:nether_bricks",
@@ -51,8 +41,6 @@
     "minecraft:waxed_exposed_cut_copper",
     "minecraft:waxed_oxidized_cut_copper",
     "minecraft:waxed_weathered_cut_copper",
-    "#minecraft:terracotta",
-    "#minecolonies:glazed_terracotta",
     "minecraft:basalt",
     "minecraft:polished_basalt",
     "minecraft:smooth_basalt",
@@ -61,6 +49,18 @@
     "minecraft:stone_bricks",
     "minecraft:chiseled_stone_bricks",
     "minecraft:cracked_stone_bricks",
-    "minecraft:mossy_stone_bricks"
+    "minecraft:mossy_stone_bricks",
+    "#minecraft:terracotta",
+    "#minecolonies:glazed_terracotta",
+    "#forge:stone",
+    "#forge:cobblestone",
+    "#forge:end_stones",
+    "#forge:sandstone",
+    "#minecolonies:concrete",
+    "#domum_ornamentum:brick_items",
+    "#domum_ornamentum:extra_block_items",
+    "#minecraft:stairs",
+    "#minecraft:slabs",
+    "#minecraft:walls"
   ]
 }

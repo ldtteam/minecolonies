@@ -25,7 +25,7 @@ import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GA
 @Mod.EventBusSubscriber
 public final class ModCreativeTabs
 {
-    private static final ResourceLocation CREATIVE_TAB = new ResourceLocation(Constants.MOD_ID, "Minecolonies");
+    private static final ResourceLocation CREATIVE_TAB = new ResourceLocation(Constants.MOD_ID, "minecolonies");
 
     @SubscribeEvent
     public static void CreativeTabEvent(final CreativeModeTabEvent.Register event)

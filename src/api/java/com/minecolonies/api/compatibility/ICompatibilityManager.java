@@ -254,4 +254,10 @@ public interface ICompatibilityManager
      * @param checkItem the storage wrapper.
      */
     CreativeModeTab getCreativeTab(ItemStorage checkItem);
+
+    /**
+     * Get all the beekeeper flowers.
+     * @return set of all flowers.
+     */
+    Set<ItemStorage> getAllBeekeeperFlowers();
 }

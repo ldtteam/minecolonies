@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecolonies:items/supplycampdeployer"
+    "layer0": "minecolonies:item/supplycampdeployer"
   }
 }

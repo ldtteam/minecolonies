@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecolonies:items/magical_arrow"
+    "layer0": "minecolonies:item/magical_arrow"
   }
 }

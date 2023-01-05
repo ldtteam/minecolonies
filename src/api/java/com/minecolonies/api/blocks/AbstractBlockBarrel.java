@@ -29,7 +29,7 @@ public abstract class AbstractBlockBarrel<B extends AbstractBlockBarrel<B>> exte
     {
         /*
          * 12.8 -> the number of items needed to go up on a state (having 6 filling states)
-         * So items/12.8 -> meta of the state we should get
+         * So item/12.8 -> meta of the state we should get
          */
         BarrelType type = BarrelType.byMetadata((int) Math.round(te.getItems() / 12.8));
 

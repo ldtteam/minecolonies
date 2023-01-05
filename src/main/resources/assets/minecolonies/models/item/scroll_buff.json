@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "minecolonies:items/scrollblue"
+    "layer0": "minecolonies:item/scrollblue"
   },
   "display": {
     "thirdperson_lefthand": {

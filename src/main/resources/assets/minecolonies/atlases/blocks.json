@@ -1,0 +1,16 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "minecraft:map/map_icons"
+    },
+    {
+      "type": "single",
+      "resource": "minecraft:entity/chest/normal"
+    },
+    {
+      "type": "single",
+      "resource": "minecraft:entity/chicken"
+    }
+  ]
+}

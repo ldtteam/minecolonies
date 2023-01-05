@@ -1,8 +1,8 @@
 {
   "values": [
-    "#forge:nuggets",
-    "#forge:ingots",
     "minecraft:shears",
-    "minecraft:lightning_rod"
+    "minecraft:lightning_rod",
+    "#forge:nuggets",
+    "#forge:ingots"
   ]
 }

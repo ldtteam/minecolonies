@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "minecolonies:items/sifter_mesh_flint"
+        "layer0": "minecolonies:item/sifter_mesh_flint"
     }
 }

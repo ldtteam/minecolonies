@@ -1,5 +1,6 @@
 {
-  "type": "minecraft:campfire_cooking",
+  "type": "minecraft:smelting",
+  "category": "blocks",
   "cookingtime": 600,
   "experience": 0.35,
   "ingredient": {

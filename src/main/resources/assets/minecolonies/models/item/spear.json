@@ -4,20 +4,20 @@
   "base": {
     "parent": "minecolonies:item/spear_in_hand",
     "textures": {
-      "spear": "minecolonies:items/spear"
+      "spear": "minecolonies:item/spear"
     }
   },
   "perspectives": {
     "gui": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "minecolonies:items/spear"
+        "layer0": "minecolonies:item/spear"
       }
     },
     "ground": {
       "parent": "minecraft:item/generated",
       "textures": {
-        "layer0": "minecolonies:items/spear"
+        "layer0": "minecolonies:item/spear"
       }
     }
   },
@@ -28,7 +28,7 @@
       },
       "model": "minecolonies:item/spear_throwing",
       "textures": {
-        "spear": "minecolonies:items/spear"
+        "spear": "minecolonies:item/spear"
       }
     }
   ]
