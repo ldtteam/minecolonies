@@ -47,9 +47,9 @@ public class SimpleModelType implements ISimpleModelType
     }
 
     @Override
-    public ResourceLocation getTextureBase()
+    public String getTextureBase()
     {
-        return name;
+        return name.getPath();
     }
 
     @Override
