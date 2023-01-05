@@ -1,0 +1,36 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:map/map_icons"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:entity/chest/normal"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:entity/chicken"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:entity/armorstand/wood"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:entity/piglin/zombified_piglin"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecraft:models/armor/leather_layer_1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecolonies:gui/builderhut/builder_paper"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "minecolonies:gui/builderhut/builder_paper_sketch"
+    }
+  ]
+}
