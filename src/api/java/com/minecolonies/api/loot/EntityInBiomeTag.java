@@ -41,7 +41,7 @@ public class EntityInBiomeTag implements LootItemCondition
     @Override
     public LootItemConditionType getType()
     {
-        return ModLootConditions.entityInBiomeTag;
+        return ModLootConditions.entityInBiomeTag.get();
     }
 
     @Override

@@ -1,8 +1,8 @@
 {
   "credit": "Made by d3miurge.vallek@gmail.com",
   "textures": {
-    "0": "minecolonies:blocks/waypoints/waypoints",
-    "particle": "minecolonies:blocks/waypoints/waypoints"
+    "0": "minecolonies:block/waypoints/waypoints",
+    "particle": "minecolonies:block/waypoints/waypoints"
   },
   "elements": [
     {

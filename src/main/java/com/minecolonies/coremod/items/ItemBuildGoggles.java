@@ -21,15 +21,13 @@ public class ItemBuildGoggles extends ArmorItem
      * Constructor
      *
      * @param name            the name.
-     * @param tab             the item tab.
      * @param properties      the item properties.
      */
     public ItemBuildGoggles(
             @NotNull final String name,
-            @NotNull final CreativeModeTab tab,
             final Item.Properties properties)
     {
-        super(GOGGLES, EquipmentSlot.HEAD, properties.tab(tab).setNoRepair().rarity(Rarity.UNCOMMON));
+        super(GOGGLES, EquipmentSlot.HEAD, properties.setNoRepair().rarity(Rarity.UNCOMMON));
     }
 
     @Override

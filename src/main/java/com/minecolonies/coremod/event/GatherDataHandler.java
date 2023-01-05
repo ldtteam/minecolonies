@@ -4,9 +4,11 @@ import com.minecolonies.coremod.generation.DatagenLootTableManager;
 import com.minecolonies.coremod.generation.defaults.*;
 import com.minecolonies.coremod.util.SchemFixerUtil;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.world.level.storage.loot.LootTables;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
+
+import java.util.Set;
 
 public class GatherDataHandler
 {
@@ -21,15 +23,15 @@ public class GatherDataHandler
 
         final DataGenerator generator = event.getGenerator();
         final LootTables lootTableManager = new DatagenLootTableManager(event.getExistingFileHelper());
-        final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator, event.getExistingFileHelper());
-        generator.addProvider(true, new DefaultBlockLootTableProvider(generator));
-        generator.addProvider(true, new DefaultAdvancementsProvider(generator, event.getExistingFileHelper()));
+        final BlockTagsProvider blockTagsProvider = new DefaultBlockTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
+        generator.addProvider(true, new DefaultBlockLootTableProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultAdvancementsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(true, new DefaultSoundProvider(generator));
         generator.addProvider(true, blockTagsProvider);
-        generator.addProvider(true, new DefaultItemTagsProvider(generator, blockTagsProvider, event.getExistingFileHelper()));
-        generator.addProvider(true, new DefaultEntityTypeTagsProvider(generator, event.getExistingFileHelper()));
+        generator.addProvider(true, new DefaultItemTagsProvider(generator.getPackOutput(), event.getLookupProvider(), blockTagsProvider, event.getExistingFileHelper()));
+        generator.addProvider(true, new DefaultEntityTypeTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
         generator.addProvider(true, new DefaultResearchProvider(generator));
-        generator.addProvider(true, new DefaultRecipeProvider(generator));
+        generator.addProvider(true, new DefaultRecipeProvider(generator.getPackOutput()));
         generator.addProvider(true, new DefaultSifterCraftingProvider(generator, lootTableManager));
         generator.addProvider(true, new DefaultEnchanterCraftingProvider(generator));
         generator.addProvider(true, new DefaultFishermanLootProvider(generator));

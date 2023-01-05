@@ -69,7 +69,7 @@ public class ItemScepterBeekeeper extends AbstractItemMinecolonies
             {
                 MessageUtils.format(TOOL_BEEHIVE_SCEPTER_REMOVE_HIVE).sendTo(useContext.getPlayer());
                 building.removeHive(pos);
-                SoundUtils.playSoundForPlayer((ServerPlayer) player, SoundEvents.NOTE_BLOCK_BELL, (float) SoundUtils.VOLUME * 2, 0.5f);
+                SoundUtils.playSoundForPlayer((ServerPlayer) player, SoundEvents.NOTE_BLOCK_BELL.get(), (float) SoundUtils.VOLUME * 2, 0.5f);
             }
             else
             {

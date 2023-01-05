@@ -3,10 +3,14 @@ package com.minecolonies.api.tileentities;
 import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
 import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.compatibility.CompatibilityManager;
+import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.api.util.CompatibilityUtils;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.BlockPos;
@@ -186,7 +190,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
 
         for (final ItemStorage storage : content.keySet())
         {
-            if (checkItem.getPrimaryCreativeTabIndex() == storage.getPrimaryCreativeTabIndex())
+            if (IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(checkItem) == IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(storage))
             {
                 return true;
             }

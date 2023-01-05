@@ -18,7 +18,7 @@
 				"9": "block/stripped_spruce_log_top",
 				"10": "block/cauldron_side",
 				"11": "block/torch",
-				"13": "minecolonies:blocks/books/booktexture_red",
+				"13": "minecolonies:block/books/booktexture_red",
 				"16": "block/iron_block",
 				"19": "block/iron_ore"
 			},
@@ -645,7 +645,7 @@
       "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
-				"1_8": "minecolonies:blocks/books/miners_hut_map"
+				"1_8": "minecolonies:block/books/miners_hut_map"
 			},
 			"elements": [
 				{

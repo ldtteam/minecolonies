@@ -51,7 +51,7 @@
 				"16": "block/blue_wool",
 				"17": "block/green_wool",
 				"19": "block/stripped_spruce_log",
-				"3_0": "minecolonies:blocks/books/booktexture_green"
+				"3_0": "minecolonies:block/books/booktexture_green"
 			},
 			"elements": [
 				{

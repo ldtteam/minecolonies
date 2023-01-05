@@ -2,9 +2,8 @@ package com.minecolonies.coremod.compatibility.jei;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
+import org.joml.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,6 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
+import org.joml.Quaternionf;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -45,10 +45,10 @@ public class RenderHelper
         matrixStack.scale(-scale, -scale, -scale);
         matrixStack.translate(-0.5F, -0.5F, 0);
 
-        matrixStack.mulPose(Vector3f.XP.rotationDegrees(pitch));
+        matrixStack.mulPose(Axis.XP.rotationDegrees(pitch));
 
         matrixStack.translate(0.5F, 0, -0.5F);
-        matrixStack.mulPose(Vector3f.YP.rotationDegrees(yaw));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(yaw));
         matrixStack.translate(-0.5F, 0, 0.5F);
 
         matrixStack.pushPose();
@@ -87,8 +87,8 @@ public class RenderHelper
         poseStack.scale(1.0F, 1.0F, -1.0F);
         poseStack.translate(0.0D, 0.0D, 1000.0D);
         poseStack.scale((float) scale, (float) scale, (float) scale);
-        final Quaternion pitchRotation = Vector3f.XP.rotationDegrees(pitch);
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+        final Quaternionf pitchRotation = Axis.XP.rotationDegrees(pitch);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
         poseStack.mulPose(pitchRotation);
         final float oldYawOffset = livingEntity.yBodyRot;
         final float oldYaw = livingEntity.getYRot();
@@ -101,7 +101,7 @@ public class RenderHelper
         livingEntity.yHeadRot = livingEntity.getYRot();
         livingEntity.yHeadRotO = livingEntity.getYRot();
         final EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
-        pitchRotation.conj();
+        pitchRotation.conjugate();
         dispatcher.overrideCameraOrientation(pitchRotation);
         dispatcher.setRenderShadow(false);
         final MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
@@ -152,7 +152,7 @@ public class RenderHelper
     {
         final Matrix4f matrix = poseStack.last().pose();
         final FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-        matrix.store(buf);
+        matrix.set(buf);
         // { x, y, z }
         return new double[]
         {

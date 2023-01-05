@@ -2,29 +2,34 @@ package com.minecolonies.coremod.generation.defaults;
 
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModTags;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
 @SuppressWarnings({"ConstantConditions", "unchecked"})
 public class DefaultBlockTagsProvider extends BlockTagsProvider
 {
-    public DefaultBlockTagsProvider(@NotNull final DataGenerator generator,
-                                    @Nullable final ExistingFileHelper existingFileHelper)
+
+    public DefaultBlockTagsProvider(
+      final PackOutput output,
+      final CompletableFuture<HolderLookup.Provider> lookupProvider,
+      @Nullable final ExistingFileHelper existingFileHelper)
     {
-        super(generator, MOD_ID, existingFileHelper);
+        super(output, lookupProvider, MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void addTags()
+    protected void addTags(final HolderLookup.Provider holder)
     {
         tag(ModTags.decorationItems)
                 .add(Blocks.DEAD_BRAIN_CORAL_BLOCK)
@@ -158,9 +163,9 @@ public class DefaultBlockTagsProvider extends BlockTagsProvider
                 .add(ModBlocks.blockGrave)
                 .add(ModBlocks.blockNamedGrave);
         tag(ModTags.validSpawn)
+          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH)
           .addTags(BlockTags.BUTTONS)
           .addTags(BlockTags.RAILS)
-          .addTags(BlockTags.WOOL_CARPETS)
-          .add(Blocks.AIR, Blocks.CAVE_AIR, Blocks.SNOW, Blocks.TALL_GRASS, Blocks.GRASS, Blocks.FERN, Blocks.TORCH);
+          .addTags(BlockTags.WOOL_CARPETS);
     }
 }

@@ -4,7 +4,7 @@
 		"0": "block/barrel_bottom",
 		"1": "block/barrel_side",
 		"2": "block/barrel_top",
-		"3": "minecolonies:blocks/books/paper_1",
+		"3": "minecolonies:block/books/paper_1",
 		"4": "block/hopper_outside",
 		"5": "block/hopper_top",
 		"particle": "block/hopper_outside"

@@ -53,7 +53,7 @@ public class ItemResourceScroll extends AbstractItemMinecolonies
      */
     public ItemResourceScroll(final Item.Properties properties)
     {
-        super("resourcescroll", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
+        super("resourcescroll", properties.stacksTo(STACKSIZE));
     }
 
     /**

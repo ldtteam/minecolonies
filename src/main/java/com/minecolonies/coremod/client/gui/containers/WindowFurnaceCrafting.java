@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.gui.containers;
 
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.modules.ICraftingBuildingModule;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.inventory.container.ContainerCraftingFurnace;
@@ -101,7 +99,7 @@ public class WindowFurnaceCrafting extends AbstractContainerScreen<ContainerCraf
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new OnButtonPress());
+        final Button doneButton = new Button.Builder(buttonDisplay, new OnButtonPress()).pos(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS).size(BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(doneButton);
         if (!module.canLearn(ModCraftingTypes.SMELTING.get()))
         {

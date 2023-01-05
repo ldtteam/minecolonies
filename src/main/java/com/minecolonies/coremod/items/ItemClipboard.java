@@ -41,7 +41,7 @@ public class ItemClipboard extends AbstractItemMinecolonies
      */
     public ItemClipboard(final Item.Properties properties)
     {
-        super("clipboard", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
+        super("clipboard", properties.stacksTo(STACKSIZE));
     }
 
     @Override

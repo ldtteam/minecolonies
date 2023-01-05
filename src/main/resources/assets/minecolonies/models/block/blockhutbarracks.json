@@ -7,7 +7,7 @@
     "1": "block/iron_block",
     "2": "block/oak_log_top",
     "3": "block/oak_log",
-    "5": "minecolonies:blocks/books/barrackstextures",
+    "5": "minecolonies:block/books/barrackstextures",
     "particle": "block/oak_planks"
   },
   "elements": [

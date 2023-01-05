@@ -11,15 +11,15 @@
       "render_type": "solid",
 			"parent": "block/block",
 			"textures": {
-				"0": "minecolonies:blocks/books/booktexture_yellow",
-				"4": "minecolonies:blocks/cloth",
+				"0": "minecolonies:block/books/booktexture_yellow",
+				"4": "minecolonies:block/cloth",
 				"6": "block/stripped_spruce_log",
 				"7": "block/stripped_oak_log_top",
 				"9": "block/brown_terracotta",
 				"10": "block/light_gray_wool",
 				"11": "block/yellow_wool",
 				"planks": "block/stripped_oak_log",
-				"2_6": "minecolonies:blocks/liquid/potionwater_still"
+				"2_6": "minecolonies:block/liquid/potionwater_still"
 			},
 			"elements": [
 				{
@@ -594,7 +594,7 @@
       "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
-				"5": "minecolonies:blocks/cloth-diamond",
+				"5": "minecolonies:block/cloth-diamond",
 				"12": "item/shears",
 				"2_7": "block/glass"
 			},

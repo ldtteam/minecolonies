@@ -6,7 +6,7 @@
 		"7": "item/egg",
 		"15": "item/bucket",
 		"16": "block/oak_planks",
-		"17": "minecolonies:blocks/liquid/liq1",
+		"17": "minecolonies:block/liquid/liq1",
 		"18": "block/hay_block_top",
 		"particle": "item/bucket"
 	},

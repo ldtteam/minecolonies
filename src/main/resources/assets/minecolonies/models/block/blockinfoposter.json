@@ -1,8 +1,8 @@
 {
   "credit": "Made by d3miurge.vallek@gmail.com",
   "textures": {
-    "0": "minecolonies:blocks/info/info_poster",
-    "1": "minecolonies:blocks/info/info_poster_wax"
+    "0": "minecolonies:block/info/info_poster",
+    "1": "minecolonies:block/info/info_poster_wax"
   },
   "elements": [
     {

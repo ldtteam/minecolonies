@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.ICivilianData;
 import com.minecolonies.api.sounds.EventType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -316,7 +317,7 @@ public final class SoundUtils
      */
     public static void playSoundForPlayer(final ServerPlayer playerEntity, final SoundEvent sound, float volume, final float pitch)
     {
-        playerEntity.connection.send(new ClientboundSoundPacket(sound,
+        playerEntity.connection.send(new ClientboundSoundPacket(Holder.direct(sound),
           playerEntity.getSoundSource(),
           playerEntity.getX(),
           playerEntity.getY(),

@@ -1,8 +1,9 @@
 package com.minecolonies.coremod.generation;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -17,9 +18,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -31,23 +30,29 @@ import java.util.stream.Collectors;
  */
 public abstract class SimpleLootTableProvider extends LootTableProvider
 {
-    protected SimpleLootTableProvider(@NotNull final DataGenerator dataGenerator)
+    protected SimpleLootTableProvider(PackOutput output)
     {
-        super(dataGenerator);
+        super(output, new HashSet<>(), new ArrayList<>());
     }
 
     protected abstract void registerTables(@NotNull final LootTableRegistrar registrar);
 
     @NotNull
     @Override
-    protected final List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables()
+    public final List<SubProviderEntry> getTables()
     {
         final Map<ResourceLocation, Pair<LootContextParamSet, LootTable.Builder>> tables = new HashMap<>();
 
         registerTables((id, type, table) -> tables.put(id, Pair.of(type, table)));
 
         return tables.entrySet().stream()
-                .map(entry -> make(entry.getKey(), entry.getValue().getFirst(), entry.getValue().getSecond()))
+                .map(w -> new SubProviderEntry(() -> new LootTableSubProvider() {
+                    @Override
+                    public void generate(final @NotNull BiConsumer<ResourceLocation, LootTable.Builder> builder)
+                    {
+                        builder.accept(w.getKey(), w.getValue().getSecond());
+                    }
+                }, w.getValue().getFirst()))
                 .collect(Collectors.toList());
     }
 

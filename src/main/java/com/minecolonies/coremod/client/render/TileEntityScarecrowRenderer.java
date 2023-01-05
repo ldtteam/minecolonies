@@ -9,6 +9,7 @@ import com.minecolonies.coremod.client.model.ScarecrowModel;
 import com.minecolonies.coremod.event.ClientRegistryHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -17,7 +18,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -74,8 +75,8 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
     public static final Material       SCARECROW_B;
     static
     {
-        SCARECROW_A = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrowpumpkin"));
-        SCARECROW_B = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/blockscarecrownormal"));
+        SCARECROW_A = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "block/blockscarecrowpumpkin"));
+        SCARECROW_B = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "block/blockscarecrownormal"));
     }
     /**
      * The public constructor for the renderer.
@@ -105,7 +106,7 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
         matrixStack.pushPose();
         //Set viewport to tile entity position to render it
         matrixStack.translate(BLOCK_MIDDLE, YOFFSET, BLOCK_MIDDLE);
-        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(ROTATION));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(ROTATION));
 
         //In the case of worldLags tileEntities may sometimes disappear.
         if (te.getLevel().getBlockState(te.getBlockPos()).getBlock() instanceof BlockScarecrow)
@@ -114,13 +115,13 @@ public class TileEntityScarecrowRenderer implements BlockEntityRenderer<Abstract
             switch (facing)
             {
                 case EAST:
-                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
+                    matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
                     break;
                 case SOUTH:
-                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_SOUTH));
+                    matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_SOUTH));
                     break;
                 case WEST:
-                    matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
+                    matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                     break;
                 default:
                     //don't rotate at all.

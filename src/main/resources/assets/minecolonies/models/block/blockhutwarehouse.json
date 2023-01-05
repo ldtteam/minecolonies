@@ -1,14 +1,14 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "minecolonies:blocks/books/booktexture_cyan",
+		"0": "minecolonies:block/books/booktexture_cyan",
 		"9": "block/cobblestone",
 		"10": "block/oak_planks",
 		"11": "block/gray_wool",
 		"12": "block/stripped_oak_log",
 		"13": "block/dirt",
 		"14": "block/spruce_planks",
-		"15": "minecolonies:blocks/books/paper_2",
+		"15": "minecolonies:block/books/paper_2",
 		"16": "block/sand",
 		"particle": "block/oak_planks",
 		"1_0": "entity/chest/normal"

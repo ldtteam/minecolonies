@@ -8,11 +8,9 @@ import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -37,11 +35,6 @@ public class ItemStorage
     private final boolean shouldIgnoreNBTValue;
 
     /**
-     * The creative tab index of the storage.
-     */
-    private final List<Integer> creativeTabIndex;
-
-    /**
      * Amount of the storage.
      */
     private int amount;
@@ -59,7 +52,6 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = ignoreDamageValue;
         this.amount = amount;
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -75,8 +67,6 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = shouldIgnoreNBTValue;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex =
-          stack.isEmpty() ? new ArrayList<>() : stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -91,7 +81,6 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = ignoreDamageValue;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -105,7 +94,6 @@ public class ItemStorage
         this.shouldIgnoreDamageValue = false;
         this.shouldIgnoreNBTValue = false;
         this.amount = ItemStackUtils.getSize(stack);
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -153,8 +141,6 @@ public class ItemStorage
             this.shouldIgnoreDamageValue = true;
             this.shouldIgnoreNBTValue = true;
         }
-    
-        this.creativeTabIndex = stack.getItem().getCreativeTabs().stream().filter(Objects::nonNull).map(g -> g.id).collect(Collectors.toList());
     }
 
     /**
@@ -224,26 +210,6 @@ public class ItemStorage
     public boolean ignoreNBT()
     {
         return shouldIgnoreNBTValue;
-    }
-
-    /**
-     * Getter for the creativeTab index of the storage.
-     *
-     * @return the index.
-     */
-    public List<Integer> getCreativeTabIndex()
-    {
-        return creativeTabIndex;
-    }
-
-    /**
-     * Getter for the primary creativeTab index of the storage.
-     *
-     * @return the index.
-     */
-    public int getPrimaryCreativeTabIndex()
-    {
-        return creativeTabIndex.isEmpty() ? 0 : creativeTabIndex.get(0);
     }
 
     @Override

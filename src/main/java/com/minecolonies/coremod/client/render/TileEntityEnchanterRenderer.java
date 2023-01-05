@@ -5,6 +5,7 @@ import com.minecolonies.api.tileentities.TileEntityEnchanter;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -15,7 +16,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ public class TileEntityEnchanterRenderer implements BlockEntityRenderer<TileEnti
     public static final Material TEXTURE_BOOK;
     static
     {
-        TEXTURE_BOOK = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "blocks/enchanting_table_book"));
+        TEXTURE_BOOK = new Material(TextureAtlas.LOCATION_BLOCKS, new ResourceLocation(Constants.MOD_ID, "block/enchanting_table_book"));
     }
 
     /**
@@ -66,8 +67,8 @@ public class TileEntityEnchanterRenderer implements BlockEntityRenderer<TileEnti
             float circleRot = (float) ((rotVPrev + Math.PI % (2 * Math.PI)) - Math.PI);
 
             float tickBasedRot = entity.bookRotationPrev + circleRot * partialTicks;
-            matrixStack.mulPose(Vector3f.YP.rotation(-tickBasedRot));
-            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(80.0F));
+            matrixStack.mulPose(Axis.YP.rotation(-tickBasedRot));
+            matrixStack.mulPose(Axis.ZP.rotationDegrees(80.0F));
             float pageFlip = Mth.lerp(partialTicks, entity.pageFlipPrev, entity.pageFlip);
             float flipA = Mth.frac(pageFlip + 0.25F) * 1.6F - 0.3F;
             float flipB = Mth.frac(pageFlip + 0.75F) * 1.6F - 0.3F;

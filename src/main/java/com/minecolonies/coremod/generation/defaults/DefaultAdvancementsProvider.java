@@ -23,16 +23,19 @@ import com.minecolonies.api.util.constant.WindowConstants;
 import net.minecraft.advancements.*;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.PlacedBlockTrigger;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.advancements.AdvancementProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeAdvancementProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
@@ -40,45 +43,35 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 /**
  * Datagen for advancements
  */
-public class DefaultAdvancementsProvider extends AdvancementProvider
+public class DefaultAdvancementsProvider extends ForgeAdvancementProvider
 {
-    public DefaultAdvancementsProvider(@NotNull final DataGenerator generatorIn,
-                                       @NotNull final ExistingFileHelper fileHelperIn)
-    {
-        super(generatorIn, fileHelperIn);
-    }
-
-    @Override
-    public String getName()
-    {
-        return "DefaultAdvancementsProvider";
-    }
-
-    @Override
-    protected void registerAdvancements(@NotNull final Consumer<Advancement> consumer,
-                                        @NotNull final ExistingFileHelper fileHelper)
-    {
+    public static AdvancementGenerator generator = (registries, consumer, fileHelper) -> {
         // todo: the achievement ids are a bit weird, in particular the folder organisation;
         //       at some major MC version update we should probably reorganise them.
 
         // this is mostly redundant with the standard root, but it lets people see a Minecolonies
         // advancement before that tab is visible...
         Advancement.Builder.advancement()
-                .parent(new ResourceLocation("story/root"))
-                .display(ModItems.supplyChest,
-                        Component.translatable("advancements.minecolonies.root.title"),
-                        Component.translatable("advancements.minecolonies.root.description"),
-                        null,
-                        FrameType.TASK, false, false, false)
-                .addCriterion("supply_ship", new PlaceSupplyCriterionInstance())
-                .save(consumer, new ResourceLocation(MOD_ID, "minecraft/craft_supply"), fileHelper);
+          .parent(new ResourceLocation("story/root"))
+          .display(ModItems.supplyChest,
+            Component.translatable("advancements.minecolonies.root.title"),
+            Component.translatable("advancements.minecolonies.root.description"),
+            null,
+            FrameType.TASK, false, false, false)
+          .addCriterion("supply_ship", new PlaceSupplyCriterionInstance())
+          .save(consumer, new ResourceLocation(MOD_ID, "minecraft/craft_supply"), fileHelper);
 
         addStandardAdvancements(consumer, fileHelper);
         addProductionAdvancements(consumer, fileHelper);
         addMilitaryAdvancements(consumer, fileHelper);
+    };
+
+    public DefaultAdvancementsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper)
+    {
+        super(output, registries, existingFileHelper, List.of(generator));
     }
 
-    private void addStandardAdvancements(@NotNull final Consumer<Advancement> consumer,
+    private static void addStandardAdvancements(@NotNull final Consumer<Advancement> consumer,
                                          @NotNull final ExistingFileHelper fileHelper)
     {
         final String GROUP = "minecolonies/";
@@ -246,7 +239,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "undertaker_totem"), fileHelper);
     }
 
-    private void addProductionAdvancements(@NotNull final Consumer<Advancement> consumer,
+    private static void addProductionAdvancements(@NotNull final Consumer<Advancement> consumer,
                                            @NotNull final ExistingFileHelper fileHelper)
     {
         final String GROUP = "production/";
@@ -255,7 +248,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .display(ModBlocks.blockHutBuilder,
                         Component.translatable("advancements.minecolonies.root.production.title"),
                         Component.translatable("advancements.minecolonies.root.production.description"),
-                        new ResourceLocation("structurize:textures/blocks/cactus/cactus_planks.png"),
+                        new ResourceLocation("structurize:textures/block/cactus/cactus_planks.png"),
                         FrameType.TASK, false, false, false)
                 .addCriterion("builders_hut", completeBuildRequest(ModBuildings.builder.get(), 1))
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "root"), fileHelper);
@@ -443,7 +436,7 @@ public class DefaultAdvancementsProvider extends AdvancementProvider
                 .save(consumer, new ResourceLocation(MOD_ID, GROUP + "build_all_herders"), fileHelper);
     }
 
-    private void addMilitaryAdvancements(@NotNull final Consumer<Advancement> consumer,
+    private static void addMilitaryAdvancements(@NotNull final Consumer<Advancement> consumer,
                                          @NotNull final ExistingFileHelper fileHelper)
     {
         final String GROUP = "military/";

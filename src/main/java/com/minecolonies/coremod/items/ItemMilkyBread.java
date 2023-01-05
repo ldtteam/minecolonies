@@ -43,7 +43,7 @@ public class ItemMilkyBread extends AbstractItemMinecolonies
      */
     public ItemMilkyBread(final Properties properties)
     {
-        super("milky_bread", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES).food(milkBread));
+        super("milky_bread", properties.stacksTo(STACKSIZE).food(milkBread));
     }
 
    /**

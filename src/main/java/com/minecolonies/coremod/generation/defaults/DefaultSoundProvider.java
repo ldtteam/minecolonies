@@ -7,18 +7,14 @@ import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.sounds.EventType;
 import com.minecolonies.api.util.constant.Constants;
-import com.minecolonies.coremod.generation.DataGeneratorConstants;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
-import net.minecraft.data.DataProvider;
+import net.minecraft.data.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 import static com.ldtteam.datagenerators.sounds.SoundsJson.createSoundJson;
 
@@ -33,7 +29,8 @@ public class DefaultSoundProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final CachedOutput cache) throws IOException
+    @NotNull
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
         sounds = new JsonObject();
 
@@ -116,8 +113,15 @@ public class DefaultSoundProvider implements DataProvider
           "raid.desert.desert_raid_victory",
           "raid.amazon.amazon_raid");
 
-        final Path savePath = generator.getOutputFolder().resolve(DataGeneratorConstants.ASSETS_DIR).resolve("sounds.json");
-        DataProvider.saveStable(cache, sounds, savePath);
+        return DataProvider.saveStable(cache, sounds, getPath());
+    }
+
+    protected Path getPath()
+    {
+        return this.generator.getPackOutput()
+                 .getOutputFolder(PackOutput.Target.RESOURCE_PACK)
+                 .resolve(Constants.MOD_ID)
+                 .resolve("sounds.json");
     }
 
     @NotNull

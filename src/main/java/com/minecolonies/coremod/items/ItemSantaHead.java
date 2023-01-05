@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
@@ -22,18 +20,16 @@ public class ItemSantaHead extends ArmorItem
      * Constructor method for the Chief Sword Item
      *
      * @param name            the name.
-     * @param tab             the item tab.
      * @param materialIn      the material.
      * @param equipmentSlotIn the equipment slot.
      * @param properties      the item properties.
      */
     public ItemSantaHead(
       @NotNull final String name,
-      @NotNull final CreativeModeTab tab,
       @NotNull final ArmorMaterial materialIn,
       @NotNull final EquipmentSlot equipmentSlotIn,
       final Item.Properties properties)
     {
-        super(materialIn, equipmentSlotIn, properties.tab(tab));
+        super(materialIn, equipmentSlotIn, properties);
     }
 }

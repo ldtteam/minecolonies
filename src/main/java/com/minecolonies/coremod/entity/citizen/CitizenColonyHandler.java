@@ -130,7 +130,6 @@ public class CitizenColonyHandler implements ICitizenColonyHandler
             citizen.setTextureId(citizen.getEntityData().get(DATA_TEXTURE));
             citizen.setRenderMetadata(citizen.getEntityData().get(DATA_RENDER_METADATA));
             citizen.setTexture();
-            citizen.getEntityData().clearDirty();
         }
     }
 

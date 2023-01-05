@@ -2,18 +2,19 @@ package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -72,7 +73,7 @@ public class PlayMusicAtPosMessage implements IMessage
     @Override
     public void toBytes(final FriendlyByteBuf buf)
     {
-        buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
+        buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
         buf.writeBlockPos(pos);
         buf.writeUtf(dimensionID.location().toString());
         buf.writeFloat(volume);
@@ -82,9 +83,9 @@ public class PlayMusicAtPosMessage implements IMessage
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
-        this.soundEvent = Registry.SOUND_EVENT.byId(buf.readVarInt());
+        this.soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(buf.readResourceLocation());
         this.pos = buf.readBlockPos();
-        this.dimensionID = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.dimensionID = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         this.volume = buf.readFloat();
         this.pitch = buf.readFloat();
     }

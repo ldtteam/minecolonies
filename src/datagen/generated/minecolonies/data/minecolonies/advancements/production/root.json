@@ -10,7 +10,7 @@
   },
   "display": {
     "announce_to_chat": false,
-    "background": "structurize:textures/blocks/cactus/cactus_planks.png",
+    "background": "structurize:textures/block/cactus/cactus_planks.png",
     "description": {
       "translate": "advancements.minecolonies.root.production.description"
     },

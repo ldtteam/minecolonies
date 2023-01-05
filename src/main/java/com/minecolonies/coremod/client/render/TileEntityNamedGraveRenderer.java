@@ -4,6 +4,7 @@ import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.tileentities.TileEntityNamedGrave;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,7 +14,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.util.FormattedCharSequence;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.network.chat.Style;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -66,7 +67,7 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
                     case NORTH:
                         matrixStack.translate(0.5f, 1.18F, 0.48F); //in front of the center point of the name plate
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
+                        matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_NORTH));
                         break;
                     case SOUTH:
                         matrixStack.translate(0.5f, 1.18F, 0.54F); //in front of the center point of the name plate
@@ -77,12 +78,12 @@ public class TileEntityNamedGraveRenderer implements BlockEntityRenderer<TileEnt
                     case EAST:
                         matrixStack.translate(0.54f, 1.18F, 0.5F); //in front of the center point of the name plate
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
+                        matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_EAST));
                         break;
                     case WEST:
                         matrixStack.translate(0.48f, 1.18F, 0.5F); //in front of the center point of the name plate
                         matrixStack.scale(0.006F, -0.006F, 0.006F); //size of the text font
-                        matrixStack.mulPose(Vector3f.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
+                        matrixStack.mulPose(Axis.YP.rotationDegrees(BASIC_ROTATION * ROTATE_WEST));
                         break;
                 }
 

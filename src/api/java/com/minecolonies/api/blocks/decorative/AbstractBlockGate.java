@@ -4,6 +4,8 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -77,7 +79,7 @@ public abstract class AbstractBlockGate extends DoorBlock
 
     public AbstractBlockGate(final String name, final float hardness, final int maxWidth, final int maxHeight)
     {
-        super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion());
+        super(Properties.of(Material.WOOD).strength(hardness, hardness * 5).noOcclusion(), SoundEvents.IRON_DOOR_CLOSE, SoundEvents.IRON_DOOR_OPEN);
         registerDefaultState(defaultBlockState());
         this.name = name;
         this.maxWidth = maxWidth;

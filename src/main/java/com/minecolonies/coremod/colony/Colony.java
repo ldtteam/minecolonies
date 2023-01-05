@@ -36,6 +36,8 @@ import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -686,7 +688,7 @@ public class Colony implements IColony
             @NotNull final Colony c = new Colony(id, world);
             c.name = compound.getString(TAG_NAME);
             c.center = BlockPosUtil.read(compound, TAG_CENTER);
-            c.dimensionId = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
+            c.dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
             c.setRequestManager();
             c.read(compound);
@@ -716,7 +718,7 @@ public class Colony implements IColony
     public void read(@NotNull final CompoundTag compound)
     {
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
-        dimensionId = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(compound.getString(TAG_DIMENSION)));
+        dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(compound.getString(TAG_DIMENSION)));
 
         mercenaryLastUse = compound.getLong(TAG_MERCENARY_TIME);
         additionalChildTime = compound.getInt(TAG_CHILD_TIME);
@@ -761,7 +763,7 @@ public class Colony implements IColony
         {
             final CompoundTag blockAtPos = wayPointTagList.getCompound(i);
             final BlockPos pos = BlockPosUtil.read(blockAtPos, TAG_WAYPOINT);
-            final BlockState state = NbtUtils.readBlockState(blockAtPos);
+            final BlockState state = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), blockAtPos);
             wayPoints.put(pos, state);
         }
 

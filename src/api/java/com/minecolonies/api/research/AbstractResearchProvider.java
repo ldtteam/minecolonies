@@ -6,15 +6,19 @@ import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A class for creating the Research-related JSONs, including Research, ResearchEffects, and (optional) Branches.
@@ -61,16 +65,18 @@ public abstract class AbstractResearchProvider implements DataProvider
      */
     protected abstract Collection<Research> getResearchCollection();
 
+    private final List<Tuple<JsonObject, Tuple<String, String>>> research = new ArrayList<>();
+
+
     @Override
-    public void run(@NotNull final CachedOutput cache) throws IOException
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
         final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         final JsonObject langJson = new JsonObject();
 
         for(final ResearchBranch branch : getResearchBranchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("data").resolve(branch.id.getNamespace()).resolve("researches").resolve(branch.id.getPath() + ".json");
-            DataProvider.saveStable(cache, branch.json, savePath);
+            research.add(new Tuple<>(branch.json, new Tuple<>(branch.id.getNamespace(), branch.id.getPath())));
             if(branch.translatedName != null && !branch.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + branch.id.getNamespace() + ".research." + branch.id.getPath().replaceAll("[/]",".") + ".name", branch.translatedName);
@@ -82,8 +88,7 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
         for(final ResearchEffect effect : getResearchEffectCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("data").resolve(effect.id.getNamespace()).resolve("researches").resolve(effect.id.getPath() + ".json");
-            DataProvider.saveStable(cache, effect.json, savePath);
+            research.add(new Tuple<>(effect.json, new Tuple<>(effect.id.getNamespace(), effect.id.getPath())));
             if(effect.translatedName != null && !effect.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + effect.id.getNamespace() + ".research." + effect.id.getPath().replaceAll("[/]",".") + ".description", effect.translatedName);
@@ -95,8 +100,8 @@ public abstract class AbstractResearchProvider implements DataProvider
         }
         for(final Research research : getResearchCollection())
         {
-            final Path savePath = generator.getOutputFolder().resolve("data").resolve(research.id.getNamespace()).resolve("researches").resolve(research.id.getPath() + ".json");
-            DataProvider.saveStable(cache, research.json, savePath);
+            this.research.add(new Tuple<>(research.json, new Tuple<>(research.id.getNamespace(), research.id.getPath())));
+
             if(research.translatedName != null && !research.translatedName.isEmpty())
             {
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".name", research.translatedName);
@@ -106,7 +111,37 @@ public abstract class AbstractResearchProvider implements DataProvider
                 addLanguageKeySafe(langJson, "com." + research.id.getNamespace() + ".research." + research.id.getPath().replaceAll("[/]",".") + ".subtitle", research.translatedSubtitle);
             }
         }
-        DataProvider.saveStable(cache, langJson, generator.getOutputFolder().resolve("assets/" + Constants.MOD_ID + "/lang/default.json"));
+        return generateAll(cache, langJson);
+    }
+
+    protected CompletableFuture<?> generateAll(CachedOutput cache, final JsonObject langJson)
+    {
+        CompletableFuture<?>[] futures = new CompletableFuture<?>[this.research.size() + 1];
+        int i = 0;
+
+        for (Tuple<JsonObject, Tuple<String, String>> model : this.research)
+        {
+            Path target = getPath(model.getB().getA(), model.getB().getB());
+            futures[i++] = DataProvider.saveStable(cache, model.getA(), target);
+        }
+
+        futures[i] = DataProvider.saveStable(cache, langJson, this.generator.getPackOutput()
+                                                                  .getOutputFolder(PackOutput.Target.RESOURCE_PACK)
+                                                                .resolve(Constants.MOD_ID)
+                                                                .resolve("lang")
+                                                                .resolve("default.json"));
+
+        return CompletableFuture.allOf(futures);
+    }
+
+    protected Path getPath(final String namespace, final String path)
+    {
+        return this.generator.getPackOutput()
+                 .getOutputFolder(PackOutput.Target.DATA_PACK)
+                 .resolve(Constants.MOD_ID)
+                 .resolve(namespace)
+                 .resolve("researches")
+                 .resolve(path + ".json");
     }
 
     /**

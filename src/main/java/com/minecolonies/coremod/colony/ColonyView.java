@@ -37,6 +37,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -792,7 +793,7 @@ public final class ColonyView implements IColonyView
         this.world = world;
         //  General Attributes
         name = buf.readUtf(32767);
-        dimensionId = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         center = buf.readBlockPos();
         manualHiring = buf.readBoolean();
         //  Citizenry
@@ -886,7 +887,7 @@ public final class ColonyView implements IColonyView
               buf.readBlockPos(),
               buf.readInt(),
               buf.readBoolean(),
-              ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+              ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         final int noOfFeuds = buf.readInt();
@@ -896,7 +897,7 @@ public final class ColonyView implements IColonyView
               buf.readBlockPos(),
               buf.readInt(),
               false,
-              ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)))));
+              ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)))));
         }
 
         this.manager.readFromNBT(buf.readNbt());

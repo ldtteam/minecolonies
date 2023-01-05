@@ -11,10 +11,10 @@
       "render_type": "solid",
 			"parent": "block/block",
 			"textures": {
-				"4": "minecolonies:blocks/cloth",
+				"4": "minecolonies:block/cloth",
 				"6": "block/stripped_spruce_log",
 				"7": "block/stripped_oak_log_top",
-				"2_0": "minecolonies:blocks/books/booktexture_purple",
+				"2_0": "minecolonies:block/books/booktexture_purple",
 				"planks": "block/stripped_oak_log",
 				"books": "block/bookshelf"
 			},
@@ -126,8 +126,8 @@
       "render_type": "cutout",
 			"parent": "block/block",
 			"textures": {
-				"5": "minecolonies:blocks/cloth-diamond",
-				"2_0": "minecolonies:blocks/books/booktexture_purple"
+				"5": "minecolonies:block/cloth-diamond",
+				"2_0": "minecolonies:block/books/booktexture_purple"
 			},
 			"elements": [
 				{

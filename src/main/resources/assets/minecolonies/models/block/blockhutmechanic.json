@@ -9,7 +9,7 @@
 		"trim": "block/cauldron_side",
 		"metal": "block/iron_block",
 		"redstone": "block/redstone_block",
-		"book": "minecolonies:blocks/books/booktexture_red",
+		"book": "minecolonies:block/books/booktexture_red",
 		"lever": "block/lever"
 	},
 	"elements": [

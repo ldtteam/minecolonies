@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -247,4 +248,10 @@ public interface ICompatibilityManager
      * @return true if so.
      */
     boolean isFreePos(BlockPos block);
+
+    /**
+     * Get the creative tab for a stack.
+     * @param checkItem the storage wrapper.
+     */
+    CreativeModeTab getCreativeTab(ItemStorage checkItem);
 }

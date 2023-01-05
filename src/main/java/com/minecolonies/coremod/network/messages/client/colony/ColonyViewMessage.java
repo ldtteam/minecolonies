@@ -4,6 +4,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -70,7 +71,7 @@ public class ColonyViewMessage implements IMessage
         final FriendlyByteBuf newBuf = new FriendlyByteBuf(buf.retain());
         colonyId = newBuf.readInt();
         isNewSubscription = newBuf.readBoolean();
-        dim = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newBuf.readUtf(32767)));
+        dim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newBuf.readUtf(32767)));
         colonyBuffer = newBuf;
     }
 

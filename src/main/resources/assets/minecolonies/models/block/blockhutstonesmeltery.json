@@ -14,7 +14,7 @@
       "textures": {
         "1": "block/cobblestone",
         "3": "block/coal_block",
-        "4": "minecolonies:blocks/books/paper_3",
+        "4": "minecolonies:block/books/paper_3",
         "5": "block/oak_log_top",
         "6": "block/spruce_log"
       },

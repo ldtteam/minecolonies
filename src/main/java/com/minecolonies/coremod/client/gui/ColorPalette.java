@@ -76,7 +76,7 @@ public class ColorPalette
 
         public PaletteButton(int posX, int posY, int sideLength, DyeColor color)
         {
-            super(posX, posY, sideLength, sideLength, Component.literal(""), pressed -> {});
+            super(posX, posY, sideLength, sideLength, Component.literal(""), pressed -> {}, DEFAULT_NARRATION);
             this.color = color;
         }
 
@@ -130,8 +130,8 @@ public class ColorPalette
         {
             color += 255 << 24;
             fill(stack,
-                    this.x+l, this.y+t,
-                    this.x+this.width-r, this.y+this.height-b,
+                    this.getX()+l, this.getY()+t,
+                    this.getX()+this.width-r, this.getY()+this.height-b,
                     color
             );
         }

@@ -42,7 +42,7 @@ public class ItemGoldenBread extends AbstractItemMinecolonies
      */
     public ItemGoldenBread(final Properties properties)
     {
-        super("golden_bread", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES).food(goldenBread));
+        super("golden_bread", properties.stacksTo(STACKSIZE).food(goldenBread));
     }
 
    /**

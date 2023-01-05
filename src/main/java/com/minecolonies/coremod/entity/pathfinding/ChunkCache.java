@@ -2,8 +2,10 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.api.util.WorldUtil;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -238,6 +240,18 @@ public class ChunkCache implements LevelReader
     public int getDirectSignal(BlockPos pos, Direction direction)
     {
         return this.getBlockState(pos).getDirectSignal(this, pos, direction);
+    }
+
+    @Override
+    public RegistryAccess registryAccess()
+    {
+        return RegistryAccess.EMPTY;
+    }
+
+    @Override
+    public FeatureFlagSet enabledFeatures()
+    {
+        return FeatureFlagSet.of();
     }
 
     @Override

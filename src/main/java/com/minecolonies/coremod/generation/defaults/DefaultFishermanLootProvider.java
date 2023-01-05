@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
-
 /**
  * Datagen for fisherman loot tables
  */
@@ -34,14 +32,7 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
 
     public DefaultFishermanLootProvider(@NotNull final DataGenerator dataGeneratorIn)
     {
-        super(dataGeneratorIn);
-    }
-
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return "DefaultFishermanLootProvider";
+        super(dataGeneratorIn.getPackOutput());
     }
 
     @Override

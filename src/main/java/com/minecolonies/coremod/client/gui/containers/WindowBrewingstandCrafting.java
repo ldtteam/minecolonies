@@ -101,7 +101,7 @@ public class WindowBrewingstandCrafting extends AbstractContainerScreen<Containe
         /*
          * The button to click done after finishing the recipe.
          */
-        final Button doneButton = new Button(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS, BUTTON_WIDTH, BUTTON_HEIGHT, buttonDisplay, new WindowBrewingstandCrafting.OnButtonPress());
+        final Button doneButton = new Button.Builder(buttonDisplay, new WindowBrewingstandCrafting.OnButtonPress()).pos(leftPos + BUTTON_X_OFFSET, topPos + BUTTON_Y_POS).size(BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(doneButton);
         if (!module.canLearn(ModCraftingTypes.BREWING.get()))
         {

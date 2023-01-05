@@ -2,10 +2,10 @@ package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.network.IMessage;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
@@ -41,7 +41,7 @@ public class ColonyViewRemoveMessage implements IMessage
     public void fromBytes(final FriendlyByteBuf buf)
     {
         id = buf.readInt();
-        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
     }
 
     @Nullable

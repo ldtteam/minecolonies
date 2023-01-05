@@ -172,21 +172,13 @@ public final class StandardRequests
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestTag requested)
         {
             super(requester, token, requested);
-            stacks = ForgeRegistries.ITEMS.tags().getTag(requested.getTag()).stream().flatMap(item -> {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(item.getItemCategory(), list);
-                return list.stream();
-            }).collect(Collectors.toList());
+            stacks = ForgeRegistries.ITEMS.tags().getTag(requested.getTag()).stream().map(ItemStack::new).collect(Collectors.toList());
         }
 
         public ItemTagRequest(@NotNull final IRequester requester, @NotNull final IToken<?> token, @NotNull final RequestState state, @NotNull final RequestTag requested)
         {
             super(requester, token, state, requested);
-            stacks = ForgeRegistries.ITEMS.tags().getTag(requested.getTag()).stream().flatMap(item -> {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(item.getItemCategory(), list);
-                return list.stream();
-            }).collect(Collectors.toList());
+            stacks = ForgeRegistries.ITEMS.tags().getTag(requested.getTag()).stream().map(ItemStack::new).collect(Collectors.toList());
         }
 
         @NotNull

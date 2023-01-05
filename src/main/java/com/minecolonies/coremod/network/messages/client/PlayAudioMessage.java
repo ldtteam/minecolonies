@@ -4,7 +4,6 @@ import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.Network;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
@@ -12,11 +11,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -69,14 +68,14 @@ public class PlayAudioMessage implements IMessage
     {
         // TODO: switch to proper registry
         buf.writeVarInt(category.ordinal());
-        buf.writeVarInt(Registry.SOUND_EVENT.getId(this.soundEvent));
+        buf.writeResourceLocation(ForgeRegistries.SOUND_EVENTS.getKey(this.soundEvent));
     }
 
     @Override
     public void fromBytes(final FriendlyByteBuf buf)
     {
         this.category = SoundSource.values()[buf.readVarInt()];
-        this.soundEvent = Registry.SOUND_EVENT.byId(buf.readVarInt());
+        this.soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(buf.readResourceLocation());
     }
 
     @Nullable

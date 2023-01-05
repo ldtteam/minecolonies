@@ -45,7 +45,7 @@ public class ItemSugaryBread extends AbstractItemMinecolonies
      */
     public ItemSugaryBread(final Properties properties)
     {
-        super("sugary_bread", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES).food(sweetBread));
+        super("sugary_bread", properties.stacksTo(STACKSIZE).food(sweetBread));
     }
 
    /**

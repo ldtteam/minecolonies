@@ -18,6 +18,6 @@ public class ItemCakeBatter extends AbstractItemMinecolonies
      */
     public ItemCakeBatter(final Properties properties)
     {
-        super("cake_batter", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
+        super("cake_batter", properties.stacksTo(STACKSIZE));
     }
 }

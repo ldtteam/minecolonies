@@ -46,7 +46,8 @@ public enum SurfaceType
               || block instanceof CampfireBlock
               || block instanceof AbstractBlockMinecoloniesDefault
               || block instanceof AbstractBlockBarrel
-              || block instanceof BambooBlock
+              || block instanceof BambooStalkBlock
+              || block instanceof BambooSaplingBlock
               || block instanceof DoorBlock
               || block instanceof MagmaBlock
               || block instanceof PowderSnowBlock)

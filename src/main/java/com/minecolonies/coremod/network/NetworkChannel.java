@@ -31,6 +31,7 @@ import com.minecolonies.coremod.network.messages.splitting.SplitPacketMessage;
 import com.minecolonies.coremod.research.GlobalResearchTreeMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -318,7 +319,7 @@ public class NetworkChannel
      */
     public void sendToDimension(final IMessage msg, final ResourceLocation dim)
     {
-        rawChannel.send(PacketDistributor.DIMENSION.with(() -> ResourceKey.create(Registry.DIMENSION_REGISTRY, dim)), msg);
+        rawChannel.send(PacketDistributor.DIMENSION.with(() -> ResourceKey.create(Registries.DIMENSION, dim)), msg);
     }
 
     /**

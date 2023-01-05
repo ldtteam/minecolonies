@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.generation.defaults;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.requestsystem.requestable.Food;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
@@ -10,7 +9,6 @@ import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -26,19 +24,13 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
 
 public class DefaultSifterCraftingProvider implements DataProvider
 {
@@ -249,11 +241,11 @@ public class DefaultSifterCraftingProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final CachedOutput cache) throws IOException
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        recipeProvider.run(cache);
-        lootTableProvider.run(cache);
+        return CompletableFuture.allOf(recipeProvider.run(cache), lootTableProvider.run(cache));
     }
+
 
     private static class SifterMeshDetails
     {
@@ -302,8 +294,9 @@ public class DefaultSifterCraftingProvider implements DataProvider
         }
 
         @Override
-        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+        protected List<CompletableFuture<?>> registerRecipes(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
         {
+            List<CompletableFuture<?>> futures = new ArrayList<>();
             for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
             {
                 for (final SifterMeshDetails mesh : inputEntry.getValue())
@@ -313,7 +306,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
                     final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
                     final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
 
-                    CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath() + "_custom", name)
+                    futures.add(CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath() + "_custom", name)
                             .inputs(Stream.of(
                                     new ItemStorage(new ItemStack(inputEntry.getKey())),
                                     new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
@@ -323,9 +316,10 @@ public class DefaultSifterCraftingProvider implements DataProvider
                                         .collect(Collectors.toList()))
                             .lootTable(new ResourceLocation(MOD_ID, "recipes/" + name))
                             .minBuildingLevel(mesh.getMinBuildingLevel())
-                            .build(consumer);
+                            .build(consumer));
                 }
             }
+            return futures;
         }
     }
 
@@ -333,14 +327,7 @@ public class DefaultSifterCraftingProvider implements DataProvider
     {
         public SifterLootTableProvider(@NotNull final DataGenerator dataGeneratorIn)
         {
-            super(dataGeneratorIn);
-        }
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return "SifterLootTableProvider";
+            super(dataGeneratorIn.getPackOutput());
         }
 
         @Override

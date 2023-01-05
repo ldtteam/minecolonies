@@ -9,7 +9,7 @@ import com.minecolonies.coremod.recipes.FoodIngredient;
 import com.minecolonies.coremod.recipes.PlantIngredient;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -17,8 +17,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -35,28 +33,22 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
  */
 public class DefaultRecipeProvider extends RecipeProvider
 {
-    public DefaultRecipeProvider(@NotNull final DataGenerator dataGenerator)
-    {
-        super(dataGenerator);
-    }
 
-    @NotNull
-    @Override
-    public String getName()
+    public DefaultRecipeProvider(final PackOutput output)
     {
-        return "DefaultVanillaRecipeProvider";
+        super(output);
     }
 
     @Override
-    protected void buildCraftingRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected void buildRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
     {
         buildHutRecipes(consumer);
         buildOtherBlocks(consumer);
         buildOtherItems(consumer);
 
-        buildFood(consumer, "", RecipeSerializer.SMELTING_RECIPE, 200);
-        buildFood(consumer, "smoking", RecipeSerializer.SMOKING_RECIPE, 100);
-        buildFood(consumer, "campfire_cooking", RecipeSerializer.CAMPFIRE_COOKING_RECIPE, 600);
+        buildFood(consumer, "", 200);
+        buildFood(consumer, "smoking", 100);
+        buildFood(consumer, "campfire_cooking", 600);
 
         CompostRecipeBuilder.strength(2)
                 .input(new FoodIngredient.Builder().maxSaturation(0.5f).build())
@@ -120,7 +112,7 @@ public class DefaultRecipeProvider extends RecipeProvider
         registerHutRecipe1(consumer, ModBlocks.blockHutWareHouse, Tags.Items.CHESTS);
         registerHutRecipe1(consumer, ModBlocks.blockHutAlchemist, Items.BREWING_STAND);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockHutCrusher)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutCrusher)
                 .pattern("XTX")
                 .pattern("CBC")
                 .pattern("XXX")
@@ -131,7 +123,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.IRON_INGOT))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockHutGraveyard)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutGraveyard)
                 .pattern("XTX")
                 .pattern("XBX")
                 .pattern("XXX")
@@ -141,7 +133,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.BONE))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockHutSchool)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutSchool)
                 .pattern("XTX")
                 .pattern("XBX")
                 .pattern("XBX")
@@ -151,7 +143,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.FEATHER))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockHutUniversity)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutUniversity)
                 .pattern("XTX")
                 .pattern("XBX")
                 .pattern("XBX")
@@ -161,7 +153,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.BOOK))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockHutStoneSmeltery)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockHutStoneSmeltery)
                 .pattern("XTX")
                 .pattern("AFA")
                 .pattern("XXX")
@@ -172,7 +164,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.STONE_BRICKS))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockScarecrow)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockScarecrow)
                 .pattern(" H ")
                 .pattern("SLS")
                 .pattern(" S ")
@@ -182,7 +174,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutFarmer))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockSimpleQuarry)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockSimpleQuarry)
                 .pattern("XTX")
                 .pattern("XDX")
                 .pattern("XBX")
@@ -193,7 +185,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutMiner))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockMediumQuarry)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockMediumQuarry)
                 .pattern("XTX")
                 .pattern("XDX")
                 .pattern("XBX")
@@ -244,7 +236,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                                            @NotNull final ItemLike output,
                                            @NotNull final ItemLike input)
     {
-        ShapedRecipeBuilder.shaped(output)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, output)
                 .pattern("XTX")
                 .pattern("XBX")
                 .pattern("XXX")
@@ -259,7 +251,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                                            @NotNull final ItemLike output,
                                            @NotNull final TagKey<Item> input)
     {
-        ShapedRecipeBuilder.shaped(output)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, output)
                 .pattern("XTX")
                 .pattern("XBX")
                 .pattern("XXX")
@@ -277,7 +269,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                                              @NotNull final ItemLike input,
                                              @NotNull final String name)
     {
-        ShapedRecipeBuilder.shaped(output, 2)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, output, 2)
                 .pattern("XTX")
                 .pattern("XBX")
                 .pattern("XXX")
@@ -292,7 +284,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                                            @NotNull final ItemLike output,
                                            @NotNull final ItemLike input)
     {
-        ShapedRecipeBuilder.shaped(output)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, output)
                 .pattern("XTX")
                 .pattern("BBB")
                 .pattern("XXX")
@@ -305,7 +297,7 @@ public class DefaultRecipeProvider extends RecipeProvider
 
     private void buildOtherBlocks(@NotNull final Consumer<FinishedRecipe> consumer)
     {
-        ShapedRecipeBuilder.shaped(ModBlocks.blockBarrel)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockBarrel)
                 .pattern("WTW")
                 .pattern("WGW")
                 .pattern("WSW")
@@ -316,7 +308,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), Items.IRON_INGOT))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockCompostedDirt)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockCompostedDirt)
                 .pattern("XXX")
                 .pattern("XPX")
                 .pattern("XXX")
@@ -325,7 +317,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_compost", has(ModItems.compost))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockConstructionTape)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockConstructionTape)
                 .pattern("SWS")
                 .pattern("S S")
                 .pattern("S S")
@@ -334,7 +326,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_wool", has(ItemTags.WOOL))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockPostBox)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockPostBox)
                 .pattern("XSX")
                 .pattern("III")
                 .pattern("XXX")
@@ -346,7 +338,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                         ItemPredicate.Builder.item().of(Tags.Items.CHESTS).build()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockStash)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockStash)
                 .pattern("XSX")
                 .pattern("IXI")
                 .pattern("XXX")
@@ -358,7 +350,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                         ItemPredicate.Builder.item().of(Tags.Items.CHESTS).build()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockRack)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockRack)
                 .pattern("XXX")
                 .pattern("ISI")
                 .pattern("XXX")
@@ -368,7 +360,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModBlocks.blockWayPoint, 16)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.blockWayPoint, 16)
                 .pattern("XXX")
                 .pattern("XBX")
                 .pattern("XXX")
@@ -377,13 +369,13 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapelessRecipeBuilder.shapeless(Items.LARGE_FERN)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.LARGE_FERN)
                 .requires(Items.FERN)
                 .requires(Items.FERN)
                 .unlockedBy("has_fern", has(Items.FERN))
                 .save(consumer, new ResourceLocation(MOD_ID, "doublefern"));
 
-        ShapelessRecipeBuilder.shapeless(Items.TALL_GRASS)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.TALL_GRASS)
                 .requires(Items.GRASS)
                 .requires(Items.GRASS)
                 .unlockedBy("has_grass", has(Items.GRASS))
@@ -392,33 +384,32 @@ public class DefaultRecipeProvider extends RecipeProvider
 
     private void buildFood(@NotNull final Consumer<FinishedRecipe> consumer,
                            @NotNull final String method,
-                           @NotNull final SimpleCookingSerializer<?> serializer,
                            final int cookingTime)
     {
-        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.breadDough),
-                Items.BREAD, 0.35f, cookingTime, serializer)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.breadDough), RecipeCategory.MISC,
+            Items.BREAD, 0.35f, cookingTime)
                 .unlockedBy("has_dough", has(ModItems.breadDough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_bread"), "_", method));
 
-        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.cakeBatter),
-                Items.CAKE, 0.35f, cookingTime, serializer)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cakeBatter), RecipeCategory.MISC,
+                Items.CAKE, 0.35f, cookingTime)
                 .unlockedBy("has_dough", has(ModItems.cakeBatter))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cake"), "_", method));
 
-        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.cookieDough),
-                Items.COOKIE, 0.0475f, cookingTime / 8, serializer)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.cookieDough),  RecipeCategory.MISC,
+                Items.COOKIE, 0.0475f, cookingTime / 8)
                 .unlockedBy("has_dough", has(ModItems.cookieDough))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_cookies"), "_", method));
 
-        SimpleCookingRecipeBuilder.cooking(Ingredient.of(ModItems.rawPumpkinPie),
-                Items.PUMPKIN_PIE, 0.35f, cookingTime, serializer)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.rawPumpkinPie),  RecipeCategory.MISC,
+                Items.PUMPKIN_PIE, 0.35f, cookingTime)
                 .unlockedBy("has_dough", has(ModItems.rawPumpkinPie))
                 .save(consumer, append(new ResourceLocation(MOD_ID, "baked_pumpkin_pie"), "_", method));
     }
 
     private void buildOtherItems(@NotNull final Consumer<FinishedRecipe> consumer)
     {
-        ShapedRecipeBuilder.shaped(ModItems.flagBanner)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.flagBanner)
                 .pattern(" W ")
                 .pattern(" W ")
                 .pattern(" B ")
@@ -429,7 +420,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                         ItemPredicate.Builder.item().of(ItemTags.WOOL).build()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.bannerRallyGuards)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.bannerRallyGuards)
                 .pattern("AAA")
                 .pattern("BXB")
                 .pattern("CCC")
@@ -440,7 +431,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_items", hasAllOf(buildTool.get(), ModBlocks.blockHutGuardTower))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(Items.CHAINMAIL_HELMET)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_HELMET)
                 .pattern("NNN")
                 .pattern("NIN")
                 .define('I', Items.IRON_INGOT)
@@ -448,7 +439,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailhelmet"));
 
-        ShapedRecipeBuilder.shaped(Items.CHAINMAIL_CHESTPLATE)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_CHESTPLATE)
                 .pattern("I I")
                 .pattern("NNN")
                 .pattern("NNN")
@@ -457,7 +448,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailchestplate"));
 
-        ShapedRecipeBuilder.shaped(Items.CHAINMAIL_LEGGINGS)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_LEGGINGS)
                 .pattern("III")
                 .pattern("N N")
                 .pattern("N N")
@@ -466,7 +457,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailleggings"));
 
-        ShapedRecipeBuilder.shaped(Items.CHAINMAIL_BOOTS)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,Items.CHAINMAIL_BOOTS)
                 .pattern("I I")
                 .pattern("N N")
                 .define('I', Items.IRON_INGOT)
@@ -474,7 +465,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_iron", has(Items.IRON_INGOT))
                 .save(consumer, new ResourceLocation(MOD_ID, "chainmailboots"));
 
-        ShapedRecipeBuilder.shaped(ModItems.clipboard)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.clipboard)
                 .pattern("XTX")
                 .pattern("XPX")
                 .pattern("XXX")
@@ -484,7 +475,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.resourceScroll)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.resourceScroll)
                 .pattern("XTX")
                 .pattern("XPX")
                 .pattern("XPX")
@@ -494,7 +485,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.buildGoggles)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.buildGoggles)
                 .pattern("NIN")
                 .pattern("GTG")
                 .pattern("L L")
@@ -506,7 +497,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_build_tool", has(buildTool.get()))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(shapeTool.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,shapeTool.get())
                 .pattern("  X")
                 .pattern(" S ")
                 .pattern("S  ")
@@ -515,7 +506,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_stick", has(Items.STICK))
                 .save(consumer, new ResourceLocation(MOD_ID, "shapetool"));
 
-        ShapedRecipeBuilder.shaped(ModItems.supplyCamp)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.supplyCamp)
                 .pattern("   ")
                 .pattern("C C")
                 .pattern("CCC")
@@ -523,7 +514,7 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_chest", has(Tags.Items.CHESTS))
                 .save(consumer);
 
-        ShapedRecipeBuilder.shaped(ModItems.supplyChest)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC,ModItems.supplyChest)
                 .pattern("   ")
                 .pattern("B B")
                 .pattern("BBB")
@@ -531,10 +522,10 @@ public class DefaultRecipeProvider extends RecipeProvider
                 .unlockedBy("has_boat", has(ItemTags.BOATS))
                 .save(consumer);
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.scimitar), Items.IRON_NUGGET, 0.1f, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModItems.scimitar), RecipeCategory.MISC, Items.IRON_NUGGET, 0.1f, 200)
                 .unlockedBy("has_scimitar", has(ModItems.scimitar))
                 .save(consumer, new ResourceLocation(MOD_ID, "iron_nugget_from_iron_scimitar_smelting"));
-        SimpleCookingRecipeBuilder.blasting(Ingredient.of(ModItems.scimitar), Items.IRON_NUGGET, 0.1f, 100)
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(ModItems.scimitar), RecipeCategory.MISC, Items.IRON_NUGGET, 0.1f, 100)
                 .unlockedBy("has_scimitar", has(ModItems.scimitar))
                 .save(consumer, new ResourceLocation(MOD_ID, "iron_nugget_from_iron_scimitar_blasting"));
     }

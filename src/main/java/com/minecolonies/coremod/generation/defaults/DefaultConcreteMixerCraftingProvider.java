@@ -3,7 +3,6 @@ package com.minecolonies.coremod.generation.defaults;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.DyeColor;
@@ -14,14 +13,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
-
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 /** Datagen for concrete mixer crafterrecipes */
 public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
@@ -39,9 +36,9 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
     }
 
     @Override
-    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+    protected List<CompletableFuture<?>> registerRecipes(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
     {
-
+        final List<CompletableFuture<?>> futures = new ArrayList<>();
         final List<ItemStorage> input = new ArrayList<>();
         input.add(new ItemStorage(new ItemStack(Items.SAND, 4)));
         input.add(new ItemStorage(new ItemStack(Items.GRAVEL, 4)));
@@ -61,19 +58,20 @@ public class DefaultConcreteMixerCraftingProvider extends CustomRecipeProvider
             final List<ItemStorage> customInput = new ArrayList<>(input);
             customInput.add(new ItemStorage(new ItemStack(dye)));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(powder).getPath())
+            futures.add(CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(powder).getPath())
                     .inputs(customInput)
                     .result(new ItemStack(powder, 8))
-                    .build(consumer);
+                    .build(consumer));
 
-            CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(concrete).getPath())
+            futures.add(CustomRecipeBuilder.create(ModJobs.CONCRETE_ID.getPath() + "_custom", ForgeRegistries.ITEMS.getKey(concrete).getPath())
                     .inputs(Collections.singletonList(new ItemStorage(new ItemStack(powder))))
                     .result(new ItemStack(concrete))
                     //.intermediate(Blocks.WATER)
-                    .build(consumer);
+                    .build(consumer));
             // TODO: it makes sense for this to have WATER as an intermediate, but the RS logic
             //       and JEI rendering don't currently support that.  Previous versions just used
             //       air, so we'll do the same for now.
         }
+        return futures;
     }
 }

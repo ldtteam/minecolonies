@@ -29,15 +29,13 @@ public class ItemPirateGear extends ArmorItem
      * @param equipmentSlotIn the equipment slot of it.
      * @param materialIn      the material of the armour.
      * @param name            the name.
-     * @param tab             the item group tab.
      */
     public ItemPirateGear(
       @NotNull final String name,
-      @NotNull final CreativeModeTab tab,
       @NotNull final ArmorMaterial materialIn,
       @NotNull final EquipmentSlot equipmentSlotIn,
       final Item.Properties properties)
     {
-        super(materialIn, equipmentSlotIn, properties.tab(tab));
+        super(materialIn, equipmentSlotIn, properties);
     }
 }

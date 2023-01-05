@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.api.util.MessageUtils;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -100,7 +101,7 @@ public abstract class AbstractColonyServerMessage implements IMessage
     @Override
     public final void fromBytes(final FriendlyByteBuf buf)
     {
-        this.dimensionId = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+        this.dimensionId = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         this.colonyId = buf.readInt();
         fromBytesAbstractOverride(buf);
         fromBytesOverride(buf);

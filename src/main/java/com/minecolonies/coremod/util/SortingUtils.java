@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -93,7 +94,7 @@ public final class SortingUtils
       final AtomicInteger requiredSlots,
       final double totalSlots, final double totalRequirement, final Map<Integer, Integer> creativeTabs)
     {
-        final int creativeTabId = entry.getKey().getPrimaryCreativeTabIndex();
+        final int creativeTabId = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(entry.getKey()).column();
 
         int slotLimit = 0;
         final ItemStack stack = entry.getKey().getItemStack();
@@ -141,8 +142,8 @@ public final class SortingUtils
      */
     private static int compare(final Map.Entry<ItemStorage, Integer> t1, final Map.Entry<ItemStorage, Integer> t2)
     {
-        final int creativeTabId1 = t1.getKey().getPrimaryCreativeTabIndex();
-        final int creativeTabId2 = t2.getKey().getPrimaryCreativeTabIndex();
+        final int creativeTabId1 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(t1.getKey()).column();
+        final int creativeTabId2 = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(t2.getKey()).column();
 
         if (creativeTabId1 != creativeTabId2)
         {
@@ -183,7 +184,7 @@ public final class SortingUtils
         for (final Map.Entry<ItemStorage, Integer> entry : map.entrySet())
         {
             sum += Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize());
-            final int index = entry.getKey().getPrimaryCreativeTabIndex();
+            final int index = IColonyManager.getInstance().getCompatibilityManager().getCreativeTab(entry.getKey()).column();
             creativeTabs.put(index, creativeTabs.getOrDefault(index, 0) + (int) Math.ceil((double) entry.getValue() / entry.getKey().getItemStack().getMaxStackSize()));
         }
 

@@ -32,11 +32,10 @@ public class ItemPlateArmor extends ArmorItem
      */
     public ItemPlateArmor(
       @NotNull final String name,
-      @NotNull final CreativeModeTab tab,
       @NotNull final ArmorMaterial materialIn,
       @NotNull final EquipmentSlot equipmentSlotIn,
       final Properties properties)
     {
-        super(materialIn, equipmentSlotIn, properties.tab(tab));
+        super(materialIn, equipmentSlotIn, properties);
     }
 }

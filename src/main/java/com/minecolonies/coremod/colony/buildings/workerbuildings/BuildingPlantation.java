@@ -53,7 +53,7 @@ public class BuildingPlantation extends AbstractBuilding
       new SettingKey<>(PlantationSetting.class, new ResourceLocation(com.minecolonies.api.util.constant.Constants.MOD_ID, "mode"));
 
     /**
-     * The combinations of items/blocks/tags.
+     * The combinations of items/block/tags.
      */
     public static final Map<Item, PlantationItem> COMBINATIONS = ImmutableMap.<Item, PlantationItem>builder()
       .put(Items.SUGAR_CANE, new PlantationItem(Items.SUGAR_CANE, Blocks.SUGAR_CANE, "sugar", 3))

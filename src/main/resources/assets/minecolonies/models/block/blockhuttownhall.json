@@ -7,7 +7,7 @@
 		"2": "block/oak_planks",
 		"3": "block/stripped_dark_oak_log_top",
 		"5": "block/bookshelf",
-		"6": "minecolonies:blocks/books/booktexture_yellow",
+		"6": "minecolonies:block/books/booktexture_yellow",
 		"particle": "block/oak_planks"
 	},
 	"elements": [

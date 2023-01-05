@@ -1,7 +1,6 @@
 package com.minecolonies.apiimp.initializer;
 
 import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.blocks.*;
 import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagBanner;
@@ -134,7 +133,7 @@ public final class ModBlocksInitializer
      */
     public static void registerBlockItem(final IForgeRegistry<Item> registry)
     {
-        final Item.Properties properties = new Item.Properties().tab(ModCreativeTabs.MINECOLONIES);
+        final Item.Properties properties = new Item.Properties();
 
         ModBlocks.blockHutBaker.registerBlockItem(registry, properties);
         ModBlocks.blockHutBlacksmith.registerBlockItem(registry, properties);

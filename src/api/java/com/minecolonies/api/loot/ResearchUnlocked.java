@@ -32,7 +32,7 @@ public class ResearchUnlocked implements LootItemCondition
     @Override
     public LootItemConditionType getType()
     {
-        return ModLootConditions.researchUnlocked;
+        return ModLootConditions.researchUnlocked.get();
     }
 
     @Override

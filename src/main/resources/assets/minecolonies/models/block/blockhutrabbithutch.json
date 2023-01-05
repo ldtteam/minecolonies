@@ -13,7 +13,7 @@
 				"14": "entity/chest/normal",
 				"15": "block/cauldron_side",
 				"16": "block/oak_planks",
-				"17": "minecolonies:blocks/liquid/liq1",
+				"17": "minecolonies:block/liquid/liq1",
 				"18": "block/hay_block_top"
 			},
 			"elements": [

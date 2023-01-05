@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
-import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
@@ -26,11 +25,12 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
@@ -46,11 +46,12 @@ public abstract class CustomRecipeProvider implements DataProvider
     }
 
     @Override
-    public void run(final CachedOutput cache) throws IOException
+    @NotNull
+    public CompletableFuture<?> run(final CachedOutput cache)
     {
-        final Path path = this.generator.getOutputFolder();
+        final Path path = this.generator.getPackOutput().getOutputFolder();
         final Set<ResourceLocation> set = Sets.newHashSet();
-        registerRecipes((recipe) ->
+        final List<CompletableFuture<?>> futures = registerRecipes((recipe) ->
         {
             if (!set.add(recipe.getId()))
             {
@@ -58,21 +59,16 @@ public abstract class CustomRecipeProvider implements DataProvider
             }
             else
             {
-                try
-                {
-                    DataProvider.saveStable(cache,
+                return DataProvider.saveStable(cache,
                       recipe.serializeRecipe(),
                       path.resolve("data/" + recipe.getId().getNamespace() + "/crafterrecipes/" + recipe.getId().getPath() + ".json"));
-                }
-                catch (IOException e)
-                {
-                    Log.getLogger().error("Error saving recipe", e);
-                }
             }
         });
+
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
-    protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);
+    protected abstract List<CompletableFuture<?>> registerRecipes(final Function<FinishedRecipe, CompletableFuture<?>> consumer);
 
     public static class CustomRecipeBuilder
     {
@@ -191,10 +187,10 @@ public abstract class CustomRecipeProvider implements DataProvider
             return this;
         }
 
-        public void build(@NotNull final Consumer<FinishedRecipe> consumer)
+        public CompletableFuture<?> build(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
         {
             this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, ForgeRegistries.BLOCKS.getKey(this.intermediate).toString());
-            consumer.accept(new Result(this.json, this.id));
+            return consumer.apply(new Result(this.json, this.id));
         }
 
         @NotNull

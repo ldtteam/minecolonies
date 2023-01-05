@@ -6,6 +6,7 @@ import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.*;
@@ -19,7 +20,7 @@ import java.util.Map;
  */
 public final class ModSoundEvents
 {
-    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registry.SOUND_EVENT_REGISTRY, Constants.MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, Constants.MOD_ID);
 
     /**
      * Map of sound events.
@@ -140,6 +141,6 @@ public final class ModSoundEvents
      */
     public static SoundEvent getSoundID(final String soundName)
     {
-        return new SoundEvent(new ResourceLocation(Constants.MOD_ID, soundName));
+        return SoundEvent.createVariableRangeEvent(new ResourceLocation(Constants.MOD_ID, soundName));
     }
 }

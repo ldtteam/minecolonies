@@ -19,6 +19,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -195,7 +196,7 @@ public class ColonyBorderMapping
                         .listOf().xmap(HashSet::new, ArrayList::new);
         static final Codec<ColonyBorderOverlay> CODEC =
                 RecordCodecBuilder.create(instance -> instance.group(
-                        ResourceKey.codec(Registry.DIMENSION_REGISTRY).fieldOf("dimension").forGetter(o -> o.dimension),
+                        ResourceKey.codec(Registries.DIMENSION).fieldOf("dimension").forGetter(o -> o.dimension),
                         Codec.INT.fieldOf("id").forGetter(o -> o.id),
                         Codec.STRING.optionalFieldOf("colony_name", null).forGetter(o -> o.colonyName),
                         Codec.INT.optionalFieldOf("colour", -1).forGetter(o -> o.text.getColor()),

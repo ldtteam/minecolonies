@@ -20,6 +20,6 @@ public class ItemIronScimitar extends SwordItem
      */
     public ItemIronScimitar(final Item.Properties properties)
     {
-        super(Tiers.IRON, 3, -2.4f, properties.tab(ModCreativeTabs.MINECOLONIES));
+        super(Tiers.IRON, 3, -2.4f, properties);
     }
 }

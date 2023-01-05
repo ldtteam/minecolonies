@@ -29,7 +29,7 @@ public class ItemSpear extends TridentItem
 {
     public ItemSpear(final Properties properties)
     {
-        super(properties.durability(250).tab(ModCreativeTabs.MINECOLONIES));
+        super(properties.durability(250));
     }
 
     @Override

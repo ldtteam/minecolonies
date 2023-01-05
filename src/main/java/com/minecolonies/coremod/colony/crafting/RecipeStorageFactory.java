@@ -12,6 +12,7 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.TypeConstants;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -186,7 +187,7 @@ public class RecipeStorageFactory implements IRecipeStorageFactory
 
         final ItemStack primaryOutput = ItemStack.of(nbt);
 
-        final Block intermediate = NbtUtils.readBlockState(nbt.getCompound(BLOCK_TAG)).getBlock();
+        final Block intermediate = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound(BLOCK_TAG)).getBlock();
 
         final int gridSize = nbt.getInt(TAG_GRID);
         final IToken<?> token = StandardFactoryController.getInstance().deserialize(nbt.getCompound(TAG_TOKEN));

@@ -46,7 +46,7 @@ public class ItemChorusBread extends AbstractItemMinecolonies
      */
     public ItemChorusBread(final Properties properties)
     {
-        super("chorus_bread", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES).food(chorusBread));
+        super("chorus_bread", properties.stacksTo(STACKSIZE).food(chorusBread));
     }
 
    /**

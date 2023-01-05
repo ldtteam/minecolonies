@@ -4,7 +4,7 @@
 	"ambientocclusion": false,
 	"textures": {
 		"1": "block/anvil",
-		"2": "minecolonies:blocks/books/paper_anvil",
+		"2": "minecolonies:block/books/paper_anvil",
 		"3": "block/stripped_oak_log",
 		"4": "block/grindstone_round",
 		"particle": "block/anvil"

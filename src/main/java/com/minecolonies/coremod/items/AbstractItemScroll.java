@@ -7,6 +7,7 @@ import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -167,7 +168,7 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
             return null;
         }
 
-        return IColonyManager.getInstance().getColonyByDimension(stack.getTag().getInt(TAG_COLONY_ID), ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(stack.getTag().getString(TAG_COLONY_DIM))));
+        return IColonyManager.getInstance().getColonyByDimension(stack.getTag().getInt(TAG_COLONY_ID), ResourceKey.create(Registries.DIMENSION, new ResourceLocation(stack.getTag().getString(TAG_COLONY_DIM))));
     }
 
     /**
@@ -183,6 +184,6 @@ public abstract class AbstractItemScroll extends AbstractItemMinecolonies
             return null;
         }
 
-        return IColonyManager.getInstance().getColonyView(stack.getTag().getInt(TAG_COLONY_ID), ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(stack.getTag().getString(TAG_COLONY_DIM))));
+        return IColonyManager.getInstance().getColonyView(stack.getTag().getInt(TAG_COLONY_ID), ResourceKey.create(Registries.DIMENSION, new ResourceLocation(stack.getTag().getString(TAG_COLONY_DIM))));
     }
 }

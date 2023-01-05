@@ -18,7 +18,7 @@
 				"9": "block/dirt",
 				"10": "block/stripped_dark_oak_log",
 				"11": "block/iron_block",
-				"12": "minecolonies:blocks/sack-small",
+				"12": "minecolonies:block/sack-small",
 				"22": "block/red_concrete_powder",
 				"particle": "block/stripped_oak_log"
 			},

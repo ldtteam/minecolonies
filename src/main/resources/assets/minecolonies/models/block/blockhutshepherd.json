@@ -21,7 +21,7 @@
 				"14": "entity/chest/normal",
 				"15": "item/bucket",
 				"16": "block/oak_planks",
-				"17": "minecolonies:blocks/liquid/liq1"
+				"17": "minecolonies:block/liquid/liq1"
 			},
 			"elements": [
 				{

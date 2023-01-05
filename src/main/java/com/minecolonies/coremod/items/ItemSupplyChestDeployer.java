@@ -78,7 +78,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     public ItemSupplyChestDeployer(final Item.Properties properties)
     {
-        super("supplychestdeployer", properties.stacksTo(1).tab(ModCreativeTabs.MINECOLONIES));
+        super("supplychestdeployer", properties.stacksTo(1));
     }
 
     @NotNull

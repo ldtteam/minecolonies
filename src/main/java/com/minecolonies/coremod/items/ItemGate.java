@@ -1,15 +1,12 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
@@ -17,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Item for gates
@@ -28,10 +23,9 @@ public class ItemGate extends BlockItem
     public ItemGate(
       @NotNull final String name,
       final Block block,
-      @NotNull final CreativeModeTab tab,
       final Properties properties)
     {
-        super(block, properties.tab(tab));
+        super(block, properties);
     }
 
     @Override

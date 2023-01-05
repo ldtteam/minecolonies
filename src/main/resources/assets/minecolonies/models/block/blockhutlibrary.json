@@ -3,13 +3,13 @@
 	"parent": "block/block",
 	"ambientocclusion": false,
 	"textures": {
-		"5": "minecolonies:blocks/books/booktexture_red",
+		"5": "minecolonies:block/books/booktexture_red",
 		"6": "block/stripped_oak_log",
 		"7": "block/bookshelf",
 		"bottom": "block/oak_planks",
 		"base": "block/lectern_base",
 		"top": "block/lectern_top",
-		"particle": "minecolonies:blocks/books/booktexture_red"
+		"particle": "minecolonies:block/books/booktexture_red"
 	},
 	"elements": [
 		{

@@ -5,7 +5,7 @@
 		"0": "block/oak_planks",
 		"1": "block/oak_log_top",
 		"3": "entity/chest/normal",
-		"4": "minecolonies:blocks/plate",
+		"4": "minecolonies:block/plate",
 		"particle": "block/oak_planks"
 	},
 	"elements": [

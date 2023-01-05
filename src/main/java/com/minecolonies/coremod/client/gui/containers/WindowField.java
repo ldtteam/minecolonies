@@ -12,7 +12,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -124,13 +124,13 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
 
         this.font.draw(stack, Component.translatable(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
 
-        for (Widget widget : this.renderables)
+        for (Renderable widget : this.renderables)
         {
             if (widget instanceof AbstractWidget)
             {
                 if (((AbstractWidget) widget).isMouseOver(mouseX, mouseY))
                 {
-                    ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
+                    // todo 1.19.3 fix this! ((AbstractWidget) widget).renderToolTip(stack, mouseX - this.leftPos, mouseY - this.topPos);
                     break;
                 }
             }
@@ -189,7 +189,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
          */
         public DirectionalButton(int x, int y, int width, int height, Component text, Direction direction)
         {
-            super(x, y, width, height, text, button -> {});
+            super(x, y, width, height, text, button -> {}, DEFAULT_NARRATION);
             this.direction = direction;
         }
 
@@ -270,18 +270,18 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.blit(stack, this.x, this.y, getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
+            this.blit(stack, this.getX(), this.getY(), getTextureXOffset(), getTextureYOffset() + i * 24, this.width, this.height);
             this.renderBg(stack, minecraft, mouseX, mouseY);
             int j = getFGColor();
             drawCenteredString(stack,
               fontrenderer, this.getMessage(),
-              this.x + this.width / 2 + getTextOffset(Direction.Axis.X),
-              this.y + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
+              this.getX() + this.width / 2 + getTextOffset(Direction.Axis.X),
+              this.getY() + (this.height - 8) / 2 + getTextOffset(Direction.Axis.Y),
               j | Mth.ceil(this.alpha * 255.0F) << 24
             );
         }
 
-        @Override
+        /*@Override
         public void renderToolTip(@NotNull final PoseStack stack, int mouseX, int mouseY)
         {
             // Don't render while they are dragging a stack around
@@ -289,7 +289,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             {
                 return;
             }
-
+            todo 1.19.3 fix this!
             List<FormattedText> lines = Lists.newArrayList(
               Component.translatable(PARTIAL_BLOCK_HUT_FIELD_DIRECTION_ABSOLUTE + this.direction.getSerializedName()),
               Component.translatable(getDirectionalTranslationKey())
@@ -297,7 +297,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
             );
 
             WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
-        }
+        }*/
 
         /**
          * Calculates where the player is and the appropriate relative direction

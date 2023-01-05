@@ -4,7 +4,7 @@
 	"textures": {
 		"2": "block/basalt_side",
 		"3": "block/stripped_oak_log",
-		"4": "minecolonies:blocks/sack-small",
+		"4": "minecolonies:block/sack-small",
 		"6": "block/basalt_top",
 		"7": "block/diorite",
 		"particle": "block/basalt_side"

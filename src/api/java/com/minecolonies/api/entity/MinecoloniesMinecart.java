@@ -2,6 +2,7 @@ package com.minecolonies.api.entity;
 
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.animal.IronGolem;
@@ -409,7 +410,7 @@ public class MinecoloniesMinecart extends Minecart
 
     @NotNull
     @Override
-    public Packet<?> getAddEntityPacket()
+    public Packet<ClientGamePacketListener> getAddEntityPacket()
     {
         return NetworkHooks.getEntitySpawningPacket(this);
     }

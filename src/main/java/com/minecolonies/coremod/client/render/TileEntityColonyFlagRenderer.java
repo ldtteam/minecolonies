@@ -7,6 +7,7 @@ import com.minecolonies.coremod.blocks.decorative.BlockColonyFlagWallBanner;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Holder;
@@ -26,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import net.minecraft.world.level.GameType;
 
 import java.util.List;
@@ -73,14 +74,14 @@ public class TileEntityColonyFlagRenderer implements BlockEntityRenderer<TileEnt
             {
                 transform.translate(0.5D, 0.5D, 0.5D);
                 float f1 = (float)(-blockstate.getValue(BlockColonyFlagBanner.ROTATION) * 360) / 16.0F;
-                transform.mulPose(Vector3f.YP.rotationDegrees(f1));
+                transform.mulPose(Axis.YP.rotationDegrees(f1));
                 this.standPost.visible = true;
             }
             else if (blockstate.getBlock() instanceof BlockColonyFlagWallBanner)
             {
                 transform.translate(0.5D, -0.16666667F, 0.5D);
                 float f3 = -blockstate.getValue(BlockColonyFlagWallBanner.HORIZONTAL_FACING).toYRot();
-                transform.mulPose(Vector3f.YP.rotationDegrees(f3));
+                transform.mulPose(Axis.YP.rotationDegrees(f3));
                 transform.translate(0.0D, -0.3125D, -0.4375D);
                 this.standPost.visible = false;
             }

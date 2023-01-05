@@ -2,8 +2,8 @@
   "credit": "Shirkit made this model in Blockbench!",
   "ambientocclusion": false,
   "textures": {
-    "0": "minecolonies:blocks/stash",
-    "particle": "minecolonies:blocks/stash"
+    "0": "minecolonies:block/stash",
+    "particle": "minecolonies:block/stash"
   },
   "elements": [
     {

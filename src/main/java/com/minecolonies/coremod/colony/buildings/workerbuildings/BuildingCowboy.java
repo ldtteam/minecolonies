@@ -14,6 +14,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +100,7 @@ public class BuildingCowboy extends AbstractBuilding
         {
             final List<IGenericRecipe> recipes = new ArrayList<>(super.getAdditionalRecipesForDisplayPurposesOnly());
 
-            final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "",
+            final ShapelessRecipe milk = new ShapelessRecipe(new ResourceLocation(""), "", CraftingBookCategory.MISC,
                     new ItemStack(Items.MILK_BUCKET), NonNullList.of(Ingredient.EMPTY, Ingredient.of(Items.BUCKET)));
             recipes.add(GenericRecipe.of(milk, null));
 

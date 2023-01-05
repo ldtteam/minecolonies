@@ -4,13 +4,11 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
-import com.minecolonies.coremod.enchants.RaiderDamageEnchant;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -23,19 +21,15 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
-
-import com.minecolonies.coremod.generation.CustomRecipeProvider.CustomRecipeBuilder;
-import com.minecolonies.coremod.generation.SimpleLootTableProvider.LootTableRegistrar;
 
 public class DefaultEnchanterCraftingProvider implements DataProvider
 {
@@ -380,10 +374,9 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     }
 
     @Override
-    public void run(@NotNull final CachedOutput cache) throws IOException
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        recipeProvider.run(cache);
-        lootTableProvider.run(cache);
+        return CompletableFuture.allOf(recipeProvider.run(cache), lootTableProvider.run(cache));
     }
 
     private static class EnchanterRecipeProvider extends CustomRecipeProvider
@@ -401,21 +394,23 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
         }
 
         @Override
-        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
+        protected List<CompletableFuture<?>> registerRecipes(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
         {
+            final List<CompletableFuture<?>> futures = new ArrayList<>();
             final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
                     new ItemStack(ModItems.ancientTome), true, true));
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
             {
-                CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath() + "_custom", "tome" + buildingLevel)
+                futures.add(CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath() + "_custom", "tome" + buildingLevel)
                         .minBuildingLevel(buildingLevel)
                         .maxBuildingLevel(buildingLevel)
                         .inputs(tome)
                         .secondaryOutputs(Collections.singletonList(new ItemStack(Items.ENCHANTED_BOOK)))
                         .lootTable(new ResourceLocation(MOD_ID, "recipes/enchanter" + buildingLevel))
-                        .build(consumer);
+                        .build(consumer));
             }
+            return futures;
         }
     }
 
@@ -423,14 +418,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     {
         public EnchanterLootTableProvider(@NotNull final DataGenerator dataGeneratorIn)
         {
-            super(dataGeneratorIn);
-        }
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return "EnchanterLootTableProvider";
+            super(dataGeneratorIn.getPackOutput());
         }
 
         @Override

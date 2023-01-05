@@ -144,6 +144,7 @@ public final class ModBlocks
           blockHutMysticalSite,
           blockHutFlorist,
           blockPostBox,
+          blockStash,
           blockHutGraveyard,
           blockHutNetherWorker,
           blockHutAlchemist,

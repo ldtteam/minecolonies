@@ -891,7 +891,7 @@
       "render_type": "cutout",
 			"parent": "block/cube_all",
 			"textures": {
-				"3": "minecolonies:blocks/books/map1"
+				"3": "minecolonies:block/books/map1"
 			},
 			"elements": [
 				{

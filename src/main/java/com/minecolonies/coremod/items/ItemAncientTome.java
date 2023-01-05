@@ -26,7 +26,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
      */
     public ItemAncientTome(final Properties properties)
     {
-        super("ancienttome", properties.stacksTo(STACKSIZE).tab(ModCreativeTabs.MINECOLONIES));
+        super("ancienttome", properties.stacksTo(STACKSIZE));
     }
 
     @Override

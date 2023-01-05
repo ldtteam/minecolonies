@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.colony.requestsystem.location.ILocationFactory;
 import com.minecolonies.api.util.constant.SerializationIdentifierConstants;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -171,7 +172,7 @@ public class StaticLocation implements ILocation
         {
             final BlockPos pos = BlockPos.of(nbt.getLong(NBT_POS));
             final String dim = nbt.getString(NBT_DIM);
-            return new StaticLocation(pos, ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(dim)));
+            return new StaticLocation(pos, ResourceKey.create(Registries.DIMENSION, new ResourceLocation(dim)));
         }
 
         @NotNull
@@ -246,6 +247,6 @@ public class StaticLocation implements ILocation
         final BlockPos pos = buffer.readBlockPos();
         final ResourceLocation dimension = new ResourceLocation(buffer.readUtf(32767));
 
-        return new StaticLocation(pos, ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
+        return new StaticLocation(pos, ResourceKey.create(Registries.DIMENSION, dimension));
     }
 }

@@ -13,6 +13,7 @@ import com.minecolonies.api.util.SoundUtils;
 import com.minecolonies.coremod.colony.Colony;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -76,7 +77,7 @@ public class PermissionsMessage
         {
             final FriendlyByteBuf newBuf = new FriendlyByteBuf(buf.retain());
             colonyID = newBuf.readInt();
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newBuf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newBuf.readUtf(32767)));
             data = newBuf;
         }
 
@@ -182,7 +183,7 @@ public class PermissionsMessage
             enable = buf.readBoolean();
             final int rankId = buf.readInt();
             action = Action.valueOf(buf.readUtf(32767));
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
             final IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             if (colony != null)
             {
@@ -239,7 +240,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerName = buf.readUtf(32767);
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Nullable
@@ -317,7 +318,7 @@ public class PermissionsMessage
         {
             this.colonyID = buf.readInt();
             this.rankName = buf.readUtf(32767);
-            this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            this.dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Override
@@ -385,7 +386,7 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerName = buf.readUtf(32767);
             id = PacketUtils.readUUID(buf);
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Nullable
@@ -465,7 +466,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
             IColony colony = IColonyManager.getInstance().getColonyByDimension(colonyID, dimension);
             rank = colony.getPermissions().getRank(buf.readInt());
 
@@ -538,7 +539,7 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Nullable
@@ -623,7 +624,7 @@ public class PermissionsMessage
         {
             colonyId = buf.readInt();
             rankId = buf.readInt();
-            dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
         }
 
         @Override
@@ -692,7 +693,7 @@ public class PermissionsMessage
         {
             this.colonyId = buf.readInt();
             this.rankId = buf.readInt();
-            this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            this.dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
             this.rankType = buf.readInt();
         }
 
@@ -777,7 +778,7 @@ public class PermissionsMessage
         public void fromBytes(final FriendlyByteBuf buf)
         {
             this.colonyId = buf.readInt();
-            this.dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
+            this.dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(buf.readUtf(32767)));
             this.rankId = buf.readInt();
             this.isSubscriber = buf.readBoolean();
         }

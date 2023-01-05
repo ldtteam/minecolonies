@@ -17,6 +17,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -27,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.translation.BaseGameTranslationConstants.BASE_GUI_DONE;
+import static net.minecraft.client.gui.components.Button.DEFAULT_NARRATION;
 
 /**
  * A custom rendered Screen (i.e. not blockui) that renders a picker for the banners,
@@ -134,10 +138,10 @@ public class WindowBannerPicker extends Screen
         {
             for (final ResourceKey key : EXCLUSION[i])
             {
-                exclusion.add((Holder<BannerPattern>) Registry.BANNER_PATTERN.getHolder(key).get());
+                exclusion.add((Holder<BannerPattern>) BuiltInRegistries.BANNER_PATTERN.getHolder(key).get());
             }
         }
-        this.patterns = new LinkedList<>(Registry.BANNER_PATTERN.holders().collect(Collectors.toList()));
+        this.patterns = new LinkedList<>(BuiltInRegistries.BANNER_PATTERN.holders().collect(Collectors.toList()));
         this.patterns.removeAll(exclusion);
 
         // Fetch the patterns as a List and not ListNBT
@@ -176,7 +180,7 @@ public class WindowBannerPicker extends Screen
                 center(this.width, 6, SIDE, 7, 0), GUI_Y,
                 SIDE, SIDE,
                 Component.literal(ChatFormatting.RED + "X"),
-                pressed -> layers.remove(activeLayer))
+                pressed -> layers.remove(activeLayer), DEFAULT_NARRATION)
         {
             @Override
             public void render(final PoseStack stack, int mouseX, int mouseY, float partialTicks)
@@ -218,14 +222,14 @@ public class WindowBannerPicker extends Screen
 
                     colony.setColonyFlag(builder.toListTag());
                     window.open();
-                }
+                }, DEFAULT_NARRATION
         ));
         this.addRenderableWidget(new Button(
                 center(this.width, 2, 80, 0, 10),
                 this.height - 40,
                 80, SIDE,
                 Component.translatable("gui.cancel"),
-                pressed -> window.open()
+                pressed -> window.open(), DEFAULT_NARRATION
         ));
     }
 
@@ -255,7 +259,7 @@ public class WindowBannerPicker extends Screen
         {
             // Drop out if only the color was selected.
             if (activeLayer == layers.size()) return;
-            else if (activeLayer == 0) pattern = Registry.BANNER_PATTERN.getHolderOrThrow(BannerPatterns.BASE);
+            else if (activeLayer == 0) pattern = BuiltInRegistries.BANNER_PATTERN.getHolderOrThrow(BannerPatterns.BASE);
             else pattern = layers.get(activeLayer).getFirst();
         }
 
@@ -325,7 +329,7 @@ public class WindowBannerPicker extends Screen
         Lighting.setupForFlatItems();
 
         List<Pair<Holder<BannerPattern>, DyeColor>> list = new ArrayList<>();
-        list.add(new Pair<>(Registry.BANNER_PATTERN.getHolder(BannerPatterns.BASE).get(), DyeColor.GRAY));
+        list.add(new Pair<>(BuiltInRegistries.BANNER_PATTERN.getHolder(BannerPatterns.BASE).get(), DyeColor.GRAY));
         list.add(new Pair<>(pattern, DyeColor.WHITE));
 
         PoseStack transform = new PoseStack();
@@ -432,7 +436,8 @@ public class WindowBannerPicker extends Screen
                     layer == 0
                             ? Component.translatable("com.minecolonies.coremod.gui.flag.base_layer")
                             : Component.literal(String.valueOf(layer)),
-                    pressed -> {}
+                    pressed -> {},
+                    DEFAULT_NARRATION
             );
             this.layer = layer;
         }
@@ -455,7 +460,7 @@ public class WindowBannerPicker extends Screen
             super.render(stack, p_render_1_, p_render_2_, p_render_3_);
 
             if (activeLayer == this.layer)
-                fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0x66DD99FF);
+                fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x66DD99FF);
         }
     }
 
@@ -475,7 +480,7 @@ public class WindowBannerPicker extends Screen
          */
         public PatternButton(int x, int y, int height, Holder<BannerPattern> pattern)
         {
-            super(x, y, height/2, height, Component.literal(""), btn -> {});
+            super(x, y, height/2, height, Component.literal(""), btn -> {}, DEFAULT_NARRATION);
             this.pattern = pattern;
             int tempIndex = 0;
             for (final Holder<BannerPattern> pat : WindowBannerPicker.this.patterns)
@@ -501,13 +506,13 @@ public class WindowBannerPicker extends Screen
             if (!this.active || !this.visible) return;
 
             int position = Math.floorDiv(this.index - scrollRow*PATTERN_COLUMNS, PATTERN_COLUMNS);
-            this.y = center(WindowBannerPicker.this.height, PATTERN_ROWS, PATTERN_HEIGHT, position, PATTERN_MARGIN);
+            this.setY(center(WindowBannerPicker.this.height, PATTERN_ROWS, PATTERN_HEIGHT, position, PATTERN_MARGIN));
 
             super.render(stack, p_render_1_, p_render_2_, p_render_3_);
 
             try
             {
-                drawBannerPattern(this.pattern, this.x, this.y);
+                drawBannerPattern(this.pattern, this.getX(), this.getY());
             }
             catch (final Exception ex)
             {
@@ -522,13 +527,13 @@ public class WindowBannerPicker extends Screen
             if (this.visible)
             {
                 if (this.isHovered && this.active)
-                    fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0xDDFFFFFF);
+                    fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xDDFFFFFF);
 
                 if (activeLayer < layers.size() && layers.get(activeLayer).getFirst() == this.pattern)
-                    fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0xFFDD88FF);
+                    fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0xFFDD88FF);
 
                 else
-                    fill(stack, this.x, this.y, this.x+this.width, this.y+this.height, 0x33888888);
+                    fill(stack, this.getX(), this.getY(), this.getX()+this.width, this.getY()+this.height, 0x33888888);
             }
         }
     }

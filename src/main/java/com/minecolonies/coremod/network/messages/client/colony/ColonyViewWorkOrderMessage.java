@@ -6,6 +6,7 @@ import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.workorders.view.AbstractWorkOrderView;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -59,7 +60,7 @@ public class ColonyViewWorkOrderMessage implements IMessage
     {
         final FriendlyByteBuf newbuf = new FriendlyByteBuf(buf.retain());
         colonyId = newbuf.readInt();
-        dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(newbuf.readUtf(32767)));
+        dimension = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(newbuf.readUtf(32767)));
         workOrderBuffer = newbuf;
     }
 

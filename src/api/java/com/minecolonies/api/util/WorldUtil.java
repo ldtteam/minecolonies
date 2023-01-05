@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
@@ -230,7 +231,7 @@ public class WorldUtil
     public static boolean isOfWorldType(@NotNull final Level world, @NotNull final ResourceKey<DimensionType> type)
     {
         RegistryAccess dynRegistries = world.registryAccess();
-        ResourceLocation loc = dynRegistries.registry(Registry.DIMENSION_TYPE_REGISTRY).get().getKey(world.dimensionType());
+        ResourceLocation loc = dynRegistries.registry(Registries.DIMENSION_TYPE).get().getKey(world.dimensionType());
         if (loc == null)
         {
             if (world.isClientSide)
@@ -239,7 +240,7 @@ public class WorldUtil
             }
             return false;
         }
-        ResourceKey<DimensionType> regKey = ResourceKey.create(Registry.DIMENSION_TYPE_REGISTRY, loc);
+        ResourceKey<DimensionType> regKey = ResourceKey.create(Registries.DIMENSION_TYPE, loc);
         return regKey == type;
     }
 

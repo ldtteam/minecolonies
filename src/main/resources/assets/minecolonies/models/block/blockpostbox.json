@@ -2,8 +2,8 @@
   "credit": "EnderDude124 made this model in Blockbench!",
   "ambientocclusion": false,
   "textures": {
-    "0": "minecolonies:blocks/postbox",
-    "particle": "minecolonies:blocks/postbox"
+    "0": "minecolonies:block/postbox",
+    "particle": "minecolonies:block/postbox"
   },
   "elements": [
     {

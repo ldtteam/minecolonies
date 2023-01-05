@@ -19,7 +19,7 @@
 				"top": "block/cauldron_top",
 				"side": "block/cauldron_side",
 				"inside": "block/cauldron_inner",
-				"water": "minecolonies:blocks/liquid/liq2"
+				"water": "minecolonies:block/liquid/liq2"
 			},
 			"elements": [
 				{
@@ -443,7 +443,7 @@
 		"second": {
       "render_type": "cutout",
 			"textures": {
-				"1": "minecolonies:blocks/fisher_net",
+				"1": "minecolonies:block/fisher_net",
 				"12": "item/string",
 				"13": "item/tropical_fish",
 				"14": "item/salmon"

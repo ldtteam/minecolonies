@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.minecolonies.api.MinecoloniesAPIProxy;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.data.IDataStoreManager;
 import com.minecolonies.api.compatibility.dynamictrees.DynamicTreeCompat;
 import com.minecolonies.api.compatibility.resourcefulbees.ResourcefulBeesCompat;
 import com.minecolonies.api.compatibility.tinkers.SlimeTreeCheck;
@@ -15,7 +16,7 @@ import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -113,6 +114,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private final Set<ItemStorage> edibles = new HashSet<>();
 
     /**
+     * Set of all beekeeper flowers.
+     */
+    private static Set<ItemStorage> beekeeperflowers;
+
+    /**
      * Set of all possible diseases.
      */
     private final Map<String, Disease> diseases = new HashMap<>();
@@ -164,6 +170,11 @@ public class CompatibilityManager implements ICompatibilityManager
     private ImmutableSet<ResourceLocation> monsters = ImmutableSet.of();
 
     /**
+     * Mapping of itemstorage to creativemodetab.
+     */
+    private Map<ItemStorage, CreativeModeTab> creativeModeTabMap;
+
+    /**
      * Instantiates the compatibilityManager.
      */
     public CompatibilityManager()
@@ -183,6 +194,7 @@ public class CompatibilityManager implements ICompatibilityManager
         edibles.clear();
         fuel.clear();
         compostRecipes.clear();
+        beekeeperflowers.clear();
 
         luckyOres.clear();
         recruitmentCostsWeights.clear();
@@ -191,6 +203,7 @@ public class CompatibilityManager implements ICompatibilityManager
         freeBlocks.clear();
         freePositions.clear();
         monsters = ImmutableSet.of();
+        creativeModeTabMap.clear();
     }
 
     /**
@@ -203,19 +216,14 @@ public class CompatibilityManager implements ICompatibilityManager
         clear();
         discoverAllItems();
 
-        discoverSaplings();
-        discoverOres();
-        discoverPlantables();
-        discoverFood();
-        discoverFuel();
-        discoverMobs();
-        discoverCompostRecipes(recipeManager);
-
         discoverLuckyOres();
         discoverRecruitCosts();
         discoverDiseases();
         discoverFreeBlocksAndPos();
         discoverModCompat();
+
+        discoverCompostRecipes(recipeManager);
+        discoverMobs();
     }
 
     /**
@@ -551,6 +559,12 @@ public class CompatibilityManager implements ICompatibilityManager
     }
 
     @Override
+    public CreativeModeTab getCreativeTab(final ItemStorage checkItem)
+    {
+        return creativeModeTabMap.get(checkItem);
+    }
+
+    @Override
     public ImmutableSet<ResourceLocation> getAllMonsters()
     {
         if (monsters.isEmpty()) Log.getLogger().error("getAllMonsters when empty");
@@ -587,72 +601,84 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
+        if (!allItems.isEmpty())
+        {
+            return;
+        }
+
         final ImmutableList.Builder<ItemStack> listBuilder = new ImmutableList.Builder<>();
         final ImmutableSet.Builder<ItemStorage> setBuilder = new ImmutableSet.Builder<>();
 
-        for (final Item item : ForgeRegistries.ITEMS.getValues())
+        for (CreativeModeTab tab : CreativeModeTabs.allTabs())
         {
-            final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
-            listBuilder.addAll(list);
-
-            for (final ItemStack stack : list)
+            if (tab != CreativeModeTabs.SEARCH && tab != CreativeModeTabs.HOTBAR)
             {
-                setBuilder.add(new ItemStorage(stack, true));
+                for (final ItemStack item : tab.getDisplayItems())
+                {
+                    setBuilder.add(new ItemStorage(item, true));
+
+                    discoverSaplings(item);
+                    discoverOres(item);
+                    discoverPlantables(item);
+                    discoverFood(item);
+                    discoverFuel(item);
+                    discoverBeekeeperFlowers(item);
+
+                    creativeModeTabMap.put(new ItemStorage(item), tab);
+                }
             }
         }
+
+        Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
+        Log.getLogger().info("Finished discovering saplings " + saplings.size());
+        Log.getLogger().info("Finished discovering plantables " + plantables.size());
+        Log.getLogger().info("Finished discovering food " + edibles.size() + " " + food.size());
+        Log.getLogger().info("Finished discovering fuel " + fuel.size());
+        Log.getLogger().info("Finished discovering flowers " + beekeeperflowers.size());
+
 
         allItems = listBuilder.build();
         allItemsSet = setBuilder.build();
     }
 
     /**
+     * Discover all flowers for the beekeeper.
+     */
+    private void discoverBeekeeperFlowers(final ItemStack item)
+    {
+        if (item.is(ItemTags.FLOWERS))
+        {
+            beekeeperflowers.add(new ItemStorage(item));
+        }
+    }
+
+    /**
      * Discover ores for the Smelter and Miners.
      */
-    private void discoverOres()
+    private void discoverOres(final ItemStack stack)
     {
-        if (smeltableOres.isEmpty())
+        if (stack.is(Tags.Items.ORES) || stack.is(ModTags.breakable_ore) || stack.is(ModTags.raw_ore))
         {
-            Set<Item> m = Stream.of(Tags.Items.ORES, ModTags.breakable_ore, ModTags.raw_ore)
-                    .flatMap(tag -> ForgeRegistries.ITEMS.tags().getTag(tag).stream())
-                    .collect(Collectors.toSet());
-
-            for (Item item : m)
+            if (stack.getItem() instanceof BlockItem)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
-
-                for (final ItemStack stack : list)
-                {
-                    if (stack.getItem() instanceof BlockItem)
-                    {
-                        oreBlocks.add(((BlockItem) stack.getItem()).getBlock());
-                    }
-                    if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty())
-                    {
-                        smeltableOres.add(new ItemStorage(stack));
-                    }
-                }
+                oreBlocks.add(((BlockItem) stack.getItem()).getBlock());
+            }
+            if (!MinecoloniesAPIProxy.getInstance().getFurnaceRecipes().getSmeltingResult(stack).isEmpty())
+            {
+                smeltableOres.add(new ItemStorage(stack));
             }
         }
-        Log.getLogger().info("Finished discovering Ores " + oreBlocks.size() + " " + smeltableOres.size());
     }
 
     /**
      * Discover saplings from the vanilla Saplings tag, used for the Forester
      */
-    private void discoverSaplings()
+    private void discoverSaplings(final ItemStack stack)
     {
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.SAPLINGS))
+        if (stack.is(ItemTags.SAPLINGS))
         {
-            final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
-            for (final ItemStack stack : list)
-            {
-                saplings.add(new ItemStorage(stack, false, true));
-            }
+            saplings.add(new ItemStorage(stack, false, true));
         }
-        Log.getLogger().info("Finished discovering saplings " + saplings.size());
     }
 
     /**
@@ -685,64 +711,41 @@ public class CompatibilityManager implements ICompatibilityManager
     /**
      * Create complete list of plantable items, from the "minecolonies:florist_flowers" tag, for the Florist.
      */
-    private void discoverPlantables()
+    private void discoverPlantables(final ItemStack stack)
     {
-        if (plantables.isEmpty())
+        if (stack.is(ModTags.floristFlowers))
         {
-            for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ModTags.floristFlowers))
+            if (stack.getItem() instanceof BlockItem)
             {
-                final NonNullList<ItemStack> list = NonNullList.create();
-                item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
-                for (final ItemStack stack : list)
-                {
-                    if (stack.getItem() instanceof BlockItem)
-                    {
-                        plantables.add(new ItemStorage(stack));
-                    }
-                }
+                plantables.add(new ItemStorage(stack));
             }
         }
-        Log.getLogger().info("Finished discovering plantables " + plantables.size());
     }
 
     /**
      * Create complete list of fuel items.
      */
-    private void discoverFuel()
+    private void discoverFuel(final ItemStack stack)
     {
-        if (fuel.isEmpty())
+        if (FurnaceBlockEntity.isFuel(stack))
         {
-            for(ItemStack item : allItems)
-            {
-                if(FurnaceBlockEntity.isFuel(item))
-                {
-                    fuel.add(new ItemStorage(item));
-                }
-            }
+            fuel.add(new ItemStorage(stack));
         }
-        Log.getLogger().info("Finished discovering fuel " + fuel.size());
     }
 
     /**
      * Create complete list of food items.
      */
-    private void discoverFood()
+    private void discoverFood(final ItemStack stack)
     {
-        if (food.isEmpty())
+        if (ISFOOD.test(stack) || ISCOOKABLE.test(stack))
         {
-            for(ItemStack item : allItems)
+            food.add(new ItemStorage(stack));
+            if (CAN_EAT.test(stack))
             {
-                if(ISFOOD.test(item) || ISCOOKABLE.test(item))
-                {
-                    food.add(new ItemStorage(item));
-                    if(CAN_EAT.test(item))
-                    {
-                        edibles.add(new ItemStorage(item));
-                    }
-                }
+                edibles.add(new ItemStorage(stack));
             }
         }
-        Log.getLogger().info("Finished discovering food " + edibles.size() + " " + food.size());
     }
 
     /**
@@ -883,7 +886,7 @@ public class CompatibilityManager implements ICompatibilityManager
 
     private static Tuple<BlockState, ItemStorage> readLeafSaplingEntryFromNBT(final CompoundTag compound)
     {
-        return new Tuple<>(NbtUtils.readBlockState(compound), new ItemStorage(ItemStack.of(compound), false, true));
+        return new Tuple<>(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), compound), new ItemStorage(ItemStack.of(compound), false, true));
     }
 
     /**
@@ -939,18 +942,6 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     public static Set<ItemStorage> getAllBeekeeperFlowers()
     {
-        Set<ItemStorage> flowers = new HashSet<>();
-
-        for (final Item item : ForgeRegistries.ITEMS.tags().getTag(ItemTags.FLOWERS))
-        {
-            final NonNullList<ItemStack> list = NonNullList.create();
-            item.fillItemCategory(CreativeModeTab.TAB_SEARCH, list);
-            for (final ItemStack stack : list)
-            {
-                flowers.add(new ItemStorage(stack));
-            }
-        }
-
-        return flowers;
+        return beekeeperflowers;
     }
 }

@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.entity.BannerPatterns;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.BannerItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
@@ -25,17 +24,15 @@ import java.util.List;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
-import net.minecraft.world.item.Item.Properties;
-
 /**
  * This item represents the colony flag banner, both wall and floor blocks.
  * Allows duplication of other banner pattern lists to its own default
  */
 public class ItemColonyFlagBanner extends BannerItem
 {
-    public ItemColonyFlagBanner(String name, CreativeModeTab tab, Properties properties)
+    public ItemColonyFlagBanner(String name, Properties properties)
     {
-        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16).tab(tab));
+        this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16));
     }
 
     public ItemColonyFlagBanner(Block standingBanner, Block wallBanner, Properties builder)
