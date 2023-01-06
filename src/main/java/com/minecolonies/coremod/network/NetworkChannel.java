@@ -239,6 +239,8 @@ public class NetworkChannel
         // Crafter Recipe-related messages
         registerMessage(++idx, CustomRecipeManagerMessage.class, CustomRecipeManagerMessage::new);
 
+        registerMessage(++idx, ColonyListMessage.class, ColonyListMessage::new);
+
         // Resource scroll NBT share message
         registerMessage(++idx, ResourceScrollSaveWarehouseSnapshotMessage.class, ResourceScrollSaveWarehouseSnapshotMessage::new);
     }
