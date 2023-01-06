@@ -156,8 +156,8 @@ public class WindowColonyMap extends AbstractWindowSkeleton
             hasMaps = true;
 
             final MinecraftMap mapImage = new MinecraftMap();
-            mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.x - 64, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.z - 64)).getZ());
-            mapImage.setID("map" + mapData.x + "-" + mapData.z);
+            mapImage.setPosition(worldPosToUIPos(new BlockPos(mapData.centerX - 64, 0, 0)).getX(), worldPosToUIPos(new BlockPos(0, 0, mapData.centerZ - 64)).getZ());
+            mapImage.setID("map" + mapData.centerX + "-" + mapData.centerZ);
             mapImage.setMapData(mapData);
             mapImage.setSize((int) (512*currentScale), (int) (512*currentScale));
             dragView.addChildFirst(mapImage);
