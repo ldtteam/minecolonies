@@ -142,7 +142,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                         .setStyle(Style.EMPTY.withItalic(true).withColor(ChatFormatting.GRAY))
                     );
 
-                    WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX, mouseY);
+                    WindowField.this.renderTooltip(stack, Language.getInstance().getVisualOrder(lines), mouseX-100, mouseY-20);
                     break;
                 }
             }

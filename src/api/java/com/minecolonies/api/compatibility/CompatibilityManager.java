@@ -616,6 +616,7 @@ public class CompatibilityManager implements ICompatibilityManager
                 for (final ItemStack item : tab.getDisplayItems())
                 {
                     setBuilder.add(new ItemStorage(item, true));
+                    listBuilder.add(item);
 
                     discoverSaplings(item);
                     discoverOres(item);

@@ -37,7 +37,7 @@ public final class ModCreativeTabs
                 output.accept(hut);
             }
 
-            output.accept(ModBlocks.blockConstructionTape);
+            output.accept(ModBlocks.blockScarecrow);
             output.accept(ModBlocks.blockRack);
             output.accept(ModBlocks.blockGrave);
             output.accept(ModBlocks.blockNamedGrave);
@@ -45,6 +45,7 @@ public final class ModCreativeTabs
             output.accept(ModBlocks.blockBarrel);
             output.accept(ModBlocks.blockDecorationPlaceholder);
             output.accept(ModBlocks.blockCompostedDirt);
+            output.accept(ModBlocks.blockConstructionTape);
 
             output.accept(ModItems.scepterLumberjack);
             output.accept(ModItems.permTool);
