@@ -42,7 +42,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
 /**
  * The scarecrow tile entity to store extra data.
  */
-@SuppressWarnings("PMD.ExcessiveImports")
 public class TileEntityScarecrow extends AbstractTileEntityScarecrow
 {
     /**

@@ -3,10 +3,10 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
+import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 
 /**
  * Interface for the managers for registered structures.
- * Buildings, Decorations, etc.
+ * Buildings, Fields, Decorations, etc.
  */
 public interface IRegisteredStructureManager
 {

@@ -8,6 +8,9 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Interface for any field instance.
+ */
 public interface IField
 {
     /**

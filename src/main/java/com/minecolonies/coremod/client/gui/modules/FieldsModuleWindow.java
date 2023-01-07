@@ -14,7 +14,10 @@ import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +26,7 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_PLANT_COUNT;
 
 /**
- * BOWindow for the farmer hut.
+ * BOWindow for the fields tab in huts.
  */
 public class FieldsModuleWindow extends AbstractModuleWindow
 {
@@ -88,7 +91,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
     private static final String TAG_ICON = "icon";
 
     /**
-     * The farmer module view.
+     * The field module view.
      */
     private final FieldModuleView moduleView;
 
@@ -98,7 +101,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
     private ScrollingList fieldList;
 
     /**
-     * Constructor for the window of the farmer.
+     * Constructor for the window.
      *
      * @param moduleView {@link FieldModuleView}.
      */

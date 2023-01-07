@@ -9,9 +9,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Abstract class for the scarecrow tile entity to store extra data.
+ */
 public abstract class AbstractTileEntityScarecrow extends BlockEntity implements MenuProvider
 {
-
     /**
      * Default constructor.
      */
