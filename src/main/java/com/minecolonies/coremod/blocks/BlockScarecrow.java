@@ -142,7 +142,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     public VoxelShape getShape(
       final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
     {
-        // Force the different halves to share the same collision space;
+        // Force the different halves to share the same collision space,
         // the user will think it is one big block
         return Shapes.box(
           (float) START_COLLISION,
@@ -165,15 +165,15 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
-        @NotNull final Direction dir = (context.getPlayer() == null) ? Direction.NORTH : Direction.fromYRot(context.getPlayer().getYRot() + 180);
+        @NotNull final Direction dir = (context.getPlayer() == null) ? Direction.NORTH : context.getPlayer().getDirection().getOpposite();
 
-        if (context.getClickedPos().getY() < 255 && context.getLevel().getBlockState(context.getClickedPos().above()).canBeReplaced(context))
+        if (context.getClickedPos().getY() < context.getLevel().getMaxBuildHeight() && context.getLevel().getBlockState(context.getClickedPos().above()).canBeReplaced(context))
         {
-            return this.defaultBlockState().setValue(FACING, dir).setValue(HALF, DoubleBlockHalf.LOWER);
+            return super.getStateForPlacement(context).setValue(FACING, dir).setValue(HALF, DoubleBlockHalf.LOWER);
         }
         else
         {
-            return null;
+            return super.getStateForPlacement(context);
         }
     }
 

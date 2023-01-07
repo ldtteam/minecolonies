@@ -254,6 +254,7 @@
   "minecolonies.config.default.double": "[Default: %f, min: %f, max: %f]",
 
   "block.minecolonies.blockhutfield": "Field",
+  "block.minecolonies.blockhutplantationfield": "Plantation Field",
   "block.minecolonies.gate_iron.name": "Iron Gate",
   "block.minecolonies.gate_iron": "Iron Gate",
   "block.minecolonies.gate_wood.name": "Wooden Gate",

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XTX",
+    "ABC",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "minecraft:planks"
+    },
+    "A": {
+      "item": "minecraft:wooden_hoe"
+    },
+    "B": {
+      "item": "minecraft:wooden_axe"
+    },
+    "C": {
+      "item": "minecraft:wooden_shovel"
+    },
+    "T": {
+      "item": "structurize:sceptergold"
+    }
+  },
+  "result": {
+    "item": "minecolonies:blockhutplantationfield"
+  }
+}

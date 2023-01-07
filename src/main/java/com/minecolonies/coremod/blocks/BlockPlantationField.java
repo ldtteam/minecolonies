@@ -40,11 +40,6 @@ import java.util.List;
 public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<BlockPlantationField> implements IAnchorBlock, EntityBlock
 {
     /**
-     * The bounding boxes.
-     */
-    private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
-
-    /**
      * The hardness this block has.
      */
     private static final float BLOCK_HARDNESS = 5F;
@@ -52,7 +47,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "plantationfield";
+    private static final String BLOCK_NAME = "blockhutplantationfield";
 
     /**
      * The resistance this block has.
@@ -69,7 +64,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      */
     public BlockPlantationField()
     {
-        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE).noCollission());
+        super(Properties.of(Material.WOOD).strength(BLOCK_HARDNESS, RESISTANCE));
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(MIRROR, false));
         setRegistryName(BLOCK_NAME);
     }
@@ -94,13 +89,6 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
         return state.setValue(MIRROR, mirrorIn != Mirror.NONE);
     }
 
-    @NotNull
-    @Override
-    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
-    {
-        return SHAPE;
-    }
-
     @Override
     public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
     {
@@ -118,6 +106,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     public void setPlacedBy(@NotNull final Level worldIn, @NotNull final BlockPos pos, final BlockState state, final LivingEntity placer, final ItemStack stack)
     {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
+
         if (worldIn.isClientSide)
         {
             return;
@@ -169,6 +158,22 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 colony.getBuildingManager().removeField(FieldStructureType.PLANTATION_FIELDS, pos);
             }
         }
+    }
+
+    @Override
+    public VoxelShape getShape(final BlockState state, final BlockGetter worldIn, final BlockPos pos, final CollisionContext context)
+    {
+        // Force the different halves to share the same collision space,
+        // the user will think it is one big block
+        Direction dir = state.getValue(FACING);
+        return Shapes.box(
+          0D + (dir.getStepX() > 0 ? 0.5 : 0),
+          0D,
+          0D + (dir.getStepZ() > 0 ? 0.5 : 0),
+          1D - (dir.getStepX() < 0 ? 0.5 : 0),
+          0.625D,
+          1D - (dir.getStepZ() < 0 ? 0.5 : 0)
+        );
     }
 }
 
