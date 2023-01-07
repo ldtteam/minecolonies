@@ -249,6 +249,11 @@ public final class ColonyView implements IColonyView
     private IStatisticsManager statisticManager = new StatisticsManager(this);
 
     /**
+     * Day in the colony.
+     */
+    private int day;
+
+    /**
      * Base constructor for a colony.
      *
      * @param id The current id for the colony.
@@ -435,6 +440,7 @@ public final class ColonyView implements IColonyView
         colony.getGraveManager().write(graveTag);
         buf.writeNbt(graveTag);     // this could be more efficient, but it should usually be short anyway
         colony.getStatisticsManager().serialize(buf);
+        buf.writeInt(colony.getDay());
     }
 
     /**
@@ -694,6 +700,7 @@ public final class ColonyView implements IColonyView
 
         this.graveManager.read(buf.readNbt());
         this.statisticManager.deserialize(buf);
+        this.day = buf.readInt();
         return null;
     }
 
@@ -1604,6 +1611,6 @@ public final class ColonyView implements IColonyView
     @Override
     public int getDay()
     {
-        return 0;
+        return this.day;
     }
 }

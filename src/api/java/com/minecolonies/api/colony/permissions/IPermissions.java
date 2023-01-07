@@ -87,7 +87,7 @@ public interface IPermissions
 
     boolean addPlayer(@NotNull UUID id, String name, Rank rank);
 
-    @Nullable
+    @NotNull
     String getOwnerName();
 
     /**
