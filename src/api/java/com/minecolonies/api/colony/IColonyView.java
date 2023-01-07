@@ -232,12 +232,7 @@ public interface IColonyView extends IColony
 
     @NotNull
     @Override
-    IPermissions getPermissions();    /**
-     * Add a new free to interact position.
-     *
-     * @param pos position to add.
-     */
-    void addFreePosition(@NotNull BlockPos pos);
+    IPermissions getPermissions();
 
     @Override
     boolean isCoordInColony(@NotNull Level w, @NotNull BlockPos pos);
@@ -338,12 +333,7 @@ public interface IColonyView extends IColony
      *
      * @return a list of their views.
      */
-    List<IBuildingView> getBuildings();    /**
-     * Add a new free to interact block.
-     *
-     * @param block block to add.
-     */
-    void addFreeBlock(@NotNull Block block);
+    List<IBuildingView> getBuildings();
 
     /**
      * If currently being raided.
@@ -381,6 +371,7 @@ public interface IColonyView extends IColony
      *
      * @return the list of options.
      */
+
     List<String> getNameFileIds();
 
     /**
@@ -390,9 +381,19 @@ public interface IColonyView extends IColony
      */
     IFieldView getField(BlockPos position);
 
+    /**
+     * Add a new free to interact block.
+     *
+     * @param block block to add.
+     */
+    void addFreeBlock(@NotNull Block block);
 
-
-
+    /**
+     * Add a new free to interact position.
+     *
+     * @param pos position to add
+     */
+    void addFreePosition(@NotNull BlockPos pos);
 
     /**
      * Remove a free to interact position.
