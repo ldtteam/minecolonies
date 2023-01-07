@@ -11,6 +11,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 
+/**
+ * Message to change the farmer field plot size.
+ */
 public class FieldPlotResizeMessage implements IMessage
 {
     /**

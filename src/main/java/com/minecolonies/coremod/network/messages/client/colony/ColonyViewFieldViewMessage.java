@@ -16,6 +16,9 @@ import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Add or Update a IFieldView to a ColonyView on the client.
+ */
 public class ColonyViewFieldViewMessage implements IMessage
 {
     /**

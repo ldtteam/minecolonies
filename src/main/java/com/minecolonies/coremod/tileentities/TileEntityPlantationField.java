@@ -18,6 +18,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Implementation for plantation field tile entities.
+ */
 public class TileEntityPlantationField extends AbstractTileEntityPlantationField implements IBlueprintDataProvider
 {
     /**
