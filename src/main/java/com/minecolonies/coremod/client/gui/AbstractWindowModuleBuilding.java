@@ -179,19 +179,9 @@ public abstract class AbstractWindowModuleBuilding<B extends IBuildingView> exte
         super.onOpened();
         setPage(false, 0);
 
-        final MutableComponent component =
-          building.getCustomName().isEmpty() ? Component.translatable(getBuildingName()) : Component.literal(building.getCustomName());
-        if (switchView != null && switchView.getID().equals(GUI_LIST_BUTTON_SWITCH + PAGE_ACTIONS))
+        if (title != null)
         {
-            // Town hall does not need level in colony name
-            title.setText(component);
-
-            final Component levelComponent = Component.translatable(CMC_GUI_TOWNHALL_BUILDING_LEVEL)
-                                                    .append(": " + buildingView.getBuildingLevel());
-            findPaneOfTypeByID(LEVEL_LABEL, Text.class).setText(levelComponent);
-        }
-        else if (title != null)
-        {
+            final MutableComponent component = building.getCustomName().isEmpty() ? Component.translatable(getBuildingName()) : Component.literal(building.getCustomName());
             final MutableComponent componentWithLevel = component.append(" ").append(String.valueOf(buildingView.getBuildingLevel()));
             title.setText(componentWithLevel);
         }

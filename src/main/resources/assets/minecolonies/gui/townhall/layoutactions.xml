@@ -4,7 +4,6 @@
     <label size="148 11" color="green" pos="100 24"
            label="$(com.minecolonies.coremod.gui.townhall.currtownhallname)"/>
     <label size="148 11" id="name" color="black" pos="100 35"/>
-    <label size="135 11" id="level" color="black" pos="113 69"/>
 
     <button id="build" size="120 19" pos="113 107"
             label="$(com.minecolonies.coremod.gui.townhall.build)"/>
