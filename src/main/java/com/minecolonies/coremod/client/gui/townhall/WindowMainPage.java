@@ -69,33 +69,6 @@ public class WindowMainPage extends AbstractWindowTownHall
     }
 
     /**
-     * Action performed when rename button is clicked.
-     */
-    private void renameClicked()
-    {
-        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(building.getColony());
-        window.open();
-    }
-
-    /**
-     * Action performed when mercenary button is clicked.
-     */
-    private void mercenaryClicked()
-    {
-        @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
-        window.open();
-    }
-
-    /**
-     * Opens the map on button clicked
-     */
-    private void mapButtonClicked()
-    {
-        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
-        window.open();
-    }
-
-    /**
      * On Button click teleport to the colony..
      *
      * @param button the clicked button.
@@ -181,6 +154,33 @@ public class WindowMainPage extends AbstractWindowTownHall
                 rowPane.findPaneOfTypeByID(DIST_LABEL, Text.class).setText(String.valueOf((int) distance));
             }
         });
+    }
+
+    /**
+     * Action performed when rename button is clicked.
+     */
+    private void renameClicked()
+    {
+        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(building.getColony());
+        window.open();
+    }
+
+    /**
+     * Action performed when mercenary button is clicked.
+     */
+    private void mercenaryClicked()
+    {
+        @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
+        window.open();
+    }
+
+    /**
+     * Opens the map on button clicked
+     */
+    private void mapButtonClicked()
+    {
+        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
+        window.open();
     }
 
     @Override
