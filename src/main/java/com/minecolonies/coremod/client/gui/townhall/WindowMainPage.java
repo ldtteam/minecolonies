@@ -34,6 +34,11 @@ public class WindowMainPage extends AbstractWindowTownHall
     private final ScrollingList alliesList;
 
     /**
+     * Label for the colony name.
+     */
+    private final Text title;
+
+    /**
      * The ScrollingList of all feuds.
      */
     private final ScrollingList feudsList;
@@ -49,6 +54,8 @@ public class WindowMainPage extends AbstractWindowTownHall
 
         alliesList = findPaneOfTypeByID(LIST_ALLIES, ScrollingList.class);
         feudsList = findPaneOfTypeByID(LIST_FEUDS, ScrollingList.class);
+
+        title = findPaneOfTypeByID(LABEL_BUILDING_NAME, Text.class);
 
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
@@ -85,6 +92,8 @@ public class WindowMainPage extends AbstractWindowTownHall
     {
         super.onOpened();
         fillAlliesAndFeudsList();
+
+        title.setText(Component.literal(building.getColony().getName()));
 
         if (building.getColony().getMercenaryUseTime() != 0
               && building.getColony().getWorld().getGameTime() - building.getColony().getMercenaryUseTime() < TICKS_FOURTY_MIN)
