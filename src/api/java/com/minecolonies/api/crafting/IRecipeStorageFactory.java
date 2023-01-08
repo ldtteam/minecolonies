@@ -3,10 +3,12 @@ package com.minecolonies.api.crafting;
 import com.minecolonies.api.colony.requestsystem.factory.IFactory;
 import com.minecolonies.api.colony.requestsystem.factory.IFactoryController;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +28,7 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
     {
         if (context.length < MIN_PARAMS_IRECIPESTORAGE || context.length > MAX_PARAMS_IRECIPESTORAGE)
         {
-            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. At least 3 at max 5 are needed.!");
+            throw new IllegalArgumentException("Unsupported context - Not correct number of parameters. At least 3 at max 10 are needed.!");
         }
 
         if (!(context[0] instanceof List))
@@ -74,6 +76,11 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
             throw new IllegalArgumentException("Ninth parameter is supposed to be a ResourceLocation or Null!");
         }
 
+        if (context.length > MIN_PARAMS_IRECIPESTORAGE + 6 && context[9] != null && !(context[9] instanceof IToolType))
+        {
+            throw new IllegalArgumentException("Ninth parameter is supposed to be a IToolType or Null!");
+        }
+
         final List<ItemStorage> input = (List<ItemStorage>) context[0];
         final int gridSize = (int) context[1];
         final ItemStack primaryOutput = (ItemStack) context[2];
@@ -83,7 +90,8 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
         final List<ItemStack> altOutputs = context.length < 7 ? null :  (List<ItemStack>) context[6];
         final List<ItemStack> secOutputs = context.length < 8 ? null :  (List<ItemStack>) context[7];
         final ResourceLocation lootTable = context.length < 9 ? null : (ResourceLocation) context[8];
-        return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable);
+        final IToolType requiredTool = context.length < 10 || context[9] == null ? ToolType.NONE : (IToolType) context[9];
+        return getNewInstance(token, input, gridSize, primaryOutput, intermediate, source, type, altOutputs, secOutputs, lootTable, requiredTool);
     }
 
     /**
@@ -98,6 +106,8 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
      * @param type          What type this recipe is, classic or multi-recipe
      * @param altOutputs    possible alternate outputs other than the primaryOutput
      * @param secOutputs    Leave-behind items in the grid. ie: bucket, pot, juicer, or hammer
+     * @param lootTable     the loot table to generate, or null
+     * @param requiredTool  the tool needed to craft (in addition to anything in the recipe itself)
      * @return a new Instance of IRecipeStorage.
      */
     @NotNull
@@ -111,7 +121,8 @@ public interface IRecipeStorageFactory extends IFactory<IToken<?>, RecipeStorage
       @Nullable final ResourceLocation type,
       @Nullable final List<ItemStack> altOutputs,
       @Nullable final List<ItemStack> secOutputs,
-      @Nullable final ResourceLocation lootTable
+      @Nullable final ResourceLocation lootTable,
+      @NotNull final IToolType requiredTool
       );
 }
 

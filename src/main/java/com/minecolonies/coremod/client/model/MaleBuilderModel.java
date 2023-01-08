@@ -96,7 +96,7 @@ public class MaleBuilderModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        body.getChild("toolbag").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
-        head.getChild("SailorHat1").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        body.getChild("toolbag").visible = isWorking(entity);
+        head.getChild("SailorHat1").visible = isWorking(entity) && displayHat(entity);
     }
 }

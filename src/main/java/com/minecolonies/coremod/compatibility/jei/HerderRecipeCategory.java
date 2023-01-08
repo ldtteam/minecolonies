@@ -4,6 +4,8 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.util.constant.IToolType;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.modules.AnimalHerdingModule;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,7 +27,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The JEI recipe category for animal herders.
@@ -74,7 +79,8 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
                           @NotNull final HerdingRecipe recipe,
                           @NotNull final IFocusGroup focuses)
     {
-        builder.addSlot(RecipeIngredientRole.INPUT, WIDTH - 18, CITIZEN_Y - 20)
+        addToolSlot(builder, recipe.getRequiredTool(), WIDTH - 18, CITIZEN_Y, true);
+        builder.addSlot(RecipeIngredientRole.INPUT, CITIZEN_X + CITIZEN_W + 2, CITIZEN_Y)
                 .setBackground(this.slot, -1, -1)
                 .addItemStacks(recipe.getBreedingItems());
 
@@ -184,6 +190,12 @@ public class HerderRecipeCategory extends JobBasedRecipeCategory<HerderRecipeCat
         public List<ItemStack> getBreedingItems()
         {
             return this.breedingItems;
+        }
+
+        @NotNull
+        public IToolType getRequiredTool()
+        {
+            return ToolType.AXE;
         }
 
         @NotNull

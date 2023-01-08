@@ -30,6 +30,9 @@
   "minecolonies.config.neighborbuildingrange": "Neighbor Building Range",
   "minecolonies.config.neighborbuildingrange.comment": "How close a building needs to be to another to be considered a neighbor, in blocks. -1 = intersecting, 0 = touching",
 
+  "minecolonies.config.buildgogglerange": "Build Goggles Range",
+  "minecolonies.config.buildgogglerange.comment": "How close (in blocks) you need to be to see work orders while wearing the Build Goggles.",
+
   "minecolonies.config.colonyteamborders": "Show Colony Borders in Team Colors",
   "minecolonies.config.colonyteamborders.comment": "When true, the colony borders shown when holding the build tool will be in the colony's team color. When false, the colony you're inside will be white and any other colony will be red.",
 
@@ -1030,6 +1033,8 @@
   "com.minecolonies.coremod.cook.serve.player": "%s: Here Governor, take this food!",
 
   "item.minecolonies.santa_hat": "Santa Hat",
+  "item.minecolonies.build_goggles": "Builder's Goggles",
+  "item.minecolonies.build_goggles.lore": "They do nothing!",
 
   "com.minecolonies.coremod.recipe.unable": "Unable to store the recipe. Either the %s has no space for any more recipes, or the recipe doesn't correspond with its profession.",
   "com.minecolonies.coremod.request.crafting": "Crafter",
@@ -2341,6 +2346,7 @@
   "com.minecolonies.coremod.structures.nocustomcamps": "Ehrmm? This is not a valid supplycamp!",
   "com.minecolonies.coremod.gui.townhall.pickcolonystyle": "Switch Colony Pack",
   "com.minecolonies.coremod.gui.colony.packdesc": "Current Pack: %s",
+  "com.minecolonies.command.gui.browsebuilding.loading": "searching ...",
 
   "com.minecolonies.coremod.gui.townhall.stats.trees_cut": "Cut Down Trees: %d",
   "com.minecolonies.coremod.gui.townhall.stats.death": "Citizen Deaths: %d",
@@ -2351,5 +2357,17 @@
   "com.minecolonies.coremod.gui.townhall.stats.mobs_killed": "Killed Mobs: %d",
   "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
   "com.minecolonies.coremod.gui.townhall.stats.items_crafted": "Crafted Items: %d",
-  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d"
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.citizens_healed": "Citzens Healed: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.crops_harvested": "Crops Harvested: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.land_tilled": "Land Tilled: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.fish_caught": "Fish Caught: %d",
+  "com.minecolonies.coremod.gui.interval.yesterday": "Since Yesterday",
+  "com.minecolonies.coremod.gui.interval.lastweek": "Last Week",
+  "com.minecolonies.coremod.gui.interval.100days": "Last 100 Days",
+  "com.minecolonies.coremod.gui.interval.alltime": "All Time",
+  "com.minecolonies.coremod.gui.townhall.stats.items_delivered": "Delivered Items: %d",
+  "com.minecolonies.coremod.gui.townhall.stats.food_served": "Served Food: %d",
+  "com.minecolonies.coremod.gui.townHall.map": "Town Map",
+  "com.minecolonies.coremod.townhall.map.warning": "Drop-off a normal scale Minecraft map in the Town Hall inventory first to unlock the map."
 }

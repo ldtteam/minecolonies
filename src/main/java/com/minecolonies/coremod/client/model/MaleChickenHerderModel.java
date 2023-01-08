@@ -77,7 +77,7 @@ public class MaleChickenHerderModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        body.getChild("seedsBag").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
-        head.getChild("RoundHat").visible = entity.getPose() != Pose.SLEEPING;
+        body.getChild("seedsBag").visible = isWorking(entity);
+        head.getChild("RoundHat").visible = displayHat(entity);
     }
 }

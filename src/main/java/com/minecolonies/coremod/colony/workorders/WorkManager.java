@@ -6,6 +6,7 @@ import com.minecolonies.api.advancements.AdvancementTriggers;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyTagCapability;
+import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.workorders.IWorkManager;
 import com.minecolonies.api.colony.workorders.IWorkOrder;
 import com.minecolonies.api.util.Log;
@@ -283,10 +284,14 @@ public class WorkManager implements IWorkManager
         final int level = order.getTargetLevel();
         if (!readingFromNbt)
         {
-            if (order instanceof WorkOrderBuilding)
+            if (order instanceof WorkOrderBuilding buildingOrder)
             {
-                AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-                  player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, order.getFileName().replace(String.valueOf(level), ""), level));
+                final IBuilding building = colony.getBuildingManager().getBuilding(buildingOrder.getLocation());
+                if (building != null)
+                {
+                    AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
+                            player -> AdvancementTriggers.CREATE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), level));
+                }
             }
             else if (order instanceof WorkOrderDecoration)
             {

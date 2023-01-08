@@ -11,8 +11,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
-
 public class FemaleBuilderModel extends CitizenModel<AbstractEntityCitizen>
 {
 
@@ -105,7 +103,7 @@ public class FemaleBuilderModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        body.getChild("toolbag").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
-        head.getChild("Cap").visible = entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        body.getChild("toolbag").visible = isWorking(entity);
+        head.getChild("Cap").visible = isWorking(entity) && displayHat(entity);
     }
 }

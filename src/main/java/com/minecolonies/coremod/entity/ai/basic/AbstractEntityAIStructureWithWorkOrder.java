@@ -190,6 +190,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     {
         if (Constants.BUILDER_INF_RESOURECES || job.getWorkOrder().isRequested() || job.getWorkOrder().getWorkOrderType() == WorkOrderType.REMOVE)
         {
+            recalculated = true;
             return;
         }
 
@@ -208,7 +209,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     @Override
     protected IAIState waitForRequests()
     {
-        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !recalculated)
+        if (job.hasWorkOrder() && building.getNeededResources().isEmpty() && !recalculated && (structurePlacer == null || !structurePlacer.getB().hasBluePrint()))
         {
             return START_BUILDING;
         }

@@ -6,6 +6,7 @@ import com.minecolonies.api.crafting.GenericRecipe;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.crafting.ModCraftingTypes;
 import com.minecolonies.api.crafting.registry.CraftingType;
+import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -61,7 +62,7 @@ public class BrewingCraftingType extends CraftingType
 
                         recipes.add(new GenericRecipe(null, actualOutput, Collections.emptyList(),
                                 Arrays.asList(Collections.singletonList(ingredient), Collections.singletonList(actualInput)),
-                                1, Blocks.BREWING_STAND, null, Collections.emptyList(), -1));
+                                1, Blocks.BREWING_STAND, null, ToolType.NONE, Collections.emptyList(), -1));
                     }
                 }
             }

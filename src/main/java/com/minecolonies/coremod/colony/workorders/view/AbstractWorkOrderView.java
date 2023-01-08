@@ -158,11 +158,13 @@ public abstract class AbstractWorkOrderView implements IWorkOrderView
         return this.location;
     }
 
+    @Override
     public int getRotation()
     {
         return rotation;
     }
 
+    @Override
     public boolean isMirrored()
     {
         return isMirrored;

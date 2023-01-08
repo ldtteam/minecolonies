@@ -2,6 +2,7 @@ package com.minecolonies.api.crafting;
 
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.requestsystem.token.IToken;
+import com.minecolonies.api.util.constant.IToolType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -186,6 +187,12 @@ public interface IRecipeStorage
      * @return list of items that weren't consumed during crafting
      */
     List<ItemStack> getCraftingTools();
+
+    /**
+     * Get the additional tool needed beyond the recipe (if any)
+     * @return the required tool
+     */
+    IToolType getRequiredTool();
 
     /** 
      * Get the location/id of the Loot table used for optional outputs

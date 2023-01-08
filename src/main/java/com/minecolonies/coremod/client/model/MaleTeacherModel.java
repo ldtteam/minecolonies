@@ -99,8 +99,8 @@ public class MaleTeacherModel extends CitizenModel<AbstractEntityCitizen>
     public void setupAnim(@NotNull final AbstractEntityCitizen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        head.getChild("SailorHat1").visible = entity.getPose() != Pose.SLEEPING;
+        head.getChild("SailorHat1").visible = displayHat(entity);
         head.getChild("glasses").visible = entity.getPose() != Pose.SLEEPING;
-        body.getChild("bag").visible = entity.getPose() != Pose.SLEEPING && entity.getRenderMetadata().contains(RENDER_META_WORKING);
+        body.getChild("bag").visible = entity.getPose() != Pose.SLEEPING && isWorking(entity);
     }
 }

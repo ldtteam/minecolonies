@@ -782,7 +782,7 @@ public class InventoryUtils
 
                 if (totalCount > count)
                 {
-                    return Integer.MAX_VALUE;
+                    return totalCount;
                 }
             }
         }
@@ -3170,5 +3170,26 @@ public class InventoryUtils
         }
 
         return getItemCountInProvider(entity, itemStack -> !ItemStackUtils.isEmpty(itemStack) && ItemStackUtils.compareItemStacksIgnoreStackSize(itemStack, stack, true, true)) >= count;
+    }
+
+    public static List<ItemStack> getBuildingInventory(final IBuilding building)
+    {
+        final Level world = building.getColony().getWorld();
+        final List<ItemStack> allInInv = new ArrayList<>();
+        for (final BlockPos pos : building.getContainers())
+        {
+            if (WorldUtil.isBlockLoaded(world, pos))
+            {
+                final BlockEntity entity = world.getBlockEntity(pos);
+                if (entity instanceof TileEntityRack)
+                {
+                    for (final ItemStorage storage : ((TileEntityRack) entity).getAllContent().keySet())
+                    {
+                        allInInv.add(storage.getItemStack());
+                    }
+                }
+            }
+        }
+        return allInInv;
     }
 }

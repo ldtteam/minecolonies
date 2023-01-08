@@ -9,6 +9,7 @@ import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
+import com.minecolonies.coremod.client.gui.map.WindowColonyMap;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingTownHall;
 import com.minecolonies.coremod.commands.ClickEventWithExecutable;
 import com.minecolonies.coremod.network.messages.server.colony.TeleportToColonyMessage;
@@ -61,6 +62,7 @@ public class WindowMainPage extends AbstractWindowTownHall
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_RENAME, this::renameClicked);
         registerButton(BUTTON_MERCENARY, this::mercenaryClicked);
+        registerButton(BUTTON_TOWNHALLMAP, this::mapButtonClicked);
 
         registerButton(BUTTON_TP, this::teleportToColony);
     }
@@ -168,6 +170,15 @@ public class WindowMainPage extends AbstractWindowTownHall
     private void mercenaryClicked()
     {
         @NotNull final WindowTownHallMercenary window = new WindowTownHallMercenary(building.getColony());
+        window.open();
+    }
+
+    /**
+     * Opens the map on button clicked
+     */
+    private void mapButtonClicked()
+    {
+        @NotNull final WindowColonyMap window = new WindowColonyMap(building);
         window.open();
     }
 

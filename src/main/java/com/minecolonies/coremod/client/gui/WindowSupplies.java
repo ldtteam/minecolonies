@@ -22,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class WindowSupplies extends AbstractBlueprintManipulationWindow
             final BlueprintPreviewData previewData = RenderingCache.getOrCreateBlueprintPreviewData("supplies");
             previewData.setBlueprint(null);
             return new WindowSupplies(previewData.getPos(), type);
-        }).open();
+        }, pack -> Files.exists(pack.getPath().resolve("decorations/supplies/" + type + ".blueprint"))).open();
     }
 
     /**
