@@ -64,7 +64,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
     @Override
     public boolean canResolveForBuilding(@NotNull final IRequestManager manager, @NotNull final IRequest<? extends IDeliverable> request, @NotNull final AbstractBuilding building)
     {
-        if (building instanceof BuildingWareHouse || !building.getCitizenForRequest(request.getId()).isPresent())
+        if (building instanceof BuildingWareHouse)
         {
             return false;
         }
@@ -111,7 +111,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             }
         }
 
-        for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacks().entrySet())
+        for (final Map.Entry<ItemStorage, Integer> reserved : building.reservedStacksExcluding(request).entrySet())
         {
             if (request.getRequest().matches(reserved.getKey().getItemStack()))
             {
