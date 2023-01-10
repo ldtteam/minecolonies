@@ -1,19 +1,18 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
+  "count": 4,
   "crafter": "baker_crafting",
   "inputs": [
     {
-        "item" : "minecraft:wheat",
-        "count": 8
+      "count": 8,
+      "item": "minecraft:wheat"
     },
     {
-        "item" : "minecraft:honey_bottle",
-        "count": 1
+      "item": "minecraft:honey_bottle"
     }
   ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
   "result": "minecolonies:sugary_bread",
-  "count": 4,
-  "intermediate" : "minecraft:air",
-  "min-building-level" : 3,
   "show-tooltip": true
 }

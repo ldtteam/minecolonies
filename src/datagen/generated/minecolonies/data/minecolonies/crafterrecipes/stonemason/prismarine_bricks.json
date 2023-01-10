@@ -1,17 +1,14 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "stonemason_crafting",
   "inputs": [
     {
-        "item" : "minecraft:stone_bricks",
-        "count": 1
+      "item": "minecraft:stone_bricks"
     },
     {
-        "item" : "minecraft:prismarine_shard",
-        "count": 1
+      "item": "minecraft:prismarine_shard"
     }
   ],
-  "result": "minecraft:prismarine_bricks",
-  "count": 1,
-  "intermediate" : "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:prismarine_bricks"
 }

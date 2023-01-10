@@ -1,15 +1,13 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "crusher_custom",
   "inputs": [
     {
-        "item" : "minecraft:cobblestone",
-        "count": "1"
+      "item": "minecraft:cobblestone"
     }
   ],
-  "result": "minecraft:gravel",
+  "intermediate": "minecraft:air",
   "loot-table": "minecolonies:recipes/gravel",
-  "count": "1",
-  "intermediate" : "minecraft:air",
-  "research-id" : "minecolonies:technology/gildedhammer"
+  "research-id": "minecolonies:effects/crushing11unlock",
+  "result": "minecraft:gravel"
 }

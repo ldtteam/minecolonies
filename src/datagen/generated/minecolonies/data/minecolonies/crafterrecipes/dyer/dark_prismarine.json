@@ -1,17 +1,17 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
+  "count": 4,
   "crafter": "dyer_crafting",
   "inputs": [
     {
-        "item" : "minecraft:prismarine",
-        "count": "4"
+      "count": 4,
+      "item": "minecraft:prismarine"
     },
     {
-        "item" : "minecraft:black_dye",
-        "count": "1"
+      "item": "minecraft:black_dye"
     }
   ],
-  "result": "minecraft:dark_prismarine",
-  "count": "4",
-  "intermediate" : "minecraft:air"
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "result": "minecraft:dark_prismarine"
 }

@@ -1,18 +1,18 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
+  "count": 16,
   "crafter": "mechanic_crafting",
   "inputs": [
     {
-        "item" : "minecraft:stick",
-        "count": 5
+      "count": 5,
+      "item": "minecraft:stick"
     },
     {
-        "item" : "minecraft:iron_ingot",
-        "count": 2
+      "count": 2,
+      "item": "minecraft:iron_ingot"
     }
   ],
-  "result": "minecraft:rail",
-  "count": 16,
-  "intermediate" : "minecraft:air",
-  "min-building-level" : 3
+  "intermediate": "minecraft:air",
+  "min-building-level": 3,
+  "result": "minecraft:rail"
 }

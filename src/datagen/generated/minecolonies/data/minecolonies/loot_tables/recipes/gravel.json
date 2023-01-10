@@ -1,19 +1,20 @@
 {
   "pools": [
     {
-      "name": "minecolonies:recipes/gravel",
-      "rolls": 1,
+      "bonus_rolls": 0.0,
       "entries": [
         {
-          "type": "empty",
+          "type": "minecraft:empty",
           "weight": 90
         },
         {
-          "type": "item",
-          "weight": 10,
-          "name": "minecraft:flint"
+          "type": "minecraft:item",
+          "name": "minecraft:flint",
+          "weight": 10
         }
-      ]
+      ],
+      "name": "minecolonies:recipes/gravel",
+      "rolls": 1.0
     }
   ]
 }

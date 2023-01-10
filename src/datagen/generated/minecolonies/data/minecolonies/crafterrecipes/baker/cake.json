@@ -1,14 +1,12 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "baker_smelting",
   "inputs": [
     {
-        "item" : "minecolonies:cake_batter",
-        "count": 1
+      "item": "minecolonies:cake_batter"
     }
   ],
-  "result": "minecraft:cake",
-  "count": 1,
-  "intermediate" : "minecraft:furnace",
-  "min-building-level" : 2
+  "intermediate": "minecraft:furnace",
+  "min-building-level": 2,
+  "result": "minecraft:cake"
 }
