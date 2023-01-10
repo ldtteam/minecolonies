@@ -1,24 +1,20 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
+  "alternate-output": [
+    {
+      "item": "minecraft:dark_oak_wood"
+    },
+    {
+      "item": "minecraft:stripped_dark_oak_wood"
+    }
+  ],
   "crafter": "lumberjack_custom",
   "inputs": [
     {
-        "item" : "minecraft:dark_oak_log",
-        "count": 1
+      "item": "minecraft:dark_oak_log"
     }
   ],
-  "alternate-output" : [
-    {
-        "item" : "minecraft:dark_oak_wood",
-        "count": 1
-    },
-    {
-        "item" : "minecraft:stripped_dark_oak_wood",
-        "count": 1
-    }
-  ],
+  "intermediate": "minecraft:air",
   "result": "minecraft:stripped_dark_oak_log",
-  "count": 1,
-  "tool": "axe",
-  "intermediate" : "minecraft:air"
+  "tool": "axe"
 }
