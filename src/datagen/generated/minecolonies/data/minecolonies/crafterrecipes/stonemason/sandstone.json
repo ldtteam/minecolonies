@@ -1,17 +1,14 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "stonemason_crafting",
   "inputs": [
     {
-        "item" : "minecraft:cobblestone",
-        "count": 1
+      "item": "minecraft:cobblestone"
     },
     {
-        "item" : "minecraft:sand",
-        "count": 1
+      "item": "minecraft:sand"
     }
   ],
-  "result": "minecraft:sandstone",
-  "count": 1,
-  "intermediate" : "minecraft:air"
+  "intermediate": "minecraft:air",
+  "result": "minecraft:sandstone"
 }

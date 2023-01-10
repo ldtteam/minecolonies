@@ -1,14 +1,13 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "stonemason_crafting",
   "inputs": [
     {
-        "item" : "minecraft:flint",
-        "count": "1"
+      "item": "minecraft:flint"
     }
   ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/sifterflintunlock",
   "result": "minecolonies:sifter_mesh_flint",
-  "count": 1,
-  "research-id" : "minecolonies:effects/sifterflintunlock",
   "show-tooltip": true
 }

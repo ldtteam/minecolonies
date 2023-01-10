@@ -3,12 +3,11 @@
   "crafter": "mechanic_crafting",
   "inputs": [
     {
-      "item": "minecraft:oak_log",
-      "count": 5
+      "count": 5,
+      "item": "minecraft:oak_log"
     }
   ],
-  "result": "minecolonies:gate_wood",
-  "count": 1,
   "intermediate": "minecraft:air",
+  "result": "minecolonies:gate_wood",
   "show-tooltip": true
 }

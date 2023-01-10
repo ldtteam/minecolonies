@@ -1,14 +1,13 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "blacksmith_crafting",
   "inputs": [
     {
-        "item" : "minecraft:iron_ingot",
-        "count": "1"
+      "item": "minecraft:iron_ingot"
     }
   ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/sifterironunlock",
   "result": "minecolonies:sifter_mesh_iron",
-  "count": 1,
-  "research-id" : "minecolonies:effects/sifterironunlock",
   "show-tooltip": true
 }

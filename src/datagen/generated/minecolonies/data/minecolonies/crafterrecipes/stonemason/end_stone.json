@@ -1,18 +1,17 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
+  "count": 8,
   "crafter": "stonemason_crafting",
   "inputs": [
     {
-        "item" : "minecraft:sandstone",
-        "count": 8
+      "count": 8,
+      "item": "minecraft:sandstone"
     },
     {
-        "item" : "minecraft:ender_pearl",
-        "count": 1
+      "item": "minecraft:ender_pearl"
     }
   ],
-  "result": "minecraft:end_stone",
-  "count": 8,
-  "intermediate" : "minecraft:air",
-  "research-id" : "minecolonies:technology/knowtheend"
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/knowledgeoftheendunlock",
+  "result": "minecraft:end_stone"
 }

@@ -1,18 +1,15 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "farmer_crafting",
   "inputs": [
     {
-      "item" : "minecraft:dirt",
-      "count": 1
+      "item": "minecraft:dirt"
     },
     {
-      "item" : "minecraft:potion{Potion:\"minecraft:water\"}",
-      "count": 1
+      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
     }
   ],
-  "result": "minecraft:mud",
-  "count": 1,
-  "loot-table" : "minecolonies:recipes/mud",
-  "intermediate" : "minecraft:air"
+  "intermediate": "minecraft:air",
+  "loot-table": "minecolonies:recipes/glass_bottle",
+  "result": "minecraft:mud"
 }

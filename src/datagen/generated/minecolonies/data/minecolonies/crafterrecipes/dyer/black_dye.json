@@ -1,14 +1,12 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "dyer_crafting",
   "inputs": [
     {
-        "item" : "minecraft:charcoal",
-        "count": 1
+      "item": "minecraft:charcoal"
     }
   ],
-  "result": "minecraft:black_dye",
-  "count": 1,
-  "intermediate" : "minecraft:air",
-  "min-building-level" : 3
+  "intermediate": "minecraft:air",
+  "min-building-level": 2,
+  "result": "minecraft:black_dye"
 }

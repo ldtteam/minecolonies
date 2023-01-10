@@ -3,13 +3,12 @@
   "crafter": "enchanter_custom",
   "inputs": [
     {
-      "item": "minecolonies:scroll_tp",
-      "count": 3
+      "count": 3,
+      "item": "minecolonies:scroll_tp"
     }
   ],
-  "result": "minecolonies:scroll_area_tp",
-  "count": 1,
   "intermediate": "minecraft:air",
   "min-building-level": 2,
+  "result": "minecolonies:scroll_area_tp",
   "show-tooltip": true
 }

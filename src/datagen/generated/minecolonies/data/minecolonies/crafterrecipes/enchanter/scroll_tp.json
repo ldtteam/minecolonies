@@ -1,22 +1,20 @@
 {
   "type": "recipe",
+  "count": 3,
   "crafter": "enchanter_custom",
   "inputs": [
     {
-      "item": "minecraft:paper",
-      "count": 3
+      "count": 3,
+      "item": "minecraft:paper"
     },
     {
-      "item": "minecraft:compass",
-      "count": 1
+      "item": "minecraft:compass"
     },
     {
-      "item": "structurize:sceptergold",
-      "count": 1
+      "item": "structurize:sceptergold"
     }
   ],
-  "result": "minecolonies:scroll_tp",
-  "count": 3,
   "intermediate": "minecraft:air",
+  "result": "minecolonies:scroll_tp",
   "show-tooltip": true
 }

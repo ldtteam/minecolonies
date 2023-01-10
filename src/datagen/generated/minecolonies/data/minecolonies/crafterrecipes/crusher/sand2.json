@@ -1,14 +1,12 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
   "crafter": "crusher_custom",
   "inputs": [
     {
-        "item" : "minecraft:gravel",
-        "count": "1"
+      "item": "minecraft:gravel"
     }
   ],
-  "result": "minecraft:sand",
-  "count": "1",
-  "intermediate" : "minecraft:air",
-  "research-id" : "minecolonies:technology/gildedhammer"
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/crushing11unlock",
+  "result": "minecraft:sand"
 }
