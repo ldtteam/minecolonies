@@ -5,10 +5,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.enchants.ModEnchants;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
+import com.minecolonies.coremod.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -27,22 +26,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class DefaultEnchanterCraftingProvider implements DataProvider
+/**
+ * Datagen for Enchanter
+ */
+public class DefaultEnchanterCraftingProvider extends CustomRecipeAndLootTableProvider
 {
+    private final String ENCHANTER = ModJobs.ENCHANTER_ID.getPath();
     private static final int MAX_BUILDING_LEVEL = 5;
 
-    private final EnchanterRecipeProvider recipeProvider;
-    private final EnchanterLootTableProvider lootTableProvider;
     private final List<LootTable.Builder> levels;
 
     public DefaultEnchanterCraftingProvider(@NotNull final PackOutput packOutput)
     {
+        super(packOutput);
+
         levels = new ArrayList<>();
 
         // building level 1
@@ -355,9 +357,6 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                 .add(enchantedBook(Enchantments.BLOCK_FORTUNE, 3).setWeight(1))
                 .add(enchantedBook(ModEnchants.raiderDamage.get(), 2).setWeight(1))
         ));
-
-        recipeProvider = new EnchanterRecipeProvider(packOutput);
-        lootTableProvider = new EnchanterLootTableProvider(packOutput);
     }
 
     @NotNull
@@ -376,101 +375,69 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     }
 
     @Override
-    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
+    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
     {
-        return CompletableFuture.allOf(recipeProvider.run(cache), lootTableProvider.run(cache));
+        final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
+                new ItemStack(ModItems.ancientTome), true, true));
+
+        for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
+        {
+            CustomRecipeProvider.CustomRecipeBuilder.create(ENCHANTER, MODULE_CUSTOM, "tome" + buildingLevel)
+                    .minBuildingLevel(buildingLevel)
+                    .maxBuildingLevel(buildingLevel)
+                    .inputs(tome)
+                    .secondaryOutputs(Collections.singletonList(new ItemStack(Items.ENCHANTED_BOOK)))
+                    .lootTable(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel))
+                    .build(consumer);
+        }
+
+        CustomRecipeProvider.CustomRecipeBuilder.create(ENCHANTER, MODULE_CUSTOM, "scroll_tp")
+                .inputs(List.of(new ItemStorage(new ItemStack(Items.PAPER, 3)),
+                        new ItemStorage(new ItemStack(Items.COMPASS)),
+                        new ItemStorage(new ItemStack(com.ldtteam.structurize.items.ModItems.buildTool.get()))))
+                .result(new ItemStack(ModItems.scrollColonyTP, 3))
+                .showTooltip(true)
+                .build(consumer);
+
+        CustomRecipeProvider.CustomRecipeBuilder.create(ENCHANTER, MODULE_CUSTOM, "scroll_area_tp")
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3))))
+                .result(new ItemStack(ModItems.scrollColonyAreaTP))
+                .minBuildingLevel(2)
+                .showTooltip(true)
+                .build(consumer);
+
+        CustomRecipeProvider.CustomRecipeBuilder.create(ENCHANTER, MODULE_CUSTOM, "scroll_guard_help")
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP)),
+                        new ItemStorage(new ItemStack(Items.LAPIS_LAZULI, 5)),
+                        new ItemStorage(new ItemStack(Items.ENDER_PEARL)),
+                        new ItemStorage(new ItemStack(Items.PAPER))))
+                .result(new ItemStack(ModItems.scrollGuardHelp, 2))
+                .minBuildingLevel(3)
+                .minResearchId(ResearchConstants.MORE_SCROLLS)
+                .showTooltip(true)
+                .build(consumer);
+
+        CustomRecipeProvider.CustomRecipeBuilder.create(ENCHANTER, MODULE_CUSTOM, "scroll_highlight")
+                .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3)),
+                        new ItemStorage(new ItemStack(Items.GLOWSTONE_DUST, 6)),
+                        new ItemStorage(new ItemStack(Items.PAPER, 2))))
+                .result(new ItemStack(ModItems.scrollHighLight, 5))
+                .minBuildingLevel(3)
+                .minResearchId(ResearchConstants.MORE_SCROLLS)
+                .showTooltip(true)
+                .build(consumer);
     }
 
-    private static class EnchanterRecipeProvider extends CustomRecipeProvider
+    @Override
+    protected void registerTables(@NotNull final SimpleLootTableProvider.LootTableRegistrar registrar)
     {
-        public EnchanterRecipeProvider(@NotNull final PackOutput packOutput)
+        for (int i = 0; i < levels.size(); i++)
         {
-            super(packOutput);
-        }
+            final int buildingLevel = i + 1;
+            final LootTable.Builder lootTable = levels.get(i);
 
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return "EnchanterRecipeProvider";
-        }
-
-        @Override
-        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
-        {
-            final String enchanter = ModJobs.ENCHANTER_ID.getPath();
-
-            final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
-                    new ItemStack(ModItems.ancientTome), true, true));
-
-            for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
-            {
-                CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "tome" + buildingLevel)
-                        .minBuildingLevel(buildingLevel)
-                        .maxBuildingLevel(buildingLevel)
-                        .inputs(tome)
-                        .secondaryOutputs(Collections.singletonList(new ItemStack(Items.ENCHANTED_BOOK)))
-                        .lootTable(new ResourceLocation(MOD_ID, "recipes/enchanter" + buildingLevel))
-                        .build(consumer);
-            }
-
-            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_tp")
-                    .inputs(List.of(new ItemStorage(new ItemStack(Items.PAPER, 3)),
-                            new ItemStorage(new ItemStack(Items.COMPASS)),
-                            new ItemStorage(new ItemStack(com.ldtteam.structurize.items.ModItems.buildTool.get()))))
-                    .result(new ItemStack(ModItems.scrollColonyTP, 3))
-                    .showTooltip(true)
-                    .build(consumer);
-
-            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_area_tp")
-                    .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3))))
-                    .result(new ItemStack(ModItems.scrollColonyAreaTP))
-                    .minBuildingLevel(2)
-                    .showTooltip(true)
-                    .build(consumer);
-
-            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_guard_help")
-                    .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP)),
-                            new ItemStorage(new ItemStack(Items.LAPIS_LAZULI, 5)),
-                            new ItemStorage(new ItemStack(Items.ENDER_PEARL)),
-                            new ItemStorage(new ItemStack(Items.PAPER))))
-                    .result(new ItemStack(ModItems.scrollGuardHelp, 2))
-                    .minBuildingLevel(3)
-                    .minResearchId(ResearchConstants.MORE_SCROLLS)
-                    .showTooltip(true)
-                    .build(consumer);
-
-            CustomRecipeBuilder.create(enchanter, MODULE_CUSTOM, "scroll_highlight")
-                    .inputs(List.of(new ItemStorage(new ItemStack(ModItems.scrollColonyTP, 3)),
-                            new ItemStorage(new ItemStack(Items.GLOWSTONE_DUST, 6)),
-                            new ItemStorage(new ItemStack(Items.PAPER, 2))))
-                    .result(new ItemStack(ModItems.scrollHighLight, 5))
-                    .minBuildingLevel(3)
-                    .minResearchId(ResearchConstants.MORE_SCROLLS)
-                    .showTooltip(true)
-                    .build(consumer);
-
-        }
-    }
-
-    private class EnchanterLootTableProvider extends SimpleLootTableProvider
-    {
-        public EnchanterLootTableProvider(@NotNull final PackOutput packOutput)
-        {
-            super(packOutput);
-        }
-
-        @Override
-        protected void registerTables(@NotNull final LootTableRegistrar registrar)
-        {
-            for (int i = 0; i < levels.size(); i++)
-            {
-                final int buildingLevel = i + 1;
-                final LootTable.Builder lootTable = levels.get(i);
-
-                registrar.register(new ResourceLocation(MOD_ID, "recipes/enchanter" + buildingLevel),
-                        LootContextParamSets.ALL_PARAMS, lootTable);
-            }
+            registrar.register(new ResourceLocation(MOD_ID, "recipes/" + ENCHANTER + buildingLevel),
+                    LootContextParamSets.ALL_PARAMS, lootTable);
         }
     }
 }

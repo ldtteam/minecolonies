@@ -5,10 +5,9 @@ import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.colony.crafting.LootTableAnalyzer;
+import com.minecolonies.coremod.generation.CustomRecipeAndLootTableProvider;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,15 +37,21 @@ import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CRAFTI
 import static com.minecolonies.api.util.constant.BuildingConstants.MODULE_CUSTOM;
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
-public class DefaultSifterCraftingProvider implements DataProvider
+/**
+ * Datagen for Sifter
+ */
+public class DefaultSifterCraftingProvider extends CustomRecipeAndLootTableProvider
 {
-    private final SifterRecipeProvider recipeProvider;
-    private final SifterLootTableProvider lootTableProvider;
+    public static final String SIFTER = ModJobs.SIFTER_ID.getPath();
     private final Map<Item, List<SifterMeshDetails>> inputs = new HashMap<>();
+    private final LootTables lootTableManager;
 
     public DefaultSifterCraftingProvider(@NotNull final PackOutput packOutput,
                                          @NotNull final LootTables lootTableManager)
     {
+        super(packOutput);
+        this.lootTableManager = lootTableManager;
+
         inputs.put(Items.DIRT, Arrays.asList(
                 new SifterMeshDetails(ModItems.sifterMeshString, 1, LootTable.lootTable()
                         .withPool(LootPool.lootPool()
@@ -235,9 +239,6 @@ public class DefaultSifterCraftingProvider implements DataProvider
                         ))
 
                 ));
-
-        recipeProvider = new SifterRecipeProvider(packOutput, lootTableManager);
-        lootTableProvider = new SifterLootTableProvider(packOutput);
     }
 
     @NotNull
@@ -246,13 +247,6 @@ public class DefaultSifterCraftingProvider implements DataProvider
     {
         return "SifterCraftingProvider";
     }
-
-    @Override
-    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
-    {
-        return CompletableFuture.allOf(recipeProvider.run(cache), lootTableProvider.run(cache));
-    }
-
 
     private static class SifterMeshDetails
     {
@@ -281,92 +275,64 @@ public class DefaultSifterCraftingProvider implements DataProvider
         public LootTable.Builder getLootTable() { return lootTable; }
     }
 
-    private class SifterRecipeProvider extends CustomRecipeProvider
+    @Override
+    protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
     {
-        private final LootTables lootTableManager;
-
-        public SifterRecipeProvider(@NotNull final PackOutput packOutput,
-                                    @NotNull final LootTables lootTableManager)
+        for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
         {
-            super(packOutput);
-
-            this.lootTableManager = lootTableManager;
-        }
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return "SifterRecipeProvider";
-        }
-
-        @Override
-        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
-        {
-            for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
+            for (final SifterMeshDetails mesh : inputEntry.getValue())
             {
-                for (final SifterMeshDetails mesh : inputEntry.getValue())
-                {
-                    final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
+                final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
 
-                    final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
-                    final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
+                final List<LootTableAnalyzer.LootDrop> drops = LootTableAnalyzer.toDrops(lootTableManager, mesh.getLootTable().build());
+                final Stream<Item> loot = drops.stream().flatMap(drop -> drop.getItemStacks().stream().map(ItemStack::getItem));
 
-                    CustomRecipeBuilder.create(ModJobs.SIFTER_ID.getPath(), MODULE_CUSTOM, name)
-                            .inputs(Stream.of(
-                                    new ItemStorage(new ItemStack(inputEntry.getKey())),
-                                    new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
-                                    .collect(Collectors.toList()))
-                            .secondaryOutputs(Stream.concat(Stream.of(mesh.getMesh()), loot)
-                                        .map(ItemStack::new)
-                                        .collect(Collectors.toList()))
-                            .lootTable(new ResourceLocation(MOD_ID, "recipes/" + name))
-                            .minBuildingLevel(mesh.getMinBuildingLevel())
-                            .build(consumer);
-                }
+                CustomRecipeProvider.CustomRecipeBuilder.create(SIFTER, MODULE_CUSTOM, name)
+                        .inputs(Stream.of(
+                                        new ItemStorage(new ItemStack(inputEntry.getKey())),
+                                        new ItemStorage(new ItemStack(mesh.getMesh()), true, false))
+                                .collect(Collectors.toList()))
+                        .secondaryOutputs(Stream.concat(Stream.of(mesh.getMesh()), loot)
+                                .map(ItemStack::new)
+                                .collect(Collectors.toList()))
+                        .lootTable(new ResourceLocation(MOD_ID, "recipes/" + name))
+                        .minBuildingLevel(mesh.getMinBuildingLevel())
+                        .build(consumer);
             }
-
-            // also mesh recipes for everyone else
-            mesh(consumer, ModJobs.FLETCHER_ID, Items.STRING, ModItems.sifterMeshString, ResearchConstants.SIFTER_STRING);
-            mesh(consumer, ModJobs.STONEMASON_ID, Items.FLINT, ModItems.sifterMeshFlint, ResearchConstants.SIFTER_FLINT);
-            mesh(consumer, ModJobs.BLACKSMITH_ID, Items.IRON_INGOT, ModItems.sifterMeshIron, ResearchConstants.SIFTER_IRON);
-            mesh(consumer, ModJobs.MECHANIC_ID, Items.DIAMOND, ModItems.sifterMeshDiamond, ResearchConstants.SIFTER_DIAMOND);
         }
 
-        private void mesh(@NotNull final Consumer<FinishedRecipe> consumer,
-                          @NotNull final ResourceLocation job,
-                          @NotNull final ItemLike input,
-                          @NotNull final ItemLike output,
-                          @NotNull final ResourceLocation research)
-        {
-            CustomRecipeBuilder.create(job.getPath(), MODULE_CRAFTING,
-                            ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
-                    .inputs(List.of(new ItemStorage(new ItemStack(input))))
-                    .result(new ItemStack(output))
-                    .minResearchId(research)
-                    .showTooltip(true)
-                    .build(consumer);
-        }
+        // also mesh recipes for everyone else
+        mesh(consumer, ModJobs.FLETCHER_ID, Items.STRING, ModItems.sifterMeshString, ResearchConstants.SIFTER_STRING);
+        mesh(consumer, ModJobs.STONEMASON_ID, Items.FLINT, ModItems.sifterMeshFlint, ResearchConstants.SIFTER_FLINT);
+        mesh(consumer, ModJobs.BLACKSMITH_ID, Items.IRON_INGOT, ModItems.sifterMeshIron, ResearchConstants.SIFTER_IRON);
+        mesh(consumer, ModJobs.MECHANIC_ID, Items.DIAMOND, ModItems.sifterMeshDiamond, ResearchConstants.SIFTER_DIAMOND);
     }
 
-    private class SifterLootTableProvider extends SimpleLootTableProvider
+    private void mesh(@NotNull final Consumer<FinishedRecipe> consumer,
+                      @NotNull final ResourceLocation job,
+                      @NotNull final ItemLike input,
+                      @NotNull final ItemLike output,
+                      @NotNull final ResourceLocation research)
     {
-        public SifterLootTableProvider(@NotNull final PackOutput packOutput)
-        {
-            super(packOutput);
-        }
+        CustomRecipeProvider.CustomRecipeBuilder.create(job.getPath(), MODULE_CRAFTING,
+                        ForgeRegistries.ITEMS.getKey(output.asItem()).getPath())
+                .inputs(List.of(new ItemStorage(new ItemStack(input))))
+                .result(new ItemStack(output))
+                .minResearchId(research)
+                .showTooltip(true)
+                .build(consumer);
+    }
 
-        @Override
-        protected void registerTables(@NotNull final LootTableRegistrar registrar)
+    @Override
+    protected void registerTables(@NotNull final SimpleLootTableProvider.LootTableRegistrar registrar)
+    {
+        for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
         {
-            for (final Map.Entry<Item, List<SifterMeshDetails>> inputEntry : inputs.entrySet())
+            for (final SifterMeshDetails mesh : inputEntry.getValue())
             {
-                for (final SifterMeshDetails mesh : inputEntry.getValue())
-                {
-                    final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
+                final String name = mesh.getName() + "/" + ForgeRegistries.ITEMS.getKey(inputEntry.getKey()).getPath();
 
-                    registrar.register(new ResourceLocation(MOD_ID, "recipes/" + name), LootContextParamSets.ALL_PARAMS, mesh.getLootTable());
-                }
+                registrar.register(new ResourceLocation(MOD_ID, "recipes/" + name), LootContextParamSets.ALL_PARAMS, mesh.getLootTable());
             }
         }
     }
