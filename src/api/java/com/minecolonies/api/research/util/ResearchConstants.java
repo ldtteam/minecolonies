@@ -164,6 +164,7 @@ public final class ResearchConstants
 
     //Recipe unlocks
     public static final ResourceLocation THE_END           = new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock");
+    public static final ResourceLocation THE_DEPTHS        = new ResourceLocation(Constants.MOD_ID, "effects/knowledgeofthedepthsunlock");
     public static final ResourceLocation MORE_SCROLLS      = new ResourceLocation(Constants.MOD_ID, "effects/morescrollsunlock");
     public static final ResourceLocation SIFTER_STRING     = new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock");
     public static final ResourceLocation SIFTER_FLINT      = new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock");
