@@ -3,7 +3,6 @@ package com.minecolonies.coremod.generation.defaults.workers;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.research.util.ResearchConstants;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -41,7 +40,7 @@ public class DefaultCrusherCraftingProvider extends CustomRecipeProvider
     {
         final Rule noGildedHammer = builder -> builder.maxResearchId(ResearchConstants.CRUSHING_11);
         final Rule withGildedHammer = builder -> builder.minResearchId(ResearchConstants.CRUSHING_11);
-        final Rule withTheDepths = builder -> builder.minResearchId(new ResourceLocation(Constants.MOD_ID, "technology/depthknowledge"));
+        final Rule withTheDepths = builder -> builder.minResearchId(ResearchConstants.THE_DEPTHS);
         final Rule gravelLoot = builder -> builder.lootTable(DefaultRecipeLootProvider.LOOT_TABLE_GRAVEL);
 
         crush(consumer, "bonemeal1", new ItemStack(Items.BONE), new ItemStack(Items.BONE_MEAL, 3), noGildedHammer);

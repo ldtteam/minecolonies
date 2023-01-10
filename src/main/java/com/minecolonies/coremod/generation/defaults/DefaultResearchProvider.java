@@ -164,6 +164,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
 
         // Crafter-recipe-only unlocks
         effects.add(new ResearchEffect(THE_END).setTranslatedName("Stonemasons Learn Endstone Recipe and Bakers Learn Chorus Bread Recipe"));
+        effects.add(new ResearchEffect(THE_DEPTHS).setTranslatedName("Crusher Learns Deepslate and Tuff Recipes"));
         effects.add(new ResearchEffect(MORE_SCROLLS).setTranslatedName("Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
         effects.add(new ResearchEffect(PLATE_ARMOR).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
 
@@ -1400,6 +1401,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.COBBLED_DEEPSLATE)
           .addBuildingRequirement("crusher", 3)
           .addItemCost(Items.DEEPSLATE, 64)
+          .addEffect(THE_DEPTHS, 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/pavetheroad"), TECH).setParentResearch(rockingRoll)
