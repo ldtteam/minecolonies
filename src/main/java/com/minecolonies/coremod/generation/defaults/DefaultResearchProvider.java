@@ -463,7 +463,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp4.png"))
           .addBuildingRequirement(ModBuildings.LIBRARY_ID, 3)
           .addItemCost(Items.WHITE_WOOL, 32)
-          .addEffect(MASKS, 3)
+          .addEffect(MASKS, 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/vaccines"), CIVIL).setParentResearch(masks)
@@ -472,7 +472,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp5.png"))
           .addBuildingRequirement(ModBuildings.HOSPITAL_ID, 3)
           .addItemCost(Items.EGG, 64)
-          .addEffect(VACCINES, 3)
+          .addEffect(VACCINES, 1)
           .addToList(r);
 
         final Research circus = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/circus"), CIVIL).setParentResearch(firstAid)
@@ -1067,7 +1067,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModItems.bannerRallyGuards)
           .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
           .addItemCost(Items.EMERALD, 16)
-          .addEffect(TELESCOPE, 3)
+          .addEffect(TELESCOPE, 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/standard"), COMBAT).setParentResearch(telescope)
@@ -1075,7 +1075,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModItems.bannerRallyGuards)
           .addBuildingRequirement(ModBuildings.BARRACKS_ID, 4)
           .addItemCost(Items.EMERALD, 32)
-          .addEffect(STANDARD, 3)
+          .addEffect(STANDARD, 1)
           .addToList(r);
 
         final Research regeneration = new Research(new ResourceLocation(Constants.MOD_ID, "combat/regeneration"), COMBAT).setParentResearch(improvedLeather)
