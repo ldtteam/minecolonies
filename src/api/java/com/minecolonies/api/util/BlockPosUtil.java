@@ -1,5 +1,6 @@
 package com.minecolonies.api.util;
 
+import com.minecolonies.api.colony.buildings.modules.IAltersBuildingFootprint;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -931,5 +932,54 @@ public final class BlockPosUtil
         }
 
         return new BlockPos(cornerX, cornerY, cornerZ);
+    }
+
+    /**
+     * Check if a location is within an area.
+     * @param cornerA the first corner.
+     * @param cornerB the second corner.
+     * @param location the location to check for.
+     * @return true if so.
+     */
+    public static boolean isInArea(final BlockPos cornerA, final BlockPos cornerB, final BlockPos location)
+    {
+        int x1, x2, z1, z2, y1, y2;
+
+        if (cornerA.getX() <= cornerB.getX())
+        {
+            x1 = cornerA.getX();
+            x2 = cornerB.getX();
+        }
+        else
+        {
+            x2 = cornerA.getX();
+            x1 = cornerB.getX();
+        }
+
+        if (cornerA.getZ() <= cornerB.getZ())
+        {
+            z1 = cornerA.getZ();
+            z2 = cornerB.getZ();
+        }
+        else
+        {
+            z2 = cornerA.getZ();
+            z1 = cornerB.getZ();
+        }
+
+        if (cornerA.getY() <= cornerB.getY())
+        {
+            y1 = cornerA.getY();
+            y2 = cornerB.getY();
+        }
+        else
+        {
+            y2 = cornerA.getY();
+            y1 = cornerB.getY();
+        }
+
+        return location.getX() >= x1 - 1 && location.getX() <= x2 + 1
+                 && location.getY() >= y1 - 1 && location.getY() <= y2 + 1
+                 && location.getZ() >= z1 - 1 && location.getZ() <= z2 + 1;
     }
 }

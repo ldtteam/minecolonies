@@ -12,6 +12,8 @@ public enum EventType
     SATURATION_LOW(0.2),
     SATURATION_HIGH(0.2),
     BAD_HOUSING(0.2),
+    GOOD_HOUSING(0.2),
+
     GREETING(2),
     FAREWELL(2),
     MISSING_EQUIPMENT(2),

@@ -436,7 +436,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private static boolean canStandInSolidBlock(final BlockState state)
     {
-       return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || state.getBlock() instanceof PanelBlock || !state.getBlock().properties.hasCollision;
+       return state.getBlock() instanceof DoorBlock || state.getBlock() instanceof TrapDoorBlock || (state.getBlock() instanceof PanelBlock && state.getValue(PanelBlock.OPEN)) || !state.getBlock().properties.hasCollision;
     }
 
     /**
@@ -1387,9 +1387,23 @@ public abstract class AbstractPathJob implements Callable<Path>
                     final Direction direction = BlockPosUtil.getXZFacing(parentPos, pos);
                     final Direction facing = block.getValue(TrapDoorBlock.FACING);
 
-                    if (block.getBlock() instanceof PanelBlock && !block.getValue(PanelBlock.OPEN)
-                          && ((dir.getY() == 0 && block.getValue(PanelBlock.HALF) == Half.TOP) || (dir.getY() != 0 && block.getValue(PanelBlock.HALF) == Half.BOTTOM)))
+                    if (block.getBlock() instanceof PanelBlock && !block.getValue(PanelBlock.OPEN))
                     {
+                        if (dir.getY() == 0)
+                        {
+                            return (head && block.getValue(PanelBlock.HALF) == Half.TOP) || (!head && block.getValue(PanelBlock.HALF) == Half.BOTTOM);
+                        }
+
+                        if (head && dir.getY() == 1 && block.getValue(PanelBlock.HALF) == Half.TOP)
+                        {
+                            return true;
+                        }
+
+                        if (!head && dir.getY() == -1 && block.getValue(PanelBlock.HALF) == Half.BOTTOM)
+                        {
+                            return true;
+                        }
+
                         return false;
                     }
 
@@ -1474,6 +1488,14 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (parentBlock.getBlock() instanceof TrapDoorBlock || parentBlock.getBlock() instanceof PanelBlock)
         {
             final BlockPos dir = pos.subtract(parentPos);
+            if (!parentBlock.getValue(TrapDoorBlock.OPEN))
+            {
+                if (dir.getY() != 0)
+                {
+                    return (head && parentBlock.getValue(PanelBlock.HALF) == Half.TOP) || (!head && parentBlock.getValue(PanelBlock.HALF) == Half.BOTTOM);
+                }
+                return true;
+            }
             if (dir.getX() != 0 || dir.getZ() != 0)
             {
                 // Check if we can leave the current block, there might be a trapdoor or panel blocking us.
