@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "XTX",
-    "XDX",
-    "XXX"
-  ],
   "key": {
-    "X": {
-      "tag": "minecraft:planks"
-    },
-    "D": {
+    "B": {
       "item": "minecraft:obsidian"
     },
     "T": {
       "item": "structurize:sceptergold"
+    },
+    "X": {
+      "tag": "minecraft:planks"
     }
   },
+  "pattern": [
+    "XTX",
+    "XBX",
+    "XXX"
+  ],
   "result": {
     "item": "minecolonies:blockhutnetherworker"
   }
