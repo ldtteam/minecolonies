@@ -148,8 +148,7 @@ public class DefaultEntityLootProvider extends SimpleLootTableProvider
 
         final LootPool.Builder pool = LootPool.lootPool()
                 .name(entityId.toString())
-                .setRolls(ConstantValue.exactly(1))
-                .setBonusRolls(ConstantValue.exactly(1));
+                .setRolls(ConstantValue.exactly(1));
         builder.accept(pool);
 
         registrar.register(lootName, LootContextParamSets.ALL_PARAMS,
