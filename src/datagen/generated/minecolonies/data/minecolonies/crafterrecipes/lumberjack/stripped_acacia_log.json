@@ -1,24 +1,20 @@
 {
-  "type" : "recipe",
+  "type": "recipe",
+  "alternate-output": [
+    {
+      "item": "minecraft:acacia_wood"
+    },
+    {
+      "item": "minecraft:stripped_acacia_wood"
+    }
+  ],
   "crafter": "lumberjack_custom",
   "inputs": [
     {
-        "item" : "minecraft:acacia_log",
-        "count": 1
+      "item": "minecraft:acacia_log"
     }
   ],
-  "alternate-output" : [
-    {
-        "item" : "minecraft:acacia_wood",
-        "count": 1
-    },
-    {
-        "item" : "minecraft:stripped_acacia_wood",
-        "count": 1
-    }
-  ],
+  "intermediate": "minecraft:air",
   "result": "minecraft:stripped_acacia_log",
-  "count": 1,
-  "tool": "axe",
-  "intermediate" : "minecraft:air"
+  "tool": "axe"
 }
