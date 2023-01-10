@@ -8,8 +8,6 @@ import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 
-import java.util.Set;
-
 public class GatherDataHandler
 {
     /**
@@ -28,16 +26,16 @@ public class GatherDataHandler
         generator.addProvider(true, new DefaultEntityLootProvider(generator.getPackOutput()));
         generator.addProvider(true, new DefaultSupplyLootProvider(generator.getPackOutput()));
         generator.addProvider(true, new DefaultAdvancementsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
-        generator.addProvider(true, new DefaultSoundProvider(generator));
+        generator.addProvider(true, new DefaultSoundProvider(generator.getPackOutput()));
         generator.addProvider(true, blockTagsProvider);
         generator.addProvider(true, new DefaultItemTagsProvider(generator.getPackOutput(), event.getLookupProvider(), blockTagsProvider, event.getExistingFileHelper()));
         generator.addProvider(true, new DefaultEntityTypeTagsProvider(generator.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
-        generator.addProvider(true, new DefaultResearchProvider(generator));
+        generator.addProvider(true, new DefaultResearchProvider(generator.getPackOutput()));
         generator.addProvider(true, new DefaultRecipeProvider(generator.getPackOutput()));
-        generator.addProvider(true, new DefaultSifterCraftingProvider(generator, lootTableManager));
-        generator.addProvider(true, new DefaultEnchanterCraftingProvider(generator));
-        generator.addProvider(true, new DefaultFishermanLootProvider(generator));
-        generator.addProvider(true, new DefaultConcreteMixerCraftingProvider(generator));
-        generator.addProvider(true, new DefaultNetherWorkerLootProvider(generator, lootTableManager));
+        generator.addProvider(true, new DefaultSifterCraftingProvider(generator.getPackOutput(), lootTableManager));
+        generator.addProvider(true, new DefaultEnchanterCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultFishermanLootProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultConcreteMixerCraftingProvider(generator.getPackOutput()));
+        generator.addProvider(true, new DefaultNetherWorkerLootProvider(generator.getPackOutput(), lootTableManager));
     }
 }

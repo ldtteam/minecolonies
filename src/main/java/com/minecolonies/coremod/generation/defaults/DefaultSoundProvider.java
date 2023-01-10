@@ -20,12 +20,12 @@ import static com.minecolonies.coremod.generation.SoundsJson.createSoundJson;
 
 public class DefaultSoundProvider implements DataProvider
 {
-    private final DataGenerator generator;
+    private final PackOutput packOutput;
     private JsonObject sounds;
 
-    public DefaultSoundProvider(final DataGenerator generator)
+    public DefaultSoundProvider(@NotNull final PackOutput packOutput)
     {
-        this.generator = generator;
+        this.packOutput = packOutput;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class DefaultSoundProvider implements DataProvider
 
     protected Path getPath()
     {
-        return this.generator.getPackOutput()
+        return this.packOutput
                  .getOutputFolder(PackOutput.Target.RESOURCE_PACK)
                  .resolve(Constants.MOD_ID)
                  .resolve("sounds.json");

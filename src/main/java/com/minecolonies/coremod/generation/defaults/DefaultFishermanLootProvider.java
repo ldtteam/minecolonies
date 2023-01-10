@@ -7,7 +7,7 @@ import com.minecolonies.api.loot.ModLootTables;
 import com.minecolonies.api.loot.ResearchUnlocked;
 import com.minecolonies.api.research.util.ResearchConstants;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.GsonHelper;
@@ -30,9 +30,9 @@ public class DefaultFishermanLootProvider extends SimpleLootTableProvider
 {
     private static final Gson GSON = Deserializers.createLootTableSerializer().create();
 
-    public DefaultFishermanLootProvider(@NotNull final DataGenerator dataGeneratorIn)
+    public DefaultFishermanLootProvider(@NotNull final PackOutput packOutput)
     {
-        super(dataGeneratorIn.getPackOutput());
+        super(packOutput);
     }
 
     @Override

@@ -7,8 +7,8 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import com.minecolonies.coremod.generation.SimpleLootTableProvider;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 
@@ -39,7 +39,7 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
     private final EnchanterLootTableProvider lootTableProvider;
     private final List<LootTable.Builder> levels;
 
-    public DefaultEnchanterCraftingProvider(@NotNull final DataGenerator generatorIn)
+    public DefaultEnchanterCraftingProvider(@NotNull final PackOutput packOutput)
     {
         levels = new ArrayList<>();
 
@@ -354,8 +354,8 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
                 .add(enchantedBook(ModEnchants.raiderDamage.get(), 2).setWeight(1))
         ));
 
-        recipeProvider = new EnchanterRecipeProvider(generatorIn);
-        lootTableProvider = new EnchanterLootTableProvider(generatorIn);
+        recipeProvider = new EnchanterRecipeProvider(packOutput);
+        lootTableProvider = new EnchanterLootTableProvider(packOutput);
     }
 
     @NotNull
@@ -381,9 +381,9 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
 
     private static class EnchanterRecipeProvider extends CustomRecipeProvider
     {
-        public EnchanterRecipeProvider(@NotNull final DataGenerator generatorIn)
+        public EnchanterRecipeProvider(@NotNull final PackOutput packOutput)
         {
-            super(generatorIn);
+            super(packOutput);
         }
 
         @NotNull
@@ -394,31 +394,29 @@ public class DefaultEnchanterCraftingProvider implements DataProvider
         }
 
         @Override
-        protected List<CompletableFuture<?>> registerRecipes(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
+        protected void registerRecipes(@NotNull final Consumer<FinishedRecipe> consumer)
         {
-            final List<CompletableFuture<?>> futures = new ArrayList<>();
             final List<ItemStorage> tome = Collections.singletonList(new ItemStorage(
                     new ItemStack(ModItems.ancientTome), true, true));
 
             for (int buildingLevel = 1; buildingLevel <= MAX_BUILDING_LEVEL; ++buildingLevel)
             {
-                futures.add(CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath() + "_custom", "tome" + buildingLevel)
+                CustomRecipeBuilder.create(ModJobs.ENCHANTER_ID.getPath() + "_custom", "tome" + buildingLevel)
                         .minBuildingLevel(buildingLevel)
                         .maxBuildingLevel(buildingLevel)
                         .inputs(tome)
                         .secondaryOutputs(Collections.singletonList(new ItemStack(Items.ENCHANTED_BOOK)))
                         .lootTable(new ResourceLocation(MOD_ID, "recipes/enchanter" + buildingLevel))
-                        .build(consumer));
+                        .build(consumer);
             }
-            return futures;
         }
     }
 
     private class EnchanterLootTableProvider extends SimpleLootTableProvider
     {
-        public EnchanterLootTableProvider(@NotNull final DataGenerator dataGeneratorIn)
+        public EnchanterLootTableProvider(@NotNull final PackOutput packOutput)
         {
-            super(dataGeneratorIn.getPackOutput());
+            super(packOutput);
         }
 
         @Override

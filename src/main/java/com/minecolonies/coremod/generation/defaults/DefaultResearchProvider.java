@@ -7,8 +7,10 @@ import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,9 +31,9 @@ import static com.minecolonies.api.research.util.ResearchConstants.*;
  */
 public class DefaultResearchProvider extends AbstractResearchProvider
 {
-    public DefaultResearchProvider(final DataGenerator generator)
+    public DefaultResearchProvider(@NotNull final PackOutput packOutput)
     {
-        super(generator);
+        super(packOutput);
     }
 
     private static final ResourceLocation CIVIL  = new ResourceLocation(Constants.MOD_ID, "civilian");

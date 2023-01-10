@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.generation;
 
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -11,8 +8,8 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -20,56 +17,56 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+/**
+ * Abstract datagen for crafterrecipes
+ */
 public abstract class CustomRecipeProvider implements DataProvider
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
-    protected final DataGenerator generator;
+    private final PackOutput packOutput;
 
-    public CustomRecipeProvider(final DataGenerator generatorIn)
+    public CustomRecipeProvider(@NotNull final PackOutput packOutput)
     {
-        this.generator = generatorIn;
+        this.packOutput = packOutput;
     }
 
     @Override
     @NotNull
-    public CompletableFuture<?> run(final CachedOutput cache)
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final Path path = this.generator.getPackOutput().getOutputFolder();
-        final Set<ResourceLocation> set = Sets.newHashSet();
-        final List<CompletableFuture<?>> futures = registerRecipes((recipe) ->
+        final PackOutput.PathProvider pathProvider = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "crafterrecipes");
+        final Map<ResourceLocation, CompletableFuture<?>> futures = new HashMap<>();
+
+        registerRecipes((recipe) ->
         {
-            if (!set.add(recipe.getId()))
+            if (futures.containsKey(recipe.getId()))
             {
                 throw new IllegalStateException("Duplicate recipe " + recipe.getId());
             }
-            else
-            {
-                return DataProvider.saveStable(cache,
-                      recipe.serializeRecipe(),
-                      path.resolve("data/" + recipe.getId().getNamespace() + "/crafterrecipes/" + recipe.getId().getPath() + ".json"));
-            }
+
+            futures.put(recipe.getId(), DataProvider.saveStable(cache,
+                    recipe.serializeRecipe(),
+                    pathProvider.json(recipe.getId())));
         });
 
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        return CompletableFuture.allOf(futures.values().toArray(new CompletableFuture[0]));
     }
 
-    protected abstract List<CompletableFuture<?>> registerRecipes(final Function<FinishedRecipe, CompletableFuture<?>> consumer);
+    protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);
 
+    /**
+     * Helper to construct custom crafterrecipes for datagen
+     */
     public static class CustomRecipeBuilder
     {
         private final JsonObject json = new JsonObject();
@@ -187,10 +184,10 @@ public abstract class CustomRecipeProvider implements DataProvider
             return this;
         }
 
-        public CompletableFuture<?> build(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
+        public void build(@NotNull final Consumer<FinishedRecipe> consumer)
         {
             this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, ForgeRegistries.BLOCKS.getKey(this.intermediate).toString());
-            return consumer.apply(new Result(this.json, this.id));
+            consumer.accept(new Result(this.json, this.id));
         }
 
         @NotNull
