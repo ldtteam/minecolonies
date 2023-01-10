@@ -46,7 +46,7 @@ public abstract class CustomRecipeProvider implements DataProvider
     }
 
     @Override
-    public void run(final CachedOutput cache) throws IOException
+    public void run(@NotNull final CachedOutput cache) throws IOException
     {
         final Path path = this.generator.getOutputFolder();
         final Set<ResourceLocation> set = Sets.newHashSet();
