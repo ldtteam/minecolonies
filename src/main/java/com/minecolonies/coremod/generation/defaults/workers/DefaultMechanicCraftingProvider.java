@@ -3,11 +3,14 @@ package com.minecolonies.coremod.generation.defaults.workers;
 import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.items.ModItems;
+import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -70,6 +73,24 @@ public class DefaultMechanicCraftingProvider extends CustomRecipeProvider
                         new ItemStorage(new ItemStack(Items.SOUL_TORCH))))
                 .result(new ItemStack(Items.SOUL_LANTERN))
                 .minBuildingLevel(3)
+                .build(consumer);
+
+        deoxidize(consumer, Items.OXIDIZED_COPPER, Items.WEATHERED_COPPER);
+        deoxidize(consumer, Items.OXIDIZED_CUT_COPPER, Items.WEATHERED_CUT_COPPER);
+        deoxidize(consumer, Items.WEATHERED_COPPER, Items.EXPOSED_COPPER);
+        deoxidize(consumer, Items.WEATHERED_CUT_COPPER, Items.EXPOSED_CUT_COPPER);
+        deoxidize(consumer, Items.EXPOSED_COPPER, Items.COPPER_BLOCK);
+        deoxidize(consumer, Items.EXPOSED_CUT_COPPER, Items.CUT_COPPER);
+    }
+
+    private void deoxidize(@NotNull final Consumer<FinishedRecipe> consumer,
+                           @NotNull final Item input,
+                           @NotNull final Item output)
+    {
+        CustomRecipeBuilder.create(MECHANIC, MODULE_CRAFTING, "deoxidize_" + ForgeRegistries.ITEMS.getKey(input).getPath())
+                .inputs(List.of(new ItemStorage(new ItemStack(input))))
+                .result(new ItemStack(output))
+                .requiredTool(ToolType.AXE)
                 .build(consumer);
     }
 }
