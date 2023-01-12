@@ -76,7 +76,7 @@ public class PlantationField extends AbstractField
         PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
         if (module != null)
         {
-            return module.getNextWorkingPosition(this) != null;
+            return module.needsWork(this);
         }
         return false;
     }
@@ -96,7 +96,7 @@ public class PlantationField extends AbstractField
      *
      * @return an unmodifiable collection of working positions.
      */
-    public Collection<BlockPos> getWorkingPositions()
+    public List<BlockPos> getWorkingPositions()
     {
         return workingPositions.stream().toList();
     }

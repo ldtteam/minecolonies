@@ -7,5 +7,7 @@ public enum PlantationFieldType
 {
     SUGAR_CANE,
     CACTUS,
-    BAMBOO;
+    BAMBOO,
+    CRIMSON_FUNGUS,
+    WARPED_FUNGUS
 }

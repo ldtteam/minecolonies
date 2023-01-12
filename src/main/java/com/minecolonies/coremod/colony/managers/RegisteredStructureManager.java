@@ -51,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -126,7 +127,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
-        this.fields = Arrays.stream(FieldStructureType.values()).collect(Collectors.toMap(k -> k, v -> new HashMap<>()));
+        this.fields = Arrays.stream(FieldStructureType.values()).collect(Collectors.toMap(k -> k, v -> new ConcurrentHashMap<>()));
     }
 
     @Override
@@ -325,19 +326,25 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
+
         for (final Map.Entry<FieldStructureType, Map<BlockPos, IField>> entry : fields.entrySet())
         {
             for (IField field : entry.getValue().values())
             {
-                if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()) && !colony.isCoordInColony(colony.getWorld(), field.getPosition()))
+                if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()))
                 {
+                    if (!colony.isCoordInColony(colony.getWorld(), field.getPosition()))
+                    {
+                        removeField(field.getType(), field.getPosition());
+                    }
+
                     Block blockAtPosition = colony.getWorld().getBlockState(field.getPosition()).getBlock();
                     if (field.getType() == FieldStructureType.FARMER_FIELDS && !blockAtPosition.equals(ModBlocks.blockScarecrow))
                     {
                         removeField(field.getType(), field.getPosition());
                     }
                     if (field.getType() == FieldStructureType.PLANTATION_FIELDS && (!blockAtPosition.equals(ModBlocks.blockPlantationField)
-                                                                                      && !blockAtPosition.equals(ModBlocks.blockHutPlantation)))
+                                                                                           && !blockAtPosition.equals(ModBlocks.blockHutPlantation)))
                     {
                         removeField(field.getType(), field.getPosition());
                     }

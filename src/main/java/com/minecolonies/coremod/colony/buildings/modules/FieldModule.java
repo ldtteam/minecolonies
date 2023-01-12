@@ -199,6 +199,14 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
     }
 
     /**
+     * Resets the current field if the worker indicates this field should no longer be worked on.
+     */
+    public void resetCurrentField()
+    {
+        currentField = null;
+    }
+
+    /**
      * Retrieves the field to work on for the citizen, as long as the current field has work, it will keep returning that field.
      * Else it will retrieve a random field to work on for the citizen.
      * This method will also automatically claim any fields that are not in use if the building is on automatic assignment mode.

@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.BoneMealedFieldPlantModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.VerticalUpwardsGrowingPlantModule;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +10,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
+import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
 
 /**
  * Registry class for all different plantation module types.
@@ -57,6 +59,18 @@ public class PlantationModuleRegistry
               new VerticalUpwardsGrowingPlantModule.Builder("bamboo_field", "bamboo", Blocks.BAMBOO)
                 .withMinimumPlantLength(6)
                 .withRequiredResearchEffect(PLANTATION_JUNGLE)
+                .build());
+            plantationModules.put(PlantationFieldType.CRIMSON_FUNGUS,
+              new BoneMealedFieldPlantModule.Builder("crimsonp_field", "plant", Blocks.CRIMSON_FUNGUS)
+                .withPercentageChance(5)
+                .withRequiredResearchEffect(PLANTATION_NETHER)
+                .withMaxPlants(50)
+                .build());
+            plantationModules.put(PlantationFieldType.WARPED_FUNGUS,
+              new BoneMealedFieldPlantModule.Builder("warpedp_field", "plant", Blocks.WARPED_FUNGUS)
+                .withPercentageChance(5)
+                .withRequiredResearchEffect(PLANTATION_NETHER)
+                .withMaxPlants(50)
                 .build());
         }
     }

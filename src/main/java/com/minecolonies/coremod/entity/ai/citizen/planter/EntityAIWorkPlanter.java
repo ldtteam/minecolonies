@@ -3,12 +3,10 @@ package com.minecolonies.coremod.entity.ai.citizen.planter;
 import com.ldtteam.structurize.util.BlockUtils;
 import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.colony.requestsystem.requestable.Stack;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
-import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
@@ -113,7 +111,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             return PREPARING;
         }
 
-        if (walkToBlock(currentPlantationField.getPosition().above(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY * 2))
+        if (walkToBlock(currentPlantationField.getPosition().above(), CitizenConstants.DEFAULT_RANGE_FOR_DELAY))
         {
             return getState();
         }
@@ -147,20 +145,19 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         if (currentWorkingPosition != null)
         {
-            return switch (planterModule.workField(currentPlantationField, this, currentWorkingPosition))
-                     {
-                         // Either when the AI has harvested, planted, cleared the position, failed to compute or simply nothing to do, return to the decision state.
-                         case INVALID, NONE, HARVESTED, PLANTED, CLEARED ->
-                         {
-                             // Reset the current working position so that next working iteration a new field/position will be selected.
-                             currentWorkingPosition = null;
-                             yield PREPARING;
-                         }
-                         // When the AI requires items move the AI into the GATHERING_REQUIRED_MATERIALS state to pick up the requested items.
-                         case REQUIRES_ITEMS -> GATHERING_REQUIRED_MATERIALS;
-                         // Either when the AI is moving to, harvesting or clearing a position, keep working on that position.
-                         case MOVING, HARVESTING, PLANTING, CLEARING -> PLANTATION_WORK_FIELD;
-                     };
+            PlantationModule.PlanterAIModuleResult result = planterModule.workField(currentPlantationField, this, worker, currentWorkingPosition, getFakePlayer());
+            if (result.shouldResetWorkingPosition())
+            {
+                currentWorkingPosition = null;
+            }
+            if (result.shouldResetCurrentField())
+            {
+                // In certain scenarios the module may request to immediately release the current field, disregarding whether the next tick still has work or not.
+                FieldModule fieldModule = building.getFirstModuleOccurance(FieldModule.class);
+                fieldModule.resetCurrentField();
+                currentWorkingPosition = null;
+            }
+            return result.getNextState();
         }
         else
         {
@@ -240,7 +237,12 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     public boolean planterWalkToBlock(final BlockPos blockPos)
     {
-        return walkToBlock(blockPos, CitizenConstants.DEFAULT_RANGE_FOR_DELAY / 2);
+        return planterWalkToBlock(blockPos, CitizenConstants.DEFAULT_RANGE_FOR_DELAY);
+    }
+
+    public boolean planterWalkToBlock(final BlockPos blockPos, final int range)
+    {
+        return walkToBlock(blockPos, range);
     }
 
     public PlantationModule.PlanterMineBlockResult planterMineBlock(final BlockPos blockPos, boolean isHarvest)
@@ -268,16 +270,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest)
     {
         ItemStack currentStack = new ItemStack(item);
-        int plantInInv = InventoryUtils.getItemCountInItemHandler(worker.getInventoryCitizen(), itemStack -> itemStack.sameItem(currentStack));
-        if (plantInInv <= 0)
+        if (!checkIfRequestForItemExistOrCreateAsync(currentStack, numberToRequest, numberToRequest, true))
         {
-            int plantInBuilding = InventoryUtils.getCountFromBuilding(building, itemStack -> itemStack.sameItem(currentStack));
-            if (plantInBuilding <= 0)
-            {
-                worker.getCitizenData().createRequestAsync(new Stack(new ItemStack(item, numberToRequest)));
-            }
-            needsCurrently = new Tuple<>(it -> !it.isEmpty() && it.getItem().equals(item), numberToRequest);
-
             return false;
         }
 

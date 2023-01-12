@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules;
 
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
@@ -7,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,15 +50,19 @@ public class VerticalUpwardsGrowingPlantModule extends PlantationModule
     }
 
     @Override
-    @NotNull
-    public PlantationModule.PlanterAIModuleResult workField(PlantationField field, final EntityAIWorkPlanter planterAI, BlockPos workPosition)
+    public PlanterAIModuleResult workField(
+      final @NotNull PlantationField field,
+      final @NotNull EntityAIWorkPlanter planterAI,
+      final @NotNull AbstractEntityCitizen worker,
+      final @NotNull BlockPos workPosition,
+      final @NotNull FakePlayer fakePlayer)
     {
         if (planterAI.planterWalkToBlock(workPosition))
         {
             return PlanterAIModuleResult.MOVING;
         }
 
-        PlanterAIModuleResult action = decidedWorkAction(field, workPosition);
+        PlanterAIModuleState action = decideWorkAction(field, workPosition);
         return switch (action)
                  {
                      case NONE -> PlanterAIModuleResult.NONE;
@@ -86,64 +92,26 @@ public class VerticalUpwardsGrowingPlantModule extends PlantationModule
      * @param plantingPosition the specific position to check for.
      * @return the {@link PlanterAIModuleResult} that the AI is going to perform.
      */
-    private PlanterAIModuleResult decidedWorkAction(PlantationField field, BlockPos plantingPosition)
+    private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
     {
-        if (isPositionEmpty(field, plantingPosition))
+        Block blockAbove = field.getColony().getWorld().getBlockState(plantingPosition.above()).getBlock();
+        Block blockAtMinHeight = field.getColony().getWorld().getBlockState(plantingPosition.above(minimumPlantLength)).getBlock();
+        if (blockAbove == Blocks.AIR)
         {
-            return PlanterAIModuleResult.PLANTING;
+            return PlanterAIModuleState.PLANTING;
         }
 
-        if (isPositionBlocked(field, plantingPosition))
+        if (blockAbove != getBlock())
         {
-            return PlanterAIModuleResult.CLEARING;
+            return PlanterAIModuleState.CLEARING;
         }
 
-        if (hasPositionReachedHeight(field, plantingPosition))
+        if (blockAtMinHeight == getBlock())
         {
-            return PlanterAIModuleResult.HARVESTING;
+            return PlanterAIModuleState.HARVESTING;
         }
 
-        return PlanterAIModuleResult.NONE;
-    }
-
-    /**
-     * Responsible for checking if the planting position is empty ({@link Blocks#AIR}).
-     *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
-     * @return whether the planting position is empty.
-     */
-    private boolean isPositionEmpty(PlantationField field, BlockPos plantingPosition)
-    {
-        return field.getColony().getWorld().getBlockState(plantingPosition.above()).getBlock() == Blocks.AIR;
-    }
-
-    /**
-     * Responsible for checking if the planting position is blocked by a foreign block which does not belong there.
-     * This includes every block except the required block, this also include {@link Blocks#AIR}, however this condition
-     * should be previously checked through {@link VerticalUpwardsGrowingPlantModule#isPositionEmpty}.
-     *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
-     * @return whether the planting position is blocked by a foreign block.
-     */
-    private boolean isPositionBlocked(final PlantationField field, BlockPos plantingPosition)
-    {
-        return field.getColony().getWorld().getBlockState(plantingPosition.above()).getBlock() != getBlock();
-    }
-
-    /**
-     * Responsible for checking if the plant has reached the minimum plant height.
-     * Only checks the block which is {@link VerticalUpwardsGrowingPlantModule#minimumPlantLength} above the working position
-     * because the assumption is made this is a continuous growing plant (which cannot have holes, like sugar cane which breaks completely if one block is removed).
-     *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
-     * @return whether the plant has reached the minimum harvesting height.
-     */
-    private boolean hasPositionReachedHeight(final PlantationField field, BlockPos plantingPosition)
-    {
-        return field.getColony().getWorld().getBlockState(plantingPosition.above(minimumPlantLength)).getBlock() == getBlock();
+        return PlanterAIModuleState.NONE;
     }
 
     @Override
@@ -151,7 +119,7 @@ public class VerticalUpwardsGrowingPlantModule extends PlantationModule
     {
         for (BlockPos position : field.getWorkingPositions())
         {
-            if (decidedWorkAction(field, position) != PlanterAIModuleResult.NONE)
+            if (decideWorkAction(field, position) != PlanterAIModuleState.NONE)
             {
                 return position;
             }

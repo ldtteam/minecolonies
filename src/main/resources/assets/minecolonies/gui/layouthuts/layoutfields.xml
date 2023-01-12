@@ -11,7 +11,7 @@
     <label id="plantCount" size="164 11" pos="13 82" color="black" textalign="MIDDLE"
            label="$(com.minecolonies.coremod.gui.workerhuts.fields.plantcount)"/>
 
-    <list id="fields" size="164 154" pos="13 95">
+    <list id="fields" size="164 130" pos="13 95">
         <box size="100% 34" linewidth="1">
             <itemicon id="icon" size="16 16" pos="1 1"/>
             <label id="worker" color="black" pos="20 2" size="130 9"/>
