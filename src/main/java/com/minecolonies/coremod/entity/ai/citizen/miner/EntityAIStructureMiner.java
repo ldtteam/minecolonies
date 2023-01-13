@@ -874,14 +874,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
                 if (currentLevel == null)
                 {
                     Log.getLogger().error("The mine state of the mine at: " + building.getID().toShortString() + " got corrupted. Trying to recover from this somehow....");
-                    // This can only happen if something with the state got broken. Returning here is the safest option, it will potentially recover.
-                    return;
-                }
 
-                currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
-                module.setActiveNode(null);
-                module.setOldNode(workingNode);
-                WorkerUtil.updateLevelSign(world, currentLevel, module.getLevelId(currentLevel));
+                    // This can only happen if something with the state got broken. Safest option is not handling the node closing and just doing the normal complete actions, it will potentially recover.
+                }
+                else
+                {
+                    currentLevel.closeNextNode(structurePlacer.getB().getSettings().rotation.ordinal(), module.getActiveNode(), world);
+                    module.setActiveNode(null);
+                    module.setOldNode(workingNode);
+                    WorkerUtil.updateLevelSign(world, currentLevel, module.getLevelId(currentLevel));
+                }
             }
         }
         super.executeSpecificCompleteActions();
