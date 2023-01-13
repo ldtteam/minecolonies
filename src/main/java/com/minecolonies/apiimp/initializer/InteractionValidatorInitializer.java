@@ -84,7 +84,7 @@ public class InteractionValidatorInitializer
                           final IItemHandler inv = building.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
                           if (inv != null)
                           {
-                              return InventoryUtils.openSlotCount(inv) > 0;
+                              return InventoryUtils.openSlotCount(inv) <= 0;
                           }
                       }
                   }

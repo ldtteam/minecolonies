@@ -13,6 +13,7 @@ import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.colony.requestsystem.StandardFactoryController;
+import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
 import com.minecolonies.api.colony.requestsystem.request.IRequest;
 import com.minecolonies.api.colony.requestsystem.requestable.IDeliverable;
 import com.minecolonies.api.colony.requestsystem.requestable.crafting.PublicCrafting;
@@ -37,12 +38,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -310,7 +308,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Tuple<Integer, Boolean>> requiredItems = new HashMap<>();
-        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueueExcluding(null))
         {
             for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
             {
@@ -337,10 +335,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
     }
 
     @Override
-    public Map<ItemStorage, Integer> reservedStacks()
+    public Map<ItemStorage, Integer> reservedStacksExcluding(@Nullable final IRequest<? extends IDeliverable> request)
     {
         final Map<ItemStorage, Integer> recipeOutputs = new HashMap<>();
-        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueue())
+        for (final Tuple<IRecipeStorage, Integer> recipeStorage : getPendingRequestQueueExcluding(request))
         {
             for (final ItemStorage itemStorage : recipeStorage.getA().getCleanedInput())
             {
@@ -357,9 +355,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
 
     /**
      * Get a list of all recipeStorages of the pending requests in the crafters queues.
+     * @param excluded ignore this request (and its parents).
      * @return the list.
      */
-    private List<Tuple<IRecipeStorage, Integer>> getPendingRequestQueue()
+    private List<Tuple<IRecipeStorage, Integer>> getPendingRequestQueueExcluding(@Nullable final IRequest<? extends IDeliverable> excluded)
     {
         final List<Tuple<IRecipeStorage, Integer>> recipes = new ArrayList<>();
         for (final ICitizenData citizen : building.getAllAssignedCitizen())
@@ -372,6 +371,11 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
                 for (final IToken<?> taskToken : assignedTasks)
                 {
                     final IRequest<? extends PublicCrafting> request = (IRequest<? extends PublicCrafting>) building.getColony().getRequestManager().getRequestForToken(taskToken);
+                    if (request == null || (excluded != null && anyChildRequestIs(building.getColony().getRequestManager(), request, excluded)))
+                    {
+                        continue;
+                    }
+
                     final IRecipeStorage recipeStorage = IColonyManager.getInstance().getRecipeManager().getRecipes().get(request.getRequest().getRecipeID());
                     if (holdsRecipe(request.getRequest().getRecipeID()) && recipeStorage != null)
                     {
@@ -381,6 +385,25 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
             }
         }
         return recipes;
+    }
+
+    private static boolean anyChildRequestIs(@NotNull final IRequestManager requestManager,
+                                             @NotNull final IRequest<?> parent,
+                                             @NotNull final IRequest<?> target)
+    {
+        return parent.getChildren().stream().anyMatch(childToken ->
+        {
+            final IRequest<?> childRequest = requestManager.getRequestForToken(childToken);
+            if (childRequest == target)
+            {
+                return true;
+            }
+            else if (childRequest != null)
+            {
+                return anyChildRequestIs(requestManager, childRequest, target);
+            }
+            return false;
+        });
     }
 
     @Override

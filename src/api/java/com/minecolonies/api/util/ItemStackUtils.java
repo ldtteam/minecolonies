@@ -1037,6 +1037,16 @@ public final class ItemStackUtils
     }
 
     /**
+     * Reports if this stack has a custom Tag value that is not purely a damage value.
+     * @param stack the stack to inspect
+     * @return      true if the stack has a non-damage tag value
+     */
+    public static boolean hasTag(@NotNull final ItemStack stack)
+    {
+        return stack.getTag() != null && stack.getTag().size() > (stack.isDamageableItem() ? 1 : 0);
+    }
+
+    /**
      * Obtains a list of all basic items in the game, plus any extra items present in the player's
      * inventory (allowing for items with custom NBT, e.g. DO blocks or dyed armour).
      *

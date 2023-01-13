@@ -11,11 +11,10 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.AdvancementUtils;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -256,8 +255,12 @@ public class WorkOrderBuilding extends AbstractWorkOrder
 
         if (getWorkOrderType() != WorkOrderType.REMOVE)
         {
-            AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
-              player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, getFileName().replace(".blueprint", "").replace(String.valueOf(this.getTargetLevel()), ""), this.getTargetLevel()));
+            final IBuilding building = colony.getBuildingManager().getBuilding(getLocation());
+            if (building != null)
+            {
+                AdvancementUtils.TriggerAdvancementPlayersForColony(colony,
+                        player -> AdvancementTriggers.COMPLETE_BUILD_REQUEST.trigger(player, building.getBuildingType().getBuildingBlock().getBlueprintName(), this.getTargetLevel()));
+            }
         }
     }
 

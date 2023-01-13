@@ -280,6 +280,7 @@ public class DefaultItemTagsProvider extends ItemTagsProvider
         tag(ModTags.crafterProduct.get(TagConstants.CRAFTING_MECHANIC))
                 .addTag(storageBlocks)
                 .addTag(ItemTags.RAILS)
+                .addTag(ItemTags.BUTTONS)
                 .addTag(ItemTags.WOODEN_PRESSURE_PLATES)
                 .add(Items.HEAVY_WEIGHTED_PRESSURE_PLATE)
                 .add(Items.LIGHT_WEIGHTED_PRESSURE_PLATE)
