@@ -27,6 +27,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.AirBlock;
@@ -613,6 +615,10 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             if (tab != CreativeModeTabs.SEARCH && tab != CreativeModeTabs.HOTBAR)
             {
+                if (tab.getDisplayItems().isEmpty())
+                {
+                    tab.buildContents(FeatureFlags.DEFAULT_FLAGS, true);
+                }
                 for (final ItemStack item : tab.getDisplayItems())
                 {
                     setBuilder.add(new ItemStorage(item, true));
