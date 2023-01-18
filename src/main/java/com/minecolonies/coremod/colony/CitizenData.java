@@ -61,6 +61,7 @@ import static com.minecolonies.api.util.constant.BuildingConstants.TAG_ACTIVE;
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.translation.DebugTranslationConstants.DEBUG_WARNING_CITIZEN_LOAD_FAILURE;
 
 /**
  * Extra data for Citizens.
@@ -458,7 +459,7 @@ public class CitizenData implements ICitizenData
             }
             catch (Exception ex)
             {
-                MessageUtils.format("Worker %s has been unassigned from his job, a problem was found during load.", citizen.getName()).sendTo(colony);
+                MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony);
                 Log.getLogger().log(Level.ERROR, String.format("Worker %s has been unassigned from his job, a problem was found during load. Worker job: %s; Building: %s",
                   citizen.getName().getString(),
                   getJob().getJobRegistryEntry().getKey().toString(),
