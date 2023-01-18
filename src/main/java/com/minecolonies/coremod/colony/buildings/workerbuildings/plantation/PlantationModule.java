@@ -8,10 +8,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Base class for planter modules that determines how the AI should work specific fields.
@@ -213,6 +217,18 @@ public abstract class PlantationModule
                      case MINING -> PlanterAIModuleResult.CLEARING;
                      case MINED -> PlanterAIModuleResult.CLEARED;
                  };
+    }
+
+    /**
+     * Returns the list of valid working positions.
+     *
+     * @param world            the world all of these positions appear in.
+     * @param workingPositions the original input working positions.
+     * @return the new list.
+     */
+    public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
+    {
+        return workingPositions.stream().distinct().limit(maxPlants).collect(Collectors.toList());
     }
 
     /**

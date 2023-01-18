@@ -8,6 +8,15 @@ public enum PlantationFieldType
     SUGAR_CANE,
     CACTUS,
     BAMBOO,
+    COCOA_BEANS,
+    VINES,
+    KELP,
+    SEAGRASS,
+    SEA_PICKLES,
+    CORAL,
+    GLOWBERRIES,
+    WEEPING_VINES,
+    TWISTING_VINES,
     CRIMSON_FUNGUS,
     WARPED_FUNGUS
 }

@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules;
+package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState;
@@ -15,7 +15,6 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,11 +24,9 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Plantation module for plants that grow vertically upwards, similar to sugar cane.
- * For a plant to fit this module it needs the following requirements.
- * - Grow vertically without any outcroppings.
- * - Grow uninterrupted (no gaps in between the plant).
- * - Must break all blocks above when a lower block is destroyed.
+ * Plantation module for plants that grow on a flat piece of land when bone-mealed.
+ * - Soil blocks must be the same so plants can grow on them.
+ * - The defined "block" on the module should be the primary plant harvested on this field.
  */
 public class BoneMealedFieldPlantModule extends PlantationModule
 {
@@ -59,7 +56,7 @@ public class BoneMealedFieldPlantModule extends PlantationModule
      * @param requiredResearchEffect the research effect required before this field type can be used.
      * @param percentChance          the chance in percentages for work to occur on this field.
      */
-    public BoneMealedFieldPlantModule(
+    protected BoneMealedFieldPlantModule(
       final String fieldTag,
       final String workTag,
       final Block block,
@@ -108,7 +105,7 @@ public class BoneMealedFieldPlantModule extends PlantationModule
                          // Check how many other positions still require to be harvested,
                          // if there's any left we keep harvesting
                          final long remainingPositions =
-                           field.getWorkingPositions().stream().map(BlockPos::above).filter(f -> worker.getLevel().getBlockState(f).getBlock() != Blocks.AIR).count();
+                           field.getWorkingPositions().stream().map(BlockPos::above).filter(f -> !worker.getLevel().getBlockState(f).isAir()).count();
 
                          if (remainingPositions > 0)
                          {
@@ -158,7 +155,7 @@ public class BoneMealedFieldPlantModule extends PlantationModule
         // If there is anything to harvest, return the first position where a non-air block is present.
         for (BlockPos position : field.getWorkingPositions())
         {
-            if (field.getColony().getWorld().getBlockState(position.above()).getBlock() != Blocks.AIR)
+            if (!field.getColony().getWorld().getBlockState(position.above()).isAir())
             {
                 return position;
             }
@@ -195,7 +192,7 @@ public class BoneMealedFieldPlantModule extends PlantationModule
      */
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos workPosition)
     {
-        if (field.getColony().getWorld().getBlockState(workPosition.above()).getBlock() != Blocks.AIR)
+        if (!field.getColony().getWorld().getBlockState(workPosition.above()).isAir())
         {
             return PlanterAIModuleState.HARVESTING;
         }

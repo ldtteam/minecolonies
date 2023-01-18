@@ -121,8 +121,8 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 PlantationModule module = PlantationModuleRegistry.getPlantationModule(tileEntityPlantationField.getPlantationFieldType());
                 if (module != null)
                 {
-                    List<BlockPos> workingPositions = tileEntityPlantationField.getWorkingPositions().stream().limit(module.getMaxPlants()).toList();
-                    PlantationField field = new PlantationField(colony, pos, tileEntityPlantationField.getPlantationFieldType(), module.getItem(), workingPositions);
+                    final List<BlockPos> validWorkingPositions = module.getValidWorkingPositions(worldIn, tileEntityPlantationField.getWorkingPositions());
+                    PlantationField field = new PlantationField(colony, pos, tileEntityPlantationField.getPlantationFieldType(), module.getItem(), validWorkingPositions);
                     colony.getBuildingManager().addField(FieldStructureType.PLANTATION_FIELDS, pos, field);
                 }
             }

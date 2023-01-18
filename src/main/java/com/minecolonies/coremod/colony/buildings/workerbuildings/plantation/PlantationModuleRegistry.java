@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.BoneMealedFieldPlantModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.VerticalUpwardsGrowingPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedFieldPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific.KelpPlantModule;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
-import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
+import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
  * Registry class for all different plantation module types.
@@ -50,15 +50,25 @@ public class PlantationModuleRegistry
         if (plantationModules.isEmpty())
         {
             plantationModules.put(PlantationFieldType.SUGAR_CANE,
-              new VerticalUpwardsGrowingPlantModule.Builder("sugar_field", "sugar", Blocks.SUGAR_CANE)
+              new UpwardsGrowingPlantModule.Builder("sugar_field", "sugar", Blocks.SUGAR_CANE)
                 .build());
             plantationModules.put(PlantationFieldType.CACTUS,
-              new VerticalUpwardsGrowingPlantModule.Builder("cactus_field", "cactus", Blocks.CACTUS)
+              new UpwardsGrowingPlantModule.Builder("cactus_field", "cactus", Blocks.CACTUS)
                 .build());
             plantationModules.put(PlantationFieldType.BAMBOO,
-              new VerticalUpwardsGrowingPlantModule.Builder("bamboo_field", "bamboo", Blocks.BAMBOO)
+              new UpwardsGrowingPlantModule.Builder("bamboo_field", "bamboo", Blocks.BAMBOO)
                 .withMinimumPlantLength(6)
                 .withRequiredResearchEffect(PLANTATION_JUNGLE)
+                .build());
+            plantationModules.put(PlantationFieldType.KELP,
+              new KelpPlantModule.Builder("kelp_field", "kelp", Blocks.KELP)
+                .withRequiredResearchEffect(PLANTATION_SEA)
+                .build());
+            plantationModules.put(PlantationFieldType.TWISTING_VINES,
+              new UpwardsGrowingPlantModule.Builder("twistv_field", "vine", Blocks.TWISTING_VINES)
+                .withMinimumPlantLength(2)
+                .withMaximumPlantLength(25)
+                .withRequiredResearchEffect(PLANTATION_NETHER)
                 .build());
             plantationModules.put(PlantationFieldType.CRIMSON_FUNGUS,
               new BoneMealedFieldPlantModule.Builder("crimsonp_field", "plant", Blocks.CRIMSON_FUNGUS)
