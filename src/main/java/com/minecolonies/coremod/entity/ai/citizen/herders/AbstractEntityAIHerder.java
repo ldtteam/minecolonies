@@ -364,6 +364,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
 
         breedTwoAnimals(animalOne, animalTwo);
         worker.decreaseSaturationForContinuousAction();
+        worker.getCitizenItemHandler().removeHeldItem();
         return DECIDE;
     }
 
@@ -402,6 +403,7 @@ public abstract class AbstractEntityAIHerder<J extends AbstractJob<?, J>, B exte
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), getBreedingItem());
             worker.getCitizenExperienceHandler().addExperience(XP_PER_ACTION);
             animalOne.playSound(SoundEvents.GENERIC_EAT, 1.0F, 1.0F);
+            worker.getCitizenItemHandler().removeHeldItem();
             return DECIDE;
         }
 
