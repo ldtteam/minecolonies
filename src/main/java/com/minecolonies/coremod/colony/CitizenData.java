@@ -453,12 +453,19 @@ public class CitizenData implements ICitizenData
         // Safety check that ensure the citizen its job matches the work building job
         if (getJob() != null && workBuilding != null)
         {
-            try
+            boolean hasCorrectJob = false;
+            for (WorkerBuildingModule module : workBuilding.getModules(WorkerBuildingModule.class))
+            {
+                if (module.getJobEntry().equals(getJob().getJobRegistryEntry()))
+                {
+                    hasCorrectJob = true;
+                    break;
+                }
+            }
+
+            if (!hasCorrectJob)
             {
                 workBuilding.getModuleMatching(WorkerBuildingModule.class, m -> m.getJobEntry().equals(getJob().getJobRegistryEntry()));
-            }
-            catch (Exception ex)
-            {
                 MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony);
                 Log.getLogger().log(Level.ERROR, String.format("Worker %s has been unassigned from his job, a problem was found during load. Worker job: %s; Building: %s",
                   citizen.getName().getString(),
