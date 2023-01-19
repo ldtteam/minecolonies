@@ -465,7 +465,7 @@ public class CitizenData implements ICitizenData
 
             if (!hasCorrectJob)
             {
-                MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony);
+                MessageUtils.format(DEBUG_WARNING_CITIZEN_LOAD_FAILURE, citizen.getName()).sendTo(colony).forAllPlayers();
                 Log.getLogger().log(Level.ERROR, String.format("Worker %s has been unassigned from his job, a problem was found during load. Worker job: %s; Building: %s",
                   citizen.getName().getString(),
                   getJob().getJobRegistryEntry().getKey().toString(),
