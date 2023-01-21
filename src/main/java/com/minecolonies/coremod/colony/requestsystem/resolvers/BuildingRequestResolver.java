@@ -85,7 +85,7 @@ public class BuildingRequestResolver extends AbstractBuildingDependentRequestRes
             return !requestParent.getRequestOfType(IDeliverable.class).map(d -> d.matches(itemStack)).orElse(false);
         };
 
-        return InventoryUtils.hasBuildingEnoughElseCount(building, pred, 1) > 0;
+        return InventoryUtils.hasBuildingEnoughElseCount(building, pred, request.getRequest().getMinimumCount()) >= request.getRequest().getMinimumCount();
     }
 
     @Nullable
