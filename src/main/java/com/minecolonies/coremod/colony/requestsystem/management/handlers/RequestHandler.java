@@ -17,6 +17,7 @@ import com.minecolonies.api.util.Log;
 import com.minecolonies.coremod.colony.requestsystem.management.IStandardRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedBlacklistAssignmentRequestManager;
 import com.minecolonies.coremod.colony.requestsystem.management.manager.wrapped.WrappedStaticStateRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.resolvers.StandardRetryingRequestResolver;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -156,6 +157,11 @@ public class RequestHandler implements IRequestHandler
                 continue;
             }
 
+            if (previousResolver != null && !previousResolver.getClass().equals(resolver.getClass()))
+            {
+                break;
+            }
+
             //Skip if preliminary check fails
             if (!resolver.canResolveRequest(manager, request))
             {
@@ -171,10 +177,8 @@ public class RequestHandler implements IRequestHandler
                     previousResolver = resolver;
                     previousMetric = resolver.getSuitabilityMetric(request);
                 }
-                continue;
             }
-
-            if (previousResolver.getClass().equals(resolver.getClass()))
+            else
             {
                 final int currentResolverMetric = resolver.getSuitabilityMetric(request);
                 if (currentResolverMetric < previousMetric)
@@ -187,10 +191,6 @@ public class RequestHandler implements IRequestHandler
                         attemptResult = tempAttemptResolveRequest;
                     }
                 }
-            }
-            else
-            {
-                break;
             }
         }
 
