@@ -2,7 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.farmer;
 
 import com.google.common.reflect.TypeToken;
 import com.minecolonies.api.advancements.AdvancementTriggers;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.colony.requestsystem.requestable.StackList;
 import com.minecolonies.api.compatibility.Compatibility;
@@ -20,7 +20,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.api.util.constant.translation.RequestSystemTranslationConstants;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.blocks.BlockScarecrow;
-import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import com.minecolonies.coremod.colony.interactionhandling.PosBasedInteraction;
@@ -186,7 +186,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         }
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        final FieldModule module = building.getFirstModuleOccurance(FieldModule.class);
+        final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         module.claimFields();
 
         if (module.getFields().size() == building.getMaxBuildingLevel())
@@ -454,7 +454,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
      */
     private IAIState workAtField()
     {
-        final FieldModule module = building.getFirstModuleOccurance(FieldModule.class);
+        final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         if (checkForToolOrWeapon(ToolType.HOE) || module.getCurrentField() == null)
         {
             return PREPARING;

@@ -11,10 +11,10 @@ import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
 import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
@@ -51,10 +51,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
 import static com.minecolonies.api.util.MathUtils.RANDOM;
@@ -80,9 +79,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     private final Colony colony;
 
     /**
-     * Map of field providers of the colony.
+     * List of fields of the colony.
      */
-    private final Map<FieldStructureType, Map<BlockPos, IField>> fields;
+    private final List<IField> fields;
 
     /**
      * List of building in the colony.
@@ -127,47 +126,40 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
-        this.fields = Arrays.stream(FieldStructureType.values()).collect(Collectors.toMap(k -> k, v -> new ConcurrentHashMap<>()));
+        this.fields = new Vector<>();
     }
 
     @Override
-    public @NotNull Collection<IField> getFields(FieldStructureType type)
+    public @NotNull <T extends IField> Collection<T> getFields(Class<T> fieldType)
     {
-        return fields.get(type).values().stream().toList();
+        return getFieldsStream(fieldType).toList();
     }
 
     @Override
-    public @Nullable IField getField(final FieldStructureType type, final BlockPos pos)
+    public @Nullable <T extends IField> T getField(Class<T> fieldType, BlockPos pos)
     {
-        return fields.get(type).get(pos);
+        return getFieldsStream(fieldType).filter(f -> f.getPosition().equals(pos)).findFirst().orElse(null);
     }
 
     @Override
-    public IField getFreeField(FieldStructureType type)
+    public <T extends IField> T getFreeField(Class<T> fieldType)
     {
-        for (IField field : fields.get(type).values())
-        {
-            if (!field.isTaken())
-            {
-                return field;
-            }
-        }
-        return null;
+        return getFieldsStream(fieldType).filter(field -> !field.isTaken()).findFirst().orElse(null);
     }
 
     @Override
-    public void addField(FieldStructureType type, BlockPos position, IField field)
+    public void addField(IField field)
     {
-        fields.get(type).put(position, field);
+        fields.add(field);
         isFieldsDirty = true;
         isBuildingsDirty = true;
         colony.markDirty();
     }
 
     @Override
-    public void updateField(FieldStructureType type, BlockPos position, Consumer<IField> modifyFunction)
+    public <T extends IField> void updateField(Class<T> fieldType, BlockPos position, Consumer<T> modifyFunction)
     {
-        IField field = fields.get(type).get(position);
+        T field = getField(fieldType, position);
         if (field != null)
         {
             modifyFunction.accept(field);
@@ -177,15 +169,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public void removeField(FieldStructureType type, BlockPos position)
+    public <T extends IField> void removeField(Class<T> fieldType, BlockPos position)
     {
-        Map<BlockPos, IField> typeFields = fields.get(type);
-        if (typeFields.containsKey(position))
-        {
-            typeFields.remove(position);
-            isFieldsDirty = true;
-            colony.markDirty();
-        }
+        fields.removeIf(f -> f.getPosition().equals(position) && fieldType.isInstance(f));
     }
 
     @Override
@@ -198,22 +184,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         minChunkZ = colony.getCenter().getZ() >> 4;
 
         // Fields
-        final CompoundTag fieldsCompound = compound.getCompound(TAG_FIELDS);
-        fieldsCompound.getAllKeys().forEach(key -> {
-            FieldStructureType type = FieldStructureType.valueOf(key);
-            Map<BlockPos, IField> fieldMap = new HashMap<>();
-
-            final ListTag fieldList = fieldsCompound.getList(key, Tag.TAG_COMPOUND);
-            for (int i = 0; i < fieldList.size(); ++i)
-            {
-                final CompoundTag fieldCompound = fieldList.getCompound(i);
-                IField field = FieldRegistry.getFieldClassForType(type, colony);
-                field.deserializeNBT(fieldCompound);
-                fieldMap.put(field.getPosition(), field);
-            }
-
-            fields.put(type, fieldMap);
-        });
+        final ListTag fieldsTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
+        for (int i = 0; i < fieldsTagList.size(); ++i)
+        {
+            final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
+            IField fieldInstance = FieldRegistry.getFieldClassForType(FieldStructureType.valueOf(fieldCompound.getString(TAG_TYPE)), colony);
+            fieldInstance.deserializeNBT(fieldCompound.getCompound(TAG_FIELD));
+            fields.add(fieldInstance);
+        }
 
         //  Buildings
         final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
@@ -258,14 +236,14 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         compound.put(TAG_BUILDINGS, buildingTagList);
 
         // Fields
-        final CompoundTag fieldsCompound = new CompoundTag();
-        fields.forEach((type, fieldMap) -> {
-            ListTag fieldsTag = fieldMap.values().stream()
-                                  .map(IField::serializeNBT)
-                                  .collect(NBTUtils.toListNBT());
-            fieldsCompound.put(type.toString(), fieldsTag);
-        });
-        compound.put(TAG_FIELDS, fieldsCompound);
+        compound.put(TAG_FIELDS, fields.stream()
+                                   .map(field -> {
+                                       final CompoundTag fieldCompound = new CompoundTag();
+                                       fieldCompound.put(TAG_FIELD, field.serializeNBT());
+                                       fieldCompound.putString(TAG_TYPE, field.getType().toString());
+                                       return fieldCompound;
+                                   })
+                                   .collect(NBTUtils.toListNBT()));
 
         // Leisure sites
         final ListTag leisureTagList = new ListTag();
@@ -327,27 +305,24 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         }
 
 
-        for (final Map.Entry<FieldStructureType, Map<BlockPos, IField>> entry : fields.entrySet())
+        for (final IField field : fields)
         {
-            for (IField field : entry.getValue().values())
+            if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()))
             {
-                if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()))
+                if (!colony.isCoordInColony(colony.getWorld(), field.getPosition()))
                 {
-                    if (!colony.isCoordInColony(colony.getWorld(), field.getPosition()))
-                    {
-                        removeField(field.getType(), field.getPosition());
-                    }
+                    removeField(field.getClass(), field.getPosition());
+                }
 
-                    Block blockAtPosition = colony.getWorld().getBlockState(field.getPosition()).getBlock();
-                    if (field.getType() == FieldStructureType.FARMER_FIELDS && !blockAtPosition.equals(ModBlocks.blockScarecrow))
-                    {
-                        removeField(field.getType(), field.getPosition());
-                    }
-                    if (field.getType() == FieldStructureType.PLANTATION_FIELDS && (!blockAtPosition.equals(ModBlocks.blockPlantationField)
-                                                                                           && !blockAtPosition.equals(ModBlocks.blockHutPlantation)))
-                    {
-                        removeField(field.getType(), field.getPosition());
-                    }
+                Block blockAtPosition = colony.getWorld().getBlockState(field.getPosition()).getBlock();
+                if (field.getType() == FieldStructureType.FARMER_FIELDS && !blockAtPosition.equals(ModBlocks.blockScarecrow))
+                {
+                    removeField(field.getClass(), field.getPosition());
+                }
+                if (field.getType() == FieldStructureType.PLANTATION_FIELDS && (!blockAtPosition.equals(ModBlocks.blockPlantationField)
+                                                                                  && !blockAtPosition.equals(ModBlocks.blockHutPlantation)))
+                {
+                    removeField(field.getClass(), field.getPosition());
                 }
             }
         }
@@ -902,12 +877,9 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 players.addAll(closeSubscribers);
             }
             players.addAll(newSubscribers);
-            for (final Map.Entry<FieldStructureType, Map<BlockPos, IField>> entry : fields.entrySet())
+            for (final IField field : fields)
             {
-                for (final IField field : entry.getValue().values())
-                {
-                    players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(field, entry.getKey()), player));
-                }
+                players.forEach(player -> Network.getNetwork().sendToPlayer(new ColonyViewFieldViewMessage(field), player));
             }
         }
     }
@@ -967,6 +939,12 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             minChunkZ = chunkZ - 1;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends IField> Stream<T> getFieldsStream(Class<T> fieldType)
+    {
+        return fields.stream().map(field -> fieldType.isInstance(field) ? (T) field : null).filter(Objects::nonNull);
     }
 
     /**

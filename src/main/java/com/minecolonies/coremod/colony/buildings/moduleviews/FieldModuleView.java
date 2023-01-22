@@ -3,10 +3,10 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.FieldsModuleWindow;
-import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldRegistry;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
@@ -202,7 +202,7 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
      */
     public boolean canAddField(IFieldView field)
     {
-        return FieldModule.checkFieldConditions(amountOfOwnedFields, workedPlants.size(), maxFieldCount, maxConcurrentPlants);
+        return FieldsModule.checkFieldConditions(amountOfOwnedFields, workedPlants.size(), maxFieldCount, maxConcurrentPlants);
     }
 
     /**
@@ -235,11 +235,11 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
     @Nullable
     public BaseComponent getFieldWarningTooltip(IFieldView field)
     {
-        if (!FieldModule.checkFieldCount(amountOfOwnedFields, maxFieldCount))
+        if (!FieldsModule.checkFieldCount(amountOfOwnedFields, maxFieldCount))
         {
             return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
-        else if (!FieldModule.checkPlantCount(workedPlants.size(), maxConcurrentPlants))
+        else if (!FieldsModule.checkPlantCount(workedPlants.size(), maxConcurrentPlants))
         {
             return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
         }

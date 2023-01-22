@@ -3,7 +3,7 @@ package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.network.messages.server.AbstractBuildingServerMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -60,11 +60,11 @@ public class AssignFieldMessage extends AbstractBuildingServerMessage<IBuilding>
     {
         if (assign)
         {
-            building.getFirstOptionalModuleOccurance(FieldModule.class).ifPresent(m -> m.assignField(field));
+            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.assignField(field));
         }
         else
         {
-            building.getFirstOptionalModuleOccurance(FieldModule.class).ifPresent(m -> m.freeField(field));
+            building.getFirstOptionalModuleOccurance(FieldsModule.class).ifPresent(m -> m.freeField(field));
         }
     }
 }

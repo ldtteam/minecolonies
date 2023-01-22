@@ -4,7 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;

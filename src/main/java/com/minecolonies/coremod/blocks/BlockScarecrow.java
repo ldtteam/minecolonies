@@ -3,7 +3,6 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
@@ -81,7 +80,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final TileEntityScarecrow scareCrow = (TileEntityScarecrow) worldIn.getBlockEntity(pos);
             if (scareCrow != null)
             {
-                colony.getBuildingManager().addField(FieldStructureType.FARMER_FIELDS, pos, new FarmField(colony, pos));
+                colony.getBuildingManager().addField(new FarmField(colony, pos));
             }
         }
     }
@@ -220,7 +219,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().removeField(FieldStructureType.FARMER_FIELDS, pos);
+                colony.getBuildingManager().removeField(FarmField.class, pos);
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

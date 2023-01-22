@@ -3,7 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import net.minecraft.core.BlockPos;

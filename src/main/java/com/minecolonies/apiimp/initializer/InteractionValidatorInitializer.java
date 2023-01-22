@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.colony.interactionhandling.InteractionValidatorRegistry;
 import com.minecolonies.api.colony.requestsystem.request.RequestUtils;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -15,6 +13,7 @@ import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.*;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.*;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import com.minecolonies.coremod.util.WorkerUtil;
@@ -105,7 +104,7 @@ public class InteractionValidatorInitializer
           });
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(NO_FREE_FIELDS),
-          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).getFirstModuleOccurance(FieldModule.class).hasNoFields());
+          citizen -> citizen.getWorkBuilding() instanceof BuildingFarmer && ((BuildingFarmer) citizen.getWorkBuilding()).getFirstModuleOccurance(FieldsModule.class).hasNoFields());
 
         InteractionValidatorRegistry.registerStandardPredicate(new TranslatableComponent(INVALID_MINESHAFT),
           citizen -> citizen.getWorkBuilding() instanceof BuildingMiner && citizen.getJob() instanceof JobMiner && (
@@ -122,7 +121,7 @@ public class InteractionValidatorInitializer
                       final Level world = colony.getWorld();
                       if (world != null)
                       {
-                          IField field = colony.getBuildingManager().getField(FieldStructureType.FARMER_FIELDS, pos);
+                          FarmField field = colony.getBuildingManager().getField(FarmField.class, pos);
                           if (field != null)
                           {
                               return field.getPlant() == null;

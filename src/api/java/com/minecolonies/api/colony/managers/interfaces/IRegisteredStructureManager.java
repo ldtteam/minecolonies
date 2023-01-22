@@ -3,10 +3,9 @@ package com.minecolonies.api.colony.managers.interfaces;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.IMysticalSite;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import net.minecraft.core.BlockPos;
@@ -35,54 +34,51 @@ public interface IRegisteredStructureManager
     /**
      * Get all the fields
      *
-     * @param type the field type.
+     * @param fieldType the field type.
      * @return an unmodifiable collection of all fields.
      */
-    @NotNull Collection<IField> getFields(FieldStructureType type);
+    @NotNull <T extends IField> Collection<T> getFields(Class<T> fieldType);
 
     /**
      * Get a specific field on the given location.
      *
-     * @param type the field type.
-     * @param pos  the position the field is supposed to be in.
+     * @param fieldType the field type.
+     * @param pos       the position the field is supposed to be in.
      * @return the field, if any.
      */
-    @Nullable
-    IField getField(FieldStructureType type, BlockPos pos);
+    @Nullable <T extends IField> T getField(Class<T> fieldType, BlockPos pos);
 
     /**
      * Gets any free field in the colony, if any, and return it.
      *
-     * @param type the field type.
+     * @param fieldType the field type.
      * @return the free field, if any.
      */
-    @Nullable IField getFreeField(FieldStructureType type);
+    @Nullable <T extends IField> T getFreeField(Class<T> fieldType);
 
     /**
      * Add a new field to the building manager.
      *
-     * @param type     the field type.
-     * @param position the unique position of the field.
      * @param field    the new field to add.
      */
-    void addField(FieldStructureType type, BlockPos position, IField field);
+    void addField(IField field);
 
     /**
      * Update a field, given its type and position, using a consumer function.
      *
-     * @param type           the field type.
+     * @param fieldType      the field type.
      * @param position       the unique position of the field.
      * @param modifyFunction the function to execute in which the field can be modified.
      */
-    void updateField(FieldStructureType type, BlockPos position, Consumer<IField> modifyFunction);
+    <T extends IField> void updateField(Class<T> fieldType, BlockPos position, Consumer<T> modifyFunction);
 
     /**
      * Remove a field from the field collection.
      *
-     * @param type     the field type.
-     * @param position the unique position of the field.
+     * @param fieldType the field type.
+     * @param position  the unique position of the field.
      */
-    void removeField(FieldStructureType type, BlockPos position);
+    <T extends IField> void removeField(Class<T> fieldType, BlockPos position);
 
     /**
      * Read the buildings from NBT.

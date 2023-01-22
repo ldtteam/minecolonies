@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 
 import java.util.EnumMap;
 import java.util.Map;

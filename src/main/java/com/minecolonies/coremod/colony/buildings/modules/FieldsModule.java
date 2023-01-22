@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * Abstract class to list all fields (assigned) to a building.
  */
-public abstract class FieldModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, IBuildingModule
+public abstract class FieldsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, IBuildingModule
 {
     /**
      * NBTTag to store the fields.
@@ -31,7 +31,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
     /**
      * NBTTag to store the field BlockPos.
      */
-    private static final String TAG_FIELDS_BLOCKPOS = "fieldsPos";
+    private static final String TAG_POSITION = "fieldsPos";
 
     /**
      * NBT tag to store assign manually.
@@ -82,7 +82,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
         for (int i = 0; i < fieldTagList.size(); ++i)
         {
             final CompoundTag fieldCompound = fieldTagList.getCompound(i);
-            final BlockPos fieldLocation = BlockPosUtil.read(fieldCompound, TAG_FIELDS_BLOCKPOS);
+            final BlockPos fieldLocation = BlockPosUtil.read(fieldCompound, TAG_POSITION);
             getFieldFromPosition(fieldLocation).ifPresent(fields::add);
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
@@ -119,7 +119,7 @@ public abstract class FieldModule extends AbstractBuildingModule implements IPer
         for (final IField field : fields)
         {
             final CompoundTag fieldCompound = new CompoundTag();
-            BlockPosUtil.write(fieldCompound, TAG_FIELDS_BLOCKPOS, field.getPosition());
+            BlockPosUtil.write(fieldCompound, TAG_POSITION, field.getPosition());
             fieldTagList.add(fieldCompound);
         }
         compound.put(TAG_FIELDS, fieldTagList);

@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
@@ -59,12 +59,12 @@ public class ColonyViewFieldViewMessage implements IMessage
      *
      * @param field field to add or update a view.
      */
-    public ColonyViewFieldViewMessage(@NotNull final IField field, final FieldStructureType type)
+    public ColonyViewFieldViewMessage(@NotNull final IField field)
     {
         super();
         this.colonyId = field.getColony().getID();
         this.position = field.getPosition();
-        this.type = type;
+        this.type = field.getType();
         this.dimension = field.getColony().getDimension();
         this.fieldData = new FriendlyByteBuf(Unpooled.buffer());
         field.serializeToView(fieldData);

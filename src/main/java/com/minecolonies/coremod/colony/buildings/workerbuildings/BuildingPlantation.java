@@ -2,8 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -12,7 +11,7 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
@@ -78,12 +77,12 @@ public class BuildingPlantation extends AbstractBuilding
     /**
      * Field module implementation for the plantation.
      */
-    public static class PlantationFieldModule extends FieldModule
+    public static class PlantationFieldsModule extends FieldsModule
     {
         @Override
         protected Collection<IField> getFields(final IColony colony)
         {
-            return colony.getBuildingManager().getFields(FieldStructureType.PLANTATION_FIELDS);
+            return colony.getBuildingManager().getFields(PlantationField.class).stream().map(IField.class::cast).toList();
         }
 
         @Override
@@ -110,7 +109,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         protected @Nullable IField getFreeField(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeField(FieldStructureType.PLANTATION_FIELDS);
+            return colony.getBuildingManager().getFreeField(PlantationField.class);
         }
 
         @Override

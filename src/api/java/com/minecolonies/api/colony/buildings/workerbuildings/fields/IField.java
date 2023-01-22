@@ -1,4 +1,4 @@
-package com.minecolonies.api.colony.buildings.workerbuildings;
+package com.minecolonies.api.colony.buildings.workerbuildings.fields;
 
 import com.minecolonies.api.colony.IColony;
 import net.minecraft.core.BlockPos;

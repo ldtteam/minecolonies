@@ -4,7 +4,6 @@ import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
@@ -123,7 +122,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
                 {
                     final List<BlockPos> validWorkingPositions = module.getValidWorkingPositions(worldIn, tileEntityPlantationField.getWorkingPositions());
                     PlantationField field = new PlantationField(colony, pos, tileEntityPlantationField.getPlantationFieldType(), module.getItem(), validWorkingPositions);
-                    colony.getBuildingManager().addField(FieldStructureType.PLANTATION_FIELDS, pos, field);
+                    colony.getBuildingManager().addField(field);
                 }
             }
         }
@@ -155,7 +154,7 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().removeField(FieldStructureType.PLANTATION_FIELDS, pos);
+                colony.getBuildingManager().removeField(PlantationField.class, pos);
             }
         }
     }

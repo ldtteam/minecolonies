@@ -2,8 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -12,7 +11,7 @@ import com.minecolonies.api.util.OptionalPredicate;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
-import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
 import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
@@ -79,21 +78,19 @@ public class BuildingFarmer extends AbstractBuilding
      * Override this method if you want to keep an amount of items in inventory. When the inventory is full, everything get's dumped into the building chest. But you can use this
      * method to hold some stacks back.
      *
-     * @return a list of objects which should be kept.
+     * @return a map of objects which should be kept.
      */
     @Override
     public Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> getRequiredItemsAndAmount()
     {
         final Map<Predicate<ItemStack>, Tuple<Integer, Boolean>> toKeep = new HashMap<>(super.getRequiredItemsAndAmount());
-        for (FieldModule module : getModules(FieldModule.class))
+
+        for (final IField field : getFieldModule().getFields())
         {
-            for (final IField field : module.getFields())
+            if (field.getPlant() != null)
             {
-                if (field instanceof FarmField farmField && farmField.getPlant() != null)
-                {
-                    final ItemStack seedStack = new ItemStack(farmField.getPlant());
-                    toKeep.put(seedStack::sameItem, new Tuple<>(64, true));
-                }
+                final ItemStack seedStack = new ItemStack(field.getPlant());
+                toKeep.put(seedStack::sameItem, new Tuple<>(64, true));
             }
         }
         return toKeep;
@@ -102,15 +99,11 @@ public class BuildingFarmer extends AbstractBuilding
     @Override
     public boolean canEat(final ItemStack stack)
     {
-        for (FieldModule module : getModules(FieldModule.class))
+        for (IField field : getFieldModule().getFields())
         {
-            for (final IField field : module.getFields())
+            if (field.getPlant() != null && ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(field.getPlant()), stack))
             {
-                if (field instanceof FarmField farmField && farmField.getPlant() != null &&
-                      ItemStackUtils.compareItemStacksIgnoreStackSize(new ItemStack(farmField.getPlant()), stack))
-                {
-                    return false;
-                }
+                return false;
             }
         }
 
@@ -125,6 +118,11 @@ public class BuildingFarmer extends AbstractBuilding
     public int getMaxBuildingLevel()
     {
         return MAX_BUILDING_LEVEL;
+    }
+
+    private FieldsModule getFieldModule()
+    {
+        return getFirstModuleOccurance(FieldsModule.class);
     }
 
     @NotNull
@@ -145,8 +143,14 @@ public class BuildingFarmer extends AbstractBuilding
     /**
      * Field module implementation for the farmer.
      */
-    public static class FarmerFieldModule extends FieldModule
+    public static class FarmerFieldsModule extends FieldsModule
     {
+        @Override
+        protected Collection<IField> getFields(final IColony colony)
+        {
+            return colony.getBuildingManager().getFields(FarmField.class).stream().map(IField.class::cast).toList();
+        }
+
         @Override
         protected int getMaxFieldCount()
         {
@@ -160,15 +164,9 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
-        protected Collection<IField> getFields(final IColony colony)
-        {
-            return colony.getBuildingManager().getFields(FieldStructureType.FARMER_FIELDS);
-        }
-
-        @Override
         protected @Nullable IField getFreeField(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeField(FieldStructureType.FARMER_FIELDS);
+            return colony.getBuildingManager().getFreeField(FarmField.class);
         }
     }
 

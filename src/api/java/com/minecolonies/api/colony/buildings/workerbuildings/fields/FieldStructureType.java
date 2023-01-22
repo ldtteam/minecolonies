@@ -1,5 +1,4 @@
-package com.minecolonies.api.colony.buildings.workerbuildings;
-
+package com.minecolonies.api.colony.buildings.workerbuildings.fields;
 /**
  * Enum that defines all the possible field types that can appear in a colony.
  * Currently, this goes for farm field and plantation fields.

@@ -2,13 +2,13 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -74,7 +74,7 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
             IColony colony = getCurrentColony();
             if (colony instanceof Colony)
             {
-                getCurrentColony().getBuildingManager().updateField(FieldStructureType.FARMER_FIELDS, pos, field -> field.setPlant(plant));
+                getCurrentColony().getBuildingManager().updateField(FarmField.class, pos, field -> field.setPlant(plant));
             }
         });
     }

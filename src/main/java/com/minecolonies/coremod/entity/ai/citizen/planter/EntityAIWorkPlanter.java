@@ -1,14 +1,14 @@
 package com.minecolonies.coremod.entity.ai.citizen.planter;
 
 import com.ldtteam.structurize.util.BlockUtils;
-import com.minecolonies.api.colony.buildings.workerbuildings.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;
 import com.minecolonies.api.util.InventoryUtils;
 import com.minecolonies.api.util.constant.CitizenConstants;
-import com.minecolonies.coremod.colony.buildings.modules.FieldModule;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingPlantation;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
@@ -74,7 +74,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         }
         worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
-        FieldModule module = building.getFirstModuleOccurance(FieldModule.class);
+        FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         module.claimFields();
 
         if (module.hasNoFields())
@@ -153,8 +153,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             if (result.shouldResetCurrentField())
             {
                 // In certain scenarios the module may request to immediately release the current field, disregarding whether the next tick still has work or not.
-                FieldModule fieldModule = building.getFirstModuleOccurance(FieldModule.class);
-                fieldModule.resetCurrentField();
+                FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
+                fieldsModule.resetCurrentField();
                 currentWorkingPosition = null;
             }
             return result.getNextState();
@@ -168,8 +168,8 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     @Nullable
     private PlantationField getCurrentField()
     {
-        FieldModule fieldModule = building.getFirstModuleOccurance(FieldModule.class);
-        if (fieldModule.getCurrentField() instanceof PlantationField field)
+        FieldsModule fieldsModule = building.getFirstModuleOccurance(FieldsModule.class);
+        if (fieldsModule.getCurrentField() instanceof PlantationField field)
         {
             return field;
         }

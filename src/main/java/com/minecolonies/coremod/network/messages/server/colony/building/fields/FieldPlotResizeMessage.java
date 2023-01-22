@@ -2,7 +2,6 @@ package com.minecolonies.coremod.network.messages.server.colony.building.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
 import com.minecolonies.api.network.IMessage;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import net.minecraft.core.BlockPos;
@@ -72,13 +71,10 @@ public class FieldPlotResizeMessage implements IMessage
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(ctxIn.getSender().level, pos);
             if (colony != null)
             {
-                colony.getBuildingManager().updateField(FieldStructureType.FARMER_FIELDS, this.pos, field -> {
-                    if (field instanceof FarmField farmField)
-                    {
-                        farmField.setRadius(this.direction, this.size);
-                        BlockState state = colony.getWorld().getBlockState(this.pos);
-                        colony.getWorld().sendBlockUpdated(this.pos, state, state, 2);
-                    }
+                colony.getBuildingManager().updateField(FarmField.class, this.pos, field -> {
+                    field.setRadius(this.direction, this.size);
+                    BlockState state = colony.getWorld().getBlockState(this.pos);
+                    colony.getWorld().sendBlockUpdated(this.pos, state, state, 2);
                 });
             }
         }

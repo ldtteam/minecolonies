@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFieldView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
