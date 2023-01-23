@@ -1,16 +1,11 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation;
 
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedFieldPlantModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific.KelpPlantModule;
-import net.minecraft.world.level.block.Blocks;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
-
-import static com.minecolonies.api.research.util.ResearchConstants.*;
 
 /**
  * Registry class for all different plantation module types.
@@ -49,39 +44,21 @@ public class PlantationModuleRegistry
     {
         if (plantationModules.isEmpty())
         {
-            plantationModules.put(PlantationFieldType.SUGAR_CANE,
-              new UpwardsGrowingPlantModule.Builder("sugar_field", "sugar", Blocks.SUGAR_CANE)
-                .build());
-            plantationModules.put(PlantationFieldType.CACTUS,
-              new UpwardsGrowingPlantModule.Builder("cactus_field", "cactus", Blocks.CACTUS)
-                .build());
-            plantationModules.put(PlantationFieldType.BAMBOO,
-              new UpwardsGrowingPlantModule.Builder("bamboo_field", "bamboo", Blocks.BAMBOO)
-                .withMinimumPlantLength(6)
-                .withRequiredResearchEffect(PLANTATION_JUNGLE)
-                .build());
-            plantationModules.put(PlantationFieldType.KELP,
-              new KelpPlantModule.Builder("kelp_field", "kelp", Blocks.KELP)
-                .withRequiredResearchEffect(PLANTATION_SEA)
-                .build());
-            plantationModules.put(PlantationFieldType.TWISTING_VINES,
-              new UpwardsGrowingPlantModule.Builder("twistv_field", "vine", Blocks.TWISTING_VINES)
-                .withMinimumPlantLength(2)
-                .withMaximumPlantLength(25)
-                .withRequiredResearchEffect(PLANTATION_NETHER)
-                .build());
-            plantationModules.put(PlantationFieldType.CRIMSON_FUNGUS,
-              new BoneMealedFieldPlantModule.Builder("crimsonp_field", "plant", Blocks.CRIMSON_FUNGUS)
-                .withPercentageChance(5)
-                .withRequiredResearchEffect(PLANTATION_NETHER)
-                .withMaxPlants(50)
-                .build());
-            plantationModules.put(PlantationFieldType.WARPED_FUNGUS,
-              new BoneMealedFieldPlantModule.Builder("warpedp_field", "plant", Blocks.WARPED_FUNGUS)
-                .withPercentageChance(5)
-                .withRequiredResearchEffect(PLANTATION_NETHER)
-                .withMaxPlants(50)
-                .build());
+            // Defaults plants
+            plantationModules.put(PlantationFieldType.SUGAR_CANE, new SugarCanePlantModule());
+            plantationModules.put(PlantationFieldType.CACTUS, new CactusPlantModule());
+
+            // Jungle plants
+            plantationModules.put(PlantationFieldType.BAMBOO, new BambooPlantModule());
+            plantationModules.put(PlantationFieldType.COCOA_BEANS, new CocoaPlantModule());
+
+            // Sea plants
+            plantationModules.put(PlantationFieldType.KELP, new KelpPlantModule());
+
+            // Nether plants
+            plantationModules.put(PlantationFieldType.TWISTING_VINES, new TwistingVinesPlantModule());
+            plantationModules.put(PlantationFieldType.CRIMSON_FUNGUS, new CrimsonPlantsPlantModule());
+            plantationModules.put(PlantationFieldType.WARPED_FUNGUS, new WarpedPlantsPlantModule());
         }
     }
 

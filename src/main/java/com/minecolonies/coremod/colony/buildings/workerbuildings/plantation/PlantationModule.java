@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
 public abstract class PlantationModule
 {
     /**
+     * The default maximum amount of plants the field can have.
+     */
+    protected static final int DEFAULT_MAX_PLANTS = 20;
+
+    /**
      * The tag that the field anchor block contains in order to select which of these modules to use.
      */
     private final String fieldTag;
@@ -38,45 +43,20 @@ public abstract class PlantationModule
     private final Block block;
 
     /**
-     * The maximum amount of plants allowed on this module type.
-     */
-    private final int maxPlants;
-
-    /**
-     * The amount of plants to request when the planter has run out.
-     */
-    private final int plantsToRequest;
-
-    /**
-     * A research effect which has to be researched first before this module can be used.
-     */
-    @Nullable
-    private final ResourceLocation requiredResearchEffect;
-
-    /**
      * Default constructor.
      *
-     * @param fieldTag               the tag of the field anchor block.
-     * @param workTag                the tag of the working positions.
-     * @param block                  the block which is harvested.
-     * @param maxPlants              the maximum allowed plants.
-     * @param plantsToRequest        the amount of plants to request when the planter has none left.
-     * @param requiredResearchEffect the research effect required before this field type can be used.
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param block    the block which is harvested.
      */
     protected PlantationModule(
       final String fieldTag,
       final String workTag,
-      final Block block,
-      final int maxPlants,
-      final int plantsToRequest,
-      final @Nullable ResourceLocation requiredResearchEffect)
+      final Block block)
     {
         this.fieldTag = fieldTag;
         this.workTag = workTag;
         this.block = block;
-        this.maxPlants = maxPlants;
-        this.plantsToRequest = plantsToRequest;
-        this.requiredResearchEffect = requiredResearchEffect;
     }
 
     /**
@@ -121,23 +101,14 @@ public abstract class PlantationModule
     }
 
     /**
-     * Get the maximum amount of plants this module is allowed to handle.
-     *
-     * @return the maximum amount of plants.
-     */
-    public final int getMaxPlants()
-    {
-        return maxPlants;
-    }
-
-    /**
      * Get the amount of plants to request when the planter no longer has any left.
+     * Defaults to quarter stack size of the block.
      *
      * @return the amount of plants to request.
      */
-    public final int getPlantsToRequest()
+    public int getPlantsToRequest()
     {
-        return plantsToRequest;
+        return (int) Math.ceil(new ItemStack(block.asItem()).getMaxStackSize() / 4d);
     }
 
     /**
@@ -145,9 +116,9 @@ public abstract class PlantationModule
      *
      * @return the key of where to find the effect.
      */
-    public final ResourceLocation getRequiredResearchEffect()
+    public ResourceLocation getRequiredResearchEffect()
     {
-        return requiredResearchEffect;
+        return null;
     }
 
     /**
@@ -228,7 +199,18 @@ public abstract class PlantationModule
      */
     public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
     {
-        return workingPositions.stream().distinct().limit(maxPlants).collect(Collectors.toList());
+        return workingPositions.stream().distinct().limit(getMaxPlants()).collect(Collectors.toList());
+    }
+
+    /**
+     * Get the maximum amount of plants this module is allowed to handle.
+     * Defaults to {@link PlantationModule#DEFAULT_MAX_PLANTS}.
+     *
+     * @return the maximum amount of plants.
+     */
+    public int getMaxPlants()
+    {
+        return DEFAULT_MAX_PLANTS;
     }
 
     /**
@@ -295,114 +277,6 @@ public abstract class PlantationModule
          * The planter has fully mined the block.
          */
         MINED
-    }
-
-    /**
-     * Builder class for the plantation modules.
-     *
-     * @param <T>
-     */
-    public abstract static class Builder<T extends Builder<T>>
-    {
-        /**
-         * The tag that the field anchor block contains in order to select which of these modules to use.
-         */
-        protected final String fieldTag;
-
-        /**
-         * The tag that the individual working positions must contain.
-         */
-        protected final String workTag;
-
-        /**
-         * The block which is harvested in this module.
-         */
-        protected final Block block;
-
-        /**
-         * The maximum amount of plants allowed on this module type.
-         * Defaults to 20.
-         */
-        protected int maxPlants;
-
-        /**
-         * The amount of plants to request when the planter has run out.
-         * Defaults to quarter of the stack size of the {@link Builder#block}.
-         */
-        protected int plantsToRequest;
-
-        /**
-         * A research effect which has to be researched first before this module can be used.
-         */
-        @Nullable
-        protected ResourceLocation requiredResearchEffect;
-
-        /**
-         * Default constructor.
-         *
-         * @param fieldTag the tag of the field anchor block.
-         * @param workTag  the tag of the working positions.
-         * @param block    the block which is harvested.
-         */
-        protected Builder(String fieldTag, String workTag, Block block)
-        {
-            this.fieldTag = fieldTag;
-            this.workTag = workTag;
-            this.block = block;
-            this.plantsToRequest = (int) Math.ceil(new ItemStack(block.asItem()).getMaxStackSize() / 4d);
-            this.maxPlants = 20;
-        }
-
-        /**
-         * Create the plantation module instance.
-         *
-         * @return the plantation module instance.
-         */
-        public abstract PlantationModule build();
-
-        /**
-         * Sets a required research effect that needs to be met before this field can be used.
-         *
-         * @param requiredResearchEffect the resource location to the research effect.
-         * @return the builder instance.
-         */
-        public T withRequiredResearchEffect(ResourceLocation requiredResearchEffect)
-        {
-            this.requiredResearchEffect = requiredResearchEffect;
-            return self();
-        }
-
-        @SuppressWarnings("unchecked")
-        private T self()
-        {
-            return (T) this;
-        }
-
-        /**
-         * Sets the amount of plants to request whenever the planter runs out of the block.
-         * Defaults to quarter of the stack size of the {@link Builder#block}.
-         *
-         * @param plantsToRequest the amount of plants to request.
-         * @return the builder instance.
-         */
-        public T withPlantsToRequest(int plantsToRequest)
-        {
-            this.plantsToRequest = plantsToRequest;
-            return self();
-        }
-
-        /**
-         * Sets the maximum amount of allowed plants on this field.
-         * Defaults to 20.
-         *
-         * @param maxPlants the maximum amount of plants.
-         * @return the builder instance.
-         */
-        public T withMaxPlants(int maxPlants)
-        {
-            this.maxPlants = maxPlants;
-            return self();
-        }
     }
 
     /**

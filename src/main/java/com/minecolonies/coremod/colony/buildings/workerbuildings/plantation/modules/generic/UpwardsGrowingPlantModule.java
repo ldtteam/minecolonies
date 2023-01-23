@@ -5,12 +5,12 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.Plantati
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -21,12 +21,12 @@ import java.util.Random;
  * - Grow uninterrupted (no gaps in between the plant).
  * - Must break all blocks above when a lower block is destroyed.
  */
-public class UpwardsGrowingPlantModule extends PlantationModule
+public abstract class UpwardsGrowingPlantModule extends PlantationModule
 {
     /**
-     * The minimum length this plant should grow to before considered harvestable.
+     * The default minimum plant length.
      */
-    private final int minimumPlantLength;
+    protected static final int DEFAULT_MINIMUM_PLANT_LENGTH = 3;
 
     /**
      * The internal random used to decide whether to work this field or not.
@@ -34,36 +34,18 @@ public class UpwardsGrowingPlantModule extends PlantationModule
     private final Random random;
 
     /**
-     * The maximum length this plant can grow.
-     * Defaults to null.
-     */
-    private final Integer maximumPlantLength;
-
-    /**
      * Default constructor.
      *
-     * @param fieldTag               the tag of the field anchor block.
-     * @param workTag                the tag of the working positions.
-     * @param block                  the block which is harvested.
-     * @param maxPlants              the maximum allowed plants.
-     * @param plantsToRequest        the amount of plants to request when the planter has none left.
-     * @param requiredResearchEffect the research effect required before this field type can be used.
-     * @param minimumPlantLength     the minimum length for this plant to grow to before it can be harvested.
-     * @param maximumPlantLength     the maximum length this plant can grow.
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param block    the block which is harvested.
      */
     protected UpwardsGrowingPlantModule(
       final String fieldTag,
       final String workTag,
-      final Block block,
-      final int maxPlants,
-      final int plantsToRequest,
-      final ResourceLocation requiredResearchEffect,
-      final int minimumPlantLength,
-      final Integer maximumPlantLength)
+      final Block block)
     {
-        super(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect);
-        this.minimumPlantLength = minimumPlantLength;
-        this.maximumPlantLength = maximumPlantLength;
+        super(fieldTag, workTag, block);
         this.random = new Random();
     }
 
@@ -150,6 +132,9 @@ public class UpwardsGrowingPlantModule extends PlantationModule
             return PlanterAIModuleState.CLEARING;
         }
 
+        int minimumPlantLength = getMinimumPlantLength();
+        Integer maximumPlantLength = getMaximumPlantLength();
+
         if (maximumPlantLength != null)
         {
             float currentHeight = 0;
@@ -181,70 +166,26 @@ public class UpwardsGrowingPlantModule extends PlantationModule
         return PlanterAIModuleState.NONE;
     }
 
-    public static class Builder extends PlantationModule.Builder<UpwardsGrowingPlantModule.Builder>
+    /**
+     * Get the minimum length this plant should grow to before considered harvestable.
+     * Defaults to {@link UpwardsGrowingPlantModule#DEFAULT_MINIMUM_PLANT_LENGTH}.
+     *
+     * @return the minimum plant length
+     */
+    protected int getMinimumPlantLength()
     {
-        /**
-         * The minimum length this plant should grow to before considered harvestable.
-         * Defaults to 3.
-         */
-        protected int minimumPlantLength = 3;
+        return DEFAULT_MINIMUM_PLANT_LENGTH;
+    }
 
-        /**
-         * The maximum length this plant can grow.
-         * Defaults to null.
-         */
-        protected Integer maximumPlantLength;
-
-        /**
-         * Default constructor.
-         *
-         * @param fieldTag the tag of the field anchor block.
-         * @param workTag  the tag of the working positions.
-         * @param block    the block which is harvested.
-         */
-        public Builder(final String fieldTag, final String workTag, final Block block)
-        {
-            super(fieldTag, workTag, block);
-        }
-
-        /**
-         * Sets the minimum length plants should be before the plants can be harvested.
-         * Defaults to 3.
-         *
-         * @param minimumPlantLength the minimum plant length.
-         * @return the builder instance.
-         */
-        public Builder withMinimumPlantLength(int minimumPlantLength)
-        {
-            this.minimumPlantLength = minimumPlantLength;
-            return this;
-        }
-
-        /**
-         * Sets the maximum length plants can reach, the higher the plant goes, the more likely it is the planter will harvest it.
-         * Defaults to null, when not assigned the minimum length is always used.
-         * When it is assigned to a numeric value above the minimum plant length, the chance to harvest will gradually increase
-         * as the plant grows taller.
-         * This is particularly useful for plants that have a randomized growth value, like kelp, which randomizes its maximum length
-         * everytime the block is broken.
-         *
-         * @param maximumPlantLength the maximum plant length
-         * @return the builder instance.
-         */
-        public Builder withMaximumPlantLength(final int maximumPlantLength)
-        {
-            this.maximumPlantLength = maximumPlantLength;
-            return this;
-        }
-
-        @Override
-        public PlantationModule build()
-        {
-            if (maximumPlantLength != null && minimumPlantLength > maximumPlantLength)
-            {
-                throw new IllegalStateException("The minimum plant length is higher than the maximum plant length");
-            }
-            return new UpwardsGrowingPlantModule(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect, minimumPlantLength, maximumPlantLength);
-        }
+    /**
+     * Get the maximum length this plant can grow.
+     * Defaults to null.
+     *
+     * @return the maximum plant length
+     */
+    @Nullable
+    protected Integer getMaximumPlantLength()
+    {
+        return null;
     }
 }

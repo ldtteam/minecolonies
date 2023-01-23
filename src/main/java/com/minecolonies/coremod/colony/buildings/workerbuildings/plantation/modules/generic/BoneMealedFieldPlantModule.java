@@ -10,7 +10,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.Plantati
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,17 +27,17 @@ import java.util.Random;
  * - Soil blocks must be the same so plants can grow on them.
  * - The defined "block" on the module should be the primary plant harvested on this field.
  */
-public class BoneMealedFieldPlantModule extends PlantationModule
+public abstract class BoneMealedFieldPlantModule extends PlantationModule
 {
+    /**
+     * The default percentage chance to be able to work on this field.
+     */
+    protected static final int DEFAULT_PERCENTAGE_CHANCE = 10;
+
     /**
      * The amount of bonemeal the worker should have at any time.
      */
     private static final int BONEMEAL_TO_KEEP = 16;
-
-    /**
-     * The chance in percentages for this field to trigger an action.
-     */
-    private final int percentChance;
 
     /**
      * The internal random used to decide whether to work this field or not.
@@ -48,25 +47,16 @@ public class BoneMealedFieldPlantModule extends PlantationModule
     /**
      * Default constructor.
      *
-     * @param fieldTag               the tag of the field anchor block.
-     * @param workTag                the tag of the working positions.
-     * @param block                  the block which is harvested.
-     * @param maxPlants              the maximum allowed plants.
-     * @param plantsToRequest        the amount of plants to request when the planter has none left.
-     * @param requiredResearchEffect the research effect required before this field type can be used.
-     * @param percentChance          the chance in percentages for work to occur on this field.
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param block    the block which is harvested.
      */
     protected BoneMealedFieldPlantModule(
       final String fieldTag,
       final String workTag,
-      final Block block,
-      final int maxPlants,
-      final int plantsToRequest,
-      final @Nullable ResourceLocation requiredResearchEffect,
-      final int percentChance)
+      final Block block)
     {
-        super(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect);
-        this.percentChance = Math.max(Math.min(percentChance, 100), 1);
+        super(fieldTag, workTag, block);
         this.random = new Random();
     }
 
@@ -145,6 +135,7 @@ public class BoneMealedFieldPlantModule extends PlantationModule
         // Therefore, we need to prevent the worker from constantly running around on this field only.
         // This is achieved by only allowing work when a percentage chance is met,
         // so that the field is not often considered as "needing work".
+        int percentChance = Math.max(Math.min(getPercentageChance(), 100), 1);
         boolean willWork = random.nextFloat() < (percentChance / 100F);
         return willWork && !field.getWorkingPositions().isEmpty();
     }
@@ -164,6 +155,17 @@ public class BoneMealedFieldPlantModule extends PlantationModule
         // Get a random position on the field, which will act as the planting position.
         int idx = random.nextInt(0, field.getWorkingPositions().size());
         return field.getWorkingPositions().get(idx);
+    }
+
+    /**
+     * Get the chance in percentages of being able to perform work on this field when asked.
+     * Defaults to {@link BoneMealedFieldPlantModule#DEFAULT_PERCENTAGE_CHANCE}.
+     *
+     * @return a number between 1 and 100.
+     */
+    protected int getPercentageChance()
+    {
+        return DEFAULT_PERCENTAGE_CHANCE;
     }
 
     /**
@@ -198,47 +200,5 @@ public class BoneMealedFieldPlantModule extends PlantationModule
         }
 
         return PlanterAIModuleState.PLANTING;
-    }
-
-    public static class Builder extends PlantationModule.Builder<BoneMealedFieldPlantModule.Builder>
-    {
-
-        /**
-         * The chance in percentages for this field to trigger an action.
-         * Defaults to 10%.
-         */
-        private int percentChance;
-
-        /**
-         * Default constructor.
-         *
-         * @param fieldTag the tag of the field anchor block.
-         * @param workTag  the tag of the working positions.
-         * @param block    the block which is harvested.
-         */
-        public Builder(final String fieldTag, final String workTag, final Block block)
-        {
-            super(fieldTag, workTag, block);
-            this.percentChance = 10;
-        }
-
-        /**
-         * Sets the minimum length plants should be before the plants can be harvested.
-         * Defaults to 10%.
-         *
-         * @param percentChance the new percentage chance to trigger work on this field.
-         * @return the builder instance.
-         */
-        public BoneMealedFieldPlantModule.Builder withPercentageChance(int percentChance)
-        {
-            this.percentChance = percentChance;
-            return this;
-        }
-
-        @Override
-        public PlantationModule build()
-        {
-            return new BoneMealedFieldPlantModule(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect, percentChance);
-        }
     }
 }

@@ -5,10 +5,8 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.Plantati
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CocoaBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -24,27 +22,21 @@ import java.util.Set;
  * - Must grow on the side of a vertically standing log.
  * - Must be harvested by chopping and re-planting the plant of the tree.
  */
-public class TreeSideFieldPlantModule extends PlantationModule
+public abstract class TreeSideFieldPlantModule extends PlantationModule
 {
     /**
      * Default constructor.
      *
-     * @param fieldTag               the tag of the field anchor block.
-     * @param workTag                the tag of the working positions.
-     * @param block                  the block which is harvested.
-     * @param maxPlants              the maximum allowed plants.
-     * @param plantsToRequest        the amount of plants to request when the planter has none left.
-     * @param requiredResearchEffect the research effect required before this field type can be used.
+     * @param fieldTag the tag of the field anchor block.
+     * @param workTag  the tag of the working positions.
+     * @param block    the block which is harvested.
      */
     protected TreeSideFieldPlantModule(
       final String fieldTag,
       final String workTag,
-      final Block block,
-      final int maxPlants,
-      final int plantsToRequest,
-      final @Nullable ResourceLocation requiredResearchEffect)
+      final Block block)
     {
-        super(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect);
+        super(fieldTag, workTag, block);
     }
 
     @Override
@@ -139,36 +131,5 @@ public class TreeSideFieldPlantModule extends PlantationModule
      * @param blockState the state of the planting position.
      * @return true if plant is fully grown.
      */
-    private boolean isPlantMaxAge(BlockState blockState)
-    {
-        // Because of Mojang its bad implementation, Cocoa (and probably similar) blocks do not have a common growth handler.
-        // Cocoa has a custom implementation for growth, therefore there is no common way to know if a plant is at its maximum age (yet soil crops do have this).
-        Block block = blockState.getBlock();
-        if (block instanceof CocoaBlock cocoa)
-        {
-            return !cocoa.isRandomlyTicking(blockState);
-        }
-        return false;
-    }
-
-    public static class Builder extends PlantationModule.Builder<TreeSideFieldPlantModule.Builder>
-    {
-        /**
-         * Default constructor.
-         *
-         * @param fieldTag the tag of the field anchor block.
-         * @param workTag  the tag of the working positions.
-         * @param block    the block which is harvested.
-         */
-        public Builder(final String fieldTag, final String workTag, final Block block)
-        {
-            super(fieldTag, workTag, block);
-        }
-
-        @Override
-        public PlantationModule build()
-        {
-            return new TreeSideFieldPlantModule(fieldTag, workTag, block, maxPlants, plantsToRequest, requiredResearchEffect);
-        }
-    }
+    protected abstract boolean isPlantMaxAge(BlockState blockState);
 }
