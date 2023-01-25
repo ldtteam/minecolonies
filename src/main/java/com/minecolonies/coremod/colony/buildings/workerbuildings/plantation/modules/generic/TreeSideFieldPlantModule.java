@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.Plantati
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,14 +30,14 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
      *
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
-     * @param block    the block which is harvested.
+     * @param item     the item which is harvested.
      */
     protected TreeSideFieldPlantModule(
       final String fieldTag,
       final String workTag,
-      final Block block)
+      final Item item)
     {
-        super(fieldTag, workTag, block);
+        super(fieldTag, workTag, item);
     }
 
     @Override
@@ -65,6 +66,7 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
                          }
                          yield PlanterAIModuleResult.REQUIRES_ITEMS;
                      }
+                     case CLEARED -> getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition, false));
                      default -> PlanterAIModuleResult.INVALID;
                  };
     }
@@ -112,7 +114,12 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition);
-        if (isPlantMaxAge(blockState))
+        if (blockState.getBlock() != getExpectedBlock())
+        {
+            return PlanterAIModuleState.CLEARING;
+        }
+
+        if (isHarvestable(blockState))
         {
             return PlanterAIModuleState.HARVESTING;
         }
@@ -126,10 +133,18 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
     }
 
     /**
-     * Checks if the provided block at the given location is at its maximum age.
+     * Get the expected block which should be present for harvesting.
+     *
+     * @return the block
+     */
+    @NotNull
+    protected abstract Block getExpectedBlock();
+
+    /**
+     * Checks if the provided block at the given location is harvestable.
      *
      * @param blockState the state of the planting position.
      * @return true if plant is fully grown.
      */
-    protected abstract boolean isPlantMaxAge(BlockState blockState);
+    protected abstract boolean isHarvestable(BlockState blockState);
 }

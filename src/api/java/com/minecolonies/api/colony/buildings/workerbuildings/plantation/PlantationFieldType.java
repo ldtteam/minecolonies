@@ -13,7 +13,6 @@ public enum PlantationFieldType
     KELP,
     SEAGRASS,
     SEA_PICKLES,
-    CORAL,
     GLOWBERRIES,
     WEEPING_VINES,
     TWISTING_VINES,

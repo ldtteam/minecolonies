@@ -115,7 +115,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ARROW_PIERCE).setTranslatedName("Archers Gain Piercing II"));
         effects.add(new ResearchEffect(PLANTATION_LARGE).setTranslatedName("Plantations Unlock 1 Additional Field"));
         effects.add(new ResearchEffect(PLANTATION_JUNGLE).setTranslatedName("Plantations Unlock Fields For: Bamboo, Cocoa and Vines"));
-        effects.add(new ResearchEffect(PLANTATION_SEA).setTranslatedName("Plantations Unlock Fields For: Kelp, Seagrass, Sea pickles and Coral"));
+        effects.add(new ResearchEffect(PLANTATION_SEA).setTranslatedName("Plantations Unlock Fields For: Kelp, Seagrass and Sea pickles"));
         effects.add(new ResearchEffect(PLANTATION_EXOTIC).setTranslatedName("Plantations Unlock Fields For: Glowberries"));
         effects.add(new ResearchEffect(PLANTATION_NETHER).setTranslatedName("Plantations Unlock Fields For: Crimson fungi and Warped fungi"));
         effects.add(new ResearchEffect(BEEKEEP_2).setTranslatedName("Beekeepers Can Harvest Both Honey Bottles and Combs at Once"));
@@ -1295,12 +1295,11 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/takingdivinglessons"), TECH).setParentResearch(letItGrow)
           .setTranslatedName("Taking Diving Lessons")
           .setTranslatedSubtitle("*Drowning Noises*")
-          .setIcon(Items.VINE)
+          .setIcon(Items.KELP)
           .addBuildingRequirement(ModBuildings.PLANTATION_ID, 2)
           .addItemCost(Items.KELP, 16)
           .addItemCost(Items.SEAGRASS, 16)
           .addItemCost(Items.SEA_PICKLE, 16)
-          .addItemCost(Items.TUBE_CORAL, 16)
           .addEffect(PLANTATION_SEA, 1)
           .addToList(r);
 

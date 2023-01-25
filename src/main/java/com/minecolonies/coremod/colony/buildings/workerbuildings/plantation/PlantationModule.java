@@ -40,23 +40,23 @@ public abstract class PlantationModule
     /**
      * The block which is harvested in this module.
      */
-    private final Block block;
+    private final Item item;
 
     /**
      * Default constructor.
      *
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
-     * @param block    the block which is harvested.
+     * @param item     the item which is harvested.
      */
     protected PlantationModule(
       final String fieldTag,
       final String workTag,
-      final Block block)
+      final Item item)
     {
         this.fieldTag = fieldTag;
         this.workTag = workTag;
-        this.block = block;
+        this.item = item;
     }
 
     /**
@@ -80,16 +80,6 @@ public abstract class PlantationModule
     }
 
     /**
-     * Get the block the module uses.
-     *
-     * @return the block.
-     */
-    public final Block getBlock()
-    {
-        return block;
-    }
-
-    /**
      * Get the item the module uses.
      * (This is obtained through the block using {@link Block#asItem()})
      *
@@ -97,7 +87,7 @@ public abstract class PlantationModule
      */
     public final Item getItem()
     {
-        return block.asItem();
+        return item;
     }
 
     /**
@@ -108,7 +98,7 @@ public abstract class PlantationModule
      */
     public int getPlantsToRequest()
     {
-        return (int) Math.ceil(new ItemStack(block.asItem()).getMaxStackSize() / 4d);
+        return (int) Math.ceil(new ItemStack(item).getMaxStackSize() / 4d);
     }
 
     /**

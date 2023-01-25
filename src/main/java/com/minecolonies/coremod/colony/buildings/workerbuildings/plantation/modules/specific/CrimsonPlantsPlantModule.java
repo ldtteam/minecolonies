@@ -2,10 +2,13 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedFieldPlantModule;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Items;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
 
+/**
+ * Planter module for growing {@link Items#CRIMSON_FUNGUS} and {@link Items#CRIMSON_ROOTS}.
+ */
 public class CrimsonPlantsPlantModule extends BoneMealedFieldPlantModule
 {
     /**
@@ -23,7 +26,7 @@ public class CrimsonPlantsPlantModule extends BoneMealedFieldPlantModule
      */
     public CrimsonPlantsPlantModule()
     {
-        super("crimsonp_field", "plant", Blocks.CRIMSON_FUNGUS);
+        super("crimsonp_field", "plant", Items.CRIMSON_FUNGUS);
     }
 
     @Override

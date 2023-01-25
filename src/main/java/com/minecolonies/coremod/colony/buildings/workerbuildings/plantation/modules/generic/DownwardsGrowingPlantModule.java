@@ -16,13 +16,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 /**
- * Plantation module for plants that grow vertically upwards, similar to sugar cane.
+ * Plantation module for plants that grow vertically downwards, similar to sugar glowberries.
  * For a plant to fit this module it needs the following requirements.
  * - Grow vertically without any outcroppings.
  * - Grow uninterrupted (no gaps in between the plant).
- * - Must break all blocks above when a lower block is destroyed.
+ * - Must break all blocks below when a higher block is destroyed.
  */
-public abstract class UpwardsGrowingPlantModule extends PlantationModule
+public abstract class DownwardsGrowingPlantModule extends PlantationModule
 {
     /**
      * The default minimum plant length.
@@ -41,7 +41,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    protected UpwardsGrowingPlantModule(
+    protected DownwardsGrowingPlantModule(
       final String fieldTag,
       final String workTag,
       final Item item)
@@ -68,19 +68,19 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
                  {
                      case NONE -> PlanterAIModuleResult.NONE;
                      case HARVESTING ->
-                         // Tell the AI to mine a block, if we're harvesting we need to mine 1 block off the ground (2 high).
-                       getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.above(2), true));
+                         // Tell the AI to mine a block, if we're harvesting we need to mine 1 block from the ceiling (2 high).
+                       getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(2), true));
                      case PLANTING ->
                      {
-                         if (planterAI.planterPlaceBlock(workPosition.above(), getItem(), getPlantsToRequest()))
+                         if (planterAI.planterPlaceBlock(workPosition.below(), getItem(), getPlantsToRequest()))
                          {
                              yield PlanterAIModuleResult.PLANTED;
                          }
                          yield PlanterAIModuleResult.REQUIRES_ITEMS;
                      }
                      case CLEARING ->
-                         // Tell the AI to mine a block, if we're clearing an obstacle we need to clear the item at the position directly above (1 high).
-                       getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition.above(), false));
+                         // Tell the AI to mine a block, if we're clearing an obstacle we need to clear the item at the position directly below (1 high).
+                       getClearingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(), false));
                      default -> PlanterAIModuleResult.INVALID;
                  };
     }
@@ -122,13 +122,13 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
      */
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
     {
-        BlockState blockAbove = field.getColony().getWorld().getBlockState(plantingPosition.above());
-        if (blockAbove.isAir())
+        BlockState blockBelow = field.getColony().getWorld().getBlockState(plantingPosition.below());
+        if (blockBelow.isAir())
         {
             return PlanterAIModuleState.PLANTING;
         }
 
-        if (blockAbove.getBlock() != getExpectedBlock())
+        if (blockBelow.getBlock() != getExpectedBlock())
         {
             return PlanterAIModuleState.CLEARING;
         }
@@ -141,7 +141,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
             float currentHeight = 0;
             for (int height = minimumPlantLength; height <= maximumPlantLength; height++)
             {
-                BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.above(height));
+                BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.below(height));
                 if (blockState.getBlock() != getExpectedBlock())
                 {
                     break;
@@ -157,7 +157,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
         }
         else
         {
-            BlockState blockAtMinHeight = field.getColony().getWorld().getBlockState(plantingPosition.above(minimumPlantLength));
+            BlockState blockAtMinHeight = field.getColony().getWorld().getBlockState(plantingPosition.below(minimumPlantLength));
             if (blockAtMinHeight.getBlock() == getExpectedBlock())
             {
                 return PlanterAIModuleState.HARVESTING;
@@ -177,7 +177,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
 
     /**
      * Get the minimum length this plant should grow to before considered harvestable.
-     * Defaults to {@link UpwardsGrowingPlantModule#DEFAULT_MINIMUM_PLANT_LENGTH}.
+     * Defaults to {@link DownwardsGrowingPlantModule#DEFAULT_MINIMUM_PLANT_LENGTH}.
      *
      * @return the minimum plant length
      */

@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
 
 /**
- * Planter module for growing {@link Items#TWISTING_VINES}.
+ * Planter module for growing {@link Items#WEEPING_VINES}.
  */
-public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
+public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
 {
     /**
      * The minimum height twisting vines can grow to.
@@ -28,15 +28,15 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
     /**
      * Default constructor.
      */
-    public TwistingVinesPlantModule()
+    public WeepingVinesPlantModule()
     {
-        super("twistv_field", "vine", Items.TWISTING_VINES);
+        super("weepv_field", "vine", Items.WEEPING_VINES);
     }
 
     @Override
     protected @NotNull Block getExpectedBlock()
     {
-        return Blocks.TWISTING_VINES;
+        return Blocks.WEEPING_VINES;
     }
 
     @Override

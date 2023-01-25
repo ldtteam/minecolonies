@@ -2,10 +2,13 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedFieldPlantModule;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Items;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
 
+/**
+ * Planter module for growing {@link Items#WARPED_FUNGUS} and {@link Items#WARPED_ROOTS}.
+ */
 public class WarpedPlantsPlantModule extends BoneMealedFieldPlantModule
 {
     /**
@@ -23,7 +26,7 @@ public class WarpedPlantsPlantModule extends BoneMealedFieldPlantModule
      */
     public WarpedPlantsPlantModule()
     {
-        super("warpedp_field", "plant", Blocks.WARPED_FUNGUS);
+        super("warpedp_field", "plant", Items.WARPED_FUNGUS);
     }
 
     @Override

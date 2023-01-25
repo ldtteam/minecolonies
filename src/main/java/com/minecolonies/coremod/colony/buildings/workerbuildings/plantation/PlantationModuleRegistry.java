@@ -54,8 +54,13 @@ public class PlantationModuleRegistry
 
             // Sea plants
             plantationModules.put(PlantationFieldType.KELP, new KelpPlantModule());
+            plantationModules.put(PlantationFieldType.SEAGRASS, new SeagrassPlantModule());
+
+            // Exotic plants
+            plantationModules.put(PlantationFieldType.GLOWBERRIES, new GlowBerriesPlantModule());
 
             // Nether plants
+            plantationModules.put(PlantationFieldType.WEEPING_VINES, new WeepingVinesPlantModule());
             plantationModules.put(PlantationFieldType.TWISTING_VINES, new TwistingVinesPlantModule());
             plantationModules.put(PlantationFieldType.CRIMSON_FUNGUS, new CrimsonPlantsPlantModule());
             plantationModules.put(PlantationFieldType.WARPED_FUNGUS, new WarpedPlantsPlantModule());

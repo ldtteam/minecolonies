@@ -11,9 +11,9 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.Plan
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,14 +49,14 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
      *
      * @param fieldTag the tag of the field anchor block.
      * @param workTag  the tag of the working positions.
-     * @param block    the block which is harvested.
+     * @param item     the item which is harvested.
      */
     protected BoneMealedFieldPlantModule(
       final String fieldTag,
       final String workTag,
-      final Block block)
+      final Item item)
     {
-        super(fieldTag, workTag, block);
+        super(fieldTag, workTag, item);
         this.random = new Random();
     }
 
@@ -92,12 +92,7 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
                              yield harvestResult;
                          }
 
-                         // Check how many other positions still require to be harvested,
-                         // if there's any left we keep harvesting
-                         final long remainingPositions =
-                           field.getWorkingPositions().stream().map(BlockPos::above).filter(f -> !worker.getLevel().getBlockState(f).isAir()).count();
-
-                         if (remainingPositions > 0)
+                         if (getPositionToHarvest(field) != null)
                          {
                              // Return a custom result here indicates that we harvested something, however we do want to keep working on the field
                              // but on another position.
@@ -106,7 +101,8 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
                          else
                          {
                              // Return a custom result here indicates that we harvested something, however we want to completely abort working on the field right now.
-                             // Therefore, we need to release the current field so that next tick a new field will be selected, running the needsWork check on the field again.
+                             // Therefore, we need to release the current field so that next tick a new field will be selected,
+                             // running the needsWork check on the field again.
                              yield new PlanterAIModuleResult(PlanterAIModuleState.HARVESTED, AIWorkerState.PREPARING, false, true);
                          }
                      }
@@ -144,12 +140,10 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
     public @Nullable BlockPos getNextWorkingPosition(final PlantationField field)
     {
         // If there is anything to harvest, return the first position where a non-air block is present.
-        for (BlockPos position : field.getWorkingPositions())
+        BlockPos positionToHarvest = getPositionToHarvest(field);
+        if (positionToHarvest != null)
         {
-            if (!field.getColony().getWorld().getBlockState(position.above()).isAir())
-            {
-                return position;
-            }
+            return positionToHarvest;
         }
 
         // Get a random position on the field, which will act as the planting position.
@@ -200,5 +194,22 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
         }
 
         return PlanterAIModuleState.PLANTING;
+    }
+
+    /**
+     * Get the first position which is harvestable on the ground.
+     * Defaults to return any non-air position.
+     *
+     * @param field the field to check on.
+     * @return the position to harvest or null if no position needs harvesting.
+     */
+    @Nullable
+    protected BlockPos getPositionToHarvest(PlantationField field)
+    {
+        return field.getWorkingPositions().stream()
+                 .map(BlockPos::above)
+                 .filter(pos -> field.getColony().getWorld().getBlockState(pos).isAir())
+                 .findFirst()
+                 .orElse(null);
     }
 }

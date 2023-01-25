@@ -4,14 +4,17 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modu
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SEA;
 
 /**
- * Planter module for growing {@link Blocks#KELP}.
+ * Planter module for growing {@link Items#KELP}.
  */
 public class KelpPlantModule extends UpwardsGrowingPlantModule
 {
@@ -30,7 +33,7 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
      */
     public KelpPlantModule()
     {
-        super("kelp_field", "kelp", Blocks.KELP);
+        super("kelp_field", "kelp", Items.KELP);
     }
 
     @Override
@@ -48,6 +51,12 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
 
         // This position is not reachable, return false, so we don't end up in a walking loop.
         return false;
+    }
+
+    @Override
+    protected @NotNull Block getExpectedBlock()
+    {
+        return Blocks.KELP;
     }
 
     @Override

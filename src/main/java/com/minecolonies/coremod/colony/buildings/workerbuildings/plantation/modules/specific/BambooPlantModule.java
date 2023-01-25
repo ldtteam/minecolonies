@@ -2,12 +2,15 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
 
 /**
- * Planter module for growing {@link Blocks#BAMBOO}.
+ * Planter module for growing {@link Items#BAMBOO}.
  */
 public class BambooPlantModule extends UpwardsGrowingPlantModule
 {
@@ -21,7 +24,13 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
      */
     public BambooPlantModule()
     {
-        super("bamboo_field", "bamboo", Blocks.BAMBOO);
+        super("bamboo_field", "bamboo", Items.BAMBOO);
+    }
+
+    @Override
+    protected @NotNull Block getExpectedBlock()
+    {
+        return Blocks.BAMBOO;
     }
 
     @Override

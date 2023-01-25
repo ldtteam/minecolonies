@@ -2,15 +2,17 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.TreeSideFieldPlantModule;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CocoaBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
 
 /**
- * Planter module for growing {@link Blocks#COCOA}.
+ * Planter module for growing {@link Items#COCOA_BEANS}.
  */
 public class CocoaPlantModule extends TreeSideFieldPlantModule
 {
@@ -19,11 +21,17 @@ public class CocoaPlantModule extends TreeSideFieldPlantModule
      */
     public CocoaPlantModule()
     {
-        super("cocoa_field", "cocoa", Blocks.COCOA);
+        super("cocoa_field", "cocoa", Items.COCOA_BEANS);
     }
 
     @Override
-    protected boolean isPlantMaxAge(final BlockState blockState)
+    protected @NotNull Block getExpectedBlock()
+    {
+        return Blocks.COCOA;
+    }
+
+    @Override
+    protected boolean isHarvestable(final BlockState blockState)
     {
         Block block = blockState.getBlock();
         if (block instanceof CocoaBlock cocoa)
