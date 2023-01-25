@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
 
@@ -28,9 +27,9 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected @NotNull Block getExpectedBlock()
+    protected boolean isValidBlock(final Block block)
     {
-        return Blocks.BAMBOO;
+        return block == Blocks.BAMBOO || block == Blocks.BAMBOO_SAPLING;
     }
 
     @Override

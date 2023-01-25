@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
@@ -34,9 +33,9 @@ public class WeepingVinesPlantModule extends DownwardsGrowingPlantModule
     }
 
     @Override
-    protected @NotNull Block getExpectedBlock()
+    protected boolean isValidBlock(final Block block)
     {
-        return Blocks.WEEPING_VINES;
+        return block == Blocks.WEEPING_VINES || block == Blocks.WEEPING_VINES_PLANT;
     }
 
     @Override

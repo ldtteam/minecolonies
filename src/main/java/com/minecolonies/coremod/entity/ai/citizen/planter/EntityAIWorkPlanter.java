@@ -89,9 +89,19 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         worker.getCitizenData().setIdleAtJob(false);
 
         // Get the next field to work on, if any.
+        final IField lastField = module.getCurrentField();
         final IField fieldToWork = module.getFieldToWorkOn();
         if (fieldToWork != null)
         {
+            // If we suddenly have to work on a new field, always reset the working position.
+            // This is because if a field is unassigned from the worker in the middle of an ongoing action inside a module
+            // the AI may not be able to return the appropriate information and accidentally end up in a situation
+            // where he thinks his working position is still on another field.
+            if (lastField != fieldToWork)
+            {
+                currentWorkingPosition = null;
+            }
+
             return PLANTATION_MOVE_TO_FIELD;
         }
 

@@ -4,7 +4,6 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modu
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Planter module for growing {@link Items#GLOW_BERRIES}.
@@ -20,8 +19,8 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
     }
 
     @Override
-    protected @NotNull Block getExpectedBlock()
+    protected boolean isValidBlock(final Block block)
     {
-        return Blocks.CAVE_VINES;
+        return block == Blocks.CAVE_VINES || block == Blocks.CAVE_VINES_PLANT;
     }
 }

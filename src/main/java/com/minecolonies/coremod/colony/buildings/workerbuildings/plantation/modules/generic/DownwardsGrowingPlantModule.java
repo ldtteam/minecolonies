@@ -68,7 +68,7 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
                  {
                      case NONE -> PlanterAIModuleResult.NONE;
                      case HARVESTING ->
-                         // Tell the AI to mine a block, if we're harvesting we need to mine 1 block from the ceiling (2 high).
+                         // Tell the AI to mine a block, if we're harvesting we need to mine 1 block from the ceiling (2 below).
                        getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition.below(2), true));
                      case PLANTING ->
                      {
@@ -122,17 +122,57 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
      */
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
     {
-        BlockState blockBelow = field.getColony().getWorld().getBlockState(plantingPosition.below());
-        if (blockBelow.isAir())
+        if (isPlantable(field, plantingPosition))
         {
             return PlanterAIModuleState.PLANTING;
         }
 
-        if (blockBelow.getBlock() != getExpectedBlock())
+        if (isClearable(field, plantingPosition))
         {
             return PlanterAIModuleState.CLEARING;
         }
 
+        if (isHarvestable(field, plantingPosition))
+        {
+            return PlanterAIModuleState.HARVESTING;
+        }
+
+        return PlanterAIModuleState.NONE;
+    }
+
+    /**
+     * Checks if the provided block at the given location is plantable.
+     *
+     * @param field            the field to check for.
+     * @param plantingPosition the specific position to check for.
+     * @return true if plant is plantable.
+     */
+    protected boolean isPlantable(PlantationField field, BlockPos plantingPosition)
+    {
+        return field.getColony().getWorld().getBlockState(plantingPosition.below()).isAir();
+    }
+
+    /**
+     * Checks if the provided block at the given location is clearable.
+     *
+     * @param field            the field to check for.
+     * @param plantingPosition the specific position to check for.
+     * @return true if plant is plantable.
+     */
+    protected boolean isClearable(PlantationField field, BlockPos plantingPosition)
+    {
+        return !isValidBlock(field.getColony().getWorld().getBlockState(plantingPosition.below()).getBlock());
+    }
+
+    /**
+     * Checks if the provided block at the given location is harvestable.
+     *
+     * @param field            the field to check for.
+     * @param plantingPosition the specific position to check for.
+     * @return true if plant is harvestable.
+     */
+    protected boolean isHarvestable(PlantationField field, BlockPos plantingPosition)
+    {
         int minimumPlantLength = getMinimumPlantLength();
         Integer maximumPlantLength = getMaximumPlantLength();
 
@@ -142,7 +182,7 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
             for (int height = minimumPlantLength; height <= maximumPlantLength; height++)
             {
                 BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.below(height));
-                if (blockState.getBlock() != getExpectedBlock())
+                if (isValidBlock(blockState.getBlock()))
                 {
                     break;
                 }
@@ -150,34 +190,25 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
             }
 
             float chance = currentHeight / maximumPlantLength;
-            if (random.nextFloat() < chance)
-            {
-                return PlanterAIModuleState.HARVESTING;
-            }
+            return random.nextFloat() < chance;
         }
         else
         {
             BlockState blockAtMinHeight = field.getColony().getWorld().getBlockState(plantingPosition.below(minimumPlantLength));
-            if (blockAtMinHeight.getBlock() == getExpectedBlock())
-            {
-                return PlanterAIModuleState.HARVESTING;
-            }
+            return isValidBlock(blockAtMinHeight.getBlock());
         }
-
-        return PlanterAIModuleState.NONE;
     }
 
     /**
-     * Get the expected block which should be present for harvesting.
+     * Check if the block is a correct block for harvesting.
      *
      * @return the block
      */
-    @NotNull
-    protected abstract Block getExpectedBlock();
+    protected abstract boolean isValidBlock(Block block);
 
     /**
      * Get the minimum length this plant should grow to before considered harvestable.
-     * Defaults to {@link DownwardsGrowingPlantModule#DEFAULT_MINIMUM_PLANT_LENGTH}.
+     * Defaults to {@link UpwardsGrowingPlantModule#DEFAULT_MINIMUM_PLANT_LENGTH}.
      *
      * @return the minimum plant length
      */

@@ -114,7 +114,7 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition);
-        if (blockState.getBlock() != getExpectedBlock())
+        if (!isValidBlock(blockState.getBlock()))
         {
             return PlanterAIModuleState.CLEARING;
         }
@@ -133,12 +133,11 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
     }
 
     /**
-     * Get the expected block which should be present for harvesting.
+     * Check if the block is a correct block for harvesting.
      *
      * @return the block
      */
-    @NotNull
-    protected abstract Block getExpectedBlock();
+    protected abstract boolean isValidBlock(Block block);
 
     /**
      * Checks if the provided block at the given location is harvestable.
