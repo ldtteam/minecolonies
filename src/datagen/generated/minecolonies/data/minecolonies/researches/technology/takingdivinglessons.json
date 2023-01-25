@@ -3,7 +3,7 @@
   "parentResearch": "minecolonies:technology/letitgrow",
   "researchLevel": 3,
   "subtitle": "com.minecolonies.research.technology.takingdivinglessons.subtitle",
-  "icon": "minecraft:vine",
+  "icon": "minecraft:kelp",
   "requirements": [
     {
       "building": "plantation",
@@ -19,10 +19,6 @@
     },
     {
       "item": "minecraft:sea_pickle",
-      "quantity": 16
-    },
-    {
-      "item": "minecraft:tube_coral",
       "quantity": 16
     }
   ],
