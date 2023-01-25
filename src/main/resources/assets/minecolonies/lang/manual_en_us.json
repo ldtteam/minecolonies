@@ -597,6 +597,7 @@
   "com.minecolonies.coremod.gui.debugscreen.noclosecolony": "No close colony!",
   "com.minecolonies.coremod.gui.debugscreen.nextcolony": "Next colony is %d blocks away (too close to found a new one)!",
   "com.minecolonies.coremod.gui.debugscreen.blocksfromcenter": "%d blocks from the center.",
+  "com.minecolonies.coremod.debug.citizenloadfailure": "Worker %s has been unassigned from their job, a problem was found during load.",
 
   "com.minecolonies.coremod.gui.workerhuts.level0": "You must construct this hut before you can hire a worker!",
 
