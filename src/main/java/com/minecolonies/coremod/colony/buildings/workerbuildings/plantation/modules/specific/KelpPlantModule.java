@@ -1,14 +1,13 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SEA;
@@ -54,21 +53,9 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected boolean isPlantable(final PlantationField field, final BlockPos plantingPosition)
+    protected boolean isValidPlantingBlock(final BlockState blockState)
     {
-        return field.getColony().getWorld().getBlockState(plantingPosition.above()).getBlock() == Blocks.WATER;
-    }
-
-    @Override
-    protected boolean isClearable(final PlantationField field, final BlockPos plantingPosition)
-    {
-        return super.isClearable(field, plantingPosition) && field.getColony().getWorld().getBlockState(plantingPosition.above()).getBlock() != Blocks.WATER;
-    }
-
-    @Override
-    protected boolean isValidBlock(final Block block)
-    {
-        return block == Blocks.KELP || block == Blocks.KELP_PLANT;
+        return blockState.getBlock() == Blocks.WATER;
     }
 
     @Override
@@ -81,6 +68,12 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     protected @Nullable Integer getMaximumPlantLength()
     {
         return MAX_HEIGHT;
+    }
+
+    @Override
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.getBlock() == Blocks.KELP || blockState.getBlock() == Blocks.KELP_PLANT;
     }
 
     @Override

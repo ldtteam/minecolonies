@@ -2,8 +2,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.DownwardsGrowingPlantModule;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Planter module for growing {@link Items#GLOW_BERRIES}.
@@ -19,8 +19,8 @@ public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
     }
 
     @Override
-    protected boolean isValidBlock(final Block block)
+    protected boolean isValidHarvestBlock(final BlockState blockState)
     {
-        return block == Blocks.CAVE_VINES || block == Blocks.CAVE_VINES_PLANT;
+        return blockState.getBlock() == Blocks.CAVE_VINES || blockState.getBlock() == Blocks.CAVE_VINES_PLANT;
     }
 }

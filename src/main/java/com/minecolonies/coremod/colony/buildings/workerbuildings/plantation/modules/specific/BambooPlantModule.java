@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JUNGLE;
 
@@ -27,15 +27,15 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected boolean isValidBlock(final Block block)
-    {
-        return block == Blocks.BAMBOO || block == Blocks.BAMBOO_SAPLING;
-    }
-
-    @Override
     protected int getMinimumPlantLength()
     {
         return MIN_HEIGHT;
+    }
+
+    @Override
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.getBlock() == Blocks.BAMBOO || blockState.getBlock() == Blocks.BAMBOO_SAPLING;
     }
 
     @Override

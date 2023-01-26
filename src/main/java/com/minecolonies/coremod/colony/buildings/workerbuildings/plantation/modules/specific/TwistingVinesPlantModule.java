@@ -3,8 +3,8 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.mod
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NETHER;
@@ -33,12 +33,6 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected boolean isValidBlock(final Block block)
-    {
-        return block == Blocks.TWISTING_VINES || block == Blocks.TWISTING_VINES_PLANT;
-    }
-
-    @Override
     protected int getMinimumPlantLength()
     {
         return MIN_HEIGHT;
@@ -48,6 +42,12 @@ public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
     protected @Nullable Integer getMaximumPlantLength()
     {
         return MAX_HEIGHT;
+    }
+
+    @Override
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.getBlock() == Blocks.TWISTING_VINES || blockState.getBlock() == Blocks.TWISTING_VINES_PLANT;
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +62,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
             return PlanterAIModuleResult.MOVING;
         }
 
-        PlanterAIModuleState action = decideWorkAction(field, workPosition);
+        PlanterAIModuleState action = decideWorkAction(field, workPosition, false);
         return switch (action)
                  {
                      case NONE -> PlanterAIModuleResult.NONE;
@@ -90,7 +89,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
     {
         for (BlockPos position : field.getWorkingPositions())
         {
-            if (decideWorkAction(field, position) != PlanterAIModuleState.NONE)
+            if (decideWorkAction(field, position, true) != PlanterAIModuleState.NONE)
             {
                 return position;
             }
@@ -116,23 +115,25 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
      * Responsible for deciding what action the AI is going to perform on a specific field position
      * depending on the state of the working position.
      *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
+     * @param field               the field to check for.
+     * @param plantingPosition    the specific position to check for.
+     * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
      * @return the {@link PlanterAIModuleResult} that the AI is going to perform.
      */
-    private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
+    private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition, boolean enablePercentChance)
     {
-        if (isPlantable(field, plantingPosition))
+        BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.above());
+        if (isValidPlantingBlock(blockState))
         {
             return PlanterAIModuleState.PLANTING;
         }
 
-        if (isClearable(field, plantingPosition))
+        if (isValidClearingBlock(blockState))
         {
             return PlanterAIModuleState.CLEARING;
         }
 
-        if (isHarvestable(field, plantingPosition))
+        if (canHarvest(field, plantingPosition, enablePercentChance))
         {
             return PlanterAIModuleState.HARVESTING;
         }
@@ -141,70 +142,63 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
     }
 
     /**
-     * Checks if the provided block at the given location is plantable.
+     * Check if the block is a correct block for planting.
+     * Defaults to being any air block.
      *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
-     * @return true if plant is plantable.
+     * @param blockState the block state.
+     * @return whether the block can be planted.
      */
-    protected boolean isPlantable(PlantationField field, BlockPos plantingPosition)
+    protected boolean isValidPlantingBlock(BlockState blockState)
     {
-        return field.getColony().getWorld().getBlockState(plantingPosition.above()).isAir();
-    }
-
-    /**
-     * Checks if the provided block at the given location is clearable.
-     *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
-     * @return true if plant is plantable.
-     */
-    protected boolean isClearable(PlantationField field, BlockPos plantingPosition)
-    {
-        return !isValidBlock(field.getColony().getWorld().getBlockState(plantingPosition.above()).getBlock());
+        return blockState.isAir();
     }
 
     /**
      * Checks if the provided block at the given location is harvestable.
      *
-     * @param field            the field to check for.
-     * @param plantingPosition the specific position to check for.
+     * @param field               the field to check for.
+     * @param plantingPosition    the specific position to check for.
+     * @param enablePercentChance if the field has a maximum length, ensure a percentage roll is thrown to check if harvesting is allowed.
      * @return true if plant is harvestable.
      */
-    protected boolean isHarvestable(PlantationField field, BlockPos plantingPosition)
+    private boolean canHarvest(PlantationField field, BlockPos plantingPosition, boolean enablePercentChance)
     {
         int minimumPlantLength = getMinimumPlantLength();
         Integer maximumPlantLength = getMaximumPlantLength();
 
-        if (maximumPlantLength != null)
+        if (maximumPlantLength != null && enablePercentChance)
         {
             float currentHeight = 0;
             for (int height = minimumPlantLength; height <= maximumPlantLength; height++)
             {
                 BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition.above(height));
-                if (isValidBlock(blockState.getBlock()))
+                if (!isValidHarvestBlock(blockState))
                 {
                     break;
                 }
                 currentHeight = height;
             }
 
-            float chance = currentHeight / maximumPlantLength;
+            float chance = currentHeight / (float) maximumPlantLength;
             return random.nextFloat() < chance;
         }
         else
         {
             BlockState blockAtMinHeight = field.getColony().getWorld().getBlockState(plantingPosition.above(minimumPlantLength));
-            return isValidBlock(blockAtMinHeight.getBlock());
+            return isValidHarvestBlock(blockAtMinHeight);
         }
     }
 
     /**
-     * Check if the block is a correct block for harvesting.
+     * Check if the block is a correct block for clearing.
      *
-     * @return the block
+     * @param blockState the block state.
+     * @return whether the block can be cleared.
      */
-    protected abstract boolean isValidBlock(Block block);
+    protected boolean isValidClearingBlock(BlockState blockState)
+    {
+        return !isValidHarvestBlock(blockState);
+    }
 
     /**
      * Get the minimum length this plant should grow to before considered harvestable.
@@ -228,4 +222,12 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
     {
         return null;
     }
+
+    /**
+     * Check if the block is a correct block for harvesting.
+     *
+     * @param blockState the block state.
+     * @return whether the block can be harvested.
+     */
+    protected abstract boolean isValidHarvestBlock(BlockState blockState);
 }
