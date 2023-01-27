@@ -277,11 +277,11 @@ public abstract class PlantationModule
         /**
          * Something is wrong in the planter AI module, request to reset the AI back to decision state.
          */
-        public static final PlanterAIModuleResult INVALID        = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult INVALID        = new PlanterAIModuleResult(PlanterAIModuleState.INVALID, AIWorkerState.PREPARING, true, true);
         /**
          * The planter had to do nothing on this position.
          */
-        public static final PlanterAIModuleResult NONE           = new PlanterAIModuleResult(PlanterAIModuleState.NONE, AIWorkerState.PREPARING, true, false);
+        public static final PlanterAIModuleResult NONE           = new PlanterAIModuleResult(PlanterAIModuleState.NONE, AIWorkerState.PREPARING, true, true);
         /**
          * The planter is moving to it's working position.
          */

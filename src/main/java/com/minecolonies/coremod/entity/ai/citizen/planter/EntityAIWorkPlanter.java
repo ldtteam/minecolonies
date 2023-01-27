@@ -39,10 +39,13 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
     private static final int MAX_BLOCKS_MINED = 64;
 
     /**
-     * Xp per harvesting block
+     * Xp per harvesting block.
      */
     private static final double XP_PER_HARVEST = 1;
 
+    /**
+     * The current position on the field the planter is working at.
+     */
     @Nullable
     private BlockPos currentWorkingPosition;
 
