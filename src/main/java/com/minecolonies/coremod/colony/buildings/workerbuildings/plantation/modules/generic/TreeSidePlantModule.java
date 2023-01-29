@@ -7,7 +7,6 @@ import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import java.util.Set;
  * - Must grow on the side of a vertically standing log.
  * - Must be harvested by chopping and re-planting the plant of the tree.
  */
-public abstract class TreeSideFieldPlantModule extends PlantationModule
+public abstract class TreeSidePlantModule extends PlantationModule
 {
     /**
      * Default constructor.
@@ -32,7 +31,7 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    protected TreeSideFieldPlantModule(
+    protected TreeSidePlantModule(
       final String fieldTag,
       final String workTag,
       final Item item)
@@ -60,7 +59,7 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
                      case HARVESTING -> getHarvestingResultFromMiningResult(planterAI.planterMineBlock(workPosition, true));
                      case PLANTING ->
                      {
-                         if (planterAI.planterPlaceBlock(workPosition, getItem(), getPlantsToRequest()))
+                         if (planterAI.planterPlaceBlock(workPosition, getItem(), getPlantsToRequest(), state -> generatePlantingBlockState(field, workPosition, state)))
                          {
                              yield PlanterAIModuleResult.PLANTED;
                          }
@@ -114,36 +113,64 @@ public abstract class TreeSideFieldPlantModule extends PlantationModule
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos plantingPosition)
     {
         BlockState blockState = field.getColony().getWorld().getBlockState(plantingPosition);
-        if (!isValidBlock(blockState.getBlock()))
+        if (isValidPlantingBlock(blockState))
+        {
+            return PlanterAIModuleState.PLANTING;
+        }
+
+        if (isValidClearingBlock(blockState))
         {
             return PlanterAIModuleState.CLEARING;
         }
 
-        if (isHarvestable(blockState))
+        if (isValidHarvestBlock(blockState))
         {
             return PlanterAIModuleState.HARVESTING;
-        }
-
-        if (blockState.isAir())
-        {
-            return PlanterAIModuleState.PLANTING;
         }
 
         return PlanterAIModuleState.NONE;
     }
 
     /**
-     * Check if the block is a correct block for harvesting.
+     * Generate a block state for a new plant.
      *
-     * @return the block
+     * @param field        the field reference to fetch data from.
+     * @param workPosition the position that has been chosen for work.
+     * @param blockState   the default block state for the block.
      */
-    protected abstract boolean isValidBlock(Block block);
+    protected BlockState generatePlantingBlockState(PlantationField field, BlockPos workPosition, BlockState blockState)
+    {
+        return blockState;
+    }
 
     /**
-     * Checks if the provided block at the given location is harvestable.
+     * Check if the block is a correct block for planting.
+     * Defaults to being any air block.
      *
-     * @param blockState the state of the planting position.
-     * @return true if plant is fully grown.
+     * @param blockState the block state.
+     * @return whether the block can be planted.
      */
-    protected abstract boolean isHarvestable(BlockState blockState);
+    protected boolean isValidPlantingBlock(BlockState blockState)
+    {
+        return blockState.isAir();
+    }
+
+    /**
+     * Check if the block is a correct block for clearing.
+     *
+     * @param blockState the block state.
+     * @return whether the block can be cleared.
+     */
+    protected boolean isValidClearingBlock(BlockState blockState)
+    {
+        return !isValidHarvestBlock(blockState);
+    }
+
+    /**
+     * Check if the block is a correct block for harvesting.
+     *
+     * @param blockState the block state.
+     * @return whether the block can be harvested.
+     */
+    protected abstract boolean isValidHarvestBlock(BlockState blockState);
 }

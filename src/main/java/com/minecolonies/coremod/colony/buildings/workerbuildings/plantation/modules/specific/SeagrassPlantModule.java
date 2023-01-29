@@ -1,16 +1,19 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedFieldPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.Nullable;
 
+import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SEA;
+
 /**
  * Planter module for growing {@link Items#SEAGRASS}.
  */
-public class SeagrassPlantModule extends BoneMealedFieldPlantModule
+public class SeagrassPlantModule extends BoneMealedPlantModule
 {
     /**
      * Default constructor.
@@ -30,5 +33,11 @@ public class SeagrassPlantModule extends BoneMealedFieldPlantModule
                  .filter(pos -> field.getColony().getWorld().getBlockState(pos).getFluidState().is(Fluids.WATER))
                  .findFirst()
                  .orElse(null);
+    }
+
+    @Override
+    public ResourceLocation getRequiredResearchEffect()
+    {
+        return PLANTATION_SEA;
     }
 }

@@ -12,11 +12,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Abstract class to list all fields (assigned) to a building.
@@ -52,11 +52,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * The list of the fields the citizen manages.
      */
     private final List<IField> fields = new ArrayList<>();
-
-    /**
-     * The list of the plants the citizen manages.
-     */
-    private final Set<Item> plants = new HashSet<>();
 
     /**
      * The field the citizen is currently working on.
@@ -296,7 +291,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             field.setOwner(module.getFirstCitizen().getId());
         }
         fields.add(field);
-        plants.add(field.getPlant());
         markDirty();
     }
 
@@ -308,7 +302,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     public boolean canAddField(IField field)
     {
-        return checkFieldConditions(fields.size(), plants.size(), getMaxFieldCount(), getMaxConcurrentPlants());
+        return checkFieldConditions(fields.size(), fields.stream().map(IField::getPlant).collect(Collectors.toSet()).size(), getMaxFieldCount(), getMaxConcurrentPlants());
     }
 
     /**

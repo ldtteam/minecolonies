@@ -27,7 +27,7 @@ import java.util.Random;
  * - Soil blocks must be the same so plants can grow on them.
  * - The defined "block" on the module should be the primary plant harvested on this field.
  */
-public abstract class BoneMealedFieldPlantModule extends PlantationModule
+public abstract class BoneMealedPlantModule extends PlantationModule
 {
     /**
      * The default percentage chance to be able to work on this field.
@@ -51,7 +51,7 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
      * @param workTag  the tag of the working positions.
      * @param item     the item which is harvested.
      */
-    protected BoneMealedFieldPlantModule(
+    protected BoneMealedPlantModule(
       final String fieldTag,
       final String workTag,
       final Item item)
@@ -153,7 +153,7 @@ public abstract class BoneMealedFieldPlantModule extends PlantationModule
 
     /**
      * Get the chance in percentages of being able to perform work on this field when asked.
-     * Defaults to {@link BoneMealedFieldPlantModule#DEFAULT_PERCENTAGE_CHANCE}.
+     * Defaults to {@link BoneMealedPlantModule#DEFAULT_PERCENTAGE_CHANCE}.
      *
      * @return a number between 1 and 100.
      */

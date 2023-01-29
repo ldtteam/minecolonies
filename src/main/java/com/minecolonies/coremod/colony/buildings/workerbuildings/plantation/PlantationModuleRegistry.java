@@ -51,6 +51,7 @@ public class PlantationModuleRegistry
             // Jungle plants
             plantationModules.put(PlantationFieldType.BAMBOO, new BambooPlantModule());
             plantationModules.put(PlantationFieldType.COCOA_BEANS, new CocoaPlantModule());
+            plantationModules.put(PlantationFieldType.VINES, new VinePlantModule());
 
             // Sea plants
             plantationModules.put(PlantationFieldType.KELP, new KelpPlantModule());

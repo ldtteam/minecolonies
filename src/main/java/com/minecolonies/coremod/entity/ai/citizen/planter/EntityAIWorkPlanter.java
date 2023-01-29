@@ -21,8 +21,11 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.UnaryOperator;
 
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.CitizenConstants.TICKS_20;
@@ -75,7 +78,6 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
         {
             return START_WORKING;
         }
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         module.claimFields();
@@ -89,7 +91,9 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
             worker.getCitizenData().setIdleAtJob(true);
             return PREPARING;
         }
+
         worker.getCitizenData().setIdleAtJob(false);
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         // Get the next field to work on, if any.
         final IField lastField = module.getCurrentField();
@@ -282,6 +286,11 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
     public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest)
     {
+        return planterPlaceBlock(blockToPlaceAt, item, numberToRequest, t -> t);
+    }
+
+    public boolean planterPlaceBlock(final BlockPos blockToPlaceAt, final Item item, final int numberToRequest, UnaryOperator<BlockState> blockStateModifier)
+    {
         ItemStack currentStack = new ItemStack(item);
         if (!checkIfRequestForItemExistOrCreateAsync(currentStack, numberToRequest, numberToRequest, true))
         {
@@ -290,7 +299,7 @@ public class EntityAIWorkPlanter extends AbstractEntityAICrafting<JobPlanter, Bu
 
         worker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
 
-        if (world.setBlockAndUpdate(blockToPlaceAt, BlockUtils.getBlockStateFromStack(currentStack)))
+        if (world.setBlockAndUpdate(blockToPlaceAt, blockStateModifier.apply(BlockUtils.getBlockStateFromStack(currentStack))))
         {
             InventoryUtils.reduceStackInItemHandler(worker.getInventoryCitizen(), currentStack);
             worker.getCitizenItemHandler().removeHeldItem();

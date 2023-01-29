@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedFieldPlantModule;
+import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
@@ -9,7 +9,7 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NE
 /**
  * Planter module for growing {@link Items#WARPED_FUNGUS} and {@link Items#WARPED_ROOTS}.
  */
-public class WarpedPlantsPlantModule extends BoneMealedFieldPlantModule
+public class WarpedPlantsPlantModule extends BoneMealedPlantModule
 {
     /**
      * The chance a worker has to work on this field.
