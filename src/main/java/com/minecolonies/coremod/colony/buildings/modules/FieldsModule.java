@@ -7,6 +7,7 @@ import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.util.BlockPosUtil;
+import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -44,9 +45,9 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     private static final int BLOCK_UPDATE_FLAG = 3;
 
     /**
-     * The last field tag.
+     * Random used for picking the field to work on.
      */
-    private static final String LAST_FIELD_TAG = "lastField";
+    private final Random random = new Random();
 
     /**
      * The list of the fields the citizen manages.
@@ -58,12 +59,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      */
     @Nullable
     private IField currentField;
-
-    /**
-     * The field the citizen worked on the last morning (first).
-     */
-    @Nullable
-    private IField lastField;
 
     /**
      * Fields should be assigned manually to the citizen.
@@ -81,11 +76,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             getFieldFromPosition(fieldLocation).ifPresent(fields::add);
         }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
-
-        if (compound.getAllKeys().contains(LAST_FIELD_TAG))
-        {
-            lastField = getFieldFromPosition(BlockPosUtil.read(compound, LAST_FIELD_TAG)).orElse(null);
-        }
     }
 
     /**
@@ -119,11 +109,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
         }
         compound.put(TAG_FIELDS, fieldTagList);
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
-
-        if (lastField != null)
-        {
-            BlockPosUtil.write(compound, LAST_FIELD_TAG, lastField.getPosition());
-        }
     }
 
     @Override
@@ -216,17 +201,9 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             return currentField;
         }
 
-        final List<IField> ownedFields = new ArrayList<>(this.fields);
-        Collections.shuffle(ownedFields);
-
-        if (!ownedFields.isEmpty())
-        {
-            if (ownedFields.get(0).equals(lastField))
-            {
-                Collections.shuffle(ownedFields);
-            }
-            lastField = ownedFields.get(0);
-        }
+        final List<IField> ownedFields = this.fields.stream()
+                                           .filter(field -> !field.equals(currentField))
+                                           .collect(CollectorUtils.toShuffledList());
         for (final IField field : ownedFields)
         {
             if (field.needsWork())

@@ -4,6 +4,7 @@ import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
+import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -99,7 +100,7 @@ public abstract class TreeSidePlantModule extends PlantationModule
                 }
             }
         }
-        return super.getValidWorkingPositions(world, treePositions.stream().toList());
+        return super.getValidWorkingPositions(world, treePositions.stream().collect(CollectorUtils.toShuffledList()));
     }
 
     /**

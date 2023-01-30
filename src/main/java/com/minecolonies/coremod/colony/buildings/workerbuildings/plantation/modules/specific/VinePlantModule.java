@@ -29,6 +29,12 @@ public class VinePlantModule extends TreeSidePlantModule
     }
 
     @Override
+    protected boolean isValidClearingBlock(final BlockState blockState)
+    {
+        return !blockState.isAir() && blockState.getBlock() != Blocks.VINE;
+    }
+
+    @Override
     protected boolean isValidHarvestBlock(final BlockState blockState)
     {
         return blockState.getBlock() == Blocks.VINE;
