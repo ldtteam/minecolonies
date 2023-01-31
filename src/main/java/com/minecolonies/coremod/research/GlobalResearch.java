@@ -302,10 +302,6 @@ public class GlobalResearch implements IGlobalResearch
             this.textureIcon = iconTexture;
         }
         this.itemIcon = iconItemStack;
-        if (MinecoloniesAPIProxy.getInstance().getConfig().getServer().researchDebugLog.get())
-        {
-            Log.getLogger().info("Statically assigned recipe [" + branch + "/" + id + "]");
-        }
     }
 
     /**
