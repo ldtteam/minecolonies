@@ -98,6 +98,7 @@ public class PathJobPathway extends AbstractPathJob
         return false;
     }
 
+    @Override
     protected double calcAdditionalCost(final double stepCost, final MNode parent, final BlockPos pos, final BlockState state)
     {
         if (parent.parent != null && parent.pos.getX() == parent.parent.pos.getX() && pos.getX() != parent.pos.getX())
