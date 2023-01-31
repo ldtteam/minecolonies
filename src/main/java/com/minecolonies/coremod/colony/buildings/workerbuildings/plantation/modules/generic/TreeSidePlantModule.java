@@ -48,7 +48,13 @@ public abstract class TreeSidePlantModule extends PlantationModule
       @NotNull final BlockPos workPosition,
       @NotNull final FakePlayer fakePlayer)
     {
-        if (planterAI.planterWalkToBlock(workPosition))
+        // Because tree side modules can grow on trees to larger heights, we must tell the AI
+        // to move to the bottom of the tree, else he ends up attempting to walk to a block he can't reach.
+        BlockPos walkPosition = field.getWorkingPositions().stream()
+                                  .filter(f -> f.getX() == workPosition.getX())
+                                  .min((a, b) -> b.getY() - a.getY())
+                                  .orElseThrow();
+        if (planterAI.planterWalkToBlock(walkPosition))
         {
             return PlanterAIModuleResult.MOVING;
         }
