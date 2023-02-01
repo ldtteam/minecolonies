@@ -184,7 +184,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
         {
             return START_WORKING;
         }
-        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         final FieldsModule module = building.getFirstModuleOccurance(FieldsModule.class);
         module.claimFields();
@@ -223,6 +222,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAICrafting<JobFarmer, Buil
             return PREPARING;
         }
         worker.getCitizenData().setIdleAtJob(false);
+        worker.getCitizenData().setVisibleStatus(VisibleCitizenStatus.WORKING);
 
         // Get the next field to work on, if any.
         final IField fieldToWork = module.getFieldToWorkOn();

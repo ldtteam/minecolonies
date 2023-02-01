@@ -6,13 +6,12 @@ import com.ldtteam.blockui.controls.Button;
 import com.ldtteam.blockui.controls.ItemIcon;
 import com.ldtteam.blockui.controls.Text;
 import com.ldtteam.blockui.views.ScrollingList;
-import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
-import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.Component;
@@ -21,7 +20,8 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.api.util.constant.TranslationConstants.*;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF;
+import static com.minecolonies.api.util.constant.TranslationConstants.COM_MINECOLONIES_COREMOD_GUI_HIRING_ON;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_FIELD_COUNT;
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.FIELD_LIST_LABEL_PLANT_COUNT;
 
@@ -39,11 +39,6 @@ public class FieldsModuleWindow extends AbstractModuleWindow
      * ID of the fields list inside the GUI.
      */
     private static final String LIST_FIELDS = "fields";
-
-    /**
-     * ID of the worker label inside the GUI.
-     */
-    private static final String TAG_WORKER = "worker";
 
     /**
      * ID of the distance label inside the GUI.
@@ -93,7 +88,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
     /**
      * The field module view.
      */
-    private final FieldModuleView moduleView;
+    private final FieldsModuleView moduleView;
 
     /**
      * ScrollList with the fields.
@@ -103,9 +98,9 @@ public class FieldsModuleWindow extends AbstractModuleWindow
     /**
      * Constructor for the window.
      *
-     * @param moduleView {@link FieldModuleView}.
+     * @param moduleView {@link FieldsModuleView}.
      */
-    public FieldsModuleWindow(final IBuildingView building, final FieldModuleView moduleView)
+    public FieldsModuleWindow(final IBuildingView building, final FieldsModuleView moduleView)
     {
         super(building, Constants.MOD_ID + HUT_FIELDS_RESOURCE_SUFFIX);
         registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
@@ -152,7 +147,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
         findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class)
           .setText(new TranslatableComponent(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
-          .setText(new TranslatableComponent(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getAmountOfOwnedFields(), moduleView.getMaxFieldCount()));
+          .setText(new TranslatableComponent(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getFields().size(), moduleView.getMaxFieldCount()));
         findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
           .setText(new TranslatableComponent(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
     }
@@ -175,19 +170,11 @@ public class FieldsModuleWindow extends AbstractModuleWindow
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final IFieldView field = moduleView.getFields().get(index);
-                final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getPosition(), buildingView.getPosition())));
+                final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
                 final boolean canAddField = moduleView.canAddField(field);
 
-                final ICitizen owner = field.getOwnerId() != null ? buildingView.getColony().getCitizen(field.getOwnerId()) : null;
-                final Component ownerText = owner == null
-                                              ? new TextComponent("<")
-                                                  .append(new TranslatableComponent(COM_MINECOLONIES_COREMOD_GUI_WORKER_HUTS_FARMER_HUT_UNUSED))
-                                                  .append(">")
-                                              : new TextComponent(owner.getName());
-
-                rowPane.findPaneOfTypeByID(TAG_WORKER, Text.class).setText(ownerText);
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(new TextComponent(distance + "m"));
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);
 
@@ -196,7 +183,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
                 assignButton.setHoverPane(null);
                 assignButton.show();
 
-                if (owner != null && !buildingView.getAllAssignedCitizens().contains(owner.getId()))
+                if (field.isTaken() && !buildingView.getID().equals(field.getBuildingId()))
                 {
                     assignButton.hide();
                 }

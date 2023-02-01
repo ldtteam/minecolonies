@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface for any field instance.
  */
-public interface IField
+public interface IField extends Comparable<IField>
 {
     /**
      * Get the type of the field.
@@ -49,24 +49,23 @@ public interface IField
     IColony getColony();
 
     /**
-     * Getter for the ownerId of the field.
+     * Getter for the owning building of the field.
      *
-     * @return the int id or null.
+     * @return the id or null.
      */
-    @Nullable Integer getOwnerId();
+    @Nullable BlockPos getBuildingId();
 
     /**
-     * Sets the owner of the field.
-     * This method stores both the citizen and colony ID.
+     * Sets the owning building of the field.
      *
-     * @param ownerId id of the citizen.
+     * @param buildingId id of the building.
      */
-    void setOwner(final int ownerId);
+    void setBuilding(final BlockPos buildingId);
 
     /**
      * Resets the ownership of the field.
      */
-    void resetOwner();
+    void resetOwningBuilding();
 
     /**
      * Has the field been taken.

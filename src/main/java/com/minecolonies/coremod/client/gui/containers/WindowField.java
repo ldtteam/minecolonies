@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
@@ -30,10 +31,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.minecolonies.api.util.constant.TranslationConstants.*;
 
@@ -76,7 +75,6 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     /**
      * The field view class.
      */
-    @Nullable
     private FarmField.View farmField;
 
     /**
@@ -91,9 +89,14 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         super(container, playerInventory, iTextComponent);
         this.tileEntity = container.getTileEntity();
         final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(tileEntity.getLevel(), tileEntity.getBlockPos());
-        if (colony != null && colony.getField(tileEntity.getBlockPos()) instanceof FarmField.View field)
+        if (colony != null)
         {
-            this.farmField = field;
+            this.farmField = colony.getField(FarmField.View.class, tileEntity.getBlockPos());
+        }
+
+        if (farmField == null)
+        {
+            throw new IllegalStateException("Field cannot be null.");
         }
     }
 
@@ -104,6 +107,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
 
         final int centerX = this.leftPos + this.imageWidth / 2 + 1;
         final int centerY = this.topPos + this.imageHeight / 2;
+
         for (Direction dir : Direction.Plane.HORIZONTAL)
         {
             int xFromPolar = (int) Math.sin(Math.PI * (4 - dir.get2DDataValue()) / 2) * (BUTTON_SIDE_LENGTH);
@@ -133,10 +137,18 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
     @Override
     protected void renderLabels(@NotNull final PoseStack stack, final int mouseX, final int mouseY)
     {
-        if (farmField != null && farmField.isTaken())
+        if (farmField.isTaken())
         {
-            ICitizen citizen = farmField.getColonyView().getCitizen(Objects.requireNonNull(farmField.getOwnerId()));
-            this.font.draw(stack, new TranslatableComponent(WORKER_FIELD, citizen.getName()), X_OFFSET, -Y_OFFSET * 2F, 16777215 /* WHITE */);
+            final IBuildingView building = farmField.getColonyView().getBuilding(farmField.getBuildingId());
+            final Integer citizenId = building.getAllAssignedCitizens().stream().findFirst().orElse(null);
+            if (citizenId != null)
+            {
+                ICitizen citizen = farmField.getColonyView().getCitizen(citizenId);
+                if (citizen != null)
+                {
+                    this.font.draw(stack, new TranslatableComponent(WORKER_FIELD, citizen.getName()), X_OFFSET, -Y_OFFSET * 2F, 16777215 /* WHITE */);
+                }
+            }
         }
 
         this.font.draw(stack, new TranslatableComponent(BLOCK_HUT_FIELD), X_OFFSET, Y_OFFSET, TEXT_COLOR);
@@ -200,15 +212,9 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
         }
 
         @Override
-        protected boolean clicked(final double p_93681_, final double p_93682_)
-        {
-            return super.clicked(p_93681_, p_93682_);
-        }
-
-        @Override
         public boolean mouseClicked(final double mouseX, final double mouseY, final int button)
         {
-            if (this.clicked(mouseX, mouseY))
+            if (this.clicked(mouseX, mouseY) && farmField != null)
             {
                 int delta = this.isValidClickButton(button) ? 1 : -1;
 
@@ -282,18 +288,14 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
          */
         public int getTextOffset(Direction.Axis axis)
         {
-            switch (this.direction)
-            {
-                case NORTH:
-                    return axis == Direction.Axis.X ? 0 : +2;
-                case EAST:
-                    return axis == Direction.Axis.X ? -2 : 0;
-                case SOUTH:
-                    return axis == Direction.Axis.X ? 0 : -2;
-                case WEST:
-                    return axis == Direction.Axis.X ? +2 : 0;
-            }
-            return 0;
+            return switch (this.direction)
+                     {
+                         case NORTH -> axis == Direction.Axis.X ? 0 : +2;
+                         case EAST -> axis == Direction.Axis.X ? -2 : 0;
+                         case SOUTH -> axis == Direction.Axis.X ? 0 : -2;
+                         case WEST -> axis == Direction.Axis.X ? +2 : 0;
+                         default -> 0;
+                     };
         }
 
         @Override

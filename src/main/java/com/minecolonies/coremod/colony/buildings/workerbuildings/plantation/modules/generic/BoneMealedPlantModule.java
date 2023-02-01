@@ -207,8 +207,7 @@ public abstract class BoneMealedPlantModule extends PlantationModule
     protected BlockPos getPositionToHarvest(PlantationField field)
     {
         return field.getWorkingPositions().stream()
-                 .map(BlockPos::above)
-                 .filter(pos -> field.getColony().getWorld().getBlockState(pos).isAir())
+                 .filter(pos -> !field.getColony().getWorld().getBlockState(pos.above()).isAir())
                  .findFirst()
                  .orElse(null);
     }

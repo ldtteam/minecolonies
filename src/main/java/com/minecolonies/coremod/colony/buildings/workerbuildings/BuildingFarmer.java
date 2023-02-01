@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
+import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -14,7 +15,7 @@ import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildin
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.settings.BoolSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.SettingKey;
-import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -164,6 +165,12 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
+        public Class<?> getExpectedFieldType()
+        {
+            return FarmField.class;
+        }
+
+        @Override
         protected @Nullable IField getFreeField(final IColony colony)
         {
             return colony.getBuildingManager().getFreeField(FarmField.class);
@@ -173,8 +180,13 @@ public class BuildingFarmer extends AbstractBuilding
     /**
      * Field module view implementation for the farmer.
      */
-    public static class FarmerFieldModuleView extends FieldModuleView
+    public static class FarmerFieldsModuleView extends FieldsModuleView
     {
+        @Override
+        public Class<? extends IFieldView> getExpectedFieldType()
+        {
+            return FarmField.View.class;
+        }
     }
 
     public static class CraftingModule extends AbstractCraftingBuildingModule.Crafting

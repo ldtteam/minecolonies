@@ -114,8 +114,9 @@ public class NetworkChannel
         registerMessage(++idx, ColonyViewCitizenViewMessage.class, ColonyViewCitizenViewMessage::new);
         registerMessage(++idx, ColonyViewRemoveCitizenMessage.class, ColonyViewRemoveCitizenMessage::new);
         registerMessage(++idx, ColonyViewBuildingViewMessage.class, ColonyViewBuildingViewMessage::new);
-        registerMessage(++idx, ColonyViewFieldViewMessage.class, ColonyViewFieldViewMessage::new);
         registerMessage(++idx, ColonyViewRemoveBuildingMessage.class, ColonyViewRemoveBuildingMessage::new);
+        registerMessage(++idx, ColonyViewFieldViewMessage.class, ColonyViewFieldViewMessage::new);
+        registerMessage(++idx, ColonyViewRemoveFieldViewMessage.class, ColonyViewRemoveFieldViewMessage::new);
         registerMessage(++idx, PermissionsMessage.View.class, PermissionsMessage.View::new);
         registerMessage(++idx, ColonyStylesMessage.class, ColonyStylesMessage::new);
         registerMessage(++idx, ColonyViewWorkOrderMessage.class, ColonyViewWorkOrderMessage::new);

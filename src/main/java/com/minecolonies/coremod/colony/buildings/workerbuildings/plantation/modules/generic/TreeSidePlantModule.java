@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.Plan
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,8 +53,8 @@ public abstract class TreeSidePlantModule extends PlantationModule
         // Because tree side modules can grow on trees to larger heights, we must tell the AI
         // to move to the bottom of the tree, else he ends up attempting to walk to a block he can't reach.
         BlockPos walkPosition = field.getWorkingPositions().stream()
-                                  .filter(f -> f.getX() == workPosition.getX())
-                                  .min((a, b) -> b.getY() - a.getY())
+                                  .filter(f -> f.getX() == workPosition.getX() && f.getZ() == workPosition.getZ())
+                                  .min(Comparator.comparingInt(Vec3i::getY))
                                   .orElseThrow();
         if (planterAI.planterWalkToBlock(walkPosition))
         {

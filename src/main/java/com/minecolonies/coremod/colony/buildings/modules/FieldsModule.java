@@ -40,19 +40,9 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     private static final String TAG_ASSIGN_MANUALLY = "assign";
 
     /**
-     * Flag used to be notified about block updates.
-     */
-    private static final int BLOCK_UPDATE_FLAG = 3;
-
-    /**
-     * Random used for picking the field to work on.
-     */
-    private final Random random = new Random();
-
-    /**
      * The list of the fields the citizen manages.
      */
-    private final List<IField> fields = new ArrayList<>();
+    private final Set<IField> fields = new HashSet<>();
 
     /**
      * The field the citizen is currently working on.
@@ -115,40 +105,6 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     public void serializeToView(@NotNull final FriendlyByteBuf buf)
     {
         buf.writeBoolean(shouldAssignManually);
-
-        int size = 0;
-
-        final List<IField> allFields = new ArrayList<>(getFields(building.getColony()));
-        final List<IField> cleanedFields = new ArrayList<>();
-        final List<IField> ownedFields = new ArrayList<>();
-
-        final WorkerBuildingModule module = building.getFirstModuleOccurance(WorkerBuildingModule.class);
-        for (final IField field : allFields)
-        {
-            if (field.isTaken() && module.getFirstCitizen() != null)
-            {
-                if (module.getAssignedCitizen().isEmpty() || ((Integer) module.getFirstCitizen().getId()).equals(field.getOwnerId()))
-                {
-                    cleanedFields.add(field);
-                    ownedFields.add(field);
-                    size++;
-                }
-            }
-            else
-            {
-                size++;
-                cleanedFields.add(field);
-            }
-        }
-
-        buf.writeInt(size);
-        for (final IField field : cleanedFields)
-        {
-            buf.writeEnum(field.getType());
-            field.serializeToView(buf);
-        }
-
-        buf.writeInt(ownedFields.size());
         buf.writeInt(getMaxFieldCount());
         buf.writeInt(getMaxConcurrentPlants());
     }
@@ -166,6 +122,13 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @return an integer stating the maximum concurrent plant count.
      */
     protected abstract int getMaxConcurrentPlants();
+
+    /**
+     * Get the class type which is expected for the fields to have.
+     *
+     * @return the class type.
+     */
+    public abstract Class<?> getExpectedFieldType();
 
     /**
      * Getter of the current field.
@@ -262,11 +225,7 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             return;
         }
 
-        final WorkerBuildingModule module = building.getFirstModuleOccurance(WorkerBuildingModule.class);
-        if (module.getFirstCitizen() != null)
-        {
-            field.setOwner(module.getFirstCitizen().getId());
-        }
+        field.setBuilding(building.getID());
         fields.add(field);
         markDirty();
     }
@@ -378,12 +337,8 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     public void freeField(final IField field)
     {
         fields.remove(field);
-        field.resetOwner();
-        building.getColony().getWorld()
-          .sendBlockUpdated(field.getPosition(),
-            building.getColony().getWorld().getBlockState(field.getPosition()),
-            building.getColony().getWorld().getBlockState(field.getPosition()),
-            BLOCK_UPDATE_FLAG);
+        field.resetOwningBuilding();
+        markDirty();
 
         if (currentField != null && currentField.equals(field))
         {

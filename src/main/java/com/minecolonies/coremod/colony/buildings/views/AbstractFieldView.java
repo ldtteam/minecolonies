@@ -1,12 +1,16 @@
 package com.minecolonies.coremod.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Client only class for the field which can be used to show it on the field window.
@@ -19,9 +23,9 @@ public abstract class AbstractFieldView implements IFieldView
     protected IColonyView colony;
 
     /**
-     * Citizen id of the citizen owning the field.
+     * Building id of the building owning the field.
      */
-    protected int ownerId;
+    protected BlockPos buildingId;
 
     /**
      * The position of the field.
@@ -74,37 +78,80 @@ public abstract class AbstractFieldView implements IFieldView
 
     @Override
     @Nullable
-    public final Integer getOwnerId()
+    public final BlockPos getBuildingId()
     {
-        return ownerId != 0 ? ownerId : null;
+        return buildingId;
     }
 
     @Override
-    public final void setOwner(final int ownerId)
+    public void setBuilding(final BlockPos buildingId)
     {
-        this.ownerId = ownerId;
+        this.buildingId = buildingId;
     }
 
     @Override
-    public final void resetOwner()
+    public final void resetOwningBuilding()
     {
-        ownerId = 0;
+        buildingId = null;
     }
 
     @Override
     public final boolean isTaken()
     {
-        return ownerId != 0;
+        return buildingId != null;
     }
 
     @Override
     public void deserialize(final FriendlyByteBuf fieldData)
     {
-        ownerId = fieldData.readInt();
+        if (fieldData.readBoolean())
+        {
+            buildingId = fieldData.readBlockPos();
+        }
         position = fieldData.readBlockPos();
         if (fieldData.readBoolean())
         {
             plant = fieldData.readItem().getItem();
         }
+    }
+
+    @Override
+    public int getDistance(final IBuildingView building)
+    {
+        return (int) Math.sqrt(BlockPosUtil.getDistanceSquared(position, building.getPosition()));
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = buildingId != null ? buildingId.hashCode() : 0;
+        result = 31 * result + position.hashCode();
+        result = 31 * result + (plant != null ? plant.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        final AbstractFieldView that = (AbstractFieldView) o;
+
+        if (!Objects.equals(buildingId, that.buildingId))
+        {
+            return false;
+        }
+        if (!position.equals(that.position))
+        {
+            return false;
+        }
+        return Objects.equals(plant, that.plant);
     }
 }

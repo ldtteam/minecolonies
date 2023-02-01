@@ -4,8 +4,8 @@ import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -82,7 +82,7 @@ public final class ColonyView implements IColonyView
     private final Map<BlockPos, IBuildingView> buildings = new HashMap<>();
 
     @NotNull
-    private final Map<BlockPos, IFieldView> fields = new HashMap<>();
+    private final Collection<IFieldView> fields = new HashSet<>();
 
     //  Citizenry
     @NotNull
@@ -599,6 +599,7 @@ public final class ColonyView implements IColonyView
             citizens.clear();
             townHall = null;
             buildings.clear();
+            fields.clear();
         }
 
         freePositions.clear();
@@ -866,25 +867,21 @@ public final class ColonyView implements IColonyView
         }
     }
 
-    /**
-     * Update a ColonyView's fields given a network data ColonyView update packet. This uses a full-replacement - fields do not get updated and are instead overwritten.
-     *
-     * @param position location of the field.
-     * @param buf      buffer containing ColonyBuilding information.
-     */
     @Override
-    public void handleColonyFieldViewMessage(final BlockPos position, final FieldStructureType type, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyFieldViewMessage(final FieldStructureType type, @NotNull final FriendlyByteBuf buf)
     {
-        if (fields.containsKey(position))
-        {
-            fields.get(position).deserialize(buf);
-        }
-        else
-        {
-            final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
-            field.deserialize(buf);
-            fields.put(field.getPosition(), field);
-        }
+        final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
+        field.deserialize(buf);
+        fields.remove(field);
+        fields.add(field);
+    }
+
+    @Override
+    public void handleColonyRemoveFieldViewMessage(final FieldStructureType type, @NotNull final FriendlyByteBuf buf)
+    {
+        final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
+        field.deserialize(buf);
+        fields.remove(field);
     }
 
     /**
@@ -938,17 +935,6 @@ public final class ColonyView implements IColonyView
     public IPermissions getPermissions()
     {
         return permissions;
-    }
-
-    /**
-     * Add a new free to interact position.
-     *
-     * @param pos position to add.
-     */
-    @Override
-    public void addFreePosition(@NotNull final BlockPos pos)
-    {
-        freePositions.add(pos);
     }
 
     @Override
@@ -1135,17 +1121,6 @@ public final class ColonyView implements IColonyView
         return new ArrayList<>(buildings.values());
     }
 
-    /**
-     * Add a new free to interact block.
-     *
-     * @param block block to add.
-     */
-    @Override
-    public void addFreeBlock(@NotNull final Block block)
-    {
-        freeBlocks.add(block);
-    }
-
     @Override
     public boolean isRaiding()
     {
@@ -1182,10 +1157,45 @@ public final class ColonyView implements IColonyView
         return this.nameFileIds;
     }
 
-    @Override
-    public IFieldView getField(final BlockPos position)
+    @SuppressWarnings("unchecked")
+    public <T extends IFieldView> @NotNull Collection<T> getFields(Class<T> fieldClass)
     {
-        return fields.get(position);
+        return fields.stream()
+                 .filter(f -> f.getClass().equals(fieldClass))
+                 .map(f -> (T) f)
+                 .toList();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends IFieldView> T getField(Class<T> fieldClass, final BlockPos position)
+    {
+        return (T) fields.stream()
+                     .filter(f -> f.getPosition().equals(position))
+                     .filter(f -> f.getClass().equals(fieldClass))
+                     .findFirst().orElse(null);
+    }
+
+    /**
+     * Add a new free to interact block.
+     *
+     * @param block block to add.
+     */
+    @Override
+    public void addFreeBlock(@NotNull final Block block)
+    {
+        freeBlocks.add(block);
+    }
+
+    /**
+     * Add a new free to interact position.
+     *
+     * @param pos position to add.
+     */
+    @Override
+    public void addFreePosition(@NotNull final BlockPos pos)
+    {
+        freePositions.add(pos);
     }
 
     /**

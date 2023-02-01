@@ -369,7 +369,7 @@ public interface IColonyManager
     void handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
-     * Returns result of {@link IColonyView#handleColonyFieldViewMessage(BlockPos, FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
+     * Returns result of {@link IColonyView#handleColonyFieldViewMessage} (BlockPos, FriendlyByteBuf)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
      * #getColonyView(int, ResourceKey)} is null, returns null.
      *
      * @param colonyId ID of the colony.
@@ -379,6 +379,18 @@ public interface IColonyManager
      * @param dim      the dimension.
      */
     void handleColonyFieldViewMessage(int colonyId, BlockPos position, FieldStructureType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
+
+    /**
+     * Returns result of {@link IColonyView#handleColonyRemoveFieldViewMessage} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
+     * #getColonyView(int, ResourceKey)} is null, returns null.
+     *
+     * @param colonyId ID of the colony.
+     * @param position the position of the field.
+     * @param type     the type of the field.
+     * @param buf      {@link FriendlyByteBuf} with field data.
+     * @param dim      the dimension.
+     */
+    void handleColonyRemoveFieldViewMessage(int colonyId, BlockPos position, FieldStructureType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link

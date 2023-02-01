@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_LOCATION;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 
@@ -35,9 +37,10 @@ public abstract class AbstractField implements IField
     protected IColony colony;
 
     /**
-     * Citizen id of the citizen owning the field.
+     * Building id of the building owning the field.
      */
-    protected int ownerId;
+    @Nullable
+    protected BlockPos buildingId;
 
     /**
      * The position of the field.
@@ -87,33 +90,36 @@ public abstract class AbstractField implements IField
 
     @Override
     @Nullable
-    public final Integer getOwnerId()
+    public final BlockPos getBuildingId()
     {
-        return ownerId != 0 ? ownerId : null;
+        return buildingId;
     }
 
     @Override
-    public final void setOwner(final int ownerId)
+    public final void setBuilding(final BlockPos buildingId)
     {
-        this.ownerId = ownerId;
+        this.buildingId = buildingId;
     }
 
     @Override
-    public final void resetOwner()
+    public final void resetOwningBuilding()
     {
-        ownerId = 0;
+        buildingId = null;
     }
 
     @Override
     public final boolean isTaken()
     {
-        return ownerId != 0;
+        return buildingId != null;
     }
 
     @Override
     public void deserializeNBT(CompoundTag compound)
     {
-        ownerId = compound.getInt(TAG_OWNER);
+        if (compound.contains(TAG_OWNER))
+        {
+            buildingId = BlockPosUtil.read(compound, TAG_OWNER);
+        }
         position = BlockPosUtil.read(compound, TAG_LOCATION);
         if (compound.contains(TAG_PLANT))
         {
@@ -125,7 +131,10 @@ public abstract class AbstractField implements IField
     public @NotNull CompoundTag serializeNBT()
     {
         CompoundTag compound = new CompoundTag();
-        compound.putInt(TAG_OWNER, ownerId);
+        if (buildingId != null)
+        {
+            BlockPosUtil.write(compound, TAG_OWNER, buildingId);
+        }
         BlockPosUtil.write(compound, TAG_LOCATION, position);
         if (plant != null)
         {
@@ -139,7 +148,11 @@ public abstract class AbstractField implements IField
     @Override
     public void serializeToView(final FriendlyByteBuf fieldData)
     {
-        fieldData.writeInt(ownerId);
+        fieldData.writeBoolean(buildingId != null);
+        if (buildingId != null)
+        {
+            fieldData.writeBlockPos(buildingId);
+        }
         fieldData.writeBlockPos(position);
         fieldData.writeBoolean(plant != null);
         if (plant != null)
@@ -149,13 +162,16 @@ public abstract class AbstractField implements IField
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
-        return position.hashCode();
+        int result = type.hashCode();
+        result = 31 * result + position.hashCode();
+        result = 31 * result + (plant != null ? plant.hashCode() : 0);
+        return result;
     }
 
     @Override
-    public final boolean equals(final Object o)
+    public boolean equals(final Object o)
     {
         if (this == o)
         {
@@ -168,6 +184,20 @@ public abstract class AbstractField implements IField
 
         final AbstractField that = (AbstractField) o;
 
-        return position.equals(that.position);
+        if (type != that.type)
+        {
+            return false;
+        }
+        if (!position.equals(that.position))
+        {
+            return false;
+        }
+        return Objects.equals(plant, that.plant);
+    }
+
+    @Override
+    public int compareTo(@NotNull final IField o)
+    {
+        return this.equals(o) ? 0 : 1;
     }
 }

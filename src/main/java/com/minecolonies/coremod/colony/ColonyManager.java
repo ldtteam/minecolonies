@@ -690,7 +690,21 @@ public final class ColonyManager implements IColonyManager
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
         {
-            view.handleColonyFieldViewMessage(position, type, buf);
+            view.handleColonyFieldViewMessage(type, buf);
+        }
+        else
+        {
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId), new Exception());
+        }
+    }
+
+    @Override
+    public void handleColonyRemoveFieldViewMessage(final int colonyId, final BlockPos position, FieldStructureType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    {
+        final IColonyView view = getColonyView(colonyId, dim);
+        if (view != null)
+        {
+            view.handleColonyRemoveFieldViewMessage(type, buf);
         }
         else
         {

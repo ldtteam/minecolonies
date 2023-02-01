@@ -12,7 +12,7 @@ import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.modules.AbstractCraftingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
-import com.minecolonies.coremod.colony.buildings.moduleviews.FieldModuleView;
+import com.minecolonies.coremod.colony.buildings.moduleviews.FieldsModuleView;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
@@ -107,6 +107,12 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
+        public Class<?> getExpectedFieldType()
+        {
+            return PlantationField.class;
+        }
+
+        @Override
         protected @Nullable IField getFreeField(final IColony colony)
         {
             return colony.getBuildingManager().getFreeField(PlantationField.class);
@@ -131,8 +137,14 @@ public class BuildingPlantation extends AbstractBuilding
     /**
      * Field module view implementation for the plantation.
      */
-    public static class PlantationFieldModuleView extends FieldModuleView
+    public static class PlantationFieldsModuleView extends FieldsModuleView
     {
+        @Override
+        public Class<? extends IFieldView> getExpectedFieldType()
+        {
+            return PlantationField.View.class;
+        }
+
         @Override
         public boolean canAddField(final IFieldView field)
         {

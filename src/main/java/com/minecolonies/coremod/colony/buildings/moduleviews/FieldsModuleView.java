@@ -2,12 +2,11 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
+import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.client.gui.modules.FieldsModuleWindow;
 import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FieldRegistry;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.server.colony.building.fields.AssignmentModeMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,7 +18,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.util.constant.translation.GuiTranslationConstants.*;
@@ -27,28 +28,12 @@ import static com.minecolonies.api.util.constant.translation.GuiTranslationConst
 /**
  * Client side version of the abstract class to list all fields (assigned) to a building.
  */
-public abstract class FieldModuleView extends AbstractBuildingModuleView
+public abstract class FieldsModuleView extends AbstractBuildingModuleView
 {
     /**
      * Checks if fields should be assigned manually.
      */
     private boolean shouldAssignFieldManually;
-
-    /**
-     * Contains a view object of all the fields in the colony.
-     */
-    @NotNull
-    private List<IFieldView> fields = new ArrayList<>();
-
-    /**
-     * Set of plants being cultivated by this building.
-     */
-    private Set<Item> workedPlants = new HashSet<>();
-
-    /**
-     * The amount of fields the building owns.
-     */
-    private int amountOfOwnedFields;
 
     /**
      * The maximum amount of fields the building can support.
@@ -63,22 +48,9 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
     @Override
     public void deserialize(@NotNull final FriendlyByteBuf buf)
     {
-        fields = new ArrayList<>();
-
         shouldAssignFieldManually = buf.readBoolean();
-        int amountOfFields = buf.readInt();
-        for (int i = 1; i <= amountOfFields; i++)
-        {
-            final FieldStructureType type = buf.readEnum(FieldStructureType.class);
-            final IFieldView fieldView = FieldRegistry.getFieldViewClassForType(type, getColony());
-            fieldView.deserialize(buf);
-            fields.add(fieldView);
-        }
-        amountOfOwnedFields = buf.readInt();
         maxFieldCount = buf.readInt();
         maxConcurrentPlants = buf.readInt();
-
-        calculateWorkedPlants();
     }
 
     @Override
@@ -101,23 +73,6 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
     }
 
     /**
-     * Determines the set of unique plants being worked on every field.
-     */
-    private void calculateWorkedPlants()
-    {
-        workedPlants = fields.stream()
-                         .map(field -> {
-                             if (field != null && buildingView.getAllAssignedCitizens().contains(field.getOwnerId()))
-                             {
-                                 return field.getPlant();
-                             }
-                             return null;
-                         })
-                         .filter(Objects::nonNull)
-                         .collect(Collectors.toSet());
-    }
-
-    /**
      * Should the citizen be assigned manually to the fields.
      *
      * @return true if yes.
@@ -125,28 +80,6 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
     public boolean assignFieldManually()
     {
         return shouldAssignFieldManually;
-    }
-
-    /**
-     * Getter of the fields list.
-     *
-     * @return an unmodifiable list.
-     */
-    @NotNull
-    public List<IFieldView> getFields()
-    {
-        return Collections.unmodifiableList(fields);
-    }
-
-    /**
-     * Getter of the worked plants set.
-     *
-     * @return an unmodifiable set.
-     */
-    @NotNull
-    public Set<Item> getWorkedPlants()
-    {
-        return Collections.unmodifiableSet(workedPlants);
     }
 
     /**
@@ -184,12 +117,7 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
             {
-                if (!buildingModuleView.getAssignedCitizens().isEmpty())
-                {
-                    field.setOwner(buildingModuleView.getAssignedCitizens().get(0));
-                }
-                amountOfOwnedFields++;
-                calculateWorkedPlants();
+                field.setBuilding(buildingView.getID());
             }
         }
     }
@@ -202,8 +130,44 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
      */
     public boolean canAddField(IFieldView field)
     {
-        return FieldsModule.checkFieldConditions(amountOfOwnedFields, workedPlants.size(), maxFieldCount, maxConcurrentPlants);
+        return FieldsModule.checkFieldConditions(getFields().size(), getWorkedPlants().size(), maxFieldCount, maxConcurrentPlants);
     }
+
+    /**
+     * Getter of all fields.
+     *
+     * @return an unmodifiable list.
+     */
+    @NotNull
+    public List<IFieldView> getFields()
+    {
+        return getColony().getFields(getExpectedFieldType()).stream()
+                 .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
+                 .map(m -> (IFieldView) m)
+                 .distinct()
+                 .sorted(new FieldsComparator(buildingView))
+                 .toList();
+    }
+
+    /**
+     * Getter of the worked plants set.
+     *
+     * @return an unmodifiable set.
+     */
+    @NotNull
+    public Set<Item> getWorkedPlants()
+    {
+        return getFields().stream()
+                 .map(IFieldView::getPlant)
+                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get the class type which is expected for the fields to have.
+     *
+     * @return the class type.
+     */
+    public abstract Class<? extends IFieldView> getExpectedFieldType();
 
     /**
      * Free a field from the current worker.
@@ -219,9 +183,7 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
             {
-                field.resetOwner();
-                amountOfOwnedFields--;
-                calculateWorkedPlants();
+                field.resetOwningBuilding();
             }
         }
     }
@@ -235,25 +197,15 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
     @Nullable
     public BaseComponent getFieldWarningTooltip(IFieldView field)
     {
-        if (!FieldsModule.checkFieldCount(amountOfOwnedFields, maxFieldCount))
+        if (!FieldsModule.checkFieldCount(getFields().size(), maxFieldCount))
         {
             return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
-        else if (!FieldsModule.checkPlantCount(workedPlants.size(), maxConcurrentPlants))
+        else if (!FieldsModule.checkPlantCount(getWorkedPlants().size(), maxConcurrentPlants))
         {
             return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_PLANT_COUNT);
         }
         return null;
-    }
-
-    /**
-     * Getter for the amount of owned fields.
-     *
-     * @return the amount of owned fields.
-     */
-    public int getAmountOfOwnedFields()
-    {
-        return amountOfOwnedFields;
     }
 
     /**
@@ -264,5 +216,45 @@ public abstract class FieldModuleView extends AbstractBuildingModuleView
     public int getMaxFieldCount()
     {
         return maxFieldCount;
+    }
+
+    /**
+     * Comparator class for sorting fields in a predictable order in the window.
+     */
+    static class FieldsComparator implements Comparator<IFieldView>
+    {
+        /**
+         * The building this comparator is running on.
+         */
+        private final IBuildingView assignedBuilding;
+
+        /**
+         * Default constructor.
+         *
+         * @param assignedBuilding the building this comparator is running on.
+         */
+        public FieldsComparator(IBuildingView assignedBuilding)
+        {
+            this.assignedBuilding = assignedBuilding;
+        }
+
+        @Override
+        public int compare(final IFieldView field1, final IFieldView field2)
+        {
+            if (field1.isTaken() && field2.isTaken())
+            {
+                return field1.getDistance(assignedBuilding) - field2.getDistance(assignedBuilding);
+            }
+            else if (field1.isTaken())
+            {
+                return -1;
+            }
+            else if (field2.isTaken())
+            {
+                return 1;
+            }
+
+            return field1.getDistance(assignedBuilding) - field2.getDistance(assignedBuilding);
+        }
     }
 }

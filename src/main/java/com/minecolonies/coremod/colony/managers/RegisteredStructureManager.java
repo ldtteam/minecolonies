@@ -25,6 +25,7 @@ import com.minecolonies.coremod.blocks.huts.BlockHutTavern;
 import com.minecolonies.coremod.blocks.huts.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.BuildingMysticalSite;
+import com.minecolonies.coremod.colony.buildings.modules.FieldsModule;
 import com.minecolonies.coremod.colony.buildings.modules.LivingBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.TavernBuildingModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBarracks;
@@ -36,6 +37,7 @@ import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewBuildingViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewFieldViewMessage;
 import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveBuildingMessage;
+import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveFieldViewMessage;
 import com.minecolonies.coremod.tileentities.TileEntityDecorationController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -51,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -81,7 +84,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     /**
      * List of fields of the colony.
      */
-    private final List<IField> fields;
+    private final Set<IField> fields;
 
     /**
      * List of building in the colony.
@@ -126,7 +129,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
-        this.fields = new Vector<>();
+        this.fields = new ConcurrentSkipListSet<>();
     }
 
     @Override
@@ -164,6 +167,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             modifyFunction.accept(field);
             isFieldsDirty = true;
+            isBuildingsDirty = true;
             colony.markDirty();
         }
     }
@@ -171,7 +175,22 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     @Override
     public <T extends IField> void removeField(Class<T> fieldType, BlockPos position)
     {
-        fields.removeIf(f -> f.getPosition().equals(position) && fieldType.isInstance(f));
+        final List<IField> fieldsToRemove = fields.stream()
+                                              .filter(f -> f.getPosition().equals(position) && fieldType.isInstance(f))
+                                              .toList();
+
+        // We must send the message to everyone since fields here will be permanently removed from the list.
+        // And the clients have no way to later on also get their fields removed, thus every client has to be told
+        // immediately that the field is gone.
+        for (IField field : fieldsToRemove)
+        {
+            fields.remove(field);
+            Network.getNetwork().sendToEveryone(new ColonyViewRemoveFieldViewMessage(field));
+        }
+
+        isFieldsDirty = true;
+        isBuildingsDirty = true;
+        colony.markDirty();
     }
 
     @Override
@@ -193,7 +212,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             fields.add(fieldInstance);
         }
 
-        //  Buildings
+        // Buildings
         final ListTag buildingTagList = compound.getList(TAG_BUILDINGS, Tag.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.size(); ++i)
         {
@@ -220,6 +239,27 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                 }
             }
             leisureSites = ImmutableList.copyOf(leisureSitesList);
+        }
+
+        // Ensure fields are still tied to an appropriate building
+        for (IField field : fields.stream().filter(IField::isTaken).toList())
+        {
+            final IBuilding building = buildings.get(field.getBuildingId());
+            if (building == null)
+            {
+                field.resetOwningBuilding();
+                continue;
+            }
+
+            final FieldsModule fieldsModule = building.getFirstOptionalModuleOccurance(FieldsModule.class).orElse(null);
+            if (fieldsModule == null || !field.getClass().equals(fieldsModule.getExpectedFieldType()))
+            {
+                field.resetOwningBuilding();
+                if (fieldsModule != null)
+                {
+                    fieldsModule.freeField(field);
+                }
+            }
         }
     }
 
@@ -304,7 +344,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             }
         }
 
-
         for (final IField field : fields)
         {
             if (WorldUtil.isBlockLoaded(colony.getWorld(), field.getPosition()))
@@ -314,6 +353,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
                     removeField(field.getClass(), field.getPosition());
                 }
 
+                // TODO: Improve this logic so it can be handled more generically
                 Block blockAtPosition = colony.getWorld().getBlockState(field.getPosition()).getBlock();
                 if (field.getType() == FieldStructureType.FARMER_FIELDS && !blockAtPosition.equals(ModBlocks.blockScarecrow))
                 {

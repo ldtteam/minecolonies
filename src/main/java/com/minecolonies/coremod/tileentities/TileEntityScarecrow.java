@@ -6,13 +6,10 @@ import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.tileentities.ScareCrowType;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -24,7 +21,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
@@ -116,7 +112,8 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     {
         if (getCurrentColony() != null)
         {
-            return getCurrentColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS);
+            return getCurrentColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS) &&
+                     getCurrentColony().getBuildingManager().getField(FarmField.class, worldPosition) != null;
         }
         return false;
     }
@@ -134,43 +131,16 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     @Override
     public void load(final CompoundTag compound)
     {
-        final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, Tag.TAG_COMPOUND);
-        for (int i = 0; i < inventoryTagList.size(); ++i)
-        {
-            final CompoundTag inventoryCompound = inventoryTagList.getCompound(i);
-            final ItemStack stack = ItemStack.of(inventoryCompound);
-            if (ItemStackUtils.getSize(stack) <= 0)
-            {
-                inventory.setStackInSlot(i, ItemStackUtils.EMPTY);
-            }
-            else
-            {
-                inventory.setStackInSlot(i, stack);
-            }
-        }
-        inventory.setLoaded();
         super.load(compound);
+        final CompoundTag inventoryTagList = compound.getCompound(TAG_INVENTORY);
+        inventory.deserializeNBT(inventoryTagList);
     }
 
     @Override
     public void saveAdditional(final CompoundTag compound)
     {
-        @NotNull final ListTag inventoryTagList = new ListTag();
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            @NotNull final CompoundTag inventoryCompound = new CompoundTag();
-            final ItemStack stack = inventory.getStackInSlot(slot);
-            if (stack == ItemStackUtils.EMPTY)
-            {
-                new ItemStack(Blocks.AIR, 0).save(inventoryCompound);
-            }
-            else
-            {
-                stack.save(inventoryCompound);
-            }
-            inventoryTagList.add(inventoryCompound);
-        }
-        compound.put(TAG_INVENTORY, inventoryTagList);
+        super.saveAdditional(compound);
+        compound.put(TAG_INVENTORY, inventory.serializeNBT());
     }
 
     @Override
@@ -212,11 +182,6 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
          */
         private Item plant;
 
-        /**
-         * Sets whether the NBT has been loaded on the inventory.
-         */
-        private boolean loaded = false;
-
         public TileEntityScarecrowInventoryHandler(Consumer<Item> onPlantChanged)
         {
             this.onPlantChanged = onPlantChanged;
@@ -235,24 +200,22 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         }
 
         @Override
+        protected void onLoad()
+        {
+            super.onLoad();
+            this.plant = this.getStackInSlot(0).getItem();
+        }
+
+        @Override
         protected void onContentsChanged(final int slot)
         {
             super.onContentsChanged(slot);
             final Item item = this.getStackInSlot(slot).getItem();
-            if (loaded && !item.equals(plant))
+            if (!item.equals(plant))
             {
                 plant = item.equals(Items.AIR) ? null : item;
                 onPlantChanged.accept(plant);
             }
-        }
-
-        /**
-         * Call this to indicate NBT loading is finished and the inventory is populated.
-         */
-        public void setLoaded()
-        {
-            this.loaded = true;
-            this.plant = this.getStackInSlot(0).getItem();
         }
     }
 }

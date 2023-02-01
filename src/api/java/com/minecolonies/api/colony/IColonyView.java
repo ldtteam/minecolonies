@@ -2,8 +2,8 @@ package com.minecolonies.api.colony;
 
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -197,11 +197,18 @@ public interface IColonyView extends IColony
     /**
      * Update a ColonyView's fields given a network data ColonyView update packet. This uses a full-replacement - fields do not get updated and are instead overwritten.
      *
-     * @param position location of the field.
-     * @param type     the type of the field.
-     * @param buf      buffer containing ColonyBuilding information.
+     * @param type the type of the field.
+     * @param buf  buffer containing ColonyBuilding information.
      */
-    void handleColonyFieldViewMessage(BlockPos position, FieldStructureType type, FriendlyByteBuf buf);
+    void handleColonyFieldViewMessage(FieldStructureType type, FriendlyByteBuf buf);
+
+    /**
+     * Update a ColonyView's fields given a network data ColonyView update packet. Removing the passed field instance.
+     *
+     * @param type the type of the field.
+     * @param buf  buffer containing ColonyBuilding information.
+     */
+    void handleColonyRemoveFieldViewMessage(FieldStructureType type, FriendlyByteBuf buf);
 
     /**
      * Update a players permissions.
@@ -375,11 +382,21 @@ public interface IColonyView extends IColony
     List<String> getNameFileIds();
 
     /**
-     * The position of the field.
+     * Get all fields.
      *
-     * @param position the position where the field is supposed to be.
+     * @param fieldClass the type of the field to fetch.
+     * @return a collection of fields.
      */
-    IFieldView getField(BlockPos position);
+    @NotNull <T extends IFieldView> Collection<T> getFields(Class<T> fieldClass);
+
+    /**
+     * Get a field at a given position.
+     *
+     * @param fieldClass the type of the field to fetch.
+     * @param position   the position where the field is supposed to be.
+     * @return the field view class if it exists.
+     */
+    @Nullable <T extends IFieldView> T getField(Class<T> fieldClass, BlockPos position);
 
     /**
      * Add a new free to interact block.

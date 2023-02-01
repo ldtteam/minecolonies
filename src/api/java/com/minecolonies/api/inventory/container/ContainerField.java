@@ -1,5 +1,7 @@
 package com.minecolonies.api.inventory.container;
 
+import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -59,7 +61,12 @@ public class ContainerField extends AbstractContainerMenu
         this.inventory = getTileEntity().getInventory();
         final int extraOffset = 0;
 
-        addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
+        // Hide the inventory slots of the scarecrow whenever we're not inside a colony.
+        final IColonyView colony = IColonyManager.getInstance().getClosestColonyView(world, pos);
+        if (colony != null)
+        {
+            addSlot(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
+        }
 
         // Player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.

@@ -34,24 +34,23 @@ public interface IFieldView
     IColonyView getColonyView();
 
     /**
-     * Getter for the ownerId of the field.
+     * Getter for the owning building of the field.
      *
-     * @return the int id or null.
+     * @return the id or null.
      */
-    @Nullable Integer getOwnerId();
+    @Nullable BlockPos getBuildingId();
 
     /**
-     * Sets the owner of the field.
-     * This method stores both the citizen and colony ID.
+     * Sets the owning building of the field.
      *
-     * @param ownerId id of the citizen.
+     * @param buildingId id of the building.
      */
-    void setOwner(final int ownerId);
+    void setBuilding(final BlockPos buildingId);
 
     /**
      * Resets the ownership of the field.
      */
-    void resetOwner();
+    void resetOwningBuilding();
 
     /**
      * Has the field been taken.
@@ -66,4 +65,12 @@ public interface IFieldView
      * @param fieldData the bugger to read the field from.
      */
     void deserialize(FriendlyByteBuf fieldData);
+
+    /**
+     * Get the distance to the building.
+     *
+     * @param building the building to check the distance to.
+     * @return the distance as a full number.
+     */
+    int getDistance(IBuildingView building);
 }
