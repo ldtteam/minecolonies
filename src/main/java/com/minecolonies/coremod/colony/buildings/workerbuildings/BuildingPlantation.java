@@ -146,9 +146,9 @@ public class BuildingPlantation extends AbstractBuilding
         }
 
         @Override
-        public boolean canAddField(final IFieldView field)
+        public boolean canAssignField(final IFieldView field)
         {
-            return super.canAddField(field) && hasRequiredResearchForField(field);
+            return super.canAssignField(field) && hasRequiredResearchForField(field);
         }
 
         @Override

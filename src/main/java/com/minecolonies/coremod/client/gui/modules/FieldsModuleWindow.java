@@ -147,7 +147,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
         findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class)
           .setText(new TranslatableComponent(moduleView.assignFieldManually() ? COM_MINECOLONIES_COREMOD_GUI_HIRING_ON : COM_MINECOLONIES_COREMOD_GUI_HIRING_OFF));
         findPaneOfTypeByID(TAG_FIELD_COUNT, Text.class)
-          .setText(new TranslatableComponent(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getFields().size(), moduleView.getMaxFieldCount()));
+          .setText(new TranslatableComponent(FIELD_LIST_LABEL_FIELD_COUNT, moduleView.getOwnedFields().size(), moduleView.getMaxFieldCount()));
         findPaneOfTypeByID(TAG_PLANT_COUNT, Text.class)
           .setText(new TranslatableComponent(FIELD_LIST_LABEL_PLANT_COUNT, moduleView.getWorkedPlants().size(), moduleView.getMaxConcurrentPlants()));
     }
@@ -173,7 +173,7 @@ public class FieldsModuleWindow extends AbstractModuleWindow
                 final String distance = Integer.toString(field.getDistance(buildingView));
                 final Component direction = BlockPosUtil.calcDirection(buildingView.getPosition(), field.getPosition());
 
-                final boolean canAddField = moduleView.canAddField(field);
+                final boolean canAddField = moduleView.canAssignField(field);
 
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Text.class).setText(new TextComponent(distance + "m"));
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Text.class).setText(direction);

@@ -110,7 +110,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      */
     public void assignField(final IFieldView field)
     {
-        if (buildingView != null && canAddField(field))
+        if (buildingView != null && canAssignField(field))
         {
             Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getPosition()));
 
@@ -128,21 +128,21 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @param field the field which is being added.
      * @return true if so.
      */
-    public boolean canAddField(IFieldView field)
+    public boolean canAssignField(IFieldView field)
     {
-        return FieldsModule.checkFieldConditions(getFields().size(), getWorkedPlants().size(), maxFieldCount, maxConcurrentPlants);
+        return FieldsModule.checkFieldConditions(getOwnedFields().size(), getWorkedPlants().size(), maxFieldCount, maxConcurrentPlants);
     }
 
     /**
-     * Getter of all fields.
+     * Getter of all owned fields.
      *
      * @return an unmodifiable list.
      */
     @NotNull
-    public List<IFieldView> getFields()
+    public List<IFieldView> getOwnedFields()
     {
         return getColony().getFields(getExpectedFieldType()).stream()
-                 .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
+                 .filter(field -> buildingView.getID().equals(field.getBuildingId()))
                  .map(m -> (IFieldView) m)
                  .distinct()
                  .sorted(new FieldsComparator(buildingView))
@@ -157,7 +157,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     @NotNull
     public Set<Item> getWorkedPlants()
     {
-        return getFields().stream()
+        return getOwnedFields().stream()
                  .map(IFieldView::getPlant)
                  .collect(Collectors.toSet());
     }
@@ -168,6 +168,22 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
      * @return the class type.
      */
     public abstract Class<? extends IFieldView> getExpectedFieldType();
+
+    /**
+     * Getter of all fields that are either free, or taken by the current building.
+     *
+     * @return an unmodifiable list.
+     */
+    @NotNull
+    public List<IFieldView> getFields()
+    {
+        return getColony().getFields(getExpectedFieldType()).stream()
+                 .filter(field -> !field.isTaken() || buildingView.getID().equals(field.getBuildingId()))
+                 .map(m -> (IFieldView) m)
+                 .distinct()
+                 .sorted(new FieldsComparator(buildingView))
+                 .toList();
+    }
 
     /**
      * Free a field from the current worker.
@@ -197,7 +213,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     @Nullable
     public BaseComponent getFieldWarningTooltip(IFieldView field)
     {
-        if (!FieldsModule.checkFieldCount(getFields().size(), maxFieldCount))
+        if (!FieldsModule.checkFieldCount(getOwnedFields().size(), maxFieldCount))
         {
             return new TranslatableComponent(FIELD_LIST_WARN_EXCEEDS_FIELD_COUNT);
         }
