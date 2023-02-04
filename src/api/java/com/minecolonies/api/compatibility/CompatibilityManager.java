@@ -603,7 +603,7 @@ public class CompatibilityManager implements ICompatibilityManager
      */
     private void discoverAllItems()
     {
-        if (!allItems.isEmpty())
+        if (!food.isEmpty())
         {
             return;
         }
