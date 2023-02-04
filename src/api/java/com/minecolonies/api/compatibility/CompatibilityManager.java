@@ -615,11 +615,19 @@ public class CompatibilityManager implements ICompatibilityManager
         {
             if (tab != CreativeModeTabs.SEARCH && tab != CreativeModeTabs.HOTBAR)
             {
+                final Collection<ItemStack> stacks;
                 if (tab.getDisplayItems().isEmpty())
                 {
-                    tab.buildContents(FeatureFlags.DEFAULT_FLAGS, true);
+                    stacks = new HashSet<>();
+                    tab.displayItemsGenerator.accept(FeatureFlags.DEFAULT_FLAGS, (stack, vis) -> {
+                        stacks.add(stack);
+                    }, true);
                 }
-                for (final ItemStack item : tab.getDisplayItems())
+                else
+                {
+                    stacks = tab.getDisplayItems();
+                }
+                for (final ItemStack item : stacks)
                 {
                     setBuilder.add(new ItemStorage(item, true));
                     listBuilder.add(item);
