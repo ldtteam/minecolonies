@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.client.gui.containers;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.inventory.container.ContainerRack;
 import com.minecolonies.api.util.constant.Constants;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -70,7 +72,7 @@ public class WindowRack extends AbstractContainerScreen<ContainerRack>
         super(container, playerInventory, iTextComponent);
         if (container.neighborRack != null)
         {
-            if (container.rack.isMain())
+            if (container.rack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.EMPTYAIR)
             {
                 this.jointChestInventory = new CombinedInvWrapper(container.rack.getInventory(), container.neighborRack.getInventory());
             }

@@ -417,7 +417,6 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
             registryName = new ResourceLocation(compound.getString(TAG_BUILDING_TYPE));
         }
         buildingPos = worldPosition;
-        single = true;
     }
 
     @Override
@@ -562,21 +561,9 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
     }
 
     @Override
-    public boolean isMain()
-    {
-        return true;
-    }
-
-    @Override
     public void updateBlockState()
     {
         // Do nothing
-    }
-
-    @Override
-    public void setSingle(final boolean single)
-    {
-        // Do nothing, these are always single!
     }
 
     @NotNull
