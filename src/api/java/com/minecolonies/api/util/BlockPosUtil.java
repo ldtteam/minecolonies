@@ -795,14 +795,14 @@ public final class BlockPosUtil
      * Returns the first air position near the given start. Advances vertically first then horizontally
      *
      * @param start     start position
-     * @param vRange    vertical search range
-     * @param hRange    horizontal search range
+     * @param horizontalRange    horizontal search range
+     * @param verticalRange    vertical search range
      * @param predicate check predicate for the right block
      * @return position or null
      */
-    public static BlockPos findAround(final Level world, final BlockPos start, final int vRange, final int hRange, final BiPredicate<BlockGetter, BlockPos> predicate)
+    public static BlockPos findAround(final Level world, final BlockPos start, final int verticalRange, final int horizontalRange, final BiPredicate<BlockGetter, BlockPos> predicate)
     {
-        if (vRange < 1 && hRange < 1)
+        if (horizontalRange < 1 && verticalRange < 1)
         {
             return null;
         }
@@ -816,9 +816,9 @@ public final class BlockPosUtil
         int y = 0;
         int y_offset = 1;
 
-        for (int i = 0; i < hRange + 2; i++)
+        for (int i = 0; i < verticalRange + 2; i++)
         {
-            for (int steps = 1; steps <= vRange; steps++)
+            for (int steps = 1; steps <= horizontalRange; steps++)
             {
                 // Start topleft of middle point
                 temp = start.offset(-steps, y, -steps);
