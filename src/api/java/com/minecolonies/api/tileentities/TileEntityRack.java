@@ -1,8 +1,9 @@
 package com.minecolonies.api.tileentities;
 
-import com.ldtteam.structurize.api.util.IRotatableBlockEntity;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
+import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.inventory.api.CombinedItemHandler;
 import com.minecolonies.api.inventory.container.ContainerRack;
@@ -21,8 +22,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,7 +45,7 @@ import static com.minecolonies.api.util.constant.TranslationConstants.RACK;
 /**
  * Tile entity for the warehouse shelves.
  */
-public class TileEntityRack extends AbstractTileEntityRack implements IRotatableBlockEntity
+public class TileEntityRack extends AbstractTileEntityRack
 {
     /**
      * All Racks current version id
@@ -137,6 +136,12 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     {
         final ItemStorage checkItem = new ItemStorage(stack, ignoreDamageValue, ignoreNBT);
         return getCount(checkItem);
+    }
+
+    @Override
+    protected void updateBlockState()
+    {
+
     }
 
     @Override
@@ -241,12 +246,32 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     {
         if (level != null && !level.isClientSide)
         {
-            final boolean empty = content.isEmpty();
+            final boolean beforeEmpty = content.isEmpty();
             updateContent();
-
-            if ((empty && !content.isEmpty()) || !empty && content.isEmpty())
+            if (getBlockState().getBlock() == ModBlocks.blockRack)
             {
-                updateBlockState();
+                boolean afterEmpty = content.isEmpty();
+                @Nullable final BlockEntity potentialNeighbor = getOtherChest();
+                if (potentialNeighbor instanceof TileEntityRack && !((TileEntityRack) potentialNeighbor).isEmpty())
+                {
+                    afterEmpty = false;
+                }
+
+                if ((beforeEmpty && !afterEmpty) || (!beforeEmpty && afterEmpty))
+                {
+                    level.setBlockAndUpdate(getBlockPos(),
+                      getBlockState().setValue(AbstractBlockMinecoloniesRack.VARIANT,
+                        getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
+
+
+                    if (potentialNeighbor != null)
+                    {
+                        level.setBlockAndUpdate(potentialNeighbor.getBlockPos(),
+                          potentialNeighbor.getBlockState()
+                            .setValue(AbstractBlockMinecoloniesRack.VARIANT,
+                              potentialNeighbor.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT).getInvBasedVariant(afterEmpty)));
+                    }
+                }
             }
             setChanged();
         }
@@ -280,99 +305,25 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     }
 
     @Override
-    public void updateBlockState()
-    {
-        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof AbstractBlockMinecoloniesRack)
-        {
-            if (!main && !single && getOtherChest() != null && !getOtherChest().isMain())
-            {
-                setMain(true);
-            }
-
-            if (main || single)
-            {
-                final BlockState typeHere;
-                final BlockState typeNeighbor;
-                if (content.isEmpty() && (getOtherChest() == null || getOtherChest().isEmpty()))
-                {
-                    if (getOtherChest() != null && level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
-                    {
-                        final Direction dirToNeighbour = BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor));
-                        typeHere = level.getBlockState(worldPosition)
-                          .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
-                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
-                        typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE)
-                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
-                    }
-                    else
-                    {
-                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
-                        typeNeighbor = null;
-                    }
-                }
-                else
-                {
-                    if (getOtherChest() != null && level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).getBlock() instanceof AbstractBlockMinecoloniesRack)
-                    {
-                        final Direction dirToNeighbour = BlockPosUtil.getFacing(worldPosition, this.worldPosition.subtract(relativeNeighbor));
-                        typeHere = level.getBlockState(worldPosition)
-                          .setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR)
-                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour);
-
-                        typeNeighbor = level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE)
-                          .setValue(AbstractBlockMinecoloniesRack.FACING, dirToNeighbour.getOpposite());
-                    }
-                    else
-                    {
-                        typeHere = level.getBlockState(worldPosition).setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
-                        typeNeighbor = null;
-                    }
-                }
-
-                // This here avoids that two racks can be main at the same time.
-                if (this.isMain() && getOtherChest() != null && getOtherChest().isMain())
-                {
-                    getOtherChest().setMain(false);
-                }
-
-                if (!level.getBlockState(worldPosition).equals(typeHere))
-                {
-                    level.setBlockAndUpdate(worldPosition, typeHere);
-                }
-                if (typeNeighbor != null)
-                {
-                    if (!level.getBlockState(this.worldPosition.subtract(relativeNeighbor)).equals(typeNeighbor))
-                    {
-                        level.setBlockAndUpdate(this.worldPosition.subtract(relativeNeighbor), typeNeighbor);
-                    }
-                }
-            }
-            else
-            {
-                getOtherChest().updateBlockState();
-            }
-        }
-    }
-
-    @Override
     public AbstractTileEntityRack getOtherChest()
     {
-        if (relativeNeighbor == null || level == null)
+        if (getBlockState().getBlock() != ModBlocks.blockRack)
         {
             return null;
         }
-        final BlockEntity tileEntity = level.getBlockEntity(worldPosition.subtract(relativeNeighbor));
+
+        final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
+        if (!type.isDoubleVariant())
+        {
+            return null;
+        }
+
+        final BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(getBlockState().getValue(AbstractBlockMinecoloniesRack.FACING)));
         if (tileEntity instanceof TileEntityRack && !(tileEntity instanceof AbstractTileEntityColonyBuilding))
         {
-            if (!this.getBlockPos().equals(((TileEntityRack) tileEntity).getNeighbor()))
-            {
-                ((AbstractTileEntityRack) tileEntity).setNeighbor(this.getBlockPos());
-            }
             return (AbstractTileEntityRack) tileEntity;
         }
 
-        setSingle(true);
-        relativeNeighbor = null;
         return null;
     }
 
@@ -398,23 +349,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
             inventory = createInventory(DEFAULT_SIZE + size * SLOT_PER_LINE);
         }
 
-        if (compound.getAllKeys().contains(TAG_RELATIVE_NEIGHBOR))
-        {
-            relativeNeighbor = BlockPosUtil.read(compound, TAG_RELATIVE_NEIGHBOR);
-        }
-
-        if (relativeNeighbor != null)
-        {
-            if (relativeNeighbor.getY() != 0)
-            {
-                relativeNeighbor = null;
-            }
-            else
-            {
-                setSingle(false);
-            }
-        }
-
         final ListTag inventoryTagList = compound.getList(TAG_INVENTORY, TAG_COMPOUND);
         for (int i = 0; i < inventoryTagList.size(); i++)
         {
@@ -426,7 +360,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
             }
         }
 
-        main = compound.getBoolean(TAG_MAIN);
         updateContent();
 
         this.inWarehouse = compound.getBoolean(TAG_IN_WAREHOUSE);
@@ -444,11 +377,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     {
         super.saveAdditional(compound);
         compound.putInt(TAG_SIZE, size);
-
-        if (relativeNeighbor != null)
-        {
-            BlockPosUtil.write(compound, TAG_RELATIVE_NEIGHBOR, relativeNeighbor);
-        }
         @NotNull final ListTag inventoryTagList = new ListTag();
         for (int slot = 0; slot < inventory.getSlots(); slot++)
         {
@@ -465,7 +393,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
             inventoryTagList.add(inventoryCompound);
         }
         compound.put(TAG_INVENTORY, inventoryTagList);
-        compound.putBoolean(TAG_MAIN, main);
         compound.putBoolean(TAG_IN_WAREHOUSE, inWarehouse);
         BlockPosUtil.write(compound, TAG_POS, buildingPos);
         compound.putByte(TAG_VERSION, version);
@@ -496,35 +423,12 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         this.load(tag);
     }
 
-    @Override
-    public void rotate(final Rotation rotationIn)
-    {
-        if (relativeNeighbor != null)
-        {
-            relativeNeighbor = relativeNeighbor.rotate(rotationIn);
-        }
-    }
-
-    @Override
-    public void mirror(final Mirror mirror)
-    {
-        if (relativeNeighbor != null)
-        {
-            switch (mirror)
-            {
-                case LEFT_RIGHT -> relativeNeighbor = new BlockPos(relativeNeighbor.getX(), relativeNeighbor.getY(), -relativeNeighbor.getZ());
-                case FRONT_BACK -> relativeNeighbor = new BlockPos(-relativeNeighbor.getX(), relativeNeighbor.getY(), relativeNeighbor.getZ());
-            }
-        }
-    }
-
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
     {
         if (version != VERSION)
         {
-            updateBlockState();
             version = VERSION;
         }
 
@@ -535,7 +439,8 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
                 return lastOptional.cast();
             }
 
-            if (single)
+            final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
+            if (!type.isDoubleVariant())
             {
                 lastOptional = LazyOptional.of(() ->
                 {
@@ -563,7 +468,7 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
                         return new CombinedItemHandler(RACK, getInventory());
                     }
 
-                    if (main)
+                    if (type != RackType.EMPTYAIR)
                     {
                         return new CombinedItemHandler(RACK, getInventory(), other.getInventory());
                     }
@@ -579,40 +484,11 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         return super.getCapability(capability, dir);
     }
 
-    @Override
-    public BlockPos getNeighbor()
-    {
-        if (relativeNeighbor == null)
-        {
-            return null;
-        }
-        return worldPosition.subtract(relativeNeighbor);
-    }
 
     @Override
     public int getUpgradeSize()
     {
         return size;
-    }
-
-    @Override
-    public boolean setNeighbor(final BlockPos neighbor)
-    {
-        if (neighbor == null)
-        {
-            setSingle(true);
-            this.relativeNeighbor = null;
-            setChanged();
-        }
-        // Only allow horizontal neighbor's
-        else if (this.worldPosition.subtract(neighbor).getY() == 0)
-        {
-            this.relativeNeighbor = this.worldPosition.subtract(neighbor);
-            setSingle(false);
-            setChanged();
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -639,26 +515,6 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
     }
 
     @Override
-    public void setMain(final boolean main)
-    {
-        if (main != this.main)
-        {
-            invalidateCap();
-            super.setMain(main);
-        }
-    }
-
-    @Override
-    public void setSingle(final boolean single)
-    {
-        if (single != this.single)
-        {
-            invalidateCap();
-            super.setSingle(single);
-        }
-    }
-
-    @Override
     public void setRemoved()
     {
         super.setRemoved();
@@ -676,14 +532,5 @@ public class TileEntityRack extends AbstractTileEntityRack implements IRotatable
         }
 
         lastOptional = null;
-    }
-
-    /**
-     * Check if this is marked as a single rack.
-     * @return true if so.
-     */
-    public boolean isSingle()
-    {
-        return this.single;
     }
 }
