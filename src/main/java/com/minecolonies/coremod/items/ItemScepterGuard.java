@@ -110,7 +110,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         if (hut.getSetting(AbstractBuildingGuards.GUARD_TASK).getValue().equals(GuardTaskSetting.GUARD))
         {
-            MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_GUARD_TARGET, pos).sendTo(playerIn);
+            MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_GUARD_TARGET, pos.toShortString()).sendTo(playerIn);
             tower.setGuardPos(pos);
             playerIn.getInventory().removeItemNoUpdate(playerIn.getInventory().selected);
         }
@@ -121,7 +121,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                 tower.resetPatrolTargets();
             }
             tower.addPatrolTargets(pos);
-            MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGET, pos).sendTo(playerIn);
+            MessageUtils.format(TOOL_GUARD_SCEPTER_ADD_PATROL_TARGET, pos.toShortString()).sendTo(playerIn);
         }
         BlockPosUtil.write(compound, TAG_LAST_POS, pos);
 
