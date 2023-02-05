@@ -982,7 +982,6 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
 
         try
         {
-            final WorkOrderBuilding workOrder = WorkOrderBuilding.create(WorkOrderType.BUILD, this);
             final Blueprint blueprint = StructurePacks.getBlueprint(getStructurePack(), getBlueprintPath());
             if (blueprint == null)
             {
@@ -993,9 +992,14 @@ public abstract class AbstractBuilding extends AbstractBuildingContainer
               = ColonyUtils.calculateCorners(this.getPosition(),
               colony.getWorld(),
               blueprint,
-              workOrder.getRotation(),
-              workOrder.isMirrored());
+              getRotation(),
+              isMirrored());
             this.setCorners(corners.getA(), corners.getB());
+
+            if (te != null)
+            {
+                this.getTileEntity().setSchematicCorners(corners.getA().subtract(getPosition()), corners.getB().subtract(getPosition()));
+            }
         }
         catch (final Exception ex)
         {
