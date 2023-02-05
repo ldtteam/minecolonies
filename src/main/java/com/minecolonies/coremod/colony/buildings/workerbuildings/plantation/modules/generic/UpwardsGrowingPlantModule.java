@@ -61,7 +61,7 @@ public abstract class UpwardsGrowingPlantModule extends PlantationModule
       final @NotNull BlockPos workPosition,
       final @NotNull FakePlayer fakePlayer)
     {
-        if (walkToWorkPosition(planterAI, field, workPosition))
+        if (walkToWorkPosition(planterAI, field, workPosition.above()))
         {
             return PlanterAIModuleResult.MOVING;
         }

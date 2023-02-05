@@ -10,10 +10,12 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.Plantati
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,7 +121,7 @@ public abstract class BoneMealedPlantModule extends PlantationModule
 
                          final int boneMealSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> stack.getItem() instanceof BoneMealItem);
                          final ItemStack stackInSlot = worker.getInventoryCitizen().getStackInSlot(boneMealSlot);
-                         BoneMealItem.applyBonemeal(stackInSlot, worker.getLevel(), workPosition, fakePlayer);
+                         applyBonemeal(worker, workPosition, stackInSlot, fakePlayer);
 
                          // Return a custom result that indicates we planted something, but we want to remain working on the field, at a different position.
                          yield new PlanterAIModuleResult(PlanterAIModuleState.PLANTED, AIWorkerState.PLANTATION_WORK_FIELD, true, false);
@@ -192,7 +194,8 @@ public abstract class BoneMealedPlantModule extends PlantationModule
      */
     private PlanterAIModuleState decideWorkAction(PlantationField field, BlockPos workPosition)
     {
-        if (!field.getColony().getWorld().getBlockState(workPosition.above()).isAir())
+        BlockState blockState = field.getColony().getWorld().getBlockState(workPosition.above());
+        if (isValidHarvestBlock(blockState))
         {
             return PlanterAIModuleState.HARVESTING;
         }
@@ -208,11 +211,37 @@ public abstract class BoneMealedPlantModule extends PlantationModule
      * @return the position to harvest or null if no position needs harvesting.
      */
     @Nullable
-    protected BlockPos getPositionToHarvest(PlantationField field)
+    private BlockPos getPositionToHarvest(PlantationField field)
     {
         return field.getWorkingPositions().stream()
-                 .filter(pos -> !field.getColony().getWorld().getBlockState(pos.above()).isAir())
+                 .filter(pos -> isValidHarvestBlock(field.getColony().getWorld().getBlockState(pos.above())))
                  .findFirst()
                  .orElse(null);
+    }
+
+    /**
+     * Logic for applying bonemeal to the working position.
+     *
+     * @param worker       the worker entity working on the plantation.
+     * @param workPosition the position that has been chosen for work.
+     * @param stackInSlot  the item stack to use for the planting.
+     * @param fakePlayer   a fake player class to use.
+     */
+    protected void applyBonemeal(AbstractEntityCitizen worker, BlockPos workPosition, ItemStack stackInSlot, Player fakePlayer)
+    {
+        BoneMealItem.applyBonemeal(stackInSlot, worker.getLevel(), workPosition, fakePlayer);
+        BoneMealItem.addGrowthParticles(worker.getLevel(), workPosition, 1);
+    }
+
+    /**
+     * Check if the block is a correct block for harvesting.
+     * Defaults to check if the block state is not air.
+     *
+     * @param blockState the block state.
+     * @return whether the block can be harvested.
+     */
+    protected boolean isValidHarvestBlock(BlockState blockState)
+    {
+        return !blockState.isAir();
     }
 }

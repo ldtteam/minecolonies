@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * Plantation module for plants that grow vertically downwards, similar to sugar glowberries.
@@ -60,7 +61,7 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
       final @NotNull BlockPos workPosition,
       final @NotNull FakePlayer fakePlayer)
     {
-        if (walkToWorkPosition(planterAI, field.getColony().getWorld(), workPosition))
+        if (walkToWorkPosition(planterAI, field, workPosition.below()))
         {
             return PlanterAIModuleResult.MOVING;
         }
@@ -103,15 +104,23 @@ public abstract class DownwardsGrowingPlantModule extends PlantationModule
 
     /**
      * Logic to walk to a work position.
+     * Default implementation, walk to any adjacent block which is free.
      *
      * @param planterAI    the AI class of the planter so instructions can be ordered to it.
-     * @param world        the world the position is located in.
+     * @param field        the field class.
      * @param workPosition the position that has been chosen for work.
      * @return true if
      */
-    protected boolean walkToWorkPosition(EntityAIWorkPlanter planterAI, Level world, BlockPos workPosition)
+    protected boolean walkToWorkPosition(EntityAIWorkPlanter planterAI, PlantationField field, BlockPos workPosition)
     {
-        return planterAI.planterWalkToBlock(workPosition);
+        // If an empty adjacent position was found, we move to that position directly,
+        // else we move to the work position itself and let entity pathing figure out how to get there (within the default range).
+        Level world = field.getColony().getWorld();
+        final BlockPos walkPosition = Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
+                                        .filter(pos -> world.getBlockState(pos).isAir())
+                                        .findFirst()
+                                        .orElse(workPosition);
+        return planterAI.planterWalkToBlock(walkPosition);
     }
 
     /**

@@ -118,7 +118,7 @@ public abstract class PlantationModule
      * @param planterAI    the AI class of the planter so instructions can be ordered to it.
      * @param worker       the worker entity working on the plantation.
      * @param workPosition the position that has been chosen for work.
-     * @param fakePlayer   a fake player class to use
+     * @param fakePlayer   a fake player class to use.
      * @return a basic enum state telling the planter AI what the AI should be doing next.
      */
     public abstract PlanterAIModuleResult workField(

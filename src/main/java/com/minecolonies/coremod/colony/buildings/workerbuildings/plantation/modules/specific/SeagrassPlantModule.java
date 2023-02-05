@@ -1,12 +1,17 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
-import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
+import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.BoneMealedPlantModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SEA;
 
@@ -30,20 +35,21 @@ public class SeagrassPlantModule extends BoneMealedPlantModule
     }
 
     @Override
-    protected @Nullable BlockPos getPositionToHarvest(final PlantationField field)
-    {
-        // Because seagrass grows underwater, we can't check for air blocks when checking for blocks to harvest.
-        // Instead, we check for water blocks directly, any other block should be harvestable (because it's either a full block instead of water or a waterlogged block).
-        return field.getWorkingPositions().stream()
-                 .map(BlockPos::above)
-                 .filter(pos -> field.getColony().getWorld().getBlockState(pos).getFluidState().is(Fluids.WATER))
-                 .findFirst()
-                 .orElse(null);
-    }
-
-    @Override
     public ResourceLocation getRequiredResearchEffect()
     {
         return PLANTATION_SEA;
+    }
+
+    @Override
+    protected void applyBonemeal(final AbstractEntityCitizen worker, final BlockPos workPosition, final ItemStack stackInSlot, final Player fakePlayer)
+    {
+        BoneMealItem.growWaterPlant(stackInSlot, worker.getLevel(), workPosition.above(), Direction.UP);
+        BoneMealItem.addGrowthParticles(worker.getLevel(), workPosition.above(), 1);
+    }
+
+    @Override
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.getFluidState().is(Fluids.WATER) && (blockState.getBlock() == Blocks.SEAGRASS || blockState.getBlock() == Blocks.TALL_SEAGRASS);
     }
 }
