@@ -1,5 +1,7 @@
 package com.minecolonies.api.inventory.container;
 
+import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.inventory.ModContainers;
 import com.minecolonies.api.tileentities.AbstractTileEntityRack;
 import com.minecolonies.api.util.ItemStackUtils;
@@ -77,7 +79,7 @@ public class ContainerRack extends AbstractContainerMenu
 
         if (neighborRack != null)
         {
-            if (abstractTileEntityRack.isMain())
+            if (abstractTileEntityRack.getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT) != RackType.EMPTYAIR)
             {
                 this.inventory = new CombinedInvWrapper(abstractTileEntityRack.getInventory(), neighborRack.getInventory());
             }
