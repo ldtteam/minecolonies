@@ -1,12 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic;
 
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
+import com.minecolonies.api.util.constant.CitizenConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import com.minecolonies.coremod.util.CollectorUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,16 +14,21 @@ import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Plantation module for plants that grow attached to any horizontal side of a tree log.
  * Similar to plants like cocoa beans.
- * - Must grow on the side of a vertically standing log.
- * - Must be harvested by chopping and re-planting the plant of the tree.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>Must grow on the side of a vertically standing log.</li>
+ *     <li>Must be harvested by chopping and re-planting the plant of the tree.</li>
+ *     <li>Every harvestable must be within {@link CitizenConstants#DEFAULT_RANGE_FOR_DELAY} blocks range of any available walking position, if not the entity will not be able path to the position.</li>
+ * </ol>
  */
 public abstract class TreeSidePlantModule extends PlantationModule
 {
@@ -50,13 +55,7 @@ public abstract class TreeSidePlantModule extends PlantationModule
       @NotNull final BlockPos workPosition,
       @NotNull final FakePlayer fakePlayer)
     {
-        // Because tree side modules can grow on trees to larger heights, we must tell the AI
-        // to move to the bottom of the tree, else he ends up attempting to walk to a block he can't reach.
-        BlockPos walkPosition = field.getWorkingPositions().stream()
-                                  .filter(f -> f.getX() == workPosition.getX() && f.getZ() == workPosition.getZ())
-                                  .min(Comparator.comparingInt(Vec3i::getY))
-                                  .orElseThrow();
-        if (planterAI.planterWalkToBlock(walkPosition))
+        if (walkToWorkPosition(planterAI, field, workPosition))
         {
             return PlanterAIModuleResult.MOVING;
         }
@@ -79,36 +78,25 @@ public abstract class TreeSidePlantModule extends PlantationModule
                  };
     }
 
-    @Override
-    public @Nullable BlockPos getNextWorkingPosition(final PlantationField field)
+    /**
+     * Logic to walk to a work position.
+     * Default implementation, walk to any adjacent block which is free.
+     *
+     * @param planterAI    the AI class of the planter so instructions can be ordered to it.
+     * @param field        the field class.
+     * @param workPosition the position that has been chosen for work.
+     * @return true if
+     */
+    protected boolean walkToWorkPosition(final EntityAIWorkPlanter planterAI, final PlantationField field, final BlockPos workPosition)
     {
-        for (BlockPos position : field.getWorkingPositions())
-        {
-            final PlanterAIModuleState action = decideWorkAction(field, position);
-            if (action != PlanterAIModuleState.NONE)
-            {
-                return position;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
-    {
-        Set<BlockPos> treePositions = new HashSet<>();
-        for (BlockPos position : workingPositions)
-        {
-            for (BlockPos adjacentPosition : List.of(position.north(), position.south(), position.west(), position.east()))
-            {
-                if (world.getBlockState(adjacentPosition).isAir())
-                {
-                    treePositions.add(adjacentPosition);
-                }
-            }
-        }
-        return super.getValidWorkingPositions(world, treePositions.stream().collect(CollectorUtils.toShuffledList()));
+        // If an empty adjacent position was found, we move to that position directly,
+        // else we move to the work position itself and let entity pathing figure out how to get there (within the default range).
+        Level world = field.getColony().getWorld();
+        final BlockPos walkPosition = Stream.of(workPosition.north(), workPosition.south(), workPosition.west(), workPosition.east())
+                                        .filter(pos -> world.getBlockState(pos).isAir())
+                                        .findFirst()
+                                        .orElse(workPosition);
+        return planterAI.planterWalkToBlock(walkPosition);
     }
 
     /**
@@ -182,4 +170,36 @@ public abstract class TreeSidePlantModule extends PlantationModule
      * @return whether the block can be harvested.
      */
     protected abstract boolean isValidHarvestBlock(BlockState blockState);
+
+    @Override
+    public @Nullable BlockPos getNextWorkingPosition(final PlantationField field)
+    {
+        for (BlockPos position : field.getWorkingPositions())
+        {
+            final PlanterAIModuleState action = decideWorkAction(field, position);
+            if (action != PlanterAIModuleState.NONE)
+            {
+                return position;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<BlockPos> getValidWorkingPositions(final @NotNull Level world, final List<BlockPos> workingPositions)
+    {
+        Set<BlockPos> treePositions = new HashSet<>();
+        for (BlockPos position : workingPositions)
+        {
+            for (BlockPos adjacentPosition : List.of(position.north(), position.south(), position.west(), position.east()))
+            {
+                if (world.getBlockState(adjacentPosition).isAir())
+                {
+                    treePositions.add(adjacentPosition);
+                }
+            }
+        }
+        return super.getValidWorkingPositions(world, treePositions.stream().collect(CollectorUtils.toShuffledList()));
+    }
 }

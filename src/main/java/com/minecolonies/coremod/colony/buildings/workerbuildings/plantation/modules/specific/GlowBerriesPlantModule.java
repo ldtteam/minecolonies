@@ -10,6 +10,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_EX
 
 /**
  * Planter module for growing {@link Items#GLOW_BERRIES}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link DownwardsGrowingPlantModule}</li>
+ * </ol>
  */
 public class GlowBerriesPlantModule extends DownwardsGrowingPlantModule
 {

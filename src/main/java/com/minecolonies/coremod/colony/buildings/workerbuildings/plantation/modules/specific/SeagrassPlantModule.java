@@ -12,6 +12,12 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SE
 
 /**
  * Planter module for growing {@link Items#SEAGRASS}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link BoneMealedPlantModule}</li>
+ *     <li>All working positions must have water directly overhead of them, else the seagrass won't be able to grow.</li>
+ * </ol>
  */
 public class SeagrassPlantModule extends BoneMealedPlantModule
 {

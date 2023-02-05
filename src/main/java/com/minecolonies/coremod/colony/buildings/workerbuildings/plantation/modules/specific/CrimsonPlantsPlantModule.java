@@ -8,6 +8,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NE
 
 /**
  * Planter module for growing {@link Items#CRIMSON_FUNGUS} and {@link Items#CRIMSON_ROOTS}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link BoneMealedPlantModule}</li>
+ * </ol>
  */
 public class CrimsonPlantsPlantModule extends BoneMealedPlantModule
 {

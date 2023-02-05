@@ -11,6 +11,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NE
 
 /**
  * Planter module for growing {@link Items#TWISTING_VINES}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link UpwardsGrowingPlantModule}</li>
+ * </ol>
  */
 public class TwistingVinesPlantModule extends UpwardsGrowingPlantModule
 {

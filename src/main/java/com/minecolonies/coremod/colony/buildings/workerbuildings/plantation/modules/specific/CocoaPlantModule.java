@@ -19,6 +19,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JU
 
 /**
  * Planter module for growing {@link Items#COCOA_BEANS}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link TreeSidePlantModule}</li>
+ * </ol>
  */
 public class CocoaPlantModule extends TreeSidePlantModule
 {

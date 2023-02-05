@@ -24,8 +24,12 @@ import java.util.Random;
 
 /**
  * Plantation module for plants that grow on a flat piece of land when bone-mealed.
- * - Soil blocks must be the same so plants can grow on them.
- * - The defined "block" on the module should be the primary plant harvested on this field.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>Soil blocks must be the same so plants can grow on them.</li>
+ *     <li>Anything that grows on the field will be harvested, but only things that are 1 block high (multi block high things must break completely, else they are ignored).</li>
+ * </ol>
  */
 public abstract class BoneMealedPlantModule extends PlantationModule
 {

@@ -8,6 +8,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_NE
 
 /**
  * Planter module for growing {@link Items#WARPED_FUNGUS} and {@link Items#WARPED_ROOTS}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link BoneMealedPlantModule}</li>
+ * </ol>
  */
 public class WarpedPlantsPlantModule extends BoneMealedPlantModule
 {

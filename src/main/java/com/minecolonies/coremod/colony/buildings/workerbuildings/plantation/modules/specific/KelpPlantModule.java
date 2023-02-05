@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.specific;
 
+import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.modules.generic.UpwardsGrowingPlantModule;
 import com.minecolonies.coremod.entity.ai.citizen.planter.EntityAIWorkPlanter;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,15 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_SE
 
 /**
  * Planter module for growing {@link Items#KELP}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link UpwardsGrowingPlantModule}</li>
+ *     <li>
+ *         There must be an air block directly above the water at least {@link KelpPlantModule#MAX_HEIGHT} + 1 from the working position block.
+ *         This is where the AI will attempt to walk to.
+ *     </li>
+ * </ol>
  */
 public class KelpPlantModule extends UpwardsGrowingPlantModule
 {
@@ -36,15 +46,16 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected boolean walkToWorkPosition(final EntityAIWorkPlanter planterAI, final Level level, final BlockPos workPosition)
+    protected boolean walkToWorkPosition(final EntityAIWorkPlanter planterAI, final PlantationField field, final BlockPos workPosition)
     {
         // Attempt to initially find an air block somewhere above the kelp planting position, so that we have a valid position
         // that the AI can actually walk to.
+        Level world = field.getColony().getWorld();
         for (int i = 0; i < MAX_HEIGHT + 1; i++)
         {
-            if (level.getBlockState(workPosition.above(i)).isAir())
+            if (world.getBlockState(workPosition.above(i)).isAir())
             {
-                return super.walkToWorkPosition(planterAI, level, workPosition.above(i));
+                return super.walkToWorkPosition(planterAI, field, workPosition.above(i));
             }
         }
 
@@ -59,6 +70,12 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
+    protected boolean isValidHarvestBlock(final BlockState blockState)
+    {
+        return blockState.getBlock() == Blocks.KELP || blockState.getBlock() == Blocks.KELP_PLANT;
+    }
+
+    @Override
     protected int getMinimumPlantLength()
     {
         return MIN_HEIGHT;
@@ -68,12 +85,6 @@ public class KelpPlantModule extends UpwardsGrowingPlantModule
     protected @Nullable Integer getMaximumPlantLength()
     {
         return MAX_HEIGHT;
-    }
-
-    @Override
-    protected boolean isValidHarvestBlock(final BlockState blockState)
-    {
-        return blockState.getBlock() == Blocks.KELP || blockState.getBlock() == Blocks.KELP_PLANT;
     }
 
     @Override

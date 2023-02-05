@@ -7,6 +7,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Planter module for growing {@link Items#CACTUS}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link UpwardsGrowingPlantModule}</li>
+ * </ol>
  */
 public class CactusPlantModule extends UpwardsGrowingPlantModule
 {

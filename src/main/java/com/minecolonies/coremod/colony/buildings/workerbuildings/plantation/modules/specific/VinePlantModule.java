@@ -12,6 +12,12 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JU
  * Planter module for growing {@link Items#VINE}.
  * Planting of vines is not possible, it is only harvested on tree sides when upper blocks let it grow down.
  * This is because vines have natural generation (in any direction), their growth cycle revolves around spreading to other blocks.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link TreeSidePlantModule}</li>
+ *     <li>There must be some vines nearby the marked tagged working positions, this is needed because the worker cannot plant these vines himself.</li>
+ * </ol>
  */
 public class VinePlantModule extends TreeSidePlantModule
 {

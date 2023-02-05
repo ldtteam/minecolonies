@@ -10,6 +10,11 @@ import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_JU
 
 /**
  * Planter module for growing {@link Items#BAMBOO}.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>All requirements from {@link UpwardsGrowingPlantModule}</li>
+ * </ol>
  */
 public class BambooPlantModule extends UpwardsGrowingPlantModule
 {
@@ -27,15 +32,15 @@ public class BambooPlantModule extends UpwardsGrowingPlantModule
     }
 
     @Override
-    protected int getMinimumPlantLength()
-    {
-        return MIN_HEIGHT;
-    }
-
-    @Override
     protected boolean isValidHarvestBlock(final BlockState blockState)
     {
         return blockState.getBlock() == Blocks.BAMBOO || blockState.getBlock() == Blocks.BAMBOO_SAPLING;
+    }
+
+    @Override
+    protected int getMinimumPlantLength()
+    {
+        return MIN_HEIGHT;
     }
 
     @Override

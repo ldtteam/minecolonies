@@ -16,10 +16,13 @@ import java.util.Random;
 
 /**
  * Plantation module for plants that grow vertically downwards, similar to sugar glowberries.
- * For a plant to fit this module it needs the following requirements.
- * - Grow vertically without any outcroppings.
- * - Grow uninterrupted (no gaps in between the plant).
- * - Must break all blocks below when a higher block is destroyed.
+ * <br/>
+ * Requirements:
+ * <ol>
+ *     <li>Grow vertically downwards without any outcroppings.</li>
+ *     <li>Grow uninterrupted (no gaps in between the plant).</li>
+ *     <li>Must break all blocks below when an upper block is destroyed.</li>
+ * </ol>
  */
 public abstract class DownwardsGrowingPlantModule extends PlantationModule
 {
