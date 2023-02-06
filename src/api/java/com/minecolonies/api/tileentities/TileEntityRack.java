@@ -439,6 +439,20 @@ public class TileEntityRack extends AbstractTileEntityRack
                 return lastOptional.cast();
             }
 
+            if (getBlockState().getBlock() != ModBlocks.blockRack)
+            {
+                lastOptional = LazyOptional.of(() ->
+                {
+                    if (this.isRemoved())
+                    {
+                        return new RackInventory(0);
+                    }
+
+                    return new CombinedItemHandler(RACK, getInventory());
+                });
+                return lastOptional.cast();
+            }
+
             final RackType type = getBlockState().getValue(AbstractBlockMinecoloniesRack.VARIANT);
             if (!type.isDoubleVariant())
             {
