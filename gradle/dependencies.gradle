@@ -40,7 +40,7 @@ dependencies {
         transitive = false
     }
 
-    implementation (fg.deobf("com.ldtteam:multi-piston:${project.multiPistonVersion}")){
+    implementation (fg.deobf("com.ldtteam:multipiston:${project.multiPistonVersion}")){
         transitive = false
     }
 

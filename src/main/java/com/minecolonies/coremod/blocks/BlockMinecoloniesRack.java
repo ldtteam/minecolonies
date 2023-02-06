@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.blocks;
 
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesRack;
+import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.blocks.types.RackType;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
@@ -109,69 +110,29 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
-        final Level worldIn = context.getLevel();
         final BlockPos pos = context.getClickedPos();
         final BlockState state = defaultBlockState();
-        final BlockEntity entity = worldIn.getBlockEntity(pos);
 
-        if (!(entity instanceof TileEntityRack))
+        for(Direction direction : UPDATE_SHAPE_ORDER)
         {
-            return super.getStateForPlacement(context);
+            if (direction != Direction.DOWN && direction != Direction.UP)
+            {
+                final BlockState relativeState = context.getLevel().getBlockState(pos.relative(direction));
+                if (relativeState.getBlock() == ModBlocks.blockRack && !relativeState.getValue(VARIANT).isDoubleVariant())
+                {
+                    return state.setValue(VARIANT, RackType.EMPTYAIR).setValue(FACING, direction);
+                }
+            }
         }
 
-        return getPlacementState(state, entity, pos);
+        if (context.getPlayer() != null)
+        {
+            return defaultBlockState().setValue(FACING, context.getPlayer().getDirection().getOpposite());
+        }
+        return super.getStateForPlacement(context);
     }
 
-    /**
-     * Get the statement ready.
-     *
-     * @param state  the state to place.
-     * @param entity the tileEntity.
-     * @param pos    the position.
-     * @return the next state.
-     */
-    public static BlockState getPlacementState(final BlockState state, final BlockEntity entity, final BlockPos pos)
-    {
-        final AbstractTileEntityRack rack = (AbstractTileEntityRack) entity;
-        if (rack.isEmpty() && (rack.getOtherChest() == null || rack.getOtherChest().isEmpty()))
-        {
-            if (rack.getOtherChest() != null)
-            {
-                state.setValue(FACING, BlockPosUtil.getFacing(pos, rack.getNeighbor()));
-                if (rack.isMain())
-                {
-                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULTDOUBLE);
-                }
-                else
-                {
-                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                }
-            }
-            else
-            {
-                return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.DEFAULT);
-            }
-        }
-        else
-        {
-            if (rack.getOtherChest() != null)
-            {
-                state.setValue(FACING, BlockPosUtil.getFacing(pos, rack.getNeighbor()));
-                if (rack.isMain())
-                {
-                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULLDOUBLE);
-                }
-                else
-                {
-                    return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.EMPTYAIR);
-                }
-            }
-            else
-            {
-                return state.setValue(AbstractBlockMinecoloniesRack.VARIANT, RackType.FULL);
-            }
-        }
-    }
+
 
     /**
      * Convert the BlockState into the correct metadata value.
@@ -197,30 +158,39 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
         return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
     }
 
-    @NotNull
     @Override
+    @NotNull
     public BlockState updateShape(
-      @NotNull final BlockState stateIn,
-      final Direction facing,
-      final BlockState state,
-      final LevelAccessor worldIn,
-      final BlockPos currentPos,
-      final BlockPos pos)
+      @NotNull final BlockState state,
+      @NotNull final Direction dir,
+      final BlockState state2,
+      @NotNull final LevelAccessor level,
+      @NotNull final BlockPos pos1,
+      @NotNull final BlockPos pos2)
     {
-        if (state.getBlock() instanceof BlockMinecoloniesRack || stateIn.getBlock() instanceof BlockMinecoloniesRack)
+        final BlockEntity bEntity1 = level.getBlockEntity(pos1);
+        final BlockEntity bEntity2 = level.getBlockEntity(pos2);
+
+        if (pos1.subtract(pos2).getY() != 0)
         {
-            final BlockEntity rack = worldIn.getBlockEntity(pos);
-            if (rack instanceof TileEntityRack)
+            return super.updateShape(state, dir, state2, level, pos1, pos2);
+        }
+
+        // Is this a double chest and our connection is being removed.
+        if (bEntity1 instanceof TileEntityRack)
+        {
+            if (bEntity2 == null && state.getValue(VARIANT).isDoubleVariant() && pos1.relative(state.getValue(FACING)).equals(pos2))
             {
-                ((AbstractTileEntityRack) rack).neighborChanged(currentPos);
+                // Reset to single
+                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULT : RackType.FULL);
             }
-            final BlockEntity rack2 = worldIn.getBlockEntity(currentPos);
-            if (rack2 instanceof TileEntityRack)
+            // If its not a double variant and the new neighbor is neither, then connect.
+            else if (bEntity2 instanceof TileEntityRack && !state.getValue(VARIANT).isDoubleVariant() && state2.getValue(VARIANT).isDoubleVariant() && state2.getValue(FACING).equals(Direction.fromNormal(pos2.subtract(pos1)).getOpposite()))
             {
-                ((AbstractTileEntityRack) rack2).neighborChanged(pos);
+                return state.setValue(VARIANT, ((TileEntityRack) bEntity1).isEmpty() ? RackType.DEFAULTDOUBLE : RackType.FULLDOUBLE).setValue(FACING, Direction.fromNormal(pos2.subtract(pos1)));
             }
         }
-        return super.updateShape(stateIn, facing, state, worldIn, currentPos, pos);
+        return super.updateShape(state, dir, state2, level, pos1, pos2);
     }
 
     @Override
@@ -260,19 +230,6 @@ public class BlockMinecoloniesRack extends AbstractBlockMinecoloniesRack<BlockMi
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.FAIL;
-    }
-
-    @Override
-    public void setPlacedBy(final Level worldIn, final BlockPos pos, final BlockState state, @Nullable final LivingEntity placer, final ItemStack stack)
-    {
-        BlockState tempState = state;
-        tempState = tempState.setValue(VARIANT, RackType.DEFAULT);
-        if (placer != null)
-        {
-            tempState = tempState.setValue(FACING, placer.getDirection().getOpposite());
-        }
-
-        worldIn.setBlock(pos, tempState, 2);
     }
 
     @Override

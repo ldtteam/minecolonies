@@ -263,10 +263,6 @@ public abstract class AbstractSchematicProvider implements ISchematicProvider, I
     {
         this.lowerCorner = new BlockPos(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()), Math.min(pos1.getZ(), pos2.getZ()));
         this.higherCorner = new BlockPos(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()), Math.max(pos1.getZ(), pos2.getZ()));
-        if (this.getTileEntity() != null && !lowerCorner.equals(higherCorner))
-        {
-            this.getTileEntity().setSchematicCorners(lowerCorner.subtract(getPosition()), higherCorner.subtract(getPosition()));
-        }
     }
 
     @Override
