@@ -17,10 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.FakePlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -43,7 +43,7 @@ public abstract class BoneMealedPlantModule extends PlantationModule
     /**
      * The amount of bonemeal the worker should have at any time.
      */
-    private static final int BONEMEAL_TO_KEEP = 16;
+    protected static final int BONEMEAL_TO_KEEP = 16;
 
     /**
      * The internal random used to decide whether to work this field or not.
@@ -119,7 +119,8 @@ public abstract class BoneMealedPlantModule extends PlantationModule
                              yield PlanterAIModuleResult.MOVING;
                          }
 
-                         final int boneMealSlot = InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> stack.getItem() instanceof BoneMealItem);
+                         final int boneMealSlot =
+                           InventoryUtils.findFirstSlotInItemHandlerWith(worker.getInventoryCitizen(), stack -> getValidBonemeal().contains(stack.getItem()));
                          final ItemStack stackInSlot = worker.getInventoryCitizen().getStackInSlot(boneMealSlot);
                          applyBonemeal(worker, workPosition, stackInSlot, fakePlayer);
 
@@ -169,17 +170,15 @@ public abstract class BoneMealedPlantModule extends PlantationModule
     }
 
     /**
-     * Check if the planter has bonemeal available
+     * Check if the planter has bonemeal available.
      *
      * @param planterAI the AI class of the planter so instructions can be ordered to it.
      * @return whether the planter has bonemeal available.
      */
     private boolean checkForBoneMeal(EntityAIWorkPlanter planterAI)
     {
-        final List<ItemStack> compostAbleItems = new ArrayList<>();
-        compostAbleItems.add(new ItemStack(ModItems.compost, 1));
-        compostAbleItems.add(new ItemStack(Items.BONE_MEAL, 1));
-        return planterAI.checkIfRequestForItemExistOrCreate(new StackList(compostAbleItems,
+        List<ItemStack> bonemeal = getValidBonemeal().stream().map(ItemStack::new).toList();
+        return planterAI.checkIfRequestForItemExistOrCreate(new StackList(bonemeal,
           RequestSystemTranslationConstants.REQUEST_TYPE_FERTILIZER,
           BONEMEAL_TO_KEEP,
           BONEMEAL_TO_KEEP));
@@ -200,7 +199,12 @@ public abstract class BoneMealedPlantModule extends PlantationModule
             return PlanterAIModuleState.HARVESTING;
         }
 
-        return PlanterAIModuleState.PLANTING;
+        if (isValidPlantingBlock(blockState))
+        {
+            return PlanterAIModuleState.PLANTING;
+        }
+
+        return PlanterAIModuleState.NONE;
     }
 
     /**
@@ -217,6 +221,15 @@ public abstract class BoneMealedPlantModule extends PlantationModule
                  .filter(pos -> isValidHarvestBlock(field.getColony().getWorld().getBlockState(pos.above())))
                  .findFirst()
                  .orElse(null);
+    }
+
+    /**
+     * Returns which items are considered valid bonemeal items.
+     */
+    @NonNull
+    protected List<Item> getValidBonemeal()
+    {
+        return List.of(Items.BONE_MEAL, ModItems.compost);
     }
 
     /**
@@ -243,5 +256,17 @@ public abstract class BoneMealedPlantModule extends PlantationModule
     protected boolean isValidHarvestBlock(BlockState blockState)
     {
         return !blockState.isAir();
+    }
+
+    /**
+     * Check if the block is a correct block for planting.
+     * Defaults to being any air block.
+     *
+     * @param blockState the block state.
+     * @return whether the block can be planted.
+     */
+    protected boolean isValidPlantingBlock(BlockState blockState)
+    {
+        return blockState.isAir();
     }
 }

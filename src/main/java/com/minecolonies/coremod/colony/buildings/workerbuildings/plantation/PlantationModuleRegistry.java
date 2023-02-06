@@ -44,7 +44,7 @@ public class PlantationModuleRegistry
     {
         if (plantationModules.isEmpty())
         {
-            // Defaults plants
+            // Default plants
             plantationModules.put(PlantationFieldType.SUGAR_CANE, new SugarCanePlantModule());
             plantationModules.put(PlantationFieldType.CACTUS, new CactusPlantModule());
 
@@ -56,6 +56,7 @@ public class PlantationModuleRegistry
             // Sea plants
             plantationModules.put(PlantationFieldType.KELP, new KelpPlantModule());
             plantationModules.put(PlantationFieldType.SEAGRASS, new SeagrassPlantModule());
+            plantationModules.put(PlantationFieldType.SEA_PICKLES, new SeapicklePlantModule());
 
             // Exotic plants
             plantationModules.put(PlantationFieldType.GLOWBERRIES, new GlowBerriesPlantModule());
