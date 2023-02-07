@@ -706,6 +706,7 @@
   "item.supplycampdeployer.invalid.inside_existing_colony": "You cannot place your Supply Camp or Ship near an existing colony.",
   "item.minecolonies.supplychestdeployer": "Supply Ship",
   "item.minecolonies.supplycampdeployer": "Supply Camp",
+  "item.minecolonies.supply.free": "%s - free",
   "com.minecolonies.coremod.job.guard.toolclickguardtoofar": "Too far away from Guard Tower, please upgrade your Guard Tower to set this spot!",
 
   "item.minecolonies.scepterbeekeeper": "Hive Tool",

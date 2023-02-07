@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.generation;
 
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.crafting.ItemStorage;
@@ -11,8 +8,8 @@ import com.minecolonies.api.util.constant.IToolType;
 import com.minecolonies.api.util.constant.ToolType;
 import com.minecolonies.coremod.colony.crafting.CustomRecipe;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -20,73 +17,73 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
 
+/**
+ * Abstract datagen for crafterrecipes
+ */
 public abstract class CustomRecipeProvider implements DataProvider
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
-    protected final DataGenerator generator;
+    private final PackOutput packOutput;
 
-    public CustomRecipeProvider(final DataGenerator generatorIn)
+    public CustomRecipeProvider(@NotNull final PackOutput packOutput)
     {
-        this.generator = generatorIn;
+        this.packOutput = packOutput;
     }
 
     @Override
     @NotNull
-    public CompletableFuture<?> run(final CachedOutput cache)
+    public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final Path path = this.generator.getPackOutput().getOutputFolder();
-        final Set<ResourceLocation> set = Sets.newHashSet();
-        final List<CompletableFuture<?>> futures = registerRecipes((recipe) ->
+        final PackOutput.PathProvider pathProvider = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "crafterrecipes");
+        final Map<ResourceLocation, CompletableFuture<?>> futures = new HashMap<>();
+
+        registerRecipes((recipe) ->
         {
-            if (!set.add(recipe.getId()))
+            if (futures.containsKey(recipe.getId()))
             {
                 throw new IllegalStateException("Duplicate recipe " + recipe.getId());
             }
-            else
-            {
-                return DataProvider.saveStable(cache,
-                      recipe.serializeRecipe(),
-                      path.resolve("data/" + recipe.getId().getNamespace() + "/crafterrecipes/" + recipe.getId().getPath() + ".json"));
-            }
+
+            futures.put(recipe.getId(), DataProvider.saveStable(cache,
+                    recipe.serializeRecipe(),
+                    pathProvider.json(recipe.getId())));
         });
 
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        return CompletableFuture.allOf(futures.values().toArray(new CompletableFuture[0]));
     }
 
-    protected abstract List<CompletableFuture<?>> registerRecipes(final Function<FinishedRecipe, CompletableFuture<?>> consumer);
+    protected abstract void registerRecipes(final Consumer<FinishedRecipe> consumer);
 
+    /**
+     * Helper to construct custom crafterrecipes for datagen
+     */
     public static class CustomRecipeBuilder
     {
         private final JsonObject json = new JsonObject();
         private final ResourceLocation id;
         private Block intermediate = Blocks.AIR;
 
-        private CustomRecipeBuilder(final String crafter, final String id)
+        private CustomRecipeBuilder(final String crafter, final String module, final String id)
         {
             this.json.addProperty(CustomRecipe.RECIPE_TYPE_PROP, CustomRecipe.RECIPE_TYPE_RECIPE);
-            this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter);
+            this.json.addProperty(CustomRecipe.RECIPE_CRAFTER_PROP, crafter + "_" + module);
             this.id = new ResourceLocation(Constants.MOD_ID, crafter + "/" + id);
         }
 
         @NotNull
-        public static CustomRecipeBuilder create(final String crafter, final String id)
+        public static CustomRecipeBuilder create(final String crafter, final String module, final String id)
         {
-            return new CustomRecipeBuilder(crafter, id);
+            return new CustomRecipeBuilder(crafter, module, id);
         }
 
         @NotNull
@@ -99,10 +96,12 @@ public abstract class CustomRecipeProvider implements DataProvider
         @NotNull
         public CustomRecipeBuilder result(@NotNull final ItemStack result)
         {
-            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, ForgeRegistries.ITEMS.getKey(result.getItem()).toString());
-            if (result.getCount() != 1)
+            final JsonObject jsonItemStack = stackAsJson(result);
+
+            this.json.addProperty(CustomRecipe.RECIPE_RESULT_PROP, jsonItemStack.get(ITEM_PROP).getAsString());
+            if (jsonItemStack.has(COUNT_PROP))
             {
-                this.json.addProperty(COUNT_PROP, result.getCount());
+                this.json.add(COUNT_PROP, jsonItemStack.get(COUNT_PROP));
             }
             return this;
         }
@@ -187,10 +186,29 @@ public abstract class CustomRecipeProvider implements DataProvider
             return this;
         }
 
-        public CompletableFuture<?> build(@NotNull final Function<FinishedRecipe, CompletableFuture<?>> consumer)
+        public void build(@NotNull final Consumer<FinishedRecipe> consumer)
         {
             this.json.addProperty(CustomRecipe.RECIPE_INTERMEDIATE_PROP, ForgeRegistries.BLOCKS.getKey(this.intermediate).toString());
-            return consumer.apply(new Result(this.json, this.id));
+            consumer.accept(new Result(this.json, this.id));
+        }
+
+        @NotNull
+        private JsonObject stackAsJson(final ItemStack stack)
+        {
+            final JsonObject jsonItemStack = new JsonObject();
+            String name = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
+            // this could be incorrect for items with both damage and other NBT,
+            // but that should be rare, and this avoids some annoyance.
+            if (stack.hasTag() && !stack.isDamageableItem())
+            {
+                name += stack.getTag().toString();
+            }
+            jsonItemStack.addProperty(ITEM_PROP, name);
+            if (stack.getCount() != 1)
+            {
+                jsonItemStack.addProperty(COUNT_PROP, stack.getCount());
+            }
+            return jsonItemStack;
         }
 
         @NotNull
@@ -199,20 +217,7 @@ public abstract class CustomRecipeProvider implements DataProvider
             final JsonArray jsonItemStacks = new JsonArray();
             for (final ItemStack itemStack : itemStacks)
             {
-                final JsonObject jsonItemStack = new JsonObject();
-                String name = ForgeRegistries.ITEMS.getKey(itemStack.getItem()).toString();
-                // this could be incorrect for items with both damage and other NBT,
-                // but that should be rare, and this avoids some annoyance.
-                if (itemStack.hasTag() && !itemStack.isDamageableItem())
-                {
-                    name += itemStack.getTag().toString();
-                }
-                jsonItemStack.addProperty(ITEM_PROP, name);
-                if (itemStack.getCount() != 1)
-                {
-                    jsonItemStack.addProperty(COUNT_PROP, itemStack.getCount());
-                }
-                jsonItemStacks.add(jsonItemStack);
+                jsonItemStacks.add(stackAsJson(itemStack));
             }
             return jsonItemStacks;
         }
@@ -223,23 +228,18 @@ public abstract class CustomRecipeProvider implements DataProvider
             final JsonArray jsonItemStorages = new JsonArray();
             for (final ItemStorage itemStorage : itemStorages)
             {
-                final ItemStack stack = itemStorage.getItemStack();
-                final JsonObject jsonItemStorage = new JsonObject();
-                String name = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
-                // this could be incorrect for items with both damage and other NBT,
-                // but that should be rare, and this avoids some annoyance.
-                if (stack.hasTag() && !stack.isDamageableItem())
+                final JsonObject jsonItemStorage = stackAsJson(itemStorage.getItemStack());
+                if (itemStorage.getAmount() == 1)
                 {
-                    name += stack.getTag().toString();
+                    jsonItemStorage.remove(COUNT_PROP);
                 }
-                jsonItemStorage.addProperty(ITEM_PROP, name);
+                else
+                {
+                    jsonItemStorage.addProperty(COUNT_PROP, itemStorage.getAmount());
+                }
                 if (itemStorage.ignoreNBT())
                 {
                     jsonItemStorage.addProperty(MATCHTYPE_PROP, MATCH_NBTIGNORE);
-                }
-                if (itemStorage.getAmount() != 1)
-                {
-                    jsonItemStorage.addProperty(COUNT_PROP, itemStorage.getAmount());
                 }
                 jsonItemStorages.add(jsonItemStorage);
             }

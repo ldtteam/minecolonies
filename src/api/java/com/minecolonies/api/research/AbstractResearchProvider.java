@@ -1,10 +1,11 @@
 package com.minecolonies.api.research;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -30,15 +31,15 @@ import java.util.concurrent.CompletableFuture;
  */
 public abstract class AbstractResearchProvider implements DataProvider
 {
-    protected final DataGenerator generator;
+    protected final PackOutput packOutput;
 
     /**
      * The abstract variant of a ResearchProvider, to register to fires during runData.
-     * @param generator  the data generator.
+     * @param packOutput  the pack output.
      */
-    public AbstractResearchProvider(final DataGenerator generator)
+    public AbstractResearchProvider(@NotNull final PackOutput packOutput)
     {
-        this.generator = generator;
+        this.packOutput = packOutput;
     }
 
     /**
@@ -67,11 +68,10 @@ public abstract class AbstractResearchProvider implements DataProvider
 
     private final List<Tuple<JsonObject, Tuple<String, String>>> research = new ArrayList<>();
 
-
+    @NotNull
     @Override
     public CompletableFuture<?> run(@NotNull final CachedOutput cache)
     {
-        final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         final JsonObject langJson = new JsonObject();
 
         for(final ResearchBranch branch : getResearchBranchCollection())
@@ -119,28 +119,18 @@ public abstract class AbstractResearchProvider implements DataProvider
         CompletableFuture<?>[] futures = new CompletableFuture<?>[this.research.size() + 1];
         int i = 0;
 
+        final PackOutput.PathProvider langPath = this.packOutput.createPathProvider(PackOutput.Target.RESOURCE_PACK, "lang");
+        final PackOutput.PathProvider researchesPath = this.packOutput.createPathProvider(PackOutput.Target.DATA_PACK, "researches");
+
         for (Tuple<JsonObject, Tuple<String, String>> model : this.research)
         {
-            Path target = getPath(model.getB().getA(), model.getB().getB());
+            final Path target = researchesPath.json(new ResourceLocation(model.getB().getA(), model.getB().getB()));
             futures[i++] = DataProvider.saveStable(cache, model.getA(), target);
         }
 
-        futures[i] = DataProvider.saveStable(cache, langJson, this.generator.getPackOutput()
-                                                                  .getOutputFolder(PackOutput.Target.RESOURCE_PACK)
-                                                                .resolve(Constants.MOD_ID)
-                                                                .resolve("lang")
-                                                                .resolve("default.json"));
+        futures[i] = DataProvider.saveStable(cache, langJson, langPath.json(new ResourceLocation(Constants.MOD_ID, "default")));
 
         return CompletableFuture.allOf(futures);
-    }
-
-    protected Path getPath(final String namespace, final String path)
-    {
-        return this.generator.getPackOutput()
-                 .getOutputFolder(PackOutput.Target.DATA_PACK)
-                 .resolve(namespace)
-                 .resolve("researches")
-                 .resolve(path + ".json");
     }
 
     /**

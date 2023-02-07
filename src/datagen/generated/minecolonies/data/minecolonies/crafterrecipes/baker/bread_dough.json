@@ -1,0 +1,14 @@
+{
+  "type": "recipe",
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "count": 3,
+      "item": "minecraft:wheat"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "max-building-level": 2,
+  "result": "minecolonies:bread_dough",
+  "show-tooltip": true
+}

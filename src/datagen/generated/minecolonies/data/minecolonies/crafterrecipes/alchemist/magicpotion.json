@@ -1,0 +1,16 @@
+{
+  "type": "recipe",
+  "crafter": "alchemist_crafting",
+  "inputs": [
+    {
+      "item": "minecolonies:mistletoe"
+    },
+    {
+      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/consumepotions",
+  "result": "minecolonies:magicpotion",
+  "show-tooltip": true
+}

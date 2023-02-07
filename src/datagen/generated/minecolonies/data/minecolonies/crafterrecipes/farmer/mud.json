@@ -1,0 +1,15 @@
+{
+  "type": "recipe",
+  "crafter": "farmer_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:dirt"
+    },
+    {
+      "item": "minecraft:potion{Potion:\"minecraft:water\"}"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "loot-table": "minecolonies:recipes/glass_bottle",
+  "result": "minecraft:mud"
+}

@@ -1,0 +1,12 @@
+{
+  "type": "recipe",
+  "crafter": "mechanic_crafting",
+  "inputs": [
+    {
+      "item": "minecraft:weathered_copper"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "minecraft:exposed_copper",
+  "tool": "axe"
+}

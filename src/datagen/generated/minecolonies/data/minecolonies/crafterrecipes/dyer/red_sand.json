@@ -1,0 +1,16 @@
+{
+  "type": "recipe",
+  "count": 4,
+  "crafter": "dyer_crafting",
+  "inputs": [
+    {
+      "count": 4,
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:red_dye"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "result": "minecraft:red_sand"
+}

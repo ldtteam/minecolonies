@@ -1,0 +1,11 @@
+{
+  "type": "recipe",
+  "crafter": "baker_smelting",
+  "inputs": [
+    {
+      "item": "minecolonies:bread_dough"
+    }
+  ],
+  "intermediate": "minecraft:furnace",
+  "result": "minecraft:bread"
+}
