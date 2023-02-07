@@ -54,6 +54,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.api.research.util.ResearchConstants.RECIPES;
+import static com.minecolonies.api.util.constant.BuildingConstants.*;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_DISABLED_RECIPES;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_RECIPES;
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_REDUCEABLE;
@@ -969,7 +970,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @NotNull
         public String getId()
         {
-            return "crafting";
+            return MODULE_CRAFTING;
         }
     }
 
@@ -1006,7 +1007,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @NotNull
         public String getId()
         {
-            return "smelting";
+            return MODULE_SMELTING;
         }
     }
 
@@ -1043,7 +1044,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @NotNull
         public String getId()
         {
-            return "brewing";
+            return MODULE_BREWING;
         }
     }
 
@@ -1076,7 +1077,7 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         @NotNull
         public String getId()
         {
-            return "custom";
+            return MODULE_CUSTOM;
         }
     }
 }

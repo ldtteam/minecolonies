@@ -160,23 +160,17 @@ public class DefaultResearchProvider extends AbstractResearchProvider
         effects.add(new ResearchEffect(ModBuildings.alchemist.get().getBuildingBlock()).setTranslatedName("Unlocks Alchemist"));
 
 
-        // Crafter-recipe-only unlocks do not require static effect resource locations; the crafter recipe json checks against the research id resource locaiton itself.
-        // Assigning them for now to handle text cleanly, and to allow researches with both recipe and non-recipe effects.
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/knowledgeoftheendunlock")).setTranslatedName(
-          "Stonemasons Learn Endstone Recipe and Bakers Learn Chorus Bread Recipe"));
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/morescrollsunlock")).setTranslatedName(
-          "Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/platearmorunlock")).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
+        // Crafter-recipe-only unlocks
+        effects.add(new ResearchEffect(THE_END).setTranslatedName("Stonemasons Learn Endstone Recipe and Bakers Learn Chorus Bread Recipe"));
+        effects.add(new ResearchEffect(THE_DEPTHS).setTranslatedName("Crusher Learns Deepslate and Tuff Recipes"));
+        effects.add(new ResearchEffect(MORE_SCROLLS).setTranslatedName("Enchanter Learns Scroll Recipes to Locate Workers and Summon Guards"));
+        effects.add(new ResearchEffect(PLATE_ARMOR).setTranslatedName("Blacksmith Learns Plate Armor Recipes"));
 
         //Sifter Mesh triggers
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterstringunlock")).setTranslatedName(
-            "Fletcher Learns How to Make String Meshes for the Sifter"));
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterflintunlock")).setTranslatedName(
-            "Stonemason Learns How to Make Flint Meshes for the Sifter"));
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterironunlock")).setTranslatedName(
-            "Blacksmith Learns How to Make Iron Meshes for the Sifter"));
-        effects.add(new ResearchEffect(new ResourceLocation(Constants.MOD_ID, "effects/sifterdiamondunlock")).setTranslatedName(
-            "Mechanic Learns How to Make Diamond Meshes for the Sifter"));
+        effects.add(new ResearchEffect(SIFTER_STRING).setTranslatedName("Fletcher Learns How to Make String Meshes for the Sifter"));
+        effects.add(new ResearchEffect(SIFTER_FLINT).setTranslatedName("Stonemason Learns How to Make Flint Meshes for the Sifter"));
+        effects.add(new ResearchEffect(SIFTER_IRON).setTranslatedName("Blacksmith Learns How to Make Iron Meshes for the Sifter"));
+        effects.add(new ResearchEffect(SIFTER_DIAMOND).setTranslatedName("Mechanic Learns How to Make Diamond Meshes for the Sifter"));
 
         return effects;
     }
@@ -469,7 +463,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp4.png"))
           .addBuildingRequirement(ModBuildings.LIBRARY_ID, 3)
           .addItemCost(Items.WHITE_WOOL, 32)
-          .addEffect(MASKS, 3)
+          .addEffect(MASKS, 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "civilian/vaccines"), CIVIL).setParentResearch(masks)
@@ -478,7 +472,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(new ResourceLocation("minecolonies:textures/icons/research/hp5.png"))
           .addBuildingRequirement(ModBuildings.HOSPITAL_ID, 3)
           .addItemCost(Items.EGG, 64)
-          .addEffect(VACCINES, 3)
+          .addEffect(VACCINES, 1)
           .addToList(r);
 
         final Research circus = new Research(new ResourceLocation(Constants.MOD_ID, "civilian/circus"), CIVIL).setParentResearch(firstAid)
@@ -1073,7 +1067,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModItems.bannerRallyGuards)
           .addBuildingRequirement(ModBuildings.BARRACKS_ID, 3)
           .addItemCost(Items.EMERALD, 16)
-          .addEffect(TELESCOPE, 3)
+          .addEffect(TELESCOPE, 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "combat/standard"), COMBAT).setParentResearch(telescope)
@@ -1081,7 +1075,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(ModItems.bannerRallyGuards)
           .addBuildingRequirement(ModBuildings.BARRACKS_ID, 4)
           .addItemCost(Items.EMERALD, 32)
-          .addEffect(STANDARD, 3)
+          .addEffect(STANDARD, 1)
           .addToList(r);
 
         final Research regeneration = new Research(new ResourceLocation(Constants.MOD_ID, "combat/regeneration"), COMBAT).setParentResearch(improvedLeather)
@@ -1405,6 +1399,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .setIcon(Items.COBBLED_DEEPSLATE)
           .addBuildingRequirement("crusher", 3)
           .addItemCost(Items.DEEPSLATE, 64)
+          .addEffect(THE_DEPTHS, 1)
           .addToList(r);
 
         new Research(new ResourceLocation(Constants.MOD_ID, "technology/pavetheroad"), TECH).setParentResearch(rockingRoll)

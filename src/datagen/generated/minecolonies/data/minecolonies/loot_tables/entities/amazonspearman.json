@@ -1,0 +1,25 @@
+{
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 80
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecolonies:spear",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecolonies:ancienttome",
+          "weight": 5
+        }
+      ],
+      "name": "minecolonies:amazonspearman",
+      "rolls": 1.0
+    }
+  ]
+}

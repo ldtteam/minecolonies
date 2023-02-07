@@ -1,0 +1,25 @@
+{
+  "type": "recipe",
+  "crafter": "baker_crafting",
+  "inputs": [
+    {
+      "count": 3,
+      "item": "minecraft:wheat"
+    },
+    {
+      "count": 3,
+      "item": "minecraft:milk_bucket"
+    },
+    {
+      "count": 2,
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "minecraft:egg"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "min-building-level": 2,
+  "result": "minecolonies:cake_batter",
+  "show-tooltip": true
+}

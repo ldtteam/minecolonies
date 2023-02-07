@@ -111,6 +111,27 @@ public final class BuildingConstants
      * String tag to identify a leisure decoration.
      */
     public static final String LEISURE = "leisure";
+
+    /**
+     * Crafting module type.
+     */
+    public static final String MODULE_CRAFTING = "crafting";
+
+    /**
+     * Smelting module type.
+     */
+    public static final String MODULE_SMELTING = "smelting";
+
+    /**
+     * Smelting module type.
+     */
+    public static final String MODULE_BREWING = "brewing";
+
+    /**
+     * Custom crafting module type.
+     */
+    public static final String MODULE_CUSTOM = "custom";
+
     /**
      * Private constructor to hide implicit public one.
      */

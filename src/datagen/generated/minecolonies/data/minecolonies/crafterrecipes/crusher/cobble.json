@@ -1,0 +1,13 @@
+{
+  "type": "recipe",
+  "crafter": "crusher_custom",
+  "inputs": [
+    {
+      "count": 2,
+      "item": "minecraft:tuff"
+    }
+  ],
+  "intermediate": "minecraft:air",
+  "research-id": "minecolonies:effects/knowledgeofthedepthsunlock",
+  "result": "minecraft:cobblestone"
+}

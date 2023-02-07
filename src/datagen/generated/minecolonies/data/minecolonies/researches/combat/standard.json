@@ -2,7 +2,7 @@
   "branch": "minecolonies:combat",
   "effects": [
     {
-      "minecolonies:effects/standard": 3
+      "minecolonies:effects/standard": 1
     }
   ],
   "icon": "minecolonies:banner_rally_guards",
