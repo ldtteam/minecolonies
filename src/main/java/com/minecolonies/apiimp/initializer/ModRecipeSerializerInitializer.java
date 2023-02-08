@@ -5,6 +5,7 @@ import com.minecolonies.api.crafting.registry.ModRecipeSerializer;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,14 +19,7 @@ public final class ModRecipeSerializerInitializer
     static
     {
         ModRecipeSerializer.CompostRecipeSerializer = RECIPE_SERIALIZER.register("composting", CompostRecipe.Serializer::new);
-        ModRecipeSerializer.CompostRecipeType = RECIPE_TYPES.register("composting", () -> new RecipeType<>() {
-            @Override
-            public String toString()
-            {
-                return Constants.MOD_ID + ":" + "composting";
-            }
-        });
-
+        ModRecipeSerializer.CompostRecipeType = RECIPE_TYPES.register("composting", () -> RecipeType.simple(new ResourceLocation(Constants.MOD_ID, "composting")));
     }
 
     private ModRecipeSerializerInitializer()
