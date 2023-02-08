@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 
-import javax.annotation.Nonnull;
 
 /**
  * This is the colonies event registry entry class, used for registering any colony related events. Takes a function of colony, nbt to create the right event object.
@@ -51,7 +50,7 @@ public class ColonyEventTypeRegistryEntry
      * @param compound the nbt to deserialize the event from.
      * @return the deserialized event.
      */
-    public IColonyEvent deserializeEvent(@Nonnull final IColony colony, @Nonnull final CompoundTag compound)
+    public IColonyEvent deserializeEvent(@NotNull final IColony colony, @NotNull final CompoundTag compound)
     {
         return eventCreator.apply(colony, compound);
     }

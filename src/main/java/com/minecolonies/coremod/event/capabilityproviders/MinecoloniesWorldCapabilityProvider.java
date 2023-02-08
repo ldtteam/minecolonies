@@ -6,8 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.coremod.MineColonies.CHUNK_STORAGE_UPDATE_CAP;
 
@@ -47,9 +46,9 @@ public class MinecoloniesWorldCapabilityProvider implements ICapabilitySerializa
         IChunkmanagerCapability.Storage.readNBT(CHUNK_STORAGE_UPDATE_CAP, chunkMap, null, nbt);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final Direction direction)
+    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap, final Direction direction)
     {
         return cap == CHUNK_STORAGE_UPDATE_CAP ? chunkMapOptional.cast() : LazyOptional.empty();
     }

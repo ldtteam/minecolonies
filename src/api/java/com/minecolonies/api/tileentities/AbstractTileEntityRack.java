@@ -15,8 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.Constants.DEFAULT_SIZE;
@@ -81,7 +79,7 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
         }
 
         @Override
-        public void setStackInSlot(final int slot, final @Nonnull ItemStack stack)
+        public void setStackInSlot(final int slot, final @NotNull ItemStack stack)
         {
             validateSlotIndex(slot);
             final boolean changed = !ItemStack.matches(stack, this.stacks.get(slot));
@@ -93,9 +91,9 @@ public abstract class AbstractTileEntityRack extends BlockEntity implements Menu
             updateWarehouseIfAvailable(stack);
         }
 
-        @Nonnull
+        @NotNull
         @Override
-        public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+        public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate)
         {
             final ItemStack result = super.insertItem(slot, stack, simulate);
             if ((result.isEmpty() || result.getCount() < stack.getCount()) && !simulate)

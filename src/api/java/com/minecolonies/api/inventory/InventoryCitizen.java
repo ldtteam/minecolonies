@@ -13,8 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 import static com.minecolonies.api.research.util.ResearchConstants.CITIZEN_INV_SLOTS;
@@ -304,9 +302,9 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
         return ItemStackUtils.isEmpty(stack);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+    public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate)
     {
         if (stack.isEmpty())
         {
@@ -357,7 +355,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
     {
@@ -401,7 +399,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     }
 
     @Override
-    public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
+    public boolean isItemValid(final int slot, @NotNull final ItemStack stack)
     {
         return true;
     }
@@ -499,7 +497,7 @@ public class InventoryCitizen implements IItemHandlerModifiable, Nameable
     }
 
     @Override
-    public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
+    public void setStackInSlot(final int slot, @NotNull final ItemStack stack)
     {
         if (!ItemStackUtils.isEmpty(stack))
         {

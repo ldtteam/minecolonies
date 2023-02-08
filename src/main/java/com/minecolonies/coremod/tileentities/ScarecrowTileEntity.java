@@ -27,8 +27,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
 import java.util.Random;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;
@@ -111,7 +109,7 @@ public class ScarecrowTileEntity extends AbstractScarecrowTileEntity
             public int getSlotLimit(int slot) { return 1; }
 
             @Override
-            public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+            public boolean isItemValid(int slot, @NotNull ItemStack stack)
             {
                 return stack.is(Tags.Items.SEEDS) || (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof CropBlock);
             }

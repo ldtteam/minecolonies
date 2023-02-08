@@ -17,8 +17,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 import static com.minecolonies.api.util.constant.InventoryConstants.*;
 
 /**
@@ -79,7 +77,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
             ItemStack potion = ItemStack.EMPTY;
 
             @Override
-            public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
+            public void setStackInSlot(final int slot, @NotNull final ItemStack stack)
             {
                 if (!isItemValid(slot, stack) && !ItemStackUtils.isEmpty(stack))
                 {
@@ -104,7 +102,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
                 return 4;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public ItemStack getStackInSlot(final int slot)
             {
@@ -118,9 +116,9 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
                 }
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack, final boolean simulate)
+            public ItemStack insertItem(final int slot, @NotNull final ItemStack stack, final boolean simulate)
             {
                 if (!isItemValid(slot, stack) && !ItemStackUtils.isEmpty(stack))
                 {
@@ -140,7 +138,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
                 return stack;
             }
 
-            @Nonnull
+            @NotNull
             @Override
             public ItemStack extractItem(final int slot, final int amount, final boolean simulate)
             {
@@ -154,7 +152,7 @@ public class ContainerCraftingBrewingstand extends AbstractContainerMenu
             }
 
             @Override
-            public boolean isItemValid(final int slot, @Nonnull final ItemStack stack)
+            public boolean isItemValid(final int slot, @NotNull final ItemStack stack)
             {
                 if (slot == 3)
                 {
