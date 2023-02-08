@@ -6,8 +6,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public abstract class AbstractBlockMinecolonies<B extends AbstractBlockMinecolonies<B>> extends Block implements IBlockMinecolonies<B>
 {
     public AbstractBlockMinecolonies(final Properties properties)

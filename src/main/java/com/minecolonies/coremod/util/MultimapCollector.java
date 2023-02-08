@@ -11,8 +11,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import java.util.stream.Collector.Characteristics;
-
 public class MultimapCollector<T, K, V> implements Collector<T, Multimap<K, V>, Multimap<K, V>>
 {
 

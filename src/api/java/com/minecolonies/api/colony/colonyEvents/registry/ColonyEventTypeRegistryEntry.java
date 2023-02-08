@@ -3,11 +3,9 @@ package com.minecolonies.api.colony.colonyEvents.registry;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.colonyEvents.IColonyEvent;
 import com.minecolonies.api.util.Log;
-import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.function.BiFunction;
 
 

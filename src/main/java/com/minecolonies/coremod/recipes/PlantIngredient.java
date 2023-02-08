@@ -15,12 +15,9 @@ import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import net.minecraft.world.item.crafting.Ingredient.Value;
-import net.minecraft.world.item.crafting.Ingredient.ItemValue;
 /**
  * An ingredient that can be used in a vanilla recipe to match plantable items.
  *

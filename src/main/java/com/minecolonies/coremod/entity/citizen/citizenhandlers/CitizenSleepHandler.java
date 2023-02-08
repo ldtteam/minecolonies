@@ -18,10 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.Optional;
 
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_BED_POS;
 import static com.minecolonies.api.entity.citizen.AbstractEntityCitizen.DATA_IS_ASLEEP;

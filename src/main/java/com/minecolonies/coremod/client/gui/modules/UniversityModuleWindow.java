@@ -11,10 +11,8 @@ import com.minecolonies.api.research.IResearchRequirement;
 import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.AbstractModuleWindow;
 import com.minecolonies.coremod.client.gui.WindowResearchTree;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingUniversity;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

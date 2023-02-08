@@ -30,9 +30,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -422,9 +420,9 @@ public class TileEntityRack extends AbstractTileEntityRack
         this.load(tag);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final Direction dir)
+    public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> capability, final Direction dir)
     {
         if (version != VERSION)
         {

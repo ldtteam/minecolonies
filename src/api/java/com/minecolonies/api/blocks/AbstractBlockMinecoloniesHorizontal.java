@@ -7,8 +7,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public abstract class AbstractBlockMinecoloniesHorizontal<B extends AbstractBlockMinecoloniesHorizontal<B>> extends HorizontalDirectionalBlock implements IBlockMinecolonies<B>
 {
     public AbstractBlockMinecoloniesHorizontal(final Properties properties)

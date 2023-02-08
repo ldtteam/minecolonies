@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.ModEntities;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -9,10 +9,6 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Scepter for the Pharao.

@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.crusher;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.requestsystem.request.RequestState;
 import com.minecolonies.api.crafting.IRecipeStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;

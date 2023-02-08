@@ -4,8 +4,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 /**
  * Abstract class for minecolonies named graves.
  */

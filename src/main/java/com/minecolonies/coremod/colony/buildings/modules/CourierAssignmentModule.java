@@ -8,9 +8,7 @@ import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.*;

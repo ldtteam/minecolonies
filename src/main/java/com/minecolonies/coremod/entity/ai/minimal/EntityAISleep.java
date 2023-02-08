@@ -37,8 +37,6 @@ import java.util.List;
 import static com.minecolonies.api.util.constant.CitizenConstants.RANGE_TO_BE_HOME;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISleep.SleepState.*;
 
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
-
 /**
  * AI to send Entity to sleep.
  */

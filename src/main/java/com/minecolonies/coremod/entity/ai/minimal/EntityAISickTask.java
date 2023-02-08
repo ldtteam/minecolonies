@@ -9,7 +9,6 @@ import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.entity.ai.DesiredActivity;
 import com.minecolonies.api.entity.ai.statemachine.AIEventTarget;
 import com.minecolonies.api.entity.ai.statemachine.states.AIBlockingEventType;
-import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.ai.statemachine.states.IState;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.ITickRateStateMachine;
 import com.minecolonies.api.entity.ai.statemachine.tickratestatemachine.TickRateStateMachine;
@@ -47,8 +46,6 @@ import static com.minecolonies.api.util.constant.TranslationConstants.NO_HOSPITA
 import static com.minecolonies.api.util.constant.TranslationConstants.WAITING_FOR_CURE;
 import static com.minecolonies.coremod.entity.ai.minimal.EntityAISickTask.DiseaseState.*;
 import static com.minecolonies.coremod.entity.citizen.citizenhandlers.CitizenDiseaseHandler.SEEK_DOCTOR_HEALTH;
-
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
 
 /**
  * The AI task for citizens to execute when they are supposed to eat.

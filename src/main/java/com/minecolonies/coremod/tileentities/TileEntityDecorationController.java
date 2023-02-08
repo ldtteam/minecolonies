@@ -18,7 +18,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;

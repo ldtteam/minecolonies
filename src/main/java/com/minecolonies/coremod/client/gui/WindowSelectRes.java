@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.google.common.collect.ImmutableList;
 import com.ldtteam.blockui.Color;
 import com.ldtteam.blockui.Pane;
 import com.ldtteam.blockui.controls.Button;
@@ -15,18 +14,14 @@ import com.minecolonies.api.util.Log;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static com.minecolonies.api.util.constant.WindowConstants.BUTTON_SELECT;
 import static com.minecolonies.api.util.constant.WindowConstants.NAME_LABEL;

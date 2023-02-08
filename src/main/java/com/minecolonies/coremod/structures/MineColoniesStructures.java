@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.structures;
 
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.DeferredRegister;

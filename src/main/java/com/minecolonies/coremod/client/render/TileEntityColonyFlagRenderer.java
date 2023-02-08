@@ -27,7 +27,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import org.joml.Vector3f;
 import net.minecraft.world.level.GameType;
 
 import java.util.List;

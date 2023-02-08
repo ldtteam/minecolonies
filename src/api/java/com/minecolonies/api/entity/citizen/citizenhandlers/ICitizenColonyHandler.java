@@ -2,7 +2,6 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.IBuilding;
 import org.jetbrains.annotations.Nullable;
 
 public interface ICitizenColonyHandler

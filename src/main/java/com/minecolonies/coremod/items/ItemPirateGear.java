@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.sounds.SoundEvents;
@@ -8,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 

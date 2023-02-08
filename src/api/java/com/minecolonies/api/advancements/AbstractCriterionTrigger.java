@@ -11,8 +11,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.function.Function;
 
-import net.minecraft.advancements.CriterionTrigger.Listener;
-
 /**
  * The base class of a Trigger that tracks listeners and defines criterion
  * related to the trigger, and how that is fetched from JSON

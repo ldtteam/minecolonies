@@ -2,13 +2,11 @@ package com.minecolonies.api.entity.citizen.citizenhandlers;
 
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.entity.citizen.Skill;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Map;
 import java.util.Random;
 

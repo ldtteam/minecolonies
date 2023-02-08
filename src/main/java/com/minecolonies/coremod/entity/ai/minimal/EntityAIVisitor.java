@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
-
 /**
  * AI for visitors, they do sometimes nap on their place, sit on their place, randomly walk around inside building outline
  */

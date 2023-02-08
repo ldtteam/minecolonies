@@ -6,7 +6,7 @@ import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Specific named damage source.

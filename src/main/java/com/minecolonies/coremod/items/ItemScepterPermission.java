@@ -2,7 +2,6 @@ package com.minecolonies.coremod.items;
 
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.network.messages.server.colony.ChangeFreeToInteractBlockMessage;

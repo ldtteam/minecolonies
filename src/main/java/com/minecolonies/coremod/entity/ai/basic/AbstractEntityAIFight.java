@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
-import com.minecolonies.api.colony.buildings.IGuardBuilding;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGear;
 import com.minecolonies.api.entity.ai.citizen.guards.GuardGearBuilder;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;

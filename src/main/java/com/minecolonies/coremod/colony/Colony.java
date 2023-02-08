@@ -35,7 +35,6 @@ import com.minecolonies.coremod.network.messages.client.colony.ColonyViewRemoveW
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;

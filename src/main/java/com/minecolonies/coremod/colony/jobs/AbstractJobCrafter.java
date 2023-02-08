@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.jobs;
 
 import com.google.common.collect.ImmutableList;
-import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -19,17 +18,10 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIBasic;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.minecolonies.api.util.SoundUtils.PITCH;
-import static com.minecolonies.api.util.SoundUtils.VOLUME;
 import static com.minecolonies.api.util.constant.Suppression.UNCHECKED;
 
 /**

@@ -11,13 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import net.minecraft.world.item.crafting.Ingredient.ItemValue;
 /**
  * An ingredient that can be used in a vanilla recipe to require more than one item in a particular input slot.
  *

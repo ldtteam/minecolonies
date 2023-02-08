@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingBuilder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 
 /**
  * The client side representation for a work order that the builder can take to build decorations.

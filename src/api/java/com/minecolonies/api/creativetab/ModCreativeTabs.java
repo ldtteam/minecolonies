@@ -1,23 +1,14 @@
 package com.minecolonies.api.creativetab;
 
 import com.minecolonies.api.blocks.*;
-import com.minecolonies.api.blocks.decorative.AbstractBlockGate;
-import com.minecolonies.api.blocks.decorative.AbstractBlockMinecoloniesConstructionTape;
-import com.minecolonies.api.blocks.decorative.AbstractColonyFlagBanner;
-import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
-import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
 
 /**
  * Class used to handle the creativeTab of minecolonies.

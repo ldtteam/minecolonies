@@ -5,8 +5,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 
 import static net.minecraft.world.item.enchantment.EnchantmentCategory.WEAPON;
 
-import net.minecraft.world.item.enchantment.Enchantment.Rarity;
-
 /**
  * Enchant for adding extra damage against raiders
  */

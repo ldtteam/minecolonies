@@ -21,8 +21,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_ID;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_POS;
 import static com.minecolonies.api.util.constant.translation.ToolTranslationConstants.*;
 
-import net.minecraft.world.item.Item.Properties;
-
 /**
  * Lumberjack Scepter Item class. Used to give tasks to Lumberjacks.
  */

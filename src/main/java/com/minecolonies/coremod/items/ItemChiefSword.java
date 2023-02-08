@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.mobs.RaiderMobUtils;
 import com.minecolonies.api.entity.mobs.barbarians.AbstractEntityBarbarian;
 import com.minecolonies.api.items.IChiefSwordItem;
@@ -15,8 +14,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.api.util.constant.Constants.*;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling the Chief Sword item.

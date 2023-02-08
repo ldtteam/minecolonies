@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.client.render.mobs.amazon;
 
 import com.minecolonies.api.entity.mobs.amazons.AbstractEntityAmazon;
-import com.minecolonies.coremod.MineColonies;
-import com.minecolonies.coremod.client.model.raiders.ModelAmazon;
 import com.minecolonies.coremod.client.model.raiders.ModelAmazonChief;
 import com.minecolonies.coremod.event.ClientRegistryHandler;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

@@ -6,7 +6,6 @@ import com.minecolonies.api.items.ModItems;
 import com.minecolonies.api.research.AbstractResearchProvider;
 import com.minecolonies.api.research.ResearchBranchType;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;

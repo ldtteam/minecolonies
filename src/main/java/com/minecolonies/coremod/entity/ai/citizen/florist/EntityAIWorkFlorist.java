@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.florist;
 
 import com.minecolonies.api.colony.interactionhandling.ChatPriority;
-import com.minecolonies.api.compatibility.CompatibilityManager;
-import com.minecolonies.api.crafting.ItemStorage;
 import com.minecolonies.api.entity.ai.statemachine.AITarget;
 import com.minecolonies.api.entity.ai.statemachine.states.IAIState;
 import com.minecolonies.api.entity.citizen.VisibleCitizenStatus;

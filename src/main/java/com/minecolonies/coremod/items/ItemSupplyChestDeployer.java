@@ -6,7 +6,6 @@ import com.ldtteam.structurize.placement.handlers.placement.PlacementError;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.permissions.Action;
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.entity.pathfinding.SurfaceType;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;

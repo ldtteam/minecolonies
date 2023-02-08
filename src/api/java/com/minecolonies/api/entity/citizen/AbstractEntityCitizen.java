@@ -45,9 +45,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
-import java.util.Random;
 
 import static com.minecolonies.api.util.constant.CitizenConstants.*;
 

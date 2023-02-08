@@ -1,16 +1,13 @@
 package com.minecolonies.api.sounds;
 
 import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.entity.mobs.RaiderType;
 import com.minecolonies.api.util.Tuple;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.*;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

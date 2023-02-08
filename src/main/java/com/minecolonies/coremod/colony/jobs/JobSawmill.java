@@ -2,8 +2,6 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
-import com.minecolonies.api.colony.jobs.ModJobs;
-import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.sounds.ModSoundEvents;
 import com.minecolonies.coremod.entity.ai.citizen.sawmill.EntityAIWorkSawmill;
 import com.minecolonies.coremod.entity.citizen.EntityCitizen;

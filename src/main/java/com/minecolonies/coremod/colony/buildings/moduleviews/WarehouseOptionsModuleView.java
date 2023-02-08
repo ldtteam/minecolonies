@@ -2,7 +2,6 @@ package com.minecolonies.coremod.colony.buildings.moduleviews;
 
 import com.ldtteam.blockui.views.BOWindow;
 import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModuleView;
-import com.minecolonies.api.util.constant.Constants;
 import com.minecolonies.coremod.client.gui.modules.WarehouseOptionsModuleWindow;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;

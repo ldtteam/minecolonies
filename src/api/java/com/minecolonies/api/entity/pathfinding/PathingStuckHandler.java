@@ -1,7 +1,6 @@
 package com.minecolonies.api.entity.pathfinding;
 
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.items.ModTags;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +13,6 @@ import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.Vec3;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;

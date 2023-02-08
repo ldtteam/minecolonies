@@ -3,7 +3,6 @@ package com.minecolonies.api.advancements.citizen_eat_food;
 import com.google.gson.JsonObject;
 import com.minecolonies.api.advancements.AbstractCriterionTrigger;
 import com.minecolonies.api.util.constant.Constants;
-import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.advancements.critereon.DeserializationContext;

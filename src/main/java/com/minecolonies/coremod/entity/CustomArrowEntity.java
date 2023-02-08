@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-import net.minecraft.world.entity.Entity.RemovalReason;
-
 /**
  * Custom arrow entity class which remove themselves when on the ground for a bit to not cause lag and they do not scale in damage with their motion.
  */

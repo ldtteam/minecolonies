@@ -14,8 +14,6 @@ import java.util.EnumSet;
 
 import static com.minecolonies.api.research.util.ResearchConstants.MECHANIC_ENHANCED_GATES;
 
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
-
 /**
  * Break door entity AI with mutex.
  */

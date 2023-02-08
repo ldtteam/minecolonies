@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import com.minecolonies.api.util.constant.TranslationConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
@@ -10,18 +9,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
 import static com.minecolonies.api.util.constant.Constants.STACKSIZE;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Sweet Bread, made by the baker. Adds speed, removes poison

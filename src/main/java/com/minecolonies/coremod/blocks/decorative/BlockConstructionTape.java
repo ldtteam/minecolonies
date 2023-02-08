@@ -20,14 +20,10 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.Plane;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * This block is used as a border to show the size of the building. It also shows that the building is in the progress of being built.

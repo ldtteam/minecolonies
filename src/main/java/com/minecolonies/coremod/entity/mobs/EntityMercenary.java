@@ -41,7 +41,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -63,8 +63,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.npc.Npc;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 /**
  * Class for Mercenary entities, which can be spawned to protect the colony

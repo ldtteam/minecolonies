@@ -23,8 +23,6 @@ import java.util.List;
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
 import static com.minecolonies.api.util.constant.Constants.UPDATE_FLAG;
 
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
-
 public class GravePlacementHandler implements IPlacementHandler
 {
     @Override

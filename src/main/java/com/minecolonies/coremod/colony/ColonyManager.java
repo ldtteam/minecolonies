@@ -41,9 +41,6 @@ import static com.minecolonies.api.util.constant.Constants.BLOCKS_PER_CHUNK;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_COMPATABILITY_MANAGER;
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_UUID;
 import static com.minecolonies.coremod.MineColonies.COLONY_MANAGER_CAP;
-import static com.minecolonies.coremod.MineColonies.getConfig;
-
-import net.minecraftforge.event.TickEvent.LevelTickEvent;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -302,7 +299,7 @@ public final class ColonyManager implements IColonyManager
     @Override
     public boolean isFarEnoughFromColonies(@NotNull final Level w, @NotNull final BlockPos pos)
     {
-        final int blockRange = Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), getConfig().getServer().initialColonySize.get()) << 4;
+        final int blockRange = Math.max(MineColonies.getConfig().getServer().minColonyDistance.get(), MineColonies.getConfig().getServer().initialColonySize.get()) << 4;
         final IColony closest = getClosestColony(w, pos);
 
         if (closest != null && BlockPosUtil.getDistance(pos, closest.getCenter()) < blockRange)
@@ -312,7 +309,7 @@ public final class ColonyManager implements IColonyManager
 
         return ChunkDataHelper.canClaimChunksInRange(w,
           pos,
-          getConfig().getServer().initialColonySize.get());
+          MineColonies.getConfig().getServer().initialColonySize.get());
     }
 
     @Override
@@ -592,7 +589,7 @@ public final class ColonyManager implements IColonyManager
     public int getMinimumDistanceBetweenTownHalls()
     {
         //  [TownHall](Radius)+(Padding)+(Radius)[TownHall]
-        return getConfig().getServer().minColonyDistance.get() * BLOCKS_PER_CHUNK;
+        return  MineColonies.getConfig().getServer().minColonyDistance.get() * BLOCKS_PER_CHUNK;
     }
 
     @Override

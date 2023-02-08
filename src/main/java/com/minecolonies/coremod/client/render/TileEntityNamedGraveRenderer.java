@@ -14,7 +14,6 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Vector3f;
 import net.minecraft.network.chat.Style;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

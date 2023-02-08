@@ -9,9 +9,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
-import org.jetbrains.annotations.NotNull;
-
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 
 public class FemaleConcreteMixerModel extends CitizenModel<AbstractEntityCitizen>
 {

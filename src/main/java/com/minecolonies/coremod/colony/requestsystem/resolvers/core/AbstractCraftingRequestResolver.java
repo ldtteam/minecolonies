@@ -19,7 +19,6 @@ import com.minecolonies.api.research.effects.AbstractResearchEffect;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.modules.CraftingWorkerBuildingModule;
 import com.minecolonies.coremod.colony.buildings.modules.WorkerBuildingModule;
 import com.minecolonies.coremod.colony.requestsystem.requesters.IBuildingBasedRequester;
 import net.minecraft.world.level.block.Blocks;

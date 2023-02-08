@@ -1,9 +1,6 @@
 package com.minecolonies.coremod.items;
 
-import com.minecolonies.api.creativetab.ModCreativeTabs;
 import org.jetbrains.annotations.NotNull;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Class handling Sifter Mesh.

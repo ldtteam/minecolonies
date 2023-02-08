@@ -1,10 +1,8 @@
 package com.minecolonies.api.blocks.decorative;
 
-import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.util.WorldUtil;
 import com.minecolonies.api.util.constant.Constants;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.BlockItem;
@@ -35,8 +33,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Block as one big door

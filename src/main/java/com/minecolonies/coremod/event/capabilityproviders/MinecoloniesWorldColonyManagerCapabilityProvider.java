@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.event.capabilityproviders;
 
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
-import net.minecraft.nbt.Tag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;

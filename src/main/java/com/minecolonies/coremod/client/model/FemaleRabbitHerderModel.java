@@ -12,7 +12,6 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract.RENDER_META_WORKING;
 import static com.minecolonies.coremod.entity.ai.citizen.herders.EntityAIWorkRabbitHerder.RENDER_META_CARROT;
 
 public class FemaleRabbitHerderModel extends CitizenModel<AbstractEntityCitizen>

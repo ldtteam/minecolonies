@@ -4,7 +4,6 @@ import com.minecolonies.api.entity.citizen.AbstractCivilianEntity;
 import com.minecolonies.api.network.IMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;

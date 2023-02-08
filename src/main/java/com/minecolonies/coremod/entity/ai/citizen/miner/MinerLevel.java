@@ -6,9 +6,7 @@ import com.minecolonies.coremod.colony.buildings.workerbuildings.BuildingMiner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.NotNull;

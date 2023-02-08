@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-import net.minecraft.world.entity.ai.goal.Goal.Flag;
-
 /**
  * Skeleton class for worker ai. Here general target execution will be handled. No utility on this level!
  *

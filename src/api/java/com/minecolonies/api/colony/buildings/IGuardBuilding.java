@@ -1,6 +1,5 @@
 package com.minecolonies.api.colony.buildings;
 
-import com.minecolonies.api.colony.guardtype.GuardType;
 import com.minecolonies.api.colony.requestsystem.location.ILocation;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
 import net.minecraft.world.entity.player.Player;

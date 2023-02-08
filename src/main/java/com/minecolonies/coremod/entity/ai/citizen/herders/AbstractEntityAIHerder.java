@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import static com.minecolonies.api.entity.ai.statemachine.states.AIWorkerState.*;
 import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 import static com.minecolonies.api.util.constant.ToolLevelConstants.TOOL_LEVEL_WOOD_OR_GOLD;
-import static net.minecraft.world.entity.animal.Sheep.ITEM_BY_DYE;
 
 /**
  * Abstract class for all Citizen Herder AIs

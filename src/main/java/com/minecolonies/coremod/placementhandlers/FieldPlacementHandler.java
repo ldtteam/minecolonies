@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
-
 public class FieldPlacementHandler implements IPlacementHandler
 {
     @Override

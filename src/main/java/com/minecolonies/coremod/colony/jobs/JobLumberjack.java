@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.colony.jobs;
 
-import com.minecolonies.api.items.ModItems;
-import com.minecolonies.api.util.InventoryUtils;
 import net.minecraft.resources.ResourceLocation;
 import com.minecolonies.api.client.render.modeltype.ModModelTypes;
 import com.minecolonies.api.colony.ICitizenData;
@@ -13,7 +11,6 @@ import com.minecolonies.coremod.util.AttributeModifierUtils;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

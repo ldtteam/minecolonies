@@ -16,8 +16,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +28,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Scroll items base class, does colony registering/checks.

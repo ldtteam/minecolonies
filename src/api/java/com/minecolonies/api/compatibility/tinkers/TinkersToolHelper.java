@@ -1,19 +1,10 @@
 package com.minecolonies.api.compatibility.tinkers;
 
-import com.minecolonies.api.colony.requestsystem.requestable.Tool;
 import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.api.util.constant.IToolType;
-import com.minecolonies.api.util.constant.ToolType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-/*import slimeknights.tconstruct.common.TinkerTags;
-import slimeknights.tconstruct.gadgets.TinkerGadgets;
-import slimeknights.tconstruct.library.tools.helper.ToolDamageUtil;
-import slimeknights.tconstruct.library.tools.item.ModifiableItem;
-import slimeknights.tconstruct.library.tools.nbt.ToolStack;
-import slimeknights.tconstruct.library.tools.stat.ToolStats;*/
 
 /**
  * Class to check if certain tinkers items serve as weapons for the guards.

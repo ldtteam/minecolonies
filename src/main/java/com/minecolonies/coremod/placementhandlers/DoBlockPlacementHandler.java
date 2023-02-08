@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.placementhandlers;
 
-import com.ldtteam.domumornamentum.block.AbstractPanelBlockTrapdoor;
 import com.ldtteam.domumornamentum.block.IMateriallyTexturedBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyDoorBlock;
 import com.ldtteam.domumornamentum.block.decorative.FancyTrapdoorBlock;
@@ -27,8 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.ldtteam.structurize.placement.handlers.placement.PlacementHandlers.handleTileEntityPlacement;
-
-import com.ldtteam.structurize.placement.handlers.placement.IPlacementHandler.ActionProcessingResult;
 
 public class DoBlockPlacementHandler implements IPlacementHandler
 {

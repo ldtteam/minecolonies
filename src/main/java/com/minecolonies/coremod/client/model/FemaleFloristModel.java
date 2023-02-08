@@ -12,7 +12,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.citizen.fisherman.EntityAIWorkFisherman.RENDER_META_ROD;
 import static com.minecolonies.coremod.entity.ai.citizen.florist.EntityAIWorkFlorist.RENDER_META_FLOWERS;
 
 public class FemaleFloristModel extends CitizenModel<AbstractEntityCitizen>

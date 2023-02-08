@@ -3,7 +3,6 @@ package com.minecolonies.coremod.client.render.worldevent;
 import com.ldtteam.structurize.util.WorldRenderMacros;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
 import java.util.HashMap;

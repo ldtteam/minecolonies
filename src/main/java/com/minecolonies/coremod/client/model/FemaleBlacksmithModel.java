@@ -11,8 +11,6 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.model.HumanoidModel;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.entity.ai.basic.AbstractEntityAICrafting.RENDER_META_WORKING;
-
 public class FemaleBlacksmithModel extends CitizenModel<AbstractEntityCitizen>
 {
 

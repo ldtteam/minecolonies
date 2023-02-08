@@ -39,10 +39,8 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PlayMessages;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
-
-import net.minecraft.world.entity.Entity.RemovalReason;
 
 public class NewBobberEntity extends Entity implements IEntityAdditionalSpawnData
 {

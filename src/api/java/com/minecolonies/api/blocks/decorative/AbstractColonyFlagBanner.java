@@ -4,7 +4,6 @@ import com.minecolonies.api.blocks.interfaces.IBlockMinecolonies;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.tileentities.TileEntityColonyFlag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,15 +17,11 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.block.AbstractBannerBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Represents the common functions of both the wall and floor colony flag banner blocks
