@@ -19,6 +19,8 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -125,30 +127,25 @@ public class RenderBipedCitizen extends MobRenderer<AbstractEntityCitizen, Citiz
             double distance = this.entityRenderDispatcher.distanceToSqr(entityIn.getX(), entityIn.getY(), entityIn.getZ());
             if (distance <= 4096.0D)
             {
-                double yOffset = model.young ? -0.3 : 0;
-                boolean isSneaking = entityIn.isShiftKeyDown();
-                double height = entityIn.getBbHeight() + 0.5F - (isSneaking ? 0.25F : 0.0F);
-                double y = height + 0.3 + yOffset;
+                double height = entityIn.getBbHeight() + 0.5F;
+                double y = height + (model.young ? 0 : 0.3);
 
                 final ResourceLocation texture = entityIn.getCitizenDataView().getInteractionIcon();
 
                 matrixStack.pushPose();
                 matrixStack.translate(0, y, 0);
                 matrixStack.mulPose(entityRenderDispatcher.cameraOrientation());
-                matrixStack.mulPose(Axis.ZP.rotationDegrees(90));
-
                 matrixStack.scale(-0.025F, -0.025F, 0.025F);
 
-                VertexConsumer r = buffer.getBuffer(RenderTypes.getEntityCutoutFront(texture));
+                VertexConsumer r = buffer.getBuffer(RenderTypes.worldEntityIcon(texture));
 
                 final Matrix4f pose = matrixStack.last().pose();
-                final Matrix3f norm = matrixStack.last().normal();
-                
-                r.vertex(pose, 0, 0, 0).color(255, 255, 255, 255).uv(0, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                r.vertex(pose, 0, 10, 0).color(255, 255, 255, 255).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                r.vertex(pose, 10, 10, 0).color(255, 255, 255, 255).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                r.vertex(pose, 10, 0, 0).color(255, 255, 255, 255).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(norm, 0, 1, 0).endVertex();
-                
+
+                r.vertex(pose, -5, 0, 0).uv(0, 0).endVertex();
+                r.vertex(pose, -5, 10, 0).uv(0, 1).endVertex();
+                r.vertex(pose, 5, 10, 0).uv(1, 1).endVertex();
+                r.vertex(pose, 5, 0, 0).uv(1, 0).endVertex();
+
                 matrixStack.popPose();
             }
         }
