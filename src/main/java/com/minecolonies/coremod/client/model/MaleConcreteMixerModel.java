@@ -18,6 +18,7 @@ public class MaleConcreteMixerModel extends CitizenModel<AbstractEntityCitizen>
         hat.visible = false;
     }
 
+    @SuppressWarnings("unused")
     public static LayerDefinition createMesh()
     {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);

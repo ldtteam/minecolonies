@@ -24,6 +24,7 @@ public class ModelPharaoh extends EgyptianModel<AbstractEntityEgyptian>
         jaw = part.getChild("head").getChild("jaw");
     }
 
+    @SuppressWarnings("unused")
     public static LayerDefinition createMesh()
     {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);

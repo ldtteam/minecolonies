@@ -47,6 +47,7 @@ public class ScarecrowModel extends Model
         leftLeg = part.getChild("left_leg");
     }
 
+    @SuppressWarnings("unused")
     public static LayerDefinition createMesh()
     {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);

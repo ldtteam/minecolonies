@@ -26,6 +26,7 @@ public class ModelArcherMummy extends EgyptianModel<AbstractEntityEgyptian>
         stripRightA = part.getChild("right_arm").getChild("stripRightA");
     }
 
+    @SuppressWarnings("unused")
     public static LayerDefinition createMesh()
     {
         MeshDefinition meshdefinition = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
