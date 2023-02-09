@@ -200,7 +200,6 @@ public abstract class AbstractWalkToProxy implements IWalkToProxy
     private boolean takeTheDirectPath(@NotNull final BlockPos target, final int range, final boolean onMove)
     {
         final boolean arrived;
-        final BlockPos pos = new BlockPos(entity.getX(), entity.getY(), entity.getZ());
 
         if (onMove)
         {

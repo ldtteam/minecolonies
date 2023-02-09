@@ -28,11 +28,6 @@ public class PathJobPathway extends AbstractPathJob
 
     private int colonyid = -1;
 
-    /**
-     * Additional cost multiplier
-     */
-    private double addCost = 1.0;
-
     public PathJobPathway(
       final int colonyID,
       final List<IBuilding> buildings,

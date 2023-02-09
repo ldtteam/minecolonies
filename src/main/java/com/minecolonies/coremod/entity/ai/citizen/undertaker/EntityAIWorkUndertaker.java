@@ -60,11 +60,6 @@ public class EntityAIWorkUndertaker extends AbstractEntityAIInteract<JobUndertak
     private boolean shouldDumpInventory = false;
 
     /**
-     * The current pos to wander at.
-     */
-    private BlockPos wanderPos = null;
-
-    /**
      * The current pos to grave to build.
      */
     private Tuple<BlockPos, Direction> burialPos = null;

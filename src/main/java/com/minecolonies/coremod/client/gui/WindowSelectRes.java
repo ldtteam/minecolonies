@@ -33,7 +33,6 @@ public class WindowSelectRes extends AbstractWindowSkeleton
      */
     private static final String BUTTON_DONE   = "done";
     private static final String BUTTON_CANCEL = "cancel";
-    private static final String INPUT_NAME    = "name";
     private static final int    WHITE         = Color.getByName("white", 0);
 
     /**

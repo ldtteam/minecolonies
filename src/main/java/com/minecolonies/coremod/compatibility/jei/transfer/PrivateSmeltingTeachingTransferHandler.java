@@ -10,7 +10,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -27,11 +26,8 @@ import java.util.Optional;
  */
 public class PrivateSmeltingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingFurnace, SmeltingRecipe>
 {
-    private final IRecipeTransferHandlerHelper handlerHelper;
-
-    public PrivateSmeltingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
+    public PrivateSmeltingTeachingTransferHandler()
     {
-        this.handlerHelper = handlerHelper;
     }
 
     @NotNull

@@ -18,13 +18,14 @@ import static com.minecolonies.api.util.constant.Constants.MOD_ID;
 public class JourneymapPlugin implements IClientPlugin
 {
     private Journeymap jmap;
-    private EventListener listener;
+    //private EventListener listener;
 
     @Override
     public void initialize(@NotNull final IClientAPI api)
     {
         this.jmap = new Journeymap(api);
-        this.listener = new EventListener(this.jmap);
+        // this.listener = (registry holds the EventListener reference)
+        new EventListener(this.jmap);
 
         api.subscribe(MOD_ID, EnumSet.of(
                 ClientEvent.Type.MAPPING_STARTED,

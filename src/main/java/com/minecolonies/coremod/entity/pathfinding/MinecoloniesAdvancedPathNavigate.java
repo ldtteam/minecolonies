@@ -49,11 +49,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
     private PathResult<AbstractPathJob> pathResult;
 
     /**
-     * The world time when a path was added.
-     */
-    private long pathStartTime = 0;
-
-    /**
      * Spawn pos of minecart.
      */
     private BlockPos spawnedPos = BlockPos.ZERO;
@@ -276,7 +271,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
         // The moveHelper won't move up if standing in a block with an empty bounding box (put grass, 1 layer snow, mushroom in front of a solid block and have them try jump up).
         if (!this.isDone())
         {
-            final int currentPathIndex = path.getNextNodeIndex();
             if (this.canUpdatePath())
             {
                 this.followThePath();
@@ -498,7 +492,6 @@ public class MinecoloniesAdvancedPathNavigate extends AbstractAdvancedPathNaviga
             stop();
             return false;
         }
-        pathStartTime = level.getGameTime();
         return super.moveTo(convertPath(path), speedFactor);
     }
 

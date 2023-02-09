@@ -135,7 +135,6 @@ public class WindowBuildBuilding extends AbstractWindowSkeleton
         registerButton(BUTTON_PICKUP_BUILDING, this::pickUpBuilding);
 
         final Button buttonBuild = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-        final IBuildingView parentBuilding = c.getBuilding(building.getParent());
 
         if (building.getBuildingLevel() == 0)
         {

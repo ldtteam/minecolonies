@@ -120,7 +120,6 @@ public class ColonyBorderMapping
         final Map<Integer, ColonyBorderOverlay> dimensionOverlays = overlays.get(dimension);
         if (dimensionOverlays == null) return;  // not ready yet
 
-        boolean changed = false;
         final int id = getOwningColonyForChunk(chunk);
         if (id == 0)
         {
@@ -128,7 +127,7 @@ public class ColonyBorderMapping
             {
                 for (final ColonyBorderOverlay overlay : overlayMap.values())
                 {
-                    changed |= overlay.updateChunks(Collections.emptySet(), Collections.singleton(chunk.getPos()));
+                    overlay.updateChunks(Collections.emptySet(), Collections.singleton(chunk.getPos()));
                 }
             }
         }
@@ -139,8 +138,8 @@ public class ColonyBorderMapping
 
             final ColonyBorderOverlay overlay = dimensionOverlays
                     .computeIfAbsent(id, k -> new ColonyBorderOverlay(dimension, id));
-            changed |= overlay.updateChunks(Collections.singleton(chunk.getPos()), Collections.emptySet());
-            changed |= overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()));
+            overlay.updateChunks(Collections.singleton(chunk.getPos()), Collections.emptySet());
+            overlay.updateInfo(colony, JourneymapOptions.getShowColonyName(jmap.getOptions()));
         }
     }
 
@@ -303,7 +302,6 @@ public class ColonyBorderMapping
                                   final int id,
                                   @NotNull final IColonyManager colonyManager)
         {
-            final IColonyView colony = colonyManager.getColonyView(id, dimension);
             final JourneymapOptions.BorderStyle fullscreenStyle = JourneymapOptions.getBorderFullscreenStyle(jmap.getOptions());
             final JourneymapOptions.BorderStyle minimapStyle = JourneymapOptions.getBorderMinimapStyle(jmap.getOptions());
             final boolean enabled = this.permitted

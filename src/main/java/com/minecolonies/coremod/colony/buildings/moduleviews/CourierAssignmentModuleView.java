@@ -36,11 +36,6 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
      */
     private HiringMode hiringMode;
 
-    /**
-     * Max number of miners.
-     */
-    private int maxSize;
-
     @Override
     public List<Integer> getAssignedCitizens()
     {
@@ -65,7 +60,7 @@ public class CourierAssignmentModuleView extends AbstractBuildingModuleView impl
         }
 
         this.hiringMode = HiringMode.values()[buf.readInt()];
-        this.maxSize = buf.readInt();
+        buf.readInt(); // max module worker count
     }
 
     @Override

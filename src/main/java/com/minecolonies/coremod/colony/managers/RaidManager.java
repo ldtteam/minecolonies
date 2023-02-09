@@ -70,13 +70,6 @@ public class RaidManager implements IRaiderManager
     private static final int MIN_BUILDING_SPAWN_DIST = 35;
 
     /**
-     * Different biome ids.
-     */
-    private static final String DESERT_BIOME_ID = "desert";
-    private static final String JUNGLE_BIOME_ID = "jungle";
-    private static final String TAIGA_BIOME_ID  = "taiga";
-
-    /**
      * Thresholds for reducing or increasing raid difficulty
      */
     private static final double LOST_CITIZEN_DIFF_REDUCE_PCT   = 0.15d;
@@ -103,16 +96,6 @@ public class RaidManager implements IRaiderManager
      * Min required raidlevel
      */
     private static final int MIN_REQUIRED_RAIDLEVEL = 75;
-
-    /**
-     * Minimum block sqdistance to colony center allowed to spawn
-     */
-    private static final int MIN_RAID_BLOCK_DIST_CENTER_SQ = 5 * 5 * 16 * 16;
-
-    /**
-     * How many chunks distance a raid span searches additionally
-     */
-    private final static int RAID_SPAWN_SEARCH_CHUNKS = 10;
 
     /**
      * Percentage increased amount of spawns per player

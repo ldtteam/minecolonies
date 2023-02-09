@@ -154,8 +154,6 @@ public final class Constants
      */
     public static final int SLOT_PER_LINE = 9;
 
-    public static final String SCIMITAR_NAME     = "iron_scimitar";
-    public static final String CHIEFSWORD_NAME   = "chiefsword";
     public static final MobEffect LEVITATION_EFFECT = MobEffects.LEVITATION;
     public static final MobEffect GLOW_EFFECT       = MobEffects.GLOWING;
 

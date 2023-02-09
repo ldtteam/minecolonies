@@ -54,11 +54,6 @@ public class EntityAIWorkFlorist extends AbstractEntityAIInteract<JobFlorist, Bu
     private static final double PERCENT_CHANGE_FOR_GROWTH = 0.2;
 
     /**
-     * Base XP gain for the florist for composting or harvesting.
-     */
-    private static final double BASE_XP_GAIN = 0.5;
-
-    /**
      * Quantity of compost to request at a time.
      */
     private static final int COMPOST_REQUEST_QTY = 16;

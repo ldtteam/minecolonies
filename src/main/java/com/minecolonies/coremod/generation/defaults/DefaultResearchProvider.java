@@ -1308,7 +1308,7 @@ public class DefaultResearchProvider extends AbstractResearchProvider
           .addToList(r);
 
         // Primary Research #2
-        final Research softShoes = new Research(new ResourceLocation(Constants.MOD_ID, "technology/softshoes"), TECH).setTranslatedName("Soft Shoes")
+        new Research(new ResourceLocation(Constants.MOD_ID, "technology/softshoes"), TECH).setTranslatedName("Soft Shoes")
         .setTranslatedSubtitle("Tiptoe through the tulips.")
         .setSortOrder(2)
         .setIcon(Items.LEATHER_BOOTS)

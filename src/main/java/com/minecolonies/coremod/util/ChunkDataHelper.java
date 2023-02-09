@@ -9,7 +9,6 @@ import com.minecolonies.api.util.ChunkLoadStorage;
 import com.minecolonies.api.util.Log;
 import com.minecolonies.api.util.MessageUtils;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.Network;
 import com.minecolonies.coremod.colony.IColonyManagerCapability;
 import com.minecolonies.coremod.network.messages.client.UpdateChunkCapabilityMessage;
@@ -51,7 +50,6 @@ public final class ChunkDataHelper
     public static void loadChunk(final LevelChunk chunk, final Level world)
     {
         // If colony is farther away from a capability then this times the default colony distance it will delete the capability.
-        final int distanceToDelete = MineColonies.getConfig().getServer().maxColonySize.get() * BLOCKS_PER_CHUNK * 2 * 5;
 
         final IChunkmanagerCapability chunkManager = world.getCapability(CHUNK_STORAGE_UPDATE_CAP, null).resolve().orElse(null);
         if (chunkManager == null)

@@ -78,11 +78,6 @@ public final class ItemStackUtils
     private static final int FORTUNE_ENCHANT_ID = 35;
 
     /**
-     * The compound id for Silk Touch enchantment.
-     */
-    private static final int SILK_TOUCH_ENCHANT_ID = 33;
-
-    /**
      * True if this stack is a standard food item (has at least some healing and some saturation, not purely for effects).
      */
     public static final Predicate<ItemStack> ISFOOD =

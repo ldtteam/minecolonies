@@ -94,7 +94,6 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
      */
     public int getThreatFor(final LivingEntity attacker)
     {
-        ThreatTableEntry threatTableEntry = null;
         int index = threatList.size();
 
         for (int i = 0; i < index; i++)

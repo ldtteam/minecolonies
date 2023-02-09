@@ -30,19 +30,9 @@ import static com.minecolonies.api.util.constant.TranslationConstants.*;
 public class FarmerFieldsModuleWindow extends AbstractModuleWindow
 {
     /**
-     * Tag of the pages view.
-     */
-    private static final String VIEW_PAGES = "pages";
-
-    /**
      * Resource suffix of the GUI.
      */
     private static final String HUT_FARMER_RESOURCE_SUFFIX = ":gui/layouthuts/layoutfarmerfields.xml";
-
-    /**
-     * Id of the the fields page inside the GUI.
-     */
-    private static final String PAGE_FIELDS = "pageFields";
 
     /**
      * Id of the the fields list inside the GUI.

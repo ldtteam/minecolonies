@@ -91,7 +91,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private static final int ROTATE_ONCE        = 1;
     private static final int ROTATE_TWICE       = 2;
     private static final int ROTATE_THREE_TIMES = 3;
-    private static final int ROTATE_FOUR_TIMES  = 4;
 
     /**
      * Check for liquids in the following range.
@@ -827,15 +826,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructureWithWorkOrd
     private Block getBlock(@NotNull final BlockPos loc)
     {
         return world.getBlockState(loc).getBlock();
-    }
-
-    private int getFirstLadder(@NotNull BlockPos pos)
-    {
-        while (world.getBlockState(pos).isLadder(world, pos, worker))
-        {
-            pos = pos.above();
-        }
-        return pos.getY() - 1;
     }
 
     @Override

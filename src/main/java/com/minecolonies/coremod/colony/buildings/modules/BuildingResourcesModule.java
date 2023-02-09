@@ -239,7 +239,6 @@ public class BuildingResourcesModule extends AbstractBuildingModule implements I
             int currentQty = last.getResourceMap().getOrDefault(key, 0);
             final int currentStacks = (int) Math.ceil((double) currentQty / res.getMaxStackSize());
             final int newStacks = (int) Math.ceil((double) (currentQty + amount) / res.getMaxStackSize());
-            final Map<String, Integer> map = last.getResourceMap();
             last.setTotalStacks(last.getTotalStacks() + newStacks - currentStacks);
             last.addOrAdjustResource(key, currentQty + amount);
             buckets.add(last);

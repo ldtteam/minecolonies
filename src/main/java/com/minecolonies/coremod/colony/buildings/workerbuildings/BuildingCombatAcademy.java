@@ -37,11 +37,6 @@ public class BuildingCombatAcademy extends AbstractBuilding
     private static final String SCHEMATIC_NAME = "combatacademy";
 
     /**
-     * The Schematic name.
-     */
-    private static final String DESC = "combatacademy";
-
-    /**
      * List of shooting targets in the building.
      */
     private final List<BlockPos> fightingPos = new ArrayList<>();

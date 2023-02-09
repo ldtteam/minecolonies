@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.generation.defaults.workers;
 
-import com.minecolonies.api.colony.jobs.ModJobs;
 import com.minecolonies.coremod.generation.CustomRecipeProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -13,8 +12,6 @@ import java.util.function.Consumer;
  */
 public class DefaultStoneSmelteryCraftingProvider extends CustomRecipeProvider
 {
-    private static final String STONE_SMELTERY = ModJobs.STONE_SMELTERY_ID.getPath();
-
     public DefaultStoneSmelteryCraftingProvider(@NotNull final PackOutput packOutput)
     {
         super(packOutput);

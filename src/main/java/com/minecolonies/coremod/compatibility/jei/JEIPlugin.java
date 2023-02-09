@@ -156,8 +156,8 @@ public class JEIPlugin implements IModPlugin
     public void registerRecipeTransferHandlers(@NotNull final IRecipeTransferRegistration registration)
     {
         registration.addRecipeTransferHandler(new PrivateCraftingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.CRAFTING);
-        registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.SMELTING);
-        registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(registration.getTransferHelper()), RecipeTypes.BREWING);
+        registration.addRecipeTransferHandler(new PrivateSmeltingTeachingTransferHandler(), RecipeTypes.SMELTING);
+        registration.addRecipeTransferHandler(new PrivateBrewingTeachingTransferHandler(), RecipeTypes.BREWING);
     }
 
     @Override

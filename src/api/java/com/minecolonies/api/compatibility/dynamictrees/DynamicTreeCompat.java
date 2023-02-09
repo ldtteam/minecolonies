@@ -6,13 +6,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class DynamicTreeCompat extends DynamicTreeProxy
 {
@@ -20,8 +16,6 @@ public final class DynamicTreeCompat extends DynamicTreeProxy
     private static DynamicTreeCompat instance = new DynamicTreeCompat();
 
     private static final String DYNAMIC_TREE_DAMAGE = "fallingtree";
-
-    private static final Map<ResourceKey<Level>, FakePlayer> fakePlayers = new HashMap<>();
 
     public DynamicTreeCompat()
     {

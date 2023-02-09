@@ -162,7 +162,6 @@ public class ItemBannerRallyGuards extends AbstractItemMinecolonies
             return null;
         }
 
-        final List<ILocation> resultList = new ArrayList<>(guardTowersListNBT.size());
         for (final Tag guardTowerNBT : guardTowersListNBT)
         {
             ILocation location = StandardFactoryController.getInstance().deserialize((CompoundTag) guardTowerNBT);

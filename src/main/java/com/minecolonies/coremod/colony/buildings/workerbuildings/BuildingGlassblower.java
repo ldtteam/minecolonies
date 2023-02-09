@@ -25,7 +25,6 @@ public class BuildingGlassblower extends AbstractBuilding
      * Description string of the building.
      */
     protected static final String GLASS_BLOWER          = "glassblower";
-    private static final   String GLASS_BLOWER_SMELTING = "glassblower_smelting";
 
     /**
      * Instantiates a new stone smeltery building.

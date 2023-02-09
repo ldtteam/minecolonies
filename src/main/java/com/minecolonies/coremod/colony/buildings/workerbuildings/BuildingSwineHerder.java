@@ -18,11 +18,6 @@ public class BuildingSwineHerder extends AbstractBuilding
     private static final String JOB = "swineherder";
 
     /**
-     * Description of the block used to set this block.
-     */
-    private static final String HUT_NAME = "swineherderhut";
-
-    /**
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;

@@ -109,14 +109,6 @@ public class TileEntityDecorationController extends BlockEntity implements IBlue
         setChanged();
     }
 
-    /**
-     * Trigger update action.
-     */
-    private void update()
-    {
-        this.setChanged();
-    }
-
     @Override
     public void setChanged()
     {

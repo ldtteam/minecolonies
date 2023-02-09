@@ -91,16 +91,6 @@ public final class JobEntry
     private final ResourceLocation key;
 
     /**
-     * The producer for the {@link IJob}. Creates the job from a {@link ICitizenData} instance.
-     *
-     * @return The created {@link IJob}.
-     */
-    private Function<ICitizenData, IJob<?>> getHandlerProducer()
-    {
-        return jobProducer;
-    }
-
-    /**
      * Construct a new job instance.
      * @param data the assigned citizen to the job.
      * @return a new job instance.

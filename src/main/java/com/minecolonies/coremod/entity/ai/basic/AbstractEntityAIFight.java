@@ -52,11 +52,6 @@ public abstract class AbstractEntityAIFight<J extends AbstractJobGuard<J>, B ext
     protected LivingEntity target = null;
 
     /**
-     * The value of the speed which the guard will move.
-     */
-    private static final double COMBAT_SPEED = 1.0;
-
-    /**
      * The bonus speed per worker level.
      */
     public static final double SPEED_LEVEL_BONUS = 0.01;

@@ -21,11 +21,6 @@ public class BuildingRabbitHutch extends AbstractBuilding
     private static final String RABBIT_HUTCH = "rabbithutch";
 
     /**
-     * Max building level of the hut.
-     */
-    private static final int MAX_BUILDING_LEVEL = 5;
-
-    /**
      * Instantiates the building.
      *
      * @param c the colony.

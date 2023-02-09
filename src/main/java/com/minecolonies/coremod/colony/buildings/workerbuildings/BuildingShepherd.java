@@ -42,11 +42,6 @@ public class BuildingShepherd extends AbstractBuilding
     private static final String SHEPHERD = "shepherd";
 
     /**
-     * The hut name, used for the lang string in the GUI
-     */
-    private static final String HUT_NAME = "shepherdhut";
-
-    /**
      * Max building level of the hut.
      */
     private static final int MAX_BUILDING_LEVEL = 5;

@@ -46,21 +46,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     private static final String SUPPLY_SHIP_STRUCTURE_NAME_NETHER = "nethership";
 
     /**
-     * Offset south/west of the supply chest.
-     */
-    private static final int OFFSET_DISTANCE = 14;
-
-    /**
-     * Offset south/east of the supply chest.
-     */
-    private static final int OFFSET_LEFT = 5;
-
-    /**
-     * Offset y of the supply chest.
-     */
-    private static final int OFFSET_Y = 0;
-
-    /**
      * Height to scan in which should be air.
      */
     private static final int SCAN_HEIGHT = 7;

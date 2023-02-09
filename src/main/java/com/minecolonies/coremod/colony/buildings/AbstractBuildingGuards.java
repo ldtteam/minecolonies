@@ -78,7 +78,6 @@ public abstract class AbstractBuildingGuards extends AbstractBuilding implements
     //manual patroll. retreat, hire from training
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
-    private static final String NBT_JOB            = "guardType";
     private static final String NBT_PATROL_TARGETS = "patrol targets";
     private static final String NBT_TARGET         = "target";
     private static final String NBT_GUARD          = "guard";

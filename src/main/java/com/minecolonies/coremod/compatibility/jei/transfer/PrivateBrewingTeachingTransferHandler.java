@@ -11,7 +11,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
-import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.recipe.vanilla.IJeiBrewingRecipe;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
@@ -28,11 +27,8 @@ import java.util.Optional;
  */
 public class PrivateBrewingTeachingTransferHandler implements IRecipeTransferHandler<ContainerCraftingBrewingstand, IJeiBrewingRecipe>
 {
-    private final IRecipeTransferHandlerHelper handlerHelper;
-
-    public PrivateBrewingTeachingTransferHandler(@NotNull final IRecipeTransferHandlerHelper handlerHelper)
+    public PrivateBrewingTeachingTransferHandler()
     {
-        this.handlerHelper = handlerHelper;
     }
 
     @NotNull
