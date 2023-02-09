@@ -361,10 +361,10 @@ public abstract class AbstractCraftingBuildingModule extends AbstractBuildingMod
         final List<Tuple<IRecipeStorage, Integer>> recipes = new ArrayList<>();
         for (final ICitizenData citizen : building.getAllAssignedCitizen())
         {
-            if (citizen.getJob() instanceof AbstractJobCrafter)
+            if (citizen.getJob() instanceof final AbstractJobCrafter<?,?> job)
             {
-                final List<IToken<?>> assignedTasks = new ArrayList<>(citizen.getJob(AbstractJobCrafter.class).getAssignedTasks());
-                assignedTasks.addAll(citizen.getJob(AbstractJobCrafter.class).getTaskQueue());
+                final List<IToken<?>> assignedTasks = new ArrayList<>(job.getAssignedTasks());
+                assignedTasks.addAll(job.getTaskQueue());
 
                 for (final IToken<?> taskToken : assignedTasks)
                 {

@@ -221,7 +221,7 @@ public abstract class AbstractEntityAIStructureWithWorkOrder<J extends AbstractJ
     public boolean requestMaterials()
     {
         StructurePhasePlacementResult result;
-        final WorkerLoadOnlyStructureHandler structure = new WorkerLoadOnlyStructureHandler(world,
+        final WorkerLoadOnlyStructureHandler<J, B> structure = new WorkerLoadOnlyStructureHandler<>(world,
           structurePlacer.getB().getWorldPos(),
           structurePlacer.getB().getBluePrint(),
           new PlacementSettings(),

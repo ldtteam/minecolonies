@@ -345,6 +345,11 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
         return c == null ? null : c.getBuilding(getPosition());
     }
 
+    public AbstractBlockHut<?> getBlockAsHutType()
+    {
+        return (AbstractBlockHut<?>) getBlockState().getBlock();
+    }
+
     @Override
     public void load(@NotNull final CompoundTag compound)
     {
@@ -389,7 +394,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
                     packName = BlueprintMapping.getStyleMapping(tags.get(0));
                     if (path == null || path.isEmpty())
                     {
-                        path = BlueprintMapping.getPathMapping(tags.get(0), ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+                        path = BlueprintMapping.getPathMapping(tags.get(0), getBlockAsHutType().getBlueprintName()) + "1.blueprint";
                     }
                 }
             }
@@ -401,7 +406,7 @@ public class TileEntityColonyBuilding extends AbstractTileEntityColonyBuilding i
 
         if (path == null || path.isEmpty() || path.contains("null"))
         {
-            path = BlueprintMapping.getPathMapping("", ((AbstractBlockHut) getBlockState().getBlock()).getBlueprintName()) + "1.blueprint";
+            path = BlueprintMapping.getPathMapping("", getBlockAsHutType().getBlueprintName()) + "1.blueprint";
         }
 
         if (!path.endsWith(".blueprint"))

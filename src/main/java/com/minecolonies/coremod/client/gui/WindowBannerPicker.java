@@ -69,7 +69,8 @@ public class WindowBannerPicker extends Screen
      * The list of patterns that usually require charges, or are to be made more valuable
      * by excluding them from lower TH levels. Sorted by the TH level they are first introduced at
      */
-    private static final ResourceKey[][] EXCLUSION = {
+    @SuppressWarnings("unchecked")
+    private static final ResourceKey<BannerPattern>[][] EXCLUSION = (ResourceKey<BannerPattern>[][]) new ResourceKey[][]{
             {    // 1
                 BannerPatterns.GRADIENT,
                 BannerPatterns.GRADIENT_UP
@@ -132,9 +133,9 @@ public class WindowBannerPicker extends Screen
         List<Holder<BannerPattern>> exclusion = new ArrayList<>();
         for (int i = hallWindow.building.getBuildingLevel(); i <= hallWindow.building.getBuildingMaxLevel(); i++)
         {
-            for (final ResourceKey key : EXCLUSION[i])
+            for (final ResourceKey<BannerPattern> key : EXCLUSION[i])
             {
-                exclusion.add((Holder<BannerPattern>) BuiltInRegistries.BANNER_PATTERN.getHolder(key).get());
+                exclusion.add(BuiltInRegistries.BANNER_PATTERN.getHolder(key).get());
             }
         }
         this.patterns = new LinkedList<>(BuiltInRegistries.BANNER_PATTERN.holders().collect(Collectors.toList()));

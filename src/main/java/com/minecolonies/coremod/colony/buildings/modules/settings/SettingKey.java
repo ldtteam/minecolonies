@@ -51,12 +51,11 @@ public class SettingKey<T extends ISetting> implements ISettingKey<T>
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (o == null)
         {
             return false;
         }
-        final SettingKey that = (SettingKey) o;
-        return Objects.equals(type, that.type) && Objects.equals(id, that.id);
+        return o instanceof final SettingKey<?> other && Objects.equals(type, other.type) && Objects.equals(id, other.id);
     }
 
     @Override

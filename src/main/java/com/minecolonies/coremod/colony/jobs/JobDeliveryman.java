@@ -217,7 +217,7 @@ public class JobDeliveryman extends AbstractJob<EntityAIWorkDeliveryman, JobDeli
         int offset = 0;
         for (int i = insertionIndex; i < taskQueue.size(); i++)
         {
-            final IToken theToken = taskQueue.get(i);
+            final IToken<?> theToken = taskQueue.get(i);
             final IRequest<? extends IDeliverymanRequestable> request = (IRequest<? extends IDeliverymanRequestable>) (requestManager.getRequestForToken(theToken));
             if (request == null || request.getState() == RequestState.COMPLETED)
             {

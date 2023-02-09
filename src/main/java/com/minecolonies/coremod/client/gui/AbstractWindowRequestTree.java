@@ -378,12 +378,12 @@ public abstract class AbstractWindowRequestTree extends AbstractWindowSkeleton
      */
     public boolean fulfillable(final IRequest<?> tRequest)
     {
-        if (!(tRequest.getRequest() instanceof IDeliverable))
+        if (!(tRequest.getRequest() instanceof IDeliverable deliRequest))
         {
             return false;
         }
 
-        final Predicate<ItemStack> requestPredicate = stack -> ((IRequest<? extends IDeliverable>) tRequest).getRequest().matches(stack);
+        final Predicate<ItemStack> requestPredicate = stack -> deliRequest.matches(stack);
         List<RequestWrapper> requestWrappers = getOpenRequestTreeOfBuilding();
         //RequestWrapper wrapper = requestWrappers.stream().filter(requestWrapper -> requestWrapper.getRequest().equals(tRequest)).findFirst().get();
 

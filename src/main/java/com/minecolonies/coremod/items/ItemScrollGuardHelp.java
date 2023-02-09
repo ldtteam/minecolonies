@@ -14,7 +14,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingGuards;
 import com.minecolonies.coremod.colony.buildings.modules.settings.FollowModeSetting;
 import com.minecolonies.coremod.colony.buildings.modules.settings.GuardTaskSetting;
 import com.minecolonies.coremod.colony.jobs.AbstractJobGuard;
-import com.minecolonies.coremod.entity.ai.citizen.guard.AbstractEntityAIGuard;
 import com.minecolonies.coremod.network.messages.client.VanillaParticleMessage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -64,8 +63,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
     {
         final IColony colony = getColony(itemStack);
         final BlockPos buildingPos = BlockPosUtil.read(itemStack.getTag(), TAG_BUILDING_POS);
-        final IBuilding building = colony.getBuildingManager().getBuilding(buildingPos);
-        if (!(building instanceof AbstractBuildingGuards))
+        if (!(colony.getBuildingManager().getBuilding(buildingPos) instanceof final AbstractBuildingGuards building))
         {
             MessageUtils.format(TOOL_GUARD_SCROLL_NO_GUARD_BUILDING).sendTo(player);
             return itemStack;
@@ -91,8 +89,8 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
         {
             for (final ICitizenData citizenData : guards)
             {
-                final AbstractJobGuard job = citizenData.getJob(AbstractJobGuard.class);
-                if (job != null && job.getWorkerAI() != null && !((AbstractEntityAIGuard) job.getWorkerAI()).hasTool())
+                final AbstractJobGuard<?> job = citizenData.getJob(AbstractJobGuard.class);
+                if (job != null && job.getWorkerAI() != null && !(job.getWorkerAI().hasTool()))
                 {
                     continue;
                 }
@@ -110,9 +108,9 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                 colony.getCitizenManager().spawnOrCreateCivilian(citizenData, world, player.blockPosition(), true);
                 citizenData.setNextRespawnPosition(buildingPos);
 
-                ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
-                ((AbstractBuildingGuards) building).setPlayerToFollow(player);
-                final FollowModeSetting grouping = ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.FOLLOW_MODE);
+                building.getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.FOLLOW);
+                building.setPlayerToFollow(player);
+                final FollowModeSetting grouping = building.getSetting(AbstractBuildingGuards.FOLLOW_MODE);
                 if (grouping.getValue().equals(FollowModeSetting.LOOSE))
                 {
                     grouping.trigger();
@@ -131,7 +129,7 @@ public class ItemScrollGuardHelp extends AbstractItemScroll
                     {
                         if (world.getGameTime() - spawnTime > 0)
                         {
-                            ((AbstractBuildingGuards) building).getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
+                            building.getSetting(AbstractBuildingGuards.GUARD_TASK).set(GuardTaskSetting.PATROL);
                             citizenData.getEntity().ifPresent(e -> e.remove(Entity.RemovalReason.DISCARDED));
                             colony.getPackageManager().removeCloseSubscriber(player);
                             return true;
