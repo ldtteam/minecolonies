@@ -3,7 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 
 import java.util.EnumMap;
@@ -18,20 +18,20 @@ public class FieldRegistry
     /**
      * Field type storage.
      */
-    private static final Map<FieldStructureType, FieldCombination<?, ?>> fields = new EnumMap<>(FieldStructureType.class);
+    private static final Map<FieldType, FieldCombination<?, ?>> fields = new EnumMap<>(FieldType.class);
 
     private FieldRegistry()
     {
     }
 
     /**
-     * Construct a new class for a specific {@link FieldStructureType}.
+     * Construct a new class for a specific {@link FieldType}.
      *
      * @param type   the field structure type.
      * @param colony the colony this field belongs to.
      * @return the newly created field class.
      */
-    public static IField getFieldClassForType(FieldStructureType type, IColony colony)
+    public static IField getFieldClassForType(FieldType type, IColony colony)
     {
         initialize();
         return fields.get(type).getField(colony);
@@ -44,19 +44,19 @@ public class FieldRegistry
     {
         if (fields.isEmpty())
         {
-            fields.put(FieldStructureType.FARMER_FIELDS, new FieldCombination<>(FarmField::new, FarmField.View::new));
-            fields.put(FieldStructureType.PLANTATION_FIELDS, new FieldCombination<>(PlantationField::new, PlantationField.View::new));
+            fields.put(FieldType.FARMER_FIELDS, new FieldCombination<>(FarmField::new, FarmField.View::new));
+            fields.put(FieldType.PLANTATION_FIELDS, new FieldCombination<>(PlantationField::new, PlantationField.View::new));
         }
     }
 
     /**
-     * Construct a new class for a specific {@link FieldStructureType}.
+     * Construct a new class for a specific {@link FieldType}.
      *
      * @param type   the field structure type.
      * @param colony the colony this field belongs to.
      * @return the newly created field class.
      */
-    public static IFieldView getFieldViewClassForType(FieldStructureType type, IColonyView colony)
+    public static IFieldView getFieldViewClassForType(FieldType type, IColonyView colony)
     {
         initialize();
         return fields.get(type).getFieldView(colony);

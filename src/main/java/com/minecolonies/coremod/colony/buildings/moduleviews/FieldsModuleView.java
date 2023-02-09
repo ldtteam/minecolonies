@@ -112,7 +112,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (buildingView != null && canAssignField(field))
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getPosition()));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, true, field.getMatcher()));
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)
@@ -194,7 +194,7 @@ public abstract class FieldsModuleView extends AbstractBuildingModuleView
     {
         if (buildingView != null)
         {
-            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, false, field.getPosition()));
+            Network.getNetwork().sendToServer(new AssignFieldMessage(buildingView, false, field.getMatcher()));
 
             final WorkerBuildingModuleView buildingModuleView = buildingView.getModuleViewMatching(WorkerBuildingModuleView.class, view -> true);
             if (buildingModuleView != null)

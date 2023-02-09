@@ -3,7 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.IMinecoloniesAPI;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.compatibility.ICompatibilityManager;
 import com.minecolonies.api.crafting.IRecipeManager;
 import net.minecraft.core.BlockPos;
@@ -378,7 +378,7 @@ public interface IColonyManager
      * @param buf      {@link FriendlyByteBuf} with field data.
      * @param dim      the dimension.
      */
-    void handleColonyFieldViewMessage(int colonyId, BlockPos position, FieldStructureType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
+    void handleColonyFieldViewMessage(int colonyId, BlockPos position, FieldType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyRemoveFieldViewMessage} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link
@@ -390,7 +390,7 @@ public interface IColonyManager
      * @param buf      {@link FriendlyByteBuf} with field data.
      * @param dim      the dimension.
      */
-    void handleColonyRemoveFieldViewMessage(int colonyId, BlockPos position, FieldStructureType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
+    void handleColonyRemoveFieldViewMessage(int colonyId, BlockPos position, FieldType type, @NotNull FriendlyByteBuf buf, ResourceKey<Level> dim);
 
     /**
      * Returns result of {@link IColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int, ResourceKey)} gives a not-null result. If {@link

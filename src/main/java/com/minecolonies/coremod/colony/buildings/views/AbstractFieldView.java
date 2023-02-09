@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.views;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -122,12 +123,21 @@ public abstract class AbstractFieldView implements IFieldView
     }
 
     @Override
+    public final boolean matches(final FieldRecord matcher)
+    {
+        return position.equals(matcher.position()) && Objects.equals(plant, matcher.plant());
+    }
+
+    @Override
     public int hashCode()
     {
-        int result = buildingId != null ? buildingId.hashCode() : 0;
-        result = 31 * result + position.hashCode();
-        result = 31 * result + (plant != null ? plant.hashCode() : 0);
-        return result;
+        return this.getMatcher().hashCode();
+    }
+
+    @Override
+    public final FieldRecord getMatcher()
+    {
+        return new FieldRecord(position, plant);
     }
 
     @Override
@@ -144,14 +154,6 @@ public abstract class AbstractFieldView implements IFieldView
 
         final AbstractFieldView that = (AbstractFieldView) o;
 
-        if (!Objects.equals(buildingId, that.buildingId))
-        {
-            return false;
-        }
-        if (!position.equals(that.position))
-        {
-            return false;
-        }
-        return Objects.equals(plant, that.plant);
+        return Objects.equals(this.getMatcher(), that.getMatcher());
     }
 }

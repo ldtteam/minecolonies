@@ -2,6 +2,9 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
@@ -30,8 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.Random;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_INVENTORY;
 
@@ -66,11 +70,19 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     public TileEntityScarecrow(final BlockPos pos, final BlockState state)
     {
         super(pos, state);
-        this.inventory = new TileEntityScarecrowInventoryHandler(plant -> {
+        this.inventory = new TileEntityScarecrowInventoryHandler((oldPlant, newPlant) -> {
             IColony colony = getCurrentColony();
             if (colony instanceof Colony)
             {
-                getCurrentColony().getBuildingManager().updateField(FarmField.class, pos, field -> field.setPlant(plant));
+                final IField field = getCurrentColony().getBuildingManager().getField(FieldType.FARMER_FIELDS, new FieldRecord(pos, oldPlant));
+                if (field instanceof FarmField farmField)
+                {
+                    getCurrentColony().getBuildingManager().removeField(FieldType.FARMER_FIELDS, new FieldRecord(pos, oldPlant));
+
+                    FarmField newField = new FarmField(farmField);
+                    newField.setPlant(newPlant);
+                    getCurrentColony().getBuildingManager().addOrUpdateField(newField);
+                }
             }
         });
     }
@@ -79,6 +91,12 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
     public IItemHandler getInventory()
     {
         return inventory;
+    }
+
+    @Override
+    public @Nullable Item getPlant()
+    {
+        return inventory.plant;
     }
 
     @Override
@@ -113,7 +131,7 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         if (getCurrentColony() != null)
         {
             return getCurrentColony().getPermissions().hasPermission(player, Action.ACCESS_HUTS) &&
-                     getCurrentColony().getBuildingManager().getField(FarmField.class, worldPosition) != null;
+                     getCurrentColony().getBuildingManager().getField(FieldType.FARMER_FIELDS, new FieldRecord(worldPosition, inventory.plant)) != null;
         }
         return false;
     }
@@ -175,14 +193,14 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         /**
          * Callback function to indicate changes in the plant item.
          */
-        private final Consumer<Item> onPlantChanged;
+        private final BiConsumer<Item, Item> onPlantChanged;
 
         /**
          * The plant which is at index 0.
          */
         private Item plant;
 
-        public TileEntityScarecrowInventoryHandler(Consumer<Item> onPlantChanged)
+        public TileEntityScarecrowInventoryHandler(BiConsumer<Item, Item> onPlantChanged)
         {
             this.onPlantChanged = onPlantChanged;
         }
@@ -203,19 +221,26 @@ public class TileEntityScarecrow extends AbstractTileEntityScarecrow
         protected void onLoad()
         {
             super.onLoad();
-            this.plant = this.getStackInSlot(0).getItem();
+            this.plant = getItemInSlot();
         }
 
         @Override
         protected void onContentsChanged(final int slot)
         {
             super.onContentsChanged(slot);
-            final Item item = this.getStackInSlot(slot).getItem();
-            if (!item.equals(plant))
+            final Item item = getItemInSlot();
+            if (!Objects.equals(plant, item))
             {
-                plant = item.equals(Items.AIR) ? null : item;
-                onPlantChanged.accept(plant);
+                onPlantChanged.accept(plant, item);
+                plant = item;
             }
+        }
+
+        @Nullable
+        private Item getItemInSlot()
+        {
+            Item item = this.getStackInSlot(0).getItem();
+            return !item.equals(Items.AIR) ? item : null;
         }
     }
 }

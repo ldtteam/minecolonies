@@ -4,10 +4,12 @@ import com.minecolonies.api.colony.IColony;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract class for the scarecrow tile entity to store extra data.
@@ -28,6 +30,14 @@ public abstract class AbstractTileEntityScarecrow extends BlockEntity implements
      * @return the IItemHandler.
      */
     public abstract IItemHandler getInventory();
+
+    /**
+     * Get which plant the scarecrow has in its inventory.
+     *
+     * @return the plant currently being harvested, or null.
+     */
+    @Nullable
+    public abstract Item getPlant();
 
     /**
      * Returns the type of the scarecrow (Important for the rendering).

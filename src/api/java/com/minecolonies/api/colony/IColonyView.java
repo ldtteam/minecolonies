@@ -3,7 +3,7 @@ package com.minecolonies.api.colony;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
 import com.minecolonies.api.colony.requestsystem.manager.IRequestManager;
@@ -200,7 +200,7 @@ public interface IColonyView extends IColony
      * @param type the type of the field.
      * @param buf  buffer containing ColonyBuilding information.
      */
-    void handleColonyFieldViewMessage(FieldStructureType type, FriendlyByteBuf buf);
+    void handleColonyFieldViewMessage(FieldType type, FriendlyByteBuf buf);
 
     /**
      * Update a ColonyView's fields given a network data ColonyView update packet. Removing the passed field instance.
@@ -208,7 +208,7 @@ public interface IColonyView extends IColony
      * @param type the type of the field.
      * @param buf  buffer containing ColonyBuilding information.
      */
-    void handleColonyRemoveFieldViewMessage(FieldStructureType type, FriendlyByteBuf buf);
+    void handleColonyRemoveFieldViewMessage(FieldType type, FriendlyByteBuf buf);
 
     /**
      * Update a players permissions.

@@ -3,6 +3,8 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.api.blocks.huts.AbstractBlockMinecoloniesDefault;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.FarmField;
 import com.minecolonies.coremod.tileentities.TileEntityScarecrow;
 import net.minecraft.core.BlockPos;
@@ -15,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -80,7 +81,7 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             final TileEntityScarecrow scareCrow = (TileEntityScarecrow) worldIn.getBlockEntity(pos);
             if (scareCrow != null)
             {
-                colony.getBuildingManager().addField(new FarmField(colony, pos));
+                colony.getBuildingManager().addOrUpdateField(new FarmField(colony, pos));
             }
         }
     }
@@ -153,13 +154,6 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
         );
     }
 
-    @Override
-    public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
-    {
-        notifyColonyAboutDestruction(worldIn, pos);
-        super.wasExploded(worldIn, pos, explosionIn);
-    }
-
     @Nullable
     @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
@@ -196,7 +190,11 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
             worldIn.setBlock(otherpos, Blocks.AIR.defaultBlockState(), 35);
         }
 
-        notifyColonyAboutDestruction(worldIn, pos);
+        final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+        if (blockEntity instanceof TileEntityScarecrow scarecrow)
+        {
+            notifyColonyAboutDestruction(worldIn, new FieldRecord(pos, scarecrow.getPlant()));
+        }
         super.playerWillDestroy(worldIn, pos, state, player);
     }
 
@@ -210,16 +208,16 @@ public class BlockScarecrow extends AbstractBlockMinecoloniesDefault<BlockScarec
      * Notify the colony about the destruction of the field.
      *
      * @param worldIn the world.
-     * @param pos     the position.
+     * @param matcher the field record matcher.
      */
-    private void notifyColonyAboutDestruction(final Level worldIn, final BlockPos pos)
+    private void notifyColonyAboutDestruction(final Level worldIn, final FieldRecord matcher)
     {
         if (!worldIn.isClientSide())
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, matcher.position());
             if (colony != null)
             {
-                colony.getBuildingManager().removeField(FarmField.class, pos);
+                colony.getBuildingManager().removeField(FieldType.FARMER_FIELDS, matcher);
             }
         }
     }

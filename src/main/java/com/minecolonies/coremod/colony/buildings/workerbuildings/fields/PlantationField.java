@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFieldView;
@@ -65,9 +65,9 @@ public class PlantationField extends AbstractField
     }
 
     @Override
-    public FieldStructureType getType()
+    public FieldType getType()
     {
-        return FieldStructureType.PLANTATION_FIELDS;
+        return FieldType.PLANTATION_FIELDS;
     }
 
     @Override
@@ -99,6 +99,16 @@ public class PlantationField extends AbstractField
     public List<BlockPos> getWorkingPositions()
     {
         return workingPositions.stream().toList();
+    }
+
+    /**
+     * Overwrite the working positions on the field instance.
+     *
+     * @param workingPositions the new list of working positions.
+     */
+    public void setWorkingPositions(final List<BlockPos> workingPositions)
+    {
+        this.workingPositions = workingPositions;
     }
 
     @Override

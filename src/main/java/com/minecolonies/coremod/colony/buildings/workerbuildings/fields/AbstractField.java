@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.util.BlockPosUtil;
 import net.minecraft.core.BlockPos;
@@ -25,11 +25,6 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.TAG_OWNER;
 public abstract class AbstractField implements IField
 {
     private static final String TAG_PLANT = "plant";
-
-    /**
-     * Type of the field.
-     */
-    protected FieldStructureType type;
 
     /**
      * Colony owning the field.
@@ -59,7 +54,6 @@ public abstract class AbstractField implements IField
      */
     protected AbstractField(IColony colony)
     {
-        this.type = getType();
         this.colony = colony;
     }
 
@@ -162,12 +156,21 @@ public abstract class AbstractField implements IField
     }
 
     @Override
+    public final FieldRecord getMatcher()
+    {
+        return new FieldRecord(position, plant);
+    }
+
+    @Override
+    public final boolean matches(final FieldRecord matcher)
+    {
+        return position.equals(matcher.position()) && Objects.equals(plant, matcher.plant());
+    }
+
+    @Override
     public int hashCode()
     {
-        int result = type.hashCode();
-        result = 31 * result + position.hashCode();
-        result = 31 * result + (plant != null ? plant.hashCode() : 0);
-        return result;
+        return this.getMatcher().hashCode();
     }
 
     @Override
@@ -184,20 +187,6 @@ public abstract class AbstractField implements IField
 
         final AbstractField that = (AbstractField) o;
 
-        if (type != that.type)
-        {
-            return false;
-        }
-        if (!position.equals(that.position))
-        {
-            return false;
-        }
-        return Objects.equals(plant, that.plant);
-    }
-
-    @Override
-    public int compareTo(@NotNull final IField o)
-    {
-        return this.equals(o) ? 0 : 1;
+        return Objects.equals(this.getMatcher(), that.getMatcher());
     }
 }

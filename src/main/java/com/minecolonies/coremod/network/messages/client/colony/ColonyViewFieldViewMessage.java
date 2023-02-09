@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.network.messages.client.colony;
 
 import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.network.IMessage;
 import io.netty.buffer.Unpooled;
@@ -39,7 +39,7 @@ public class ColonyViewFieldViewMessage implements IMessage
     /**
      * The type of the field.
      */
-    private FieldStructureType type;
+    private FieldType type;
 
     /**
      * The buffer containing the serialized field class.
@@ -85,7 +85,7 @@ public class ColonyViewFieldViewMessage implements IMessage
     {
         colonyId = buf.readInt();
         position = buf.readBlockPos();
-        type = buf.readEnum(FieldStructureType.class);
+        type = buf.readEnum(FieldType.class);
         dimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(buf.readUtf(32767)));
         fieldData = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
         buf.readBytes(fieldData, buf.readableBytes());

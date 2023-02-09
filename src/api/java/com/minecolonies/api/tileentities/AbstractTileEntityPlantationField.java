@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The abstract implementation for plantation field tile entities.
@@ -26,26 +27,17 @@ public abstract class AbstractTileEntityPlantationField extends BlockEntity
     }
 
     /**
-     * Is this tile entity a valid field, meaning it has a field type set as well as at least one working position.
-     *
-     * @return true if so.
-     */
-    public final boolean isValidPlantationField()
-    {
-        return getPlantationFieldType() != null && !getWorkingPositions().isEmpty();
-    }
-
-    /**
      * The field type of this plantation.
      *
      * @return the field type.
      */
-    public abstract PlantationFieldType getPlantationFieldType();
+    public abstract Set<PlantationFieldType> getPlantationFieldTypes();
 
     /**
      * The working positions stored in this field.
      *
+     * @param tag the tag to search for.
      * @return a list of working positions.
      */
-    public abstract List<BlockPos> getWorkingPositions();
+    public abstract List<BlockPos> getWorkingPositions(String tag);
 }

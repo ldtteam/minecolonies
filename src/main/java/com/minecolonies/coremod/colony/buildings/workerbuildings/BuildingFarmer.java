@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.modules.settings.ISettingKey;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
@@ -25,9 +26,9 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static com.minecolonies.api.util.constant.TagConstants.CRAFTING_FARMER;
@@ -147,12 +148,6 @@ public class BuildingFarmer extends AbstractBuilding
     public static class FarmerFieldsModule extends FieldsModule
     {
         @Override
-        protected Collection<IField> getFields(final IColony colony)
-        {
-            return colony.getBuildingManager().getFields(FarmField.class).stream().map(IField.class::cast).toList();
-        }
-
-        @Override
         protected int getMaxFieldCount()
         {
             return building.getBuildingLevel();
@@ -165,6 +160,12 @@ public class BuildingFarmer extends AbstractBuilding
         }
 
         @Override
+        protected @NotNull Set<IField> getFields(final IColony colony)
+        {
+            return colony.getBuildingManager().getFields(FieldType.FARMER_FIELDS);
+        }
+
+        @Override
         public Class<?> getExpectedFieldType()
         {
             return FarmField.class;
@@ -173,7 +174,7 @@ public class BuildingFarmer extends AbstractBuilding
         @Override
         protected @Nullable IField getFreeField(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeField(FarmField.class);
+            return colony.getBuildingManager().getFreeField(FieldType.FARMER_FIELDS);
         }
     }
 

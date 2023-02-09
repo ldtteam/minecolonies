@@ -5,13 +5,10 @@ import com.minecolonies.api.colony.buildings.modules.AbstractBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingEventsModule;
 import com.minecolonies.api.colony.buildings.modules.IBuildingModule;
 import com.minecolonies.api.colony.buildings.modules.IPersistentModule;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
-import com.minecolonies.api.util.BlockPosUtil;
 import com.minecolonies.coremod.util.CollectorUtils;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,16 +21,6 @@ import java.util.stream.Collectors;
  */
 public abstract class FieldsModule extends AbstractBuildingModule implements IPersistentModule, IBuildingEventsModule, IBuildingModule
 {
-    /**
-     * NBTTag to store the fields.
-     */
-    private static final String TAG_FIELDS = "fields";
-
-    /**
-     * NBTTag to store the field BlockPos.
-     */
-    private static final String TAG_POSITION = "fieldsPos";
-
     /**
      * NBT tag to store assign manually.
      */
@@ -58,46 +45,14 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     @Override
     public void deserializeNBT(final CompoundTag compound)
     {
-        final ListTag fieldTagList = compound.getList(TAG_FIELDS, Tag.TAG_COMPOUND);
-        for (int i = 0; i < fieldTagList.size(); ++i)
-        {
-            final CompoundTag fieldCompound = fieldTagList.getCompound(i);
-            final BlockPos fieldLocation = BlockPosUtil.read(fieldCompound, TAG_POSITION);
-            getFieldFromPosition(fieldLocation).ifPresent(fields::add);
-        }
         shouldAssignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
-    }
 
-    /**
-     * Util method that obtains a field instance from its respective block position
-     *
-     * @param position the position.
-     * @return the field instance or null.
-     */
-    private Optional<IField> getFieldFromPosition(BlockPos position)
-    {
-        return getFields(building.getColony()).stream().filter(f -> f.getPosition().equals(position)).findFirst();
+        updateFields();
     }
-
-    /**
-     * Getter to obtain the fields this module should process.
-     *
-     * @param colony the current colony.
-     * @return a collection of fields.
-     */
-    protected abstract Collection<IField> getFields(IColony colony);
 
     @Override
     public void serializeNBT(final CompoundTag compound)
     {
-        final ListTag fieldTagList = new ListTag();
-        for (final IField field : fields)
-        {
-            final CompoundTag fieldCompound = new CompoundTag();
-            BlockPosUtil.write(fieldCompound, TAG_POSITION, field.getPosition());
-            fieldTagList.add(fieldCompound);
-        }
-        compound.put(TAG_FIELDS, fieldTagList);
         compound.putBoolean(TAG_ASSIGN_MANUALLY, shouldAssignManually);
     }
 
@@ -122,6 +77,25 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
      * @return an integer stating the maximum concurrent plant count.
      */
     protected abstract int getMaxConcurrentPlants();
+
+    /**
+     * Updates the internal set of fields backed by {@link FieldsModule#getFields(IColony)}
+     */
+    private void updateFields()
+    {
+        fields.clear();
+        fields.addAll(getFields(building.getColony()).stream()
+                        .filter(f -> building.getID().equals(f.getBuildingId()))
+                        .toList());
+    }
+
+    /**
+     * Getter to obtain the fields this module should process.
+     *
+     * @param colony the current colony.
+     * @return a collection of fields.
+     */
+    protected abstract @NotNull Set<? extends IField> getFields(IColony colony);
 
     /**
      * Get the class type which is expected for the fields to have.
@@ -164,10 +138,10 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
             return currentField;
         }
 
-        final List<IField> ownedFields = this.fields.stream()
-                                           .filter(field -> !field.equals(currentField))
-                                           .collect(CollectorUtils.toShuffledList());
-        for (final IField field : ownedFields)
+        final List<IField> randomizedFields = this.fields.stream()
+                                                .filter(field -> !field.equals(currentField))
+                                                .collect(CollectorUtils.toShuffledList());
+        for (final IField field : randomizedFields)
         {
             if (field.needsWork())
             {
@@ -282,11 +256,22 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     /**
      * Method called to assign a field to the building.
      *
-     * @param position position of the field.
+     * @param matcher the field matcher.
      */
-    public final void assignField(final BlockPos position)
+    public final void assignField(final FieldRecord matcher)
     {
-        getFieldFromPosition(position).ifPresent(this::assignField);
+        getFieldByMatcher(matcher).ifPresent(this::assignField);
+    }
+
+    /**
+     * Query a field by checking for the appropriate field matcher.
+     *
+     * @param matcher the field matcher.
+     * @return an optional containing a field if one was found.
+     */
+    private Optional<? extends IField> getFieldByMatcher(final FieldRecord matcher)
+    {
+        return getFields(building.getColony()).stream().filter(f -> f.matches(matcher)).findFirst();
     }
 
     /**
@@ -322,11 +307,11 @@ public abstract class FieldsModule extends AbstractBuildingModule implements IPe
     /**
      * Method called to free a field.
      *
-     * @param position the position a field that needs to be freed.
+     * @param matcher the field matcher.
      */
-    public final void freeField(final BlockPos position)
+    public final void freeField(final FieldRecord matcher)
     {
-        getFieldFromPosition(position).ifPresent(this::freeField);
+        getFieldByMatcher(matcher).ifPresent(this::freeField);
     }
 
     /**

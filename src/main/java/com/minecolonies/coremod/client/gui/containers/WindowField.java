@@ -5,6 +5,7 @@ import com.minecolonies.api.colony.ICitizen;
 import com.minecolonies.api.colony.IColonyManager;
 import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import com.minecolonies.api.inventory.container.ContainerField;
 import com.minecolonies.api.tileentities.AbstractTileEntityScarecrow;
 import com.minecolonies.api.util.constant.Constants;
@@ -227,7 +228,7 @@ public class WindowField extends AbstractContainerScreen<ContainerField>
                 farmField.setRadius(this.direction, newRadius);
 
                 this.setMessage(new TextComponent(String.valueOf(newRadius)));
-                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(newRadius, this.direction, tileEntity.getBlockPos()));
+                Network.getNetwork().sendToServer(new FieldPlotResizeMessage(newRadius, this.direction, new FieldRecord(tileEntity.getBlockPos(), tileEntity.getPlant())));
 
                 return true;
             }

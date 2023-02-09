@@ -4,7 +4,7 @@ import com.minecolonies.api.blocks.AbstractBlockHut;
 import com.minecolonies.api.colony.*;
 import com.minecolonies.api.colony.buildings.IBuilding;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.event.ColonyViewUpdatedEvent;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.compatibility.CompatibilityManager;
@@ -685,7 +685,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyFieldViewMessage(final int colonyId, final BlockPos position, FieldStructureType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyFieldViewMessage(final int colonyId, final BlockPos position, FieldType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)
@@ -699,7 +699,7 @@ public final class ColonyManager implements IColonyManager
     }
 
     @Override
-    public void handleColonyRemoveFieldViewMessage(final int colonyId, final BlockPos position, FieldStructureType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
+    public void handleColonyRemoveFieldViewMessage(final int colonyId, final BlockPos position, FieldType type, @NotNull final FriendlyByteBuf buf, final ResourceKey<Level> dim)
     {
         final IColonyView view = getColonyView(colonyId, dim);
         if (view != null)

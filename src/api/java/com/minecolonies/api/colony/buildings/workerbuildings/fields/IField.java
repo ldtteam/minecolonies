@@ -11,14 +11,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Interface for any field instance.
  */
-public interface IField extends Comparable<IField>
+public interface IField
 {
     /**
      * Get the type of the field.
      *
      * @return the type of the field.
      */
-    FieldStructureType getType();
+    FieldType getType();
 
     /**
      * Gets the position of the field.
@@ -99,4 +99,19 @@ public interface IField extends Comparable<IField>
      * @param fieldData the buffer to write the field data to.
      */
     void serializeToView(FriendlyByteBuf fieldData);
+
+    /**
+     * Generate a matcher for this field.
+     *
+     * @return the field record matcher.
+     */
+    FieldRecord getMatcher();
+
+    /**
+     * Whether this field matches the provided field record matcher.
+     *
+     * @param matcher the field record matcher.
+     * @return true if so.
+     */
+    boolean matches(FieldRecord matcher);
 }

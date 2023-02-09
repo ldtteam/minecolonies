@@ -5,7 +5,7 @@ import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHallView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.managers.interfaces.*;
 import com.minecolonies.api.colony.permissions.ColonyPlayer;
 import com.minecolonies.api.colony.permissions.IPermissions;
@@ -868,7 +868,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyFieldViewMessage(final FieldStructureType type, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyFieldViewMessage(final FieldType type, @NotNull final FriendlyByteBuf buf)
     {
         final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
         field.deserialize(buf);
@@ -877,7 +877,7 @@ public final class ColonyView implements IColonyView
     }
 
     @Override
-    public void handleColonyRemoveFieldViewMessage(final FieldStructureType type, @NotNull final FriendlyByteBuf buf)
+    public void handleColonyRemoveFieldViewMessage(final FieldType type, @NotNull final FriendlyByteBuf buf)
     {
         final IFieldView field = FieldRegistry.getFieldViewClassForType(type, this);
         field.deserialize(buf);

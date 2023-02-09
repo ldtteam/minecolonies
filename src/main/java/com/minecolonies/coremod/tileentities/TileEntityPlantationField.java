@@ -5,7 +5,6 @@ import com.minecolonies.api.colony.buildings.workerbuildings.plantation.Plantati
 import com.minecolonies.api.tileentities.AbstractTileEntityPlantationField;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.util.WorldUtil;
-import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implementation for plantation field tile entities.
@@ -38,16 +38,6 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
      * Map of block positions relative to TE pos and string tags
      */
     private Map<BlockPos, List<String>> tagPosMap = new HashMap<>();
-
-    /**
-     * The plantation field type.
-     */
-    private PlantationFieldType plantationFieldType;
-
-    /**
-     * A list of all found tagged working positions.
-     */
-    private List<BlockPos> workingPositions;
 
     /**
      * Default constructor.
@@ -82,7 +72,6 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     public void setPositionedTags(final Map<BlockPos, List<String>> positionedTags)
     {
         tagPosMap = positionedTags;
-        readPlantationFields();
         setChanged();
     }
 
@@ -108,33 +97,12 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     public void readSchematicDataFromNBT(final CompoundTag originalCompound)
     {
         IBlueprintDataProvider.super.readSchematicDataFromNBT(originalCompound);
-        readPlantationFields();
     }
 
     @Override
     public BlockPos getTilePos()
     {
         return worldPosition;
-    }
-
-    private void readPlantationFields()
-    {
-        plantationFieldType = tagPosMap.values().stream()
-                                .flatMap(Collection::stream)
-                                .map(PlantationModuleRegistry::getFromFieldTag)
-                                .filter(Objects::nonNull)
-                                .findFirst()
-                                .orElse(null);
-
-        PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
-        if (module != null)
-        {
-            workingPositions = tagPosMap.entrySet().stream()
-                                 .filter(f -> f.getValue().contains(module.getWorkTag()))
-                                 .map(Map.Entry::getKey)
-                                 .map(worldPosition::offset)
-                                 .toList();
-        }
     }
 
     @Override
@@ -185,14 +153,23 @@ public class TileEntityPlantationField extends AbstractTileEntityPlantationField
     }
 
     @Override
-    public PlantationFieldType getPlantationFieldType()
+    public Set<PlantationFieldType> getPlantationFieldTypes()
     {
-        return plantationFieldType;
+        return tagPosMap.values().stream()
+                 .flatMap(Collection::stream)
+                 .map(PlantationModuleRegistry::getFromFieldTag)
+                 .filter(Objects::nonNull)
+                 .collect(Collectors.toSet());
     }
 
     @Override
-    public List<BlockPos> getWorkingPositions()
+    public List<BlockPos> getWorkingPositions(final String tag)
     {
-        return workingPositions;
+        return tagPosMap.entrySet().stream()
+                 .filter(f -> f.getValue().contains(tag))
+                 .distinct()
+                 .map(Map.Entry::getKey)
+                 .map(worldPosition::offset)
+                 .toList();
     }
 }

@@ -2,7 +2,7 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings.fields;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyView;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.coremod.colony.buildings.views.AbstractFieldView;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,6 +58,22 @@ public class FarmField extends AbstractField
     }
 
     /**
+     * Copy constructor.
+     *
+     * @param field the original field class.
+     */
+    public FarmField(final FarmField field)
+    {
+        super(field.colony);
+        this.buildingId = field.buildingId;
+        this.position = field.position;
+        this.plant = field.plant;
+        this.radii = field.radii.clone();
+        this.maxRadius = field.maxRadius;
+        this.fieldStage = field.fieldStage;
+    }
+
+    /**
      * Constructor to create new instances
      *
      * @param colony   the colony it is created in.
@@ -71,9 +87,9 @@ public class FarmField extends AbstractField
     }
 
     @Override
-    public FieldStructureType getType()
+    public FieldType getType()
     {
-        return FieldStructureType.FARMER_FIELDS;
+        return FieldType.FARMER_FIELDS;
     }
 
     @Override

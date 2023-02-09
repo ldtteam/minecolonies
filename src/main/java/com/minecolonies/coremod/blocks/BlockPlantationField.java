@@ -4,6 +4,9 @@ import com.ldtteam.structurize.blocks.interfaces.IAnchorBlock;
 import com.minecolonies.api.blocks.AbstractBlockMinecoloniesHorizontal;
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.IColonyManager;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
+import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.fields.PlantationField;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModule;
 import com.minecolonies.coremod.colony.buildings.workerbuildings.plantation.PlantationModuleRegistry;
@@ -15,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -89,13 +91,6 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     }
 
     @Override
-    public void wasExploded(final Level worldIn, final BlockPos pos, final Explosion explosionIn)
-    {
-        notifyColonyAboutDestruction(worldIn, pos);
-        super.wasExploded(worldIn, pos, explosionIn);
-    }
-
-    @Override
     public BlockState getStateForPlacement(final BlockPlaceContext context)
     {
         return super.getStateForPlacement(context).setValue(FACING, context.getHorizontalDirection());
@@ -112,17 +107,20 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
         }
 
         final BlockEntity tileEntity = worldIn.getBlockEntity(pos);
-        if (tileEntity instanceof TileEntityPlantationField tileEntityPlantationField && tileEntityPlantationField.isValidPlantationField())
+        if (tileEntity instanceof TileEntityPlantationField plantationField)
         {
             final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
             if (colony != null)
             {
-                PlantationModule module = PlantationModuleRegistry.getPlantationModule(tileEntityPlantationField.getPlantationFieldType());
-                if (module != null)
+                for (PlantationFieldType plantationFieldType : plantationField.getPlantationFieldTypes())
                 {
-                    final List<BlockPos> validWorkingPositions = module.getValidWorkingPositions(worldIn, tileEntityPlantationField.getWorkingPositions());
-                    PlantationField field = new PlantationField(colony, pos, tileEntityPlantationField.getPlantationFieldType(), module.getItem(), validWorkingPositions);
-                    colony.getBuildingManager().addField(field);
+                    PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
+                    if (module != null)
+                    {
+                        final List<BlockPos> validWorkingPositions = module.getValidWorkingPositions(worldIn, plantationField.getWorkingPositions(module.getWorkTag()));
+                        PlantationField field = new PlantationField(colony, pos, plantationFieldType, module.getItem(), validWorkingPositions);
+                        colony.getBuildingManager().addOrUpdateField(field);
+                    }
                 }
             }
         }
@@ -131,7 +129,18 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
     @Override
     public void playerWillDestroy(final Level worldIn, @NotNull final BlockPos pos, final BlockState state, @NotNull final Player player)
     {
-        notifyColonyAboutDestruction(worldIn, pos);
+        final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+        if (blockEntity instanceof TileEntityPlantationField plantationField)
+        {
+            for (PlantationFieldType plantationFieldType : plantationField.getPlantationFieldTypes())
+            {
+                PlantationModule module = PlantationModuleRegistry.getPlantationModule(plantationFieldType);
+                if (module != null)
+                {
+                    notifyColonyAboutDestruction(worldIn, new FieldRecord(pos, module.getItem()));
+                }
+            }
+        }
         super.playerWillDestroy(worldIn, pos, state, player);
     }
 
@@ -145,16 +154,16 @@ public class BlockPlantationField extends AbstractBlockMinecoloniesHorizontal<Bl
      * Notify the colony about the destruction of the field.
      *
      * @param worldIn the world.
-     * @param pos     the position.
+     * @param matcher the field record matcher.
      */
-    private void notifyColonyAboutDestruction(final Level worldIn, final BlockPos pos)
+    private void notifyColonyAboutDestruction(final Level worldIn, final FieldRecord matcher)
     {
         if (!worldIn.isClientSide())
         {
-            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, pos);
+            final IColony colony = IColonyManager.getInstance().getColonyByPosFromWorld(worldIn, matcher.position());
             if (colony != null)
             {
-                colony.getBuildingManager().removeField(PlantationField.class, pos);
+                colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, matcher);
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.minecolonies.api.colony.buildings.views;
 
 import com.minecolonies.api.colony.IColonyView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
@@ -73,4 +74,19 @@ public interface IFieldView
      * @return the distance as a full number.
      */
     int getDistance(IBuildingView building);
+
+    /**
+     * Generate a matcher for this field.
+     *
+     * @return the field record matcher.
+     */
+    FieldRecord getMatcher();
+
+    /**
+     * Whether this field matches the provided field record matcher.
+     *
+     * @param matcher the field record matcher.
+     * @return true if so.
+     */
+    boolean matches(FieldRecord matcher);
 }

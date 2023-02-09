@@ -13,7 +13,8 @@ import com.minecolonies.api.colony.buildings.IRSComponent;
 import com.minecolonies.api.colony.buildings.registry.IBuildingDataManager;
 import com.minecolonies.api.colony.buildings.workerbuildings.ITownHall;
 import com.minecolonies.api.colony.buildings.workerbuildings.IWareHouse;
-import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldStructureType;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.entity.citizen.AbstractEntityCitizen;
@@ -53,9 +54,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Consumer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.minecolonies.api.colony.IColony.CLOSE_COLONY_CAP;
@@ -129,30 +130,39 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     public RegisteredStructureManager(final Colony colony)
     {
         this.colony = colony;
-        this.fields = new ConcurrentSkipListSet<>();
+        this.fields = ConcurrentHashMap.newKeySet();
     }
 
     @Override
-    public @NotNull <T extends IField> Collection<T> getFields(Class<T> fieldType)
+    public @NotNull Set<IField> getFields(FieldType type)
     {
-        return getFieldsStream(fieldType).toList();
+        return getFieldsStream(type).collect(Collectors.toSet());
+    }
+
+    private Stream<IField> getFieldsStream(FieldType type)
+    {
+        return fields.stream().filter(field -> field.getType().equals(type));
     }
 
     @Override
-    public @Nullable <T extends IField> T getField(Class<T> fieldType, BlockPos pos)
+    public @Nullable IField getField(FieldType type, FieldRecord matcher)
     {
-        return getFieldsStream(fieldType).filter(f -> f.getPosition().equals(pos)).findFirst().orElse(null);
+        return getFieldsStream(type)
+                 .filter(f -> f.matches(matcher))
+                 .findFirst()
+                 .orElse(null);
     }
 
     @Override
-    public <T extends IField> T getFreeField(Class<T> fieldType)
+    public IField getFreeField(FieldType type)
     {
-        return getFieldsStream(fieldType).filter(field -> !field.isTaken()).findFirst().orElse(null);
+        return getFieldsStream(type).filter(field -> !field.isTaken()).findFirst().orElse(null);
     }
 
     @Override
-    public void addField(IField field)
+    public void addOrUpdateField(IField field)
     {
+        fields.remove(field);
         fields.add(field);
         isFieldsDirty = true;
         isBuildingsDirty = true;
@@ -160,23 +170,10 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
     }
 
     @Override
-    public <T extends IField> void updateField(Class<T> fieldType, BlockPos position, Consumer<T> modifyFunction)
-    {
-        T field = getField(fieldType, position);
-        if (field != null)
-        {
-            modifyFunction.accept(field);
-            isFieldsDirty = true;
-            isBuildingsDirty = true;
-            colony.markDirty();
-        }
-    }
-
-    @Override
-    public <T extends IField> void removeField(Class<T> fieldType, BlockPos position)
+    public void removeField(FieldType type, FieldRecord matcher)
     {
         final List<IField> fieldsToRemove = fields.stream()
-                                              .filter(f -> f.getPosition().equals(position) && fieldType.isInstance(f))
+                                              .filter(f -> f.matches(matcher))
                                               .toList();
 
         // We must send the message to everyone since fields here will be permanently removed from the list.
@@ -207,7 +204,7 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         for (int i = 0; i < fieldsTagList.size(); ++i)
         {
             final CompoundTag fieldCompound = fieldsTagList.getCompound(i);
-            IField fieldInstance = FieldRegistry.getFieldClassForType(FieldStructureType.valueOf(fieldCompound.getString(TAG_TYPE)), colony);
+            IField fieldInstance = FieldRegistry.getFieldClassForType(FieldType.valueOf(fieldCompound.getString(TAG_TYPE)), colony);
             fieldInstance.deserializeNBT(fieldCompound.getCompound(TAG_FIELD));
             fields.add(fieldInstance);
         }
@@ -350,19 +347,19 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
             {
                 if (!colony.isCoordInColony(colony.getWorld(), field.getPosition()))
                 {
-                    removeField(field.getClass(), field.getPosition());
+                    removeField(field.getType(), field.getMatcher());
                 }
 
                 // TODO: Improve this logic so it can be handled more generically
                 Block blockAtPosition = colony.getWorld().getBlockState(field.getPosition()).getBlock();
-                if (field.getType() == FieldStructureType.FARMER_FIELDS && !blockAtPosition.equals(ModBlocks.blockScarecrow))
+                if (field.getType() == FieldType.FARMER_FIELDS && !blockAtPosition.equals(ModBlocks.blockScarecrow))
                 {
-                    removeField(field.getClass(), field.getPosition());
+                    removeField(field.getType(), field.getMatcher());
                 }
-                if (field.getType() == FieldStructureType.PLANTATION_FIELDS && (!blockAtPosition.equals(ModBlocks.blockPlantationField)
-                                                                                  && !blockAtPosition.equals(ModBlocks.blockHutPlantation)))
+                if (field.getType() == FieldType.PLANTATION_FIELDS && (!blockAtPosition.equals(ModBlocks.blockPlantationField)
+                                                                         && !blockAtPosition.equals(ModBlocks.blockHutPlantation)))
                 {
-                    removeField(field.getClass(), field.getPosition());
+                    removeField(field.getType(), field.getMatcher());
                 }
             }
         }
@@ -979,12 +976,6 @@ public class RegisteredStructureManager implements IRegisteredStructureManager
         {
             minChunkZ = chunkZ - 1;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T extends IField> Stream<T> getFieldsStream(Class<T> fieldType)
-    {
-        return fields.stream().map(field -> fieldType.isInstance(field) ? (T) field : null).filter(Objects::nonNull);
     }
 
     /**

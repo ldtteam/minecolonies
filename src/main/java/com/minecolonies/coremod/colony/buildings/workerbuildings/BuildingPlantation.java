@@ -2,7 +2,10 @@ package com.minecolonies.coremod.colony.buildings.workerbuildings;
 
 import com.minecolonies.api.colony.IColony;
 import com.minecolonies.api.colony.buildings.views.IFieldView;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldRecord;
+import com.minecolonies.api.colony.buildings.workerbuildings.fields.FieldType;
 import com.minecolonies.api.colony.buildings.workerbuildings.fields.IField;
+import com.minecolonies.api.colony.buildings.workerbuildings.plantation.PlantationFieldType;
 import com.minecolonies.api.colony.jobs.registry.JobEntry;
 import com.minecolonies.api.crafting.IGenericRecipe;
 import com.minecolonies.api.util.CraftingUtils;
@@ -21,11 +24,13 @@ import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.minecolonies.api.research.util.ResearchConstants.PLANTATION_LARGE;
 import static com.minecolonies.api.util.constant.BuildingConstants.CONST_DEFAULT_MAX_BUILDING_LEVEL;
@@ -63,9 +68,56 @@ public class BuildingPlantation extends AbstractBuilding
     }
 
     @Override
+    public void onPlacement()
+    {
+        super.onPlacement();
+        updateFields();
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, new FieldRecord(getPosition(), Items.SUGAR_CANE));
+        colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, new FieldRecord(getPosition(), Items.CACTUS));
+        colony.getBuildingManager().removeField(FieldType.PLANTATION_FIELDS, new FieldRecord(getPosition(), Items.BAMBOO));
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+        updateFields();
+    }
+
+    @Override
     public int getMaxBuildingLevel()
     {
         return CONST_DEFAULT_MAX_BUILDING_LEVEL;
+    }
+
+    private void updateFields()
+    {
+        updateField(PlantationFieldType.SUGAR_CANE);
+        updateField(PlantationFieldType.CACTUS);
+        updateField(PlantationFieldType.BAMBOO);
+    }
+
+    /**
+     * TODO: 1.20
+     * Legacy code, can be removed when plantations will no longer have to support fields
+     * directly from the hut building.
+     */
+    private void updateField(PlantationFieldType type)
+    {
+        final PlantationModule module = PlantationModuleRegistry.getPlantationModule(type);
+        if (module != null)
+        {
+            final List<BlockPos> workingPositions = module.getValidWorkingPositions(colony.getWorld(), getLocationsFromTag(module.getWorkTag()));
+            final PlantationField updatedField = new PlantationField(colony, getPosition(), type, module.getItem(), workingPositions);
+            updatedField.setBuilding(getID());
+            colony.getBuildingManager().addOrUpdateField(updatedField);
+        }
     }
 
     @Override
@@ -80,9 +132,9 @@ public class BuildingPlantation extends AbstractBuilding
     public static class PlantationFieldsModule extends FieldsModule
     {
         @Override
-        protected Collection<IField> getFields(final IColony colony)
+        protected @NotNull Set<? extends IField> getFields(final IColony colony)
         {
-            return colony.getBuildingManager().getFields(PlantationField.class).stream().map(IField.class::cast).toList();
+            return colony.getBuildingManager().getFields(FieldType.PLANTATION_FIELDS);
         }
 
         @Override
@@ -91,6 +143,7 @@ public class BuildingPlantation extends AbstractBuilding
             boolean hasDoubleTrouble = building.getColony().getResearchManager().getResearchEffects().getEffectStrength(PLANTATION_LARGE) > 0;
             int allowedPlants = switch (building.getBuildingLevel())
                                   {
+                                      case 0 -> 0;
                                       case 1, 2 -> 1;
                                       case 3, 4 -> 2;
                                       case 5 -> 3;
@@ -115,7 +168,7 @@ public class BuildingPlantation extends AbstractBuilding
         @Override
         protected @Nullable IField getFreeField(final IColony colony)
         {
-            return colony.getBuildingManager().getFreeField(PlantationField.class);
+            return colony.getBuildingManager().getFreeField(FieldType.PLANTATION_FIELDS);
         }
 
         @Override
@@ -140,15 +193,15 @@ public class BuildingPlantation extends AbstractBuilding
     public static class PlantationFieldsModuleView extends FieldsModuleView
     {
         @Override
-        public Class<? extends IFieldView> getExpectedFieldType()
-        {
-            return PlantationField.View.class;
-        }
-
-        @Override
         public boolean canAssignField(final IFieldView field)
         {
             return super.canAssignField(field) && hasRequiredResearchForField(field);
+        }
+
+        @Override
+        public Class<? extends IFieldView> getExpectedFieldType()
+        {
+            return PlantationField.View.class;
         }
 
         @Override
