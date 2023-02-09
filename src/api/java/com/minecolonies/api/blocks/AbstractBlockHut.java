@@ -17,7 +17,6 @@ import com.minecolonies.api.colony.buildings.registry.BuildingEntry;
 import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.permissions.Action;
 import com.minecolonies.api.entity.ai.citizen.builder.IBuilderUndestroyable;
-import com.minecolonies.api.items.ItemBlockHut;
 import com.minecolonies.api.tileentities.AbstractTileEntityColonyBuilding;
 import com.minecolonies.api.tileentities.MinecoloniesTileEntities;
 import com.minecolonies.api.tileentities.TileEntityColonyBuilding;
@@ -39,6 +38,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -119,11 +119,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     private static final VoxelShape SHAPE = Shapes.box(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
 
     /**
-     * The hut's lower-case building-registry-compatible name.
-     */
-    private final String name;
-
-    /**
      * The timepoint of the last chat warning message
      */
     private long lastBreakTickWarn = 0;
@@ -137,7 +132,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         super(Properties.of(Material.WOOD).strength(HARDNESS, RESISTANCE).noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
     }
 
     @Override
@@ -164,7 +158,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     {
         super(properties.noOcclusion());
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
-        this.name = getHutName();
     }
 
     /**
@@ -589,6 +582,6 @@ public abstract class AbstractBlockHut<B extends AbstractBlockHut<B>> extends Ab
     @Override
     public void registerBlockItem(final IForgeRegistry<Item> registry, final Item.Properties properties)
     {
-        registry.register(getRegistryName(), new ItemBlockHut(this, properties));
+        registry.register(getRegistryName(), new BlockItem(this, properties));
     }
 }
