@@ -156,14 +156,6 @@ public class ContainerGrave extends AbstractContainerMenu
     }
 
     @Override
-    protected boolean moveItemStackTo(final ItemStack stack, final int startIndex, final int endIndex, final boolean reverseDirection)
-    {
-        final ItemStack before = stack.copy();
-        final boolean merge =  super.moveItemStackTo(stack, startIndex, endIndex, reverseDirection);
-        return merge;
-    }
-
-    @Override
     public boolean stillValid(final Player playerIn)
     {
         return true;
