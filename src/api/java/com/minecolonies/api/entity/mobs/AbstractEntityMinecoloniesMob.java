@@ -171,7 +171,7 @@ public abstract class AbstractEntityMinecoloniesMob extends Mob implements IStuc
     /**
      * The threattable of the mob
      */
-    private ThreatTable threatTable = new ThreatTable<>(this);
+    private ThreatTable threatTable = new ThreatTable(this);
 
     /**
      * Raiders AI statemachine

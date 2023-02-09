@@ -10,7 +10,7 @@ import static com.minecolonies.api.util.constant.Constants.TICKS_SECOND;
 /**
  * Threat table class, basically a list of entities with an associated threat value
  */
-public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
+public class ThreatTable
 {
     /**
      * Melee range sq
@@ -45,9 +45,9 @@ public class ThreatTable<T extends LivingEntity & IThreatTableEntity>
     /**
      * The owner entity of this table
      */
-    private final T owner;
+    private final LivingEntity owner;
 
-    public ThreatTable(final T owner)
+    public <T extends LivingEntity & IThreatTableEntity> ThreatTable(final T owner)
     {
         this.owner = owner;
     }

@@ -231,7 +231,7 @@ public class EntityCitizen extends AbstractEntityCitizen implements IThreatTable
     /**
      * Our entities threat list
      */
-    private final ThreatTable threatTable         = new ThreatTable<>(this);
+    private final ThreatTable threatTable         = new ThreatTable(this);
     private       int         interactionCooldown = 0;
 
     /**
