@@ -26,7 +26,6 @@ public class ItemPlateArmor extends ArmorItem
      * @param tab             the item group tab.
      */
     public ItemPlateArmor(
-      @NotNull final String name,
       @NotNull final ArmorMaterial materialIn,
       @NotNull final EquipmentSlot equipmentSlotIn,
       final Properties properties)

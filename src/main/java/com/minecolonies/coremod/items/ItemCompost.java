@@ -25,7 +25,7 @@ public class ItemCompost extends AbstractItemMinecolonies
      */
     public ItemCompost(final Item.Properties properties)
     {
-        super("compost", properties.stacksTo(Constants.STACKSIZE));
+        super(properties.stacksTo(Constants.STACKSIZE));
     }
 
     @Override

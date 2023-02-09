@@ -23,9 +23,7 @@ public class ItemBuildGoggles extends ArmorItem
      * @param name            the name.
      * @param properties      the item properties.
      */
-    public ItemBuildGoggles(
-            @NotNull final String name,
-            final Item.Properties properties)
+    public ItemBuildGoggles(final Item.Properties properties)
     {
         super(GOGGLES, EquipmentSlot.HEAD, properties.setNoRepair().rarity(Rarity.UNCOMMON));
     }

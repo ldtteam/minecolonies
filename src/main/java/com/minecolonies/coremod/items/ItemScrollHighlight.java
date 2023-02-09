@@ -38,7 +38,7 @@ public class ItemScrollHighlight extends AbstractItemScroll
      */
     public ItemScrollHighlight(final Properties properties)
     {
-        super("scroll_highlight", properties);
+        super(properties);
     }
 
     @Override

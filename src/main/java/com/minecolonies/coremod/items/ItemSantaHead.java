@@ -25,7 +25,6 @@ public class ItemSantaHead extends ArmorItem
      * @param properties      the item properties.
      */
     public ItemSantaHead(
-      @NotNull final String name,
       @NotNull final ArmorMaterial materialIn,
       @NotNull final EquipmentSlot equipmentSlotIn,
       final Item.Properties properties)

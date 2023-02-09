@@ -30,7 +30,7 @@ import static com.minecolonies.api.util.constant.NbtTagConstants.*;
  */
 public class ItemColonyFlagBanner extends BannerItem
 {
-    public ItemColonyFlagBanner(String name, Properties properties)
+    public ItemColonyFlagBanner(Properties properties)
     {
         this(ModBlocks.blockColonyBanner, ModBlocks.blockColonyWallBanner, properties.stacksTo(16));
     }

@@ -39,7 +39,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      */
     public ItemScepterGuard(final Item.Properties properties)
     {
-        super("scepterguard", properties.stacksTo(1).durability(2));
+        super(properties.stacksTo(1).durability(2));
     }
 
     @NotNull

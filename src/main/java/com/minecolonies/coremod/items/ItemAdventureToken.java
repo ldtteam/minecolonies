@@ -25,7 +25,7 @@ public class ItemAdventureToken extends AbstractItemMinecolonies
      */
     public ItemAdventureToken(Properties properties)
     {
-        super("adventure_token", properties);
+        super(properties);
     }
 
     @Override

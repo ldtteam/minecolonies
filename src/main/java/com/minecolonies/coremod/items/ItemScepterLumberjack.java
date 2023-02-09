@@ -36,7 +36,7 @@ public class ItemScepterLumberjack extends AbstractItemMinecolonies
      */
     public ItemScepterLumberjack(final Properties properties)
     {
-        super("scepterlumberjack", properties.stacksTo(1));
+        super(properties.stacksTo(1));
     }
 
     @NotNull

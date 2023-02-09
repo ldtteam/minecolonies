@@ -21,7 +21,6 @@ import java.util.List;
 public class ItemGate extends BlockItem
 {
     public ItemGate(
-      @NotNull final String name,
       final Block block,
       final Properties properties)
     {

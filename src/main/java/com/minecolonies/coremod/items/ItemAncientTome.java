@@ -23,7 +23,7 @@ public class ItemAncientTome extends AbstractItemMinecolonies
      */
     public ItemAncientTome(final Properties properties)
     {
-        super("ancienttome", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 
     @Override

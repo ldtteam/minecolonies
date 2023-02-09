@@ -14,6 +14,6 @@ public class ItemMistletoe extends AbstractItemMinecolonies
      */
     public ItemMistletoe(final Properties properties)
     {
-        super("mistletoe", properties.stacksTo(STACKSIZE));
+        super(properties.stacksTo(STACKSIZE));
     }
 }

@@ -17,8 +17,6 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.IRON_GATE;
 import static com.minecolonies.api.blocks.decorative.AbstractBlockGate.WOODEN_GATE;
-import static com.minecolonies.api.util.constant.Constants.CHIEFSWORD_NAME;
-import static com.minecolonies.api.util.constant.Constants.SCIMITAR_NAME;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ModItemsInitializer
@@ -102,33 +100,33 @@ public final class ModItemsInitializer
         ModItems.scrollHighLight = new ItemScrollHighlight(new Item.Properties().stacksTo(16));
         registry.register(new ResourceLocation(Constants.MOD_ID, "scroll_highlight"), ModItems.scrollHighLight);
 
-        ModItems.santaHat = new ItemSantaHead("santa_hat", ItemSantaHead.SANTA_HAT, EquipmentSlot.HEAD, new Item.Properties());
-        ModItems.irongate = new ItemGate(IRON_GATE, ModBlocks.blockIronGate, new Item.Properties());
-        ModItems.woodgate = new ItemGate(WOODEN_GATE, ModBlocks.blockWoodenGate, new Item.Properties());
+        ModItems.santaHat = new ItemSantaHead(ItemSantaHead.SANTA_HAT, EquipmentSlot.HEAD, new Item.Properties());
+        ModItems.irongate = new ItemGate(ModBlocks.blockIronGate, new Item.Properties());
+        ModItems.woodgate = new ItemGate(ModBlocks.blockWoodenGate, new Item.Properties());
 
-        ModItems.flagBanner = new ItemColonyFlagBanner("colony_banner", new Item.Properties());
-        ModItems.pirateHelmet_1 = new ItemPirateGear("pirate_hat", ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.HEAD, new Item.Properties());
-        ModItems.pirateChest_1 = new ItemPirateGear("pirate_top", ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.CHEST, new Item.Properties());
-        ModItems.pirateLegs_1 = new ItemPirateGear("pirate_leggins", ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.LEGS, new Item.Properties());
-        ModItems.pirateBoots_1 = new ItemPirateGear("pirate_boots", ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.FEET, new Item.Properties());
+        ModItems.flagBanner = new ItemColonyFlagBanner(new Item.Properties());
+        ModItems.pirateHelmet_1 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.HEAD, new Item.Properties());
+        ModItems.pirateChest_1 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.CHEST, new Item.Properties());
+        ModItems.pirateLegs_1 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.LEGS, new Item.Properties());
+        ModItems.pirateBoots_1 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_1, EquipmentSlot.FEET, new Item.Properties());
 
-        ModItems.pirateHelmet_2 = new ItemPirateGear("pirate_cap", ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.HEAD, new Item.Properties());
-        ModItems.pirateChest_2 = new ItemPirateGear("pirate_chest", ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.CHEST, new Item.Properties());
-        ModItems.pirateLegs_2 = new ItemPirateGear("pirate_legs", ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.LEGS, new Item.Properties());
-        ModItems.pirateBoots_2 = new ItemPirateGear("pirate_shoes", ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.FEET, new Item.Properties());
+        ModItems.pirateHelmet_2 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.HEAD, new Item.Properties());
+        ModItems.pirateChest_2 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.CHEST, new Item.Properties());
+        ModItems.pirateLegs_2 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.LEGS, new Item.Properties());
+        ModItems.pirateBoots_2 = new ItemPirateGear(ItemPirateGear.PIRATE_ARMOR_2, EquipmentSlot.FEET, new Item.Properties());
 
-        ModItems.plateArmorHelmet = new ItemPlateArmor("plate_armor_helmet", ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.HEAD, new Item.Properties());
-        ModItems.plateArmorChest = new ItemPlateArmor("plate_armor_chest", ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.CHEST, new Item.Properties());
-        ModItems.plateArmorLegs = new ItemPlateArmor("plate_armor_legs", ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.LEGS, new Item.Properties());
-        ModItems.plateArmorBoots = new ItemPlateArmor("plate_armor_boots", ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.FEET, new Item.Properties());
+        ModItems.plateArmorHelmet = new ItemPlateArmor(ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.HEAD, new Item.Properties());
+        ModItems.plateArmorChest = new ItemPlateArmor(ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.CHEST, new Item.Properties());
+        ModItems.plateArmorLegs = new ItemPlateArmor(ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.LEGS, new Item.Properties());
+        ModItems.plateArmorBoots = new ItemPlateArmor(ItemPlateArmor.PLATE_ARMOR, EquipmentSlot.FEET, new Item.Properties());
 
-        ModItems.sifterMeshString = new ItemSifterMesh("sifter_mesh_string", new Item.Properties().durability(500).setNoRepair());
-        ModItems.sifterMeshFlint = new ItemSifterMesh("sifter_mesh_flint", new Item.Properties().durability(1000).setNoRepair());
-        ModItems.sifterMeshIron = new ItemSifterMesh("sifter_mesh_iron", new Item.Properties().durability(1500).setNoRepair());
-        ModItems.sifterMeshDiamond = new ItemSifterMesh("sifter_mesh_diamond", new Item.Properties().durability(2000).setNoRepair());
+        ModItems.sifterMeshString = new ItemSifterMesh(new Item.Properties().durability(500).setNoRepair());
+        ModItems.sifterMeshFlint = new ItemSifterMesh(new Item.Properties().durability(1000).setNoRepair());
+        ModItems.sifterMeshIron = new ItemSifterMesh(new Item.Properties().durability(1500).setNoRepair());
+        ModItems.sifterMeshDiamond = new ItemSifterMesh(new Item.Properties().durability(2000).setNoRepair());
 
-        ModItems.magicpotion = new ItemMagicPotion("magicpotion", new Item.Properties());
-        ModItems.buildGoggles = new ItemBuildGoggles("build_goggles", new Item.Properties());
+        ModItems.magicpotion = new ItemMagicPotion(new Item.Properties());
+        ModItems.buildGoggles = new ItemBuildGoggles(new Item.Properties());
 
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplychestdeployer"), ModItems.supplyChest);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterpermission"), ModItems.permTool);
@@ -136,11 +134,11 @@ public final class ModItemsInitializer
         registry.register(new ResourceLocation(Constants.MOD_ID, "banner_rally_guards"), ModItems.bannerRallyGuards);
         registry.register(new ResourceLocation(Constants.MOD_ID, "supplycampdeployer"), ModItems.supplyCamp);
         registry.register(new ResourceLocation(Constants.MOD_ID, "ancienttome"), ModItems.ancientTome);
-        registry.register(new ResourceLocation(Constants.MOD_ID, CHIEFSWORD_NAME), ModItems.chiefSword);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "chiefsword"), ModItems.chiefSword);
         registry.register(new ResourceLocation(Constants.MOD_ID, "clipboard"), ModItems.clipboard);
         registry.register(new ResourceLocation(Constants.MOD_ID, "compost"), ModItems.compost);
         registry.register(new ResourceLocation(Constants.MOD_ID, "resourcescroll"), ModItems.resourceScroll);
-        registry.register(new ResourceLocation(Constants.MOD_ID, SCIMITAR_NAME), ModItems.scimitar);
+        registry.register(new ResourceLocation(Constants.MOD_ID, "iron_scimitar"), ModItems.scimitar);
         registry.register(new ResourceLocation(Constants.MOD_ID, "scepterlumberjack"), ModItems.scepterLumberjack);
         registry.register(new ResourceLocation(Constants.MOD_ID, "pharaoscepter"), ModItems.pharaoscepter);
         registry.register(new ResourceLocation(Constants.MOD_ID, "firearrow"), ModItems.firearrow);

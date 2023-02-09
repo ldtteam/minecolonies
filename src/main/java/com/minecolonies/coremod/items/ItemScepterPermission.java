@@ -50,7 +50,7 @@ public class ItemScepterPermission extends AbstractItemMinecolonies
      */
     public ItemScepterPermission(final Item.Properties properties)
     {
-        super("scepterpermission", properties.stacksTo(1).durability(2));
+        super(properties.stacksTo(1).durability(2));
     }
 
     @NotNull

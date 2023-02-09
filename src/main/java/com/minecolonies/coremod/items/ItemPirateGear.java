@@ -29,7 +29,6 @@ public class ItemPirateGear extends ArmorItem
      * @param name            the name.
      */
     public ItemPirateGear(
-      @NotNull final String name,
       @NotNull final ArmorMaterial materialIn,
       @NotNull final EquipmentSlot equipmentSlotIn,
       final Item.Properties properties)

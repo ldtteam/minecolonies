@@ -38,7 +38,7 @@ public class ItemGoldenBread extends AbstractItemMinecolonies
      */
     public ItemGoldenBread(final Properties properties)
     {
-        super("golden_bread", properties.stacksTo(STACKSIZE).food(goldenBread));
+        super(properties.stacksTo(STACKSIZE).food(goldenBread));
     }
 
    /**
